@@ -1,0 +1,997 @@
+[verified-full 01:52:42] resume: loaded 10 existing results
+[verified-full 01:52:42] [1/500] scikit-learn__scikit-learn-10297 SKIP (predicted, patch=1547B)
+[verified-full 01:52:42] [2/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-10844
+[verified-full 02:10:16]   -> patch-produced (patch=627B wall=917.0s)
+[verified-full 02:10:16] [3/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-10908
+[verified-full 02:23:05]   -> patch-produced (patch=526B wall=235.4s)
+[verified-full 02:23:05] [4/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-11310
+[verified-full 02:32:38]   -> patch-produced (patch=3325B wall=411.9s)
+[verified-full 02:32:38] [5/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-11578
+[verified-full 02:53:08]   -> patch-produced (patch=58660B wall=1086.7s)
+[verified-full 02:53:08] [6/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-12585
+[verified-full 03:10:02]   -> patch-produced (patch=1705B wall=452.3s)
+[verified-full 03:10:02] [7/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-12682
+[verified-full 03:40:56]   -> patch-produced (patch=60739B wall=1235.4s)
+[verified-full 03:40:56] [8/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-12973
+[verified-full 03:55:56]   -> patch-produced (patch=63728B wall=263.7s)
+[verified-full 03:55:56] [9/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-13124
+[verified-full 04:30:41]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 04:30:41] [10/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-13135
+[verified-full 04:38:42]   -> patch-produced (patch=1839B wall=323.3s)
+[verified-full 04:38:42] [11/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-13142
+[verified-full 04:52:09]   -> patch-produced (patch=2717B wall=643.5s)
+[verified-full 04:52:09] [12/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-13328
+[verified-full 05:04:30]   -> patch-produced (patch=1387B wall=276.9s)
+[verified-full 05:04:30] [13/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-13439
+[verified-full 05:11:51]   -> patch-produced (patch=1118B wall=293.6s)
+[verified-full 05:11:51] [14/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-13496
+[verified-full 05:20:57]   -> patch-produced (patch=4255B wall=381.5s)
+[verified-full 05:20:57] [15/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-13779
+[verified-full 05:29:53]   -> patch-produced (patch=609B wall=378.5s)
+[verified-full 05:29:53] [16/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-14053
+[verified-full 05:39:46]   -> patch-produced (patch=762B wall=433.9s)
+[verified-full 05:39:46] [17/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-14087
+[verified-full 05:56:52]   -> patch-produced (patch=1892B wall=868.3s)
+[verified-full 05:56:52] [18/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-14141
+[verified-full 05:59:55]   -> patch-produced (patch=804B wall=41.0s)
+[verified-full 05:59:55] [19/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-14496
+[verified-full 06:09:46]   -> quota-blocked (patch=1305B wall=429.7s)
+[verified-full 06:09:46] [20/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-14629
+[verified-full 06:30:00]   -> patch-produced (patch=1695B wall=749.2s)
+[verified-full 06:30:00] [21/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-14710
+[verified-full 06:41:42]   -> patch-produced (patch=50275B wall=542.6s)
+[verified-full 06:41:42] [22/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-14894
+[verified-full 06:57:02]   -> patch-produced (patch=48850B wall=754.5s)
+[verified-full 06:57:02] [23/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-14983
+[verified-full 07:08:47]   -> patch-produced (patch=631B wall=546.9s)
+[verified-full 07:08:47] [24/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-15100
+[verified-full 07:14:37]   -> patch-produced (patch=582B wall=181.4s)
+[verified-full 07:14:37] [25/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-25102
+[verified-full 07:49:33]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 07:49:33] [26/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-25232
+[verified-full 08:03:14]   -> patch-produced (patch=4362B wall=643.5s)
+[verified-full 08:03:14] [27/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-25747
+[verified-full 08:25:57]   -> patch-produced (patch=10888B wall=1186.3s)
+[verified-full 08:25:57] [28/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-25931
+[verified-full 08:44:11]   -> no-patch (patch=0B wall=573.9s)
+[verified-full 08:44:11] [29/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-25973
+[verified-full 09:06:53]   -> patch-produced (patch=3588B wall=849.3s)
+[verified-full 09:06:53] [30/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-26194
+[verified-full 09:41:51]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 09:41:51] [31/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-26323
+[verified-full 09:57:40]   -> patch-produced (patch=1204B wall=762.0s)
+[verified-full 09:57:40] [32/500] PREDICT deepseek-harness on scikit-learn__scikit-learn-9288
+[verified-full 10:25:58]   -> patch-produced (patch=4924B wall=1178.1s)
+[verified-full 10:25:58] [33/500] sphinx-doc__sphinx-10323 SKIP (predicted, patch=0B)
+[verified-full 10:25:58] [34/500] PREDICT deepseek-harness on sphinx-doc__sphinx-10435
+[verified-full 11:02:17]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 11:02:17] [35/500] PREDICT deepseek-harness on sphinx-doc__sphinx-10449
+[verified-full 11:36:22]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 11:36:22] [36/500] PREDICT deepseek-harness on sphinx-doc__sphinx-10466
+[verified-full 12:02:42]   -> patch-produced (patch=632B wall=1318.3s)
+[verified-full 12:02:42] [37/500] PREDICT deepseek-harness on sphinx-doc__sphinx-10614
+[verified-full 12:36:14]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 12:36:14] [38/500] PREDICT deepseek-harness on sphinx-doc__sphinx-10673
+[verified-full 13:09:49]   -> timeout (patch=0B wall=1920.0s)
+[verified-full 13:09:49] [39/500] PREDICT deepseek-harness on sphinx-doc__sphinx-11445
+[verified-full 13:30:16]   -> patch-produced (patch=1872B wall=1136.5s)
+[verified-full 13:30:16] [40/500] PREDICT deepseek-harness on sphinx-doc__sphinx-11510
+[verified-full 13:30:16]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:16] [41/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7440
+[verified-full 13:30:16]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:16] [42/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7454
+[verified-full 13:30:16]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:16] [43/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7462
+[verified-full 13:30:16]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:16] [44/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7590
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [45/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7748
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [46/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7757
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [47/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7889
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [48/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7910
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [49/500] PREDICT deepseek-harness on sphinx-doc__sphinx-7985
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [50/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8035
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [51/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8056
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [52/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8120
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [53/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8265
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [54/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8269
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [55/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8459
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [56/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8475
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [57/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8548
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [58/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8551
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [59/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8593
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [60/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8595
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [61/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8621
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [62/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8638
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [63/500] PREDICT deepseek-harness on sphinx-doc__sphinx-8721
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [64/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9229
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [65/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9230
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [66/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9258
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [67/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9281
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [68/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9320
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [69/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9367
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [70/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9461
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [71/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9591
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [72/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9602
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [73/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9658
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [74/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9673
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [75/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9698
+[verified-full 13:30:17]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:17] [76/500] PREDICT deepseek-harness on sphinx-doc__sphinx-9711
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [77/500] sympy__sympy-11618 SKIP (predicted, patch=945B)
+[verified-full 13:30:18] [78/500] PREDICT deepseek-harness on sympy__sympy-12096
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [79/500] PREDICT deepseek-harness on sympy__sympy-12419
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [80/500] PREDICT deepseek-harness on sympy__sympy-12481
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [81/500] PREDICT deepseek-harness on sympy__sympy-12489
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [82/500] PREDICT deepseek-harness on sympy__sympy-13031
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [83/500] PREDICT deepseek-harness on sympy__sympy-13091
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [84/500] PREDICT deepseek-harness on sympy__sympy-13372
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [85/500] PREDICT deepseek-harness on sympy__sympy-13480
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [86/500] PREDICT deepseek-harness on sympy__sympy-13551
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [87/500] PREDICT deepseek-harness on sympy__sympy-13615
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [88/500] PREDICT deepseek-harness on sympy__sympy-13647
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [89/500] PREDICT deepseek-harness on sympy__sympy-13757
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [90/500] PREDICT deepseek-harness on sympy__sympy-13798
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [91/500] PREDICT deepseek-harness on sympy__sympy-13852
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [92/500] PREDICT deepseek-harness on sympy__sympy-13877
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [93/500] PREDICT deepseek-harness on sympy__sympy-13878
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [94/500] PREDICT deepseek-harness on sympy__sympy-13974
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [95/500] PREDICT deepseek-harness on sympy__sympy-14248
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [96/500] PREDICT deepseek-harness on sympy__sympy-14531
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [97/500] PREDICT deepseek-harness on sympy__sympy-14711
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [98/500] PREDICT deepseek-harness on sympy__sympy-14976
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [99/500] PREDICT deepseek-harness on sympy__sympy-15017
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [100/500] PREDICT deepseek-harness on sympy__sympy-15345
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [101/500] PREDICT deepseek-harness on sympy__sympy-15349
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [102/500] PREDICT deepseek-harness on sympy__sympy-15599
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [103/500] PREDICT deepseek-harness on sympy__sympy-15809
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [104/500] PREDICT deepseek-harness on sympy__sympy-15875
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [105/500] PREDICT deepseek-harness on sympy__sympy-15976
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [106/500] PREDICT deepseek-harness on sympy__sympy-16450
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [107/500] PREDICT deepseek-harness on sympy__sympy-16597
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [108/500] PREDICT deepseek-harness on sympy__sympy-16766
+[verified-full 13:30:18]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:18] [109/500] PREDICT deepseek-harness on sympy__sympy-16792
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [110/500] PREDICT deepseek-harness on sympy__sympy-16886
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [111/500] PREDICT deepseek-harness on sympy__sympy-17139
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [112/500] PREDICT deepseek-harness on sympy__sympy-17318
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [113/500] PREDICT deepseek-harness on sympy__sympy-17630
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [114/500] PREDICT deepseek-harness on sympy__sympy-17655
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [115/500] PREDICT deepseek-harness on sympy__sympy-18189
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [116/500] PREDICT deepseek-harness on sympy__sympy-18199
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [117/500] PREDICT deepseek-harness on sympy__sympy-18211
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [118/500] PREDICT deepseek-harness on sympy__sympy-18698
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [119/500] PREDICT deepseek-harness on sympy__sympy-18763
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [120/500] PREDICT deepseek-harness on sympy__sympy-19040
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [121/500] PREDICT deepseek-harness on sympy__sympy-19346
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [122/500] PREDICT deepseek-harness on sympy__sympy-19495
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [123/500] PREDICT deepseek-harness on sympy__sympy-19637
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [124/500] PREDICT deepseek-harness on sympy__sympy-19783
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [125/500] PREDICT deepseek-harness on sympy__sympy-19954
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [126/500] PREDICT deepseek-harness on sympy__sympy-20154
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [127/500] PREDICT deepseek-harness on sympy__sympy-20428
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [128/500] PREDICT deepseek-harness on sympy__sympy-20438
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [129/500] PREDICT deepseek-harness on sympy__sympy-20590
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [130/500] PREDICT deepseek-harness on sympy__sympy-20801
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [131/500] PREDICT deepseek-harness on sympy__sympy-20916
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [132/500] PREDICT deepseek-harness on sympy__sympy-21379
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [133/500] PREDICT deepseek-harness on sympy__sympy-21596
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [134/500] PREDICT deepseek-harness on sympy__sympy-21612
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [135/500] PREDICT deepseek-harness on sympy__sympy-21847
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [136/500] PREDICT deepseek-harness on sympy__sympy-21930
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [137/500] PREDICT deepseek-harness on sympy__sympy-22080
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [138/500] PREDICT deepseek-harness on sympy__sympy-22456
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [139/500] PREDICT deepseek-harness on sympy__sympy-22714
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [140/500] PREDICT deepseek-harness on sympy__sympy-22914
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [141/500] PREDICT deepseek-harness on sympy__sympy-23262
+[verified-full 13:30:19]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:19] [142/500] PREDICT deepseek-harness on sympy__sympy-23413
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [143/500] PREDICT deepseek-harness on sympy__sympy-23534
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [144/500] PREDICT deepseek-harness on sympy__sympy-23824
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [145/500] PREDICT deepseek-harness on sympy__sympy-23950
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [146/500] PREDICT deepseek-harness on sympy__sympy-24066
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [147/500] PREDICT deepseek-harness on sympy__sympy-24213
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [148/500] PREDICT deepseek-harness on sympy__sympy-24443
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [149/500] PREDICT deepseek-harness on sympy__sympy-24539
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [150/500] PREDICT deepseek-harness on sympy__sympy-24562
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [151/500] PREDICT deepseek-harness on sympy__sympy-24661
+[verified-full 13:30:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 13:30:20] [152/500] PREDICT deepseek-harness on astropy__astropy-12907
+[verified-full 13:37:28]   -> patch-produced (patch=2411B wall=427.8s)
+[verified-full 13:37:28] [153/500] PREDICT deepseek-harness on astropy__astropy-13033
+[verified-full 14:12:12]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 14:12:12] [154/500] PREDICT deepseek-harness on astropy__astropy-13236
+[verified-full 14:34:48]   -> patch-produced (patch=1676B wall=1191.7s)
+[verified-full 14:34:48] [155/500] PREDICT deepseek-harness on astropy__astropy-13398
+[verified-full 15:03:33]   -> patch-produced (patch=12477B wall=1568.0s)
+[verified-full 15:03:33] [156/500] PREDICT deepseek-harness on astropy__astropy-13453
+[verified-full 15:23:45]   -> patch-produced (patch=1384B wall=1047.2s)
+[verified-full 15:23:45] [157/500] PREDICT deepseek-harness on astropy__astropy-13579
+[verified-full 16:00:50]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 16:00:50] [158/500] PREDICT deepseek-harness on astropy__astropy-13977
+[verified-full 16:35:27]   -> timeout (patch=0B wall=1920.0s)
+[verified-full 16:35:27] [159/500] PREDICT deepseek-harness on astropy__astropy-14096
+[verified-full 16:54:37]   -> patch-produced (patch=94969B wall=984.3s)
+[verified-full 16:54:37] [160/500] PREDICT deepseek-harness on astropy__astropy-14182
+[verified-full 17:29:28]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 17:29:28] [161/500] PREDICT deepseek-harness on astropy__astropy-14309
+[verified-full 17:50:47]   -> patch-produced (patch=1613B wall=693.0s)
+[verified-full 17:50:47] [162/500] PREDICT deepseek-harness on astropy__astropy-14365
+[verified-full 18:01:25]   -> patch-produced (patch=2183B wall=476.5s)
+[verified-full 18:01:25] [163/500] PREDICT deepseek-harness on astropy__astropy-14369
+[verified-full 18:36:15]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 18:36:15] [164/500] PREDICT deepseek-harness on astropy__astropy-14508
+[verified-full 19:07:46]   -> patch-produced (patch=1553B wall=1714.2s)
+[verified-full 19:07:46] [165/500] PREDICT deepseek-harness on astropy__astropy-14539
+[verified-full 19:23:06]   -> patch-produced (patch=1920B wall=760.3s)
+[verified-full 19:23:06] [166/500] PREDICT deepseek-harness on astropy__astropy-14598
+[verified-full 19:57:51]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 19:57:51] [167/500] PREDICT deepseek-harness on astropy__astropy-14995
+[verified-full 20:16:01]   -> patch-produced (patch=30770B wall=487.5s)
+[verified-full 20:16:01] [168/500] PREDICT deepseek-harness on astropy__astropy-7166
+[verified-full 20:34:36]   -> patch-produced (patch=3034B wall=957.6s)
+[verified-full 20:34:36] [169/500] PREDICT deepseek-harness on astropy__astropy-7336
+[verified-full 20:40:46]   -> patch-produced (patch=1452B wall=214.2s)
+[verified-full 20:40:46] [170/500] PREDICT deepseek-harness on astropy__astropy-7606
+[verified-full 20:47:21]   -> patch-produced (patch=588B wall=230.6s)
+[verified-full 20:47:21] [171/500] PREDICT deepseek-harness on astropy__astropy-7671
+[verified-full 20:57:45]   -> patch-produced (patch=927B wall=467.4s)
+[verified-full 20:57:45] [172/500] PREDICT deepseek-harness on astropy__astropy-8707
+[verified-full 21:17:02]   -> patch-produced (patch=2195B wall=992.1s)
+[verified-full 21:17:02] [173/500] PREDICT deepseek-harness on astropy__astropy-8872
+[verified-full 21:34:48]   -> patch-produced (patch=997B wall=911.9s)
+[verified-full 21:34:48] [174/500] django__django-10097 SKIP (predicted, patch=0B)
+[verified-full 21:34:48] [175/500] PREDICT deepseek-harness on django__django-10554
+[verified-full 22:18:40]   -> timeout (patch=0B wall=1920.0s)
+[verified-full 22:18:40] [176/500] PREDICT deepseek-harness on django__django-10880
+[verified-full 22:35:23]   -> patch-produced (patch=635B wall=791.1s)
+[verified-full 22:35:23] [177/500] PREDICT deepseek-harness on django__django-10914
+[verified-full 22:54:10]   -> patch-produced (patch=3135B wall=913.3s)
+[verified-full 22:54:10] [178/500] PREDICT deepseek-harness on django__django-10973
+[verified-full 23:05:50]   -> patch-produced (patch=6452B wall=464.4s)
+[verified-full 23:05:50] [179/500] PREDICT deepseek-harness on django__django-10999
+[verified-full 23:24:42]   -> patch-produced (patch=493B wall=920.7s)
+[verified-full 23:24:42] [180/500] PREDICT deepseek-harness on django__django-11066
+[verified-full 23:40:37]   -> patch-produced (patch=763B wall=69.4s)
+[verified-full 23:40:37] [181/500] PREDICT deepseek-harness on django__django-11087
+[verified-full 00:16:20]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 00:16:20] [182/500] PREDICT deepseek-harness on django__django-11095
+[verified-full 00:41:06]   -> patch-produced (patch=3858B wall=694.7s)
+[verified-full 00:41:06] [183/500] PREDICT deepseek-harness on django__django-11099
+[verified-full 00:46:20]   -> patch-produced (patch=899B wall=98.4s)
+[verified-full 00:46:20] [184/500] PREDICT deepseek-harness on django__django-11119
+[verified-full 00:46:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 00:46:20] [185/500] PREDICT deepseek-harness on django__django-11133
+[verified-full 00:46:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 00:46:20] [186/500] PREDICT deepseek-harness on django__django-11138
+[verified-full 00:46:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 00:46:20] [187/500] PREDICT deepseek-harness on django__django-11141
+[verified-full 00:46:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 00:46:20] [188/500] PREDICT deepseek-harness on django__django-11149
+[verified-full 00:46:20]   -> blocked (patch=0B wall=Nones)
+[verified-full 00:46:20] [189/500] PREDICT deepseek-harness on django__django-11163
+[verified-full 00:46:21]   -> blocked (patch=0B wall=Nones)
+[verified-full 00:46:21] [190/500] PREDICT deepseek-harness on django__django-11179
+[verified-full 01:02:14]   -> patch-produced (patch=1212B wall=263.5s)
+[verified-full 01:02:14] [191/500] PREDICT deepseek-harness on django__django-11206
+[verified-full 01:46:28]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 01:46:28] [192/500] PREDICT deepseek-harness on django__django-11211
+[verified-full 02:05:00]   -> patch-produced (patch=650B wall=896.3s)
+[verified-full 02:05:00] [193/500] PREDICT deepseek-harness on django__django-11239
+[verified-full 02:27:02]   -> patch-produced (patch=5713B wall=395.6s)
+[verified-full 02:27:02] [194/500] PREDICT deepseek-harness on django__django-11265
+[verified-full 03:02:58]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 03:02:58] [195/500] PREDICT deepseek-harness on django__django-11276
+[verified-full 03:19:40]   -> patch-produced (patch=19984B wall=694.0s)
+[verified-full 03:19:40] [196/500] PREDICT deepseek-harness on django__django-11292
+[verified-full 03:56:54]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 03:56:54] [197/500] PREDICT deepseek-harness on django__django-11299
+[verified-full 04:05:42]   -> patch-produced (patch=666B wall=296.4s)
+[verified-full 04:05:42] [198/500] PREDICT deepseek-harness on django__django-11333
+[verified-full 04:27:01]   -> patch-produced (patch=1268B wall=419.8s)
+[verified-full 04:27:01] [199/500] PREDICT deepseek-harness on django__django-11400
+[verified-full 05:00:07]   -> patch-produced (patch=4497B wall=1760.9s)
+[verified-full 05:00:07] [200/500] PREDICT deepseek-harness on django__django-11433
+[verified-full 05:35:54]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 05:35:54] [201/500] PREDICT deepseek-harness on django__django-11451
+[verified-full 05:58:50]   -> patch-produced (patch=589B wall=695.6s)
+[verified-full 05:58:50] [202/500] PREDICT deepseek-harness on django__django-11477
+[verified-full 06:34:42]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 06:34:42] [203/500] PREDICT deepseek-harness on django__django-11490
+[verified-full 07:09:10]   -> patch-produced (patch=2594B wall=1369.7s)
+[verified-full 07:09:10] [204/500] PREDICT deepseek-harness on django__django-11532
+[verified-full 07:31:31]   -> patch-produced (patch=678B wall=1104.4s)
+[verified-full 07:31:31] [205/500] PREDICT deepseek-harness on django__django-11551
+[verified-full 08:03:05]   -> patch-produced (patch=4337B wall=997.7s)
+[verified-full 08:03:05] [206/500] PREDICT deepseek-harness on django__django-11555
+[verified-full 08:38:48]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 08:38:48] [207/500] PREDICT deepseek-harness on django__django-11603
+[verified-full 08:51:41]   -> patch-produced (patch=795B wall=96.6s)
+[verified-full 08:51:41] [208/500] PREDICT deepseek-harness on django__django-11728
+[verified-full 09:27:29]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 09:27:29] [209/500] PREDICT deepseek-harness on django__django-11734
+[verified-full 10:11:14]   -> timeout (patch=0B wall=1920.0s)
+[verified-full 10:11:14] [210/500] PREDICT deepseek-harness on django__django-11740
+[verified-full 10:42:12]   -> patch-produced (patch=68199B wall=1115.6s)
+[verified-full 10:42:12] [211/500] PREDICT deepseek-harness on django__django-11749
+[verified-full 10:59:02]   -> patch-produced (patch=3365B wall=780.4s)
+[verified-full 10:59:02] [212/500] PREDICT deepseek-harness on django__django-11790
+[verified-full 11:17:56]   -> patch-produced (patch=712B wall=902.9s)
+[verified-full 11:17:56] [213/500] PREDICT deepseek-harness on django__django-11815
+[verified-full 11:37:58]   -> patch-produced (patch=4564B wall=981.3s)
+[verified-full 11:37:58] [214/500] PREDICT deepseek-harness on django__django-11820
+[verified-full 12:13:32]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 12:13:32] [215/500] PREDICT deepseek-harness on django__django-11848
+[verified-full 12:49:23]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 12:49:23] [216/500] PREDICT deepseek-harness on django__django-11880
+[verified-full 13:08:50]   -> patch-produced (patch=2397B wall=477.8s)
+[verified-full 13:08:50] [217/500] PREDICT deepseek-harness on django__django-11885
+[verified-full 13:52:16]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 13:52:16] [218/500] PREDICT deepseek-harness on django__django-11951
+[verified-full 14:02:06]   -> patch-produced (patch=1672B wall=362.8s)
+[verified-full 14:02:06] [219/500] PREDICT deepseek-harness on django__django-11964
+[verified-full 14:44:54]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 14:44:54] [220/500] PREDICT deepseek-harness on django__django-11999
+[verified-full 14:53:44]   -> patch-produced (patch=2263B wall=292.7s)
+[verified-full 14:53:44] [221/500] PREDICT deepseek-harness on django__django-12039
+[verified-full 15:11:46]   -> patch-produced (patch=1358B wall=843.4s)
+[verified-full 15:11:46] [222/500] PREDICT deepseek-harness on django__django-12050
+[verified-full 15:19:28]   -> patch-produced (patch=500B wall=231.1s)
+[verified-full 15:19:28] [223/500] PREDICT deepseek-harness on django__django-12125
+[verified-full 15:55:16]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 15:55:16] [224/500] PREDICT deepseek-harness on django__django-12143
+[verified-full 16:03:04]   -> patch-produced (patch=2585B wall=242.5s)
+[verified-full 16:03:04] [225/500] PREDICT deepseek-harness on django__django-12155
+[verified-full 16:16:45]   -> patch-produced (patch=851B wall=599.7s)
+[verified-full 16:16:45] [226/500] PREDICT deepseek-harness on django__django-12193
+[verified-full 16:39:42]   -> patch-produced (patch=558B wall=669.8s)
+[verified-full 16:39:42] [227/500] PREDICT deepseek-harness on django__django-12209
+[verified-full 17:24:59]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 17:24:59] [228/500] PREDICT deepseek-harness on django__django-12262
+[verified-full 17:38:53]   -> patch-produced (patch=2373B wall=621.7s)
+[verified-full 17:38:53] [229/500] PREDICT deepseek-harness on django__django-12273
+[verified-full 18:14:33]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 18:14:33] [230/500] PREDICT deepseek-harness on django__django-12276
+[verified-full 18:28:36]   -> patch-produced (patch=39906B wall=256.3s)
+[verified-full 18:28:36] [231/500] PREDICT deepseek-harness on django__django-12304
+[verified-full 18:52:07]   -> patch-produced (patch=5872B wall=547.0s)
+[verified-full 18:52:07] [232/500] PREDICT deepseek-harness on django__django-12308
+[verified-full 19:11:42]   -> patch-produced (patch=2181B wall=949.2s)
+[verified-full 19:11:42] [233/500] PREDICT deepseek-harness on django__django-12325
+[verified-full 19:17:00]   -> no-patch (patch=0B wall=101.1s)
+[verified-full 19:17:00] [234/500] PREDICT deepseek-harness on django__django-12406
+[verified-full 19:52:44]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 19:52:44] [235/500] PREDICT deepseek-harness on django__django-12419
+[verified-full 20:12:03]   -> patch-produced (patch=5201B wall=936.2s)
+[verified-full 20:12:03] [236/500] PREDICT deepseek-harness on django__django-12663
+[verified-full 20:35:08]   -> patch-produced (patch=2256B wall=1170.0s)
+[verified-full 20:35:08] [237/500] PREDICT deepseek-harness on django__django-12708
+[verified-full 21:07:18]   -> patch-produced (patch=2954B wall=1700.9s)
+[verified-full 21:07:18] [238/500] PREDICT deepseek-harness on django__django-12713
+[verified-full 21:21:51]   -> patch-produced (patch=3276B wall=676.6s)
+[verified-full 21:21:51] [239/500] PREDICT deepseek-harness on django__django-12741
+[verified-full 21:27:13]   -> patch-produced (patch=2602B wall=146.5s)
+[verified-full 21:27:13] [240/500] PREDICT deepseek-harness on django__django-12754
+[verified-full 22:02:45]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 22:02:45] [241/500] PREDICT deepseek-harness on django__django-12774
+[verified-full 22:14:50]   -> patch-produced (patch=87629B wall=514.3s)
+[verified-full 22:14:50] [242/500] PREDICT deepseek-harness on django__django-12858
+[verified-full 22:26:29]   -> patch-produced (patch=1498B wall=542.8s)
+[verified-full 22:26:29] [243/500] PREDICT deepseek-harness on django__django-12965
+[verified-full 23:09:52]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 23:09:52] [244/500] PREDICT deepseek-harness on django__django-13012
+[verified-full 23:29:57]   -> patch-produced (patch=538B wall=993.4s)
+[verified-full 23:29:57] [245/500] PREDICT deepseek-harness on django__django-13023
+[verified-full 23:50:44]   -> quota-blocked (patch=1842B wall=439.3s)
+[verified-full 23:50:44] [246/500] PREDICT deepseek-harness on django__django-13028
+[verified-full 00:20:41]   -> patch-produced (patch=663B wall=1594.7s)
+[verified-full 00:20:41] [247/500] PREDICT deepseek-harness on django__django-13033
+[verified-full 00:55:59]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 00:55:59] [248/500] PREDICT deepseek-harness on django__django-13089
+[verified-full 01:20:17]   -> patch-produced (patch=15966B wall=694.2s)
+[verified-full 01:20:17] [249/500] PREDICT deepseek-harness on django__django-13109
+[verified-full 01:41:45]   -> patch-produced (patch=636B wall=601.2s)
+[verified-full 01:41:45] [250/500] PREDICT deepseek-harness on django__django-13112
+[verified-full 02:24:50]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 02:24:50] [251/500] PREDICT deepseek-harness on django__django-13121
+[verified-full 03:00:22]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 03:00:22] [252/500] PREDICT deepseek-harness on django__django-13128
+[verified-full 03:36:13]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 03:36:13] [253/500] PREDICT deepseek-harness on django__django-13158
+[verified-full 04:12:13]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 04:12:13] [254/500] PREDICT deepseek-harness on django__django-13195
+[verified-full 04:48:06]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 04:48:06] [255/500] PREDICT deepseek-harness on django__django-13212
+[verified-full 05:18:00]   -> patch-produced (patch=9571B wall=1075.9s)
+[verified-full 05:18:00] [256/500] PREDICT deepseek-harness on django__django-13279
+[verified-full 05:52:03]   -> patch-produced (patch=2871B wall=1813.3s)
+[verified-full 05:52:03] [257/500] PREDICT deepseek-harness on django__django-13297
+[verified-full 06:36:39]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 06:36:39] [258/500] PREDICT deepseek-harness on django__django-13315
+[verified-full 07:12:02]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 07:12:02] [259/500] PREDICT deepseek-harness on django__django-13343
+[verified-full 07:39:48]   -> patch-produced (patch=3376B wall=773.9s)
+[verified-full 07:39:48] [260/500] PREDICT deepseek-harness on django__django-13344
+[verified-full 08:24:17]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 08:24:17] [261/500] PREDICT deepseek-harness on django__django-13346
+[verified-full 08:36:07]   -> blocked (patch=0B wall=Nones)
+[verified-full 08:36:07] [262/500] PREDICT deepseek-harness on django__django-13363
+[verified-full 08:52:35]   -> patch-produced (patch=1061B wall=229.6s)
+[verified-full 08:52:35] [263/500] PREDICT deepseek-harness on django__django-13401
+[verified-full 09:22:42]   -> patch-produced (patch=2934B wall=1602.5s)
+[verified-full 09:22:42] [264/500] PREDICT deepseek-harness on django__django-13406
+[verified-full 10:04:20]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 10:04:20] [265/500] PREDICT deepseek-harness on django__django-13410
+[verified-full 10:10:05]   -> patch-produced (patch=755B wall=172.8s)
+[verified-full 10:10:05] [266/500] PREDICT deepseek-harness on django__django-13417
+[verified-full 10:37:09]   -> patch-produced (patch=1078B wall=1444.0s)
+[verified-full 10:37:09] [267/500] PREDICT deepseek-harness on django__django-13449
+[verified-full 11:12:40]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 11:12:40] [268/500] PREDICT deepseek-harness on django__django-13512
+[verified-full 11:22:35]   -> patch-produced (patch=534B wall=381.2s)
+[verified-full 11:22:35] [269/500] PREDICT deepseek-harness on django__django-13513
+[verified-full 11:39:31]   -> no-patch (patch=0B wall=799.4s)
+[verified-full 11:39:31] [270/500] PREDICT deepseek-harness on django__django-13516
+[verified-full 11:56:56]   -> patch-produced (patch=23927B wall=387.6s)
+[verified-full 11:56:56] [271/500] PREDICT deepseek-harness on django__django-13551
+[verified-full 12:19:48]   -> patch-produced (patch=2275B wall=765.4s)
+[verified-full 12:19:48] [272/500] PREDICT deepseek-harness on django__django-13568
+[verified-full 12:38:27]   -> patch-produced (patch=4476B wall=325.0s)
+[verified-full 12:38:27] [273/500] PREDICT deepseek-harness on django__django-13569
+[verified-full 12:52:32]   -> patch-produced (patch=540B wall=623.7s)
+[verified-full 12:52:32] [274/500] PREDICT deepseek-harness on django__django-13590
+[verified-full 13:17:03]   -> patch-produced (patch=1941B wall=806.3s)
+[verified-full 13:17:03] [275/500] PREDICT deepseek-harness on django__django-13658
+[verified-full 13:22:04]   -> patch-produced (patch=831B wall=98.5s)
+[verified-full 13:22:04] [276/500] PREDICT deepseek-harness on django__django-13670
+[verified-full 13:28:55]   -> patch-produced (patch=2004B wall=217.1s)
+[verified-full 13:28:55] [277/500] PREDICT deepseek-harness on django__django-13741
+[verified-full 13:47:47]   -> patch-produced (patch=2357B wall=943.9s)
+[verified-full 13:47:47] [278/500] PREDICT deepseek-harness on django__django-13786
+[verified-full 14:06:58]   -> patch-produced (patch=37574B wall=497.7s)
+[verified-full 14:06:58] [279/500] PREDICT deepseek-harness on django__django-13794
+[verified-full 14:41:28]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 14:41:28] [280/500] PREDICT deepseek-harness on django__django-13807
+[verified-full 14:59:32]   -> patch-produced (patch=1921B wall=557.4s)
+[verified-full 14:59:32] [281/500] PREDICT deepseek-harness on django__django-13809
+[verified-full 15:28:41]   -> patch-produced (patch=2477B wall=988.7s)
+[verified-full 15:28:41] [282/500] PREDICT deepseek-harness on django__django-13810
+[verified-full 16:03:07]   -> quota-blocked (patch=2824B wall=1846.3s)
+[verified-full 16:03:07] [283/500] PREDICT deepseek-harness on django__django-13820
+[verified-full 16:38:03]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 16:38:03] [284/500] PREDICT deepseek-harness on django__django-13821
+[verified-full 17:00:47]   -> patch-produced (patch=4160B wall=1133.2s)
+[verified-full 17:00:47] [285/500] PREDICT deepseek-harness on django__django-13837
+[verified-full 17:12:09]   -> patch-produced (patch=4865B wall=442.0s)
+[verified-full 17:12:09] [286/500] PREDICT deepseek-harness on django__django-13925
+[verified-full 17:45:04]   -> patch-produced (patch=93448B wall=1241.3s)
+[verified-full 17:45:04] [287/500] PREDICT deepseek-harness on django__django-13933
+[verified-full 18:00:01]   -> patch-produced (patch=6555B wall=703.2s)
+[verified-full 18:00:01] [288/500] PREDICT deepseek-harness on django__django-13964
+[verified-full 18:43:56]   -> patch-produced (patch=704B wall=1807.1s)
+[verified-full 18:43:56] [289/500] PREDICT deepseek-harness on django__django-14007
+[verified-full 19:19:06]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 19:19:06] [290/500] PREDICT deepseek-harness on django__django-14011
+[verified-full 19:54:19]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 19:54:19] [291/500] PREDICT deepseek-harness on django__django-14017
+[verified-full 20:29:53]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 20:29:53] [292/500] PREDICT deepseek-harness on django__django-14034
+[verified-full 21:05:39]   -> timeout (patch=0B wall=1920.0s)
+[verified-full 21:05:39] [293/500] PREDICT deepseek-harness on django__django-14053
+[verified-full 21:41:45]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 21:41:45] [294/500] PREDICT deepseek-harness on django__django-14089
+[verified-full 21:57:30]   -> patch-produced (patch=1066B wall=149.1s)
+[verified-full 21:57:30] [295/500] PREDICT deepseek-harness on django__django-14122
+[verified-full 22:13:46]   -> patch-produced (patch=1137B wall=765.6s)
+[verified-full 22:13:46] [296/500] PREDICT deepseek-harness on django__django-14140
+[verified-full 22:23:14]   -> patch-produced (patch=2810B wall=339.6s)
+[verified-full 22:23:14] [297/500] PREDICT deepseek-harness on django__django-14155
+[verified-full 22:32:39]   -> blocked (patch=0B wall=Nones)
+[verified-full 22:32:39] [298/500] PREDICT deepseek-harness on django__django-14170
+[verified-full 23:00:33]   -> patch-produced (patch=7857B wall=806.7s)
+[verified-full 23:00:33] [299/500] PREDICT deepseek-harness on django__django-14238
+[verified-full 23:25:15]   -> patch-produced (patch=649B wall=571.1s)
+[verified-full 23:25:15] [300/500] PREDICT deepseek-harness on django__django-14311
+[verified-full 23:41:00]   -> patch-produced (patch=1951B wall=718.5s)
+[verified-full 23:41:00] [301/500] PREDICT deepseek-harness on django__django-14315
+[verified-full 23:51:41]   -> patch-produced (patch=3001B wall=396.3s)
+[verified-full 23:51:41] [302/500] PREDICT deepseek-harness on django__django-14349
+[verified-full 00:07:51]   -> patch-produced (patch=777B wall=742.0s)
+[verified-full 00:07:51] [303/500] PREDICT deepseek-harness on django__django-14351
+[verified-full 00:43:32]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 00:43:32] [304/500] PREDICT deepseek-harness on django__django-14373
+[verified-full 00:51:07]   -> patch-produced (patch=1276B wall=225.3s)
+[verified-full 00:51:07] [305/500] PREDICT deepseek-harness on django__django-14376
+[verified-full 01:02:46]   -> patch-produced (patch=789B wall=463.3s)
+[verified-full 01:02:46] [306/500] PREDICT deepseek-harness on django__django-14404
+[verified-full 01:12:53]   -> patch-produced (patch=567B wall=361.1s)
+[verified-full 01:12:54] [307/500] PREDICT deepseek-harness on django__django-14434
+[verified-full 01:36:54]   -> patch-produced (patch=678B wall=748.9s)
+[verified-full 01:36:54] [308/500] PREDICT deepseek-harness on django__django-14493
+[verified-full 01:43:50]   -> patch-produced (patch=563B wall=187.8s)
+[verified-full 01:43:50] [309/500] PREDICT deepseek-harness on django__django-14500
+[verified-full 01:58:46]   -> patch-produced (patch=2608B wall=671.5s)
+[verified-full 01:58:46] [310/500] PREDICT deepseek-harness on django__django-14534
+[verified-full 02:18:49]   -> patch-produced (patch=11488B wall=970.5s)
+[verified-full 02:18:49] [311/500] PREDICT deepseek-harness on django__django-14539
+[verified-full 02:52:02]   -> patch-produced (patch=2112B wall=1755.3s)
+[verified-full 02:52:02] [312/500] PREDICT deepseek-harness on django__django-14559
+[verified-full 03:15:36]   -> patch-produced (patch=3314B wall=544.7s)
+[verified-full 03:15:36] [313/500] PREDICT deepseek-harness on django__django-14580
+[verified-full 03:32:45]   -> patch-produced (patch=599B wall=803.6s)
+[verified-full 03:32:45] [314/500] PREDICT deepseek-harness on django__django-14608
+[verified-full 03:59:29]   -> patch-produced (patch=861B wall=1382.8s)
+[verified-full 03:59:29] [315/500] PREDICT deepseek-harness on django__django-14631
+[verified-full 04:36:43]   -> patch-produced (patch=35970B wall=1500.4s)
+[verified-full 04:36:43] [316/500] PREDICT deepseek-harness on django__django-14672
+[verified-full 04:41:45]   -> patch-produced (patch=512B wall=72.3s)
+[verified-full 04:41:45] [317/500] PREDICT deepseek-harness on django__django-14725
+[verified-full 05:27:14]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 05:27:14] [318/500] PREDICT deepseek-harness on django__django-14752
+[verified-full 05:38:43]   -> patch-produced (patch=2572B wall=395.0s)
+[verified-full 05:38:43] [319/500] PREDICT deepseek-harness on django__django-14765
+[verified-full 05:46:03]   -> patch-produced (patch=701B wall=187.5s)
+[verified-full 05:46:03] [320/500] PREDICT deepseek-harness on django__django-14771
+[verified-full 06:07:59]   -> patch-produced (patch=2584B wall=429.5s)
+[verified-full 06:07:59] [321/500] PREDICT deepseek-harness on django__django-14787
+[verified-full 06:19:38]   -> patch-produced (patch=618B wall=476.7s)
+[verified-full 06:19:38] [322/500] PREDICT deepseek-harness on django__django-14792
+[verified-full 07:05:36]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 07:05:36] [323/500] PREDICT deepseek-harness on django__django-14855
+[verified-full 07:28:54]   -> patch-produced (patch=630B wall=1172.8s)
+[verified-full 07:28:54] [324/500] PREDICT deepseek-harness on django__django-14915
+[verified-full 07:36:59]   -> patch-produced (patch=2387B wall=309.9s)
+[verified-full 07:36:59] [325/500] PREDICT deepseek-harness on django__django-14999
+[verified-full 07:58:57]   -> patch-produced (patch=3765B wall=1078.5s)
+[verified-full 07:58:57] [326/500] PREDICT deepseek-harness on django__django-15022
+[verified-full 08:35:02]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 08:35:02] [327/500] PREDICT deepseek-harness on django__django-15037
+[verified-full 09:10:51]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 09:10:51] [328/500] PREDICT deepseek-harness on django__django-15098
+[verified-full 09:46:34]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 09:46:34] [329/500] PREDICT deepseek-harness on django__django-15103
+[verified-full 09:55:59]   -> patch-produced (patch=4509B wall=358.7s)
+[verified-full 09:55:59] [330/500] PREDICT deepseek-harness on django__django-15104
+[verified-full 10:04:09]   -> patch-produced (patch=606B wall=136.1s)
+[verified-full 10:04:09] [331/500] PREDICT deepseek-harness on django__django-15127
+[verified-full 10:12:26]   -> patch-produced (patch=742B wall=270.0s)
+[verified-full 10:12:26] [332/500] PREDICT deepseek-harness on django__django-15128
+[verified-full 10:47:49]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 10:47:49] [333/500] PREDICT deepseek-harness on django__django-15161
+[verified-full 11:23:33]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 11:23:33] [334/500] PREDICT deepseek-harness on django__django-15252
+[verified-full 11:59:10]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 11:59:10] [335/500] PREDICT deepseek-harness on django__django-15268
+[verified-full 12:35:01]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 12:35:01] [336/500] PREDICT deepseek-harness on django__django-15277
+[verified-full 12:41:34]   -> patch-produced (patch=687B wall=168.9s)
+[verified-full 12:41:34] [337/500] PREDICT deepseek-harness on django__django-15278
+[verified-full 13:12:12]   -> patch-produced (patch=24118B wall=1837.8s)
+[verified-full 13:12:12] [338/500] PREDICT deepseek-harness on django__django-15280
+[verified-full 13:57:04]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 13:57:04] [339/500] PREDICT deepseek-harness on django__django-15315
+[verified-full 14:08:52]   -> patch-produced (patch=1489B wall=491.4s)
+[verified-full 14:08:52] [340/500] PREDICT deepseek-harness on django__django-15368
+[verified-full 14:15:01]   -> patch-produced (patch=1421B wall=160.2s)
+[verified-full 14:15:01] [341/500] PREDICT deepseek-harness on django__django-15375
+[verified-full 14:36:57]   -> patch-produced (patch=1249B wall=1099.2s)
+[verified-full 14:36:57] [342/500] PREDICT deepseek-harness on django__django-15380
+[verified-full 15:02:48]   -> patch-produced (patch=855B wall=1357.5s)
+[verified-full 15:02:48] [343/500] PREDICT deepseek-harness on django__django-15382
+[verified-full 15:48:41]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 15:48:41] [344/500] PREDICT deepseek-harness on django__django-15467
+[verified-full 16:14:35]   -> patch-produced (patch=1990B wall=1321.1s)
+[verified-full 16:14:35] [345/500] PREDICT deepseek-harness on django__django-15499
+[verified-full 16:31:32]   -> patch-produced (patch=2484B wall=804.5s)
+[verified-full 16:31:32] [346/500] PREDICT deepseek-harness on django__django-15503
+[verified-full 17:14:41]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 17:14:41] [347/500] PREDICT deepseek-harness on django__django-15525
+[verified-full 17:50:38]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 17:50:38] [348/500] PREDICT deepseek-harness on django__django-15554
+[verified-full 18:06:11]   -> patch-produced (patch=2247B wall=929.9s)
+[verified-full 18:06:11] [349/500] PREDICT deepseek-harness on django__django-15561
+[verified-full 18:19:43]   -> patch-produced (patch=72282B wall=804.0s)
+[verified-full 18:19:43] [350/500] PREDICT deepseek-harness on django__django-15563
+[verified-full 18:51:48]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 18:51:48] [351/500] PREDICT deepseek-harness on django__django-15569
+[verified-full 18:58:28]   -> patch-produced (patch=2217B wall=394.9s)
+[verified-full 18:58:28] [352/500] PREDICT deepseek-harness on django__django-15572
+[verified-full 19:12:52]   -> patch-produced (patch=1996B wall=857.4s)
+[verified-full 19:12:52] [353/500] PREDICT deepseek-harness on django__django-15629
+[verified-full 19:44:56]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 19:44:56] [354/500] PREDICT deepseek-harness on django__django-15695
+[verified-full 20:17:01]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 20:17:01] [355/500] PREDICT deepseek-harness on django__django-15731
+[verified-full 20:21:21]   -> patch-produced (patch=769B wall=255.4s)
+[verified-full 20:21:21] [356/500] PREDICT deepseek-harness on django__django-15732
+[verified-full 20:39:16]   -> patch-produced (patch=625B wall=1072.3s)
+[verified-full 20:39:16] [357/500] PREDICT deepseek-harness on django__django-15741
+[verified-full 20:46:33]   -> patch-produced (patch=926B wall=433.3s)
+[verified-full 20:46:33] [358/500] PREDICT deepseek-harness on django__django-15814
+[verified-full 21:18:36]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 21:18:36] [359/500] PREDICT deepseek-harness on django__django-15851
+[verified-full 21:20:10]   -> patch-produced (patch=1141B wall=90.6s)
+[verified-full 21:20:10] [360/500] PREDICT deepseek-harness on django__django-15863
+[verified-full 21:39:34]   -> patch-produced (patch=659B wall=1153.5s)
+[verified-full 21:39:34] [361/500] PREDICT deepseek-harness on django__django-15916
+[verified-full 22:11:40]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 22:11:40] [362/500] PREDICT deepseek-harness on django__django-15930
+[verified-full 22:43:44]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 22:43:44] [363/500] PREDICT deepseek-harness on django__django-15957
+[verified-full 23:15:49]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 23:15:49] [364/500] PREDICT deepseek-harness on django__django-15973
+[verified-full 23:47:53]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 23:47:53] [365/500] PREDICT deepseek-harness on django__django-15987
+[verified-full 23:54:53]   -> patch-produced (patch=2466B wall=416.2s)
+[verified-full 23:54:53] [366/500] PREDICT deepseek-harness on django__django-16032
+[verified-full 00:27:03]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 00:27:03] [367/500] PREDICT deepseek-harness on django__django-16082
+[verified-full 00:33:03]   -> quota-blocked (patch=429B wall=355.6s)
+[verified-full 00:33:03] [368/500] PREDICT deepseek-harness on django__django-16100
+[verified-full 01:05:09]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 01:05:09] [369/500] PREDICT deepseek-harness on django__django-16116
+[verified-full 01:23:48]   -> patch-produced (patch=3515B wall=1115.6s)
+[verified-full 01:23:48] [370/500] PREDICT deepseek-harness on django__django-16136
+[verified-full 01:32:48]   -> patch-produced (patch=1920B wall=535.5s)
+[verified-full 01:32:48] [371/500] PREDICT deepseek-harness on django__django-16139
+[verified-full 02:04:51]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 02:04:51] [372/500] PREDICT deepseek-harness on django__django-16145
+[verified-full 02:27:38]   -> patch-produced (patch=1211B wall=1363.7s)
+[verified-full 02:27:38] [373/500] PREDICT deepseek-harness on django__django-16255
+[verified-full 02:28:53]   -> patch-produced (patch=524B wall=70.9s)
+[verified-full 02:28:53] [374/500] PREDICT deepseek-harness on django__django-16256
+[verified-full 02:40:02]   -> patch-produced (patch=3794B wall=665.1s)
+[verified-full 02:40:02] [375/500] PREDICT deepseek-harness on django__django-16263
+[verified-full 02:59:21]   -> quota-blocked (patch=0B wall=1154.2s)
+[verified-full 02:59:21] [376/500] PREDICT deepseek-harness on django__django-16315
+[verified-full 03:31:25]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 03:31:25] [377/500] PREDICT deepseek-harness on django__django-16333
+[verified-full 03:37:25]   -> patch-produced (patch=1899B wall=357.1s)
+[verified-full 03:37:25] [378/500] PREDICT deepseek-harness on django__django-16429
+[verified-full 03:40:12]   -> quota-blocked (patch=404B wall=162.8s)
+[verified-full 03:40:12] [379/500] PREDICT deepseek-harness on django__django-16454
+[verified-full 04:00:06]   -> patch-produced (patch=2956B wall=1190.8s)
+[verified-full 04:00:06] [380/500] PREDICT deepseek-harness on django__django-16485
+[verified-full 04:05:33]   -> patch-produced (patch=548B wall=323.5s)
+[verified-full 04:05:33] [381/500] PREDICT deepseek-harness on django__django-16493
+[verified-full 04:11:57]   -> patch-produced (patch=1639B wall=379.4s)
+[verified-full 04:11:57] [382/500] PREDICT deepseek-harness on django__django-16502
+[verified-full 04:33:34]   -> patch-produced (patch=2854B wall=1293.4s)
+[verified-full 04:33:34] [383/500] PREDICT deepseek-harness on django__django-16527
+[verified-full 04:49:54]   -> patch-produced (patch=545B wall=975.7s)
+[verified-full 04:49:54] [384/500] PREDICT deepseek-harness on django__django-16560
+[verified-full 04:59:39]   -> patch-produced (patch=11637B wall=580.9s)
+[verified-full 04:59:39] [385/500] PREDICT deepseek-harness on django__django-16569
+[verified-full 05:01:47]   -> patch-produced (patch=660B wall=124.7s)
+[verified-full 05:01:47] [386/500] PREDICT deepseek-harness on django__django-16595
+[verified-full 05:10:11]   -> patch-produced (patch=2409B wall=500.6s)
+[verified-full 05:10:11] [387/500] PREDICT deepseek-harness on django__django-16612
+[verified-full 05:21:28]   -> patch-produced (patch=2201B wall=672.3s)
+[verified-full 05:21:28] [388/500] PREDICT deepseek-harness on django__django-16631
+[verified-full 05:39:25]   -> patch-produced (patch=9142B wall=1073.6s)
+[verified-full 05:39:25] [389/500] PREDICT deepseek-harness on django__django-16642
+[verified-full 05:43:36]   -> patch-produced (patch=1258B wall=247.3s)
+[verified-full 05:43:36] [390/500] PREDICT deepseek-harness on django__django-16661
+[verified-full 06:15:54]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 06:15:54] [391/500] PREDICT deepseek-harness on django__django-16662
+[verified-full 06:21:56]   -> patch-produced (patch=2419B wall=353.1s)
+[verified-full 06:21:56] [392/500] PREDICT deepseek-harness on django__django-16667
+[verified-full 06:25:05]   -> patch-produced (patch=2591B wall=185.4s)
+[verified-full 06:25:05] [393/500] PREDICT deepseek-harness on django__django-16801
+[verified-full 06:30:31]   -> patch-produced (patch=715B wall=322.4s)
+[verified-full 06:30:31] [394/500] PREDICT deepseek-harness on django__django-16819
+[verified-full 06:59:50]   -> patch-produced (patch=1703B wall=1755.9s)
+[verified-full 06:59:50] [395/500] PREDICT deepseek-harness on django__django-16877
+[verified-full 07:08:06]   -> patch-produced (patch=3787B wall=488.6s)
+[verified-full 07:08:06] [396/500] PREDICT deepseek-harness on django__django-16899
+[verified-full 07:17:50]   -> patch-produced (patch=3118B wall=580.2s)
+[verified-full 07:17:50] [397/500] PREDICT deepseek-harness on django__django-16901
+[verified-full 07:41:09]   -> patch-produced (patch=2397B wall=1396.0s)
+[verified-full 07:41:09] [398/500] PREDICT deepseek-harness on django__django-16938
+[verified-full 08:09:15]   -> patch-produced (patch=3557B wall=1682.6s)
+[verified-full 08:09:15] [399/500] PREDICT deepseek-harness on django__django-16950
+[verified-full 08:41:18]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 08:41:18] [400/500] PREDICT deepseek-harness on django__django-17029
+[verified-full 08:44:37]   -> patch-produced (patch=1385B wall=197.3s)
+[verified-full 08:44:37] [401/500] PREDICT deepseek-harness on django__django-17084
+[verified-full 09:09:47]   -> patch-produced (patch=827B wall=1507.5s)
+[verified-full 09:09:47] [402/500] PREDICT deepseek-harness on django__django-17087
+[verified-full 09:17:21]   -> patch-produced (patch=614B wall=451.1s)
+[verified-full 09:17:21] [403/500] PREDICT deepseek-harness on django__django-7530
+[verified-full 09:25:19]   -> patch-produced (patch=774B wall=473.4s)
+[verified-full 09:25:19] [404/500] PREDICT deepseek-harness on django__django-9296
+[verified-full 09:27:05]   -> patch-produced (patch=1614B wall=99.8s)
+[verified-full 09:27:05] [405/500] PREDICT deepseek-harness on matplotlib__matplotlib-13989
+[verified-full 09:30:12]   -> patch-produced (patch=34734B wall=181.9s)
+[verified-full 09:30:12] [406/500] PREDICT deepseek-harness on matplotlib__matplotlib-14623
+[verified-full 10:02:20]   -> timeout (patch=0B wall=1920.0s)
+[verified-full 10:02:20] [407/500] PREDICT deepseek-harness on matplotlib__matplotlib-20488
+[verified-full 10:34:25]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 10:34:25] [408/500] PREDICT deepseek-harness on matplotlib__matplotlib-20676
+[verified-full 11:14:21]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 11:14:21] [409/500] PREDICT deepseek-harness on matplotlib__matplotlib-20826
+[verified-full 11:46:30]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 11:46:30] [410/500] PREDICT deepseek-harness on matplotlib__matplotlib-20859
+[verified-full 12:04:29]   -> patch-produced (patch=2406B wall=1072.1s)
+[verified-full 12:04:29] [411/500] PREDICT deepseek-harness on matplotlib__matplotlib-21568
+[verified-full 12:41:06]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 12:41:06] [412/500] PREDICT deepseek-harness on matplotlib__matplotlib-22719
+[verified-full 12:49:30]   -> patch-produced (patch=1862B wall=467.2s)
+[verified-full 12:49:30] [413/500] PREDICT deepseek-harness on matplotlib__matplotlib-22865
+[verified-full 13:20:18]   -> patch-produced (patch=833B wall=1842.7s)
+[verified-full 13:20:18] [414/500] PREDICT deepseek-harness on matplotlib__matplotlib-22871
+[verified-full 13:52:23]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 13:52:23] [415/500] PREDICT deepseek-harness on matplotlib__matplotlib-23299
+[verified-full 14:32:27]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 14:32:27] [416/500] PREDICT deepseek-harness on matplotlib__matplotlib-23314
+[verified-full 14:36:54]   -> patch-produced (patch=1344B wall=261.6s)
+[verified-full 14:36:54] [417/500] PREDICT deepseek-harness on matplotlib__matplotlib-23412
+[verified-full 14:46:45]   -> patch-produced (patch=741B wall=586.8s)
+[verified-full 14:46:45] [418/500] PREDICT deepseek-harness on matplotlib__matplotlib-23476
+[verified-full 15:08:09]   -> patch-produced (patch=634B wall=1277.9s)
+[verified-full 15:08:09] [419/500] PREDICT deepseek-harness on matplotlib__matplotlib-24026
+[verified-full 15:17:25]   -> patch-produced (patch=2619B wall=551.3s)
+[verified-full 15:17:25] [420/500] PREDICT deepseek-harness on matplotlib__matplotlib-24149
+[verified-full 15:49:31]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 15:49:31] [421/500] PREDICT deepseek-harness on matplotlib__matplotlib-24177
+[verified-full 16:21:37]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 16:21:37] [422/500] PREDICT deepseek-harness on matplotlib__matplotlib-24570
+[verified-full 16:36:39]   -> patch-produced (patch=713B wall=896.5s)
+[verified-full 16:36:39] [423/500] PREDICT deepseek-harness on matplotlib__matplotlib-24627
+[verified-full 17:09:00]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 17:09:00] [424/500] PREDICT deepseek-harness on matplotlib__matplotlib-24637
+[verified-full 17:22:57]   -> patch-produced (patch=852B wall=830.3s)
+[verified-full 17:22:57] [425/500] PREDICT deepseek-harness on matplotlib__matplotlib-24870
+[verified-full 17:55:11]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 17:55:11] [426/500] PREDICT deepseek-harness on matplotlib__matplotlib-24970
+[verified-full 18:11:00]   -> patch-produced (patch=863B wall=942.8s)
+[verified-full 18:11:00] [427/500] PREDICT deepseek-harness on matplotlib__matplotlib-25122
+[verified-full 18:13:12]   -> patch-produced (patch=540B wall=126.9s)
+[verified-full 18:13:12] [428/500] PREDICT deepseek-harness on matplotlib__matplotlib-25287
+[verified-full 18:16:53]   -> patch-produced (patch=2815B wall=216.0s)
+[verified-full 18:16:53] [429/500] PREDICT deepseek-harness on matplotlib__matplotlib-25311
+[verified-full 18:48:59]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 18:48:59] [430/500] PREDICT deepseek-harness on matplotlib__matplotlib-25332
+[verified-full 19:06:08]   -> patch-produced (patch=975B wall=1022.5s)
+[verified-full 19:06:08] [431/500] PREDICT deepseek-harness on matplotlib__matplotlib-25479
+[verified-full 19:22:42]   -> patch-produced (patch=1703B wall=973.1s)
+[verified-full 19:22:42] [432/500] PREDICT deepseek-harness on matplotlib__matplotlib-25775
+[verified-full 19:54:16]   -> patch-produced (patch=9112B wall=1888.1s)
+[verified-full 19:54:16] [433/500] PREDICT deepseek-harness on matplotlib__matplotlib-25960
+[verified-full 20:26:29]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 20:26:29] [434/500] PREDICT deepseek-harness on matplotlib__matplotlib-26113
+[verified-full 20:29:26]   -> patch-produced (patch=1023B wall=171.4s)
+[verified-full 20:29:26] [435/500] PREDICT deepseek-harness on matplotlib__matplotlib-26208
+[verified-full 21:01:32]   -> timeout (patch=0B wall=1920.0s)
+[verified-full 21:01:32] [436/500] PREDICT deepseek-harness on matplotlib__matplotlib-26291
+[verified-full 21:21:40]   -> patch-produced (patch=647B wall=1203.7s)
+[verified-full 21:21:40] [437/500] PREDICT deepseek-harness on matplotlib__matplotlib-26342
+[verified-full 21:41:33]   -> patch-produced (patch=713B wall=1188.1s)
+[verified-full 21:41:33] [438/500] PREDICT deepseek-harness on matplotlib__matplotlib-26466
+[verified-full 22:03:27]   -> patch-produced (patch=428B wall=1308.6s)
+[verified-full 22:03:27] [439/500] PREDICT deepseek-harness on mwaskom__seaborn-3069
+[verified-full 22:30:44]   -> no-patch (patch=0B wall=1635.4s)
+[verified-full 22:30:44] [440/500] PREDICT deepseek-harness on mwaskom__seaborn-3187
+[verified-full 23:02:46]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 23:02:46] [441/500] PREDICT deepseek-harness on pallets__flask-5014
+[verified-full 23:12:49]   -> patch-produced (patch=1359B wall=601.5s)
+[verified-full 23:12:49] [442/500] psf__requests-1142 SKIP (predicted, patch=1436B)
+[verified-full 23:12:49] [443/500] PREDICT deepseek-harness on psf__requests-1724
+[verified-full 23:22:44]   -> patch-produced (patch=530B wall=591.4s)
+[verified-full 23:22:44] [444/500] PREDICT deepseek-harness on psf__requests-1766
+[verified-full 23:25:49]   -> patch-produced (patch=451B wall=183.8s)
+[verified-full 23:25:49] [445/500] PREDICT deepseek-harness on psf__requests-1921
+[verified-full 23:39:00]   -> patch-produced (patch=1689B wall=786.8s)
+[verified-full 23:39:00] [446/500] PREDICT deepseek-harness on psf__requests-2317
+[verified-full 23:43:12]   -> patch-produced (patch=3716B wall=249.8s)
+[verified-full 23:43:12] [447/500] PREDICT deepseek-harness on psf__requests-2931
+[verified-full 00:02:57]   -> patch-produced (patch=4231B wall=1182.5s)
+[verified-full 00:02:57] [448/500] PREDICT deepseek-harness on psf__requests-5414
+[verified-full 00:34:59]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 00:34:59] [449/500] PREDICT deepseek-harness on psf__requests-6028
+[verified-full 01:07:04]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 01:07:04] [450/500] PREDICT deepseek-harness on pydata__xarray-2905
+[verified-full 01:35:24]   -> patch-produced (patch=2476B wall=1699.8s)
+[verified-full 01:35:24] [451/500] PREDICT deepseek-harness on pydata__xarray-3095
+[verified-full 01:40:39]   -> patch-produced (patch=659B wall=313.0s)
+[verified-full 01:40:39] [452/500] PREDICT deepseek-harness on pydata__xarray-3151
+[verified-full 02:11:09]   -> patch-produced (patch=595B wall=1828.5s)
+[verified-full 02:11:09] [453/500] PREDICT deepseek-harness on pydata__xarray-3305
+[verified-full 02:27:41]   -> patch-produced (patch=86747B wall=990.0s)
+[verified-full 02:27:41] [454/500] PREDICT deepseek-harness on pydata__xarray-3677
+[verified-full 02:32:48]   -> patch-produced (patch=1730B wall=305.0s)
+[verified-full 02:32:48] [455/500] PREDICT deepseek-harness on pydata__xarray-3993
+[verified-full 02:44:55]   -> patch-produced (patch=3567B wall=722.8s)
+[verified-full 02:44:55] [456/500] PREDICT deepseek-harness on pydata__xarray-4075
+[verified-full 03:13:56]   -> patch-produced (patch=10739B wall=1738.0s)
+[verified-full 03:13:56] [457/500] PREDICT deepseek-harness on pydata__xarray-4094
+[verified-full 03:21:59]   -> patch-produced (patch=1463B wall=481.3s)
+[verified-full 03:21:59] [458/500] PREDICT deepseek-harness on pydata__xarray-4356
+[verified-full 03:36:48]   -> patch-produced (patch=1107B wall=885.1s)
+[verified-full 03:36:48] [459/500] PREDICT deepseek-harness on pydata__xarray-4629
+[verified-full 03:37:51]   -> patch-produced (patch=501B wall=59.2s)
+[verified-full 03:37:51] [460/500] PREDICT deepseek-harness on pydata__xarray-4687
+[verified-full 04:04:28]   -> patch-produced (patch=1828B wall=1595.0s)
+[verified-full 04:04:28] [461/500] PREDICT deepseek-harness on pydata__xarray-4695
+[verified-full 04:35:35]   -> patch-produced (patch=574B wall=1865.1s)
+[verified-full 04:35:35] [462/500] PREDICT deepseek-harness on pydata__xarray-4966
+[verified-full 05:07:37]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 05:07:37] [463/500] PREDICT deepseek-harness on pydata__xarray-6461
+[verified-full 05:32:35]   -> patch-produced (patch=660B wall=1494.0s)
+[verified-full 05:32:35] [464/500] PREDICT deepseek-harness on pydata__xarray-6599
+[verified-full 06:01:11]   -> patch-produced (patch=2476B wall=1711.9s)
+[verified-full 06:01:11] [465/500] PREDICT deepseek-harness on pydata__xarray-6721
+[verified-full 06:23:19]   -> patch-produced (patch=482B wall=1326.3s)
+[verified-full 06:23:19] [466/500] PREDICT deepseek-harness on pydata__xarray-6744
+[verified-full 06:55:24]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 06:55:24] [467/500] PREDICT deepseek-harness on pydata__xarray-6938
+[verified-full 07:03:40]   -> patch-produced (patch=1818B wall=493.7s)
+[verified-full 07:03:40] [468/500] PREDICT deepseek-harness on pydata__xarray-6992
+[verified-full 07:20:49]   -> patch-produced (patch=472B wall=1027.4s)
+[verified-full 07:20:49] [469/500] PREDICT deepseek-harness on pydata__xarray-7229
+[verified-full 07:52:52]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 07:52:52] [470/500] PREDICT deepseek-harness on pydata__xarray-7233
+[verified-full 08:01:28]   -> patch-produced (patch=579B wall=514.4s)
+[verified-full 08:01:28] [471/500] PREDICT deepseek-harness on pydata__xarray-7393
+[verified-full 08:18:23]   -> patch-produced (patch=2577B wall=1012.5s)
+[verified-full 08:18:23] [472/500] PREDICT deepseek-harness on pylint-dev__pylint-4551
+[verified-full 08:36:37]   -> patch-produced (patch=5858B wall=1092.1s)
+[verified-full 08:36:37] [473/500] PREDICT deepseek-harness on pylint-dev__pylint-4604
+[verified-full 08:45:38]   -> patch-produced (patch=834B wall=539.2s)
+[verified-full 08:45:38] [474/500] PREDICT deepseek-harness on pylint-dev__pylint-4661
+[verified-full 08:48:51]   -> patch-produced (patch=4194B wall=190.7s)
+[verified-full 08:48:51] [475/500] PREDICT deepseek-harness on pylint-dev__pylint-4970
+[verified-full 09:19:04]   -> patch-produced (patch=2395B wall=1813.5s)
+[verified-full 09:19:04] [476/500] PREDICT deepseek-harness on pylint-dev__pylint-6386
+[verified-full 09:30:10]   -> patch-produced (patch=1144B wall=662.7s)
+[verified-full 09:30:10] [477/500] PREDICT deepseek-harness on pylint-dev__pylint-6528
+[verified-full 10:02:12]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 10:02:12] [478/500] PREDICT deepseek-harness on pylint-dev__pylint-6903
+[verified-full 10:14:43]   -> patch-produced (patch=2936B wall=748.8s)
+[verified-full 10:14:43] [479/500] PREDICT deepseek-harness on pylint-dev__pylint-7080
+[verified-full 10:46:45]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 10:46:45] [480/500] PREDICT deepseek-harness on pylint-dev__pylint-7277
+[verified-full 10:59:46]   -> patch-produced (patch=2228B wall=778.8s)
+[verified-full 10:59:46] [481/500] PREDICT deepseek-harness on pylint-dev__pylint-8898
+[verified-full 11:31:48]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 11:31:48] [482/500] PREDICT deepseek-harness on pytest-dev__pytest-10051
+[verified-full 11:36:58]   -> patch-produced (patch=435B wall=310.2s)
+[verified-full 11:36:58] [483/500] PREDICT deepseek-harness on pytest-dev__pytest-10081
+[verified-full 12:08:55]   -> patch-produced (patch=17386B wall=1914.7s)
+[verified-full 12:08:55] [484/500] PREDICT deepseek-harness on pytest-dev__pytest-10356
+[verified-full 12:40:57]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 12:40:57] [485/500] PREDICT deepseek-harness on pytest-dev__pytest-5262
+[verified-full 12:44:43]   -> patch-produced (patch=643B wall=222.4s)
+[verified-full 12:44:43] [486/500] PREDICT deepseek-harness on pytest-dev__pytest-5631
+[verified-full 12:49:05]   -> patch-produced (patch=540B wall=259.9s)
+[verified-full 12:49:05] [487/500] PREDICT deepseek-harness on pytest-dev__pytest-5787
+[verified-full 13:04:41]   -> patch-produced (patch=9677B wall=934.2s)
+[verified-full 13:04:41] [488/500] PREDICT deepseek-harness on pytest-dev__pytest-5809
+[verified-full 13:06:37]   -> patch-produced (patch=979B wall=113.8s)
+[verified-full 13:06:37] [489/500] PREDICT deepseek-harness on pytest-dev__pytest-5840
+[verified-full 13:38:41]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 13:38:41] [490/500] PREDICT deepseek-harness on pytest-dev__pytest-6197
+[verified-full 13:56:56]   -> no-patch (patch=0B wall=1094.0s)
+[verified-full 13:56:57] [491/500] PREDICT deepseek-harness on pytest-dev__pytest-6202
+[verified-full 14:24:03]   -> patch-produced (patch=391B wall=1623.3s)
+[verified-full 14:24:03] [492/500] PREDICT deepseek-harness on pytest-dev__pytest-7205
+[verified-full 14:50:22]   -> patch-produced (patch=2173B wall=1576.6s)
+[verified-full 14:50:22] [493/500] PREDICT deepseek-harness on pytest-dev__pytest-7236
+[verified-full 15:22:25]   -> timeout (patch=0B wall=1920.1s)
+[verified-full 15:22:25] [494/500] PREDICT deepseek-harness on pytest-dev__pytest-7324
+[verified-full 15:39:08]   -> patch-produced (patch=1693B wall=1000.7s)
+[verified-full 15:39:08] [495/500] PREDICT deepseek-harness on pytest-dev__pytest-7432
+[verified-full 15:44:52]   -> patch-produced (patch=486B wall=341.7s)
+[verified-full 15:44:52] [496/500] PREDICT deepseek-harness on pytest-dev__pytest-7490
+[verified-full 15:58:31]   -> patch-produced (patch=601B wall=816.8s)
+[verified-full 15:58:31] [497/500] PREDICT deepseek-harness on pytest-dev__pytest-7521
+[verified-full 16:06:59]   -> patch-produced (patch=61287B wall=505.2s)
+[verified-full 16:06:59] [498/500] PREDICT deepseek-harness on pytest-dev__pytest-7571
+[verified-full 16:16:52]   -> patch-produced (patch=2204B wall=589.8s)
+[verified-full 16:16:52] [499/500] PREDICT deepseek-harness on pytest-dev__pytest-7982
+[verified-full 16:20:10]   -> patch-produced (patch=471B wall=196.2s)
+[verified-full 16:20:10] [500/500] PREDICT deepseek-harness on pytest-dev__pytest-8399
+[verified-full 16:41:29]   -> patch-produced (patch=2114B wall=1275.0s)
+[verified-full 16:41:29] merged 270/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json

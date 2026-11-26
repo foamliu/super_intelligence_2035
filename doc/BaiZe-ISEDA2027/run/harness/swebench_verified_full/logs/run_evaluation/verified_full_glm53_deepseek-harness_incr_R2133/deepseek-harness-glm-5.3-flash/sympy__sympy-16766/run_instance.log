@@ -1,0 +1,82 @@
+2026-11-11 01:28:53,569 - INFO - Creating container for sympy__sympy-16766...
+2026-11-11 01:28:53,586 - INFO - Container for sympy__sympy-16766 created: 04c4effa9a4b0aa3b2b0dda1729f3401072f87898da47f48a371532bcaa35315
+2026-11-11 01:28:54,263 - INFO - Container for sympy__sympy-16766 started: 04c4effa9a4b0aa3b2b0dda1729f3401072f87898da47f48a371532bcaa35315
+2026-11-11 01:28:54,265 - INFO - Intermediate patch for sympy__sympy-16766 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2133/deepseek-harness-glm-5.3-flash/sympy__sympy-16766/patch.diff, now applying to container...
+2026-11-11 01:28:54,382 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/pycode.py...
+Checking patch sympy/printing/tests/test_pycode.py...
+Applied patch sympy/printing/pycode.py cleanly.
+Applied patch sympy/printing/tests/test_pycode.py cleanly.
+
+2026-11-11 01:28:54,998 - INFO - Git diff before:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index a3f031073..5a144d56a 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -357,6 +357,11 @@ def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+ 
++    def _print_Indexed(self, expr):
++        base, *index = expr.args
++        return "{}[{}]".format(str(base), ", ".join(
++            [self._print(ind) for ind in index]))
++
+ 
+ for k in PythonCodePrinter._kf:
+     setattr(PythonCodePrinter, '_print_%s' % k, _print_known_func)
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index f1a9a3789..ef09fd1e4 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -3,6 +3,7 @@
+ 
+ from sympy.codegen import Assignment
+ from sympy.codegen.ast import none
++from sympy.tensor import IndexedBase
+ from sympy.core import Expr, Mod, symbols, Eq, Le, Gt, zoo, oo, Rational
+ from sympy.core.numbers import pi
+ from sympy.functions import acos, Piecewise, sign
+@@ -36,6 +37,14 @@ def test_PythonCodePrinter():
+     assert prntr.doprint(sign(x)) == '(0.0 if x == 0 else math.copysign(1, x))'
+ 
+ 
++def test_PythonCodePrinter_indexed():
++    prntr = PythonCodePrinter()
++    p = IndexedBase('p')
++    x, y = symbols('x y')
++    assert prntr.doprint(p[0]) == 'p[0]'
++    assert prntr.doprint(p[x, y]) == 'p[x, y]'
++
++
+ def test_MpmathPrinter():
+     p = MpmathPrinter()
+     assert p.doprint(sign(x)) == 'mpmath.sign(x)'
+2026-11-11 01:28:55,000 - INFO - Eval script for sympy__sympy-16766 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2133/deepseek-harness-glm-5.3-flash/sympy__sympy-16766/eval.sh; copying to container...
+2026-11-11 01:28:58,871 - INFO - Test runtime: 3.80 seconds
+2026-11-11 01:28:58,873 - INFO - Test output for sympy__sympy-16766 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2133/deepseek-harness-glm-5.3-flash/sympy__sympy-16766/test_output.txt
+2026-11-11 01:28:58,945 - INFO - Git diff after:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index a3f031073..5a144d56a 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -357,6 +357,11 @@ def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+ 
++    def _print_Indexed(self, expr):
++        base, *index = expr.args
++        return "{}[{}]".format(str(base), ", ".join(
++            [self._print(ind) for ind in index]))
++
+ 
+ for k in PythonCodePrinter._kf:
+     setattr(PythonCodePrinter, '_print_%s' % k, _print_known_func)
+2026-11-11 01:28:58,945 - INFO - Git diff changed after running eval script
+2026-11-11 01:28:58,945 - INFO - Grading answer for sympy__sympy-16766...
+2026-11-11 01:28:58,946 - INFO - report: {'sympy__sympy-16766': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_PythonCodePrinter'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_MpmathPrinter', 'test_NumPyPrinter', 'test_SciPyPrinter', 'test_pycode_reserved_words', 'test_printmethod', 'test_codegen_ast_nodes', 'test_issue_14283'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-16766: resolved: True
+2026-11-11 01:28:58,947 - INFO - Attempting to stop container sweb.eval.sympy__sympy-16766.verified_full_glm53_deepseek-harness_incr_R2133...
+2026-11-11 01:29:15,069 - INFO - Container sweb.eval.sympy__sympy-16766.verified_full_glm53_deepseek-harness_incr_R2133 stopped successfully.
+2026-11-11 01:29:15,069 - INFO - Attempting to remove container sweb.eval.sympy__sympy-16766.verified_full_glm53_deepseek-harness_incr_R2133...
+2026-11-11 01:29:15,113 - INFO - Container sweb.eval.sympy__sympy-16766.verified_full_glm53_deepseek-harness_incr_R2133 removed successfully.

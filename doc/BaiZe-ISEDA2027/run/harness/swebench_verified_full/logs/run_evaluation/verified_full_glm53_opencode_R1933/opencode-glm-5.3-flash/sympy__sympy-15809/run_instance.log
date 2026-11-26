@@ -1,0 +1,70 @@
+2026-11-10 19:10:23,407 - INFO - Creating container for sympy__sympy-15809...
+2026-11-10 19:10:23,438 - INFO - Container for sympy__sympy-15809 created: 65e5516fb40d32905345e806be877bb6b68463e4c857493672e4e710bff4ef94
+2026-11-10 19:10:39,006 - INFO - Container for sympy__sympy-15809 started: 65e5516fb40d32905345e806be877bb6b68463e4c857493672e4e710bff4ef94
+2026-11-10 19:10:39,008 - INFO - Intermediate patch for sympy__sympy-15809 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/sympy__sympy-15809/patch.diff, now applying to container...
+2026-11-10 19:10:39,156 - INFO - >>>>> Applied Patch:
+Checking patch sympy/functions/elementary/miscellaneous.py...
+Checking patch sympy/functions/elementary/tests/test_miscellaneous.py...
+Applied patch sympy/functions/elementary/miscellaneous.py cleanly.
+Applied patch sympy/functions/elementary/tests/test_miscellaneous.py cleanly.
+
+2026-11-10 19:10:39,633 - INFO - Git diff before:
+diff --git a/sympy/functions/elementary/miscellaneous.py b/sympy/functions/elementary/miscellaneous.py
+index 5f9fe73c5..f4294571f 100644
+--- a/sympy/functions/elementary/miscellaneous.py
++++ b/sympy/functions/elementary/miscellaneous.py
+@@ -340,7 +340,7 @@ def real_root(arg, n=None, evaluate=None):
+ class MinMaxBase(Expr, LatticeOp):
+     def __new__(cls, *args, **assumptions):
+         if not args:
+-            raise ValueError("The Max/Min functions must have arguments.")
++            return cls.identity
+ 
+         args = (sympify(arg) for arg in args)
+ 
+diff --git a/sympy/functions/elementary/tests/test_miscellaneous.py b/sympy/functions/elementary/tests/test_miscellaneous.py
+index 00dc94600..9181c64bc 100644
+--- a/sympy/functions/elementary/tests/test_miscellaneous.py
++++ b/sympy/functions/elementary/tests/test_miscellaneous.py
+@@ -85,7 +85,7 @@ def test_Min():
+     assert Min(p, p_).func is Min
+ 
+     # lists
+-    raises(ValueError, lambda: Min())
++    assert Min() == oo
+     assert Min(x, y) == Min(y, x)
+     assert Min(x, y, z) == Min(z, y, x)
+     assert Min(x, Min(y, z)) == Min(z, y, x)
+@@ -156,7 +156,7 @@ def test_Max():
+ 
+     # lists
+ 
+-    raises(ValueError, lambda: Max())
++    assert Max() == -oo
+     assert Max(x, y) == Max(y, x)
+     assert Max(x, y, z) == Max(z, y, x)
+     assert Max(x, Max(y, z)) == Max(z, y, x)
+2026-11-10 19:10:39,636 - INFO - Eval script for sympy__sympy-15809 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/sympy__sympy-15809/eval.sh; copying to container...
+2026-11-10 19:10:55,613 - INFO - Test runtime: 15.92 seconds
+2026-11-10 19:10:55,615 - INFO - Test output for sympy__sympy-15809 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/sympy__sympy-15809/test_output.txt
+2026-11-10 19:10:55,672 - INFO - Git diff after:
+diff --git a/sympy/functions/elementary/miscellaneous.py b/sympy/functions/elementary/miscellaneous.py
+index 5f9fe73c5..f4294571f 100644
+--- a/sympy/functions/elementary/miscellaneous.py
++++ b/sympy/functions/elementary/miscellaneous.py
+@@ -340,7 +340,7 @@ def real_root(arg, n=None, evaluate=None):
+ class MinMaxBase(Expr, LatticeOp):
+     def __new__(cls, *args, **assumptions):
+         if not args:
+-            raise ValueError("The Max/Min functions must have arguments.")
++            return cls.identity
+ 
+         args = (sympify(arg) for arg in args)
+2026-11-10 19:10:55,672 - INFO - Git diff changed after running eval script
+2026-11-10 19:10:55,672 - INFO - Grading answer for sympy__sympy-15809...
+2026-11-10 19:10:55,673 - INFO - report: {'sympy__sympy-15809': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Min', 'test_Max'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_minmax_assumptions', 'test_issue_8413', 'test_root', 'test_real_root', 'test_rewrite_MaxMin_as_Heaviside', 'test_rewrite_MaxMin_as_Piecewise', 'test_issue_11099', 'test_issue_12638', 'test_instantiation_evaluation', 'test_rewrite_as_Abs'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-15809: resolved: True
+2026-11-10 19:10:55,674 - INFO - Attempting to stop container sweb.eval.sympy__sympy-15809.verified_full_glm53_opencode_R1933...
+2026-11-10 19:11:11,747 - INFO - Container sweb.eval.sympy__sympy-15809.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-10 19:11:11,748 - INFO - Attempting to remove container sweb.eval.sympy__sympy-15809.verified_full_glm53_opencode_R1933...
+2026-11-10 19:11:11,790 - INFO - Container sweb.eval.sympy__sympy-15809.verified_full_glm53_opencode_R1933 removed successfully.

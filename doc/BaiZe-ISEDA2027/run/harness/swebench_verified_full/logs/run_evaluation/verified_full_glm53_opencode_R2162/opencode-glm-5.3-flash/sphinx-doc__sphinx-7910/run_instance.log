@@ -1,0 +1,145 @@
+2026-11-11 08:47:05,144 - INFO - Creating container for sphinx-doc__sphinx-7910...
+2026-11-11 08:47:06,553 - INFO - Removed existing container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_opencode_R2162
+2026-11-11 08:47:06,570 - INFO - Container for sphinx-doc__sphinx-7910 created: a90e8ceed1ea46599e0d7d41f23f356ac6c218bed7f58ce6975dfea6bfed35b4
+2026-11-11 08:47:08,976 - INFO - Container for sphinx-doc__sphinx-7910 started: a90e8ceed1ea46599e0d7d41f23f356ac6c218bed7f58ce6975dfea6bfed35b4
+2026-11-11 08:47:08,977 - INFO - Intermediate patch for sphinx-doc__sphinx-7910 written to logs/run_evaluation/verified_full_glm53_opencode_R2162/opencode-glm-5.3-flash/sphinx-doc__sphinx-7910/patch.diff, now applying to container...
+2026-11-11 08:47:09,084 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/napoleon/__init__.py...
+Checking patch sphinx/testing/util.py...
+Checking patch tests/test_ext_napoleon.py...
+Applied patch sphinx/ext/napoleon/__init__.py cleanly.
+Applied patch sphinx/testing/util.py cleanly.
+Applied patch tests/test_ext_napoleon.py cleanly.
+
+2026-11-11 08:47:09,371 - INFO - Git diff before:
+diff --git a/sphinx/ext/napoleon/__init__.py b/sphinx/ext/napoleon/__init__.py
+index 10b1ff3a3..2b1818425 100644
+--- a/sphinx/ext/napoleon/__init__.py
++++ b/sphinx/ext/napoleon/__init__.py
+@@ -13,6 +13,7 @@ from typing import Any, Dict, List
+ from sphinx import __display_version__ as __version__
+ from sphinx.application import Sphinx
+ from sphinx.ext.napoleon.docstring import GoogleDocstring, NumpyDocstring
++from sphinx.util import inspect
+ 
+ 
+ class Config:
+@@ -438,7 +439,7 @@ def _skip_member(app: Sphinx, what: str, name: str, obj: Any,
+                         mod_path = cls_path.split('.')
+                         cls = functools.reduce(getattr, mod_path, mod)
+                     else:
+-                        cls = obj.__globals__[cls_path]
++                        cls = inspect.unwrap(obj).__globals__[cls_path]
+                 except Exception:
+                     cls_is_owner = False
+                 else:
+diff --git a/sphinx/testing/util.py b/sphinx/testing/util.py
+index 450241f55..5ac334068 100644
+--- a/sphinx/testing/util.py
++++ b/sphinx/testing/util.py
+@@ -7,6 +7,7 @@
+     :copyright: Copyright 2007-2020 by the Sphinx team, see AUTHORS.
+     :license: BSD, see LICENSE for details.
+ """
++import functools
+ import os
+ import re
+ import sys
+@@ -195,3 +196,13 @@ def find_files(root: str, suffix: bool = None) -> Generator[str, None, None]:
+ 
+ def strip_escseq(text: str) -> str:
+     return re.sub('\x1b.*?m', '', text)
++
++
++def simple_decorator(f):
++    """
++    A simple decorator that does nothing, for tests to use.
++    """
++    @functools.wraps(f)
++    def wrapper(*args, **kwargs):
++        return f(*args, **kwargs)
++    return wrapper
+diff --git a/tests/test_ext_napoleon.py b/tests/test_ext_napoleon.py
+index 7c3379757..9f356ce9e 100644
+--- a/tests/test_ext_napoleon.py
++++ b/tests/test_ext_napoleon.py
+@@ -14,6 +14,7 @@ from collections import namedtuple
+ from unittest import TestCase, mock
+ 
+ from sphinx.application import Sphinx
++from sphinx.testing.util import simple_decorator
+ from sphinx.ext.napoleon import _process_docstring, _skip_member, Config, setup
+ 
+ 
+@@ -50,6 +51,11 @@ class SampleClass:
+     def __special_undoc__(self):
+         pass
+ 
++    @simple_decorator
++    def __decorated_func__(self):
++        """doc"""
++        pass
++
+ 
+ class SampleError(Exception):
+     def _private_doc(self):
+@@ -130,8 +136,8 @@ class SkipMemberTest(TestCase):
+             self.assertEqual(None, _skip_member(app, what, member, obj, skip,
+                                                 mock.Mock()))
+         else:
+-            self.assertFalse(_skip_member(app, what, member, obj, skip,
+-                                          mock.Mock()))
++            self.assertIs(_skip_member(app, what, member, obj, skip,
++                                       mock.Mock()), False)
+         setattr(app.config, config_name, False)
+         self.assertEqual(None, _skip_member(app, what, member, obj, skip,
+                                             mock.Mock()))
+@@ -170,6 +176,11 @@ class SkipMemberTest(TestCase):
+                         SampleClass.__special_undoc__, True,
+                         'napoleon_include_special_with_doc')
+ 
++    def test_class_decorated_doc(self):
++        self.assertSkip('class', '__decorated_func__',
++                        SampleClass.__decorated_func__, False,
++                        'napoleon_include_special_with_doc')
++
+     def test_exception_private_doc(self):
+         self.assertSkip('exception', '_private_doc',
+                         SampleError._private_doc, False,
+2026-11-11 08:47:09,372 - INFO - Eval script for sphinx-doc__sphinx-7910 written to logs/run_evaluation/verified_full_glm53_opencode_R2162/opencode-glm-5.3-flash/sphinx-doc__sphinx-7910/eval.sh; copying to container...
+2026-11-11 08:47:13,071 - INFO - Test runtime: 3.63 seconds
+2026-11-11 08:47:13,073 - INFO - Test output for sphinx-doc__sphinx-7910 written to logs/run_evaluation/verified_full_glm53_opencode_R2162/opencode-glm-5.3-flash/sphinx-doc__sphinx-7910/test_output.txt
+2026-11-11 08:47:13,145 - INFO - Git diff after:
+diff --git a/sphinx/ext/napoleon/__init__.py b/sphinx/ext/napoleon/__init__.py
+index 10b1ff3a3..2b1818425 100644
+--- a/sphinx/ext/napoleon/__init__.py
++++ b/sphinx/ext/napoleon/__init__.py
+@@ -13,6 +13,7 @@ from typing import Any, Dict, List
+ from sphinx import __display_version__ as __version__
+ from sphinx.application import Sphinx
+ from sphinx.ext.napoleon.docstring import GoogleDocstring, NumpyDocstring
++from sphinx.util import inspect
+ 
+ 
+ class Config:
+@@ -438,7 +439,7 @@ def _skip_member(app: Sphinx, what: str, name: str, obj: Any,
+                         mod_path = cls_path.split('.')
+                         cls = functools.reduce(getattr, mod_path, mod)
+                     else:
+-                        cls = obj.__globals__[cls_path]
++                        cls = inspect.unwrap(obj).__globals__[cls_path]
+                 except Exception:
+                     cls_is_owner = False
+                 else:
+2026-11-11 08:47:13,145 - INFO - Git diff changed after running eval script
+2026-11-11 08:47:13,145 - INFO - Grading answer for sphinx-doc__sphinx-7910...
+2026-11-11 08:47:13,149 - INFO - report: {'sphinx-doc__sphinx-7910': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_napoleon.py::SkipMemberTest::test_class_decorated_doc'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_napoleon.py::ProcessDocstringTest::test_modify_in_place', 'tests/test_ext_napoleon.py::SetupTest::test_add_config_values', 'tests/test_ext_napoleon.py::SetupTest::test_unknown_app_type', 'tests/test_ext_napoleon.py::SkipMemberTest::test_class_private_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_class_private_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_class_special_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_class_special_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_exception_private_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_exception_private_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_exception_special_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_exception_special_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_module_private_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_module_private_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_module_special_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_module_special_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_namedtuple'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7910: resolved: True
+2026-11-11 08:47:13,151 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_opencode_R2162...
+2026-11-11 08:47:29,389 - INFO - Container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_opencode_R2162 stopped successfully.
+2026-11-11 08:47:29,389 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_opencode_R2162...
+2026-11-11 08:47:29,436 - INFO - Container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_opencode_R2162 removed successfully.
+89cc2d02499a0e276c9257663597: No such container: 836cedf916ac0d857818098b29e1cc68a48189cc2d02499a0e276c9257663597
+
+2026-11-11 08:47:06,603 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_opencode_R2162...
+2026-11-11 08:47:06,649 - INFO - Container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_opencode_R2162 removed successfully.

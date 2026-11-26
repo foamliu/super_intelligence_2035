@@ -1,0 +1,100 @@
+2026-11-09 04:40:05,614 - INFO - Creating container for scikit-learn__scikit-learn-13779...
+2026-11-09 04:40:06,883 - INFO - Removed existing container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_cline-patched_R1933
+2026-11-09 04:40:06,896 - INFO - Container for scikit-learn__scikit-learn-13779 created: 03185859caa261c1cccef2ef570a053fa65d715cfd4bd5d3fc002f1cd42fd697
+2026-11-09 04:40:07,836 - INFO - Container for scikit-learn__scikit-learn-13779 started: 03185859caa261c1cccef2ef570a053fa65d715cfd4bd5d3fc002f1cd42fd697
+2026-11-09 04:40:07,837 - INFO - Intermediate patch for scikit-learn__scikit-learn-13779 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/scikit-learn__scikit-learn-13779/patch.diff, now applying to container...
+2026-11-09 04:40:07,963 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/ensemble/tests/test_voting.py...
+warning: sklearn/ensemble/tests/test_voting.py has type 100755, expected 100644
+Checking patch sklearn/ensemble/voting.py...
+warning: sklearn/ensemble/voting.py has type 100755, expected 100644
+Applied patch sklearn/ensemble/tests/test_voting.py cleanly.
+Applied patch sklearn/ensemble/voting.py cleanly.
+
+2026-11-09 04:40:08,191 - INFO - Git diff before:
+diff --git a/sklearn/ensemble/tests/test_voting.py b/sklearn/ensemble/tests/test_voting.py
+index 2a19bc9a6..a3621066e 100755
+--- a/sklearn/ensemble/tests/test_voting.py
++++ b/sklearn/ensemble/tests/test_voting.py
+@@ -8,7 +8,7 @@ from sklearn.utils.testing import assert_array_almost_equal
+ from sklearn.utils.testing import assert_equal
+ from sklearn.utils.testing import assert_raise_message
+ from sklearn.exceptions import NotFittedError
+-from sklearn.linear_model import LogisticRegression
++from sklearn.linear_model import LogisticRegression, LinearRegression
+ from sklearn.naive_bayes import GaussianNB
+ from sklearn.ensemble import RandomForestClassifier
+ from sklearn.ensemble import VotingClassifier, VotingRegressor
+@@ -362,6 +362,30 @@ def test_sample_weight_kwargs():
+     eclf.fit(X, y, sample_weight=np.ones((len(y),)))
+ 
+ 
++@pytest.mark.parametrize(
++    "Voter, Estimator, X_data, y_data",
++    [(VotingClassifier, LogisticRegression, X, y),
++     (VotingRegressor, LinearRegression, X_r, y_r)])
++@pytest.mark.filterwarnings('ignore: Default solver will be changed')  # 0.22
++@pytest.mark.filterwarnings('ignore: Default multi_class will')  # 0.22
++def test_sample_weight_with_none_estimator(Voter, Estimator, X_data, y_data):
++    # Non-regression test for #13725: setting an estimator to None with
++    # set_params should not make fit fail when sample_weight is passed
++    voter = Voter(estimators=[('est1', Estimator()), ('est2', Estimator())])
++    voter.fit(X_data, y_data, sample_weight=np.ones(y_data.shape[0]))
++
++    voter.set_params(est1=None)
++    voter.fit(X_data, y_data, sample_weight=np.ones(y_data.shape[0]))
++    assert len(voter.estimators_) == 1
++
++    # estimators which are not None should still be checked for sample_weight
++    # support
++    voter.set_params(est1=KNeighborsClassifier())
++    msg = 'Underlying estimator \'est1\' does not support sample weights.'
++    assert_raise_message(ValueError, msg, voter.fit, X_data, y_data,
++                         np.ones(y_data.shape[0]))
++
++
+ @pytest.mark.filterwarnings('ignore: Default solver will be changed')  # 0.22
+ @pytest.mark.filterwarnings('ignore: Default multi_class will')  # 0.22
+ @pytest.mark.filterwarnings('ignore:The default value of n_estimators')
+diff --git a/sklearn/ensemble/voting.py b/sklearn/ensemble/voting.py
+index 7afa7180c..1da83f3ee 100755
+--- a/sklearn/ensemble/voting.py
++++ b/sklearn/ensemble/voting.py
+@@ -78,7 +78,8 @@ class _BaseVoting(_BaseComposition, TransformerMixin):
+ 
+         if sample_weight is not None:
+             for name, step in self.estimators:
+-                if not has_fit_parameter(step, 'sample_weight'):
++                if step is not None and not has_fit_parameter(
++                        step, 'sample_weight'):
+                     raise ValueError('Underlying estimator \'%s\' does not'
+                                      ' support sample weights.' % name)
+2026-11-09 04:40:08,192 - INFO - Eval script for scikit-learn__scikit-learn-13779 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/scikit-learn__scikit-learn-13779/eval.sh; copying to container...
+2026-11-09 04:40:14,184 - INFO - Test runtime: 5.93 seconds
+2026-11-09 04:40:14,185 - INFO - Test output for scikit-learn__scikit-learn-13779 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/scikit-learn__scikit-learn-13779/test_output.txt
+2026-11-09 04:40:14,265 - INFO - Git diff after:
+diff --git a/sklearn/ensemble/voting.py b/sklearn/ensemble/voting.py
+index 7afa7180c..1da83f3ee 100755
+--- a/sklearn/ensemble/voting.py
++++ b/sklearn/ensemble/voting.py
+@@ -78,7 +78,8 @@ class _BaseVoting(_BaseComposition, TransformerMixin):
+ 
+         if sample_weight is not None:
+             for name, step in self.estimators:
+-                if not has_fit_parameter(step, 'sample_weight'):
++                if step is not None and not has_fit_parameter(
++                        step, 'sample_weight'):
+                     raise ValueError('Underlying estimator \'%s\' does not'
+                                      ' support sample weights.' % name)
+2026-11-09 04:40:14,265 - INFO - Git diff changed after running eval script
+2026-11-09 04:40:14,265 - INFO - Grading answer for scikit-learn__scikit-learn-13779...
+2026-11-09 04:40:14,268 - INFO - report: {'scikit-learn__scikit-learn-13779': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/ensemble/tests/test_voting.py::test_none_estimator_with_weights[X0-y0-voter0]', 'sklearn/ensemble/tests/test_voting.py::test_none_estimator_with_weights[X1-y1-voter1]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/ensemble/tests/test_voting.py::test_estimator_init', 'sklearn/ensemble/tests/test_voting.py::test_predictproba_hardvoting', 'sklearn/ensemble/tests/test_voting.py::test_notfitted', 'sklearn/ensemble/tests/test_voting.py::test_majority_label_iris', 'sklearn/ensemble/tests/test_voting.py::test_tie_situation', 'sklearn/ensemble/tests/test_voting.py::test_weights_iris', 'sklearn/ensemble/tests/test_voting.py::test_weights_regressor', 'sklearn/ensemble/tests/test_voting.py::test_predict_on_toy_problem', 'sklearn/ensemble/tests/test_voting.py::test_predict_proba_on_toy_problem', 'sklearn/ensemble/tests/test_voting.py::test_multilabel', 'sklearn/ensemble/tests/test_voting.py::test_gridsearch', 'sklearn/ensemble/tests/test_voting.py::test_parallel_fit', 'sklearn/ensemble/tests/test_voting.py::test_sample_weight', 'sklearn/ensemble/tests/test_voting.py::test_sample_weight_kwargs', 'sklearn/ensemble/tests/test_voting.py::test_set_params', 'sklearn/ensemble/tests/test_voting.py::test_set_estimator_none', 'sklearn/ensemble/tests/test_voting.py::test_estimator_weights_format', 'sklearn/ensemble/tests/test_voting.py::test_transform'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-13779: resolved: True
+2026-11-09 04:40:14,269 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_cline-patched_R1933...
+2026-11-09 04:40:30,514 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_cline-patched_R1933 stopped successfully.
+2026-11-09 04:40:30,514 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_cline-patched_R1933...
+2026-11-09 04:40:30,551 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_cline-patched_R1933 removed successfully.
+13779.verified_full_glm53_cline-patched_R1933: Error response from daemon: cannot kill container: 8fcc2020889e196c5a9181a42659dc473ee8969d6350b16cbe049e0893aac24c: No such container: 8fcc2020889e196c5a9181a42659dc473ee8969d6350b16cbe049e0893aac24c
+
+2026-11-09 04:40:06,924 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_cline-patched_R1933...
+2026-11-09 04:40:06,949 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13779.verified_full_glm53_cline-patched_R1933 removed successfully.

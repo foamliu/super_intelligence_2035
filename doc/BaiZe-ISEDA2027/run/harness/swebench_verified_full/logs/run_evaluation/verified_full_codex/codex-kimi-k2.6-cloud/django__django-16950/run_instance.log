@@ -1,0 +1,248 @@
+2026-10-30 17:47:44,356 - INFO - Creating container for django__django-16950...
+2026-10-30 17:47:44,407 - INFO - Container for django__django-16950 created: b19e7c2f47a0c9100522ee5d2b4edc1953c19505791cdb49174c0757f608c649
+2026-10-30 17:47:47,401 - INFO - Container for django__django-16950 started: b19e7c2f47a0c9100522ee5d2b4edc1953c19505791cdb49174c0757f608c649
+2026-10-30 17:47:47,413 - INFO - Intermediate patch for django__django-16950 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-16950/patch.diff, now applying to container...
+2026-10-30 17:47:47,606 - INFO - >>>>> Applied Patch:
+Checking patch django/forms/models.py...
+Checking patch tests/admin_inlines/admin.py...
+Checking patch tests/admin_inlines/models.py...
+Checking patch tests/admin_inlines/tests.py...
+Applied patch django/forms/models.py cleanly.
+Applied patch tests/admin_inlines/admin.py cleanly.
+Applied patch tests/admin_inlines/models.py cleanly.
+Applied patch tests/admin_inlines/tests.py cleanly.
+
+2026-10-30 17:47:48,952 - INFO - Git diff before:
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..9534f03d4a 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1172,7 +1172,7 @@ class BaseInlineFormSet(BaseModelFormSet):
+ 
+         # If we're adding a new object, ignore a parent's auto-generated key
+         # as it will be regenerated on the save request.
+-        if self.instance._state.adding:
++        if self.instance._state.adding and not self.is_bound:
+             if kwargs.get("to_field") is not None:
+                 to_field = self.instance._meta.get_field(kwargs["to_field"])
+             else:
+diff --git a/tests/admin_inlines/admin.py b/tests/admin_inlines/admin.py
+index 0ec56d71b3..58ed3508f0 100644
+--- a/tests/admin_inlines/admin.py
++++ b/tests/admin_inlines/admin.py
+@@ -55,6 +55,8 @@ from .models import (
+     Teacher,
+     Title,
+     TitleCollection,
++    UUIDParent,
++    UUIDChild,
+ )
+ 
+ site = admin.AdminSite(name="admin")
+@@ -466,3 +468,15 @@ site3 = admin.AdminSite(name="stacked_inline_hidden_field_in_group_admin")
+ site3.register(SomeParentModel, inlines=[ChildHiddenFieldInFieldsGroupStackedInline])
+ site4 = admin.AdminSite(name="stacked_inline_hidden_field_on_single_line_admin")
+ site4.register(SomeParentModel, inlines=[ChildHiddenFieldOnSingleLineStackedInline])
++
++
++# Admin for #32260
++class UUIDChildInline(admin.StackedInline):
++    model = UUIDChild
++
++
++class UUIDParentAdmin(admin.ModelAdmin):
++    inlines = [UUIDChildInline]
++
++
++site.register(UUIDParent, UUIDParentAdmin)
+diff --git a/tests/admin_inlines/models.py b/tests/admin_inlines/models.py
+index a8d2ee02e1..07c1227e1d 100644
+--- a/tests/admin_inlines/models.py
++++ b/tests/admin_inlines/models.py
+@@ -377,3 +377,23 @@ class BothVerboseNameProfile(Profile):
+     class Meta:
+         verbose_name = "Model with both - name"
+         verbose_name_plural = "Model with both - plural name"
++
++
++# Models for ticket #32260 -- UUID default with inline FK to to_field
++import uuid
++
++
++class UUIDParent(models.Model):
++    pkid = models.BigAutoField(primary_key=True, editable=False)
++    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
++    name = models.CharField(max_length=50)
++
++
++class UUIDChild(models.Model):
++    name = models.CharField(max_length=50)
++    parent = models.ForeignKey(
++        UUIDParent,
++        on_delete=models.CASCADE,
++        to_field="id",
++        related_name="children",
++    )
+diff --git a/tests/admin_inlines/tests.py b/tests/admin_inlines/tests.py
+index 9533cc9af3..9473e623ab 100644
+--- a/tests/admin_inlines/tests.py
++++ b/tests/admin_inlines/tests.py
+@@ -44,6 +44,8 @@ from .models import (
+     Teacher,
+     VerboseNamePluralProfile,
+     VerboseNameProfile,
++    UUIDParent,
++    UUIDChild,
+ )
+ 
+ INLINE_CHANGELINK_HTML = 'class="inlinechangelink">Change</a>'
+@@ -662,6 +664,27 @@ class TestInline(TestDataMixin, TestCase):
+             count=1,
+         )
+ 
++    def test_inline_with_uuid_default_to_field(self):
++        """Adding a parent with a UUID default and an inline FK to to_field works (#32260)."""
++        data = {
++            'name': 'Parent',
++            'children-TOTAL_FORMS': '1',
++            'children-INITIAL_FORMS': '0',
++            'children-MIN_NUM_FORMS': '0',
++            'children-MAX_NUM_FORMS': '1000',
++            'children-0-name': 'Child',
++            'children-0-parent': '',
++            'children-0-id': '',
++            '_save': 'Save',
++        }
++        response = self.client.post(
++            reverse('admin:admin_inlines_uuidparent_add'), data
++        )
++        self.assertEqual(response.status_code, 302)
++        parent = UUIDParent.objects.get(name='Parent')
++        self.assertIsNotNone(parent.id)
++        self.assertEqual(parent.children.count(), 1)
++
+     def test_stacked_inline_edit_form_contains_has_original_class(self):
+         holder = Holder.objects.create(dummy=1)
+         holder.inner_set.create(dummy=1)
+2026-10-30 17:47:48,956 - INFO - Eval script for django__django-16950 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-16950/eval.sh; copying to container...
+2026-10-30 17:47:56,060 - INFO - Test runtime: 6.82 seconds
+2026-10-30 17:47:56,062 - INFO - Test output for django__django-16950 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-16950/test_output.txt
+2026-10-30 17:47:56,136 - INFO - Git diff after:
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..9534f03d4a 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1172,7 +1172,7 @@ class BaseInlineFormSet(BaseModelFormSet):
+ 
+         # If we're adding a new object, ignore a parent's auto-generated key
+         # as it will be regenerated on the save request.
+-        if self.instance._state.adding:
++        if self.instance._state.adding and not self.is_bound:
+             if kwargs.get("to_field") is not None:
+                 to_field = self.instance._meta.get_field(kwargs["to_field"])
+             else:
+diff --git a/tests/admin_inlines/admin.py b/tests/admin_inlines/admin.py
+index 0ec56d71b3..58ed3508f0 100644
+--- a/tests/admin_inlines/admin.py
++++ b/tests/admin_inlines/admin.py
+@@ -55,6 +55,8 @@ from .models import (
+     Teacher,
+     Title,
+     TitleCollection,
++    UUIDParent,
++    UUIDChild,
+ )
+ 
+ site = admin.AdminSite(name="admin")
+@@ -466,3 +468,15 @@ site3 = admin.AdminSite(name="stacked_inline_hidden_field_in_group_admin")
+ site3.register(SomeParentModel, inlines=[ChildHiddenFieldInFieldsGroupStackedInline])
+ site4 = admin.AdminSite(name="stacked_inline_hidden_field_on_single_line_admin")
+ site4.register(SomeParentModel, inlines=[ChildHiddenFieldOnSingleLineStackedInline])
++
++
++# Admin for #32260
++class UUIDChildInline(admin.StackedInline):
++    model = UUIDChild
++
++
++class UUIDParentAdmin(admin.ModelAdmin):
++    inlines = [UUIDChildInline]
++
++
++site.register(UUIDParent, UUIDParentAdmin)
+diff --git a/tests/admin_inlines/models.py b/tests/admin_inlines/models.py
+index a8d2ee02e1..07c1227e1d 100644
+--- a/tests/admin_inlines/models.py
++++ b/tests/admin_inlines/models.py
+@@ -377,3 +377,23 @@ class BothVerboseNameProfile(Profile):
+     class Meta:
+         verbose_name = "Model with both - name"
+         verbose_name_plural = "Model with both - plural name"
++
++
++# Models for ticket #32260 -- UUID default with inline FK to to_field
++import uuid
++
++
++class UUIDParent(models.Model):
++    pkid = models.BigAutoField(primary_key=True, editable=False)
++    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
++    name = models.CharField(max_length=50)
++
++
++class UUIDChild(models.Model):
++    name = models.CharField(max_length=50)
++    parent = models.ForeignKey(
++        UUIDParent,
++        on_delete=models.CASCADE,
++        to_field="id",
++        related_name="children",
++    )
+diff --git a/tests/admin_inlines/tests.py b/tests/admin_inlines/tests.py
+index 9533cc9af3..9473e623ab 100644
+--- a/tests/admin_inlines/tests.py
++++ b/tests/admin_inlines/tests.py
+@@ -44,6 +44,8 @@ from .models import (
+     Teacher,
+     VerboseNamePluralProfile,
+     VerboseNameProfile,
++    UUIDParent,
++    UUIDChild,
+ )
+ 
+ INLINE_CHANGELINK_HTML = 'class="inlinechangelink">Change</a>'
+@@ -662,6 +664,27 @@ class TestInline(TestDataMixin, TestCase):
+             count=1,
+         )
+ 
++    def test_inline_with_uuid_default_to_field(self):
++        """Adding a parent with a UUID default and an inline FK to to_field works (#32260)."""
++        data = {
++            'name': 'Parent',
++            'children-TOTAL_FORMS': '1',
++            'children-INITIAL_FORMS': '0',
++            'children-MIN_NUM_FORMS': '0',
++            'children-MAX_NUM_FORMS': '1000',
++            'children-0-name': 'Child',
++            'children-0-parent': '',
++            'children-0-id': '',
++            '_save': 'Save',
++        }
++        response = self.client.post(
++            reverse('admin:admin_inlines_uuidparent_add'), data
++        )
++        self.assertEqual(response.status_code, 302)
++        parent = UUIDParent.objects.get(name='Parent')
++        self.assertIsNotNone(parent.id)
++        self.assertEqual(parent.children.count(), 1)
++
+     def test_stacked_inline_edit_form_contains_has_original_class(self):
+         holder = Holder.objects.create(dummy=1)
+         holder.inner_set.create(dummy=1)
+2026-10-30 17:47:56,136 - INFO - Grading answer for django__django-16950...
+2026-10-30 17:47:56,137 - INFO - report: {'django__django-16950': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ["If form data is provided, a parent's auto-generated alternate key is"], 'failure': []}, 'PASS_TO_PASS': {'success': ["#24377 - If we're adding a new object, a parent's auto-generated pk", '#24958 - Variant of test_inlineformset_factory_nulls_default_pks for'], 'failure': ['#24377 - Inlines with a model field default should ignore that default']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16950: resolved: False
+2026-10-30 17:47:56,139 - INFO - Attempting to stop container sweb.eval.django__django-16950.verified_full_codex...
+2026-10-30 17:48:12,087 - INFO - Container sweb.eval.django__django-16950.verified_full_codex stopped successfully.
+2026-10-30 17:48:12,087 - INFO - Attempting to remove container sweb.eval.django__django-16950.verified_full_codex...
+2026-10-30 17:48:12,171 - INFO - Container sweb.eval.django__django-16950.verified_full_codex removed successfully.

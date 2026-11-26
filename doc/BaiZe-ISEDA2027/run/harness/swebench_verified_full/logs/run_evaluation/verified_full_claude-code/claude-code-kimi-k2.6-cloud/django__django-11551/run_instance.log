@@ -1,0 +1,216 @@
+2026-10-31 02:59:26,207 - INFO - Creating container for django__django-11551...
+2026-10-31 02:59:26,619 - INFO - Container for django__django-11551 created: e23e755d3dfbf9e38c86c47d90bb379a849af03796aaa6ca89339c9a38e47e63
+2026-10-31 02:59:32,029 - INFO - Container for django__django-11551 started: e23e755d3dfbf9e38c86c47d90bb379a849af03796aaa6ca89339c9a38e47e63
+2026-10-31 02:59:32,032 - INFO - Intermediate patch for django__django-11551 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11551/patch.diff, now applying to container...
+2026-10-31 02:59:32,190 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admin/checks.py...
+Checking patch tests/modeladmin/models.py...
+Checking patch tests/modeladmin/test_checks.py...
+Applied patch django/contrib/admin/checks.py cleanly.
+Applied patch tests/modeladmin/models.py cleanly.
+Applied patch tests/modeladmin/test_checks.py cleanly.
+
+2026-10-31 02:59:33,619 - INFO - Git diff before:
+diff --git a/django/contrib/admin/checks.py b/django/contrib/admin/checks.py
+index f82c20c2f1..9fd77b5d41 100644
+--- a/django/contrib/admin/checks.py
++++ b/django/contrib/admin/checks.py
+@@ -720,33 +720,33 @@ class ModelAdminChecks(BaseModelAdminChecks):
+             return []
+         elif hasattr(obj, item):
+             return []
+-        elif hasattr(obj.model, item):
++        else:
+             try:
+                 field = obj.model._meta.get_field(item)
+             except FieldDoesNotExist:
+-                return []
+-            else:
+-                if isinstance(field, models.ManyToManyField):
++                try:
++                    field = getattr(obj.model, item)
++                except AttributeError:
+                     return [
+                         checks.Error(
+-                            "The value of '%s' must not be a ManyToManyField." % label,
++                            "The value of '%s' refers to '%s', which is not a callable, "
++                            "an attribute of '%s', or an attribute or method on '%s.%s'." % (
++                                label, item, obj.__class__.__name__,
++                                obj.model._meta.app_label, obj.model._meta.object_name,
++                            ),
+                             obj=obj.__class__,
+-                            id='admin.E109',
++                            id='admin.E108',
+                         )
+                     ]
+-                return []
+-        else:
+-            return [
+-                checks.Error(
+-                    "The value of '%s' refers to '%s', which is not a callable, "
+-                    "an attribute of '%s', or an attribute or method on '%s.%s'." % (
+-                        label, item, obj.__class__.__name__,
+-                        obj.model._meta.app_label, obj.model._meta.object_name,
+-                    ),
+-                    obj=obj.__class__,
+-                    id='admin.E108',
+-                )
+-            ]
++            if isinstance(field, models.ManyToManyField):
++                return [
++                    checks.Error(
++                        "The value of '%s' must not be a ManyToManyField." % label,
++                        obj=obj.__class__,
++                        id='admin.E109',
++                    )
++                ]
++            return []
+ 
+     def _check_list_display_links(self, obj):
+         """ Check that list_display_links is a unique subset of list_display.
+diff --git a/tests/modeladmin/models.py b/tests/modeladmin/models.py
+index c0d3c772c9..3842b43ca0 100644
+--- a/tests/modeladmin/models.py
++++ b/tests/modeladmin/models.py
+@@ -2,6 +2,15 @@ from django.contrib.auth.models import User
+ from django.db import models
+ 
+ 
++class PositionField(models.IntegerField):
++    """A field that raises an error when accessed via the model class."""
++
++    def __get__(self, instance, cls):
++        if instance is None:
++            raise AttributeError("PositionField is only accessible via instance.")
++        return super().__get__(instance, cls)
++
++
+ class Band(models.Model):
+     name = models.CharField(max_length=100)
+     bio = models.TextField()
+@@ -45,6 +54,7 @@ class ValidationTestModel(models.Model):
+     best_friend = models.OneToOneField(User, models.CASCADE, related_name='best_friend')
+     # This field is intentionally 2 characters long (#16080).
+     no = models.IntegerField(verbose_name="Number", blank=True, null=True)
++    position = PositionField()
+ 
+     def decade_published_in(self):
+         return self.pub_date.strftime('%Y')[:3] + "0's"
+diff --git a/tests/modeladmin/test_checks.py b/tests/modeladmin/test_checks.py
+index a1b7001f68..b0562410d1 100644
+--- a/tests/modeladmin/test_checks.py
++++ b/tests/modeladmin/test_checks.py
+@@ -509,6 +509,17 @@ class ListDisplayTests(CheckTestCase):
+ 
+         self.assertIsValid(TestModelAdmin, ValidationTestModel)
+ 
++    def test_field_not_accessible_via_class(self):
++        """
++        A field accessible only via instance (hasattr returns False on model
++        class but get_field works) should be valid for list_display.
++        Refs #30621.
++        """
++        class TestModelAdmin(ModelAdmin):
++            list_display = ('position',)
++
++        self.assertIsValid(TestModelAdmin, ValidationTestModel)
++
+ 
+ class ListDisplayLinksCheckTests(CheckTestCase):
+2026-10-31 02:59:33,622 - INFO - Eval script for django__django-11551 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11551/eval.sh; copying to container...
+2026-10-31 02:59:40,433 - INFO - Test runtime: 6.73 seconds
+2026-10-31 02:59:40,443 - INFO - Test output for django__django-11551 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-11551/test_output.txt
+2026-10-31 02:59:40,541 - INFO - Git diff after:
+diff --git a/django/contrib/admin/checks.py b/django/contrib/admin/checks.py
+index f82c20c2f1..9fd77b5d41 100644
+--- a/django/contrib/admin/checks.py
++++ b/django/contrib/admin/checks.py
+@@ -720,33 +720,33 @@ class ModelAdminChecks(BaseModelAdminChecks):
+             return []
+         elif hasattr(obj, item):
+             return []
+-        elif hasattr(obj.model, item):
++        else:
+             try:
+                 field = obj.model._meta.get_field(item)
+             except FieldDoesNotExist:
+-                return []
+-            else:
+-                if isinstance(field, models.ManyToManyField):
++                try:
++                    field = getattr(obj.model, item)
++                except AttributeError:
+                     return [
+                         checks.Error(
+-                            "The value of '%s' must not be a ManyToManyField." % label,
++                            "The value of '%s' refers to '%s', which is not a callable, "
++                            "an attribute of '%s', or an attribute or method on '%s.%s'." % (
++                                label, item, obj.__class__.__name__,
++                                obj.model._meta.app_label, obj.model._meta.object_name,
++                            ),
+                             obj=obj.__class__,
+-                            id='admin.E109',
++                            id='admin.E108',
+                         )
+                     ]
+-                return []
+-        else:
+-            return [
+-                checks.Error(
+-                    "The value of '%s' refers to '%s', which is not a callable, "
+-                    "an attribute of '%s', or an attribute or method on '%s.%s'." % (
+-                        label, item, obj.__class__.__name__,
+-                        obj.model._meta.app_label, obj.model._meta.object_name,
+-                    ),
+-                    obj=obj.__class__,
+-                    id='admin.E108',
+-                )
+-            ]
++            if isinstance(field, models.ManyToManyField):
++                return [
++                    checks.Error(
++                        "The value of '%s' must not be a ManyToManyField." % label,
++                        obj=obj.__class__,
++                        id='admin.E109',
++                    )
++                ]
++            return []
+ 
+     def _check_list_display_links(self, obj):
+         """ Check that list_display_links is a unique subset of list_display.
+diff --git a/tests/modeladmin/models.py b/tests/modeladmin/models.py
+index c0d3c772c9..3842b43ca0 100644
+--- a/tests/modeladmin/models.py
++++ b/tests/modeladmin/models.py
+@@ -2,6 +2,15 @@ from django.contrib.auth.models import User
+ from django.db import models
+ 
+ 
++class PositionField(models.IntegerField):
++    """A field that raises an error when accessed via the model class."""
++
++    def __get__(self, instance, cls):
++        if instance is None:
++            raise AttributeError("PositionField is only accessible via instance.")
++        return super().__get__(instance, cls)
++
++
+ class Band(models.Model):
+     name = models.CharField(max_length=100)
+     bio = models.TextField()
+@@ -45,6 +54,7 @@ class ValidationTestModel(models.Model):
+     best_friend = models.OneToOneField(User, models.CASCADE, related_name='best_friend')
+     # This field is intentionally 2 characters long (#16080).
+     no = models.IntegerField(verbose_name="Number", blank=True, null=True)
++    position = PositionField()
+ 
+     def decade_published_in(self):
+         return self.pub_date.strftime('%Y')[:3] + "0's"
+2026-10-31 02:59:40,541 - INFO - Git diff changed after running eval script
+2026-10-31 02:59:40,542 - INFO - Grading answer for django__django-11551...
+2026-10-31 02:59:40,549 - INFO - report: {'django__django-11551': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_valid_field_accessible_via_instance (modeladmin.test_checks.ListDisplayTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_not_integer (modeladmin.test_checks.ExtraCheckTests)', 'test_valid_case (modeladmin.test_checks.ExtraCheckTests)', 'test_duplicate_fields_in_fields (modeladmin.test_checks.FieldsCheckTests)', 'test_inline (modeladmin.test_checks.FieldsCheckTests)', 'test_missing_field (modeladmin.test_checks.FkNameCheckTests)', 'test_valid_case (modeladmin.test_checks.FkNameCheckTests)', 'test_invalid_type (modeladmin.test_checks.ListSelectRelatedCheckTests)', 'test_valid_case (modeladmin.test_checks.ListSelectRelatedCheckTests)', 'test_both_list_editable_and_list_display_links (modeladmin.test_checks.ListDisplayEditableTests)', 'test_list_display_first_item_in_list_editable (modeladmin.test_checks.ListDisplayEditableTests)', 'test_list_display_first_item_in_list_editable_no_list_display_links (modeladmin.test_checks.ListDisplayEditableTests)', 'test_list_display_first_item_same_as_list_editable_first_item (modeladmin.test_checks.ListDisplayEditableTests)', 'test_list_display_first_item_same_as_list_editable_no_list_display_links (modeladmin.test_checks.ListDisplayEditableTests)', 'test_list_display_links_is_none (modeladmin.test_checks.ListDisplayEditableTests)', 'test_fieldsets_with_custom_form_validation (modeladmin.test_checks.FormCheckTests)', 'test_invalid_type (modeladmin.test_checks.FormCheckTests)', 'test_valid_case (modeladmin.test_checks.FormCheckTests)', 'test_actions_not_unique (modeladmin.test_checks.ActionsCheckTests)', 'test_actions_unique (modeladmin.test_checks.ActionsCheckTests)', 'test_custom_permissions_require_matching_has_method (modeladmin.test_checks.ActionsCheckTests)', 'test_not_integer (modeladmin.test_checks.ListMaxShowAllCheckTests)', 'test_valid_case (modeladmin.test_checks.ListMaxShowAllCheckTests)', 'test_invalid_field_type (modeladmin.test_checks.FilterVerticalCheckTests)', 'test_missing_field (modeladmin.test_checks.FilterVerticalCheckTests)', 'test_not_iterable (modeladmin.test_checks.FilterVerticalCheckTests)', 'test_valid_case (modeladmin.test_checks.FilterVerticalCheckTests)', 'test_autocomplete_e036 (modeladmin.test_checks.AutocompleteFieldsTests)', 'test_autocomplete_e037 (modeladmin.test_checks.AutocompleteFieldsTests)', 'test_autocomplete_e039 (modeladmin.test_checks.AutocompleteFieldsTests)', 'test_autocomplete_e040 (modeladmin.test_checks.AutocompleteFieldsTests)', 'test_autocomplete_e38 (modeladmin.test_checks.AutocompleteFieldsTests)', 'test_autocomplete_is_onetoone (modeladmin.test_checks.AutocompleteFieldsTests)', 'test_autocomplete_is_valid (modeladmin.test_checks.AutocompleteFieldsTests)', 'test_callable (modeladmin.test_checks.ListFilterTests)', 'test_list_filter_is_func (modeladmin.test_checks.ListFilterTests)', 'test_list_filter_validation (modeladmin.test_checks.ListFilterTests)', 'test_missing_field (modeladmin.test_checks.ListFilterTests)', 'test_not_associated_with_field_name (modeladmin.test_checks.ListFilterTests)', 'test_not_callable (modeladmin.test_checks.ListFilterTests)', 'test_not_filter (modeladmin.test_checks.ListFilterTests)', 'test_not_filter_again (modeladmin.test_checks.ListFilterTests)', 'test_not_filter_again_again (modeladmin.test_checks.ListFilterTests)', 'test_not_list_filter_class (modeladmin.test_checks.ListFilterTests)', 'test_valid_case (modeladmin.test_checks.ListFilterTests)', 'test_not_boolean (modeladmin.test_checks.SaveOnTopCheckTests)', 'test_valid_case (modeladmin.test_checks.SaveOnTopCheckTests)', 'test_not_iterable (modeladmin.test_checks.SearchFieldsCheckTests)', 'test_invalid_field_type (modeladmin.test_checks.FilterHorizontalCheckTests)', 'test_missing_field (modeladmin.test_checks.FilterHorizontalCheckTests)', 'test_not_iterable (modeladmin.test_checks.FilterHorizontalCheckTests)', 'test_valid_case (modeladmin.test_checks.FilterHorizontalCheckTests)', 'test_not_boolean (modeladmin.test_checks.SaveAsCheckTests)', 'test_valid_case (modeladmin.test_checks.SaveAsCheckTests)', 'test_not_integer (modeladmin.test_checks.ListPerPageCheckTests)', 'test_valid_case (modeladmin.test_checks.ListPerPageCheckTests)', 'test_invalid_field_type (modeladmin.test_checks.DateHierarchyCheckTests)', 'test_missing_field (modeladmin.test_checks.DateHierarchyCheckTests)', 'test_related_invalid_field_type (modeladmin.test_checks.DateHierarchyCheckTests)', 'test_related_valid_case (modeladmin.test_checks.DateHierarchyCheckTests)', 'test_valid_case (modeladmin.test_checks.DateHierarchyCheckTests)', 'test_not_integer (modeladmin.test_checks.MaxNumCheckTests)', 'test_valid_case (modeladmin.test_checks.MaxNumCheckTests)', 'test_not_integer (modeladmin.test_checks.MinNumCheckTests)', 'test_valid_case (modeladmin.test_checks.MinNumCheckTests)', 'test_invalid_field_type (modeladmin.test_checks.RadioFieldsCheckTests)', 'test_invalid_value (modeladmin.test_checks.RadioFieldsCheckTests)', 'test_missing_field (modeladmin.test_checks.RadioFieldsCheckTests)', 'test_not_dictionary (modeladmin.test_checks.RadioFieldsCheckTests)', 'test_valid_case (modeladmin.test_checks.RadioFieldsCheckTests)', 'test_invalid_field_type (modeladmin.test_checks.RawIdCheckTests)', 'test_missing_field (modeladmin.test_checks.RawIdCheckTests)', 'test_not_iterable (modeladmin.test_checks.RawIdCheckTests)', 'test_valid_case (modeladmin.test_checks.RawIdCheckTests)', 'test_inline_without_formset_class (modeladmin.test_checks.FormsetCheckTests)', 'test_invalid_type (modeladmin.test_checks.FormsetCheckTests)', 'test_valid_case (modeladmin.test_checks.FormsetCheckTests)', 'test_duplicate_fields (modeladmin.test_checks.FieldsetsCheckTests)', 'test_duplicate_fields_in_fieldsets (modeladmin.test_checks.FieldsetsCheckTests)', 'test_fieldsets_with_custom_form_validation (modeladmin.test_checks.FieldsetsCheckTests)', 'test_item_not_a_pair (modeladmin.test_checks.FieldsetsCheckTests)', 'test_missing_fields_key (modeladmin.test_checks.FieldsetsCheckTests)', 'test_non_iterable_item (modeladmin.test_checks.FieldsetsCheckTests)', 'test_not_iterable (modeladmin.test_checks.FieldsetsCheckTests)', 'test_second_element_of_item_not_a_dict (modeladmin.test_checks.FieldsetsCheckTests)', 'test_specified_both_fields_and_fieldsets (modeladmin.test_checks.FieldsetsCheckTests)', 'test_valid_case (modeladmin.test_checks.FieldsetsCheckTests)', 'test_invalid_field_type (modeladmin.test_checks.ListDisplayTests)', 'test_missing_field (modeladmin.test_checks.ListDisplayTests)', 'test_not_iterable (modeladmin.test_checks.ListDisplayTests)', 'test_valid_case (modeladmin.test_checks.ListDisplayTests)', 'test_invalid_callable (modeladmin.test_checks.InlinesCheckTests)', 'test_invalid_model (modeladmin.test_checks.InlinesCheckTests)', 'test_invalid_model_type (modeladmin.test_checks.InlinesCheckTests)', 'test_missing_model_field (modeladmin.test_checks.InlinesCheckTests)', 'test_not_correct_inline_field (modeladmin.test_checks.InlinesCheckTests)', 'test_not_iterable (modeladmin.test_checks.InlinesCheckTests)', 'test_not_model_admin (modeladmin.test_checks.InlinesCheckTests)', 'test_valid_case (modeladmin.test_checks.InlinesCheckTests)', 'test_None_is_valid_case (modeladmin.test_checks.ListDisplayLinksCheckTests)', 'test_list_display_link_checked_for_list_tuple_if_get_list_display_overridden (modeladmin.test_checks.ListDisplayLinksCheckTests)', 'test_list_display_links_check_skipped_if_get_list_display_overridden (modeladmin.test_checks.ListDisplayLinksCheckTests)', 'test_missing_field (modeladmin.test_checks.ListDisplayLinksCheckTests)', 'test_missing_in_list_display (modeladmin.test_checks.ListDisplayLinksCheckTests)', 'test_not_iterable (modeladmin.test_checks.ListDisplayLinksCheckTests)', 'test_valid_case (modeladmin.test_checks.ListDisplayLinksCheckTests)', 'test_invalid_field_type (modeladmin.test_checks.PrepopulatedFieldsCheckTests)', 'test_missing_field (modeladmin.test_checks.PrepopulatedFieldsCheckTests)', 'test_missing_field_again (modeladmin.test_checks.PrepopulatedFieldsCheckTests)', 'test_not_dictionary (modeladmin.test_checks.PrepopulatedFieldsCheckTests)', 'test_not_list_or_tuple (modeladmin.test_checks.PrepopulatedFieldsCheckTests)', 'test_one_to_one_field (modeladmin.test_checks.PrepopulatedFieldsCheckTests)', 'test_valid_case (modeladmin.test_checks.PrepopulatedFieldsCheckTests)', 'test_invalid_expression (modeladmin.test_checks.OrderingCheckTests)', 'test_not_iterable (modeladmin.test_checks.OrderingCheckTests)', 'test_random_marker_not_alone (modeladmin.test_checks.OrderingCheckTests)', 'test_valid_case (modeladmin.test_checks.OrderingCheckTests)', 'test_valid_complex_case (modeladmin.test_checks.OrderingCheckTests)', 'test_valid_expression (modeladmin.test_checks.OrderingCheckTests)', 'test_valid_random_marker_case (modeladmin.test_checks.OrderingCheckTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11551: resolved: True
+2026-10-31 02:59:40,555 - INFO - Attempting to stop container sweb.eval.django__django-11551.verified_full_claude-code...
+2026-10-31 02:59:56,407 - INFO - Container sweb.eval.django__django-11551.verified_full_claude-code stopped successfully.
+2026-10-31 02:59:56,408 - INFO - Attempting to remove container sweb.eval.django__django-11551.verified_full_claude-code...
+2026-10-31 02:59:56,458 - INFO - Container sweb.eval.django__django-11551.verified_full_claude-code removed successfully.

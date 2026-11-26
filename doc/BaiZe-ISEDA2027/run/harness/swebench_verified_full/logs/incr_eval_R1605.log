@@ -1,0 +1,64 @@
+=== incr_eval R1605 START Wed Nov  4 11:49:07 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Wed Nov  4 11:49:07 PM CST 2026] === merge cline-patched predictions ===
+cline-patched: 469 real patches merged
+[Wed Nov  4 11:49:07 PM CST 2026] === cline-patched eval START 2 instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:25<00:25, 25.50s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:25<00:25, 25.50s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.34s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.34s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.34s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched_rerun_R1605.json
+[Wed Nov  4 11:49:37 PM CST 2026] === cline-patched eval DONE ===
+[Wed Nov  4 11:49:37 PM CST 2026] === merge deepseek-harness predictions ===
+deepseek-harness: 228 real patches merged
+[Wed Nov  4 11:49:37 PM CST 2026] === deepseek-harness eval START 2 instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [01:05<01:05, 65.07s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [01:05<01:05, 65.07s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [02:15<00:00, 67.51s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [02:15<00:00, 67.51s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [02:15<00:00, 67.51s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 2
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness_rerun_R1605.json
+[Wed Nov  4 11:51:56 PM CST 2026] === deepseek-harness eval DONE ===
+[Wed Nov  4 11:51:56 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: scanned 9 run dir(s), 469 instances with report.json
+  cline-patched: WROTE eval_cline-patched.json  n=480 resolved=346 failed=123 infra=1 no_patch=10)
+  opencode: scanned 1 run dir(s), 497 instances with report.json
+  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
+  pi: scanned 1 run dir(s), 463 instances with report.json
+  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
+  claude-code: scanned 1 run dir(s), 358 instances with report.json
+  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
+  codex: scanned 2 run dir(s), 362 instances with report.json
+  codex: unchanged (n=488 resolved=284 failed=78 infra=0 no_patch=126)
+  hermes: scanned 1 run dir(s), 230 instances with report.json
+  hermes: unchanged (n=314 resolved=184 failed=46 infra=0 no_patch=84)
+  deepseek-harness: scanned 8 run dir(s), 228 instances with report.json
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=236 resolved=185 failed=43 infra=0 no_patch=8)
+[Wed Nov  4 11:51:57 PM CST 2026] === gen report HTML ===
+  pi           done=500/500 patch=463 no_patch=4 infra=25 eval=Y resolved=333
+  claude-code  done=500/500 patch=358 no_patch=67 infra=67 eval=Y resolved=273
+  codex        done=500/500 patch=362 no_patch=120 infra=12 eval=Y resolved=284
+  hermes       done=500/500 patch=229 no_patch=84 infra=185 eval=Y resolved=184
+  deepseek-harness done=449/500 patch=226 no_patch=3 infra=119 eval=Y resolved=185
+=== incr_eval R1605 DONE Wed Nov  4 11:51:57 PM CST 2026 ===

@@ -1,0 +1,74 @@
+2026-10-30 17:10:21,016 - INFO - Creating container for django__django-16429...
+2026-10-30 17:10:21,045 - INFO - Container for django__django-16429 created: ada2f40fc457d65f66f29212b094f6957ee87d0638a53da342c389214dec7a6c
+2026-10-30 17:10:22,034 - INFO - Container for django__django-16429 started: ada2f40fc457d65f66f29212b094f6957ee87d0638a53da342c389214dec7a6c
+2026-10-30 17:10:22,036 - INFO - Intermediate patch for django__django-16429 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-16429/patch.diff, now applying to container...
+2026-10-30 17:10:22,185 - INFO - >>>>> Applied Patch:
+Checking patch django/utils/timesince.py...
+Checking patch tests/utils_tests/test_timesince.py...
+Applied patch django/utils/timesince.py cleanly.
+Applied patch tests/utils_tests/test_timesince.py cleanly.
+
+2026-10-30 17:10:23,059 - INFO - Git diff before:
+diff --git a/django/utils/timesince.py b/django/utils/timesince.py
+index 701c49bab9..f582d0e4f2 100644
+--- a/django/utils/timesince.py
++++ b/django/utils/timesince.py
+@@ -97,6 +97,7 @@ def timesince(d, now=None, reversed=False, time_strings=None, depth=2):
+             d.hour,
+             d.minute,
+             d.second,
++            tzinfo=d.tzinfo,
+         )
+     else:
+         pivot = d
+diff --git a/tests/utils_tests/test_timesince.py b/tests/utils_tests/test_timesince.py
+index bf05f32f5e..bbb352a255 100644
+--- a/tests/utils_tests/test_timesince.py
++++ b/tests/utils_tests/test_timesince.py
+@@ -1,7 +1,7 @@
+ import datetime
+ 
+ from django.test import TestCase
+-from django.test.utils import requires_tz_support
++from django.test.utils import override_settings, requires_tz_support
+ from django.utils import timezone, translation
+ from django.utils.timesince import timesince, timeuntil
+ from django.utils.translation import npgettext_lazy
+@@ -136,6 +136,13 @@ class TimesinceTests(TestCase):
+         self.assertEqual(timeuntil(now_tz_i), "0\xa0minutes")
+         self.assertEqual(timeuntil(now_tz, now_tz_i), "0\xa0minutes")
+ 
++    @requires_tz_support
++    @override_settings(USE_TZ=True)
++    def test_long_interval_with_tz(self):
++        now = timezone.now()
++        d = now - datetime.timedelta(days=31)
++        self.assertEqual(timesince(d), "1\xa0month")
++
+     def test_date_objects(self):
+         """Both timesince and timeuntil should work on date objects (#17937)."""
+         today = datetime.date.today()
+2026-10-30 17:10:23,061 - INFO - Eval script for django__django-16429 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-16429/eval.sh; copying to container...
+2026-10-30 17:10:30,157 - INFO - Test runtime: 7.01 seconds
+2026-10-30 17:10:30,159 - INFO - Test output for django__django-16429 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-16429/test_output.txt
+2026-10-30 17:10:30,221 - INFO - Git diff after:
+diff --git a/django/utils/timesince.py b/django/utils/timesince.py
+index 701c49bab9..f582d0e4f2 100644
+--- a/django/utils/timesince.py
++++ b/django/utils/timesince.py
+@@ -97,6 +97,7 @@ def timesince(d, now=None, reversed=False, time_strings=None, depth=2):
+             d.hour,
+             d.minute,
+             d.second,
++            tzinfo=d.tzinfo,
+         )
+     else:
+         pivot = d
+2026-10-30 17:10:30,221 - INFO - Git diff changed after running eval script
+2026-10-30 17:10:30,221 - INFO - Grading answer for django__django-16429...
+2026-10-30 17:10:30,223 - INFO - report: {'django__django-16429': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_depth (utils_tests.test_timesince.TZAwareTimesinceTests)', 'test_depth_invalid (utils_tests.test_timesince.TZAwareTimesinceTests)', 'Test other units.', 'test_thousand_years_ago (utils_tests.test_timesince.TZAwareTimesinceTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['Timesince should work with both date objects (#9672)', 'Both timesince and timeuntil should work on date objects (#17937).', 'When using two different timezones.', "If the two differing units aren't adjacent, only the first unit is", 'When the second date occurs before the first, we should always', 'equal datetimes.', 'Microseconds and seconds are ignored.', 'test_leap_year (utils_tests.test_timesince.TZAwareTimesinceTests)', 'test_leap_year_new_years_eve (utils_tests.test_timesince.TZAwareTimesinceTests)', 'test_months_edge (utils_tests.test_timesince.TZAwareTimesinceTests)', 'Test multiple units.', 'test_naive_datetime_with_tzinfo_attribute (utils_tests.test_timesince.TZAwareTimesinceTests)', 'test_second_before_equal_first_humanize_time_strings (utils_tests.test_timesince.TZAwareTimesinceTests)', 'test_depth (utils_tests.test_timesince.TimesinceTests)', 'test_depth_invalid (utils_tests.test_timesince.TimesinceTests)', 'test_leap_year (utils_tests.test_timesince.TimesinceTests)', 'test_leap_year_new_years_eve (utils_tests.test_timesince.TimesinceTests)', 'test_months_edge (utils_tests.test_timesince.TimesinceTests)', 'test_naive_datetime_with_tzinfo_attribute (utils_tests.test_timesince.TimesinceTests)', 'test_second_before_equal_first_humanize_time_strings (utils_tests.test_timesince.TimesinceTests)', 'test_thousand_years_ago (utils_tests.test_timesince.TimesinceTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16429: resolved: True
+2026-10-30 17:10:30,224 - INFO - Attempting to stop container sweb.eval.django__django-16429.verified_full_claude-code...
+2026-10-30 17:10:45,633 - INFO - Container sweb.eval.django__django-16429.verified_full_claude-code stopped successfully.
+2026-10-30 17:10:45,633 - INFO - Attempting to remove container sweb.eval.django__django-16429.verified_full_claude-code...
+2026-10-30 17:10:45,681 - INFO - Container sweb.eval.django__django-16429.verified_full_claude-code removed successfully.

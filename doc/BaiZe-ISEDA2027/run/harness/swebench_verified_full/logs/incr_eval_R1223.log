@@ -1,0 +1,24 @@
+=== incr_eval R1223 START Sun Nov  1 11:42:43 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Sun Nov  1 11:42:43 PM CST 2026] === merge deepseek-harness predictions ===
+deepseek-harness: 93 real patches merged
+[Sun Nov  1 11:42:44 PM CST 2026] === deepseek-harness eval START: django__django-13012 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.21s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.21s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.21s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 3
+Unremoved images: 1
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[Sun Nov  1 11:43:13 PM CST 2026] === deepseek-harness eval DONE ===
+[Sun Nov  1 11:43:13 PM CST 2026] === merge hermes predictions ===
+hermes: 92 real patches merged
+[Sun Nov  1 11:43:13 PM CST 2026] === hermes eval START: django__django-11477 ===

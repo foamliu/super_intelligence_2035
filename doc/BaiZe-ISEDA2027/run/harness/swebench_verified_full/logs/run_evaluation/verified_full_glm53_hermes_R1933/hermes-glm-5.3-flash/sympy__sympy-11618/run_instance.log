@@ -1,0 +1,90 @@
+2026-11-09 07:41:21,013 - INFO - Creating container for sympy__sympy-11618...
+2026-11-09 07:41:22,914 - INFO - Removed existing container sweb.eval.sympy__sympy-11618.verified_full_glm53_hermes_R1933
+2026-11-09 07:41:22,931 - INFO - Container for sympy__sympy-11618 created: 61361e6f4319b407ef69de78e7d035ead1599f1c6140a1b884f96c0513c9877c
+2026-11-09 07:41:24,994 - INFO - Container for sympy__sympy-11618 started: 61361e6f4319b407ef69de78e7d035ead1599f1c6140a1b884f96c0513c9877c
+2026-11-09 07:41:24,995 - INFO - Intermediate patch for sympy__sympy-11618 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sympy__sympy-11618/patch.diff, now applying to container...
+2026-11-09 07:41:25,117 - INFO - >>>>> Applied Patch:
+Checking patch sympy/geometry/point.py...
+Checking patch sympy/geometry/tests/test_point.py...
+Applied patch sympy/geometry/point.py cleanly.
+Applied patch sympy/geometry/tests/test_point.py cleanly.
+
+2026-11-09 07:41:25,369 - INFO - Git diff before:
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 593048464..c49faa6fe 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -265,7 +265,19 @@ def distance(self, p):
+         >>> p3.distance(Point(0, 0))
+         sqrt(x**2 + y**2)
+ 
++        >>> Point(0, 0).distance(Point(1, 0, 2))
++        sqrt(5)
++
+         """
++        if type(p) is not type(self):
++            p1, p2 = list(self.args), list(p.args if isinstance(p, Point) else p)
++            len_diff = len(p1) - len(p2)
++            if len_diff > 0:
++                p2 += [S.Zero]*len_diff
++            else:
++                p1 += [S.Zero]*(-len_diff)
++            return sqrt(sum([(a - b)**2 for a, b in zip(p1, p2)]))
++
+         return sqrt(sum([(a - b)**2 for a, b in zip(
+             self.args, p.args if isinstance(p, Point) else p)]))
+ 
+diff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py
+index c7b2d30f1..e88a85cdb 100644
+--- a/sympy/geometry/tests/test_point.py
++++ b/sympy/geometry/tests/test_point.py
+@@ -244,6 +244,14 @@ def test_issue_9214():
+     assert Point3D.are_collinear(p1, p2, p3) is False
+ 
+ 
++def test_issue_11617():
++    p1 = Point3D(1, 0, 2)
++    p2 = Point2D(2, 0)
++
++    assert p1.distance(p2) == sqrt(5)
++    assert p2.distance(p1) == sqrt(5)
++
++
+ def test_transform():
+     p = Point(1, 1)
+     assert p.transform(rotate(pi/2)) == Point(-1, 1)
+2026-11-09 07:41:25,371 - INFO - Eval script for sympy__sympy-11618 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sympy__sympy-11618/eval.sh; copying to container...
+2026-11-09 07:41:29,388 - INFO - Test runtime: 3.96 seconds
+2026-11-09 07:41:29,389 - INFO - Test output for sympy__sympy-11618 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sympy__sympy-11618/test_output.txt
+2026-11-09 07:41:29,460 - INFO - Git diff after:
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 593048464..c49faa6fe 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -265,7 +265,19 @@ def distance(self, p):
+         >>> p3.distance(Point(0, 0))
+         sqrt(x**2 + y**2)
+ 
++        >>> Point(0, 0).distance(Point(1, 0, 2))
++        sqrt(5)
++
+         """
++        if type(p) is not type(self):
++            p1, p2 = list(self.args), list(p.args if isinstance(p, Point) else p)
++            len_diff = len(p1) - len(p2)
++            if len_diff > 0:
++                p2 += [S.Zero]*len_diff
++            else:
++                p1 += [S.Zero]*(-len_diff)
++            return sqrt(sum([(a - b)**2 for a, b in zip(p1, p2)]))
++
+         return sqrt(sum([(a - b)**2 for a, b in zip(
+             self.args, p.args if isinstance(p, Point) else p)]))
+2026-11-09 07:41:29,460 - INFO - Git diff changed after running eval script
+2026-11-09 07:41:29,460 - INFO - Grading answer for sympy__sympy-11618...
+2026-11-09 07:41:29,473 - INFO - report: {'sympy__sympy-11618': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_11617'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_point3D', 'test_Point2D', 'test_issue_9214', 'test_transform'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-11618: resolved: True
+2026-11-09 07:41:29,475 - INFO - Attempting to stop container sweb.eval.sympy__sympy-11618.verified_full_glm53_hermes_R1933...
+2026-11-09 07:41:45,439 - INFO - Container sweb.eval.sympy__sympy-11618.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 07:41:45,439 - INFO - Attempting to remove container sweb.eval.sympy__sympy-11618.verified_full_glm53_hermes_R1933...
+2026-11-09 07:41:45,490 - INFO - Container sweb.eval.sympy__sympy-11618.verified_full_glm53_hermes_R1933 removed successfully.

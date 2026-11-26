@@ -1,0 +1,74 @@
+2026-11-09 04:56:09,479 - INFO - Creating container for sympy__sympy-23534...
+2026-11-09 04:56:09,502 - INFO - Container for sympy__sympy-23534 created: edf118a95b1491c8d928094468fb31c7d9915309c138ee9f7d78ba64cf72e91a
+2026-11-09 04:56:10,431 - INFO - Container for sympy__sympy-23534 started: edf118a95b1491c8d928094468fb31c7d9915309c138ee9f7d78ba64cf72e91a
+2026-11-09 04:56:10,432 - INFO - Intermediate patch for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/sympy__sympy-23534/patch.diff, now applying to container...
+2026-11-09 04:56:10,610 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/symbol.py...
+Checking patch sympy/core/tests/test_symbol.py...
+Applied patch sympy/core/symbol.py cleanly.
+Applied patch sympy/core/tests/test_symbol.py cleanly.
+
+2026-11-09 04:56:11,279 - INFO - Git diff before:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c2083..e140564f01 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -1,5 +1,6 @@
+ from sympy.core.numbers import (I, Rational, pi)
+ from sympy.core.relational import (GreaterThan, LessThan, StrictGreaterThan, StrictLessThan)
++from sympy.core.function import Function
+ from sympy.core.symbol import (Dummy, Symbol, Wild, symbols)
+ from sympy.core.sympify import sympify  # can't import as S yet
+ from sympy.core.symbol import uniquely_named_symbol, _symbol, Str
+@@ -336,6 +337,14 @@ def test_symbols_become_functions_issue_3539():
+     raises(TypeError, lambda: phi(t))
+ 
+ 
++def test_symbols_become_functions_in_containers():
++    q, u = symbols(('q:2', 'u:2'), cls=Function)
++    assert all(type(s) is type(Function('f')) for s in q + u)
++    f, g = symbols(['f:2', 'g:2'], cls=Function)
++    assert f == (Function('f0'), Function('f1'))
++    assert g == (Function('g0'), Function('g1'))
++
++
+ def test_unicode():
+     xu = Symbol('x')
+     x = Symbol('x')
+2026-11-09 04:56:11,281 - INFO - Eval script for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/sympy__sympy-23534/eval.sh; copying to container...
+2026-11-09 04:56:15,767 - INFO - Test runtime: 4.42 seconds
+2026-11-09 04:56:15,769 - INFO - Test output for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/sympy__sympy-23534/test_output.txt
+2026-11-09 04:56:15,822 - INFO - Git diff after:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+2026-11-09 04:56:15,823 - INFO - Git diff changed after running eval script
+2026-11-09 04:56:15,823 - INFO - Grading answer for sympy__sympy-23534...
+2026-11-09 04:56:15,823 - INFO - report: {'sympy__sympy-23534': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_symbols'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Str', 'test_Symbol', 'test_Dummy', 'test_Dummy_force_dummy_index', 'test_lt_gt', 'test_no_len', 'test_ineq_unequal', 'test_Wild_properties', 'test_symbols_become_functions_issue_3539', 'test_unicode', 'test_uniquely_named_symbol_and_Symbol'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-23534: resolved: True
+2026-11-09 04:56:15,825 - INFO - Attempting to stop container sweb.eval.sympy__sympy-23534.verified_full_glm53_codex_R1933...
+2026-11-09 04:56:31,917 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_glm53_codex_R1933 stopped successfully.
+2026-11-09 04:56:31,918 - INFO - Attempting to remove container sweb.eval.sympy__sympy-23534.verified_full_glm53_codex_R1933...
+2026-11-09 04:56:31,973 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_glm53_codex_R1933 removed successfully.

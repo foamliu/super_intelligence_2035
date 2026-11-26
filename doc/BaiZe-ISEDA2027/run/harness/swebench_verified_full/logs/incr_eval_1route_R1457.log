@@ -1,0 +1,24 @@
+=== incr_eval_1route R1457 START Tue Nov  3 08:24:03 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Tue Nov  3 08:24:03 PM CST 2026] === merge codex predictions ===
+codex: 316 real patches merged
+[Tue Nov  3 08:24:03 PM CST 2026] === codex eval START 2 new instances ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:23<00:23, 23.20s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:23<00:23, 23.20s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:24<00:00, 12.41s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:24<00:00, 12.41s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:24<00:00, 12.41s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 2
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[Tue Nov  3 08:24:32 PM CST 2026] === codex eval DONE ===
+[Tue Nov  3 08:24:32 PM CST 2026] === merge deepseek-harness predictions ===
+deepseek-harness: 166 real patches merged
+[Tue Nov  3 08:24:32 PM CST 2026] === deepseek-harness eval START 1 new instances ===

@@ -1,0 +1,111 @@
+2026-10-30 15:44:36,888 - INFO - Creating container for matplotlib__matplotlib-20676...
+2026-10-30 15:44:36,921 - INFO - Container for matplotlib__matplotlib-20676 created: cbae32fc1812cc77d8755ffade8f8550b402836724ccded330d0288c97053b7b
+2026-10-30 15:44:38,422 - INFO - Container for matplotlib__matplotlib-20676 started: cbae32fc1812cc77d8755ffade8f8550b402836724ccded330d0288c97053b7b
+2026-10-30 15:44:38,424 - INFO - Intermediate patch for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-20676/patch.diff, now applying to container...
+2026-10-30 15:44:38,600 - INFO - >>>>> Applied Patch:
+Checking patch lib/matplotlib/tests/test_widgets.py...
+Checking patch lib/matplotlib/widgets.py...
+Applied patch lib/matplotlib/tests/test_widgets.py cleanly.
+Applied patch lib/matplotlib/widgets.py cleanly.
+
+2026-10-30 15:44:40,701 - INFO - Git diff before:
+diff --git a/lib/matplotlib/tests/test_widgets.py b/lib/matplotlib/tests/test_widgets.py
+index 71ebd176f..a5333865a 100644
+--- a/lib/matplotlib/tests/test_widgets.py
++++ b/lib/matplotlib/tests/test_widgets.py
+@@ -280,6 +280,25 @@ def test_span_selector_direction():
+         tool.direction = 'invalid_string'
+ 
+ 
++def test_span_selector_interactive_does_not_expand_axes():
++    # Regression test for GH issue: interactive SpanSelector should not
++    # force axes limits to include 0.
++    ax = get_ax()
++    ax.set_xlim(10, 20)
++    ax.set_ylim(10, 20)
++
++    def onselect(vmin, vmax):
++        pass
++
++    tool = widgets.SpanSelector(ax, onselect, 'horizontal', interactive=True)
++    assert ax.get_xlim() == (10, 20)
++    assert ax.get_ylim() == (10, 20)
++
++    tool.direction = 'vertical'
++    assert ax.get_xlim() == (10, 20)
++    assert ax.get_ylim() == (10, 20)
++
++
+ def test_tool_line_handle():
+     ax = get_ax()
+ 
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index a199e45d4..01ac36182 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -2366,10 +2366,21 @@ class ToolLineHandles:
+             line_props = {}
+         line_props.update({'visible': False, 'animated': useblit})
+ 
+-        line_fun = ax.axvline if self.direction == 'horizontal' else ax.axhline
+-        self._line_props = line_props
++        if self.direction == 'horizontal':
++            trans = ax.get_xaxis_transform()
++            self.artists = [
++                Line2D([p, p], [0, 1], transform=trans, **line_props)
++                for p in positions]
++        else:
++            trans = ax.get_yaxis_transform()
++            self.artists = [
++                Line2D([0, 1], [p, p], transform=trans, **line_props)
++                for p in positions]
++
++        for artist in self.artists:
++            ax.add_line(artist)
+ 
+-        self.artists = [line_fun(p, **line_props) for p in positions]
++        self._line_props = line_props
+ 
+     @property
+     def positions(self):
+2026-10-30 15:44:40,704 - INFO - Eval script for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-20676/eval.sh; copying to container...
+2026-10-30 15:44:56,718 - INFO - Test runtime: 15.94 seconds
+2026-10-30 15:44:56,721 - INFO - Test output for matplotlib__matplotlib-20676 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/matplotlib__matplotlib-20676/test_output.txt
+2026-10-30 15:44:56,817 - INFO - Git diff after:
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index a199e45d4..01ac36182 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -2366,10 +2366,21 @@ class ToolLineHandles:
+             line_props = {}
+         line_props.update({'visible': False, 'animated': useblit})
+ 
+-        line_fun = ax.axvline if self.direction == 'horizontal' else ax.axhline
+-        self._line_props = line_props
++        if self.direction == 'horizontal':
++            trans = ax.get_xaxis_transform()
++            self.artists = [
++                Line2D([p, p], [0, 1], transform=trans, **line_props)
++                for p in positions]
++        else:
++            trans = ax.get_yaxis_transform()
++            self.artists = [
++                Line2D([0, 1], [p, p], transform=trans, **line_props)
++                for p in positions]
++
++        for artist in self.artists:
++            ax.add_line(artist)
+ 
+-        self.artists = [line_fun(p, **line_props) for p in positions]
++        self._line_props = line_props
+ 
+     @property
+     def positions(self):
+2026-10-30 15:44:56,818 - INFO - Git diff changed after running eval script
+2026-10-30 15:44:56,818 - INFO - Grading answer for matplotlib__matplotlib-20676...
+2026-10-30 15:44:56,823 - INFO - report: {'matplotlib__matplotlib-20676': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['lib/matplotlib/tests/test_widgets.py::test_span_selector_bound[horizontal]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_bound[vertical]']}, 'PASS_TO_PASS': {'success': ['lib/matplotlib/tests/test_widgets.py::test_rectangle_drag[True-new_center0]', 'lib/matplotlib/tests/test_widgets.py::test_rectangle_drag[False-new_center1]', 'lib/matplotlib/tests/test_widgets.py::test_ellipse', 'lib/matplotlib/tests/test_widgets.py::test_rectangle_handles', 'lib/matplotlib/tests/test_widgets.py::test_span_selector', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_drag[True]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_drag[False]', 'lib/matplotlib/tests/test_widgets.py::test_span_selector_direction', 'lib/matplotlib/tests/test_widgets.py::test_tool_line_handle', 'lib/matplotlib/tests/test_widgets.py::test_lasso_selector', 'lib/matplotlib/tests/test_widgets.py::test_CheckButtons', 'lib/matplotlib/tests/test_widgets.py::test_TextBox', 'lib/matplotlib/tests/test_widgets.py::test_check_radio_buttons_image[png]', 'lib/matplotlib/tests/test_widgets.py::test_check_bunch_of_radio_buttons[png]', 'lib/matplotlib/tests/test_widgets.py::test_slider_slidermin_slidermax_invalid', 'lib/matplotlib/tests/test_widgets.py::test_slider_slidermin_slidermax', 'lib/matplotlib/tests/test_widgets.py::test_slider_valmin_valmax', 'lib/matplotlib/tests/test_widgets.py::test_slider_valstep_snapping', 'lib/matplotlib/tests/test_widgets.py::test_slider_horizontal_vertical', 'lib/matplotlib/tests/test_widgets.py::test_range_slider[horizontal]', 'lib/matplotlib/tests/test_widgets.py::test_range_slider[vertical]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[True-True]', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[True-False]', 'lib/matplotlib/tests/test_widgets.py::test_MultiCursor[False-True]', 'lib/matplotlib/tests/test_widgets.py::test_rect_visibility[png]', 'lib/matplotlib/tests/test_widgets.py::test_rect_visibility[pdf]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[1]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[2]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove[3]', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_remove_first_point', 'lib/matplotlib/tests/test_widgets.py::test_polygon_selector_redraw'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for matplotlib__matplotlib-20676: resolved: False
+2026-10-30 15:44:56,824 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-20676.verified_full_opencode...
+2026-10-30 15:45:12,227 - INFO - Container sweb.eval.matplotlib__matplotlib-20676.verified_full_opencode stopped successfully.
+2026-10-30 15:45:12,228 - INFO - Attempting to remove container sweb.eval.matplotlib__matplotlib-20676.verified_full_opencode...
+2026-10-30 15:45:12,277 - INFO - Container sweb.eval.matplotlib__matplotlib-20676.verified_full_opencode removed successfully.

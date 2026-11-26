@@ -1,0 +1,281 @@
+2026-10-31 22:19:57,600 - INFO - Creating container for django__django-13568...
+2026-10-31 22:19:57,623 - INFO - Container for django__django-13568 created: be399345c0680a1addfed95e13a85f7fc2cc8ad592a3c1107261fa5031c019d8
+2026-10-31 22:19:58,115 - INFO - Container for django__django-13568 started: be399345c0680a1addfed95e13a85f7fc2cc8ad592a3c1107261fa5031c019d8
+2026-10-31 22:19:58,117 - INFO - Intermediate patch for django__django-13568 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-13568/patch.diff, now applying to container...
+2026-10-31 22:19:58,272 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/auth/checks.py...
+Checking patch tests/auth_tests/models/__init__.py...
+Checking patch tests/auth_tests/models/invalid_models.py...
+Checking patch tests/auth_tests/test_checks.py...
+Applied patch django/contrib/auth/checks.py cleanly.
+Applied patch tests/auth_tests/models/__init__.py cleanly.
+Applied patch tests/auth_tests/models/invalid_models.py cleanly.
+Applied patch tests/auth_tests/test_checks.py cleanly.
+
+2026-10-31 22:19:59,630 - INFO - Git diff before:
+diff --git a/django/contrib/auth/checks.py b/django/contrib/auth/checks.py
+index 65fc266f7e..ff42cbc5b3 100644
+--- a/django/contrib/auth/checks.py
++++ b/django/contrib/auth/checks.py
+@@ -4,6 +4,7 @@ from types import MethodType
+ from django.apps import apps
+ from django.conf import settings
+ from django.core import checks
++from django.db.models.constraints import UniqueConstraint
+ 
+ from .management import _get_builtin_permissions
+ 
+@@ -52,7 +53,13 @@ def check_user_model(app_configs=None, **kwargs):
+         )
+ 
+     # Check that the username field is unique
+-    if not cls._meta.get_field(cls.USERNAME_FIELD).unique:
++    if not cls._meta.get_field(cls.USERNAME_FIELD).unique and not any(
++        isinstance(constraint, UniqueConstraint) and
++        len(constraint.fields) == 1 and
++        constraint.fields[0] == cls.USERNAME_FIELD and
++        constraint.condition is None
++        for constraint in cls._meta.constraints
++    ):
+         if (settings.AUTHENTICATION_BACKENDS ==
+                 ['django.contrib.auth.backends.ModelBackend']):
+             errors.append(
+diff --git a/tests/auth_tests/models/__init__.py b/tests/auth_tests/models/__init__.py
+index 003d8eeaa7..61e29aec34 100644
+--- a/tests/auth_tests/models/__init__.py
++++ b/tests/auth_tests/models/__init__.py
+@@ -2,7 +2,10 @@ from .custom_permissions import CustomPermissionsUser
+ from .custom_user import (
+     CustomUser, CustomUserWithoutIsActiveField, ExtensionUser,
+ )
+-from .invalid_models import CustomUserNonUniqueUsername
++from .invalid_models import (
++    CustomUserConditionalUniqueConstraintUsername,
++    CustomUserNonUniqueUsername, CustomUserUniqueConstraintUsername,
++)
+ from .is_active import IsActiveTestUser1
+ from .minimal import MinimalUser
+ from .no_password import NoPasswordUser
+@@ -16,8 +19,9 @@ from .with_many_to_many import (
+ )
+ 
+ __all__ = (
+-    'CustomPermissionsUser', 'CustomUser', 'CustomUserNonUniqueUsername',
+-    'CustomUserWithFK', 'CustomUserWithM2M', 'CustomUserWithM2MThrough',
++    'CustomPermissionsUser', 'CustomUser', 'CustomUserConditionalUniqueConstraintUsername',
++    'CustomUserNonUniqueUsername', 'CustomUserUniqueConstraintUsername', 'CustomUserWithFK',
++    'CustomUserWithM2M', 'CustomUserWithM2MThrough',
+     'CustomUserWithoutIsActiveField', 'Email', 'ExtensionUser',
+     'IntegerUsernameUser', 'IsActiveTestUser1', 'MinimalUser',
+     'NoPasswordUser', 'Organization', 'Proxy', 'UUIDUser', 'UserProxy',
+diff --git a/tests/auth_tests/models/invalid_models.py b/tests/auth_tests/models/invalid_models.py
+index 123ed4d865..109a888772 100644
+--- a/tests/auth_tests/models/invalid_models.py
++++ b/tests/auth_tests/models/invalid_models.py
+@@ -18,3 +18,43 @@ class CustomUserNonUniqueUsername(AbstractBaseUser):
+     REQUIRED_FIELDS = ['email']
+ 
+     objects = UserManager()
++
++
++class CustomUserUniqueConstraintUsername(AbstractBaseUser):
++    """A user with a UniqueConstraint on the username field."""
++    username = models.CharField(max_length=30)
++    email = models.EmailField(blank=True)
++    is_staff = models.BooleanField(default=False)
++    is_superuser = models.BooleanField(default=False)
++
++    USERNAME_FIELD = 'username'
++    REQUIRED_FIELDS = ['email']
++
++    objects = UserManager()
++
++    class Meta:
++        constraints = [
++            models.UniqueConstraint(fields=['username'], name='user_username_unq'),
++        ]
++
++
++class CustomUserConditionalUniqueConstraintUsername(AbstractBaseUser):
++    """A user with a conditional UniqueConstraint on the username field."""
++    username = models.CharField(max_length=30)
++    email = models.EmailField(blank=True)
++    is_staff = models.BooleanField(default=False)
++    is_superuser = models.BooleanField(default=False)
++
++    USERNAME_FIELD = 'username'
++    REQUIRED_FIELDS = ['email']
++
++    objects = UserManager()
++
++    class Meta:
++        constraints = [
++            models.UniqueConstraint(
++                fields=['username'],
++                name='user_username_active_unq',
++                condition=models.Q(is_staff=True),
++            ),
++        ]
+diff --git a/tests/auth_tests/test_checks.py b/tests/auth_tests/test_checks.py
+index cfaa4063f8..ddcf9fadeb 100644
+--- a/tests/auth_tests/test_checks.py
++++ b/tests/auth_tests/test_checks.py
+@@ -9,7 +9,10 @@ from django.test import (
+ )
+ from django.test.utils import isolate_apps
+ 
+-from .models import CustomUserNonUniqueUsername
++from .models import (
++    CustomUserConditionalUniqueConstraintUsername,
++    CustomUserNonUniqueUsername, CustomUserUniqueConstraintUsername,
++)
+ 
+ 
+ @isolate_apps('auth_tests', attr_name='apps')
+@@ -85,6 +88,31 @@ class UserModelChecksTests(SimpleTestCase):
+                 ),
+             ])
+ 
++    @override_settings(AUTH_USER_MODEL='auth_tests.CustomUserUniqueConstraintUsername')
++    def test_username_unique_constraint(self):
++        """
++        A UniqueConstraint on USERNAME_FIELD without a condition should pass
++        the uniqueness check.
++        """
++        errors = checks.run_checks()
++        self.assertEqual(errors, [])
++
++    @override_settings(AUTH_USER_MODEL='auth_tests.CustomUserConditionalUniqueConstraintUsername')
++    def test_username_conditional_unique_constraint(self):
++        """
++        A conditional UniqueConstraint on USERNAME_FIELD does not satisfy the
++        uniqueness check.
++        """
++        errors = checks.run_checks()
++        self.assertEqual(errors, [
++            checks.Error(
++                "'CustomUserConditionalUniqueConstraintUsername.username' must be "
++                "unique because it is named as the 'USERNAME_FIELD'.",
++                obj=CustomUserConditionalUniqueConstraintUsername,
++                id='auth.E003',
++            ),
++        ])
++
+     @override_settings(AUTH_USER_MODEL='auth_tests.BadUser')
+     def test_is_anonymous_authenticated_methods(self):
+         """
+2026-10-31 22:19:59,634 - INFO - Eval script for django__django-13568 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-13568/eval.sh; copying to container...
+2026-10-31 22:20:06,014 - INFO - Test runtime: 6.27 seconds
+2026-10-31 22:20:06,017 - INFO - Test output for django__django-13568 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/django__django-13568/test_output.txt
+2026-10-31 22:20:06,097 - INFO - Git diff after:
+diff --git a/django/contrib/auth/checks.py b/django/contrib/auth/checks.py
+index 65fc266f7e..ff42cbc5b3 100644
+--- a/django/contrib/auth/checks.py
++++ b/django/contrib/auth/checks.py
+@@ -4,6 +4,7 @@ from types import MethodType
+ from django.apps import apps
+ from django.conf import settings
+ from django.core import checks
++from django.db.models.constraints import UniqueConstraint
+ 
+ from .management import _get_builtin_permissions
+ 
+@@ -52,7 +53,13 @@ def check_user_model(app_configs=None, **kwargs):
+         )
+ 
+     # Check that the username field is unique
+-    if not cls._meta.get_field(cls.USERNAME_FIELD).unique:
++    if not cls._meta.get_field(cls.USERNAME_FIELD).unique and not any(
++        isinstance(constraint, UniqueConstraint) and
++        len(constraint.fields) == 1 and
++        constraint.fields[0] == cls.USERNAME_FIELD and
++        constraint.condition is None
++        for constraint in cls._meta.constraints
++    ):
+         if (settings.AUTHENTICATION_BACKENDS ==
+                 ['django.contrib.auth.backends.ModelBackend']):
+             errors.append(
+diff --git a/tests/auth_tests/models/__init__.py b/tests/auth_tests/models/__init__.py
+index 003d8eeaa7..61e29aec34 100644
+--- a/tests/auth_tests/models/__init__.py
++++ b/tests/auth_tests/models/__init__.py
+@@ -2,7 +2,10 @@ from .custom_permissions import CustomPermissionsUser
+ from .custom_user import (
+     CustomUser, CustomUserWithoutIsActiveField, ExtensionUser,
+ )
+-from .invalid_models import CustomUserNonUniqueUsername
++from .invalid_models import (
++    CustomUserConditionalUniqueConstraintUsername,
++    CustomUserNonUniqueUsername, CustomUserUniqueConstraintUsername,
++)
+ from .is_active import IsActiveTestUser1
+ from .minimal import MinimalUser
+ from .no_password import NoPasswordUser
+@@ -16,8 +19,9 @@ from .with_many_to_many import (
+ )
+ 
+ __all__ = (
+-    'CustomPermissionsUser', 'CustomUser', 'CustomUserNonUniqueUsername',
+-    'CustomUserWithFK', 'CustomUserWithM2M', 'CustomUserWithM2MThrough',
++    'CustomPermissionsUser', 'CustomUser', 'CustomUserConditionalUniqueConstraintUsername',
++    'CustomUserNonUniqueUsername', 'CustomUserUniqueConstraintUsername', 'CustomUserWithFK',
++    'CustomUserWithM2M', 'CustomUserWithM2MThrough',
+     'CustomUserWithoutIsActiveField', 'Email', 'ExtensionUser',
+     'IntegerUsernameUser', 'IsActiveTestUser1', 'MinimalUser',
+     'NoPasswordUser', 'Organization', 'Proxy', 'UUIDUser', 'UserProxy',
+diff --git a/tests/auth_tests/models/invalid_models.py b/tests/auth_tests/models/invalid_models.py
+index 123ed4d865..109a888772 100644
+--- a/tests/auth_tests/models/invalid_models.py
++++ b/tests/auth_tests/models/invalid_models.py
+@@ -18,3 +18,43 @@ class CustomUserNonUniqueUsername(AbstractBaseUser):
+     REQUIRED_FIELDS = ['email']
+ 
+     objects = UserManager()
++
++
++class CustomUserUniqueConstraintUsername(AbstractBaseUser):
++    """A user with a UniqueConstraint on the username field."""
++    username = models.CharField(max_length=30)
++    email = models.EmailField(blank=True)
++    is_staff = models.BooleanField(default=False)
++    is_superuser = models.BooleanField(default=False)
++
++    USERNAME_FIELD = 'username'
++    REQUIRED_FIELDS = ['email']
++
++    objects = UserManager()
++
++    class Meta:
++        constraints = [
++            models.UniqueConstraint(fields=['username'], name='user_username_unq'),
++        ]
++
++
++class CustomUserConditionalUniqueConstraintUsername(AbstractBaseUser):
++    """A user with a conditional UniqueConstraint on the username field."""
++    username = models.CharField(max_length=30)
++    email = models.EmailField(blank=True)
++    is_staff = models.BooleanField(default=False)
++    is_superuser = models.BooleanField(default=False)
++
++    USERNAME_FIELD = 'username'
++    REQUIRED_FIELDS = ['email']
++
++    objects = UserManager()
++
++    class Meta:
++        constraints = [
++            models.UniqueConstraint(
++                fields=['username'],
++                name='user_username_active_unq',
++                condition=models.Q(is_staff=True),
++            ),
++        ]
+2026-10-31 22:20:06,097 - INFO - Git diff changed after running eval script
+2026-10-31 22:20:06,097 - INFO - Grading answer for django__django-13568...
+2026-10-31 22:20:06,099 - INFO - report: {'django__django-13568': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_username_unique_with_model_constraint (auth_tests.test_checks.UserModelChecksTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_clashing_custom_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_clashing_default_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_custom_permission_codename_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_custom_permission_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_empty_default_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_model_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_non_clashing_custom_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_verbose_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_is_anonymous_authenticated_methods (auth_tests.test_checks.UserModelChecksTests)', 'REQUIRED_FIELDS should be a list.', 'test_username_non_unique (auth_tests.test_checks.UserModelChecksTests)', 'USERNAME_FIELD should not appear in REQUIRED_FIELDS.', 'test_username_partially_unique (auth_tests.test_checks.UserModelChecksTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13568: resolved: True
+2026-10-31 22:20:06,101 - INFO - Attempting to stop container sweb.eval.django__django-13568.verified_full_claude-code...
+2026-10-31 22:20:21,699 - INFO - Container sweb.eval.django__django-13568.verified_full_claude-code stopped successfully.
+2026-10-31 22:20:21,699 - INFO - Attempting to remove container sweb.eval.django__django-13568.verified_full_claude-code...
+2026-10-31 22:20:21,756 - INFO - Container sweb.eval.django__django-13568.verified_full_claude-code removed successfully.

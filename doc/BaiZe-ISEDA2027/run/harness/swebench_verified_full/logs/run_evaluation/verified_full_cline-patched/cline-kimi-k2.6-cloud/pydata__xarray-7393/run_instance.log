@@ -1,0 +1,132 @@
+2026-10-30 16:26:44,088 - INFO - Creating container for pydata__xarray-7393...
+2026-10-30 16:26:44,127 - INFO - Container for pydata__xarray-7393 created: c2dbd7fdd29ff34fb7f75c9b6c14e1e213a5514dcc0d2c23b1f3055ffe41d371
+2026-10-30 16:26:45,073 - INFO - Container for pydata__xarray-7393 started: c2dbd7fdd29ff34fb7f75c9b6c14e1e213a5514dcc0d2c23b1f3055ffe41d371
+2026-10-30 16:26:45,076 - INFO - Intermediate patch for pydata__xarray-7393 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pydata__xarray-7393/patch.diff, now applying to container...
+2026-10-30 16:26:45,231 - INFO - >>>>> Applied Patch:
+Checking patch xarray/core/indexing.py...
+Checking patch xarray/tests/test_dataset.py...
+Checking patch xarray/tests/test_indexing.py...
+Applied patch xarray/core/indexing.py cleanly.
+Applied patch xarray/tests/test_dataset.py cleanly.
+Applied patch xarray/tests/test_indexing.py cleanly.
+
+2026-10-30 16:26:45,390 - INFO - Git diff before:
+diff --git a/xarray/core/indexing.py b/xarray/core/indexing.py
+index ba937183..50bedf7b 100644
+--- a/xarray/core/indexing.py
++++ b/xarray/core/indexing.py
+@@ -1532,7 +1532,9 @@ class PandasMultiIndexingAdapter(PandasIndexingAdapter):
+ 
+     def __array__(self, dtype: DTypeLike = None) -> np.ndarray:
+         if self.level is not None:
+-            return self.array.get_level_values(self.level).values
++            if dtype is None:
++                dtype = self.dtype
++            return np.asarray(self.array.get_level_values(self.level).values, dtype=dtype)
+         else:
+             return super().__array__(dtype)
+ 
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 6ab4c40c..d086e467 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3526,6 +3526,11 @@ class TestDataset:
+         assert_identical(expected, actual)
+         assert list(actual.xindexes) == ["z", "xx", "y"]
+ 
++    def test_stack_preserves_dtype(self) -> None:
++        ds = Dataset(coords={"a": np.array([0], dtype="i4")})
++        stacked = ds.stack(b=("a",))
++        assert ds["a"].values.dtype == stacked["a"].values.dtype
++
+     def test_unstack(self) -> None:
+         index = pd.MultiIndex.from_product([[0, 1], ["a", "b"]], names=["x", "y"])
+         ds = Dataset(data_vars={"b": ("z", [0, 1, 2, 3])}, coords={"z": index})
+diff --git a/xarray/tests/test_indexing.py b/xarray/tests/test_indexing.py
+index b28aebe6..fa2af46e 100644
+--- a/xarray/tests/test_indexing.py
++++ b/xarray/tests/test_indexing.py
+@@ -822,3 +822,18 @@ def test_indexing_1d_object_array() -> None:
+     expected = DataArray(expected_data)
+ 
+     assert [actual.data.item()] == [expected.data.item()]
++
++
++def test_pandas_multi_indexing_adapter_dtype() -> None:
++    idx = pd.MultiIndex.from_arrays([np.array([0], dtype="i4")], names=["a"])
++    adapter = indexing.PandasMultiIndexingAdapter(
++        idx, dtype=np.dtype("float64"), level="a"
++    )
++    result = np.asarray(adapter)
++    assert result.dtype == np.dtype("float64")
++
++    adapter_int = indexing.PandasMultiIndexingAdapter(
++        idx, dtype=np.dtype("int32"), level="a"
++    )
++    result_int = np.asarray(adapter_int)
++    assert result_int.dtype == np.dtype("int32")
+2026-10-30 16:26:45,393 - INFO - Eval script for pydata__xarray-7393 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pydata__xarray-7393/eval.sh; copying to container...
+2026-10-30 16:26:57,604 - INFO - Test runtime: 12.12 seconds
+2026-10-30 16:26:57,607 - INFO - Test output for pydata__xarray-7393 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pydata__xarray-7393/test_output.txt
+2026-10-30 16:26:57,685 - INFO - Git diff after:
+diff --git a/xarray/core/indexing.py b/xarray/core/indexing.py
+index ba937183..50bedf7b 100644
+--- a/xarray/core/indexing.py
++++ b/xarray/core/indexing.py
+@@ -1532,7 +1532,9 @@ class PandasMultiIndexingAdapter(PandasIndexingAdapter):
+ 
+     def __array__(self, dtype: DTypeLike = None) -> np.ndarray:
+         if self.level is not None:
+-            return self.array.get_level_values(self.level).values
++            if dtype is None:
++                dtype = self.dtype
++            return np.asarray(self.array.get_level_values(self.level).values, dtype=dtype)
+         else:
+             return super().__array__(dtype)
+ 
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 6ab4c40c..d086e467 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3526,6 +3526,11 @@ class TestDataset:
+         assert_identical(expected, actual)
+         assert list(actual.xindexes) == ["z", "xx", "y"]
+ 
++    def test_stack_preserves_dtype(self) -> None:
++        ds = Dataset(coords={"a": np.array([0], dtype="i4")})
++        stacked = ds.stack(b=("a",))
++        assert ds["a"].values.dtype == stacked["a"].values.dtype
++
+     def test_unstack(self) -> None:
+         index = pd.MultiIndex.from_product([[0, 1], ["a", "b"]], names=["x", "y"])
+         ds = Dataset(data_vars={"b": ("z", [0, 1, 2, 3])}, coords={"z": index})
+diff --git a/xarray/tests/test_indexing.py b/xarray/tests/test_indexing.py
+index b28aebe6..fa2af46e 100644
+--- a/xarray/tests/test_indexing.py
++++ b/xarray/tests/test_indexing.py
+@@ -822,3 +822,18 @@ def test_indexing_1d_object_array() -> None:
+     expected = DataArray(expected_data)
+ 
+     assert [actual.data.item()] == [expected.data.item()]
++
++
++def test_pandas_multi_indexing_adapter_dtype() -> None:
++    idx = pd.MultiIndex.from_arrays([np.array([0], dtype="i4")], names=["a"])
++    adapter = indexing.PandasMultiIndexingAdapter(
++        idx, dtype=np.dtype("float64"), level="a"
++    )
++    result = np.asarray(adapter)
++    assert result.dtype == np.dtype("float64")
++
++    adapter_int = indexing.PandasMultiIndexingAdapter(
++        idx, dtype=np.dtype("int32"), level="a"
++    )
++    result_int = np.asarray(adapter_int)
++    assert result_int.dtype == np.dtype("int32")
+2026-10-30 16:26:57,685 - INFO - Grading answer for pydata__xarray-7393...
+2026-10-30 16:26:57,687 - INFO - report: {'pydata__xarray-7393': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['xarray/tests/test_indexes.py::test_restore_dtype_on_multiindexes[int32]', 'xarray/tests/test_indexes.py::test_restore_dtype_on_multiindexes[float32]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['xarray/tests/test_indexes.py::test_asarray_tuplesafe', 'xarray/tests/test_indexes.py::TestIndex::test_from_variables', 'xarray/tests/test_indexes.py::TestIndex::test_concat', 'xarray/tests/test_indexes.py::TestIndex::test_stack', 'xarray/tests/test_indexes.py::TestIndex::test_unstack', 'xarray/tests/test_indexes.py::TestIndex::test_create_variables', 'xarray/tests/test_indexes.py::TestIndex::test_to_pandas_index', 'xarray/tests/test_indexes.py::TestIndex::test_isel', 'xarray/tests/test_indexes.py::TestIndex::test_sel', 'xarray/tests/test_indexes.py::TestIndex::test_join', 'xarray/tests/test_indexes.py::TestIndex::test_reindex_like', 'xarray/tests/test_indexes.py::TestIndex::test_equals', 'xarray/tests/test_indexes.py::TestIndex::test_roll', 'xarray/tests/test_indexes.py::TestIndex::test_rename', 'xarray/tests/test_indexes.py::TestIndex::test_copy[True]', 'xarray/tests/test_indexes.py::TestIndex::test_copy[False]', 'xarray/tests/test_indexes.py::TestIndex::test_getitem', 'xarray/tests/test_indexes.py::TestPandasIndex::test_constructor', 'xarray/tests/test_indexes.py::TestPandasIndex::test_from_variables', 'xarray/tests/test_indexes.py::TestPandasIndex::test_from_variables_index_adapter', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_periods', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_str_dtype[str]', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_str_dtype[bytes]', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_empty', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_dim_error', 'xarray/tests/test_indexes.py::TestPandasIndex::test_create_variables', 'xarray/tests/test_indexes.py::TestPandasIndex::test_to_pandas_index', 'xarray/tests/test_indexes.py::TestPandasIndex::test_sel', 'xarray/tests/test_indexes.py::TestPandasIndex::test_sel_boolean', 'xarray/tests/test_indexes.py::TestPandasIndex::test_sel_datetime', 'xarray/tests/test_indexes.py::TestPandasIndex::test_sel_unsorted_datetime_index_raises', 'xarray/tests/test_indexes.py::TestPandasIndex::test_equals', 'xarray/tests/test_indexes.py::TestPandasIndex::test_join', 'xarray/tests/test_indexes.py::TestPandasIndex::test_reindex_like', 'xarray/tests/test_indexes.py::TestPandasIndex::test_rename', 'xarray/tests/test_indexes.py::TestPandasIndex::test_copy', 'xarray/tests/test_indexes.py::TestPandasIndex::test_getitem', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_constructor', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_from_variables', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_concat', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_stack', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_stack_non_unique', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_unstack', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_create_variables', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_sel', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_join', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_rename', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_copy', 'xarray/tests/test_indexes.py::TestIndexes::test_interface[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_interface[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_variables[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_variables[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_dims[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_dims[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_unique[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_unique[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_is_multi[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_is_multi[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_all_coords[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_all_coords[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_all_dims[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_all_dims[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_group_by_index[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_group_by_index[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_to_pandas_indexes[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_to_pandas_indexes[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_copy_indexes[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_copy_indexes[xr_index]', 'xarray/tests/test_indexes.py::test_safe_cast_to_index', 'xarray/tests/test_indexes.py::test_safe_cast_to_index_cftimeindex', 'xarray/tests/test_indexes.py::test_safe_cast_to_index_datetime_datetime'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pydata__xarray-7393: resolved: True
+2026-10-30 16:26:57,689 - INFO - Attempting to stop container sweb.eval.pydata__xarray-7393.verified_full_cline-patched...
+2026-10-30 16:27:13,568 - INFO - Container sweb.eval.pydata__xarray-7393.verified_full_cline-patched stopped successfully.
+2026-10-30 16:27:13,568 - INFO - Attempting to remove container sweb.eval.pydata__xarray-7393.verified_full_cline-patched...
+2026-10-30 16:27:13,615 - INFO - Container sweb.eval.pydata__xarray-7393.verified_full_cline-patched removed successfully.

@@ -1,0 +1,33 @@
+Running 6 instances...
+All instances run.
+Total instances: 6
+Instances submitted: 6
+Instances completed: 6
+Instances incomplete: 0
+Instances resolved: 4
+Instances unresolved: 2
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 6
+Report written to logs/evaluation/verified_full_glm53_cline-patched_incr_R2765/results.json
+
+[stderr]
+<unknown>:0: DeprecationError: 2026-11-04: Python 3.10 is EOL and Modal will not support it in version 1.7.0. Please upgrade your local Python to 3.11 or later.
+
+  0%|          | 0/6 [00:00<?, ?it/s]
+ 17%|█▋        | 1/6 [00:22<01:54, 22.86s/it]
+1 ran successfully, 0 failed:  17%|█▋        | 1/6 [00:22<01:54, 22.86s/it]
+1 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:45<01:31, 22.88s/it]
+2 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:45<01:31, 22.88s/it]
+2 ran successfully, 0 failed:  50%|█████     | 3/6 [01:08<01:08, 22.98s/it]
+3 ran successfully, 0 failed:  50%|█████     | 3/6 [01:08<01:08, 22.98s/it]
+3 ran successfully, 0 failed:  67%|██████▋   | 4/6 [01:36<00:48, 24.09s/it]
+4 ran successfully, 0 failed:  67%|██████▋   | 4/6 [01:36<00:48, 24.09s/it]
+4 ran successfully, 0 failed:  83%|████████▎ | 5/6 [02:03<00:24, 24.68s/it]
+5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [02:03<00:24, 24.68s/it]
+5 ran successfully, 0 failed: 100%|██████████| 6/6 [02:28<00:00, 24.69s/it]
+6 ran successfully, 0 failed: 100%|██████████| 6/6 [02:28<00:00, 24.69s/it]
+6 ran successfully, 0 failed: 100%|██████████| 6/6 [02:28<00:00, 24.69s/it]

@@ -1,0 +1,88 @@
+2026-10-30 16:52:05,032 - INFO - Creating container for django__django-13820...
+2026-10-30 16:52:05,054 - INFO - Container for django__django-13820 created: 32054ad0480a10abc9ac6c2f1ebc5d5b7032a69c3865a9ee24f370b0309c0c4e
+2026-10-30 16:52:05,656 - INFO - Container for django__django-13820 started: 32054ad0480a10abc9ac6c2f1ebc5d5b7032a69c3865a9ee24f370b0309c0c4e
+2026-10-30 16:52:05,657 - INFO - Intermediate patch for django__django-13820 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13820/patch.diff, now applying to container...
+2026-10-30 16:52:05,803 - INFO - >>>>> Applied Patch:
+Checking patch django/db/migrations/loader.py...
+Checking patch tests/migrations/test_loader.py...
+Applied patch django/db/migrations/loader.py cleanly.
+Applied patch tests/migrations/test_loader.py cleanly.
+
+2026-10-30 16:52:07,151 - INFO - Git diff before:
+diff --git a/django/db/migrations/loader.py b/django/db/migrations/loader.py
+index 95a5062ec9..5e51194bbd 100644
+--- a/django/db/migrations/loader.py
++++ b/django/db/migrations/loader.py
+@@ -90,7 +90,7 @@ class MigrationLoader:
+             else:
+                 # Empty directories are namespaces.
+                 # getattr() needed on PY36 and older (replace w/attribute access).
+-                if getattr(module, '__file__', None) is None:
++                if getattr(module, '__file__', None) is None and not isinstance(getattr(module, '__path__', None), list):
+                     self.unmigrated_apps.add(app_config.label)
+                     continue
+                 # Module is not a package (e.g. migrations.py).
+diff --git a/tests/migrations/test_loader.py b/tests/migrations/test_loader.py
+index 27a052ddac..2774e7e6c2 100644
+--- a/tests/migrations/test_loader.py
++++ b/tests/migrations/test_loader.py
+@@ -1,5 +1,7 @@
+ import compileall
+ import os
++import sys
++import types
+ 
+ from django.db import connection, connections
+ from django.db.migrations.exceptions import (
+@@ -511,6 +513,26 @@ class LoaderTests(TestCase):
+         loader.load_disk()
+         migrations = [name for app, name in loader.disk_migrations if app == 'migrations']
+         self.assertEqual(migrations, [])
++    @override_settings(
++        MIGRATION_MODULES={'migrations': 'migrations.test_migrations'},
++        INSTALLED_APPS=['migrations'],
++    )
++    def test_loading_frozen_module(self):
++        """Migration modules without __file__ but with list __path__ are loaded."""
++        from importlib import import_module
++        module_name = 'migrations.test_migrations'
++        real_module = import_module(module_name)
++
++        fake_module = types.ModuleType(module_name)
++        fake_module.__path__ = list(real_module.__path__)
++        sys.modules[module_name] = fake_module
++        try:
++            loader = MigrationLoader(connection)
++            loader.load_disk()
++            migrations = [name for app, name in loader.disk_migrations if app == 'migrations']
++            self.assertEqual(migrations, ['0001_initial', '0002_second'])
++        finally:
++            sys.modules[module_name] = real_module
+ 
+ 
+ class PycLoaderTests(MigrationTestBase):
+2026-10-30 16:52:07,153 - INFO - Eval script for django__django-13820 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13820/eval.sh; copying to container...
+2026-10-30 16:52:14,292 - INFO - Test runtime: 7.06 seconds
+2026-10-30 16:52:14,294 - INFO - Test output for django__django-13820 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13820/test_output.txt
+2026-10-30 16:52:14,361 - INFO - Git diff after:
+diff --git a/django/db/migrations/loader.py b/django/db/migrations/loader.py
+index 95a5062ec9..5e51194bbd 100644
+--- a/django/db/migrations/loader.py
++++ b/django/db/migrations/loader.py
+@@ -90,7 +90,7 @@ class MigrationLoader:
+             else:
+                 # Empty directories are namespaces.
+                 # getattr() needed on PY36 and older (replace w/attribute access).
+-                if getattr(module, '__file__', None) is None:
++                if getattr(module, '__file__', None) is None and not isinstance(getattr(module, '__path__', None), list):
+                     self.unmigrated_apps.add(app_config.label)
+                     continue
+                 # Module is not a package (e.g. migrations.py).
+2026-10-30 16:52:14,362 - INFO - Git diff changed after running eval script
+2026-10-30 16:52:14,362 - INFO - Grading answer for django__django-13820...
+2026-10-30 16:52:14,363 - INFO - report: {'django__django-13820': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_loading_package_without__file__ (migrations.test_loader.LoaderTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_apply (migrations.test_loader.RecorderTests)', 'test_invalid (migrations.test_loader.PycLoaderTests)', 'test_valid (migrations.test_loader.PycLoaderTests)', 'test_check_consistent_history (migrations.test_loader.LoaderTests)', 'test_check_consistent_history_squashed (migrations.test_loader.LoaderTests)', 'test_explicit_missing_module (migrations.test_loader.LoaderTests)', "Files prefixed with underscore, tilde, or dot aren't loaded.", 'test_load (migrations.test_loader.LoaderTests)', 'test_load_empty_dir (migrations.test_loader.LoaderTests)', 'test_load_import_error (migrations.test_loader.LoaderTests)', 'test_load_module_file (migrations.test_loader.LoaderTests)', 'test_load_unmigrated_dependency (migrations.test_loader.LoaderTests)', 'Migration directories without an __init__.py file are ignored.', 'Tests loading a squashed migration', 'Tests loading a complex set of squashed migrations', 'test_loading_squashed_complex_multi_apps (migrations.test_loader.LoaderTests)', 'test_loading_squashed_complex_multi_apps_partially_applied (migrations.test_loader.LoaderTests)', 'Tests loading a complex but erroneous set of squashed migrations', 'Tests loading a squashed migration with a new migration referencing it', 'test_marked_as_migrated (migrations.test_loader.LoaderTests)', 'test_marked_as_unmigrated (migrations.test_loader.LoaderTests)', 'Tests prefix name matching', 'test_plan_handles_repeated_migrations (migrations.test_loader.LoaderTests)', 'test_run_before (migrations.test_loader.LoaderTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13820: resolved: True
+2026-10-30 16:52:14,364 - INFO - Attempting to stop container sweb.eval.django__django-13820.verified_full_pi...
+2026-10-30 16:52:29,880 - INFO - Container sweb.eval.django__django-13820.verified_full_pi stopped successfully.
+2026-10-30 16:52:29,880 - INFO - Attempting to remove container sweb.eval.django__django-13820.verified_full_pi...
+2026-10-30 16:52:29,941 - INFO - Container sweb.eval.django__django-13820.verified_full_pi removed successfully.

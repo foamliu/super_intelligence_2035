@@ -1,0 +1,7 @@
+[incr-eval 23:39:41] === incr_eval R1604 for cline-patched: ['pytest-dev__pytest-6202'] ===
+[incr-eval 23:39:41] merged 468/478 predictions -> predictions/predictions_cline-patched.json
+[incr-eval 23:39:41] EVAL cline-patched on 1 instances: ['pytest-dev__pytest-6202']
+[incr-eval 23:39:44] eval finished rc=0; log -> logs/eval_incr_verified_full_cline-patched_R1604_1793806784.log
+[incr-eval 23:39:44] pytest-dev__pytest-6202: RESOLVED (resolved=True)
+[incr-eval 23:39:44] updated reports/eval_cline-patched.json: n=478 resolved=344 failed=123 infra=1 no_patch=10
+[incr-eval 23:39:44] DONE in 3s

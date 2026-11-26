@@ -1,0 +1,79 @@
+2026-11-10 14:11:57,376 - INFO - Creating container for pydata__xarray-3677...
+2026-11-10 14:11:57,392 - INFO - Container for pydata__xarray-3677 created: c8d29b6da0ddbca5a29f8c6bd9f3cbc65f4797af6ec6ffe3463496f0bebbdccd
+2026-11-10 14:11:59,178 - INFO - Container for pydata__xarray-3677 started: c8d29b6da0ddbca5a29f8c6bd9f3cbc65f4797af6ec6ffe3463496f0bebbdccd
+2026-11-10 14:11:59,180 - INFO - Intermediate patch for pydata__xarray-3677 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/pydata__xarray-3677/patch.diff, now applying to container...
+2026-11-10 14:11:59,307 - INFO - >>>>> Applied Patch:
+Checking patch xarray/core/merge.py...
+Checking patch xarray/tests/test_merge.py...
+Applied patch xarray/core/merge.py cleanly.
+Applied patch xarray/tests/test_merge.py cleanly.
+
+2026-11-10 14:11:59,478 - INFO - Git diff before:
+diff --git a/xarray/core/merge.py b/xarray/core/merge.py
+index 10c7804d..4058ff36 100644
+--- a/xarray/core/merge.py
++++ b/xarray/core/merge.py
+@@ -809,6 +809,11 @@ def dataset_merge_method(
+     # method due for backwards compatibility
+     # TODO: consider deprecating it?
+ 
++    from .dataarray import DataArray
++
++    if isinstance(other, DataArray):
++        other = other.to_dataset()
++
+     if isinstance(overwrite_vars, Iterable) and not isinstance(overwrite_vars, str):
+         overwrite_vars = set(overwrite_vars)
+     else:
+diff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py
+index c1e6c7a5..0b1d4bfd 100644
+--- a/xarray/tests/test_merge.py
++++ b/xarray/tests/test_merge.py
+@@ -159,6 +159,19 @@ class TestMergeMethod:
+         with raises_regex(ValueError, "should be coordinates or not"):
+             data.merge(data.reset_coords())
+ 
++    def test_merge_dataarray(self):
++        ds = xr.Dataset({"a": 0})
++        da = xr.DataArray(1, name="b")
++
++        actual = ds.merge(da)
++        expected = xr.merge([ds, da])
++        assert actual.identical(expected)
++
++        ds2 = xr.Dataset({"c": 0})
++        actual = ds.merge(ds2).merge(da)
++        expected = xr.merge([ds, ds2, da])
++        assert actual.identical(expected)
++
+     def test_merge_broadcast_equals(self):
+         ds1 = xr.Dataset({"x": 0})
+         ds2 = xr.Dataset({"x": ("y", [0, 0])})
+2026-11-10 14:11:59,481 - INFO - Eval script for pydata__xarray-3677 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/pydata__xarray-3677/eval.sh; copying to container...
+2026-11-10 14:12:07,072 - INFO - Test runtime: 7.55 seconds
+2026-11-10 14:12:07,074 - INFO - Test output for pydata__xarray-3677 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/pydata__xarray-3677/test_output.txt
+2026-11-10 14:12:07,128 - INFO - Git diff after:
+diff --git a/xarray/core/merge.py b/xarray/core/merge.py
+index 10c7804d..4058ff36 100644
+--- a/xarray/core/merge.py
++++ b/xarray/core/merge.py
+@@ -809,6 +809,11 @@ def dataset_merge_method(
+     # method due for backwards compatibility
+     # TODO: consider deprecating it?
+ 
++    from .dataarray import DataArray
++
++    if isinstance(other, DataArray):
++        other = other.to_dataset()
++
+     if isinstance(overwrite_vars, Iterable) and not isinstance(overwrite_vars, str):
+         overwrite_vars = set(overwrite_vars)
+     else:
+2026-11-10 14:12:07,128 - INFO - Git diff changed after running eval script
+2026-11-10 14:12:07,128 - INFO - Grading answer for pydata__xarray-3677...
+2026-11-10 14:12:07,129 - INFO - report: {'pydata__xarray-3677': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['xarray/tests/test_merge.py::TestMergeMethod::test_merge_dataarray'], 'failure': []}, 'PASS_TO_PASS': {'success': ['xarray/tests/test_merge.py::TestMergeInternals::test_broadcast_dimension_size', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_arrays', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_datasets', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_dataarray_unnamed', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_dicts_simple', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_dicts_dims', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_error', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_alignment_error', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_wrong_input_error', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_single_var', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_multi_var', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_preserve_attrs', 'xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_broadcast', 'xarray/tests/test_merge.py::TestMergeMethod::test_merge', 'xarray/tests/test_merge.py::TestMergeMethod::test_merge_broadcast_equals', 'xarray/tests/test_merge.py::TestMergeMethod::test_merge_compat', 'xarray/tests/test_merge.py::TestMergeMethod::test_merge_auto_align', 'xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[fill_value0]', 'xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[2]', 'xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[2.0]', 'xarray/tests/test_merge.py::TestMergeMethod::test_merge_no_conflicts'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pydata__xarray-3677: resolved: True
+2026-11-10 14:12:07,130 - INFO - Attempting to stop container sweb.eval.pydata__xarray-3677.verified_full_glm53_claude-code_incr_R2028...
+2026-11-10 14:12:22,984 - INFO - Container sweb.eval.pydata__xarray-3677.verified_full_glm53_claude-code_incr_R2028 stopped successfully.
+2026-11-10 14:12:22,984 - INFO - Attempting to remove container sweb.eval.pydata__xarray-3677.verified_full_glm53_claude-code_incr_R2028...
+2026-11-10 14:12:23,016 - INFO - Container sweb.eval.pydata__xarray-3677.verified_full_glm53_claude-code_incr_R2028 removed successfully.

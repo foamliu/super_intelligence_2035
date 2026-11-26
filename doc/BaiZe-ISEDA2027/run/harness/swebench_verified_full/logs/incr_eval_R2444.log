@@ -1,0 +1,16 @@
+[incr-eval 03:40:02] === incr_eval R2444 start ===
+[incr-eval 03:40:02] cline: 0 new instances, skip
+
+=== codex R2444 ===
+new instances: 1 ['django__django-13449']
+[incr-eval 03:40:02] codex: merged 1 new patches -> predictions_codex_new_R2444.json
+[incr-eval 03:40:02] codex: EVAL 1 instances -> run_id=verified_full_glm53_codex_incr_R2444
+[incr-eval 03:40:33] codex: eval rc=0
+[incr-eval 03:40:33]   django__django-13449: FAILED
+[incr-eval 03:40:33] codex: cumulative n=144 resolved=91 failed=53 infra=0 -> eval_glm53_codex.json
+[incr-eval 03:40:33] opencode: 0 new instances, skip
+[incr-eval 03:40:33] claude-code: 0 new instances, skip
+[incr-eval 03:40:33] pi: 0 new instances, skip
+[incr-eval 03:40:33] hermes: 0 new instances, skip
+[incr-eval 03:40:33] deepseek: 0 new instances, skip
+[incr-eval 03:40:33] === incr_eval R2444 done: 1 instances, +0resolved +1failed +0infra ===

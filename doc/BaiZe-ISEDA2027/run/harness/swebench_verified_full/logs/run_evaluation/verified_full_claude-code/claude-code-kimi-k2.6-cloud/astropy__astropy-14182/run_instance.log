@@ -1,0 +1,118 @@
+2026-11-01 21:33:07,187 - INFO - Creating container for astropy__astropy-14182...
+2026-11-01 21:33:07,210 - INFO - Container for astropy__astropy-14182 created: e428c5bc91ae01ebf7ba5589906d1f287e166779d65ed8ca2abde16087150906
+2026-11-01 21:33:07,935 - INFO - Container for astropy__astropy-14182 started: e428c5bc91ae01ebf7ba5589906d1f287e166779d65ed8ca2abde16087150906
+2026-11-01 21:33:07,938 - INFO - Intermediate patch for astropy__astropy-14182 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/astropy__astropy-14182/patch.diff, now applying to container...
+2026-11-01 21:33:08,092 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/ascii/rst.py...
+warning: astropy/io/ascii/rst.py has type 100755, expected 100644
+Checking patch astropy/io/ascii/tests/test_rst.py...
+warning: astropy/io/ascii/tests/test_rst.py has type 100755, expected 100644
+Applied patch astropy/io/ascii/rst.py cleanly.
+Applied patch astropy/io/ascii/tests/test_rst.py cleanly.
+
+2026-11-01 21:33:08,813 - INFO - Git diff before:
+diff --git a/astropy/io/ascii/rst.py b/astropy/io/ascii/rst.py
+index abdeba8ef..a725a70c3 100755
+--- a/astropy/io/ascii/rst.py
++++ b/astropy/io/ascii/rst.py
+@@ -57,10 +57,16 @@ class RST(FixedWidth):
+     data_class = SimpleRSTData
+     header_class = SimpleRSTHeader
+ 
+-    def __init__(self):
+-        super().__init__(delimiter_pad=None, bookend=False)
++    def __init__(self, header_rows=None):
++        if header_rows is None:
++            header_rows = ["name"]
++        super().__init__(delimiter_pad=None, bookend=False, header_rows=header_rows)
++        self.data.start_line = len(header_rows) + 2
+ 
+     def write(self, lines):
+         lines = super().write(lines)
+-        lines = [lines[1]] + lines + [lines[1]]
++        # The position line follows all header rows.
++        n_header_rows = len(self.header.header_rows)
++        pos_line = lines[n_header_rows]
++        lines = [pos_line] + lines + [pos_line]
+         return lines
+diff --git a/astropy/io/ascii/tests/test_rst.py b/astropy/io/ascii/tests/test_rst.py
+index 84d6fed40..d1f3584ba 100755
+--- a/astropy/io/ascii/tests/test_rst.py
++++ b/astropy/io/ascii/tests/test_rst.py
+@@ -185,3 +185,40 @@ Col1      Col2 Col3 Col4
+ ==== ========= ==== ====
+ """,
+     )
++
++
++def test_write_header_rows():
++    """Write a table with header_rows parameter"""
++    out = StringIO()
++    ascii.write(dat, out, Writer=ascii.RST, header_rows=["name", "dtype"])
++    assert_equal_splitlines(
++        out.getvalue(),
++        """\
++======= ========= ===== ====
++   Col1      Col2  Col3 Col4
++float64       <U9 int64  <U1
++======= ========= ===== ====
++    1.2   "hello"     1    a
++    2.4 's worlds     2    2
++======= ========= ===== ====
++""",
++    )
++
++
++def test_read_header_rows():
++    """Read a table with header_rows parameter"""
++    table = """\
++===== ========
++ wave response
++   nm       ct
++===== ========
++350.0      0.7
++950.0      1.2
++===== ========
++"""
++    dat = ascii.read(table, Reader=ascii.RST, header_rows=["name", "unit"])
++    assert_equal(dat.colnames, ["wave", "response"])
++    assert_equal(dat["wave"].unit, "nm")
++    assert_equal(dat["response"].unit, "ct")
++    assert_almost_equal(dat[0]["wave"], 350.0)
++    assert_almost_equal(dat[0]["response"], 0.7)
+2026-11-01 21:33:08,816 - INFO - Eval script for astropy__astropy-14182 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/astropy__astropy-14182/eval.sh; copying to container...
+2026-11-01 21:34:53,328 - INFO - Test runtime: 104.43 seconds
+2026-11-01 21:34:53,334 - INFO - Test output for astropy__astropy-14182 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/astropy__astropy-14182/test_output.txt
+2026-11-01 21:34:53,388 - INFO - Git diff after:
+diff --git a/astropy/io/ascii/rst.py b/astropy/io/ascii/rst.py
+index abdeba8ef..a725a70c3 100755
+--- a/astropy/io/ascii/rst.py
++++ b/astropy/io/ascii/rst.py
+@@ -57,10 +57,16 @@ class RST(FixedWidth):
+     data_class = SimpleRSTData
+     header_class = SimpleRSTHeader
+ 
+-    def __init__(self):
+-        super().__init__(delimiter_pad=None, bookend=False)
++    def __init__(self, header_rows=None):
++        if header_rows is None:
++            header_rows = ["name"]
++        super().__init__(delimiter_pad=None, bookend=False, header_rows=header_rows)
++        self.data.start_line = len(header_rows) + 2
+ 
+     def write(self, lines):
+         lines = super().write(lines)
+-        lines = [lines[1]] + lines + [lines[1]]
++        # The position line follows all header rows.
++        n_header_rows = len(self.header.header_rows)
++        pos_line = lines[n_header_rows]
++        lines = [pos_line] + lines + [pos_line]
+         return lines
+2026-11-01 21:34:53,388 - INFO - Git diff changed after running eval script
+2026-11-01 21:34:53,388 - INFO - Grading answer for astropy__astropy-14182...
+2026-11-01 21:34:53,397 - INFO - report: {'astropy__astropy-14182': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/ascii/tests/test_rst.py::test_rst_with_header_rows'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/ascii/tests/test_rst.py::test_read_normal', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_names', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_names_include', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_exclude', 'astropy/io/ascii/tests/test_rst.py::test_read_unbounded_right_column', 'astropy/io/ascii/tests/test_rst.py::test_read_unbounded_right_column_header', 'astropy/io/ascii/tests/test_rst.py::test_read_right_indented_table', 'astropy/io/ascii/tests/test_rst.py::test_trailing_spaces_in_row_definition', 'astropy/io/ascii/tests/test_rst.py::test_write_normal'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-14182: resolved: True
+2026-11-01 21:34:53,399 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14182.verified_full_claude-code...
+2026-11-01 21:35:09,565 - INFO - Container sweb.eval.astropy__astropy-14182.verified_full_claude-code stopped successfully.
+2026-11-01 21:35:09,566 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14182.verified_full_claude-code...
+2026-11-01 21:35:09,614 - INFO - Container sweb.eval.astropy__astropy-14182.verified_full_claude-code removed successfully.

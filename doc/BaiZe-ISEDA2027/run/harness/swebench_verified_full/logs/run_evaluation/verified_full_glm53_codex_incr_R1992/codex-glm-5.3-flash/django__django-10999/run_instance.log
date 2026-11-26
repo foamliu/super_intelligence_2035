@@ -1,0 +1,62 @@
+2026-11-09 20:21:29,150 - INFO - Creating container for django__django-10999...
+2026-11-09 20:21:29,192 - INFO - Container for django__django-10999 created: 45881fa823505f448f8f553b0fd9d48f7ac037645f5c51c13ab1651cfcdf367f
+2026-11-09 20:21:29,600 - INFO - Container for django__django-10999 started: 45881fa823505f448f8f553b0fd9d48f7ac037645f5c51c13ab1651cfcdf367f
+2026-11-09 20:21:29,602 - INFO - Intermediate patch for django__django-10999 written to logs/run_evaluation/verified_full_glm53_codex_incr_R1992/codex-glm-5.3-flash/django__django-10999/patch.diff, now applying to container...
+2026-11-09 20:21:29,831 - INFO - >>>>> Applied Patch:
+Checking patch django/utils/dateparse.py...
+Checking patch tests/utils_tests/test_dateparse.py...
+Applied patch django/utils/dateparse.py cleanly.
+Applied patch tests/utils_tests/test_dateparse.py cleanly.
+
+2026-11-09 20:21:31,090 - INFO - Git diff before:
+diff --git a/django/utils/dateparse.py b/django/utils/dateparse.py
+index 8d08b7d1d3..a037758784 100644
+--- a/django/utils/dateparse.py
++++ b/django/utils/dateparse.py
+@@ -29,7 +29,7 @@ datetime_re = re.compile(
+ standard_duration_re = re.compile(
+     r'^'
+     r'(?:(?P<days>-?\d+) (days?, )?)?'
+-    r'((?:(?P<hours>-?\d+):)(?=\d+:\d+))?'
++    r'((?:(?P<hours>-?\d+):)(?=-?\d+:-?\d+))?'
+     r'(?:(?P<minutes>-?\d+):)?'
+     r'(?P<seconds>-?\d+)'
+     r'(?:\.(?P<microseconds>\d{1,6})\d{0,6})?'
+diff --git a/tests/utils_tests/test_dateparse.py b/tests/utils_tests/test_dateparse.py
+index 8d464278ce..5fdc512cb4 100644
+--- a/tests/utils_tests/test_dateparse.py
++++ b/tests/utils_tests/test_dateparse.py
+@@ -115,6 +115,8 @@ class DurationParseTests(unittest.TestCase):
+             ('-172800', timedelta(days=-2)),
+             ('-15:30', timedelta(minutes=-15, seconds=30)),
+             ('-1:15:30', timedelta(hours=-1, minutes=15, seconds=30)),
++            ('-1 -15:30', timedelta(days=-1, minutes=-15, seconds=30)),
++            ('-1 -1:15:30', timedelta(days=-1, hours=-1, minutes=15, seconds=30)),
+             ('-30.1', timedelta(seconds=-30, milliseconds=-100)),
+         )
+         for source, expected in test_values:
+2026-11-09 20:21:31,092 - INFO - Eval script for django__django-10999 written to logs/run_evaluation/verified_full_glm53_codex_incr_R1992/codex-glm-5.3-flash/django__django-10999/eval.sh; copying to container...
+2026-11-09 20:21:37,475 - INFO - Test runtime: 6.29 seconds
+2026-11-09 20:21:37,476 - INFO - Test output for django__django-10999 written to logs/run_evaluation/verified_full_glm53_codex_incr_R1992/codex-glm-5.3-flash/django__django-10999/test_output.txt
+2026-11-09 20:21:37,567 - INFO - Git diff after:
+diff --git a/django/utils/dateparse.py b/django/utils/dateparse.py
+index 8d08b7d1d3..a037758784 100644
+--- a/django/utils/dateparse.py
++++ b/django/utils/dateparse.py
+@@ -29,7 +29,7 @@ datetime_re = re.compile(
+ standard_duration_re = re.compile(
+     r'^'
+     r'(?:(?P<days>-?\d+) (days?, )?)?'
+-    r'((?:(?P<hours>-?\d+):)(?=\d+:\d+))?'
++    r'((?:(?P<hours>-?\d+):)(?=-?\d+:-?\d+))?'
+     r'(?:(?P<minutes>-?\d+):)?'
+     r'(?P<seconds>-?\d+)'
+     r'(?:\.(?P<microseconds>\d{1,6})\d{0,6})?'
+2026-11-09 20:21:37,567 - INFO - Git diff changed after running eval script
+2026-11-09 20:21:37,567 - INFO - Grading answer for django__django-10999...
+2026-11-09 20:21:37,570 - INFO - report: {'django__django-10999': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_negative (utils_tests.test_dateparse.DurationParseTests)', 'test_parse_postgresql_format (utils_tests.test_dateparse.DurationParseTests)']}, 'PASS_TO_PASS': {'success': ['test_parse_date (utils_tests.test_dateparse.DateParseTests)', 'test_parse_datetime (utils_tests.test_dateparse.DateParseTests)', 'test_parse_time (utils_tests.test_dateparse.DateParseTests)', 'test_days (utils_tests.test_dateparse.DurationParseTests)', 'test_fractions_of_seconds (utils_tests.test_dateparse.DurationParseTests)', 'test_hours_minutes_seconds (utils_tests.test_dateparse.DurationParseTests)', 'test_iso_8601 (utils_tests.test_dateparse.DurationParseTests)', 'test_minutes_seconds (utils_tests.test_dateparse.DurationParseTests)', 'test_parse_python_format (utils_tests.test_dateparse.DurationParseTests)', 'test_seconds (utils_tests.test_dateparse.DurationParseTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-10999: resolved: False
+2026-11-09 20:21:37,571 - INFO - Attempting to stop container sweb.eval.django__django-10999.verified_full_glm53_codex_incr_R1992...
+2026-11-09 20:21:53,182 - INFO - Container sweb.eval.django__django-10999.verified_full_glm53_codex_incr_R1992 stopped successfully.
+2026-11-09 20:21:53,182 - INFO - Attempting to remove container sweb.eval.django__django-10999.verified_full_glm53_codex_incr_R1992...
+2026-11-09 20:21:53,229 - INFO - Container sweb.eval.django__django-10999.verified_full_glm53_codex_incr_R1992 removed successfully.

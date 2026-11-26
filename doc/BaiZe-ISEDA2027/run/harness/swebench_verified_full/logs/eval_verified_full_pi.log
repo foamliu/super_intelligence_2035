@@ -1,0 +1,17 @@
+398 instances already run, skipping...
+No instances to run.
+Total instances: 398
+Instances submitted: 398
+Instances completed: 398
+Instances incomplete: 0
+Instances resolved: 291
+Instances unresolved: 107
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 8
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 398
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+
+[stderr]

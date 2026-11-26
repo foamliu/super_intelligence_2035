@@ -1,0 +1,60 @@
+=== incr_eval R1223b START Sun Nov  1 11:45:26 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Sun Nov  1 11:45:26 PM CST 2026] === merge hermes predictions ===
+hermes: 93 real patches merged
+[Sun Nov  1 11:45:26 PM CST 2026] === hermes eval START: django__django-11477 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:27<00:00, 27.69s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:27<00:00, 27.69s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:27<00:00, 27.69s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Sun Nov  1 11:45:57 PM CST 2026] === hermes eval DONE ===
+[Sun Nov  1 11:45:57 PM CST 2026] === merge pi predictions ===
+pi: 445 real patches merged
+[Sun Nov  1 11:45:57 PM CST 2026] === pi eval START: pytest-dev__pytest-5840 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:27<00:00, 27.76s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:27<00:00, 27.77s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:27<00:00, 27.77s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 1
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 8
+Unremoved images: 1
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+[Sun Nov  1 11:46:29 PM CST 2026] === pi eval DONE ===
+[Sun Nov  1 11:46:29 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=497 resolved=401 failed=96 infra=0)
+  pi: WROTE eval_pi.json  n=445 resolved=318 failed=127 infra=0
+  claude-code: unchanged (n=352 resolved=269 failed=83 infra=0)
+  codex: unchanged (n=230 resolved=180 failed=50 infra=0)
+  hermes: WROTE eval_hermes.json  n=92 resolved=70 failed=22 infra=0
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=93 resolved=75 failed=18 infra=0
+[Sun Nov  1 11:46:30 PM CST 2026] === gen report HTML ===
+written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (15380B)
+  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=326
+  opencode     done=500/500 patch=497 no_patch=-7 infra=0 eval=Y resolved=401
+  pi           done=500/500 patch=445 no_patch=5 infra=42 eval=Y resolved=318
+  claude-code  done=500/500 patch=352 no_patch=70 infra=70 eval=Y resolved=269
+  codex        done=500/500 patch=230 no_patch=68 infra=197 eval=Y resolved=180
+  hermes       done=134/500 patch=92 no_patch=41 infra=0 eval=Y resolved=70
+  deepseek-harness done=249/500 patch=91 no_patch=5 infra=118 eval=Y resolved=75
+=== incr_eval R1223b DONE Sun Nov  1 11:46:30 PM CST 2026 ===

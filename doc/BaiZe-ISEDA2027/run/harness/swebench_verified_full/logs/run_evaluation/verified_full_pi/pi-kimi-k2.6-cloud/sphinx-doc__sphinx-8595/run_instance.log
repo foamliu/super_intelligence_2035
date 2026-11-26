@@ -1,0 +1,90 @@
+2026-10-30 17:02:10,046 - INFO - Creating container for sphinx-doc__sphinx-8595...
+2026-10-30 17:02:10,062 - INFO - Container for sphinx-doc__sphinx-8595 created: 63f046f00d20d08348e088d13f705a66cd9381fcec8f88e510f987212f2ea1b7
+2026-10-30 17:02:10,794 - INFO - Container for sphinx-doc__sphinx-8595 started: 63f046f00d20d08348e088d13f705a66cd9381fcec8f88e510f987212f2ea1b7
+2026-10-30 17:02:10,796 - INFO - Intermediate patch for sphinx-doc__sphinx-8595 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8595/patch.diff, now applying to container...
+2026-10-30 17:02:10,928 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/autodoc/__init__.py...
+warning: sphinx/ext/autodoc/__init__.py has type 100755, expected 100644
+Checking patch tests/roots/test-ext-autodoc/target/empty_all.py...
+Checking patch tests/test_ext_autodoc.py...
+warning: tests/test_ext_autodoc.py has type 100755, expected 100644
+Applied patch sphinx/ext/autodoc/__init__.py cleanly.
+Applied patch tests/roots/test-ext-autodoc/target/empty_all.py cleanly.
+Applied patch tests/test_ext_autodoc.py cleanly.
+
+2026-10-30 17:02:11,694 - INFO - Git diff before:
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index d85d79617..c9f90acca 100755
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1074,7 +1074,7 @@ class ModuleDocumenter(Documenter):
+     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
+         members = self.get_module_members()
+         if want_all:
+-            if not self.__all__:
++            if self.__all__ is None:
+                 # for implicit module members, check __module__ to avoid
+                 # documenting imported objects
+                 return True, list(members.values())
+diff --git a/tests/test_ext_autodoc.py b/tests/test_ext_autodoc.py
+index 39897eb7d..b475430fa 100755
+--- a/tests/test_ext_autodoc.py
++++ b/tests/test_ext_autodoc.py
+@@ -737,7 +737,14 @@ def test_autodoc_ignore_module_all(app):
+         '.. py:class:: StrRepr'
+     ]
+ 
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_autodoc_empty_all(app):
++    options = {"members": None}
++    actual = do_autodoc(app, 'module', 'target.empty_all', options)
++    assert list(filter(lambda l: 'function::' in l, actual)) == []
+ 
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
+ @pytest.mark.sphinx('html', testroot='ext-autodoc')
+ def test_autodoc_noindex(app):
+     options = {"noindex": True}
+2026-10-30 17:02:11,695 - INFO - Eval script for sphinx-doc__sphinx-8595 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8595/eval.sh; copying to container...
+2026-10-30 17:02:16,325 - INFO - Test runtime: 4.56 seconds
+2026-10-30 17:02:16,326 - INFO - Test output for sphinx-doc__sphinx-8595 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8595/test_output.txt
+2026-10-30 17:02:16,399 - INFO - Git diff after:
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index d85d79617..c9f90acca 100755
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1074,7 +1074,7 @@ class ModuleDocumenter(Documenter):
+     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
+         members = self.get_module_members()
+         if want_all:
+-            if not self.__all__:
++            if self.__all__ is None:
+                 # for implicit module members, check __module__ to avoid
+                 # documenting imported objects
+                 return True, list(members.values())
+diff --git a/tests/test_ext_autodoc.py b/tests/test_ext_autodoc.py
+index 39897eb7d..b475430fa 100755
+--- a/tests/test_ext_autodoc.py
++++ b/tests/test_ext_autodoc.py
+@@ -737,7 +737,14 @@ def test_autodoc_ignore_module_all(app):
+         '.. py:class:: StrRepr'
+     ]
+ 
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_autodoc_empty_all(app):
++    options = {"members": None}
++    actual = do_autodoc(app, 'module', 'target.empty_all', options)
++    assert list(filter(lambda l: 'function::' in l, actual)) == []
+ 
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
+ @pytest.mark.sphinx('html', testroot='ext-autodoc')
+ def test_autodoc_noindex(app):
+     options = {"noindex": True}
+2026-10-30 17:02:16,399 - INFO - Grading answer for sphinx-doc__sphinx-8595...
+2026-10-30 17:02:16,442 - INFO - report: {'sphinx-doc__sphinx-8595': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False, 'infra_failure_reason': 'no_tests_collected'}}
+Result for sphinx-doc__sphinx-8595: resolved: False
+2026-10-30 17:02:16,444 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8595.verified_full_pi...
+2026-10-30 17:02:32,515 - INFO - Container sweb.eval.sphinx-doc__sphinx-8595.verified_full_pi stopped successfully.
+2026-10-30 17:02:32,515 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8595.verified_full_pi...
+2026-10-30 17:02:32,548 - INFO - Container sweb.eval.sphinx-doc__sphinx-8595.verified_full_pi removed successfully.

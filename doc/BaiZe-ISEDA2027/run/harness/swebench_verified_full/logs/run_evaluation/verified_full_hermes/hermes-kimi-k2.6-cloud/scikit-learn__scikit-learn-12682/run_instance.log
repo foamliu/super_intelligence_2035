@@ -1,0 +1,309 @@
+2026-11-03 08:39:53,236 - INFO - Creating container for scikit-learn__scikit-learn-12682...
+2026-11-03 08:39:53,259 - INFO - Container for scikit-learn__scikit-learn-12682 created: adeaeb313bf7411120db453854bbc55b3444b452df6b50af612d03f285ee0d4a
+2026-11-03 08:39:54,163 - INFO - Container for scikit-learn__scikit-learn-12682 started: adeaeb313bf7411120db453854bbc55b3444b452df6b50af612d03f285ee0d4a
+2026-11-03 08:39:54,166 - INFO - Intermediate patch for scikit-learn__scikit-learn-12682 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-12682/patch.diff, now applying to container...
+2026-11-03 08:39:54,295 - INFO - >>>>> Applied Patch:
+Checking patch shim/sitecustomize.py...
+Checking patch sklearn/decomposition/dict_learning.py...
+Checking patch sklearn/decomposition/tests/test_dict_learning.py...
+Applied patch shim/sitecustomize.py cleanly.
+Applied patch sklearn/decomposition/dict_learning.py cleanly.
+Applied patch sklearn/decomposition/tests/test_dict_learning.py cleanly.
+
+2026-11-03 08:39:54,742 - INFO - Git diff before:
+diff --git a/sklearn/decomposition/dict_learning.py b/sklearn/decomposition/dict_learning.py
+index a318c957f..40f06d3d2 100644
+--- a/sklearn/decomposition/dict_learning.py
++++ b/sklearn/decomposition/dict_learning.py
+@@ -864,12 +864,15 @@ class SparseCodingMixin(TransformerMixin):
+     def _set_sparse_coding_params(self, n_components,
+                                   transform_algorithm='omp',
+                                   transform_n_nonzero_coefs=None,
+-                                  transform_alpha=None, split_sign=False,
++                                  transform_alpha=None,
++                                  transform_max_iter=1000,
++                                  split_sign=False,
+                                   n_jobs=None, positive_code=False):
+         self.n_components = n_components
+         self.transform_algorithm = transform_algorithm
+         self.transform_n_nonzero_coefs = transform_n_nonzero_coefs
+         self.transform_alpha = transform_alpha
++        self.transform_max_iter = transform_max_iter
+         self.split_sign = split_sign
+         self.n_jobs = n_jobs
+         self.positive_code = positive_code
+@@ -899,8 +902,8 @@ class SparseCodingMixin(TransformerMixin):
+         code = sparse_encode(
+             X, self.components_, algorithm=self.transform_algorithm,
+             n_nonzero_coefs=self.transform_n_nonzero_coefs,
+-            alpha=self.transform_alpha, n_jobs=self.n_jobs,
+-            positive=self.positive_code)
++            alpha=self.transform_alpha, max_iter=self.transform_max_iter,
++            n_jobs=self.n_jobs, positive=self.positive_code)
+ 
+         if self.split_sign:
+             # feature vector is split into a positive and negative side
+@@ -958,6 +961,10 @@ class SparseCoder(BaseEstimator, SparseCodingMixin):
+         the reconstruction error targeted. In this case, it overrides
+         `n_nonzero_coefs`.
+ 
++    transform_max_iter : int, optional (default=1000)
++        Maximum number of iterations to perform if `transform_algorithm` is
++        `'lasso_cd'`.
++
+     split_sign : bool, False by default
+         Whether to split the sparse feature vector into the concatenation of
+         its negative part and its positive part. This can improve the
+@@ -991,12 +998,13 @@ class SparseCoder(BaseEstimator, SparseCodingMixin):
+ 
+     def __init__(self, dictionary, transform_algorithm='omp',
+                  transform_n_nonzero_coefs=None, transform_alpha=None,
+-                 split_sign=False, n_jobs=None, positive_code=False):
++                 transform_max_iter=1000, split_sign=False, n_jobs=None,
++                 positive_code=False):
+         self._set_sparse_coding_params(dictionary.shape[0],
+                                        transform_algorithm,
+                                        transform_n_nonzero_coefs,
+-                                       transform_alpha, split_sign, n_jobs,
+-                                       positive_code)
++                                       transform_alpha, transform_max_iter,
++                                       split_sign, n_jobs, positive_code)
+         self.components_ = dictionary
+ 
+     def fit(self, X, y=None):
+@@ -1086,6 +1094,10 @@ class DictionaryLearning(BaseEstimator, SparseCodingMixin):
+         the reconstruction error targeted. In this case, it overrides
+         `n_nonzero_coefs`.
+ 
++    transform_max_iter : int, optional (default=1000)
++        Maximum number of iterations to perform if `transform_algorithm` is
++        `'lasso_cd'`.
++
+     n_jobs : int or None, optional (default=None)
+         Number of parallel jobs to run.
+         ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
+@@ -1150,14 +1162,14 @@ class DictionaryLearning(BaseEstimator, SparseCodingMixin):
+     def __init__(self, n_components=None, alpha=1, max_iter=1000, tol=1e-8,
+                  fit_algorithm='lars', transform_algorithm='omp',
+                  transform_n_nonzero_coefs=None, transform_alpha=None,
+-                 n_jobs=None, code_init=None, dict_init=None, verbose=False,
+-                 split_sign=False, random_state=None,
+-                 positive_code=False, positive_dict=False):
++                 transform_max_iter=1000, n_jobs=None, code_init=None,
++                 dict_init=None, verbose=False, split_sign=False,
++                 random_state=None, positive_code=False, positive_dict=False):
+ 
+         self._set_sparse_coding_params(n_components, transform_algorithm,
+                                        transform_n_nonzero_coefs,
+-                                       transform_alpha, split_sign, n_jobs,
+-                                       positive_code)
++                                       transform_alpha, transform_max_iter,
++                                       split_sign, n_jobs, positive_code)
+         self.alpha = alpha
+         self.max_iter = max_iter
+         self.tol = tol
+@@ -1281,6 +1293,10 @@ class MiniBatchDictionaryLearning(BaseEstimator, SparseCodingMixin):
+         the reconstruction error targeted. In this case, it overrides
+         `n_nonzero_coefs`.
+ 
++    transform_max_iter : int, optional (default=1000)
++        Maximum number of iterations to perform if `transform_algorithm` is
++        `'lasso_cd'`.
++
+     verbose : bool, optional (default: False)
+         To control the verbosity of the procedure.
+ 
+@@ -1340,13 +1356,13 @@ class MiniBatchDictionaryLearning(BaseEstimator, SparseCodingMixin):
+                  fit_algorithm='lars', n_jobs=None, batch_size=3,
+                  shuffle=True, dict_init=None, transform_algorithm='omp',
+                  transform_n_nonzero_coefs=None, transform_alpha=None,
+-                 verbose=False, split_sign=False, random_state=None,
+-                 positive_code=False, positive_dict=False):
++                 transform_max_iter=1000, verbose=False, split_sign=False,
++                 random_state=None, positive_code=False, positive_dict=False):
+ 
+         self._set_sparse_coding_params(n_components, transform_algorithm,
+                                        transform_n_nonzero_coefs,
+-                                       transform_alpha, split_sign, n_jobs,
+-                                       positive_code)
++                                       transform_alpha, transform_max_iter,
++                                       split_sign, n_jobs, positive_code)
+         self.alpha = alpha
+         self.n_iter = n_iter
+         self.fit_algorithm = fit_algorithm
+diff --git a/sklearn/decomposition/tests/test_dict_learning.py b/sklearn/decomposition/tests/test_dict_learning.py
+index f0bd4bedf..cd1adcc6b 100644
+--- a/sklearn/decomposition/tests/test_dict_learning.py
++++ b/sklearn/decomposition/tests/test_dict_learning.py
+@@ -2,6 +2,7 @@ import pytest
+ 
+ import numpy as np
+ import itertools
++import warnings
+ 
+ from sklearn.exceptions import ConvergenceWarning
+ 
+@@ -451,3 +452,31 @@ def test_sparse_coder_parallel_mmap():
+ 
+     sc = SparseCoder(init_dict, transform_algorithm='omp', n_jobs=2)
+     sc.fit_transform(data)
++
++
++def test_sparse_coder_transform_max_iter():
++    # Non-regression test for transform_max_iter parameter in SparseCoder
++    n_components, n_features = 12, 8
++    rng = np.random.RandomState(0)
++    D = rng.randn(n_components, n_features)
++    D /= np.sum(D ** 2, axis=1)[:, np.newaxis]
++    X = rng.randn(5, n_features)
++
++    # Using a very low max_iter should cause ConvergenceWarning
++    with pytest.warns(ConvergenceWarning):
++        coder = SparseCoder(
++            dictionary=D, transform_algorithm='lasso_cd',
++            transform_alpha=0.001, transform_max_iter=1)
++        coder.transform(X)
++
++    # Using a high max_iter should not cause ConvergenceWarning
++    with warnings.catch_warnings(record=True) as warn_records:
++        warnings.simplefilter("always")
++        coder = SparseCoder(
++            dictionary=D, transform_algorithm='lasso_cd',
++            transform_alpha=0.001, transform_max_iter=5000)
++        coder.transform(X)
++    # Filter only ConvergenceWarning
++    convergence_warnings = [w for w in warn_records
++                            if issubclass(w.category, ConvergenceWarning)]
++    assert len(convergence_warnings) == 0
+2026-11-03 08:39:54,746 - INFO - Eval script for scikit-learn__scikit-learn-12682 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-12682/eval.sh; copying to container...
+2026-11-03 08:40:09,174 - INFO - Test runtime: 14.35 seconds
+2026-11-03 08:40:09,176 - INFO - Test output for scikit-learn__scikit-learn-12682 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-12682/test_output.txt
+2026-11-03 08:40:09,249 - INFO - Git diff after:
+diff --git a/sklearn/decomposition/dict_learning.py b/sklearn/decomposition/dict_learning.py
+index a318c957f..40f06d3d2 100644
+--- a/sklearn/decomposition/dict_learning.py
++++ b/sklearn/decomposition/dict_learning.py
+@@ -864,12 +864,15 @@ class SparseCodingMixin(TransformerMixin):
+     def _set_sparse_coding_params(self, n_components,
+                                   transform_algorithm='omp',
+                                   transform_n_nonzero_coefs=None,
+-                                  transform_alpha=None, split_sign=False,
++                                  transform_alpha=None,
++                                  transform_max_iter=1000,
++                                  split_sign=False,
+                                   n_jobs=None, positive_code=False):
+         self.n_components = n_components
+         self.transform_algorithm = transform_algorithm
+         self.transform_n_nonzero_coefs = transform_n_nonzero_coefs
+         self.transform_alpha = transform_alpha
++        self.transform_max_iter = transform_max_iter
+         self.split_sign = split_sign
+         self.n_jobs = n_jobs
+         self.positive_code = positive_code
+@@ -899,8 +902,8 @@ class SparseCodingMixin(TransformerMixin):
+         code = sparse_encode(
+             X, self.components_, algorithm=self.transform_algorithm,
+             n_nonzero_coefs=self.transform_n_nonzero_coefs,
+-            alpha=self.transform_alpha, n_jobs=self.n_jobs,
+-            positive=self.positive_code)
++            alpha=self.transform_alpha, max_iter=self.transform_max_iter,
++            n_jobs=self.n_jobs, positive=self.positive_code)
+ 
+         if self.split_sign:
+             # feature vector is split into a positive and negative side
+@@ -958,6 +961,10 @@ class SparseCoder(BaseEstimator, SparseCodingMixin):
+         the reconstruction error targeted. In this case, it overrides
+         `n_nonzero_coefs`.
+ 
++    transform_max_iter : int, optional (default=1000)
++        Maximum number of iterations to perform if `transform_algorithm` is
++        `'lasso_cd'`.
++
+     split_sign : bool, False by default
+         Whether to split the sparse feature vector into the concatenation of
+         its negative part and its positive part. This can improve the
+@@ -991,12 +998,13 @@ class SparseCoder(BaseEstimator, SparseCodingMixin):
+ 
+     def __init__(self, dictionary, transform_algorithm='omp',
+                  transform_n_nonzero_coefs=None, transform_alpha=None,
+-                 split_sign=False, n_jobs=None, positive_code=False):
++                 transform_max_iter=1000, split_sign=False, n_jobs=None,
++                 positive_code=False):
+         self._set_sparse_coding_params(dictionary.shape[0],
+                                        transform_algorithm,
+                                        transform_n_nonzero_coefs,
+-                                       transform_alpha, split_sign, n_jobs,
+-                                       positive_code)
++                                       transform_alpha, transform_max_iter,
++                                       split_sign, n_jobs, positive_code)
+         self.components_ = dictionary
+ 
+     def fit(self, X, y=None):
+@@ -1086,6 +1094,10 @@ class DictionaryLearning(BaseEstimator, SparseCodingMixin):
+         the reconstruction error targeted. In this case, it overrides
+         `n_nonzero_coefs`.
+ 
++    transform_max_iter : int, optional (default=1000)
++        Maximum number of iterations to perform if `transform_algorithm` is
++        `'lasso_cd'`.
++
+     n_jobs : int or None, optional (default=None)
+         Number of parallel jobs to run.
+         ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
+@@ -1150,14 +1162,14 @@ class DictionaryLearning(BaseEstimator, SparseCodingMixin):
+     def __init__(self, n_components=None, alpha=1, max_iter=1000, tol=1e-8,
+                  fit_algorithm='lars', transform_algorithm='omp',
+                  transform_n_nonzero_coefs=None, transform_alpha=None,
+-                 n_jobs=None, code_init=None, dict_init=None, verbose=False,
+-                 split_sign=False, random_state=None,
+-                 positive_code=False, positive_dict=False):
++                 transform_max_iter=1000, n_jobs=None, code_init=None,
++                 dict_init=None, verbose=False, split_sign=False,
++                 random_state=None, positive_code=False, positive_dict=False):
+ 
+         self._set_sparse_coding_params(n_components, transform_algorithm,
+                                        transform_n_nonzero_coefs,
+-                                       transform_alpha, split_sign, n_jobs,
+-                                       positive_code)
++                                       transform_alpha, transform_max_iter,
++                                       split_sign, n_jobs, positive_code)
+         self.alpha = alpha
+         self.max_iter = max_iter
+         self.tol = tol
+@@ -1281,6 +1293,10 @@ class MiniBatchDictionaryLearning(BaseEstimator, SparseCodingMixin):
+         the reconstruction error targeted. In this case, it overrides
+         `n_nonzero_coefs`.
+ 
++    transform_max_iter : int, optional (default=1000)
++        Maximum number of iterations to perform if `transform_algorithm` is
++        `'lasso_cd'`.
++
+     verbose : bool, optional (default: False)
+         To control the verbosity of the procedure.
+ 
+@@ -1340,13 +1356,13 @@ class MiniBatchDictionaryLearning(BaseEstimator, SparseCodingMixin):
+                  fit_algorithm='lars', n_jobs=None, batch_size=3,
+                  shuffle=True, dict_init=None, transform_algorithm='omp',
+                  transform_n_nonzero_coefs=None, transform_alpha=None,
+-                 verbose=False, split_sign=False, random_state=None,
+-                 positive_code=False, positive_dict=False):
++                 transform_max_iter=1000, verbose=False, split_sign=False,
++                 random_state=None, positive_code=False, positive_dict=False):
+ 
+         self._set_sparse_coding_params(n_components, transform_algorithm,
+                                        transform_n_nonzero_coefs,
+-                                       transform_alpha, split_sign, n_jobs,
+-                                       positive_code)
++                                       transform_alpha, transform_max_iter,
++                                       split_sign, n_jobs, positive_code)
+         self.alpha = alpha
+         self.n_iter = n_iter
+         self.fit_algorithm = fit_algorithm
+2026-11-03 08:40:09,249 - INFO - Git diff changed after running eval script
+2026-11-03 08:40:09,249 - INFO - Grading answer for scikit-learn__scikit-learn-12682...
+2026-11-03 08:40:09,254 - INFO - report: {'scikit-learn__scikit-learn-12682': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/decomposition/tests/test_dict_learning.py::test_max_iter'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_shapes_omp', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_shapes', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_overcomplete', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_lars_positive_parameter', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[False-False-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[False-False-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[False-False-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[False-True-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[False-True-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[False-True-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[True-False-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[True-False-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[True-False-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[True-True-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[True-True-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_positivity[True-True-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_lars_dict_positivity[False]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_lars_dict_positivity[True]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_lars_code_positivity', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_reconstruction', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_reconstruction_parallel', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_lassocd_readonly_data', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_nonzero_coefs', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_unknown_fit_algorithm', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_split', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_shapes', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_lars_positive_parameter', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[False-False-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[False-False-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[False-False-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[False-True-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[False-True-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[False-True-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[True-False-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[True-False-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[True-False-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[True-True-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[True-True-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_positivity[True-True-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_lars[False]', 'sklearn/decomposition/tests/test_dict_learning.py::test_minibatch_dictionary_learning_lars[True]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_positivity[False-False]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_positivity[False-True]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_positivity[True-False]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_positivity[True-True]', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_verbosity', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_estimator_shapes', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_overcomplete', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_initialization', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_readonly_initialization', 'sklearn/decomposition/tests/test_dict_learning.py::test_dict_learning_online_partial_fit', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_shapes', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_positivity[False-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_positivity[False-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_positivity[False-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_positivity[True-lasso_lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_positivity[True-lasso_cd]', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_positivity[True-threshold]', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_unavailable_positivity[lars]', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_unavailable_positivity[omp]', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_input', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_error', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_encode_error_default_sparsity', 'sklearn/decomposition/tests/test_dict_learning.py::test_unknown_method', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_coder_estimator', 'sklearn/decomposition/tests/test_dict_learning.py::test_sparse_coder_parallel_mmap'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-12682: resolved: True
+2026-11-03 08:40:09,256 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-12682.verified_full_hermes...
+2026-11-03 08:40:25,426 - INFO - Container sweb.eval.scikit-learn__scikit-learn-12682.verified_full_hermes stopped successfully.
+2026-11-03 08:40:25,426 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-12682.verified_full_hermes...
+2026-11-03 08:40:25,464 - INFO - Container sweb.eval.scikit-learn__scikit-learn-12682.verified_full_hermes removed successfully.

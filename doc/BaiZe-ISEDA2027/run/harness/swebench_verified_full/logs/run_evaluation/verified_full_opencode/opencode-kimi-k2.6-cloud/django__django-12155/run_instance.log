@@ -1,0 +1,68 @@
+2026-10-30 15:33:38,581 - INFO - Creating container for django__django-12155...
+2026-10-30 15:33:38,613 - INFO - Container for django__django-12155 created: 12c8f81ac132ca2523786416808826fa37b372095b718f2444c4cfedbfb14594
+2026-10-30 15:33:39,903 - INFO - Container for django__django-12155 started: 12c8f81ac132ca2523786416808826fa37b372095b718f2444c4cfedbfb14594
+2026-10-30 15:33:39,905 - INFO - Intermediate patch for django__django-12155 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12155/patch.diff, now applying to container...
+2026-10-30 15:33:40,083 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admindocs/utils.py...
+Checking patch tests/admin_docs/test_utils.py...
+Applied patch django/contrib/admindocs/utils.py cleanly.
+Applied patch tests/admin_docs/test_utils.py cleanly.
+
+2026-10-30 15:33:41,500 - INFO - Git diff before:
+diff --git a/django/contrib/admindocs/utils.py b/django/contrib/admindocs/utils.py
+index 4c0e7e2a56..aa663ead5b 100644
+--- a/django/contrib/admindocs/utils.py
++++ b/django/contrib/admindocs/utils.py
+@@ -34,7 +34,7 @@ def trim_docstring(docstring):
+         return ''
+     # Convert tabs to spaces and split into lines
+     lines = docstring.expandtabs().splitlines()
+-    indent = min(len(line) - len(line.lstrip()) for line in lines if line.lstrip())
++    indent = min((len(line) - len(line.lstrip()) for line in lines[1:] if line.lstrip()), default=0)
+     trimmed = [lines[0].lstrip()] + [line[indent:].rstrip() for line in lines[1:]]
+     return "\n".join(trimmed).strip()
+ 
+diff --git a/tests/admin_docs/test_utils.py b/tests/admin_docs/test_utils.py
+index 17ea912015..1f47857799 100644
+--- a/tests/admin_docs/test_utils.py
++++ b/tests/admin_docs/test_utils.py
+@@ -44,6 +44,15 @@ class TestUtils(AdminDocsSimpleTestCase):
+         )
+         self.assertEqual(trim_docstring_output, trimmed_docstring)
+ 
++    def test_trim_docstring_no_first_line_empty(self):
++        """
++        trim_docstring() should work correctly when the first line of the
++        docstring is not empty.
++        """
++        docstring = 'test tests something.\n\n    More text.\n    '
++        trimmed_docstring = 'test tests something.\n\nMore text.'
++        self.assertEqual(trim_docstring(docstring), trimmed_docstring)
++
+     def test_parse_docstring(self):
+         title, description, metadata = parse_docstring(self.docstring)
+         docstring_title = (
+2026-10-30 15:33:41,503 - INFO - Eval script for django__django-12155 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12155/eval.sh; copying to container...
+2026-10-30 15:33:48,414 - INFO - Test runtime: 6.81 seconds
+2026-10-30 15:33:48,417 - INFO - Test output for django__django-12155 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12155/test_output.txt
+2026-10-30 15:33:48,490 - INFO - Git diff after:
+diff --git a/django/contrib/admindocs/utils.py b/django/contrib/admindocs/utils.py
+index 4c0e7e2a56..aa663ead5b 100644
+--- a/django/contrib/admindocs/utils.py
++++ b/django/contrib/admindocs/utils.py
+@@ -34,7 +34,7 @@ def trim_docstring(docstring):
+         return ''
+     # Convert tabs to spaces and split into lines
+     lines = docstring.expandtabs().splitlines()
+-    indent = min(len(line) - len(line.lstrip()) for line in lines if line.lstrip())
++    indent = min((len(line) - len(line.lstrip()) for line in lines[1:] if line.lstrip()), default=0)
+     trimmed = [lines[0].lstrip()] + [line[indent:].rstrip() for line in lines[1:]]
+     return "\n".join(trimmed).strip()
+2026-10-30 15:33:48,491 - INFO - Git diff changed after running eval script
+2026-10-30 15:33:48,491 - INFO - Grading answer for django__django-12155...
+2026-10-30 15:33:48,491 - INFO - report: {'django__django-12155': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_parse_rst_with_docstring_no_leading_line_feed (admin_docs.test_utils.TestUtils)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_description_output (admin_docs.test_utils.TestUtils)', 'test_initial_header_level (admin_docs.test_utils.TestUtils)', 'test_parse_docstring (admin_docs.test_utils.TestUtils)', 'test_parse_rst (admin_docs.test_utils.TestUtils)', 'test_publish_parts (admin_docs.test_utils.TestUtils)', 'test_title_output (admin_docs.test_utils.TestUtils)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12155: resolved: True
+2026-10-30 15:33:48,493 - INFO - Attempting to stop container sweb.eval.django__django-12155.verified_full_opencode...
+2026-10-30 15:34:04,130 - INFO - Container sweb.eval.django__django-12155.verified_full_opencode stopped successfully.
+2026-10-30 15:34:04,130 - INFO - Attempting to remove container sweb.eval.django__django-12155.verified_full_opencode...
+2026-10-30 15:34:04,187 - INFO - Container sweb.eval.django__django-12155.verified_full_opencode removed successfully.

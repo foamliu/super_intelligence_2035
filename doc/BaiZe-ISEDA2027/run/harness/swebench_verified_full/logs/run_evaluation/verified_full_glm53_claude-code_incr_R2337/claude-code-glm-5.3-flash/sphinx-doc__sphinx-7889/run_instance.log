@@ -1,0 +1,108 @@
+2026-11-13 06:24:58,239 - INFO - Creating container for sphinx-doc__sphinx-7889...
+2026-11-13 06:24:58,261 - INFO - Container for sphinx-doc__sphinx-7889 created: 9f82dc3b6aa448a24787262e197f1ced5386250a091f51d9f897d2a19c608f4e
+2026-11-13 06:24:59,099 - INFO - Container for sphinx-doc__sphinx-7889 started: 9f82dc3b6aa448a24787262e197f1ced5386250a091f51d9f897d2a19c608f4e
+2026-11-13 06:24:59,101 - INFO - Intermediate patch for sphinx-doc__sphinx-7889 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2337/claude-code-glm-5.3-flash/sphinx-doc__sphinx-7889/patch.diff, now applying to container...
+2026-11-13 06:24:59,277 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/ext/autodoc/mock.py...
+Checking patch tests/test_ext_autodoc_mock.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/ext/autodoc/mock.py cleanly.
+Applied patch tests/test_ext_autodoc_mock.py cleanly.
+
+2026-11-13 06:24:59,754 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index e6888146c..32ce16917 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -19,6 +19,7 @@ Features added
+ Bugs fixed
+ ----------
+ 
++* #7886: autodoc: TypeError is raised on mocking generic-typed classes
+ * #7839: autosummary: cannot handle umlauts in function names
+ * #7865: autosummary: Failed to extract summary line when abbreviations found
+ * #7866: autosummary: Failed to extract correct summary line when docstring
+diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py
+index 98a3a3a96..40258a135 100644
+--- a/sphinx/ext/autodoc/mock.py
++++ b/sphinx/ext/autodoc/mock.py
+@@ -52,8 +52,8 @@ class _MockObject:
+     def __mro_entries__(self, bases: Tuple) -> Tuple:
+         return (self.__class__,)
+ 
+-    def __getitem__(self, key: str) -> "_MockObject":
+-        return _make_subclass(key, self.__display_name__, self.__class__)()
++    def __getitem__(self, key: Any) -> "_MockObject":
++        return _make_subclass(str(key), self.__display_name__, self.__class__)()
+ 
+     def __getattr__(self, key: str) -> "_MockObject":
+         return _make_subclass(key, self.__display_name__, self.__class__)()
+diff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py
+index 4760493cf..f26f97edb 100644
+--- a/tests/test_ext_autodoc_mock.py
++++ b/tests/test_ext_autodoc_mock.py
+@@ -11,6 +11,7 @@
+ import abc
+ import sys
+ from importlib import import_module
++from typing import TypeVar
+ 
+ import pytest
+ 
+@@ -51,6 +52,16 @@ def test_MockObject():
+     assert obj.method() == "string"
+     assert isinstance(obj.other_method(), SubClass)
+ 
++    # parametrized type
++    T = TypeVar('T')
++
++    class SubClass2(mock.SomeClass[T]):
++        """docstring of SubClass"""
++
++    obj2 = SubClass2()
++    assert SubClass2.__doc__ == "docstring of SubClass"
++    assert isinstance(obj2, SubClass2)
++
+ 
+ def test_mock():
+     modname = 'sphinx.unknown'
+2026-11-13 06:24:59,757 - INFO - Eval script for sphinx-doc__sphinx-7889 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2337/claude-code-glm-5.3-flash/sphinx-doc__sphinx-7889/eval.sh; copying to container...
+2026-11-13 06:25:03,498 - INFO - Test runtime: 3.66 seconds
+2026-11-13 06:25:03,500 - INFO - Test output for sphinx-doc__sphinx-7889 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2337/claude-code-glm-5.3-flash/sphinx-doc__sphinx-7889/test_output.txt
+2026-11-13 06:25:03,574 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index e6888146c..32ce16917 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -19,6 +19,7 @@ Features added
+ Bugs fixed
+ ----------
+ 
++* #7886: autodoc: TypeError is raised on mocking generic-typed classes
+ * #7839: autosummary: cannot handle umlauts in function names
+ * #7865: autosummary: Failed to extract summary line when abbreviations found
+ * #7866: autosummary: Failed to extract correct summary line when docstring
+diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py
+index 98a3a3a96..40258a135 100644
+--- a/sphinx/ext/autodoc/mock.py
++++ b/sphinx/ext/autodoc/mock.py
+@@ -52,8 +52,8 @@ class _MockObject:
+     def __mro_entries__(self, bases: Tuple) -> Tuple:
+         return (self.__class__,)
+ 
+-    def __getitem__(self, key: str) -> "_MockObject":
+-        return _make_subclass(key, self.__display_name__, self.__class__)()
++    def __getitem__(self, key: Any) -> "_MockObject":
++        return _make_subclass(str(key), self.__display_name__, self.__class__)()
+ 
+     def __getattr__(self, key: str) -> "_MockObject":
+         return _make_subclass(key, self.__display_name__, self.__class__)()
+2026-11-13 06:25:03,574 - INFO - Git diff changed after running eval script
+2026-11-13 06:25:03,574 - INFO - Grading answer for sphinx-doc__sphinx-7889...
+2026-11-13 06:25:03,576 - INFO - report: {'sphinx-doc__sphinx-7889': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_mock.py::test_MockObject'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_mock.py::test_MockModule', 'tests/test_ext_autodoc_mock.py::test_mock', 'tests/test_ext_autodoc_mock.py::test_mock_does_not_follow_upper_modules', 'tests/test_ext_autodoc_mock.py::test_abc_MockObject', 'tests/test_ext_autodoc_mock.py::test_mock_decorator'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7889: resolved: True
+2026-11-13 06:25:03,577 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7889.verified_full_glm53_claude-code_incr_R2337...
+2026-11-13 06:25:19,830 - INFO - Container sweb.eval.sphinx-doc__sphinx-7889.verified_full_glm53_claude-code_incr_R2337 stopped successfully.
+2026-11-13 06:25:19,830 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7889.verified_full_glm53_claude-code_incr_R2337...
+2026-11-13 06:25:19,869 - INFO - Container sweb.eval.sphinx-doc__sphinx-7889.verified_full_glm53_claude-code_incr_R2337 removed successfully.

@@ -1,0 +1,68 @@
+352 instances already run, skipping...
+Running 11 instances...
+  0%|          | 0/11 [00:00<?, ?it/s]  9%|▉         | 1/11 [01:40<16:45, 100.59s/it]1 ran successfully, 0 failed:   9%|▉         | 1/11 [01:40<16:45, 100.60s/it]1 ran successfully, 0 failed:  18%|█▊        | 2/11 [01:44<07:52, 52.48s/it] 2 ran successfully, 0 failed:  18%|█▊        | 2/11 [01:44<07:52, 52.48s/it]2 ran successfully, 0 failed:  27%|██▋       | 3/11 [01:45<04:40, 35.11s/it]3 ran successfully, 0 failed:  27%|██▋       | 3/11 [01:45<04:40, 35.11s/it]3 ran successfully, 0 failed:  36%|███▋      | 4/11 [01:45<03:04, 26.38s/it]4 ran successfully, 0 failed:  36%|███▋      | 4/11 [01:45<03:04, 26.38s/it]4 ran successfully, 0 failed:  45%|████▌     | 5/11 [01:45<02:06, 21.16s/it]5 ran successfully, 0 failed:  45%|████▌     | 5/11 [01:45<02:06, 21.16s/it]5 ran successfully, 0 failed:  55%|█████▍    | 6/11 [01:48<01:30, 18.04s/it]6 ran successfully, 0 failed:  55%|█████▍    | 6/11 [01:48<01:30, 18.04s/it]6 ran successfully, 0 failed:  64%|██████▎   | 7/11 [01:49<01:02, 15.71s/it]7 ran successfully, 0 failed:  64%|██████▎   | 7/11 [01:49<01:02, 15.71s/it]7 ran successfully, 0 failed:  73%|███████▎  | 8/11 [02:49<01:03, 21.19s/it]8 ran successfully, 0 failed:  73%|███████▎  | 8/11 [02:49<01:03, 21.19s/it]8 ran successfully, 0 failed:  82%|████████▏ | 9/11 [03:26<00:45, 22.95s/it]9 ran successfully, 0 failed:  82%|████████▏ | 9/11 [03:26<00:45, 22.95s/it]9 ran successfully, 0 failed:  91%|█████████ | 10/11 [03:45<00:22, 22.59s/it]10 ran successfully, 0 failed:  91%|█████████ | 10/11 [03:45<00:22, 22.59s/it]10 ran successfully, 0 failed: 100%|██████████| 11/11 [04:37<00:00, 25.22s/it]11 ran successfully, 0 failed: 100%|██████████| 11/11 [04:37<00:00, 25.22s/it]11 ran successfully, 0 failed: 100%|██████████| 11/11 [04:37<00:00, 25.22s/it]
+All instances run.
+Total instances: 363
+Instances submitted: 363
+Instances completed: 363
+Instances incomplete: 0
+Instances resolved: 270
+Instances unresolved: 93
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 7
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 363
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+363 instances already run, skipping...
+Running 8 instances...
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:24<02:51, 24.51s/it]1 ran successfully, 0 failed:  12%|█▎        | 1/8 [00:24<02:51, 24.51s/it]1 ran successfully, 0 failed:  25%|██▌       | 2/8 [00:43<02:11, 21.87s/it]2 ran successfully, 0 failed:  25%|██▌       | 2/8 [00:43<02:11, 21.87s/it]2 ran successfully, 0 failed:  38%|███▊      | 3/8 [01:05<01:49, 21.81s/it]3 ran successfully, 0 failed:  38%|███▊      | 3/8 [01:05<01:49, 21.81s/it]3 ran successfully, 0 failed:  50%|█████     | 4/8 [01:08<01:08, 17.20s/it]4 ran successfully, 0 failed:  50%|█████     | 4/8 [01:08<01:08, 17.20s/it]4 ran successfully, 0 failed:  62%|██████▎   | 5/8 [01:48<01:04, 21.65s/it]5 ran successfully, 0 failed:  62%|██████▎   | 5/8 [01:48<01:04, 21.65s/it]5 ran successfully, 0 failed:  75%|███████▌  | 6/8 [01:53<00:37, 18.92s/it]6 ran successfully, 0 failed:  75%|███████▌  | 6/8 [01:53<00:37, 18.92s/it]6 ran successfully, 0 failed:  88%|████████▊ | 7/8 [02:00<00:17, 17.23s/it]7 ran successfully, 0 failed:  88%|████████▊ | 7/8 [02:00<00:17, 17.23s/it]7 ran successfully, 0 failed: 100%|██████████| 8/8 [02:49<00:00, 21.20s/it]8 ran successfully, 0 failed: 100%|██████████| 8/8 [02:49<00:00, 21.20s/it]8 ran successfully, 0 failed: 100%|██████████| 8/8 [02:49<00:00, 21.20s/it]
+All instances run.
+Total instances: 371
+Instances submitted: 371
+Instances completed: 371
+Instances incomplete: 0
+Instances resolved: 274
+Instances unresolved: 97
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 7
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 371
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+371 instances already run, skipping...
+Running 11 instances...
+  0%|          | 0/11 [00:00<?, ?it/s]  9%|▉         | 1/11 [00:25<04:15, 25.55s/it]1 ran successfully, 0 failed:   9%|▉         | 1/11 [00:25<04:15, 25.55s/it]1 ran successfully, 0 failed:  18%|█▊        | 2/11 [00:26<02:00, 13.36s/it]2 ran successfully, 0 failed:  18%|█▊        | 2/11 [00:26<02:00, 13.36s/it]2 ran successfully, 0 failed:  27%|██▋       | 3/11 [00:26<01:11,  8.95s/it]3 ran successfully, 0 failed:  27%|██▋       | 3/11 [00:26<01:11,  8.95s/it]3 ran successfully, 0 failed:  36%|███▋      | 4/11 [00:30<00:52,  7.53s/it]4 ran successfully, 0 failed:  36%|███▋      | 4/11 [00:30<00:52,  7.53s/it]4 ran successfully, 0 failed:  45%|████▌     | 5/11 [00:55<01:06, 11.13s/it]5 ran successfully, 0 failed:  45%|████▌     | 5/11 [00:55<01:06, 11.13s/it]5 ran successfully, 0 failed:  55%|█████▍    | 6/11 [01:05<00:54, 10.93s/it]6 ran successfully, 0 failed:  55%|█████▍    | 6/11 [01:05<00:54, 10.93s/it]6 ran successfully, 0 failed:  64%|██████▎   | 7/11 [01:08<00:39,  9.76s/it]7 ran successfully, 0 failed:  64%|██████▎   | 7/11 [01:08<00:39,  9.76s/it]7 ran successfully, 0 failed:  73%|███████▎  | 8/11 [01:21<00:30, 10.17s/it]8 ran successfully, 0 failed:  73%|███████▎  | 8/11 [01:21<00:30, 10.17s/it]8 ran successfully, 0 failed:  82%|████████▏ | 9/11 [01:55<00:25, 12.85s/it]9 ran successfully, 0 failed:  82%|████████▏ | 9/11 [01:55<00:25, 12.85s/it]9 ran successfully, 0 failed:  91%|█████████ | 10/11 [02:21<00:14, 14.13s/it]10 ran successfully, 0 failed:  91%|█████████ | 10/11 [02:21<00:14, 14.13s/it]10 ran successfully, 0 failed: 100%|██████████| 11/11 [02:21<00:00, 12.91s/it]11 ran successfully, 0 failed: 100%|██████████| 11/11 [02:21<00:00, 12.91s/it]11 ran successfully, 0 failed: 100%|██████████| 11/11 [02:21<00:00, 12.91s/it]
+All instances run.
+Total instances: 382
+Instances submitted: 382
+Instances completed: 382
+Instances incomplete: 0
+Instances resolved: 281
+Instances unresolved: 101
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 8
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 382
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+382 instances already run, skipping...
+Running 15 instances...
+  0%|          | 0/15 [00:00<?, ?it/s]  7%|▋         | 1/15 [00:27<06:24, 27.46s/it]1 ran successfully, 0 failed:   7%|▋         | 1/15 [00:27<06:24, 27.46s/it]1 ran successfully, 0 failed:  13%|█▎        | 2/15 [00:32<03:29, 16.11s/it]2 ran successfully, 0 failed:  13%|█▎        | 2/15 [00:32<03:29, 16.11s/it]2 ran successfully, 0 failed:  20%|██        | 3/15 [00:36<02:27, 12.27s/it]3 ran successfully, 0 failed:  20%|██        | 3/15 [00:36<02:27, 12.27s/it]3 ran successfully, 0 failed:  27%|██▋       | 4/15 [00:55<02:33, 13.92s/it]4 ran successfully, 0 failed:  27%|██▋       | 4/15 [00:55<02:33, 13.92s/it]4 ran successfully, 0 failed:  33%|███▎      | 5/15 [01:01<02:03, 12.34s/it]5 ran successfully, 0 failed:  33%|███▎      | 5/15 [01:01<02:03, 12.34s/it]5 ran successfully, 0 failed:  40%|████      | 6/15 [01:26<02:10, 14.46s/it]6 ran successfully, 0 failed:  40%|████      | 6/15 [01:26<02:10, 14.46s/it]6 ran successfully, 0 failed:  47%|████▋     | 7/15 [01:31<01:44, 13.12s/it]7 ran successfully, 0 failed:  47%|████▋     | 7/15 [01:31<01:44, 13.12s/it]7 ran successfully, 0 failed:  53%|█████▎    | 8/15 [01:37<01:25, 12.15s/it]8 ran successfully, 0 failed:  53%|█████▎    | 8/15 [01:37<01:25, 12.15s/it]8 ran successfully, 0 failed:  60%|██████    | 9/15 [01:50<01:13, 12.25s/it]9 ran successfully, 0 failed:  60%|██████    | 9/15 [01:50<01:13, 12.25s/it]9 ran successfully, 0 failed:  67%|██████▋   | 10/15 [01:56<00:58, 11.62s/it]10 ran successfully, 0 failed:  67%|██████▋   | 10/15 [01:56<00:58, 11.62s/it]10 ran successfully, 0 failed:  73%|███████▎  | 11/15 [01:59<00:43, 10.82s/it]11 ran successfully, 0 failed:  73%|███████▎  | 11/15 [01:59<00:43, 10.82s/it]11 ran successfully, 0 failed:  80%|████████  | 12/15 [02:01<00:30, 10.13s/it]12 ran successfully, 0 failed:  80%|████████  | 12/15 [02:01<00:30, 10.13s/it]13 ran successfully, 0 failed:  87%|████████▋ | 13/15 [02:01<00:18,  9.36s/it]13 ran successfully, 0 failed:  93%|█████████▎| 14/15 [02:18<00:09,  9.92s/it]14 ran successfully, 0 failed:  93%|█████████▎| 14/15 [02:18<00:09,  9.92s/it]14 ran successfully, 0 failed: 100%|██████████| 15/15 [03:53<00:00, 15.59s/it]15 ran successfully, 0 failed: 100%|██████████| 15/15 [03:53<00:00, 15.59s/it]15 ran successfully, 0 failed: 100%|██████████| 15/15 [03:53<00:00, 15.59s/it]
+All instances run.
+Total instances: 397
+Instances submitted: 397
+Instances completed: 397
+Instances incomplete: 0
+Instances resolved: 290
+Instances unresolved: 107
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 8
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 397
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json

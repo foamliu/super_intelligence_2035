@@ -1,0 +1,26 @@
+2026-11-11 03:33:11,451 - INFO - Creating container for astropy__astropy-14309...
+2026-11-11 03:33:11,487 - INFO - Container for astropy__astropy-14309 created: 4ec050ad619bc3712c96a43b797d38fba906a5266ec74888ffe3937bdcb6b48c
+2026-11-11 03:33:12,492 - INFO - Container for astropy__astropy-14309 started: 4ec050ad619bc3712c96a43b797d38fba906a5266ec74888ffe3937bdcb6b48c
+2026-11-11 03:33:12,494 - INFO - Intermediate patch for astropy__astropy-14309 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2140/opencode-glm-5.3-flash/astropy__astropy-14309/patch.diff, now applying to container...
+2026-11-11 03:33:12,666 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/fits/connect.py...
+Applied patch astropy/io/fits/connect.py cleanly.
+
+2026-11-11 03:33:13,469 - INFO - Git diff before:
+diff --git a/astropy/io/fits/connect.py b/astropy/io/fits/connect.py
+index 4b6150f4a..1674df109 100644
+--- a/astropy/io/fits/connect.py
++++ b/astropy/io/fits/connect.py
+@@ -69,7 +69,10 @@ def is_fits(origin, filepath, fileobj, *args, **kwargs):
+             (".fits", ".fits.gz", ".fit", ".fit.gz", ".fts", ".fts.gz")
+         ):
+             return True
+-    return isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))
++    if len(args):
++        return isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))
++    else:
++        return False
+ 
+ 
+ def _decode_mixins(tbl):
+2026-11-11 03:33:13,472 - INFO - Eval script for astropy__astropy-14309 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2140/opencode-glm-5.3-flash/astropy__astropy-14309/eval.sh; copying to container...

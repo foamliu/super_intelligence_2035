@@ -1,0 +1,469 @@
+2026-11-09 12:16:30,771 - INFO - Creating container for django__django-14999...
+2026-11-09 12:16:30,791 - INFO - Container for django__django-14999 created: 51a9277264634fc2b36a4476909db895e6330dc6b8191b373de7a7c4a9a1c0dc
+2026-11-09 12:16:31,185 - INFO - Container for django__django-14999 started: 51a9277264634fc2b36a4476909db895e6330dc6b8191b373de7a7c4a9a1c0dc
+2026-11-09 12:16:31,187 - INFO - Intermediate patch for django__django-14999 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-14999/patch.diff, now applying to container...
+2026-11-09 12:16:31,334 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/mysql/operations.py...
+warning: django/db/backends/mysql/operations.py has type 100755, expected 100644
+Checking patch django/db/backends/oracle/operations.py...
+warning: django/db/backends/oracle/operations.py has type 100755, expected 100644
+Checking patch django/db/backends/postgresql/operations.py...
+warning: django/db/backends/postgresql/operations.py has type 100755, expected 100644
+Checking patch django/db/backends/sqlite3/base.py...
+warning: django/db/backends/sqlite3/base.py has type 100755, expected 100644
+Checking patch django/db/backends/utils.py...
+warning: django/db/backends/utils.py has type 100755, expected 100644
+Checking patch tests/backends/test_utils.py...
+warning: tests/backends/test_utils.py has type 100755, expected 100644
+Checking patch tests/db_functions/datetime/test_extract_trunc.py...
+warning: tests/db_functions/datetime/test_extract_trunc.py has type 100755, expected 100644
+Applied patch django/db/backends/mysql/operations.py cleanly.
+Applied patch django/db/backends/oracle/operations.py cleanly.
+Applied patch django/db/backends/postgresql/operations.py cleanly.
+Applied patch django/db/backends/sqlite3/base.py cleanly.
+Applied patch django/db/backends/utils.py cleanly.
+Applied patch tests/backends/test_utils.py cleanly.
+Applied patch tests/db_functions/datetime/test_extract_trunc.py cleanly.
+
+2026-11-09 12:16:32,686 - INFO - Git diff before:
+diff --git a/django/db/backends/mysql/operations.py b/django/db/backends/mysql/operations.py
+index 89730cee29..3e1faad41b 100755
+--- a/django/db/backends/mysql/operations.py
++++ b/django/db/backends/mysql/operations.py
+@@ -2,6 +2,7 @@ import uuid
+ 
+ from django.conf import settings
+ from django.db.backends.base.operations import BaseDatabaseOperations
++from django.db.backends.utils import split_tzname_delta
+ from django.utils import timezone
+ from django.utils.encoding import force_str
+ 
+@@ -76,11 +77,8 @@ class DatabaseOperations(BaseDatabaseOperations):
+             return "DATE(%s)" % (field_name)
+ 
+     def _prepare_tzname_delta(self, tzname):
+-        if '+' in tzname:
+-            return tzname[tzname.find('+'):]
+-        elif '-' in tzname:
+-            return tzname[tzname.find('-'):]
+-        return tzname
++        tzname, sign, offset = split_tzname_delta(tzname)
++        return f'{sign}{offset}' if offset else tzname
+ 
+     def _convert_field_to_tz(self, field_name, tzname):
+         if tzname and settings.USE_TZ and self.connection.timezone_name != tzname:
+diff --git a/django/db/backends/oracle/operations.py b/django/db/backends/oracle/operations.py
+index 4cfc7da070..f497390bea 100755
+--- a/django/db/backends/oracle/operations.py
++++ b/django/db/backends/oracle/operations.py
+@@ -5,7 +5,9 @@ from functools import lru_cache
+ from django.conf import settings
+ from django.db import DatabaseError, NotSupportedError
+ from django.db.backends.base.operations import BaseDatabaseOperations
+-from django.db.backends.utils import strip_quotes, truncate_name
++from django.db.backends.utils import (
++    split_tzname_delta, strip_quotes, truncate_name,
++)
+ from django.db.models import AutoField, Exists, ExpressionWrapper, Lookup
+ from django.db.models.expressions import RawSQL
+ from django.db.models.sql.where import WhereNode
+@@ -108,11 +110,8 @@ END;
+     _tzname_re = _lazy_re_compile(r'^[\w/:+-]+$')
+ 
+     def _prepare_tzname_delta(self, tzname):
+-        if '+' in tzname:
+-            return tzname[tzname.find('+'):]
+-        elif '-' in tzname:
+-            return tzname[tzname.find('-'):]
+-        return tzname
++        tzname, sign, offset = split_tzname_delta(tzname)
++        return f'{sign}{offset}' if offset else tzname
+ 
+     def _convert_field_to_tz(self, field_name, tzname):
+         if not (settings.USE_TZ and tzname):
+diff --git a/django/db/backends/postgresql/operations.py b/django/db/backends/postgresql/operations.py
+index 8d19872bea..399c1b24e7 100755
+--- a/django/db/backends/postgresql/operations.py
++++ b/django/db/backends/postgresql/operations.py
+@@ -2,6 +2,7 @@ from psycopg2.extras import Inet
+ 
+ from django.conf import settings
+ from django.db.backends.base.operations import BaseDatabaseOperations
++from django.db.backends.utils import split_tzname_delta
+ 
+ 
+ class DatabaseOperations(BaseDatabaseOperations):
+@@ -44,10 +45,10 @@ class DatabaseOperations(BaseDatabaseOperations):
+         return "DATE_TRUNC('%s', %s)" % (lookup_type, field_name)
+ 
+     def _prepare_tzname_delta(self, tzname):
+-        if '+' in tzname:
+-            return tzname.replace('+', '-')
+-        elif '-' in tzname:
+-            return tzname.replace('-', '+')
++        tzname, sign, offset = split_tzname_delta(tzname)
++        if offset:
++            sign = '-' if sign == '+' else '+'
++            return f'{tzname}{sign}{offset}'
+         return tzname
+ 
+     def _convert_field_to_tz(self, field_name, tzname):
+diff --git a/django/db/backends/sqlite3/base.py b/django/db/backends/sqlite3/base.py
+index 666b367be7..0ff9a50b93 100755
+--- a/django/db/backends/sqlite3/base.py
++++ b/django/db/backends/sqlite3/base.py
+@@ -434,15 +434,15 @@ def _sqlite_datetime_parse(dt, tzname=None, conn_tzname=None):
+     if conn_tzname:
+         dt = dt.replace(tzinfo=timezone_constructor(conn_tzname))
+     if tzname is not None and tzname != conn_tzname:
+-        sign_index = tzname.find('+') + tzname.find('-') + 1
+-        if sign_index > -1:
+-            sign = tzname[sign_index]
+-            tzname, offset = tzname.split(sign)
+-            if offset:
+-                hours, minutes = offset.split(':')
+-                offset_delta = datetime.timedelta(hours=int(hours), minutes=int(minutes))
+-                dt += offset_delta if sign == '+' else -offset_delta
+-        dt = timezone.localtime(dt, timezone_constructor(tzname))
++        tzname, sign, offset = backend_utils.split_tzname_delta(tzname)
++        if offset:
++            hours, minutes = offset.split(':')
++            offset_delta = datetime.timedelta(hours=int(hours), minutes=int(minutes))
++            dt += offset_delta if sign == '+' else -offset_delta
++        # The tzname may originally be just the offset e.g. "+3:00",
++        # which becomes an empty string after splitting the sign and offset.
++        # In this case, use the conn_tzname as fallback.
++        dt = timezone.localtime(dt, timezone_constructor(tzname or conn_tzname))
+     return dt
+ 
+ 
+diff --git a/django/db/backends/utils.py b/django/db/backends/utils.py
+index eda7159a41..cc92e1f035 100755
+--- a/django/db/backends/utils.py
++++ b/django/db/backends/utils.py
+@@ -7,6 +7,7 @@ from contextlib import contextmanager
+ 
+ from django.db import NotSupportedError
+ from django.utils.crypto import md5
++from django.utils.dateparse import parse_time
+ 
+ logger = logging.getLogger('django.db.backends')
+ 
+@@ -130,6 +131,20 @@ class CursorDebugWrapper(CursorWrapper):
+             )
+ 
+ 
++def split_tzname_delta(tzname):
++    """
++    Split a time zone name into a 3-tuple of (name, sign, offset).
++    """
++    for sign in ['+', '-']:
++        if sign in tzname:
++            name, offset = tzname.rsplit(sign, 1)
++            if offset and parse_time(offset):
++                if ':' not in offset:
++                    offset = f'{offset}:00'
++                return name, sign, offset
++    return tzname, None, None
++
++
+ ###############################################
+ # Converters from database (string) to Python #
+ ###############################################
+diff --git a/tests/backends/test_utils.py b/tests/backends/test_utils.py
+index 7974dee607..54819829fd 100755
+--- a/tests/backends/test_utils.py
++++ b/tests/backends/test_utils.py
+@@ -3,7 +3,7 @@ from decimal import Decimal, Rounded
+ 
+ from django.db import NotSupportedError, connection
+ from django.db.backends.utils import (
+-    format_number, split_identifier, truncate_name,
++    format_number, split_identifier, split_tzname_delta, truncate_name,
+ )
+ from django.test import (
+     SimpleTestCase, TransactionTestCase, skipIfDBFeature, skipUnlessDBFeature,
+@@ -57,6 +57,23 @@ class TestUtils(SimpleTestCase):
+         with self.assertRaises(Rounded):
+             equal('1234567890.1234', 5, None, '1234600000')
+ 
++    def test_split_tzname_delta(self):
++        tests = [
++            ('Asia/Ust+Nera', ('Asia/Ust+Nera', None, None)),
++            ('Asia/Ust-Nera', ('Asia/Ust-Nera', None, None)),
++            ('Asia/Ust+Nera-02:00', ('Asia/Ust+Nera', '-', '02:00')),
++            ('Asia/Ust-Nera+05:00', ('Asia/Ust-Nera', '+', '05:00')),
++            ('America/Coral_Harbour-01:00', ('America/Coral_Harbour', '-', '01:00')),
++            ('America/Coral_Harbour+02:30', ('America/Coral_Harbour', '+', '02:30')),
++            ('UTC+15:00', ('UTC', '+', '15:00')),
++            ('UTC-04:43', ('UTC', '-', '04:43')),
++            ('UTC', ('UTC', None, None)),
++            ('UTC+1', ('UTC+1', None, None)),
++        ]
++        for tzname, expected in tests:
++            with self.subTest(tzname=tzname):
++                self.assertEqual(split_tzname_delta(tzname), expected)
++
+ 
+ class CursorWrapperTests(TransactionTestCase):
+     available_apps = []
+diff --git a/tests/db_functions/datetime/test_extract_trunc.py b/tests/db_functions/datetime/test_extract_trunc.py
+index a129448470..71d9b676ed 100755
+--- a/tests/db_functions/datetime/test_extract_trunc.py
++++ b/tests/db_functions/datetime/test_extract_trunc.py
+@@ -1210,6 +1210,29 @@ class DateFunctionWithTimeZoneTests(DateFunctionTests):
+                 self.assertEqual(melb_model.hour, 9)
+                 self.assertEqual(melb_model.hour_melb, 9)
+ 
++    def test_extract_func_with_timezone_minus_no_offset(self):
++        start_datetime = datetime(2015, 6, 15, 23, 30, 1, 321)
++        end_datetime = datetime(2015, 6, 16, 13, 11, 27, 123)
++        start_datetime = timezone.make_aware(start_datetime)
++        end_datetime = timezone.make_aware(end_datetime)
++        self.create_model(start_datetime, end_datetime)
++        for ust_nera in self.get_timezones('Asia/Ust-Nera'):
++            with self.subTest(repr(ust_nera)):
++                qs = DTModel.objects.annotate(
++                    hour=ExtractHour('start_datetime'),
++                    hour_tz=ExtractHour('start_datetime', tzinfo=ust_nera),
++                ).order_by('start_datetime')
++
++                utc_model = qs.get()
++                self.assertEqual(utc_model.hour, 23)
++                self.assertEqual(utc_model.hour_tz, 9)
++
++                with timezone.override(ust_nera):
++                    ust_nera_model = qs.get()
++
++                self.assertEqual(ust_nera_model.hour, 9)
++                self.assertEqual(ust_nera_model.hour_tz, 9)
++
+     def test_extract_func_explicit_timezone_priority(self):
+         start_datetime = datetime(2015, 6, 15, 23, 30, 1, 321)
+         end_datetime = datetime(2015, 6, 16, 13, 11, 27, 123)
+2026-11-09 12:16:32,689 - INFO - Eval script for django__django-14999 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-14999/eval.sh; copying to container...
+2026-11-09 12:16:43,304 - INFO - Test runtime: 10.52 seconds
+2026-11-09 12:16:43,309 - INFO - Test output for django__django-14999 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-14999/test_output.txt
+2026-11-09 12:16:43,393 - INFO - Git diff after:
+diff --git a/django/db/backends/mysql/operations.py b/django/db/backends/mysql/operations.py
+index 89730cee29..3e1faad41b 100755
+--- a/django/db/backends/mysql/operations.py
++++ b/django/db/backends/mysql/operations.py
+@@ -2,6 +2,7 @@ import uuid
+ 
+ from django.conf import settings
+ from django.db.backends.base.operations import BaseDatabaseOperations
++from django.db.backends.utils import split_tzname_delta
+ from django.utils import timezone
+ from django.utils.encoding import force_str
+ 
+@@ -76,11 +77,8 @@ class DatabaseOperations(BaseDatabaseOperations):
+             return "DATE(%s)" % (field_name)
+ 
+     def _prepare_tzname_delta(self, tzname):
+-        if '+' in tzname:
+-            return tzname[tzname.find('+'):]
+-        elif '-' in tzname:
+-            return tzname[tzname.find('-'):]
+-        return tzname
++        tzname, sign, offset = split_tzname_delta(tzname)
++        return f'{sign}{offset}' if offset else tzname
+ 
+     def _convert_field_to_tz(self, field_name, tzname):
+         if tzname and settings.USE_TZ and self.connection.timezone_name != tzname:
+diff --git a/django/db/backends/oracle/operations.py b/django/db/backends/oracle/operations.py
+index 4cfc7da070..f497390bea 100755
+--- a/django/db/backends/oracle/operations.py
++++ b/django/db/backends/oracle/operations.py
+@@ -5,7 +5,9 @@ from functools import lru_cache
+ from django.conf import settings
+ from django.db import DatabaseError, NotSupportedError
+ from django.db.backends.base.operations import BaseDatabaseOperations
+-from django.db.backends.utils import strip_quotes, truncate_name
++from django.db.backends.utils import (
++    split_tzname_delta, strip_quotes, truncate_name,
++)
+ from django.db.models import AutoField, Exists, ExpressionWrapper, Lookup
+ from django.db.models.expressions import RawSQL
+ from django.db.models.sql.where import WhereNode
+@@ -108,11 +110,8 @@ END;
+     _tzname_re = _lazy_re_compile(r'^[\w/:+-]+$')
+ 
+     def _prepare_tzname_delta(self, tzname):
+-        if '+' in tzname:
+-            return tzname[tzname.find('+'):]
+-        elif '-' in tzname:
+-            return tzname[tzname.find('-'):]
+-        return tzname
++        tzname, sign, offset = split_tzname_delta(tzname)
++        return f'{sign}{offset}' if offset else tzname
+ 
+     def _convert_field_to_tz(self, field_name, tzname):
+         if not (settings.USE_TZ and tzname):
+diff --git a/django/db/backends/postgresql/operations.py b/django/db/backends/postgresql/operations.py
+index 8d19872bea..399c1b24e7 100755
+--- a/django/db/backends/postgresql/operations.py
++++ b/django/db/backends/postgresql/operations.py
+@@ -2,6 +2,7 @@ from psycopg2.extras import Inet
+ 
+ from django.conf import settings
+ from django.db.backends.base.operations import BaseDatabaseOperations
++from django.db.backends.utils import split_tzname_delta
+ 
+ 
+ class DatabaseOperations(BaseDatabaseOperations):
+@@ -44,10 +45,10 @@ class DatabaseOperations(BaseDatabaseOperations):
+         return "DATE_TRUNC('%s', %s)" % (lookup_type, field_name)
+ 
+     def _prepare_tzname_delta(self, tzname):
+-        if '+' in tzname:
+-            return tzname.replace('+', '-')
+-        elif '-' in tzname:
+-            return tzname.replace('-', '+')
++        tzname, sign, offset = split_tzname_delta(tzname)
++        if offset:
++            sign = '-' if sign == '+' else '+'
++            return f'{tzname}{sign}{offset}'
+         return tzname
+ 
+     def _convert_field_to_tz(self, field_name, tzname):
+diff --git a/django/db/backends/sqlite3/base.py b/django/db/backends/sqlite3/base.py
+index 666b367be7..0ff9a50b93 100755
+--- a/django/db/backends/sqlite3/base.py
++++ b/django/db/backends/sqlite3/base.py
+@@ -434,15 +434,15 @@ def _sqlite_datetime_parse(dt, tzname=None, conn_tzname=None):
+     if conn_tzname:
+         dt = dt.replace(tzinfo=timezone_constructor(conn_tzname))
+     if tzname is not None and tzname != conn_tzname:
+-        sign_index = tzname.find('+') + tzname.find('-') + 1
+-        if sign_index > -1:
+-            sign = tzname[sign_index]
+-            tzname, offset = tzname.split(sign)
+-            if offset:
+-                hours, minutes = offset.split(':')
+-                offset_delta = datetime.timedelta(hours=int(hours), minutes=int(minutes))
+-                dt += offset_delta if sign == '+' else -offset_delta
+-        dt = timezone.localtime(dt, timezone_constructor(tzname))
++        tzname, sign, offset = backend_utils.split_tzname_delta(tzname)
++        if offset:
++            hours, minutes = offset.split(':')
++            offset_delta = datetime.timedelta(hours=int(hours), minutes=int(minutes))
++            dt += offset_delta if sign == '+' else -offset_delta
++        # The tzname may originally be just the offset e.g. "+3:00",
++        # which becomes an empty string after splitting the sign and offset.
++        # In this case, use the conn_tzname as fallback.
++        dt = timezone.localtime(dt, timezone_constructor(tzname or conn_tzname))
+     return dt
+ 
+ 
+diff --git a/django/db/backends/utils.py b/django/db/backends/utils.py
+index eda7159a41..cc92e1f035 100755
+--- a/django/db/backends/utils.py
++++ b/django/db/backends/utils.py
+@@ -7,6 +7,7 @@ from contextlib import contextmanager
+ 
+ from django.db import NotSupportedError
+ from django.utils.crypto import md5
++from django.utils.dateparse import parse_time
+ 
+ logger = logging.getLogger('django.db.backends')
+ 
+@@ -130,6 +131,20 @@ class CursorDebugWrapper(CursorWrapper):
+             )
+ 
+ 
++def split_tzname_delta(tzname):
++    """
++    Split a time zone name into a 3-tuple of (name, sign, offset).
++    """
++    for sign in ['+', '-']:
++        if sign in tzname:
++            name, offset = tzname.rsplit(sign, 1)
++            if offset and parse_time(offset):
++                if ':' not in offset:
++                    offset = f'{offset}:00'
++                return name, sign, offset
++    return tzname, None, None
++
++
+ ###############################################
+ # Converters from database (string) to Python #
+ ###############################################
+diff --git a/tests/backends/test_utils.py b/tests/backends/test_utils.py
+index 7974dee607..54819829fd 100755
+--- a/tests/backends/test_utils.py
++++ b/tests/backends/test_utils.py
+@@ -3,7 +3,7 @@ from decimal import Decimal, Rounded
+ 
+ from django.db import NotSupportedError, connection
+ from django.db.backends.utils import (
+-    format_number, split_identifier, truncate_name,
++    format_number, split_identifier, split_tzname_delta, truncate_name,
+ )
+ from django.test import (
+     SimpleTestCase, TransactionTestCase, skipIfDBFeature, skipUnlessDBFeature,
+@@ -57,6 +57,23 @@ class TestUtils(SimpleTestCase):
+         with self.assertRaises(Rounded):
+             equal('1234567890.1234', 5, None, '1234600000')
+ 
++    def test_split_tzname_delta(self):
++        tests = [
++            ('Asia/Ust+Nera', ('Asia/Ust+Nera', None, None)),
++            ('Asia/Ust-Nera', ('Asia/Ust-Nera', None, None)),
++            ('Asia/Ust+Nera-02:00', ('Asia/Ust+Nera', '-', '02:00')),
++            ('Asia/Ust-Nera+05:00', ('Asia/Ust-Nera', '+', '05:00')),
++            ('America/Coral_Harbour-01:00', ('America/Coral_Harbour', '-', '01:00')),
++            ('America/Coral_Harbour+02:30', ('America/Coral_Harbour', '+', '02:30')),
++            ('UTC+15:00', ('UTC', '+', '15:00')),
++            ('UTC-04:43', ('UTC', '-', '04:43')),
++            ('UTC', ('UTC', None, None)),
++            ('UTC+1', ('UTC+1', None, None)),
++        ]
++        for tzname, expected in tests:
++            with self.subTest(tzname=tzname):
++                self.assertEqual(split_tzname_delta(tzname), expected)
++
+ 
+ class CursorWrapperTests(TransactionTestCase):
+     available_apps = []
+diff --git a/tests/db_functions/datetime/test_extract_trunc.py b/tests/db_functions/datetime/test_extract_trunc.py
+index a129448470..71d9b676ed 100755
+--- a/tests/db_functions/datetime/test_extract_trunc.py
++++ b/tests/db_functions/datetime/test_extract_trunc.py
+@@ -1210,6 +1210,29 @@ class DateFunctionWithTimeZoneTests(DateFunctionTests):
+                 self.assertEqual(melb_model.hour, 9)
+                 self.assertEqual(melb_model.hour_melb, 9)
+ 
++    def test_extract_func_with_timezone_minus_no_offset(self):
++        start_datetime = datetime(2015, 6, 15, 23, 30, 1, 321)
++        end_datetime = datetime(2015, 6, 16, 13, 11, 27, 123)
++        start_datetime = timezone.make_aware(start_datetime)
++        end_datetime = timezone.make_aware(end_datetime)
++        self.create_model(start_datetime, end_datetime)
++        for ust_nera in self.get_timezones('Asia/Ust-Nera'):
++            with self.subTest(repr(ust_nera)):
++                qs = DTModel.objects.annotate(
++                    hour=ExtractHour('start_datetime'),
++                    hour_tz=ExtractHour('start_datetime', tzinfo=ust_nera),
++                ).order_by('start_datetime')
++
++                utc_model = qs.get()
++                self.assertEqual(utc_model.hour, 23)
++                self.assertEqual(utc_model.hour_tz, 9)
++
++                with timezone.override(ust_nera):
++                    ust_nera_model = qs.get()
++
++                self.assertEqual(ust_nera_model.hour, 9)
++                self.assertEqual(ust_nera_model.hour_tz, 9)
++
+     def test_extract_func_explicit_timezone_priority(self):
+         start_datetime = datetime(2015, 6, 15, 23, 30, 1, 321)
+         end_datetime = datetime(2015, 6, 16, 13, 11, 27, 123)
+2026-11-09 12:16:43,393 - INFO - Grading answer for django__django-14999...
+2026-11-09 12:16:43,412 - INFO - report: {'django__django-14999': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_rename_model_with_db_table_noop (migrations.test_operations.OperationTests)']}, 'PASS_TO_PASS': {'success': ['test_references_model_mixin (migrations.test_operations.TestCreateModel)', 'test_reference_field_by_through_fields (migrations.test_operations.FieldOperationTests)', 'test_references_field_by_from_fields (migrations.test_operations.FieldOperationTests)', 'test_references_field_by_name (migrations.test_operations.FieldOperationTests)', 'test_references_field_by_remote_field_model (migrations.test_operations.FieldOperationTests)', 'test_references_field_by_through (migrations.test_operations.FieldOperationTests)', 'test_references_field_by_to_fields (migrations.test_operations.FieldOperationTests)', 'test_references_model (migrations.test_operations.FieldOperationTests)', 'Tests the AddField operation.', 'The CreateTable operation ignores swapped models.', 'Tests the DeleteModel operation ignores swapped models.', 'Add/RemoveIndex operations ignore swapped models.', 'Tests the AddField operation on TextField/BinaryField.', 'Tests the AddField operation on TextField.', 'test_add_constraint (migrations.test_operations.OperationTests)', 'test_add_constraint_combinable (migrations.test_operations.OperationTests)', 'test_add_constraint_percent_escaping (migrations.test_operations.OperationTests)', 'test_add_covering_unique_constraint (migrations.test_operations.OperationTests)', 'test_add_deferred_unique_constraint (migrations.test_operations.OperationTests)', 'Tests the AddField operation with a ManyToManyField.', "Tests the AddField operation's state alteration", 'test_add_func_index (migrations.test_operations.OperationTests)', 'test_add_func_unique_constraint (migrations.test_operations.OperationTests)', 'Test the AddIndex operation.', 'test_add_index_state_forwards (migrations.test_operations.OperationTests)', 'test_add_or_constraint (migrations.test_operations.OperationTests)', 'test_add_partial_unique_constraint (migrations.test_operations.OperationTests)', 'Tests the AlterField operation.', 'AlterField operation is a noop when adding only a db_column and the', 'test_alter_field_m2m (migrations.test_operations.OperationTests)', "Tests the AlterField operation on primary keys (for things like PostgreSQL's SERIAL weirdness)", 'Tests the AlterField operation on primary keys changes any FKs pointing to it.', 'test_alter_field_pk_mti_fk (migrations.test_operations.OperationTests)', "If AlterField doesn't reload state appropriately, the second AlterField", 'test_alter_field_reloads_state_on_fk_with_to_field_related_name_target_type_change (migrations.test_operations.OperationTests)', 'test_alter_field_reloads_state_on_fk_with_to_field_target_type_change (migrations.test_operations.OperationTests)', 'test_alter_field_with_func_index (migrations.test_operations.OperationTests)', 'test_alter_field_with_func_unique_constraint (migrations.test_operations.OperationTests)', 'Test AlterField operation with an index to ensure indexes created via', 'Creating and then altering an FK works correctly', 'Altering an FK to a non-FK works (#23244)', 'Tests the AlterIndexTogether operation.', 'test_alter_index_together_remove (migrations.test_operations.OperationTests)', 'test_alter_index_together_remove_with_unique_together (migrations.test_operations.OperationTests)', 'The managers on a model are set.', 'Tests the AlterModelOptions operation.', 'The AlterModelOptions operation removes keys from the dict (#23121)', 'Tests the AlterModelTable operation.', 'AlterModelTable should rename auto-generated M2M tables.', 'Tests the AlterModelTable operation if the table name is set to None.', 'Tests the AlterModelTable operation if the table name is not changed.', 'Tests the AlterOrderWithRespectTo operation.', 'Tests the AlterUniqueTogether operation.', 'test_alter_unique_together_remove (migrations.test_operations.OperationTests)', 'A field may be migrated from AutoField to BigAutoField.', "Column names that are SQL keywords shouldn't cause problems when used", 'Tests the CreateModel operation.', 'Tests the CreateModel operation on a multi-table inheritance setup.', 'Test the creation of a model with a ManyToMany field and the', 'test_create_model_with_constraint (migrations.test_operations.OperationTests)', 'test_create_model_with_deferred_unique_constraint (migrations.test_operations.OperationTests)', 'test_create_model_with_duplicate_base (migrations.test_operations.OperationTests)', 'test_create_model_with_duplicate_field_name (migrations.test_operations.OperationTests)', 'test_create_model_with_duplicate_manager_name (migrations.test_operations.OperationTests)', 'test_create_model_with_partial_unique_constraint (migrations.test_operations.OperationTests)', 'Tests the CreateModel operation directly followed by an', 'CreateModel ignores proxy models.', 'CreateModel ignores unmanaged models.', 'Tests the DeleteModel operation.', 'test_delete_mti_model (migrations.test_operations.OperationTests)', 'Tests the DeleteModel operation ignores proxy models.', 'A model with BigAutoField can be created.', 'test_remove_constraint (migrations.test_operations.OperationTests)', 'test_remove_covering_unique_constraint (migrations.test_operations.OperationTests)', 'test_remove_deferred_unique_constraint (migrations.test_operations.OperationTests)', 'Tests the RemoveField operation.', 'test_remove_field_m2m (migrations.test_operations.OperationTests)', 'test_remove_field_m2m_with_through (migrations.test_operations.OperationTests)', 'Tests the RemoveField operation on a foreign key.', 'test_remove_func_index (migrations.test_operations.OperationTests)', 'test_remove_func_unique_constraint (migrations.test_operations.OperationTests)', 'Test the RemoveIndex operation.', 'test_remove_index_state_forwards (migrations.test_operations.OperationTests)', 'test_remove_partial_unique_constraint (migrations.test_operations.OperationTests)', 'Tests the RenameField operation.', 'test_rename_field_case (migrations.test_operations.OperationTests)', "If RenameField doesn't reload state appropriately, the AlterField", 'test_rename_field_with_db_column (migrations.test_operations.OperationTests)', 'RenameModel renames a many-to-many column after a RenameField.', 'test_rename_m2m_target_model (migrations.test_operations.OperationTests)', 'test_rename_m2m_through_model (migrations.test_operations.OperationTests)', 'test_rename_missing_field (migrations.test_operations.OperationTests)', 'Tests the RenameModel operation.', "RenameModel operations shouldn't trigger the caching of rendered apps", 'test_rename_model_with_m2m (migrations.test_operations.OperationTests)', 'Tests the RenameModel operation on model with self referential FK.', 'test_rename_model_with_self_referential_m2m (migrations.test_operations.OperationTests)', 'Tests the RenameModel operation on a model which has a superclass that', 'test_rename_referenced_field_state_forward (migrations.test_operations.OperationTests)', 'test_repoint_field_m2m (migrations.test_operations.OperationTests)', 'Tests the RunPython operation', 'Tests the RunPython operation correctly handles the "atomic" keyword', '#24098 - Tests no-op RunPython operations.', '#24282 - Model changes to a FK reverse side update the model', 'Tests the RunSQL operation.', 'test_run_sql_add_missing_semicolon_on_collect_sql (migrations.test_operations.OperationTests)', '#24098 - Tests no-op RunSQL operations.', '#23426 - RunSQL should accept parameters.', '#23426 - RunSQL should fail when a list of statements with an incorrect', 'Tests the SeparateDatabaseAndState operation.', 'A complex SeparateDatabaseAndState operation: Multiple operations both', 'A field may be migrated from SmallAutoField to AutoField.', 'A field may be migrated from SmallAutoField to BigAutoField.'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14999: resolved: False
+2026-11-09 12:16:43,414 - INFO - Attempting to stop container sweb.eval.django__django-14999.verified_full_glm53_hermes_R1933...
+2026-11-09 12:16:59,160 - INFO - Container sweb.eval.django__django-14999.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 12:16:59,161 - INFO - Attempting to remove container sweb.eval.django__django-14999.verified_full_glm53_hermes_R1933...
+2026-11-09 12:16:59,214 - INFO - Container sweb.eval.django__django-14999.verified_full_glm53_hermes_R1933 removed successfully.

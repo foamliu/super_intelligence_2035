@@ -1,0 +1,58 @@
+2026-11-03 10:27:54,779 - INFO - Creating container for scikit-learn__scikit-learn-14053...
+2026-11-03 10:27:54,817 - INFO - Container for scikit-learn__scikit-learn-14053 created: 633877320b1057da6c0fcff2ba0f900561f826e8b37852b27199d8ab93c4cc33
+2026-11-03 10:27:55,590 - INFO - Container for scikit-learn__scikit-learn-14053 started: 633877320b1057da6c0fcff2ba0f900561f826e8b37852b27199d8ab93c4cc33
+2026-11-03 10:27:55,592 - INFO - Intermediate patch for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-14053/patch.diff, now applying to container...
+2026-11-03 10:27:55,779 - INFO - >>>>> Applied Patch:
+Checking patch shim/sitecustomize.py...
+Checking patch sklearn/tree/export.py...
+Applied patch shim/sitecustomize.py cleanly.
+Applied patch sklearn/tree/export.py cleanly.
+
+2026-11-03 10:27:56,227 - INFO - Git diff before:
+diff --git a/sklearn/tree/export.py b/sklearn/tree/export.py
+index 1fe11e596..831c0a670 100644
+--- a/sklearn/tree/export.py
++++ b/sklearn/tree/export.py
+@@ -890,9 +890,12 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+         value_fmt = "{}{} value: {}\n"
+ 
+     if feature_names:
+-        feature_names_ = [feature_names[i] for i in tree_.feature]
++        feature_names_ = [feature_names[i] if i != _tree.TREE_UNDEFINED else None
++                          for i in tree_.feature]
+     else:
+-        feature_names_ = ["feature_{}".format(i) for i in tree_.feature]
++        feature_names_ = ["feature_{}".format(i) if i != _tree.TREE_UNDEFINED
++                          else None
++                          for i in tree_.feature]
+ 
+     export_text.report = ""
+2026-11-03 10:27:56,229 - INFO - Eval script for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-14053/eval.sh; copying to container...
+2026-11-03 10:28:01,029 - INFO - Test runtime: 4.71 seconds
+2026-11-03 10:28:01,030 - INFO - Test output for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-14053/test_output.txt
+2026-11-03 10:28:01,072 - INFO - Git diff after:
+diff --git a/sklearn/tree/export.py b/sklearn/tree/export.py
+index 1fe11e596..831c0a670 100644
+--- a/sklearn/tree/export.py
++++ b/sklearn/tree/export.py
+@@ -890,9 +890,12 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+         value_fmt = "{}{} value: {}\n"
+ 
+     if feature_names:
+-        feature_names_ = [feature_names[i] for i in tree_.feature]
++        feature_names_ = [feature_names[i] if i != _tree.TREE_UNDEFINED else None
++                          for i in tree_.feature]
+     else:
+-        feature_names_ = ["feature_{}".format(i) for i in tree_.feature]
++        feature_names_ = ["feature_{}".format(i) if i != _tree.TREE_UNDEFINED
++                          else None
++                          for i in tree_.feature]
+ 
+     export_text.report = ""
+2026-11-03 10:28:01,072 - INFO - Grading answer for scikit-learn__scikit-learn-14053...
+2026-11-03 10:28:01,074 - INFO - report: {'scikit-learn__scikit-learn-14053': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/tree/tests/test_export.py::test_export_text'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/tree/tests/test_export.py::test_graphviz_toy', 'sklearn/tree/tests/test_export.py::test_graphviz_errors', 'sklearn/tree/tests/test_export.py::test_friedman_mse_in_graphviz', 'sklearn/tree/tests/test_export.py::test_precision', 'sklearn/tree/tests/test_export.py::test_export_text_errors'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14053: resolved: True
+2026-11-03 10:28:01,075 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_hermes...
+2026-11-03 10:28:17,019 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_hermes stopped successfully.
+2026-11-03 10:28:17,019 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_hermes...
+2026-11-03 10:28:17,057 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_hermes removed successfully.

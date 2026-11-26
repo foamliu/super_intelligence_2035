@@ -1,0 +1,105 @@
+2026-11-01 13:25:10,222 - INFO - Creating container for astropy__astropy-8707...
+2026-11-01 13:25:10,244 - INFO - Container for astropy__astropy-8707 created: a54732be3305aff78028b2d89d075492105d089f9c2b7ed57f6225331ce3f95c
+2026-11-01 13:25:10,868 - INFO - Container for astropy__astropy-8707 started: a54732be3305aff78028b2d89d075492105d089f9c2b7ed57f6225331ce3f95c
+2026-11-01 13:25:10,871 - INFO - Intermediate patch for astropy__astropy-8707 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-8707/patch.diff, now applying to container...
+2026-11-01 13:25:11,068 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/fits/card.py...
+Checking patch astropy/io/fits/header.py...
+Applied patch astropy/io/fits/card.py cleanly.
+Applied patch astropy/io/fits/header.py cleanly.
+
+2026-11-01 13:25:11,600 - INFO - Git diff before:
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..58d982538 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -553,6 +553,9 @@ class Card(_Verify):
+         card(s).
+         """
+ 
++        if isinstance(image, bytes):
++            image = image.decode('ascii')
++
+         card = cls()
+         card._image = _pad(image)
+         card._verified = False
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..f1fbf768b 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,10 +334,10 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
++        data : str or bytes
+            String containing the entire header.
+ 
+-        sep : str, optional
++        sep : str or bytes, optional
+             The string separating cards from each other, such as a newline.  By
+             default there is no card separator (as is the case in a raw FITS
+             file).
+@@ -348,6 +348,11 @@ class Header:
+             A new `Header` instance.
+         """
+ 
++        if isinstance(data, bytes):
++            data = decode_ascii(data)
++        if isinstance(sep, bytes):
++            sep = decode_ascii(sep)
++
+         cards = []
+ 
+         # If the card separator contains characters that may validly appear in
+2026-11-01 13:25:11,603 - INFO - Eval script for astropy__astropy-8707 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-8707/eval.sh; copying to container...
+2026-11-01 13:25:21,861 - INFO - Test runtime: 10.17 seconds
+2026-11-01 13:25:21,863 - INFO - Test output for astropy__astropy-8707 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-8707/test_output.txt
+2026-11-01 13:25:21,936 - INFO - Git diff after:
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..58d982538 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -553,6 +553,9 @@ class Card(_Verify):
+         card(s).
+         """
+ 
++        if isinstance(image, bytes):
++            image = image.decode('ascii')
++
+         card = cls()
+         card._image = _pad(image)
+         card._verified = False
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..f1fbf768b 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,10 +334,10 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
++        data : str or bytes
+            String containing the entire header.
+ 
+-        sep : str, optional
++        sep : str or bytes, optional
+             The string separating cards from each other, such as a newline.  By
+             default there is no card separator (as is the case in a raw FITS
+             file).
+@@ -348,6 +348,11 @@ class Header:
+             A new `Header` instance.
+         """
+ 
++        if isinstance(data, bytes):
++            data = decode_ascii(data)
++        if isinstance(sep, bytes):
++            sep = decode_ascii(sep)
++
+         cards = []
+ 
+         # If the card separator contains characters that may validly appear in
+2026-11-01 13:25:21,937 - INFO - Grading answer for astropy__astropy-8707...
+2026-11-01 13:25:21,945 - INFO - report: {'astropy__astropy-8707': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_from_bytes'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::test_shallow_copy', 'astropy/io/fits/tests/test_header.py::test_init_with_header', 'astropy/io/fits/tests/test_header.py::test_init_with_dict', 'astropy/io/fits/tests/test_header.py::test_init_with_ordereddict', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_rename_keyword', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_constructor_default_args', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_string_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_boolean_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_long_integer_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_floating_point_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_complex_value_card'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-8707: resolved: True
+2026-11-01 13:25:21,947 - INFO - Attempting to stop container sweb.eval.astropy__astropy-8707.verified_full_hermes...

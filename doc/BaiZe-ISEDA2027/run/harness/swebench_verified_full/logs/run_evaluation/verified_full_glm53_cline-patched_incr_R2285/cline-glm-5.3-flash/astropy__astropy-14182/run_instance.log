@@ -1,0 +1,154 @@
+2026-11-12 18:44:55,110 - INFO - Creating container for astropy__astropy-14182...
+2026-11-12 18:44:55,140 - INFO - Container for astropy__astropy-14182 created: a921e711260f60f8b4eda70de0fe8bbb89d71d0b590c5d03473d0aed6317717c
+2026-11-12 18:44:56,015 - INFO - Container for astropy__astropy-14182 started: a921e711260f60f8b4eda70de0fe8bbb89d71d0b590c5d03473d0aed6317717c
+2026-11-12 18:44:56,017 - INFO - Intermediate patch for astropy__astropy-14182 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2285/cline-glm-5.3-flash/astropy__astropy-14182/patch.diff, now applying to container...
+2026-11-12 18:44:56,163 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/ascii/rst.py...
+warning: astropy/io/ascii/rst.py has type 100755, expected 100644
+Checking patch astropy/io/ascii/tests/test_rst.py...
+warning: astropy/io/ascii/tests/test_rst.py has type 100755, expected 100644
+Checking patch docs/changes/io.ascii/15100.feature.rst...
+Applied patch astropy/io/ascii/rst.py cleanly.
+Applied patch astropy/io/ascii/tests/test_rst.py cleanly.
+Applied patch docs/changes/io.ascii/15100.feature.rst cleanly.
+
+2026-11-12 18:44:56,958 - INFO - Git diff before:
+diff --git a/astropy/io/ascii/rst.py b/astropy/io/ascii/rst.py
+index abdeba8ef..a45b7482c 100755
+--- a/astropy/io/ascii/rst.py
++++ b/astropy/io/ascii/rst.py
+@@ -46,6 +46,11 @@ class RST(FixedWidth):
+           2    4.5  Worlds
+         ==== ===== ======
+ 
++    When writing, the ``header_rows`` keyword argument is available to select
++    the column attributes that are written as header rows.  For instance,
++    ``header_rows=["name", "unit"]`` will write a row of column names followed
++    by a row of column units.
++
+     Currently there is no support for reading tables which utilize continuation lines,
+     or for ones which define column spans through the use of an additional
+     line of dashes in the header.
+@@ -57,10 +62,18 @@ class RST(FixedWidth):
+     data_class = SimpleRSTData
+     header_class = SimpleRSTHeader
+ 
+-    def __init__(self):
+-        super().__init__(delimiter_pad=None, bookend=False)
++    def __init__(self, header_rows=None):
++        super().__init__(delimiter_pad=None, bookend=False, header_rows=header_rows)
++        # When reading, the data start after the position line, the header
++        # rows, and the second position line.  For the default
++        # ``header_rows=["name"]`` this gives the ``SimpleRSTData.start_line``
++        # class default of 3.
++        self.data.start_line = len(self.header.header_rows) + 2
+ 
+     def write(self, lines):
+         lines = super().write(lines)
+-        lines = [lines[1]] + lines + [lines[1]]
++        # The position line is written after the header rows, so its index
++        # within the written lines equals the number of header rows.
++        n_header_rows = len(self.data.header_rows)
++        lines = [lines[n_header_rows]] + lines + [lines[n_header_rows]]
+         return lines
+diff --git a/astropy/io/ascii/tests/test_rst.py b/astropy/io/ascii/tests/test_rst.py
+index 84d6fed40..cd6348b4c 100755
+--- a/astropy/io/ascii/tests/test_rst.py
++++ b/astropy/io/ascii/tests/test_rst.py
+@@ -2,7 +2,10 @@
+ 
+ from io import StringIO
+ 
++import astropy.units as u
++
+ from astropy.io import ascii
++from astropy.table import QTable
+ 
+ from .common import assert_almost_equal, assert_equal
+ 
+@@ -185,3 +188,35 @@ Col1      Col2 Col3 Col4
+ ==== ========= ==== ====
+ """,
+     )
++
++
++def test_write_header_rows():
++    """Write a table with column units in an additional header row"""
++    tbl = QTable({"wave": [350, 950] * u.nm, "response": [0.7, 1.2] * u.count})
++    out = StringIO()
++    tbl.write(out, format="ascii.rst", header_rows=["name", "unit"])
++    assert_equal_splitlines(
++        out.getvalue(),
++        """\
++===== ========
++ wave response
++   nm       ct
++===== ========
++350.0      0.7
++950.0      1.2
++===== ========
++""",
++    )
++
++
++def test_read_write_header_rows():
++    """Read back a table written with column units in an additional header row"""
++    tbl = QTable({"wave": [350, 950] * u.nm, "response": [0.7, 1.2] * u.count})
++    out = StringIO()
++    tbl.write(out, format="ascii.rst", header_rows=["name", "unit"])
++    dat_out = ascii.read(out.getvalue(), format="rst", header_rows=["name", "unit"])
++    assert_equal(dat_out.colnames, ["wave", "response"])
++    assert dat_out["wave"].unit == u.nm
++    assert dat_out["response"].unit == u.count
++    assert_almost_equal(dat_out["wave"], [350.0, 950.0])
++    assert_almost_equal(dat_out["response"], [0.7, 1.2])
+2026-11-12 18:44:56,960 - INFO - Eval script for astropy__astropy-14182 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2285/cline-glm-5.3-flash/astropy__astropy-14182/eval.sh; copying to container...
+2026-11-12 18:46:19,837 - INFO - Test runtime: 82.77 seconds
+2026-11-12 18:46:19,841 - INFO - Test output for astropy__astropy-14182 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2285/cline-glm-5.3-flash/astropy__astropy-14182/test_output.txt
+2026-11-12 18:46:19,883 - INFO - Git diff after:
+diff --git a/astropy/io/ascii/rst.py b/astropy/io/ascii/rst.py
+index abdeba8ef..a45b7482c 100755
+--- a/astropy/io/ascii/rst.py
++++ b/astropy/io/ascii/rst.py
+@@ -46,6 +46,11 @@ class RST(FixedWidth):
+           2    4.5  Worlds
+         ==== ===== ======
+ 
++    When writing, the ``header_rows`` keyword argument is available to select
++    the column attributes that are written as header rows.  For instance,
++    ``header_rows=["name", "unit"]`` will write a row of column names followed
++    by a row of column units.
++
+     Currently there is no support for reading tables which utilize continuation lines,
+     or for ones which define column spans through the use of an additional
+     line of dashes in the header.
+@@ -57,10 +62,18 @@ class RST(FixedWidth):
+     data_class = SimpleRSTData
+     header_class = SimpleRSTHeader
+ 
+-    def __init__(self):
+-        super().__init__(delimiter_pad=None, bookend=False)
++    def __init__(self, header_rows=None):
++        super().__init__(delimiter_pad=None, bookend=False, header_rows=header_rows)
++        # When reading, the data start after the position line, the header
++        # rows, and the second position line.  For the default
++        # ``header_rows=["name"]`` this gives the ``SimpleRSTData.start_line``
++        # class default of 3.
++        self.data.start_line = len(self.header.header_rows) + 2
+ 
+     def write(self, lines):
+         lines = super().write(lines)
+-        lines = [lines[1]] + lines + [lines[1]]
++        # The position line is written after the header rows, so its index
++        # within the written lines equals the number of header rows.
++        n_header_rows = len(self.data.header_rows)
++        lines = [lines[n_header_rows]] + lines + [lines[n_header_rows]]
+         return lines
+2026-11-12 18:46:19,883 - INFO - Git diff changed after running eval script
+2026-11-12 18:46:19,883 - INFO - Grading answer for astropy__astropy-14182...
+2026-11-12 18:46:19,890 - INFO - report: {'astropy__astropy-14182': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/ascii/tests/test_rst.py::test_rst_with_header_rows'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/ascii/tests/test_rst.py::test_read_normal', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_names', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_names_include', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_exclude', 'astropy/io/ascii/tests/test_rst.py::test_read_unbounded_right_column', 'astropy/io/ascii/tests/test_rst.py::test_read_unbounded_right_column_header', 'astropy/io/ascii/tests/test_rst.py::test_read_right_indented_table', 'astropy/io/ascii/tests/test_rst.py::test_trailing_spaces_in_row_definition', 'astropy/io/ascii/tests/test_rst.py::test_write_normal'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-14182: resolved: True
+2026-11-12 18:46:19,892 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14182.verified_full_glm53_cline-patched_incr_R2285...
+2026-11-12 18:46:36,322 - INFO - Container sweb.eval.astropy__astropy-14182.verified_full_glm53_cline-patched_incr_R2285 stopped successfully.
+2026-11-12 18:46:36,322 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14182.verified_full_glm53_cline-patched_incr_R2285...
+2026-11-12 18:46:36,380 - INFO - Container sweb.eval.astropy__astropy-14182.verified_full_glm53_cline-patched_incr_R2285 removed successfully.

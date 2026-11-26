@@ -1,0 +1,110 @@
+2026-11-05 02:57:10,918 - INFO - Creating container for django__django-13033...
+2026-11-05 02:57:10,953 - INFO - Container for django__django-13033 created: c289541d714e498a9c76ceb5cf81bf2b9adcea7f2ded9df8130cd7951381cf02
+2026-11-05 02:57:11,453 - INFO - Container for django__django-13033 started: c289541d714e498a9c76ceb5cf81bf2b9adcea7f2ded9df8130cd7951381cf02
+2026-11-05 02:57:11,455 - INFO - Intermediate patch for django__django-13033 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13033/patch.diff, now applying to container...
+2026-11-05 02:57:11,606 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+warning: django/db/models/sql/compiler.py has type 100755, expected 100644
+Checking patch tests/ordering/models.py...
+warning: tests/ordering/models.py has type 100755, expected 100644
+Checking patch tests/ordering/tests.py...
+warning: tests/ordering/tests.py has type 100755, expected 100644
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/ordering/models.py cleanly.
+Applied patch tests/ordering/tests.py cleanly.
+
+2026-11-05 02:57:12,886 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index abbb1e37cb..edc283d94c 100755
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -727,7 +727,7 @@ class SQLCompiler:
+         # If we get to this point and the field is a relation to another model,
+         # append the default ordering for that model unless it is the pk
+         # shortcut or the attribute name of the field that is specified.
+-        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != name and name != 'pk':
++        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != pieces[-1] and pieces[-1] != 'pk':
+             # Firstly, avoid infinite loops.
+             already_seen = already_seen or set()
+             join_tuple = tuple(getattr(self.query.alias_map[j], 'join_cols', None) for j in joins)
+diff --git a/tests/ordering/models.py b/tests/ordering/models.py
+index 2efb743e44..54c57a6701 100755
+--- a/tests/ordering/models.py
++++ b/tests/ordering/models.py
+@@ -59,3 +59,15 @@ class Reference(models.Model):
+ 
+     class Meta:
+         ordering = ('article',)
++
++
++class OrderedBySelfFk(models.Model):
++    parent = models.ForeignKey('self', models.SET_NULL, null=True, blank=True)
++    name = models.CharField(max_length=100)
++
++    class Meta:
++        ordering = ('-id',)
++
++
++class RelatedToOrderedBySelfFk(models.Model):
++    record = models.ForeignKey(OrderedBySelfFk, models.CASCADE)
+diff --git a/tests/ordering/tests.py b/tests/ordering/tests.py
+index a9cc729c45..48d9d3d8df 100755
+--- a/tests/ordering/tests.py
++++ b/tests/ordering/tests.py
+@@ -8,7 +8,10 @@ from django.db.models import (
+ from django.db.models.functions import Upper
+ from django.test import TestCase
+ 
+-from .models import Article, Author, ChildArticle, OrderedByFArticle, Reference
++from .models import (
++    Article, Author, ChildArticle, OrderedByFArticle,
++    OrderedBySelfFk, Reference, RelatedToOrderedBySelfFk,
++)
+ 
+ 
+ class OrderingTests(TestCase):
+@@ -480,3 +483,19 @@ class OrderingTests(TestCase):
+         ca4 = ChildArticle.objects.create(headline='h1', pub_date=datetime(2005, 7, 28))
+         articles = ChildArticle.objects.order_by('article_ptr')
+         self.assertSequenceEqual(articles, [ca4, ca2, ca1, ca3])
++
++
++class SelfFkOrderingTests(TestCase):
++    def test_order_by_self_fk_attname(self):
++        """
++        ordering by a self-referencing foreign key by its attribute name
++        prevents the query from inheriting its related model ordering
++        option (#31376).
++        """
++        parent = OrderedBySelfFk.objects.create(name='parent')
++        child = OrderedBySelfFk.objects.create(name='child', parent=parent)
++        RelatedToOrderedBySelfFk.objects.create(record=child)
++
++        qs = RelatedToOrderedBySelfFk.objects.filter(record__name='child')
++        self.assertIn('ORDER BY "ordering_orderedbyselffk"."parent_id" ASC', str(qs.order_by('record__parent_id').query))
++        self.assertIn('ORDER BY "ordering_orderedbyselffk"."parent_id" DESC', str(qs.order_by('-record__parent_id').query))
+2026-11-05 02:57:12,889 - INFO - Eval script for django__django-13033 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13033/eval.sh; copying to container...
+2026-11-05 02:57:20,936 - INFO - Test runtime: 7.97 seconds
+2026-11-05 02:57:20,941 - INFO - Test output for django__django-13033 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-13033/test_output.txt
+2026-11-05 02:57:21,025 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index abbb1e37cb..edc283d94c 100755
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -727,7 +727,7 @@ class SQLCompiler:
+         # If we get to this point and the field is a relation to another model,
+         # append the default ordering for that model unless it is the pk
+         # shortcut or the attribute name of the field that is specified.
+-        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != name and name != 'pk':
++        if field.is_relation and opts.ordering and getattr(field, 'attname', None) != pieces[-1] and pieces[-1] != 'pk':
+             # Firstly, avoid infinite loops.
+             already_seen = already_seen or set()
+             join_tuple = tuple(getattr(self.query.alias_map[j], 'join_cols', None) for j in joins)
+2026-11-05 02:57:21,025 - INFO - Git diff changed after running eval script
+2026-11-05 02:57:21,025 - INFO - Grading answer for django__django-13033...
+2026-11-05 02:57:21,038 - INFO - report: {'django__django-13033': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_order_by_self_referential_fk (ordering.tests.OrderingTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_default_ordering (ordering.tests.OrderingTests)', 'F expressions can be used in Meta.ordering.', 'test_default_ordering_override (ordering.tests.OrderingTests)', 'test_extra_ordering (ordering.tests.OrderingTests)', 'test_extra_ordering_quoting (ordering.tests.OrderingTests)', 'test_extra_ordering_with_table_name (ordering.tests.OrderingTests)', 'test_no_reordering_after_slicing (ordering.tests.OrderingTests)', 'test_order_by_constant_value (ordering.tests.OrderingTests)', 'test_order_by_constant_value_without_output_field (ordering.tests.OrderingTests)', 'test_order_by_f_expression (ordering.tests.OrderingTests)', 'test_order_by_f_expression_duplicates (ordering.tests.OrderingTests)', 'test_order_by_fk_attname (ordering.tests.OrderingTests)', 'test_order_by_nulls_first (ordering.tests.OrderingTests)', 'test_order_by_nulls_first_and_last (ordering.tests.OrderingTests)', 'test_order_by_nulls_last (ordering.tests.OrderingTests)', 'test_order_by_override (ordering.tests.OrderingTests)', 'test_order_by_pk (ordering.tests.OrderingTests)', 'test_order_by_ptr_field_with_default_ordering_by_expression (ordering.tests.OrderingTests)', 'test_orders_nulls_first_on_filtered_subquery (ordering.tests.OrderingTests)', 'test_random_ordering (ordering.tests.OrderingTests)', 'test_related_ordering_duplicate_table_reference (ordering.tests.OrderingTests)', 'test_reverse_meta_ordering_pure (ordering.tests.OrderingTests)', 'test_reverse_ordering_pure (ordering.tests.OrderingTests)', 'test_reversed_ordering (ordering.tests.OrderingTests)', 'test_stop_slicing (ordering.tests.OrderingTests)', 'test_stop_start_slicing (ordering.tests.OrderingTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13033: resolved: True
+2026-11-05 02:57:21,040 - INFO - Attempting to stop container sweb.eval.django__django-13033.verified_full_codex...
+2026-11-05 02:57:36,890 - INFO - Container sweb.eval.django__django-13033.verified_full_codex stopped successfully.
+2026-11-05 02:57:36,890 - INFO - Attempting to remove container sweb.eval.django__django-13033.verified_full_codex...
+2026-11-05 02:57:36,940 - INFO - Container sweb.eval.django__django-13033.verified_full_codex removed successfully.

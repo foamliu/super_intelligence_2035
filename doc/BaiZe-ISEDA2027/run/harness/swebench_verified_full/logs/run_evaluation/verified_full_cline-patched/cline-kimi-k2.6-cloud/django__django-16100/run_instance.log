@@ -1,0 +1,199 @@
+2026-10-30 16:19:58,118 - INFO - Creating container for django__django-16100...
+2026-10-30 16:19:59,211 - INFO - Removed existing container sweb.eval.django__django-16100.verified_full_cline-patched
+2026-10-30 16:19:59,258 - INFO - Container for django__django-16100 created: 80d55b0bc68aad564706cd6d883f850e41b27682db2e32f477dd35e804ffa527
+2026-10-30 16:20:01,472 - INFO - Container for django__django-16100 started: 80d55b0bc68aad564706cd6d883f850e41b27682db2e32f477dd35e804ffa527
+2026-10-30 16:20:01,474 - INFO - Intermediate patch for django__django-16100 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-16100/patch.diff, now applying to container...
+2026-10-30 16:20:01,657 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admin/options.py...
+Checking patch tests/admin_changelist/tests.py...
+Applied patch django/contrib/admin/options.py cleanly.
+Applied patch tests/admin_changelist/tests.py cleanly.
+
+2026-10-30 16:20:02,524 - INFO - Git diff before:
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5f07a4208a..62e443bf43 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -2010,26 +2010,27 @@ class ModelAdmin(BaseModelAdmin):
+                 request.POST, request.FILES, queryset=modified_objects
+             )
+             if formset.is_valid():
+-                changecount = 0
+-                for form in formset.forms:
+-                    if form.has_changed():
+-                        obj = self.save_form(request, form, change=True)
+-                        self.save_model(request, obj, form, change=True)
+-                        self.save_related(request, form, formsets=[], change=True)
+-                        change_msg = self.construct_change_message(request, form, None)
+-                        self.log_change(request, obj, change_msg)
+-                        changecount += 1
+-
+-                if changecount:
+-                    msg = ngettext(
+-                        "%(count)s %(name)s was changed successfully.",
+-                        "%(count)s %(name)s were changed successfully.",
+-                        changecount,
+-                    ) % {
+-                        "count": changecount,
+-                        "name": model_ngettext(self.opts, changecount),
+-                    }
+-                    self.message_user(request, msg, messages.SUCCESS)
++                with transaction.atomic(using=router.db_for_write(self.model)):
++                    changecount = 0
++                    for form in formset.forms:
++                        if form.has_changed():
++                            obj = self.save_form(request, form, change=True)
++                            self.save_model(request, obj, form, change=True)
++                            self.save_related(request, form, formsets=[], change=True)
++                            change_msg = self.construct_change_message(request, form, None)
++                            self.log_change(request, obj, change_msg)
++                            changecount += 1
++
++                    if changecount:
++                        msg = ngettext(
++                            "%(count)s %(name)s was changed successfully.",
++                            "%(count)s %(name)s were changed successfully.",
++                            changecount,
++                        ) % {
++                            "count": changecount,
++                            "name": model_ngettext(self.opts, changecount),
++                        }
++                        self.message_user(request, msg, messages.SUCCESS)
+ 
+                 return HttpResponseRedirect(request.get_full_path())
+ 
+diff --git a/tests/admin_changelist/tests.py b/tests/admin_changelist/tests.py
+index b85d5383cd..3addc4238d 100644
+--- a/tests/admin_changelist/tests.py
++++ b/tests/admin_changelist/tests.py
+@@ -1072,6 +1072,48 @@ class ChangeListTests(TestCase):
+         # No new swallows were created.
+         self.assertEqual(len(Swallow.objects.all()), 4)
+ 
++    def test_list_editable_transaction_rollback(self):
++        """
++        list_editable changes must be wrapped in a transaction so that an
++        error during processing rolls back any partial changes.
++        """
++        a = Swallow.objects.create(origin="Swallow A", load=4, speed=1)
++        b = Swallow.objects.create(origin="Swallow B", load=2, speed=2)
++
++        class FaultySwallowAdmin(SwallowAdmin):
++            def save_model(self, request, obj, form, change):
++                if obj.origin == "Swallow B":
++                    raise RuntimeError("Boom!")
++                super().save_model(request, obj, form, change)
++
++        superuser = self._create_superuser("superuser")
++        changelist_url = reverse("admin:admin_changelist_swallow_changelist")
++        data = {
++            "form-TOTAL_FORMS": "2",
++            "form-INITIAL_FORMS": "2",
++            "form-MIN_NUM_FORMS": "0",
++            "form-MAX_NUM_FORMS": "1000",
++            "form-0-uuid": str(a.pk),
++            "form-1-uuid": str(b.pk),
++            "form-0-load": "9.0",
++            "form-0-speed": "9.0",
++            "form-1-load": "5.0",
++            "form-1-speed": "5.0",
++            "_save": "Save",
++        }
++        request = self.factory.post(changelist_url, data=data)
++        request.user = superuser
++        request.csrf_processing_done = True
++        m = FaultySwallowAdmin(Swallow, custom_site)
++        with self.assertRaises(RuntimeError):
++            m.changelist_view(request)
++        a.refresh_from_db()
++        b.refresh_from_db()
++        self.assertEqual(a.load, 4)
++        self.assertEqual(a.speed, 1)
++        self.assertEqual(b.load, 2)
++        self.assertEqual(b.speed, 2)
++
+     def test_get_edited_object_ids(self):
+         a = Swallow.objects.create(origin="Swallow A", load=4, speed=1)
+         b = Swallow.objects.create(origin="Swallow B", load=2, speed=2)
+@@ -1164,10 +1206,15 @@ class ChangeListTests(TestCase):
+         with CaptureQueriesContext(connection) as context:
+             response = self.client.post(changelist_url, data=data)
+             self.assertEqual(response.status_code, 200)
+-            self.assertIn("WHERE", context.captured_queries[4]["sql"])
+-            self.assertIn("IN", context.captured_queries[4]["sql"])
++            filtered_query = None
++            for query in context.captured_queries:
++                sql = query["sql"]
++                if "WHERE" in sql and "IN" in sql:
++                    filtered_query = sql
++                    break
++            self.assertIsNotNone(filtered_query)
+             # Check only the first few characters since the UUID may have dashes.
+-            self.assertIn(str(a.pk)[:8], context.captured_queries[4]["sql"])
++            self.assertIn(str(a.pk)[:8], filtered_query)
+ 
+     def test_deterministic_order_for_unordered_model(self):
+         """
+2026-10-30 16:20:02,526 - INFO - Eval script for django__django-16100 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-16100/eval.sh; copying to container...
+2026-10-30 16:20:10,135 - INFO - Test runtime: 7.54 seconds
+2026-10-30 16:20:10,138 - INFO - Test output for django__django-16100 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-16100/test_output.txt
+2026-10-30 16:20:10,210 - INFO - Git diff after:
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5f07a4208a..62e443bf43 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -2010,26 +2010,27 @@ class ModelAdmin(BaseModelAdmin):
+                 request.POST, request.FILES, queryset=modified_objects
+             )
+             if formset.is_valid():
+-                changecount = 0
+-                for form in formset.forms:
+-                    if form.has_changed():
+-                        obj = self.save_form(request, form, change=True)
+-                        self.save_model(request, obj, form, change=True)
+-                        self.save_related(request, form, formsets=[], change=True)
+-                        change_msg = self.construct_change_message(request, form, None)
+-                        self.log_change(request, obj, change_msg)
+-                        changecount += 1
+-
+-                if changecount:
+-                    msg = ngettext(
+-                        "%(count)s %(name)s was changed successfully.",
+-                        "%(count)s %(name)s were changed successfully.",
+-                        changecount,
+-                    ) % {
+-                        "count": changecount,
+-                        "name": model_ngettext(self.opts, changecount),
+-                    }
+-                    self.message_user(request, msg, messages.SUCCESS)
++                with transaction.atomic(using=router.db_for_write(self.model)):
++                    changecount = 0
++                    for form in formset.forms:
++                        if form.has_changed():
++                            obj = self.save_form(request, form, change=True)
++                            self.save_model(request, obj, form, change=True)
++                            self.save_related(request, form, formsets=[], change=True)
++                            change_msg = self.construct_change_message(request, form, None)
++                            self.log_change(request, obj, change_msg)
++                            changecount += 1
++
++                    if changecount:
++                        msg = ngettext(
++                            "%(count)s %(name)s was changed successfully.",
++                            "%(count)s %(name)s were changed successfully.",
++                            changecount,
++                        ) % {
++                            "count": changecount,
++                            "name": model_ngettext(self.opts, changecount),
++                        }
++                        self.message_user(request, msg, messages.SUCCESS)
+ 
+                 return HttpResponseRedirect(request.get_full_path())
+2026-10-30 16:20:10,210 - INFO - Git diff changed after running eval script
+2026-10-30 16:20:10,210 - INFO - Grading answer for django__django-16100...
+2026-10-30 16:20:10,213 - INFO - report: {'django__django-16100': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_list_editable_atomicity (admin_changelist.tests.ChangeListTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ["{% get_admin_log %} works if the user model's primary key isn't named", 'test_missing_args (admin_changelist.tests.GetAdminLogTests)', '{% get_admin_log %} works without specifying a user.', 'test_non_integer_limit (admin_changelist.tests.GetAdminLogTests)', 'test_without_as (admin_changelist.tests.GetAdminLogTests)', 'test_without_for_user (admin_changelist.tests.GetAdminLogTests)', 'test_builtin_lookup_in_search_fields (admin_changelist.tests.ChangeListTests)', 'test_changelist_search_form_validation (admin_changelist.tests.ChangeListTests)', 'list_editable edits use a filtered queryset to limit memory usage.', 'test_clear_all_filters_link (admin_changelist.tests.ChangeListTests)', 'test_clear_all_filters_link_callable_filter (admin_changelist.tests.ChangeListTests)', 'Regression test for #13196: output of functions should be  localized', 'test_custom_lookup_in_search_fields (admin_changelist.tests.ChangeListTests)', 'test_custom_lookup_with_pk_shortcut (admin_changelist.tests.ChangeListTests)', 'test_custom_paginator (admin_changelist.tests.ChangeListTests)', "The primary key is used in the ordering of the changelist's results to", 'Regression tests for #14206: dynamic list_display support.', 'Regression tests for #16257: dynamic list_display_links support.', 'Regression tests for ticket #17646: dynamic list_filter support.', 'test_dynamic_search_fields (admin_changelist.tests.ChangeListTests)', 'test_get_edited_object_ids (admin_changelist.tests.ChangeListTests)', 'test_get_list_editable_queryset (admin_changelist.tests.ChangeListTests)', 'test_get_list_editable_queryset_with_regex_chars_in_prefix (admin_changelist.tests.ChangeListTests)', 'test_get_select_related_custom_method (admin_changelist.tests.ChangeListTests)', 'test_many_search_terms (admin_changelist.tests.ChangeListTests)', 'All rows containing each of the searched words are returned, where each', 'Simultaneous edits of list_editable fields on the changelist by', 'test_no_clear_all_filters_link (admin_changelist.tests.ChangeListTests)', 'Regression test for #13902: When using a ManyToMany in list_filter,', 'When using a ManyToMany in search_fields at the second level behind a', 'Regressions tests for #15819: If a field listed in list_filters is a', 'Regressions tests for #15819: If a field listed in search_fields', 'When using a ManyToMany in list_filter at the second level behind a', "If a ManyToManyField is in list_filter but isn't in any lookup params,", "#15185 -- Allow no links from the 'change list' view grid.", 'When ModelAdmin.has_add_permission() returns False, the object-tools', "Regression tests for #12893: Pagination in admins changelist doesn't", 'Regression tests for ticket #15653: ensure the number of pages', 'test_pk_in_search_fields (admin_changelist.tests.ChangeListTests)', 'Searches over multi-valued relationships return rows from related', 'test_repr (admin_changelist.tests.ChangeListTests)', 'Regression test for #14312: list_editable with pagination', 'Regression tests for #11791: Inclusion tag result_list generates a', 'Regression test for #14982: EMPTY_CHANGELIST_VALUE should be honored', 'Inclusion tag result_list generates a table when with default', 'Empty value display can be set in ModelAdmin or individual fields.', 'Empty value display can be set on AdminSite.', 'test_search_help_text (admin_changelist.tests.ChangeListTests)', 'test_select_related_as_empty_tuple (admin_changelist.tests.ChangeListTests)', 'test_select_related_as_tuple (admin_changelist.tests.ChangeListTests)', "Regression test for #10348: ChangeList.get_queryset() shouldn't", 'test_select_related_preserved_when_multi_valued_in_search_fields (admin_changelist.tests.ChangeListTests)', 'test_show_all (admin_changelist.tests.ChangeListTests)', 'test_spanning_relations_with_custom_lookup_in_search_fields (admin_changelist.tests.ChangeListTests)', 'test_specified_ordering_by_f_expression (admin_changelist.tests.ChangeListTests)', 'test_specified_ordering_by_f_expression_without_asc_desc (admin_changelist.tests.ChangeListTests)', 'test_total_ordering_optimization (admin_changelist.tests.ChangeListTests)', 'test_total_ordering_optimization_meta_constraints (admin_changelist.tests.ChangeListTests)', 'test_tuple_list_display (admin_changelist.tests.ChangeListTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16100: resolved: True
+2026-10-30 16:20:10,214 - INFO - Attempting to stop container sweb.eval.django__django-16100.verified_full_cline-patched...
+2026-10-30 16:20:28,025 - INFO - Container sweb.eval.django__django-16100.verified_full_cline-patched stopped successfully.
+2026-10-30 16:20:28,025 - INFO - Attempting to remove container sweb.eval.django__django-16100.verified_full_cline-patched...
+2026-10-30 16:20:28,071 - INFO - Container sweb.eval.django__django-16100.verified_full_cline-patched removed successfully.

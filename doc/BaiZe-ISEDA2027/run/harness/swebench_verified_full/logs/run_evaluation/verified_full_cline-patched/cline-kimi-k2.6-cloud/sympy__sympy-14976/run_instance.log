@@ -1,0 +1,109 @@
+2026-10-30 18:48:07,638 - INFO - Creating container for sympy__sympy-14976...
+2026-10-30 18:48:07,661 - INFO - Container for sympy__sympy-14976 created: 4ed7fbcb97610ad47c9085749d6a18895fe51e71dfaa37a3e7ffcafc45fd1d48
+2026-10-30 18:48:10,519 - INFO - Container for sympy__sympy-14976 started: 4ed7fbcb97610ad47c9085749d6a18895fe51e71dfaa37a3e7ffcafc45fd1d48
+2026-10-30 18:48:10,522 - INFO - Intermediate patch for sympy__sympy-14976 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14976/patch.diff, now applying to container...
+2026-10-30 18:48:10,867 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/pycode.py...
+Checking patch sympy/printing/tests/test_pycode.py...
+Checking patch sympy/utilities/tests/test_lambdify.py...
+Applied patch sympy/printing/pycode.py cleanly.
+Applied patch sympy/printing/tests/test_pycode.py cleanly.
+Applied patch sympy/utilities/tests/test_lambdify.py cleanly.
+
+2026-10-30 18:48:11,337 - INFO - Git diff before:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index d06901425..f102131cf 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -331,6 +331,9 @@ def _print_Float(self, e):
+         args = str(tuple(map(int, e._mpf_)))
+         return '{func}({args})'.format(func=self._module_format('mpmath.mpf'), args=args)
+ 
++    def _print_Rational(self, e):
++        return '{func}({args})'.format(func=self._module_format('mpmath.mpf'), args=repr(str(e)))
++
+ 
+     def _print_uppergamma(self, e):
+         return "{0}({1}, {2}, {3})".format(
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index 68994056e..97d84be6d 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -3,7 +3,7 @@
+ 
+ from sympy.codegen import Assignment
+ from sympy.core import Expr, Mod, symbols, Eq, Le, Gt, zoo, oo
+-from sympy.core.numbers import pi
++from sympy.core.numbers import pi, Rational
+ from sympy.codegen.ast import none
+ from sympy.external import import_module
+ from sympy.logic import And, Or
+@@ -40,6 +40,8 @@ def test_PythonCodePrinter():
+ def test_MpmathPrinter():
+     p = MpmathPrinter()
+     assert p.doprint(sign(x)) == 'mpmath.sign(x)'
++    assert p.doprint(Rational(1, 2)) == "mpmath.mpf('1/2')"
++    assert p.doprint(Rational(-1, 2)) == "mpmath.mpf('-1/2')"
+ 
+ 
+ def test_NumPyPrinter():
+diff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py
+index 149a7e313..af6e25180 100644
+--- a/sympy/utilities/tests/test_lambdify.py
++++ b/sympy/utilities/tests/test_lambdify.py
+@@ -157,6 +157,12 @@ def test_mpmath_precision():
+     mpmath.mp.dps = 100
+     assert str(lambdify((), pi.evalf(100), 'mpmath')()) == str(pi.evalf(100))
+ 
++@conserve_mpmath_dps
++def test_mpmath_rational_precision():
++    mpmath.mp.dps = 50
++    f = lambdify((), Rational(1, 3), 'mpmath')
++    assert -1e-49 < f() - mpmath.mpf('1/3') < 1e-49
++
+ #================== Test Translations ==============================
+ # We can only check if all translated functions are valid. It has to be checked
+ # by hand if they are complete.
+2026-10-30 18:48:11,343 - INFO - Eval script for sympy__sympy-14976 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14976/eval.sh; copying to container...
+2026-10-30 18:48:15,639 - INFO - Test runtime: 4.12 seconds
+2026-10-30 18:48:15,640 - INFO - Test output for sympy__sympy-14976 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14976/test_output.txt
+2026-10-30 18:48:15,789 - INFO - Git diff after:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index d06901425..f102131cf 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -331,6 +331,9 @@ def _print_Float(self, e):
+         args = str(tuple(map(int, e._mpf_)))
+         return '{func}({args})'.format(func=self._module_format('mpmath.mpf'), args=args)
+ 
++    def _print_Rational(self, e):
++        return '{func}({args})'.format(func=self._module_format('mpmath.mpf'), args=repr(str(e)))
++
+ 
+     def _print_uppergamma(self, e):
+         return "{0}({1}, {2}, {3})".format(
+diff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py
+index 149a7e313..af6e25180 100644
+--- a/sympy/utilities/tests/test_lambdify.py
++++ b/sympy/utilities/tests/test_lambdify.py
+@@ -157,6 +157,12 @@ def test_mpmath_precision():
+     mpmath.mp.dps = 100
+     assert str(lambdify((), pi.evalf(100), 'mpmath')()) == str(pi.evalf(100))
+ 
++@conserve_mpmath_dps
++def test_mpmath_rational_precision():
++    mpmath.mp.dps = 50
++    f = lambdify((), Rational(1, 3), 'mpmath')
++    assert -1e-49 < f() - mpmath.mpf('1/3') < 1e-49
++
+ #================== Test Translations ==============================
+ # We can only check if all translated functions are valid. It has to be checked
+ # by hand if they are complete.
+2026-10-30 18:48:15,789 - INFO - Git diff changed after running eval script
+2026-10-30 18:48:15,789 - INFO - Grading answer for sympy__sympy-14976...
+2026-10-30 18:48:15,790 - INFO - report: {'sympy__sympy-14976': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_MpmathPrinter']}, 'PASS_TO_PASS': {'success': ['test_PythonCodePrinter', 'test_NumPyPrinter', 'test_SciPyPrinter', 'test_pycode_reserved_words', 'test_printmethod', 'test_codegen_ast_nodes', 'test_nsolve_denominator', 'test_nsolve', 'test_issue_6408', 'test_increased_dps', 'test_nsolve_precision', 'test_nsolve_complex', 'test_nsolve_dict_kwarg'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-14976: resolved: False
+2026-10-30 18:48:15,792 - INFO - Attempting to stop container sweb.eval.sympy__sympy-14976.verified_full_cline-patched...
+2026-10-30 18:48:31,271 - INFO - Container sweb.eval.sympy__sympy-14976.verified_full_cline-patched stopped successfully.
+2026-10-30 18:48:31,271 - INFO - Attempting to remove container sweb.eval.sympy__sympy-14976.verified_full_cline-patched...
+2026-10-30 18:48:31,407 - INFO - Container sweb.eval.sympy__sympy-14976.verified_full_cline-patched removed successfully.

@@ -1,0 +1,87 @@
+2026-11-10 15:46:23,816 - INFO - Creating container for astropy__astropy-12907...
+2026-11-10 15:46:23,833 - INFO - Container for astropy__astropy-12907 created: aa794b1670e21315f883db22e4145cfb82642f1ce41f22ac971cece3e4329d3c
+2026-11-10 15:46:24,283 - INFO - Container for astropy__astropy-12907 started: aa794b1670e21315f883db22e4145cfb82642f1ce41f22ac971cece3e4329d3c
+2026-11-10 15:46:24,285 - INFO - Intermediate patch for astropy__astropy-12907 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/astropy__astropy-12907/patch.diff, now applying to container...
+2026-11-10 15:46:24,374 - INFO - >>>>> Applied Patch:
+Checking patch astropy/modeling/separable.py...
+warning: astropy/modeling/separable.py has type 100755, expected 100644
+Checking patch astropy/modeling/tests/test_separable.py...
+warning: astropy/modeling/tests/test_separable.py has type 100755, expected 100644
+Checking patch docs/changes/modeling/12907.bugfix.rst...
+Applied patch astropy/modeling/separable.py cleanly.
+Applied patch astropy/modeling/tests/test_separable.py cleanly.
+Applied patch docs/changes/modeling/12907.bugfix.rst cleanly.
+
+2026-11-10 15:46:24,879 - INFO - Git diff before:
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e2729..45bea3608 100755
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+ 
+diff --git a/astropy/modeling/tests/test_separable.py b/astropy/modeling/tests/test_separable.py
+index 8dfe5c862..024b23950 100755
+--- a/astropy/modeling/tests/test_separable.py
++++ b/astropy/modeling/tests/test_separable.py
+@@ -28,6 +28,13 @@ p22 = models.Polynomial2D(2, name='p22')
+ p1 = models.Polynomial1D(1, name='p1')
+ 
+ 
++cm_4d_expected = (np.array([False, False, True, True]),
++                  np.array([[True,  True,  False, False],
++                            [True,  True,  False, False],
++                            [False, False, True,  False],
++                            [False, False, False, True]]))
++
++
+ compound_models = {
+     'cm1': (map3 & sh1 | rot & sh1 | sh1 & sh2 & sh1,
+             (np.array([False, False, True]),
+@@ -52,7 +59,17 @@ compound_models = {
+     'cm7': (map2 | p2 & sh1,
+             (np.array([False, True]),
+              np.array([[True, False], [False, True]]))
+-            )
++            ),
++    'cm8': (rot & (sh1 & sh2), cm_4d_expected),
++    'cm9': (rot & sh1 & sh2, cm_4d_expected),
++    'cm10': ((rot & sh1) & sh2, cm_4d_expected),
++    'cm11': (rot & sh1 & (scl1 & scl2),
++             (np.array([False, False, True, True, True]),
++              np.array([[True,  True,  False, False, False],
++                        [True,  True,  False, False, False],
++                        [False, False, True,  False, False],
++                        [False, False, False, True,  False],
++                        [False, False, False, False, True]]))),
+ }
+2026-11-10 15:46:24,881 - INFO - Eval script for astropy__astropy-12907 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/astropy__astropy-12907/eval.sh; copying to container...
+2026-11-10 15:47:42,183 - INFO - Test runtime: 77.21 seconds
+2026-11-10 15:47:42,187 - INFO - Test output for astropy__astropy-12907 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/astropy__astropy-12907/test_output.txt
+2026-11-10 15:47:42,241 - INFO - Git diff after:
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e2729..45bea3608 100755
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+2026-11-10 15:47:42,242 - INFO - Git diff changed after running eval script
+2026-11-10 15:47:42,242 - INFO - Grading answer for astropy__astropy-12907...
+2026-11-10 15:47:42,252 - INFO - report: {'astropy__astropy-12907': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/modeling/tests/test_separable.py::test_separable[compound_model6-result6]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model9-result9]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/modeling/tests/test_separable.py::test_coord_matrix', 'astropy/modeling/tests/test_separable.py::test_cdot', 'astropy/modeling/tests/test_separable.py::test_cstack', 'astropy/modeling/tests/test_separable.py::test_arith_oper', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model0-result0]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model1-result1]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model2-result2]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model3-result3]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model4-result4]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model5-result5]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model7-result7]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model8-result8]', 'astropy/modeling/tests/test_separable.py::test_custom_model_separable'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-12907: resolved: True
+2026-11-10 15:47:42,254 - INFO - Attempting to stop container sweb.eval.astropy__astropy-12907.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 15:47:58,398 - INFO - Container sweb.eval.astropy__astropy-12907.verified_full_glm53_hermes_incr_R2028 stopped successfully.
+2026-11-10 15:47:58,398 - INFO - Attempting to remove container sweb.eval.astropy__astropy-12907.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 15:47:58,440 - INFO - Container sweb.eval.astropy__astropy-12907.verified_full_glm53_hermes_incr_R2028 removed successfully.

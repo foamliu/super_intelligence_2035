@@ -1,0 +1,62 @@
+2026-11-09 17:49:49,267 - INFO - Creating container for django__django-16485...
+2026-11-09 17:49:49,297 - INFO - Container for django__django-16485 created: c2658032466a1459d7058d16376692d23e75ddd264f6f0b25b2c8f7c19475f30
+2026-11-09 17:49:50,789 - INFO - Container for django__django-16485 started: c2658032466a1459d7058d16376692d23e75ddd264f6f0b25b2c8f7c19475f30
+2026-11-09 17:49:50,792 - INFO - Intermediate patch for django__django-16485 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-16485/patch.diff, now applying to container...
+2026-11-09 17:49:50,913 - INFO - >>>>> Applied Patch:
+Checking patch django/template/defaultfilters.py...
+Checking patch tests/template_tests/filter_tests/test_floatformat.py...
+Applied patch django/template/defaultfilters.py cleanly.
+Applied patch tests/template_tests/filter_tests/test_floatformat.py cleanly.
+
+2026-11-09 17:49:51,925 - INFO - Git diff before:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 23c3a08c67..225048ce7c 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -184,6 +184,8 @@ def floatformat(text, arg=-1):
+     units = len(tupl[1])
+     units += -tupl[2] if m else tupl[2]
+     prec = abs(p) + units + 1
++    # Avoid invalid precision for Decimals with a large number of digits.
++    prec = max(prec, 1)
+ 
+     # Avoid conversion to scientific notation by accessing `sign`, `digits`,
+     # and `exponent` from Decimal.as_tuple() directly.
+diff --git a/tests/template_tests/filter_tests/test_floatformat.py b/tests/template_tests/filter_tests/test_floatformat.py
+index 361a888ce3..8f75c2b4ee 100644
+--- a/tests/template_tests/filter_tests/test_floatformat.py
++++ b/tests/template_tests/filter_tests/test_floatformat.py
+@@ -111,6 +111,8 @@ class FunctionTests(SimpleTestCase):
+         self.assertEqual(
+             floatformat(0.000000000000000000015, 20), "0.00000000000000000002"
+         )
++        self.assertEqual(floatformat("0.00", 0), "0")
++        self.assertEqual(floatformat(Decimal("0.00"), 0), "0")
+ 
+     def test_negative_zero_values(self):
+         tests = [
+2026-11-09 17:49:51,929 - INFO - Eval script for django__django-16485 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-16485/eval.sh; copying to container...
+2026-11-09 17:50:14,069 - INFO - Test runtime: 22.06 seconds
+2026-11-09 17:50:14,072 - INFO - Test output for django__django-16485 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-16485/test_output.txt
+2026-11-09 17:50:14,158 - INFO - Git diff after:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 23c3a08c67..225048ce7c 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -184,6 +184,8 @@ def floatformat(text, arg=-1):
+     units = len(tupl[1])
+     units += -tupl[2] if m else tupl[2]
+     prec = abs(p) + units + 1
++    # Avoid invalid precision for Decimals with a large number of digits.
++    prec = max(prec, 1)
+ 
+     # Avoid conversion to scientific notation by accessing `sign`, `digits`,
+     # and `exponent` from Decimal.as_tuple() directly.
+2026-11-09 17:50:14,158 - INFO - Git diff changed after running eval script
+2026-11-09 17:50:14,158 - INFO - Grading answer for django__django-16485...
+2026-11-09 17:50:14,159 - INFO - report: {'django__django-16485': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_zero_values (template_tests.filter_tests.test_floatformat.FunctionTests.test_zero_values)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_floatformat01 (template_tests.filter_tests.test_floatformat.FloatformatTests.test_floatformat01)', 'test_floatformat02 (template_tests.filter_tests.test_floatformat.FloatformatTests.test_floatformat02)', 'test_float_dunder_method (template_tests.filter_tests.test_floatformat.FunctionTests.test_float_dunder_method)', 'test_force_grouping (template_tests.filter_tests.test_floatformat.FunctionTests.test_force_grouping)', 'test_infinity (template_tests.filter_tests.test_floatformat.FunctionTests.test_infinity)', 'test_inputs (template_tests.filter_tests.test_floatformat.FunctionTests.test_inputs)', '#15789', 'test_negative_zero_values (template_tests.filter_tests.test_floatformat.FunctionTests.test_negative_zero_values)', 'test_unlocalize (template_tests.filter_tests.test_floatformat.FunctionTests.test_unlocalize)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16485: resolved: True
+2026-11-09 17:50:14,161 - INFO - Attempting to stop container sweb.eval.django__django-16485.verified_full_glm53_opencode_R1933...
+2026-11-09 17:50:30,031 - INFO - Container sweb.eval.django__django-16485.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-09 17:50:30,032 - INFO - Attempting to remove container sweb.eval.django__django-16485.verified_full_glm53_opencode_R1933...
+2026-11-09 17:50:30,085 - INFO - Container sweb.eval.django__django-16485.verified_full_glm53_opencode_R1933 removed successfully.

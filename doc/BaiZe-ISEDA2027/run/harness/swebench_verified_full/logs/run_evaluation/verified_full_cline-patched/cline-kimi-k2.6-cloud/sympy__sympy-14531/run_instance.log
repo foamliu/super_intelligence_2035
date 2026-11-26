@@ -1,0 +1,590 @@
+2026-10-30 18:47:45,347 - INFO - Creating container for sympy__sympy-14531...
+2026-10-30 18:47:45,397 - INFO - Container for sympy__sympy-14531 created: d6bb76eb99f7f5e6aeb7098a98e0e29d1c0faadecd18cb7275ea6ccaf5784f5b
+2026-10-30 18:47:46,273 - INFO - Container for sympy__sympy-14531 started: d6bb76eb99f7f5e6aeb7098a98e0e29d1c0faadecd18cb7275ea6ccaf5784f5b
+2026-10-30 18:47:46,276 - INFO - Intermediate patch for sympy__sympy-14531 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14531/patch.diff, now applying to container...
+2026-10-30 18:47:46,421 - INFO - >>>>> Applied Patch:
+Checking patch sympy/assumptions/sathandlers.py...
+Checking patch sympy/core/basic.py...
+Checking patch sympy/core/containers.py...
+Checking patch sympy/core/expr.py...
+Checking patch sympy/core/function.py...
+Checking patch sympy/matrices/matrices.py...
+Checking patch sympy/matrices/sparse.py...
+Checking patch sympy/plotting/plot.py...
+Checking patch sympy/printing/str.py...
+Checking patch sympy/printing/tests/test_python.py...
+Checking patch sympy/printing/tests/test_str.py...
+Applied patch sympy/assumptions/sathandlers.py cleanly.
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/core/containers.py cleanly.
+Applied patch sympy/core/expr.py cleanly.
+Applied patch sympy/core/function.py cleanly.
+Applied patch sympy/matrices/matrices.py cleanly.
+Applied patch sympy/matrices/sparse.py cleanly.
+Applied patch sympy/plotting/plot.py cleanly.
+Applied patch sympy/printing/str.py cleanly.
+Applied patch sympy/printing/tests/test_python.py cleanly.
+Applied patch sympy/printing/tests/test_str.py cleanly.
+
+2026-10-30 18:47:46,844 - INFO - Git diff before:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..6723e560e 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index bdfebf24c..4a189a4d1 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93e3..4a66bac38 100644
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -8,6 +8,12 @@
+ 
+ from __future__ import print_function, division
+ 
++try:
++    from collections.abc import MutableSet
++except ImportError:
++    from collections import MutableSet
++import collections
++
+ from sympy.core.basic import Basic
+ from sympy.core.compatibility import as_int, range
+ from sympy.core.sympify import sympify, converter
+@@ -268,7 +274,7 @@ def _sorted_args(self):
+         return tuple(sorted(self.args, key=default_sort_key))
+ 
+ 
+-class OrderedSet(collections.MutableSet):
++class OrderedSet(MutableSet):
+     def __init__(self, iterable=None):
+         if iterable:
+             self.map = collections.OrderedDict((item, None) for item in iterable)
+diff --git a/sympy/core/expr.py b/sympy/core/expr.py
+index 2894db361..85d727724 100644
+--- a/sympy/core/expr.py
++++ b/sympy/core/expr.py
+@@ -9,7 +9,11 @@
+ from .compatibility import reduce, as_int, default_sort_key, range
+ from mpmath.libmp import mpf_log, prec_to_dps
+ 
+-from collections import defaultdict, Iterable
++try:
++    from collections.abc import Iterable
++except ImportError:
++    from collections import Iterable
++from collections import defaultdict
+ 
+ class Expr(Basic, EvalfMixin):
+     """
+diff --git a/sympy/core/function.py b/sympy/core/function.py
+index 3f7374fe6..5e621059b 100644
+--- a/sympy/core/function.py
++++ b/sympy/core/function.py
+@@ -58,6 +58,10 @@
+ import mpmath.libmp as mlib
+ 
+ import inspect
++try:
++    from collections.abc import Iterable
++except ImportError:
++    from collections import Iterable
+ import collections
+ 
+ def _coeff_isneg(a):
+@@ -1242,7 +1246,7 @@ def __new__(cls, expr, *variables, **kwargs):
+             elif (count < 0) == True:
+                 obj = None
+             else:
+-                if isinstance(v, (collections.Iterable, Tuple, MatrixCommon, NDimArray)):
++                if isinstance(v, (Iterable, Tuple, MatrixCommon, NDimArray)):
+                     # Treat derivatives by arrays/matrices as much as symbols.
+                     is_symbol = True
+                 if not is_symbol:
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index ab3663a69..4d49335bd 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,6 +1,9 @@
+ from __future__ import print_function, division
+ 
+-import collections
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ from mpmath.libmp.libmpf import prec_to_dps
+ from sympy.assumptions.refine import refine
+ from sympy.core.add import Add
+@@ -2071,7 +2074,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+                                  "Both dimensions must be positive".format(rows, cols))
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 7701cbc17..f0d87ccbf 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -2,6 +2,10 @@
+ 
+ import copy
+ from collections import defaultdict
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ 
+ from sympy.core.containers import Dict
+ from sympy.core.expr import Expr
+@@ -14,7 +18,6 @@
+ 
+ from .matrices import MatrixBase, ShapeError, a2idx
+ from .dense import Matrix
+-import collections
+ 
+ 
+ class SparseMatrix(MatrixBase):
+@@ -53,7 +56,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 18c6f7afe..e1e4e13b9 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index cc1d19fcc..7e14c072c 100644
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -86,7 +86,7 @@ def _print_Or(self, expr):
+         return self.stringify(expr.args, " | ", PRECEDENCE["BitwiseOr"])
+ 
+     def _print_AppliedPredicate(self, expr):
+-        return '%s(%s)' % (expr.func, expr.arg)
++        return '%s(%s)' % (expr.func, self._print(expr.arg))
+ 
+     def _print_Basic(self, expr):
+         l = [self._print(o) for o in expr.args]
+@@ -141,7 +141,7 @@ def _print_Exp1(self, expr):
+         return 'E'
+ 
+     def _print_ExprCondPair(self, expr):
+-        return '(%s, %s)' % (expr.expr, expr.cond)
++        return '(%s, %s)' % (self._print(expr.expr), self._print(expr.cond))
+ 
+     def _print_FiniteSet(self, s):
+         s = sorted(s, key=default_sort_key)
+@@ -193,7 +193,7 @@ def _print_Interval(self, i):
+             m = '.Lopen'
+         else:
+             m = '.Ropen'
+-        return fin.format(**{'a': a, 'b': b, 'm': m})
++        return fin.format(**{'a': self._print(a), 'b': self._print(b), 'm': m})
+ 
+     def _print_AccumulationBounds(self, i):
+         return "AccumBounds(%s, %s)" % (self._print(i.min), self._print(i.max))
+@@ -204,10 +204,10 @@ def _print_Inverse(self, I):
+     def _print_Lambda(self, obj):
+         args, expr = obj.args
+         if len(args) == 1:
+-            return "Lambda(%s, %s)" % (args.args[0], expr)
++            return "Lambda(%s, %s)" % (self._print(args.args[0]), self._print(expr))
+         else:
+             arg_string = ", ".join(self._print(arg) for arg in args)
+-            return "Lambda((%s), %s)" % (arg_string, expr)
++            return "Lambda((%s), %s)" % (arg_string, self._print(expr))
+ 
+     def _print_LatticeOp(self, expr):
+         args = sorted(expr.args, key=default_sort_key)
+@@ -216,9 +216,9 @@ def _print_LatticeOp(self, expr):
+     def _print_Limit(self, expr):
+         e, z, z0, dir = expr.args
+         if str(dir) == "+":
+-            return "Limit(%s, %s, %s)" % (e, z, z0)
++            return "Limit(%s, %s, %s)" % (self._print(e), self._print(z), self._print(z0))
+         else:
+-            return "Limit(%s, %s, %s, dir='%s')" % (e, z, z0, dir)
++            return "Limit(%s, %s, %s, dir='%s')" % (self._print(e), self._print(z), self._print(z0), self._print(dir))
+ 
+     def _print_list(self, expr):
+         return "[%s]" % self.stringify(expr, ", ")
+@@ -341,7 +341,7 @@ def _print_NegativeInfinity(self, expr):
+         return '-oo'
+ 
+     def _print_Normal(self, expr):
+-        return "Normal(%s, %s)" % (expr.mu, expr.sigma)
++        return "Normal(%s, %s)" % (self._print(expr.mu), self._print(expr.sigma))
+ 
+     def _print_Order(self, expr):
+         if all(p is S.Zero for p in expr.point) or not len(expr.variables):
+@@ -630,7 +630,7 @@ def _print_Relational(self, expr):
+         }
+ 
+         if expr.rel_op in charmap:
+-            return '%s(%s, %s)' % (charmap[expr.rel_op], expr.lhs, expr.rhs)
++            return '%s(%s, %s)' % (charmap[expr.rel_op], self._print(expr.lhs), self._print(expr.rhs))
+ 
+         return '%s %s %s' % (self.parenthesize(expr.lhs, precedence(expr)),
+                            self._relationals.get(expr.rel_op) or expr.rel_op,
+@@ -722,7 +722,7 @@ def _print_Transpose(self, T):
+         return "%s.T" % self.parenthesize(T.arg, PRECEDENCE["Pow"])
+ 
+     def _print_Uniform(self, expr):
+-        return "Uniform(%s, %s)" % (expr.a, expr.b)
++        return "Uniform(%s, %s)" % (self._print(expr.a), self._print(expr.b))
+ 
+     def _print_Union(self, expr):
+         return 'Union(%s)' %(', '.join([self._print(a) for a in expr.args]))
+diff --git a/sympy/printing/tests/test_python.py b/sympy/printing/tests/test_python.py
+index b059fbded..fb8854e21 100644
+--- a/sympy/printing/tests/test_python.py
++++ b/sympy/printing/tests/test_python.py
+@@ -80,12 +80,12 @@ def test_python_keyword_function_name_escaping():
+ 
+ 
+ def test_python_relational():
+-    assert python(Eq(x, y)) == "e = Eq(x, y)"
++    assert python(Eq(x, y)) == "x = Symbol('x')\ny = Symbol('y')\ne = Eq(x, y)"
+     assert python(Ge(x, y)) == "x = Symbol('x')\ny = Symbol('y')\ne = x >= y"
+     assert python(Le(x, y)) == "x = Symbol('x')\ny = Symbol('y')\ne = x <= y"
+     assert python(Gt(x, y)) == "x = Symbol('x')\ny = Symbol('y')\ne = x > y"
+     assert python(Lt(x, y)) == "x = Symbol('x')\ny = Symbol('y')\ne = x < y"
+-    assert python(Ne(x/(y + 1), y**2)) in ["e = Ne(x/(1 + y), y**2)", "e = Ne(x/(y + 1), y**2)"]
++    assert python(Ne(x/(y + 1), y**2)) in ["x = Symbol('x')\ny = Symbol('y')\ne = Ne(x/(1 + y), y**2)", "x = Symbol('x')\ny = Symbol('y')\ne = Ne(x/(y + 1), y**2)"]
+ 
+ 
+ def test_python_functions():
+diff --git a/sympy/printing/tests/test_str.py b/sympy/printing/tests/test_str.py
+index 95e13e70f..cc541d332 100644
+--- a/sympy/printing/tests/test_str.py
++++ b/sympy/printing/tests/test_str.py
+@@ -183,7 +183,7 @@ def test_Limit():
+     assert str(Limit(1/x, x, 0)) == "Limit(1/x, x, 0)"
+     assert str(
+         Limit(sin(x)/x, x, y, dir="-")) == "Limit(sin(x)/x, x, y, dir='-')"
+-
++    assert sstr(Limit(x, x, S(1)/2), sympy_integers=True) == "Limit(x, x, S(1)/2)"
+ 
+ def test_list():
+     assert str([x]) == sstr([x]) == "[x]"
+@@ -516,7 +516,7 @@ def test_Relational():
+     assert str(Rel(x, y, ':=')) == "Assignment(x, y)"
+     assert str(Eq(x, 1) | Eq(x, 2)) == "Eq(x, 1) | Eq(x, 2)"
+     assert str(Ne(x, 1) & Ne(x, 2)) == "Ne(x, 1) & Ne(x, 2)"
+-
++    assert sstr(Eq(x, S(1)/2), sympy_integers=True) == "Eq(x, S(1)/2)"
+ 
+ def test_CRootOf():
+     assert str(rootof(x**5 + 2*x - 1, 0)) == "CRootOf(x**5 + 2*x - 1, 0)"
+2026-10-30 18:47:46,846 - INFO - Eval script for sympy__sympy-14531 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14531/eval.sh; copying to container...
+2026-10-30 18:47:51,802 - INFO - Test runtime: 4.83 seconds
+2026-10-30 18:47:51,808 - INFO - Test output for sympy__sympy-14531 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-14531/test_output.txt
+2026-10-30 18:47:51,894 - INFO - Git diff after:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..6723e560e 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index bdfebf24c..4a189a4d1 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93e3..4a66bac38 100644
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -8,6 +8,12 @@
+ 
+ from __future__ import print_function, division
+ 
++try:
++    from collections.abc import MutableSet
++except ImportError:
++    from collections import MutableSet
++import collections
++
+ from sympy.core.basic import Basic
+ from sympy.core.compatibility import as_int, range
+ from sympy.core.sympify import sympify, converter
+@@ -268,7 +274,7 @@ def _sorted_args(self):
+         return tuple(sorted(self.args, key=default_sort_key))
+ 
+ 
+-class OrderedSet(collections.MutableSet):
++class OrderedSet(MutableSet):
+     def __init__(self, iterable=None):
+         if iterable:
+             self.map = collections.OrderedDict((item, None) for item in iterable)
+diff --git a/sympy/core/expr.py b/sympy/core/expr.py
+index 2894db361..85d727724 100644
+--- a/sympy/core/expr.py
++++ b/sympy/core/expr.py
+@@ -9,7 +9,11 @@
+ from .compatibility import reduce, as_int, default_sort_key, range
+ from mpmath.libmp import mpf_log, prec_to_dps
+ 
+-from collections import defaultdict, Iterable
++try:
++    from collections.abc import Iterable
++except ImportError:
++    from collections import Iterable
++from collections import defaultdict
+ 
+ class Expr(Basic, EvalfMixin):
+     """
+diff --git a/sympy/core/function.py b/sympy/core/function.py
+index 3f7374fe6..5e621059b 100644
+--- a/sympy/core/function.py
++++ b/sympy/core/function.py
+@@ -58,6 +58,10 @@
+ import mpmath.libmp as mlib
+ 
+ import inspect
++try:
++    from collections.abc import Iterable
++except ImportError:
++    from collections import Iterable
+ import collections
+ 
+ def _coeff_isneg(a):
+@@ -1242,7 +1246,7 @@ def __new__(cls, expr, *variables, **kwargs):
+             elif (count < 0) == True:
+                 obj = None
+             else:
+-                if isinstance(v, (collections.Iterable, Tuple, MatrixCommon, NDimArray)):
++                if isinstance(v, (Iterable, Tuple, MatrixCommon, NDimArray)):
+                     # Treat derivatives by arrays/matrices as much as symbols.
+                     is_symbol = True
+                 if not is_symbol:
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index ab3663a69..4d49335bd 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,6 +1,9 @@
+ from __future__ import print_function, division
+ 
+-import collections
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ from mpmath.libmp.libmpf import prec_to_dps
+ from sympy.assumptions.refine import refine
+ from sympy.core.add import Add
+@@ -2071,7 +2074,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+                                  "Both dimensions must be positive".format(rows, cols))
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 7701cbc17..f0d87ccbf 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -2,6 +2,10 @@
+ 
+ import copy
+ from collections import defaultdict
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ 
+ from sympy.core.containers import Dict
+ from sympy.core.expr import Expr
+@@ -14,7 +18,6 @@
+ 
+ from .matrices import MatrixBase, ShapeError, a2idx
+ from .dense import Matrix
+-import collections
+ 
+ 
+ class SparseMatrix(MatrixBase):
+@@ -53,7 +56,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 18c6f7afe..e1e4e13b9 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index cc1d19fcc..7e14c072c 100644
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -86,7 +86,7 @@ def _print_Or(self, expr):
+         return self.stringify(expr.args, " | ", PRECEDENCE["BitwiseOr"])
+ 
+     def _print_AppliedPredicate(self, expr):
+-        return '%s(%s)' % (expr.func, expr.arg)
++        return '%s(%s)' % (expr.func, self._print(expr.arg))
+ 
+     def _print_Basic(self, expr):
+         l = [self._print(o) for o in expr.args]
+@@ -141,7 +141,7 @@ def _print_Exp1(self, expr):
+         return 'E'
+ 
+     def _print_ExprCondPair(self, expr):
+-        return '(%s, %s)' % (expr.expr, expr.cond)
++        return '(%s, %s)' % (self._print(expr.expr), self._print(expr.cond))
+ 
+     def _print_FiniteSet(self, s):
+         s = sorted(s, key=default_sort_key)
+@@ -193,7 +193,7 @@ def _print_Interval(self, i):
+             m = '.Lopen'
+         else:
+             m = '.Ropen'
+-        return fin.format(**{'a': a, 'b': b, 'm': m})
++        return fin.format(**{'a': self._print(a), 'b': self._print(b), 'm': m})
+ 
+     def _print_AccumulationBounds(self, i):
+         return "AccumBounds(%s, %s)" % (self._print(i.min), self._print(i.max))
+@@ -204,10 +204,10 @@ def _print_Inverse(self, I):
+     def _print_Lambda(self, obj):
+         args, expr = obj.args
+         if len(args) == 1:
+-            return "Lambda(%s, %s)" % (args.args[0], expr)
++            return "Lambda(%s, %s)" % (self._print(args.args[0]), self._print(expr))
+         else:
+             arg_string = ", ".join(self._print(arg) for arg in args)
+-            return "Lambda((%s), %s)" % (arg_string, expr)
++            return "Lambda((%s), %s)" % (arg_string, self._print(expr))
+ 
+     def _print_LatticeOp(self, expr):
+         args = sorted(expr.args, key=default_sort_key)
+@@ -216,9 +216,9 @@ def _print_LatticeOp(self, expr):
+     def _print_Limit(self, expr):
+         e, z, z0, dir = expr.args
+         if str(dir) == "+":
+-            return "Limit(%s, %s, %s)" % (e, z, z0)
++            return "Limit(%s, %s, %s)" % (self._print(e), self._print(z), self._print(z0))
+         else:
+-            return "Limit(%s, %s, %s, dir='%s')" % (e, z, z0, dir)
++            return "Limit(%s, %s, %s, dir='%s')" % (self._print(e), self._print(z), self._print(z0), self._print(dir))
+ 
+     def _print_list(self, expr):
+         return "[%s]" % self.stringify(expr, ", ")
+@@ -341,7 +341,7 @@ def _print_NegativeInfinity(self, expr):
+         return '-oo'
+ 
+     def _print_Normal(self, expr):
+-        return "Normal(%s, %s)" % (expr.mu, expr.sigma)
++        return "Normal(%s, %s)" % (self._print(expr.mu), self._print(expr.sigma))
+ 
+     def _print_Order(self, expr):
+         if all(p is S.Zero for p in expr.point) or not len(expr.variables):
+@@ -630,7 +630,7 @@ def _print_Relational(self, expr):
+         }
+ 
+         if expr.rel_op in charmap:
+-            return '%s(%s, %s)' % (charmap[expr.rel_op], expr.lhs, expr.rhs)
++            return '%s(%s, %s)' % (charmap[expr.rel_op], self._print(expr.lhs), self._print(expr.rhs))
+ 
+         return '%s %s %s' % (self.parenthesize(expr.lhs, precedence(expr)),
+                            self._relationals.get(expr.rel_op) or expr.rel_op,
+@@ -722,7 +722,7 @@ def _print_Transpose(self, T):
+         return "%s.T" % self.parenthesize(T.arg, PRECEDENCE["Pow"])
+ 
+     def _print_Uniform(self, expr):
+-        return "Uniform(%s, %s)" % (expr.a, expr.b)
++        return "Uniform(%s, %s)" % (self._print(expr.a), self._print(expr.b))
+ 
+     def _print_Union(self, expr):
+         return 'Union(%s)' %(', '.join([self._print(a) for a in expr.args]))
+2026-10-30 18:47:51,894 - INFO - Git diff changed after running eval script
+2026-10-30 18:47:51,894 - INFO - Grading answer for sympy__sympy-14531...
+2026-10-30 18:47:51,897 - INFO - report: {'sympy__sympy-14531': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_python_relational', 'test_Rational'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_python_basic', 'test_python_keyword_symbol_name_escaping', 'test_python_keyword_function_name_escaping', 'test_python_functions', 'test_python_derivatives', 'test_python_integrals', 'test_python_matrix', 'test_python_limits', 'test_printmethod', 'test_Abs', 'test_Add', 'test_Catalan', 'test_ComplexInfinity', 'test_Derivative', 'test_dict', 'test_Dict', 'test_Dummy', 'test_EulerGamma', 'test_Exp', 'test_factorial', 'test_Function', 'test_Geometry', 'test_GoldenRatio', 'test_ImaginaryUnit', 'test_Infinity', 'test_Integer', 'test_Integral', 'test_Interval', 'test_AccumBounds', 'test_Lambda', 'test_Limit', 'test_list', 'test_Matrix_str', 'test_Mul', 'test_NaN', 'test_NegativeInfinity', 'test_Order', 'test_Permutation_Cycle', 'test_Pi', 'test_Poly', 'test_PolyRing', 'test_FracField', 'test_PolyElement', 'test_FracElement', 'test_Pow', 'test_sqrt', 'test_Float', 'test_Relational', 'test_CRootOf', 'test_RootSum', 'test_GroebnerBasis', 'test_set', 'test_SparseMatrix', 'test_Sum', 'test_Symbol', 'test_tuple', 'test_Quaternion_str_printer', 'test_Quantity_str', 'test_wild_str', 'test_zeta', 'test_issue_3101', 'test_issue_3103', 'test_issue_4021', 'test_sstrrepr', 'test_infinity', 'test_full_prec', 'test_noncommutative', 'test_empty_printer', 'test_settings', 'test_RandomDomain', 'test_FiniteSet', 'test_PrettyPoly', 'test_categories', 'test_Tr', 'test_issue_6387', 'test_MatMul_MatAdd', 'test_MatrixSlice', 'test_true_false', 'test_Equivalent', 'test_Xor', 'test_Complement', 'test_SymmetricDifference', 'test_UnevaluatedExpr', 'test_MatrixElement_printing'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-14531: resolved: True
+2026-10-30 18:47:51,904 - INFO - Attempting to stop container sweb.eval.sympy__sympy-14531.verified_full_cline-patched...
+2026-10-30 18:48:07,563 - INFO - Container sweb.eval.sympy__sympy-14531.verified_full_cline-patched stopped successfully.
+2026-10-30 18:48:07,563 - INFO - Attempting to remove container sweb.eval.sympy__sympy-14531.verified_full_cline-patched...
+2026-10-30 18:48:07,623 - INFO - Container sweb.eval.sympy__sympy-14531.verified_full_cline-patched removed successfully.

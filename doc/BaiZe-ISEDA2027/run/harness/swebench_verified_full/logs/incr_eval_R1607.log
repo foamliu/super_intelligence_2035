@@ -1,0 +1,40 @@
+[incr-eval 00:10:15] === R1607 cline-patched: ['pytest-dev__pytest-7432'] (run_id=verified_full_cline-patched_rerun_R1607) ===
+[incr-eval 00:10:15] merged 471/481 -> predictions/predictions_cline-patched.json
+[incr-eval 00:10:15] EVAL cline-patched on 1: ['pytest-dev__pytest-7432']
+[incr-eval 00:12:24] === R1607 cline-patched: ['pytest-dev__pytest-7432'] (run_id=verified_full_cline-patched_rerun_R1607) ===
+[incr-eval 00:12:25] merged 471/481 -> predictions/predictions_cline-patched.json
+[incr-eval 00:12:25] EVAL cline-patched on 1: ['pytest-dev__pytest-7432']
+[incr-eval 00:12:29] eval rc=0; log -> logs/eval_incr_verified_full_cline-patched_R1607_1793808749.log
+[incr-eval 00:12:29] cline-patched pytest-dev__pytest-7432: RESOLVED
+[incr-eval 00:12:29] === R1607 deepseek-harness: ['psf__requests-2931'] (run_id=verified_full_deepseek-harness_rerun_R1607) ===
+[incr-eval 00:12:29] merged 229/237 -> predictions/predictions_deepseek-harness.json
+[incr-eval 00:12:29] EVAL deepseek-harness on 1: ['psf__requests-2931']
+[incr-eval 00:13:54] eval rc=0; log -> logs/eval_incr_verified_full_deepseek-harness_R1607_1793808834.log
+[incr-eval 00:13:54] deepseek-harness psf__requests-2931: FAILED
+[incr-eval 00:13:54] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: scanned 11 run dir(s), 471 instances with report.json
+  cline-patched: WROTE eval_cline-patched.json  n=481 resolved=348 failed=123 infra=0 no_patch=10)
+  opencode: scanned 1 run dir(s), 497 instances with report.json
+  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
+  pi: scanned 1 run dir(s), 463 instances with report.json
+  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
+  claude-code: scanned 1 run dir(s), 358 instances with report.json
+  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
+  codex: scanned 2 run dir(s), 362 instances with report.json
+  codex: unchanged (n=488 resolved=284 failed=78 infra=0 no_patch=126)
+  hermes: scanned 1 run dir(s), 230 instances with report.json
+  hermes: unchanged (n=314 resolved=184 failed=46 infra=0 no_patch=84)
+  deepseek-harness: scanned 9 run dir(s), 229 instances with report.json
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=237 resolved=185 failed=44 infra=0 no_patch=8)
+[incr-eval 00:13:56] === gen report HTML ===
+written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (17110B)
+  cline        done=500/500 patch=471 no_patch=20 infra=0 eval=Y resolved=348
+  opencode     done=500/500 patch=497 no_patch=-7 infra=0 eval=Y resolved=401
+  pi           done=500/500 patch=463 no_patch=4 infra=25 eval=Y resolved=333
+  claude-code  done=500/500 patch=358 no_patch=67 infra=67 eval=Y resolved=273
+  codex        done=500/500 patch=362 no_patch=120 infra=12 eval=Y resolved=284
+  hermes       done=500/500 patch=229 no_patch=84 infra=185 eval=Y resolved=184
+  deepseek-harness done=450/500 patch=227 no_patch=3 infra=119 eval=Y resolved=185
+[incr-eval 00:13:56] === incr_eval R1607 DONE (91s) ===
+SUMMARY: {('cline-patched', 'pytest-dev__pytest-7432'): 'RESOLVED', ('deepseek-harness', 'psf__requests-2931'): 'FAILED'}

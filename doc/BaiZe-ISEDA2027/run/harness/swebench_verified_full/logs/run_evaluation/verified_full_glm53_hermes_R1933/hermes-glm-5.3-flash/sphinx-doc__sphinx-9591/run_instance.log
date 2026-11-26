@@ -1,0 +1,72 @@
+2026-11-09 07:40:06,171 - INFO - Creating container for sphinx-doc__sphinx-9591...
+2026-11-09 07:40:06,222 - INFO - Container for sphinx-doc__sphinx-9591 created: af313c24b5ec0dd222648a708d16ff2e6455a272f9fd7d93ca3452e36c5b1eb5
+2026-11-09 07:40:08,111 - INFO - Container for sphinx-doc__sphinx-9591 started: af313c24b5ec0dd222648a708d16ff2e6455a272f9fd7d93ca3452e36c5b1eb5
+2026-11-09 07:40:08,113 - INFO - Intermediate patch for sphinx-doc__sphinx-9591 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9591/patch.diff, now applying to container...
+2026-11-09 07:40:08,228 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/domains/python.py...
+Checking patch tests/test_domain_py.py...
+Applied patch sphinx/domains/python.py cleanly.
+Applied patch tests/test_domain_py.py cleanly.
+
+2026-11-09 07:40:08,690 - INFO - Git diff before:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index e8330e81c..9875a9f4b 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -861,7 +861,8 @@ class PyProperty(PyObject):
+ 
+         typ = self.options.get('type')
+         if typ:
+-            signode += addnodes.desc_annotation(typ, ': ' + typ)
++            annotations = _parse_annotation(typ, self.env)
++            signode += addnodes.desc_annotation(typ, '', nodes.Text(': '), *annotations)
+ 
+         return fullname, prefix
+ 
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 8b72f8b7a..067febcf4 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -833,13 +833,15 @@ def test_pyproperty(app):
+                 entries=[('single', 'prop1 (Class property)', 'Class.prop1', '', None)])
+     assert_node(doctree[1][1][1], ([desc_signature, ([desc_annotation, "abstract property "],
+                                                      [desc_name, "prop1"],
+-                                                     [desc_annotation, ": str"])],
++                                                     [desc_annotation, (": ",
++                                                                        [pending_xref, "str"])])],
+                                    [desc_content, ()]))
+     assert_node(doctree[1][1][2], addnodes.index,
+                 entries=[('single', 'prop2 (Class property)', 'Class.prop2', '', None)])
+     assert_node(doctree[1][1][3], ([desc_signature, ([desc_annotation, "class property "],
+                                                      [desc_name, "prop2"],
+-                                                     [desc_annotation, ": str"])],
++                                                     [desc_annotation, (": ",
++                                                                        [pending_xref, "str"])])],
+                                    [desc_content, ()]))
+     assert 'Class.prop1' in domain.objects
+     assert domain.objects['Class.prop1'] == ('index', 'Class.prop1', 'property', False)
+2026-11-09 07:40:08,692 - INFO - Eval script for sphinx-doc__sphinx-9591 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9591/eval.sh; copying to container...
+2026-11-09 07:40:15,558 - INFO - Test runtime: 6.81 seconds
+2026-11-09 07:40:15,559 - INFO - Test output for sphinx-doc__sphinx-9591 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9591/test_output.txt
+2026-11-09 07:40:15,618 - INFO - Git diff after:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index e8330e81c..9875a9f4b 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -861,7 +861,8 @@ class PyProperty(PyObject):
+ 
+         typ = self.options.get('type')
+         if typ:
+-            signode += addnodes.desc_annotation(typ, ': ' + typ)
++            annotations = _parse_annotation(typ, self.env)
++            signode += addnodes.desc_annotation(typ, '', nodes.Text(': '), *annotations)
+ 
+         return fullname, prefix
+2026-11-09 07:40:15,618 - INFO - Git diff changed after running eval script
+2026-11-09 07:40:15,618 - INFO - Grading answer for sphinx-doc__sphinx-9591...
+2026-11-09 07:40:15,627 - INFO - report: {'sphinx-doc__sphinx-9591': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_py.py::test_pyproperty'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs', 'tests/test_domain_py.py::test_domain_py_xrefs_abbreviations', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_domain_py_canonical', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_parse_annotation', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_pyfunction_with_number_literals', 'tests/test_domain_py.py::test_pyfunction_with_union_type_operator', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pydata_with_union_type_operator', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pyclass_options', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_canonical', 'tests/test_domain_py.py::test_canonical_definition_overrides', 'tests/test_domain_py.py::test_canonical_definition_skip', 'tests/test_domain_py.py::test_canonical_duplicated', 'tests/test_domain_py.py::test_info_field_list', 'tests/test_domain_py.py::test_info_field_list_piped_type', 'tests/test_domain_py.py::test_info_field_list_var', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix', 'tests/test_domain_py.py::test_noindexentry', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names_disabled', 'tests/test_domain_py.py::test_warn_missing_reference'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9591: resolved: True
+2026-11-09 07:40:15,629 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9591.verified_full_glm53_hermes_R1933...
+2026-11-09 07:40:32,788 - INFO - Container sweb.eval.sphinx-doc__sphinx-9591.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 07:40:32,788 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9591.verified_full_glm53_hermes_R1933...
+2026-11-09 07:40:32,829 - INFO - Container sweb.eval.sphinx-doc__sphinx-9591.verified_full_glm53_hermes_R1933 removed successfully.

@@ -1,0 +1,72 @@
+2026-11-09 06:13:05,353 - INFO - Creating container for django__django-16819...
+2026-11-09 06:13:05,558 - INFO - Container for django__django-16819 created: f7559ac238fa48f297be738c60af72bf85fad483e9f57e3d92df55c9bcfdfef5
+2026-11-09 06:13:06,572 - INFO - Container for django__django-16819 started: f7559ac238fa48f297be738c60af72bf85fad483e9f57e3d92df55c9bcfdfef5
+2026-11-09 06:13:06,574 - INFO - Intermediate patch for django__django-16819 written to logs/run_evaluation/verified_full_glm532026-11-09 06:13:06,910 - INFO - Container for django__django-16819 started: 2ee16499653fc5185cfd010911345b4a6a2e4985b62526fa3278a0cbff6d1e0d
+2026-11-09 06:13:06,912 - INFO - Intermediate patch for django__django-16819 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/django__django-16819/patch.diff, now applying to container...
+2026-11-09 06:13:07,032026-11-09 06:13:07,443 - INFO - Git diff before:
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc8..b89b6b511b 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operation2026-11-09 06:13:07,965 - INFO - Git diff before:
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc8..b89b6b511b 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -861,6 +861,11 @@ class AddIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "%s_%s" % (self.model_name_lower, self.index.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if isinstance(operation, RemoveIndex) and self.index.name == operation.name:
++            return []
++        return super().reduce(operation, app_label)
++
+ 
+ class RemoveIndex(IndexOperation):
+     """Remove an index from a model."""
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 8cd4c67fbd..2f6616ad5b 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -1158,3 +1158,17 @@ class OptimizerTests(SimpleTestCase):
+                 ),
+             ]
+         )
++
++    def test_add_remove_index(self):
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Pony",
++                    models.Index(
++                        fields=["weight", "pink"], name="idx_pony_weight_pink"
++                    ),
++                ),
++                migrations.RemoveIndex("Pony", "idx_pony_weight_pi2026-11-09 06:13:24,846 - INFO - Test runtime: 17.35 seconds
+2026-11-09 06:13:24,847 - INFO - Test output for django__django-16819 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/django__django-16819/test_output.txt
+2026-12026-11-09 06:13:28,241 - INFO - Test runtime: 20.21 seconds
+2026-11-09 06:13:28,242 - INFO - Test output for django__django-16819 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/django__django-16819/test_output.txt
+2026-11-09 06:13:28,306 - INFO - Git diff after:
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc8..b89b6b511b 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -861,6 +861,11 @@ class AddIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "%s_%s" % (self.model_name_lower, self.index.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if isinstance(operation, RemoveIndex) and self.index.name == operation.name:
++            return []
++        return super().reduce(operation, app_label)
++
+ 
+ class RemoveIndex(IndexOperation):
+     """Remove an index from a model."""
+2026-11-09 06:13:28,306 - INFO - Git diff changed after running eval script
+2026-11-09 06:13:28,306 - INFO - Grading answer for django__django-16819...
+2026-11-09 06:13:28,308 - INFO - report: {'django__django-16819': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_add_remove_index (migrations.test_optimizer.OptimizerTests.test_add_remove_index)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['AlterField should optimize into AddField.', 'RemoveField should cancel AddField', 'RenameField should optimize into AddField', 'test_alter_alter_field (migrations.test_optimizer.OptimizerTests.test_alter_alter_field)', 'test_alter_alter_index_model (migrations.test_optimizer.OptimizerTests.test_alter_alter_index_model)', 'test_alter_alter_owrt_model (migrations.test_optimizer.OptimizerTests.test_alter_alter_owrt_model)', 'test_alter_alter_table_model (migrations.test_optimizer.OptimizerTests.test_alter_alter_table_model)', 'test_alter_alter_unique_model (migrations.test_optimizer.OptimizerTests.test_alter_alter_unique_model)', 'RemoveField should absorb AlterField', 'RenameField should optimize to the other side of AlterField,', 'test_create_alter_index_delete_model (migrations.test_optimizer.OptimizerTests.test_create_alter_index_delete_model)', 'test_create_alter_index_field (migrations.test_optimizer.OptimizerTests.test_create_alter_index_field)', 'test_create_alter_model_managers (migrations.test_optimizer.OptimizerTests.test_create_alter_model_managers)', 'test_create_alter_model_options (migrations.test_optimizer.OptimizerTests.test_create_alter_model_options)', 'test_create_alter_owrt_delete_model (migrations.test_optimizer.OptimizerTests.test_create_alter_owrt_delete_model)', 'test_create_alter_owrt_field (migrations.test_optimizer.OptimizerTests.test_create_alter_owrt_field)', 'test_create_alter_unique_delete_model (migrations.test_optimizer.OptimizerTests.test_create_alter_unique_delete_model)', 'test_create_alter_unique_field (migrations.test_optimizer.OptimizerTests.test_create_alter_unique_field)', 'CreateModel and DeleteModel should collapse into nothing.', 'AddField should optimize into CreateModel.', "AddField should NOT optimize into CreateModel if it's an M2M using a", 'AlterField should optimize into CreateModel.', 'test_create_model_and_remove_model_options (migrations.test_optimizer.OptimizerTests.test_create_model_and_remove_model_options)', 'CreateModel order remains unchanged if the later AddField operation', "A CreateModel that inherits from another isn't reordered to avoid", 'RemoveField should optimize into CreateModel.', 'RenameField should optimize into CreateModel.', "AddField optimizes into CreateModel if it's a FK to a model that's", "CreateModel reordering behavior doesn't result in an infinite loop if", 'CreateModel should absorb RenameModels.', 'test_none_app_label (migrations.test_optimizer.OptimizerTests.test_none_app_label)', 'test_optimize_elidable_operation (migrations.test_optimizer.OptimizerTests.test_optimize_elidable_operation)', 'We should be able to optimize away create/delete through a create or', 'field-level through checking is working. This should manage to collapse', 'test_rename_index (migrations.test_optimizer.OptimizerTests.test_rename_index)', 'RenameModels should absorb themselves.', 'The optimizer does nothing on a single operation,', 'test_swapping_fields_names (migrations.test_optimizer.OptimizerTests.test_swapping_fields_names)'], 'failure': []}, 'FAIL_TO_FA2026-11-09 06:13:41,825 - INFO - Container sweb.eval.django__django-16819.verified_full_glm53_claude-code_R1933 stopped successfully.
+2026-11-09 06:13:41,825 - INFO - Attempting to remove container sweb.eval.django__django-16819.verified_full_glm53_claude-code_R1933...
+2026-11-092026-11-09 06:13:45,455 - INFO - Container sweb.eval.django__django-16819.verified_full_glm53_claude-code_R1933.1794175985 stopped successfully.
+2026-11-09 06:13:45,455 - INFO - Attempting to remove container sweb.eval.django__django-16819.verified_full_glm53_claude-code_R1933.1794175985...
+2026-11-09 06:13:45,502 - INFO - Container sweb.eval.django__django-16819.verified_full_glm53_claude-code_R1933.1794175985 removed successfully.

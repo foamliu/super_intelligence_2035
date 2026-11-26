@@ -1,0 +1,99 @@
+2026-11-09 21:03:26,987 - INFO - Creating container for django__django-14034...
+2026-11-09 21:03:27,006 - INFO - Container for django__django-14034 created: 48611606e8e29daf8881b0fbb9047669e294909337e85c7bda4aaae85d027fc0
+2026-11-09 21:03:27,545 - INFO - Container for django__django-14034 started: 48611606e8e29daf8881b0fbb9047669e294909337e85c7bda4aaae85d027fc0
+2026-11-09 21:03:27,547 - INFO - Intermediate patch for django__django-14034 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R1992/opencode-glm-5.3-flash/django__django-14034/patch.diff, now applying to container...
+2026-11-09 21:03:27,695 - INFO - >>>>> Applied Patch:
+Checking patch django/forms/fields.py...
+Checking patch tests/forms_tests/field_tests/test_multivaluefield.py...
+Applied patch django/forms/fields.py cleanly.
+Applied patch tests/forms_tests/field_tests/test_multivaluefield.py cleanly.
+
+2026-11-09 21:03:29,158 - INFO - Git diff before:
+diff --git a/django/forms/fields.py b/django/forms/fields.py
+index 65d6a9ec82..90c2429a2c 100644
+--- a/django/forms/fields.py
++++ b/django/forms/fields.py
+@@ -1025,8 +1025,11 @@ class MultiValueField(Field):
+             if not value or not [v for v in value if v not in self.empty_values]:
+                 if self.required:
+                     raise ValidationError(self.error_messages['required'], code='required')
+-                else:
+-                    return self.compress([])
++                if value and any(f.required for f in self.fields):
++                    raise ValidationError(
++                        self.error_messages['incomplete'], code='incomplete'
++                    )
++                return self.compress([])
+         else:
+             raise ValidationError(self.error_messages['invalid'], code='invalid')
+         for i, field in enumerate(self.fields):
+diff --git a/tests/forms_tests/field_tests/test_multivaluefield.py b/tests/forms_tests/field_tests/test_multivaluefield.py
+index 29287d0b01..d3adceadc6 100644
+--- a/tests/forms_tests/field_tests/test_multivaluefield.py
++++ b/tests/forms_tests/field_tests/test_multivaluefield.py
+@@ -172,3 +172,35 @@ class MultiValueFieldTest(SimpleTestCase):
+         })
+         form.is_valid()
+         self.assertEqual(form.cleaned_data['field1'], 'some text,JP,2007-04-25 06:24:00')
++
++    def test_multivalue_field_with_required_subfields(self):
++        class MF(MultiValueField):
++            widget = MultiWidget
++
++            def __init__(self, required):
++                fields = [
++                    CharField(required=False),
++                    CharField(required=True),
++                ]
++                widget = self.widget(
++                    widgets=[f.widget for f in fields],
++                    attrs={},
++                )
++                super().__init__(
++                    fields=fields,
++                    widget=widget,
++                    require_all_fields=False,
++                    required=required,
++                )
++
++            def compress(self, value):
++                return []
++
++        self.assertRaisesMessage(
++            ValidationError, "'Enter a complete value.'",
++            MF(required=False).clean, ['', ''],
++        )
++        self.assertRaisesMessage(
++            ValidationError, "'This field is required.'",
++            MF(required=True).clean, ['', ''],
++        )
+2026-11-09 21:03:29,161 - INFO - Eval script for django__django-14034 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R1992/opencode-glm-5.3-flash/django__django-14034/eval.sh; copying to container...
+2026-11-09 21:03:40,149 - INFO - Test runtime: 10.91 seconds
+2026-11-09 21:03:40,151 - INFO - Test output for django__django-14034 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R1992/opencode-glm-5.3-flash/django__django-14034/test_output.txt
+2026-11-09 21:03:40,230 - INFO - Git diff after:
+diff --git a/django/forms/fields.py b/django/forms/fields.py
+index 65d6a9ec82..90c2429a2c 100644
+--- a/django/forms/fields.py
++++ b/django/forms/fields.py
+@@ -1025,8 +1025,11 @@ class MultiValueField(Field):
+             if not value or not [v for v in value if v not in self.empty_values]:
+                 if self.required:
+                     raise ValidationError(self.error_messages['required'], code='required')
+-                else:
+-                    return self.compress([])
++                if value and any(f.required for f in self.fields):
++                    raise ValidationError(
++                        self.error_messages['incomplete'], code='incomplete'
++                    )
++                return self.compress([])
+         else:
+             raise ValidationError(self.error_messages['invalid'], code='invalid')
+         for i, field in enumerate(self.fields):
+2026-11-09 21:03:40,230 - INFO - Git diff changed after running eval script
+2026-11-09 21:03:40,230 - INFO - Grading answer for django__django-14034...
+2026-11-09 21:03:40,231 - INFO - report: {'django__django-14034': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_render_required_attributes (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)']}, 'PASS_TO_PASS': {'success': ['test_bad_choice (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_clean (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_clean_disabled_multivalue (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_disabled_has_changed (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_as_table (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_as_table_data (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_form_cleaned_data (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', "Test when the first widget's data has changed.", "Test when the last widget's data has changed. This ensures that it is", 'test_has_changed_no_initial (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'test_has_changed_same (forms_tests.field_tests.test_multivaluefield.MultiValueFieldTest)', 'If insufficient data is provided, None is substituted.'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14034: resolved: False
+2026-11-09 21:03:40,233 - INFO - Attempting to stop container sweb.eval.django__django-14034.verified_full_glm53_opencode_incr_R1992...
+2026-11-09 21:03:56,417 - INFO - Container sweb.eval.django__django-14034.verified_full_glm53_opencode_incr_R1992 stopped successfully.
+2026-11-09 21:03:56,417 - INFO - Attempting to remove container sweb.eval.django__django-14034.verified_full_glm53_opencode_incr_R1992...
+2026-11-09 21:03:56,462 - INFO - Container sweb.eval.django__django-14034.verified_full_glm53_opencode_incr_R1992 removed successfully.

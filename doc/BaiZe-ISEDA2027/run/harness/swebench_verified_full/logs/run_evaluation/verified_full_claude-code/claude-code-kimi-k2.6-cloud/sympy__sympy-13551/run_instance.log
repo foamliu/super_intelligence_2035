@@ -1,0 +1,204 @@
+2026-10-30 17:27:31,103 - INFO - Creating container for sympy__sympy-13551...
+2026-10-30 17:27:31,382 - INFO - Container for sympy__sympy-13551 created: 9360d39b5e3a949d7749a3c9e014d398e4398fc1fee1b5837984995e041d4b92
+2026-10-30 17:27:32,749 - INFO - Container for sympy__sympy-13551 started: 9360d39b5e3a949d7749a3c9e014d398e4398fc1fee1b5837984995e041d4b92
+2026-10-30 17:27:32,751 - INFO - Intermediate patch for sympy__sympy-13551 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-13551/patch.diff, now applying to container...
+2026-10-30 17:27:32,885 - INFO - >>>>> Applied Patch:
+Checking patch sympy/assumptions/sathandlers.py...
+Checking patch sympy/concrete/products.py...
+Checking patch sympy/core/basic.py...
+Checking patch sympy/core/containers.py...
+Checking patch sympy/plotting/plot.py...
+Applied patch sympy/assumptions/sathandlers.py cleanly.
+Applied patch sympy/concrete/products.py cleanly.
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/core/containers.py cleanly.
+Applied patch sympy/plotting/plot.py cleanly.
+
+2026-10-30 17:27:33,222 - INFO - Git diff before:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..6723e560e 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/concrete/products.py b/sympy/concrete/products.py
+index 66aafde2d..983e0260a 100644
+--- a/sympy/concrete/products.py
++++ b/sympy/concrete/products.py
+@@ -277,16 +277,16 @@ def _eval_product(self, term, limits):
+         elif term.is_Add:
+             p, q = term.as_numer_denom()
+             q = self._eval_product(q, (k, a, n))
++            if q is None:
++                return None
+             if q.is_Number:
+-
+-                # There is expression, which couldn't change by
+-                # as_numer_denom(). E.g. n**(2/3) + 1 --> (n**(2/3) + 1, 1).
+-                # We have to catch this case.
+-
+-                p = sum([self._eval_product(i, (k, a, n)) for i in p.as_coeff_Add()])
++                if k not in p.free_symbols:
++                    return p**(n - a + 1) / q
++                return None
+             else:
+                 p = self._eval_product(p, (k, a, n))
+-            return p / q
++                if p is not None:
++                    return p / q
+ 
+         elif term.is_Mul:
+             exclude, include = [], []
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index afcdd46be..fbf82f9f5 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93e3..cbb9f7875 100644
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -14,6 +14,11 @@
+ from sympy.utilities.iterables import iterable
+ 
+ import collections
++try:
++    from collections.abc import MutableSet
++except ImportError:
++    from collections import MutableSet
++collections.MutableSet = MutableSet
+ 
+ 
+ class Tuple(Basic):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b3b0237d1..0b959a43a 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+2026-10-30 17:27:33,231 - INFO - Eval script for sympy__sympy-13551 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-13551/eval.sh; copying to container...
+2026-10-30 17:27:48,514 - INFO - Test runtime: 15.20 seconds
+2026-10-30 17:27:48,516 - INFO - Test output for sympy__sympy-13551 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sympy__sympy-13551/test_output.txt
+2026-10-30 17:27:48,590 - INFO - Git diff after:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..6723e560e 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/concrete/products.py b/sympy/concrete/products.py
+index 66aafde2d..983e0260a 100644
+--- a/sympy/concrete/products.py
++++ b/sympy/concrete/products.py
+@@ -277,16 +277,16 @@ def _eval_product(self, term, limits):
+         elif term.is_Add:
+             p, q = term.as_numer_denom()
+             q = self._eval_product(q, (k, a, n))
++            if q is None:
++                return None
+             if q.is_Number:
+-
+-                # There is expression, which couldn't change by
+-                # as_numer_denom(). E.g. n**(2/3) + 1 --> (n**(2/3) + 1, 1).
+-                # We have to catch this case.
+-
+-                p = sum([self._eval_product(i, (k, a, n)) for i in p.as_coeff_Add()])
++                if k not in p.free_symbols:
++                    return p**(n - a + 1) / q
++                return None
+             else:
+                 p = self._eval_product(p, (k, a, n))
+-            return p / q
++                if p is not None:
++                    return p / q
+ 
+         elif term.is_Mul:
+             exclude, include = [], []
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index afcdd46be..fbf82f9f5 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93e3..cbb9f7875 100644
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -14,6 +14,11 @@
+ from sympy.utilities.iterables import iterable
+ 
+ import collections
++try:
++    from collections.abc import MutableSet
++except ImportError:
++    from collections import MutableSet
++collections.MutableSet = MutableSet
+ 
+ 
+ class Tuple(Basic):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b3b0237d1..0b959a43a 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+2026-10-30 17:27:48,590 - INFO - Grading answer for sympy__sympy-13551...
+2026-10-30 17:27:48,595 - INFO - report: {'sympy__sympy-13551': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_13546'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_karr_convention', 'test_karr_proposition_2a', 'test_karr_proposition_2b', 'test_simple_products', 'test_multiple_products', 'test_rational_products', 'test_special_products', 'test__eval_product', 'test_product_pow', 'test_infinite_product', 'test_conjugate_transpose', 'test_simplify', 'test_change_index', 'test_reorder', 'test_Product_is_convergent', 'test_reverse_order', 'test_issue_9983'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-13551: resolved: True
+2026-10-30 17:27:48,601 - INFO - Attempting to stop container sweb.eval.sympy__sympy-13551.verified_full_claude-code...
+2026-10-30 17:28:04,059 - INFO - Container sweb.eval.sympy__sympy-13551.verified_full_claude-code stopped successfully.
+2026-10-30 17:28:04,059 - INFO - Attempting to remove container sweb.eval.sympy__sympy-13551.verified_full_claude-code...
+2026-10-30 17:28:04,119 - INFO - Container sweb.eval.sympy__sympy-13551.verified_full_claude-code removed successfully.

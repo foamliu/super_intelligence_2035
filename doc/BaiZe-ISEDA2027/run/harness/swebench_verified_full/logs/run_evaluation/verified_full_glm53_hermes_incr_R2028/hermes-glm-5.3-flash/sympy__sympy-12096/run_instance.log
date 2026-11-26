@@ -1,0 +1,64 @@
+2026-11-10 17:01:30,445 - INFO - Creating container for sympy__sympy-12096...
+2026-11-10 17:01:30,477 - INFO - Container for sympy__sympy-12096 created: d9b7563cd89b8e8885050fe445905c6811522fc5a677c3d27708a9bfad7b8a48
+2026-11-10 17:01:31,459 - INFO - Container for sympy__sympy-12096 started: d9b7563cd89b8e8885050fe445905c6811522fc5a677c3d27708a9bfad7b8a48
+2026-11-10 17:01:31,461 - INFO - Intermediate patch for sympy__sympy-12096 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/sympy__sympy-12096/patch.diff, now applying to container...
+2026-11-10 17:01:31,606 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/function.py...
+Checking patch sympy/utilities/tests/test_lambdify.py...
+Applied patch sympy/core/function.py cleanly.
+Applied patch sympy/utilities/tests/test_lambdify.py cleanly.
+
+2026-11-10 17:01:32,074 - INFO - Git diff before:
+diff --git a/sympy/core/function.py b/sympy/core/function.py
+index 1b8005e1d..c730d8c9c 100644
+--- a/sympy/core/function.py
++++ b/sympy/core/function.py
+@@ -507,7 +507,7 @@ def _eval_evalf(self, prec):
+             func = getattr(mpmath, fname)
+         except (AttributeError, KeyError):
+             try:
+-                return Float(self._imp_(*self.args), prec)
++                return Float(self._imp_(*[i.evalf(prec) for i in self.args]), prec)
+             except (AttributeError, TypeError, ValueError):
+                 return
+ 
+diff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py
+index d8a1a68a2..e495b6669 100644
+--- a/sympy/utilities/tests/test_lambdify.py
++++ b/sympy/utilities/tests/test_lambdify.py
+@@ -752,6 +752,11 @@ def test_issue_2790():
+     assert lambdify(x, x + 1, dummify=False)(1) == 2
+ 
+ 
++def test_issue_12092():
++    f = implemented_function('f', lambda x: x**2)
++    assert f(f(2)).evalf() == Float(16)
++
++
+ def test_ITE():
+     assert lambdify((x, y, z), ITE(x, y, z))(True, 5, 3) == 5
+     assert lambdify((x, y, z), ITE(x, y, z))(False, 5, 3) == 3
+2026-11-10 17:01:32,077 - INFO - Eval script for sympy__sympy-12096 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/sympy__sympy-12096/eval.sh; copying to container...
+2026-11-10 17:01:36,996 - INFO - Test runtime: 4.85 seconds
+2026-11-10 17:01:36,999 - INFO - Test output for sympy__sympy-12096 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/sympy__sympy-12096/test_output.txt
+2026-11-10 17:01:37,075 - INFO - Git diff after:
+diff --git a/sympy/core/function.py b/sympy/core/function.py
+index 1b8005e1d..c730d8c9c 100644
+--- a/sympy/core/function.py
++++ b/sympy/core/function.py
+@@ -507,7 +507,7 @@ def _eval_evalf(self, prec):
+             func = getattr(mpmath, fname)
+         except (AttributeError, KeyError):
+             try:
+-                return Float(self._imp_(*self.args), prec)
++                return Float(self._imp_(*[i.evalf(prec) for i in self.args]), prec)
+             except (AttributeError, TypeError, ValueError):
+                 return
+2026-11-10 17:01:37,075 - INFO - Git diff changed after running eval script
+2026-11-10 17:01:37,075 - INFO - Grading answer for sympy__sympy-12096...
+2026-11-10 17:01:37,084 - INFO - report: {'sympy__sympy-12096': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_12092'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_no_args', 'test_single_arg', 'test_list_args', 'test_str_args', 'test_own_namespace', 'test_own_module', 'test_bad_args', 'test_atoms', 'test_sympy_lambda', 'test_math_lambda', 'test_mpmath_lambda', 'test_number_precision', 'test_mpmath_precision', 'test_math_transl', 'test_mpmath_transl', 'test_exponentiation', 'test_sqrt', 'test_trig', 'test_vector_simple', 'test_vector_discontinuous', 'test_trig_symbolic', 'test_trig_float', 'test_docs', 'test_math', 'test_sin', 'test_matrix', 'test_issue9474', 'test_integral', 'test_sym_single_arg', 'test_sym_list_args', 'test_namespace_order', 'test_imps', 'test_imps_errors', 'test_imps_wrong_args', 'test_lambdify_imps', 'test_dummification', 'test_python_keywords', 'test_lambdify_docstring', 'test_special_printers', 'test_true_false', 'test_issue_2790', 'test_ITE', 'test_Min_Max'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-12096: resolved: True
+2026-11-10 17:01:37,086 - INFO - Attempting to stop container sweb.eval.sympy__sympy-12096.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 17:01:53,148 - INFO - Container sweb.eval.sympy__sympy-12096.verified_full_glm53_hermes_incr_R2028 stopped successfully.
+2026-11-10 17:01:53,149 - INFO - Attempting to remove container sweb.eval.sympy__sympy-12096.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 17:01:53,192 - INFO - Container sweb.eval.sympy__sympy-12096.verified_full_glm53_hermes_incr_R2028 removed successfully.

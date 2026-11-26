@@ -1,0 +1,26 @@
+[incr-eval 22:08:43] === incr_eval R2789 start ===
+[incr-eval 22:08:43] cline: 0 new instances, skip
+[incr-eval 22:08:43] codex: 0 new instances, skip
+[incr-eval 22:08:43] opencode: 0 new instances, skip
+[incr-eval 22:08:43] claude-code: 0 new instances, skip
+
+=== pi R2789 ===
+new instances: 1 ['pydata__xarray-6744']
+[incr-eval 22:08:43] pi: merged 1 new patches -> predictions_pi_new_R2789.json
+[incr-eval 22:08:43] pi: EVAL 1 instances -> run_id=verified_full_glm53_pi_incr_R2789
+[incr-eval 22:11:19] pi: eval rc=0
+[incr-eval 22:11:19]   pydata__xarray-6744: NO report.json -> infra
+[incr-eval 22:11:19] pi: cumulative n=440 resolved=245 failed=193 infra=2 -> eval_glm53_pi.json
+[incr-eval 22:11:19] hermes: 0 new instances, skip
+
+=== deepseek R2789 ===
+new instances: 1 ['django__django-16145']
+[incr-eval 22:11:19] deepseek: merged 1 new patches -> predictions_deepseek-harness_new_R2789.json
+[incr-eval 22:11:19] deepseek: EVAL 1 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2789
+[incr-eval 22:11:24] deepseek: eval rc=0
+[incr-eval 22:11:24]   django__django-16145: RESOLVED
+[incr-eval 22:11:24] deepseek: cumulative n=282 resolved=184 failed=98 infra=0 -> eval_glm53_deepseek-harness.json
+[incr-eval 22:11:24] === incr_eval R2789 done: 2 instances, +1resolved +0failed +1infra, spiral_marked=0 ===
+django-16255: RESOLVED
+[incr-eval 22:08:56] deepseek: cumulative n=284 resolved=185 failed=98 infra=1 -> eval_glm53_deepseek-harness.json
+[incr-eval 22:08:56] === incr_eval R2789 done: 5 instances, +3resolved +0failed +2infra, spiral_marked=0 ===

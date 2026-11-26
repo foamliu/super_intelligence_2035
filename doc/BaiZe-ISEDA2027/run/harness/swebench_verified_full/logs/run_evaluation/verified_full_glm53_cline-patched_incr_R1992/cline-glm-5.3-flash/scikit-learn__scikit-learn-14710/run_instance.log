@@ -1,0 +1,105 @@
+2026-11-09 19:54:01,906 - INFO - Creating container for scikit-learn__scikit-learn-14710...
+2026-11-09 19:54:01,929 - INFO - Container for scikit-learn__scikit-learn-14710 created: 8ba6e965f6b93e0306e261973157e229a5f257f23e7fd92005ed147a4bd26926
+2026-11-09 19:54:02,672 - INFO - Container for scikit-learn__scikit-learn-14710 started: 8ba6e965f6b93e0306e261973157e229a5f257f23e7fd92005ed147a4bd26926
+2026-11-09 19:54:02,674 - INFO - Intermediate patch for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R1992/cline-glm-5.3-flash/scikit-learn__scikit-learn-14710/patch.diff, now applying to container...
+2026-11-09 19:54:02,861 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py...
+Checking patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py...
+Applied patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py cleanly.
+Applied patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py cleanly.
+
+2026-11-09 19:54:03,369 - INFO - Git diff before:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..c774d4ca9 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,16 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if is_classifier(self):
++            y_small_train = self.classes_[y_small_train.astype(int)]
++
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if is_classifier(self):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd5..811e9fb27 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -132,6 +132,33 @@ def test_early_stopping_classification(data, scoring, validation_fraction,
+         assert gb.n_iter_ == max_iter
+ 
+ 
++@pytest.mark.parametrize('data', (
++    make_classification(n_samples=50, random_state=0),
++    make_classification(n_samples=50, n_classes=3, n_clusters_per_class=1,
++                        random_state=0)
++))
++@pytest.mark.parametrize('validation_fraction', [0.1, None])
++def test_early_stopping_with_string_targets(data, validation_fraction):
++    # Regression test for #14228: with string targets, early stopping based on
++    # a scorer used to fail because the scorer was given the integer-encoded
++    # y_true while predict() returns the original (string) classes.
++    X, y = data
++    y = y.astype(str)
++    gb = HistGradientBoostingClassifier(
++        n_iter_no_change=10, validation_fraction=validation_fraction)
++    gb.fit(X, y)
++
++    # Early stopping can't occur before n_iter_no_change iterations
++    assert gb.n_iter_ >= 10
++    # Scores are computed for the initial model (before the first iteration)
++    # and after each iteration.
++    assert gb.train_score_.shape[0] == gb.n_iter_ + 1
++    if validation_fraction is None:
++        assert gb.validation_score_.shape[0] == 0
++    else:
++        assert gb.validation_score_.shape[0] == gb.n_iter_ + 1
++
++
+ @pytest.mark.parametrize(
+     'scores, n_iter_no_change, tol, stopping',
+     [
+2026-11-09 19:54:03,371 - INFO - Eval script for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R1992/cline-glm-5.3-flash/scikit-learn__scikit-learn-14710/eval.sh; copying to container...
+2026-11-09 20:02:10,742 - INFO - Test runtime: 487.31 seconds
+2026-11-09 20:02:10,744 - INFO - Test output for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R1992/cline-glm-5.3-flash/scikit-learn__scikit-learn-14710/test_output.txt
+2026-11-09 20:02:11,615 - ERROR - Error in evaluating model for scikit-learn__scikit-learn-14710: 409 Client Error for http+docker://localhost/v1.47/containers/8ba6e965f6b93e0306e261973157e229a5f257f23e7fd92005ed147a4bd26926/exec: Conflict ("container 8ba6e965f6b93e0306e261973157e229a5f257f23e7fd92005ed147a4bd26926 is not running")
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/client.py", line 275, in _raise_for_status
+    response.raise_for_status()
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/requests/models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 409 Client Error: Conflict for url: http+docker://localhost/v1.47/containers/8ba6e965f6b93e0306e261973157e229a5f257f23e7fd92005ed147a4bd26926/exec
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 385, in run_instance
+    container.exec_run(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/models/containers.py", line 209, in exec_run
+    resp = self.client.api.exec_create(
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/utils/decorators.py", line 19, in wrapped
+    return f(self, resource_id, *args, **kwargs)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/exec_api.py", line 78, in exec_create
+    return self._result(res, True)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/client.py", line 281, in _result
+    self._raise_for_status(response)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/api/client.py", line 277, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.APIError: 409 Client Error for http+docker://localhost/v1.47/containers/8ba6e965f6b93e0306e261973157e229a5f257f23e7fd92005ed147a4bd26926/exec: Conflict ("container 8ba6e965f6b93e0306e261973157e229a5f257f23e7fd92005ed147a4bd26926 is not running")
+
+Check (logs/run_evaluation/verified_full_glm53_cline-patched_incr_R1992/cline-glm-5.3-flash/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+2026-11-09 20:02:11,616 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R1992...
+2026-11-09 20:02:11,647 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R1992 stopped successfully.
+2026-11-09 20:02:11,647 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R1992...
+2026-11-09 20:02:11,696 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R1992 removed successfully.

@@ -1,0 +1,29 @@
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial bn-fit-modify__Ju75JqN failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial break-filter-js-from-html__uz2cMAe failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial chess-best-move__ScowEoK failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Trial fix-git__PmnEi79 failed: Agent setup timed out after 600.0 seconds
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial log-summary-date-ranges__mft7Tzp failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached

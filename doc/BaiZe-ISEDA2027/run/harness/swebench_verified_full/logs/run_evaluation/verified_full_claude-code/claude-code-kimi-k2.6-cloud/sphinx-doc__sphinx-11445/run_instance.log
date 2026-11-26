@@ -1,0 +1,81 @@
+2026-10-30 17:24:34,835 - INFO - Creating container for sphinx-doc__sphinx-11445...
+2026-10-30 17:24:34,856 - INFO - Container for sphinx-doc__sphinx-11445 created: 50819f64b42f007ddabebb2ff3097b5ebf840ba00c80350f3931bce50994df3f
+2026-10-30 17:24:37,220 - INFO - Container for sphinx-doc__sphinx-11445 started: 50819f64b42f007ddabebb2ff3097b5ebf840ba00c80350f3931bce50994df3f
+2026-10-30 17:24:37,225 - INFO - Intermediate patch for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/patch.diff, now applying to container...
+2026-10-30 17:24:37,513 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/util/rst.py...
+warning: sphinx/util/rst.py has type 100755, expected 100644
+Checking patch tests/test_util_rst.py...
+warning: tests/test_util_rst.py has type 100755, expected 100644
+Applied patch sphinx/util/rst.py cleanly.
+Applied patch tests/test_util_rst.py cleanly.
+
+2026-10-30 17:24:38,026 - INFO - Git diff before:
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a1538325..638337fcf 100755
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,7 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++docinfo_re = re.compile(r':\w+:(?:\s|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+ 
+diff --git a/tests/test_util_rst.py b/tests/test_util_rst.py
+index 40a2ee68b..f4af6d24d 100755
+--- a/tests/test_util_rst.py
++++ b/tests/test_util_rst.py
+@@ -48,6 +48,26 @@ def test_prepend_prolog(app):
+                                       ('dummy.rst', 4, 'Sphinx is a document generator')]
+ 
+ 
++def test_prepend_prolog_with_docinfo_like_heading(app):
++    # Ensure docinfo-like headings (e.g. :mod:`foo`) are not treated as docinfo
++    prolog = 'this is rst_prolog\nhello reST!'
++    content = StringList([':mod:`mypackage2`',
++                          '=================',
++                          '',
++                          'hello Sphinx world'],
++                         'dummy.rst')
++    prepend_prolog(content, prolog)
++
++    # The prolog should be inserted BEFORE the heading, not after it
++    assert list(content.xitems()) == [('<rst_prolog>', 0, 'this is rst_prolog'),
++                                      ('<rst_prolog>', 1, 'hello reST!'),
++                                      ('<generated>', 0, ''),
++                                      ('dummy.rst', 0, ':mod:`mypackage2`'),
++                                      ('dummy.rst', 1, '================='),
++                                      ('dummy.rst', 2, ''),
++                                      ('dummy.rst', 3, 'hello Sphinx world')]
++
++
+ def test_prepend_prolog_with_CR(app):
+     # prolog having CR at tail
+     prolog = 'this is rst_prolog\nhello reST!\n'
+2026-10-30 17:24:38,029 - INFO - Eval script for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/eval.sh; copying to container...
+2026-10-30 17:24:43,617 - INFO - Test runtime: 5.41 seconds
+2026-10-30 17:24:43,631 - INFO - Test output for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/test_output.txt
+2026-10-30 17:24:43,836 - INFO - Git diff after:
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a1538325..638337fcf 100755
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,7 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++docinfo_re = re.compile(r':\w+:(?:\s|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+2026-10-30 17:24:43,836 - INFO - Git diff changed after running eval script
+2026-10-30 17:24:43,836 - INFO - Grading answer for sphinx-doc__sphinx-11445...
+2026-10-30 17:24:43,840 - INFO - report: {'sphinx-doc__sphinx-11445': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_with_newline', 'tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_without_newline'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_util_rst.py::test_escape', 'tests/test_util_rst.py::test_append_epilog', 'tests/test_util_rst.py::test_prepend_prolog', 'tests/test_util_rst.py::test_prepend_prolog_with_CR', 'tests/test_util_rst.py::test_prepend_prolog_without_CR', 'tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections', 'tests/test_util_rst.py::test_textwidth', 'tests/test_util_rst.py::test_heading'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-11445: resolved: True
+2026-10-30 17:24:43,841 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-11445.verified_full_claude-code...
+2026-10-30 17:25:09,678 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_claude-code stopped successfully.
+2026-10-30 17:25:09,678 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-11445.verified_full_claude-code...
+2026-10-30 17:25:09,735 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_claude-code removed successfully.

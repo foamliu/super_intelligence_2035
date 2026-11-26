@@ -1,0 +1,244 @@
+2026-11-09 14:51:18,690 - INFO - Creating container for sphinx-doc__sphinx-8621...
+2026-11-09 14:51:18,731 - INFO - Container for sphinx-doc__sphinx-8621 created: 9fb850aa2441abeeb2b2db7cafbe8157a56644f1bfdd5f34e6f27a1f9e73fde4
+2026-11-09 14:51:20,333 - INFO - Container for sphinx-doc__sphinx-8621 started: 9fb850aa2441abeeb2b2db7cafbe8157a56644f1bfdd5f34e6f27a1f9e73fde4
+2026-11-09 14:51:21,012 - INFO - Intermediate patch for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8621/patch.diff, now applying to container...
+2026-11-09 14:51:21,254 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/builders/html/transforms.py...
+Checking patch tests/test_markup.py...
+Applied patch sphinx/builders/html/transforms.py cleanly.
+Applied patch tests/test_markup.py cleanly.
+
+2026-11-09 14:51:21,737 - INFO - Git diff before:
+diff --git a/sphinx/builders/html/transforms.py b/sphinx/builders/html/transforms.py
+index c91da57e9..4bd1d09cb 100644
+--- a/sphinx/builders/html/transforms.py
++++ b/sphinx/builders/html/transforms.py
+@@ -9,7 +9,7 @@
+ """
+ 
+ import re
+-from typing import Any, Dict
++from typing import Any, Dict, List
+ 
+ from docutils import nodes
+ 
+@@ -28,7 +28,7 @@ class KeyboardTransform(SphinxPostTransform):
+ 
+     After::
+ 
+-        <literal class="kbd">
++        <literal class="kbd compound">
+             <literal class="kbd">
+                 Control
+             -
+@@ -37,18 +37,32 @@ class KeyboardTransform(SphinxPostTransform):
+     """
+     default_priority = 400
+     builders = ('html',)
+-    pattern = re.compile(r'(-|\+|\^|\s+)')
++    pattern = re.compile(r'(?<=.)(-|\+|\^|\s+)(?=.)')
++    multiwords_keys = (('caps', 'lock'),
++                       ('page', 'down'),
++                       ('page', 'up'),
++                       ('scroll', 'lock'),
++                       ('num', 'lock'),
++                       ('sys', 'rq'),
++                       ('back', 'space'))
+ 
+     def run(self, **kwargs: Any) -> None:
+         matcher = NodeMatcher(nodes.literal, classes=["kbd"])
+-        for node in self.document.traverse(matcher):  # type: nodes.literal
++        # this list must be pre-created as during iteration new nodes
++        # are added which match the condition in the NodeMatcher.
++        for node in list(self.document.traverse(matcher)):  # type: nodes.literal
+             parts = self.pattern.split(node[-1].astext())
+-            if len(parts) == 1:
++            if len(parts) == 1 or self.is_multiwords_key(parts):
+                 continue
+ 
++            node['classes'].append('compound')
+             node.pop()
+             while parts:
+-                key = parts.pop(0)
++                if self.is_multiwords_key(parts):
++                    key = ''.join(parts[:3])
++                    parts[:3] = []
++                else:
++                    key = parts.pop(0)
+                 node += nodes.literal('', key, classes=["kbd"])
+ 
+                 try:
+@@ -58,6 +72,13 @@ class KeyboardTransform(SphinxPostTransform):
+                 except IndexError:
+                     pass
+ 
++    def is_multiwords_key(self, parts: List[str]) -> bool:
++        if len(parts) >= 3 and parts[1].strip() == '':
++            name = parts[0].lower(), parts[2].lower()
++            return name in self.multiwords_keys
++        else:
++            return False
++
+ 
+ def setup(app: Sphinx) -> Dict[str, Any]:
+     app.add_post_transform(KeyboardTransform)
+diff --git a/tests/test_markup.py b/tests/test_markup.py
+index a2bcb2dc1..e3337440a 100644
+--- a/tests/test_markup.py
++++ b/tests/test_markup.py
+@@ -240,22 +240,47 @@ def get_verifier(verify, verify_re):
+         '<p><kbd class="kbd docutils literal notranslate">space</kbd></p>',
+         '\\sphinxkeyboard{\\sphinxupquote{space}}',
+     ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`Caps Lock`',
++        '<p><kbd class="kbd docutils literal notranslate">Caps Lock</kbd></p>',
++        '\\sphinxkeyboard{\\sphinxupquote{Caps Lock}}',
++    ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`sys   rq`',
++        '<p><kbd class="kbd docutils literal notranslate">sys   rq</kbd></p>',
++        '\\sphinxkeyboard{\\sphinxupquote{sys   rq}}',
++    ),
+     (
+         # kbd role
+         'verify',
+         ':kbd:`Control+X`',
+-        ('<p><kbd class="kbd docutils literal notranslate">'
++        ('<p><kbd class="kbd compound docutils literal notranslate">'
+          '<kbd class="kbd docutils literal notranslate">Control</kbd>'
+          '+'
+          '<kbd class="kbd docutils literal notranslate">X</kbd>'
+          '</kbd></p>'),
+         '\\sphinxkeyboard{\\sphinxupquote{Control+X}}',
+     ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`Alt+^`',
++        ('<p><kbd class="kbd compound docutils literal notranslate">'
++         '<kbd class="kbd docutils literal notranslate">Alt</kbd>'
++         '+'
++         '<kbd class="kbd docutils literal notranslate">^</kbd>'
++         '</kbd></p>'),
++        '\\sphinxkeyboard{\\sphinxupquote{Alt+\\textasciicircum{}}}',
++    ),
+     (
+         # kbd role
+         'verify',
+         ':kbd:`M-x  M-s`',
+-        ('<p><kbd class="kbd docutils literal notranslate">'
++        ('<p><kbd class="kbd compound docutils literal notranslate">'
+          '<kbd class="kbd docutils literal notranslate">M</kbd>'
+          '-'
+          '<kbd class="kbd docutils literal notranslate">x</kbd>'
+@@ -266,6 +291,20 @@ def get_verifier(verify, verify_re):
+          '</kbd></p>'),
+         '\\sphinxkeyboard{\\sphinxupquote{M\\sphinxhyphen{}x  M\\sphinxhyphen{}s}}',
+     ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`-`',
++        '<p><kbd class="kbd docutils literal notranslate">-</kbd></p>',
++        '\\sphinxkeyboard{\\sphinxupquote{\\sphinxhyphen{}}}',
++    ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`+`',
++        '<p><kbd class="kbd docutils literal notranslate">+</kbd></p>',
++        '\\sphinxkeyboard{\\sphinxupquote{+}}',
++    ),
+     (
+         # non-interpolation of dashes in option role
+         'verify_re',
+2026-11-09 14:51:21,740 - INFO - Eval script for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8621/eval.sh; copying to container...
+2026-11-09 14:51:28,319 - INFO - Test runtime: 6.50 seconds
+2026-11-09 14:51:28,326 - INFO - Test output for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8621/test_output.txt
+2026-11-09 14:51:28,423 - INFO - Git diff after:
+diff --git a/sphinx/builders/html/transforms.py b/sphinx/builders/html/transforms.py
+index c91da57e9..4bd1d09cb 100644
+--- a/sphinx/builders/html/transforms.py
++++ b/sphinx/builders/html/transforms.py
+@@ -9,7 +9,7 @@
+ """
+ 
+ import re
+-from typing import Any, Dict
++from typing import Any, Dict, List
+ 
+ from docutils import nodes
+ 
+@@ -28,7 +28,7 @@ class KeyboardTransform(SphinxPostTransform):
+ 
+     After::
+ 
+-        <literal class="kbd">
++        <literal class="kbd compound">
+             <literal class="kbd">
+                 Control
+             -
+@@ -37,18 +37,32 @@ class KeyboardTransform(SphinxPostTransform):
+     """
+     default_priority = 400
+     builders = ('html',)
+-    pattern = re.compile(r'(-|\+|\^|\s+)')
++    pattern = re.compile(r'(?<=.)(-|\+|\^|\s+)(?=.)')
++    multiwords_keys = (('caps', 'lock'),
++                       ('page', 'down'),
++                       ('page', 'up'),
++                       ('scroll', 'lock'),
++                       ('num', 'lock'),
++                       ('sys', 'rq'),
++                       ('back', 'space'))
+ 
+     def run(self, **kwargs: Any) -> None:
+         matcher = NodeMatcher(nodes.literal, classes=["kbd"])
+-        for node in self.document.traverse(matcher):  # type: nodes.literal
++        # this list must be pre-created as during iteration new nodes
++        # are added which match the condition in the NodeMatcher.
++        for node in list(self.document.traverse(matcher)):  # type: nodes.literal
+             parts = self.pattern.split(node[-1].astext())
+-            if len(parts) == 1:
++            if len(parts) == 1 or self.is_multiwords_key(parts):
+                 continue
+ 
++            node['classes'].append('compound')
+             node.pop()
+             while parts:
+-                key = parts.pop(0)
++                if self.is_multiwords_key(parts):
++                    key = ''.join(parts[:3])
++                    parts[:3] = []
++                else:
++                    key = parts.pop(0)
+                 node += nodes.literal('', key, classes=["kbd"])
+ 
+                 try:
+@@ -58,6 +72,13 @@ class KeyboardTransform(SphinxPostTransform):
+                 except IndexError:
+                     pass
+ 
++    def is_multiwords_key(self, parts: List[str]) -> bool:
++        if len(parts) >= 3 and parts[1].strip() == '':
++            name = parts[0].lower(), parts[2].lower()
++            return name in self.multiwords_keys
++        else:
++            return False
++
+ 
+ def setup(app: Sphinx) -> Dict[str, Any]:
+     app.add_post_transform(KeyboardTransform)
+2026-11-09 14:51:28,423 - INFO - Git diff changed after running eval script
+2026-11-09 14:51:28,423 - INFO - Grading answer for sphinx-doc__sphinx-8621...
+2026-11-09 14:51:28,469 - INFO - report: {'sphinx-doc__sphinx-8621': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_markup.py::test_inline[verify-:kbd:`-`-<p><kbd'], 'failure': ['tests/test_markup.py::test_inline[verify-:kbd:`Alt+^`-<p><kbd']}, 'PASS_TO_PASS': {'success': ['tests/test_markup.py::test_inline[verify-:rfc:`2324`-<p><span', 'tests/test_markup.py::test_inline[verify-:rfc:`2324#id1`-<p><span', 'tests/test_markup.py::test_inline[verify_re-``code', 'tests/test_markup.py::test_inline[verify-:menuselection:`a', 'tests/test_markup.py::test_inline[verify-:menuselection:`&Foo', 'tests/test_markup.py::test_inline[verify-:guilabel:`&Foo', 'tests/test_markup.py::test_inline[verify-:guilabel:`Foo`-<p><span', 'tests/test_markup.py::test_inline[verify-:kbd:`space`-<p><kbd', 'tests/test_markup.py::test_inline[verify_re-:option:`--with-option`-<p><code(', 'tests/test_markup.py::test_inline[verify-"John"-<p>\\u201cJohn\\u201d</p>-\\u201cJohn\\u201d]', 'tests/test_markup.py::test_inline[verify-``"John"``-<p><code', 'tests/test_markup.py::test_inline[verify-:manpage:`mp(1)`-<p><em', 'tests/test_markup.py::test_inline[verify-\\u0393\\\\\\\\\\u221e$-None-\\u0393\\\\textbackslash{}\\\\(\\\\infty\\\\)\\\\$]', 'tests/test_markup.py::test_inline[verify-::\\n\\n', 'tests/test_markup.py::test_inline[verify_re-`test', 'tests/test_markup.py::test_inline[verify-term\\n', 'tests/test_markup.py::test_inline[verify-term', 'tests/test_markup.py::test_inline[verify-..', 'tests/test_markup.py::test_inline_docutils16[verify-4', 'tests/test_markup.py::test_inline_for_unicode_latex_engine[verify-::\\n\\n', 'tests/test_markup.py::test_samp_role', 'tests/test_markup.py::test_download_role', 'tests/test_markup.py::test_XRefRole', 'tests/test_markup.py::test_rst_prolog', 'tests/test_markup.py::test_keep_warnings_is_True', 'tests/test_markup.py::test_keep_warnings_is_False', 'tests/test_markup.py::test_compact_refonly_bullet_list', 'tests/test_markup.py::test_default_role1', 'tests/test_markup.py::test_default_role2'], 'failure': ['tests/test_markup.py::test_inline[verify-:kbd:`Control+X`-<p><kbd', 'tests/test_markup.py::test_inline[verify-:kbd:`M-x']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8621: resolved: False
+2026-11-09 14:51:28,470 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_cline-patched_R1933...
+2026-11-09 14:51:45,898 - INFO - Container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_cline-patched_R1933 stopped successfully.
+2026-11-09 14:51:45,898 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_cline-patched_R1933...
+2026-11-09 14:51:45,945 - INFO - Container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_cline-patched_R1933 removed successfully.

@@ -1,0 +1,92 @@
+2026-11-07 21:46:07,521 - INFO - Creating container for astropy__astropy-13033...
+2026-11-07 21:46:07,549 - INFO - Container for astropy__astropy-13033 created: 8e378fabfcd92b1c80672b6e2fdb791b7e5d30acd2f26d81b1fa86102f7549f3
+2026-11-07 21:46:08,274 - INFO - Container for astropy__astropy-13033 started: 8e378fabfcd92b1c80672b6e2fdb791b7e5d30acd2f26d81b1fa86102f7549f3
+2026-11-07 21:46:08,276 - INFO - Intermediate patch for astropy__astropy-13033 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-13033/patch.diff, now applying to container...
+2026-11-07 21:46:08,428 - INFO - >>>>> Applied Patch:
+Checking patch astropy/timeseries/core.py...
+Applied patch astropy/timeseries/core.py cleanly.
+
+2026-11-07 21:46:09,003 - INFO - Git diff before:
+diff --git a/astropy/timeseries/core.py b/astropy/timeseries/core.py
+index c279f35f8..b78548a79 100644
+--- a/astropy/timeseries/core.py
++++ b/astropy/timeseries/core.py
+@@ -76,10 +76,30 @@ class BaseTimeSeries(QTable):
+ 
+             elif self.colnames[:len(required_columns)] != required_columns:
+ 
++                if self.colnames[0] == required_columns[0]:
++                    # The first column is correct, so the mismatch must be due
++                    # to the other required columns being missing or being in
++                    # the wrong order - report this instead of the first column.
++                    missing = [name for name in required_columns
++                               if name not in self.colnames]
++                    if missing:
++                        plural_missing = 's' if len(missing) > 1 else ''
++                        raise ValueError("{} object is invalid - missing required "
++                                         "column{}: {}"
++                                         .format(self.__class__.__name__,
++                                                 plural_missing,
++                                                 ", ".join(repr(name) for name in missing)))
++                    for index, (expected, actual) in enumerate(zip(required_columns,
++                                                                   self.colnames)):
++                        if expected != actual:
++                            raise ValueError("{} object is invalid - expected '{}' "
++                                             "as the column at index {} but found '{}'"
++                                             .format(self.__class__.__name__,
++                                                     expected, index, actual))
++
+                 raise ValueError("{} object is invalid - expected '{}' "
+                                  "as the first column{} but found '{}'"
+                                  .format(self.__class__.__name__, required_columns[0], plural, self.colnames[0]))
+-
+             if (self._required_columns_relax
+                     and self._required_columns == self.colnames[:len(self._required_columns)]):
+                 self._required_columns_relax = False
+2026-11-07 21:46:09,006 - INFO - Eval script for astropy__astropy-13033 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-13033/eval.sh; copying to container...
+2026-11-07 21:47:30,617 - INFO - Test runtime: 81.55 seconds
+2026-11-07 21:47:30,621 - INFO - Test output for astropy__astropy-13033 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-13033/test_output.txt
+2026-11-07 21:47:30,693 - INFO - Git diff after:
+diff --git a/astropy/timeseries/core.py b/astropy/timeseries/core.py
+index c279f35f8..b78548a79 100644
+--- a/astropy/timeseries/core.py
++++ b/astropy/timeseries/core.py
+@@ -76,10 +76,30 @@ class BaseTimeSeries(QTable):
+ 
+             elif self.colnames[:len(required_columns)] != required_columns:
+ 
++                if self.colnames[0] == required_columns[0]:
++                    # The first column is correct, so the mismatch must be due
++                    # to the other required columns being missing or being in
++                    # the wrong order - report this instead of the first column.
++                    missing = [name for name in required_columns
++                               if name not in self.colnames]
++                    if missing:
++                        plural_missing = 's' if len(missing) > 1 else ''
++                        raise ValueError("{} object is invalid - missing required "
++                                         "column{}: {}"
++                                         .format(self.__class__.__name__,
++                                                 plural_missing,
++                                                 ", ".join(repr(name) for name in missing)))
++                    for index, (expected, actual) in enumerate(zip(required_columns,
++                                                                   self.colnames)):
++                        if expected != actual:
++                            raise ValueError("{} object is invalid - expected '{}' "
++                                             "as the column at index {} but found '{}'"
++                                             .format(self.__class__.__name__,
++                                                     expected, index, actual))
++
+                 raise ValueError("{} object is invalid - expected '{}' "
+                                  "as the first column{} but found '{}'"
+                                  .format(self.__class__.__name__, required_columns[0], plural, self.colnames[0]))
+-
+             if (self._required_columns_relax
+                     and self._required_columns == self.colnames[:len(self._required_columns)]):
+                 self._required_columns_relax = False
+2026-11-07 21:47:30,694 - INFO - Grading answer for astropy__astropy-13033...
+2026-11-07 21:47:30,709 - INFO - report: {'astropy__astropy-13033': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['astropy/timeseries/tests/test_sampled.py::test_required_columns']}, 'PASS_TO_PASS': {'success': ['astropy/timeseries/tests/test_sampled.py::test_empty_initialization', 'astropy/timeseries/tests/test_sampled.py::test_empty_initialization_invalid', 'astropy/timeseries/tests/test_sampled.py::test_initialize_only_time', 'astropy/timeseries/tests/test_sampled.py::test_initialization_with_data', 'astropy/timeseries/tests/test_sampled.py::test_initialize_only_data', 'astropy/timeseries/tests/test_sampled.py::test_initialization_with_table', 'astropy/timeseries/tests/test_sampled.py::test_initialization_missing_time_delta', 'astropy/timeseries/tests/test_sampled.py::test_initialization_invalid_time_and_time_start', 'astropy/timeseries/tests/test_sampled.py::test_initialization_invalid_time_delta', 'astropy/timeseries/tests/test_sampled.py::test_initialization_with_time_in_data', 'astropy/timeseries/tests/test_sampled.py::test_initialization_n_samples', 'astropy/timeseries/tests/test_sampled.py::test_initialization_length_mismatch', 'astropy/timeseries/tests/test_sampled.py::test_initialization_invalid_both_time_and_time_delta', 'astropy/timeseries/tests/test_sampled.py::test_fold', 'astropy/timeseries/tests/test_sampled.py::test_fold_invalid_options', 'astropy/timeseries/tests/test_sampled.py::test_read_time_missing', 'astropy/timeseries/tests/test_sampled.py::test_read_time_wrong', 'astropy/timeseries/tests/test_sampled.py::test_read', 'astropy/timeseries/tests/test_sampled.py::test_periodogram[BoxLeastSquares]', 'astropy/timeseries/tests/test_sampled.py::test_periodogram[LombScargle]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-13033: resolved: False
+2026-11-07 21:47:30,711 - INFO - Attempting to stop container sweb.eval.astropy__astropy-13033.verified_full_glm53_pi_R1789...
+2026-11-07 21:47:46,986 - INFO - Container sweb.eval.astropy__astropy-13033.verified_full_glm53_pi_R1789 stopped successfully.
+2026-11-07 21:47:46,986 - INFO - Attempting to remove container sweb.eval.astropy__astropy-13033.verified_full_glm53_pi_R1789...
+2026-11-07 21:47:47,033 - INFO - Container sweb.eval.astropy__astropy-13033.verified_full_glm53_pi_R1789 removed successfully.

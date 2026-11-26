@@ -1,0 +1,94 @@
+2026-10-31 03:44:56,078 - INFO - Creating container for sphinx-doc__sphinx-10466...
+2026-10-31 03:44:56,094 - INFO - Container for sphinx-doc__sphinx-10466 created: 13578f3d2313f4aaebfddf9808c7c730ed8de4a0be8bdedec996c074ddc45874
+2026-10-31 03:44:56,893 - INFO - Container for sphinx-doc__sphinx-10466 started: 13578f3d2313f4aaebfddf9808c7c730ed8de4a0be8bdedec996c074ddc45874
+2026-10-31 03:44:56,895 - INFO - Intermediate patch for sphinx-doc__sphinx-10466 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-10466/patch.diff, now applying to container...
+2026-10-31 03:44:57,081 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/builders/gettext.py...
+Checking patch tests/test_build_gettext.py...
+Applied patch sphinx/builders/gettext.py cleanly.
+Applied patch tests/test_build_gettext.py cleanly.
+
+2026-10-31 03:44:57,357 - INFO - Git diff before:
+diff --git a/sphinx/builders/gettext.py b/sphinx/builders/gettext.py
+index e8bc547b7..ab404667a 100644
+--- a/sphinx/builders/gettext.py
++++ b/sphinx/builders/gettext.py
+@@ -57,11 +57,16 @@ class Catalog:
+ 
+     def __iter__(self) -> Generator[Message, None, None]:
+         for message in self.messages:
+-            positions = [(source, line) for source, line, uuid in self.metadata[message]]
+-            uuids = [uuid for source, line, uuid in self.metadata[message]]
++            seen = set()  # type: Set[Tuple[str, int]]
++            positions = []
++            uuids = []
++            for source, line, uuid in self.metadata[message]:
++                if (source, line) not in seen:
++                    seen.add((source, line))
++                    positions.append((source, line))
++                    uuids.append(uuid)
+             yield Message(message, positions, uuids)
+ 
+-
+ class MsgOrigin:
+     """
+     Origin holder for Catalog message origin.
+diff --git a/tests/test_build_gettext.py b/tests/test_build_gettext.py
+index 3c4617e84..d95280bda 100644
+--- a/tests/test_build_gettext.py
++++ b/tests/test_build_gettext.py
+@@ -184,3 +184,21 @@ def test_build_single_pot(app):
+          'msgid "Generated section".*'),
+         result,
+         flags=re.S)
++
++
++def test_catalog_deduplicates_locations():
++    from sphinx.builders.gettext import Catalog, MsgOrigin
++
++    catalog = Catalog()
++    origin1 = MsgOrigin("file.rst", 10)
++    origin2 = MsgOrigin("file.rst", 10)
++    origin3 = MsgOrigin("file.rst", 20)
++
++    catalog.add("hello", origin1)
++    catalog.add("hello", origin2)
++    catalog.add("hello", origin3)
++
++    messages = list(catalog)
++    assert len(messages) == 1
++    assert messages[0].locations == [("file.rst", 10), ("file.rst", 20)]
++    assert len(messages[0].uuids) == 2
+2026-10-31 03:44:57,360 - INFO - Eval script for sphinx-doc__sphinx-10466 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-10466/eval.sh; copying to container...
+2026-10-31 03:45:08,856 - INFO - Test runtime: 11.41 seconds
+2026-10-31 03:45:08,858 - INFO - Test output for sphinx-doc__sphinx-10466 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-10466/test_output.txt
+2026-10-31 03:45:08,912 - INFO - Git diff after:
+diff --git a/sphinx/builders/gettext.py b/sphinx/builders/gettext.py
+index e8bc547b7..ab404667a 100644
+--- a/sphinx/builders/gettext.py
++++ b/sphinx/builders/gettext.py
+@@ -57,11 +57,16 @@ class Catalog:
+ 
+     def __iter__(self) -> Generator[Message, None, None]:
+         for message in self.messages:
+-            positions = [(source, line) for source, line, uuid in self.metadata[message]]
+-            uuids = [uuid for source, line, uuid in self.metadata[message]]
++            seen = set()  # type: Set[Tuple[str, int]]
++            positions = []
++            uuids = []
++            for source, line, uuid in self.metadata[message]:
++                if (source, line) not in seen:
++                    seen.add((source, line))
++                    positions.append((source, line))
++                    uuids.append(uuid)
+             yield Message(message, positions, uuids)
+ 
+-
+ class MsgOrigin:
+     """
+     Origin holder for Catalog message origin.
+2026-10-31 03:45:08,912 - INFO - Git diff changed after running eval script
+2026-10-31 03:45:08,912 - INFO - Grading answer for sphinx-doc__sphinx-10466...
+2026-10-31 03:45:08,920 - INFO - report: {'sphinx-doc__sphinx-10466': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_build_gettext.py::test_Catalog_duplicated_message'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_build_gettext.py::test_build_gettext', 'tests/test_build_gettext.py::test_gettext_index_entries', 'tests/test_build_gettext.py::test_gettext_disable_index_entries', 'tests/test_build_gettext.py::test_gettext_template', 'tests/test_build_gettext.py::test_gettext_template_msgid_order_in_sphinxpot', 'tests/test_build_gettext.py::test_build_single_pot'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-10466: resolved: True
+2026-10-31 03:45:08,921 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-10466.verified_full_pi...

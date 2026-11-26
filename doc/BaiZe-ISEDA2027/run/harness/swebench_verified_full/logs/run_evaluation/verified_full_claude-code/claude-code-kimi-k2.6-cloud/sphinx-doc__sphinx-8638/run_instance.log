@@ -1,0 +1,135 @@
+2026-10-30 17:26:06,238 - INFO - Creating container for sphinx-doc__sphinx-8638...
+2026-10-30 17:26:06,406 - INFO - Container for sphinx-doc__sphinx-8638 created: dcf748ddadd3dc4c94168523c914bbe68889f8f379c5990fbddc6901f9ce39c8
+2026-10-30 17:26:07,378 - INFO - Container for sphinx-doc__sphinx-8638 started: dcf748ddadd3dc4c94168523c914bbe68889f8f379c5990fbddc6901f9ce39c8
+2026-10-30 17:26:07,388 - INFO - Intermediate patch for sphinx-doc__sphinx-8638 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-8638/patch.diff, now applying to container...
+2026-10-30 17:26:07,564 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/domains/python.py...
+Checking patch tests/test_domain_py.py...
+Applied patch sphinx/domains/python.py cleanly.
+Applied patch tests/test_domain_py.py cleanly.
+
+2026-10-30 17:26:07,850 - INFO - Git diff before:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 000e2e8d3..1930c7a24 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -270,9 +270,10 @@ class PyXrefMixin:
+                   contnode: Node = None, env: BuildEnvironment = None) -> Node:
+         result = super().make_xref(rolename, domain, target,  # type: ignore
+                                    innernode, contnode, env)
+-        result['refspecific'] = True
+-        result['py:module'] = env.ref_context.get('py:module')
+-        result['py:class'] = env.ref_context.get('py:class')
++        if isinstance(result, pending_xref):
++            result['refspecific'] = True
++            result['py:module'] = env.ref_context.get('py:module')
++            result['py:class'] = env.ref_context.get('py:class')
+         if target.startswith(('.', '~')):
+             prefix, result['reftarget'] = target[0], target[1:]
+             if prefix == '.':
+@@ -354,7 +355,7 @@ class PyObject(ObjectDescription):
+                             'keyword', 'kwarg', 'kwparam'),
+                      typerolename='class', typenames=('paramtype', 'type'),
+                      can_collapse=True),
+-        PyTypedField('variable', label=_('Variables'), rolename='obj',
++        PyTypedField('variable', label=_('Variables'),
+                      names=('var', 'ivar', 'cvar'),
+                      typerolename='class', typenames=('vartype',),
+                      can_collapse=True),
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index e0c690518..70c8cff2b 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -838,6 +838,53 @@ def test_info_field_list(app):
+                 **{"py:module": "example", "py:class": "Class"})
+ 
+ 
++def test_info_field_list_var(app):
++    text = (".. py:class:: Class\n"
++            "\n"
++            "   :ivar name: blah blah\n"
++            "   :cvar int age: blah blah\n"
++            "   :var str gender: blah blah\n")
++    doctree = restructuredtext.parse(app, text)
++    print(doctree)
++
++    # doctree structure: [index, desc]
++    # desc_content -> field_list -> field -> field_body -> bullet_list -> list_item -> paragraph
++    field_list = doctree[1][1][0]
++    bullet_list = field_list[0][1][0]
++
++    # :ivar name: should NOT be a cross-reference (just literal_strong)
++    assert_node(bullet_list[0][0],
++                ([addnodes.literal_strong, "name"],
++                 " -- ",
++                 "blah blah"))
++
++    # :cvar int age: should NOT be a cross-reference (just literal_strong)
++    # but the type (int) should be a pending_xref
++    assert_node(bullet_list[1][0],
++                ([addnodes.literal_strong, "age"],
++                 " (",
++                 [pending_xref, addnodes.literal_emphasis, "int"],
++                 ")",
++                 " -- ",
++                 "blah blah"))
++    assert_node(bullet_list[1][0][2], pending_xref,
++                refdomain="py", reftype="class", reftarget="int",
++                **{"py:module": None, "py:class": "Class"})
++
++    # :var str gender: should NOT be a cross-reference (just literal_strong)
++    # but the type (str) should be a pending_xref
++    assert_node(bullet_list[2][0],
++                ([addnodes.literal_strong, "gender"],
++                 " (",
++                 [pending_xref, addnodes.literal_emphasis, "str"],
++                 ")",
++                 " -- ",
++                 "blah blah"))
++    assert_node(bullet_list[2][0][2], pending_xref,
++                refdomain="py", reftype="class", reftarget="str",
++                **{"py:module": None, "py:class": "Class"})
++
++
+ @pytest.mark.sphinx(freshenv=True)
+ def test_module_index(app):
+     text = (".. py:module:: docutils\n"
+2026-10-30 17:26:07,852 - INFO - Eval script for sphinx-doc__sphinx-8638 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-8638/eval.sh; copying to container...
+2026-10-30 17:26:13,121 - INFO - Test runtime: 5.09 seconds
+2026-10-30 17:26:13,131 - INFO - Test output for sphinx-doc__sphinx-8638 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-8638/test_output.txt
+2026-10-30 17:26:13,190 - INFO - Git diff after:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 000e2e8d3..1930c7a24 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -270,9 +270,10 @@ class PyXrefMixin:
+                   contnode: Node = None, env: BuildEnvironment = None) -> Node:
+         result = super().make_xref(rolename, domain, target,  # type: ignore
+                                    innernode, contnode, env)
+-        result['refspecific'] = True
+-        result['py:module'] = env.ref_context.get('py:module')
+-        result['py:class'] = env.ref_context.get('py:class')
++        if isinstance(result, pending_xref):
++            result['refspecific'] = True
++            result['py:module'] = env.ref_context.get('py:module')
++            result['py:class'] = env.ref_context.get('py:class')
+         if target.startswith(('.', '~')):
+             prefix, result['reftarget'] = target[0], target[1:]
+             if prefix == '.':
+@@ -354,7 +355,7 @@ class PyObject(ObjectDescription):
+                             'keyword', 'kwarg', 'kwparam'),
+                      typerolename='class', typenames=('paramtype', 'type'),
+                      can_collapse=True),
+-        PyTypedField('variable', label=_('Variables'), rolename='obj',
++        PyTypedField('variable', label=_('Variables'),
+                      names=('var', 'ivar', 'cvar'),
+                      typerolename='class', typenames=('vartype',),
+                      can_collapse=True),
+2026-10-30 17:26:13,190 - INFO - Git diff changed after running eval script
+2026-10-30 17:26:13,190 - INFO - Grading answer for sphinx-doc__sphinx-8638...
+2026-10-30 17:26:13,199 - INFO - report: {'sphinx-doc__sphinx-8638': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_py.py::test_info_field_list_var'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_parse_annotation', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_pyfunction_with_number_literals', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_exceptions_module_is_ignored', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pyclass_options', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_canonical', 'tests/test_domain_py.py::test_info_field_list', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix', 'tests/test_domain_py.py::test_noindexentry', 'tests/test_domain_py.py::test_warn_missing_reference'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8638: resolved: True
+2026-10-30 17:26:13,204 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8638.verified_full_claude-code...
+2026-10-30 17:26:30,107 - INFO - Container sweb.eval.sphinx-doc__sphinx-8638.verified_full_claude-code stopped successfully.
+2026-10-30 17:26:30,107 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8638.verified_full_claude-code...
+2026-10-30 17:26:30,178 - INFO - Container sweb.eval.sphinx-doc__sphinx-8638.verified_full_claude-code removed successfully.

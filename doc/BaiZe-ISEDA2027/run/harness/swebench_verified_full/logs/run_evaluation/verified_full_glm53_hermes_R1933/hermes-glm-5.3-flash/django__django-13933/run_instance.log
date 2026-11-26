@@ -1,0 +1,199 @@
+2026-11-09 06:59:57,855 - INFO - Creating container for django__django-13933...
+2026-11-09 06:59:58,004 - INFO - Container for django__django-13933 created: b45cf473327c5dd8ff9ee61c4215700dcd887e4548d2961b04d25f099ac8650c
+2026-11-09 06:59:58,801 - INFO - Container for django__django-13933 started: b45cf473327c5dd8ff9ee61c4215700dcd887e4548d2961b04d25f099ac8650c
+2026-11-09 06:59:58,803 - INFO - Intermediate patch for django__django-13933 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-13933/patch.diff, now applying to container...
+2026-11-09 06:59:58,943 - INFO - >>>>> Applied Patch:
+Checking patch AUTHORS...
+warning: AUTHORS has type 100755, expected 100644
+Checking patch django/forms/models.py...
+warning: django/forms/models.py has type 100755, expected 100644
+Checking patch docs/ref/forms/fields.txt...
+warning: docs/ref/forms/fields.txt has type 100755, expected 100644
+Checking patch docs/releases/4.0.txt...
+warning: docs/releases/4.0.txt has type 100755, expected 100644
+Checking patch tests/forms_tests/tests/test_error_messages.py...
+warning: tests/forms_tests/tests/test_error_messages.py has type 100755, expected 100644
+Applied patch AUTHORS cleanly.
+Applied patch django/forms/models.py cleanly.
+Applied patch docs/ref/forms/fields.txt cleanly.
+Applied patch docs/releases/4.0.txt cleanly.
+Applied patch tests/forms_tests/tests/test_error_messages.py cleanly.
+
+2026-11-09 06:59:59,901 - INFO - Git diff before:
+diff --git a/AUTHORS b/AUTHORS
+index a92baaceb9..f5c71c7e30 100755
+--- a/AUTHORS
++++ b/AUTHORS
+@@ -442,6 +442,7 @@ answer newbie questions, and generally made Django that much better:
+     Jeremy Carbaugh <jcarbaugh@gmail.com>
+     Jeremy Dunck <jdunck@gmail.com>
+     Jeremy Lainé <jeremy.laine@m4x.org>
++    Jerin Peter George <jerinpetergeorge@gmail.com>
+     Jesse Young <adunar@gmail.com>
+     Jezeniel Zapanta <jezeniel.zapanta@gmail.com>
+     jhenry <jhenry@theonion.com>
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 422bc5d178..a88c384841 100755
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1284,7 +1284,11 @@ class ModelChoiceField(ChoiceField):
+                 value = getattr(value, key)
+             value = self.queryset.get(**{key: value})
+         except (ValueError, TypeError, self.queryset.model.DoesNotExist):
+-            raise ValidationError(self.error_messages['invalid_choice'], code='invalid_choice')
++            raise ValidationError(
++                self.error_messages['invalid_choice'],
++                code='invalid_choice',
++                params={'value': value},
++            )
+         return value
+ 
+     def validate(self, value):
+diff --git a/docs/ref/forms/fields.txt b/docs/ref/forms/fields.txt
+index b13af1a270..a4f80831ad 100755
+--- a/docs/ref/forms/fields.txt
++++ b/docs/ref/forms/fields.txt
+@@ -1219,6 +1219,9 @@ generating choices. See :ref:`iterating-relationship-choices` for details.
+     * Validates that the given id exists in the queryset.
+     * Error message keys: ``required``, ``invalid_choice``
+ 
++    The ``invalid_choice`` error message may contain ``%(value)s``, which will
++    be replaced with the selected choice.
++
+     Allows the selection of a single model object, suitable for representing a
+     foreign key. Note that the default widget for ``ModelChoiceField`` becomes
+     impractical when the number of entries increases. You should avoid using it
+@@ -1307,6 +1310,11 @@ generating choices. See :ref:`iterating-relationship-choices` for details.
+             def label_from_instance(self, obj):
+                 return "My Object #%i" % obj.id
+ 
++    .. versionchanged:: 4.0
++
++        Support for containing ``%(value)s`` in the ``invalid_choice`` error
++        message was added.
++
+ ``ModelMultipleChoiceField``
+ ----------------------------
+ 
+diff --git a/docs/releases/4.0.txt b/docs/releases/4.0.txt
+index 1e408c97bd..99ad826865 100755
+--- a/docs/releases/4.0.txt
++++ b/docs/releases/4.0.txt
+@@ -135,7 +135,11 @@ File Uploads
+ Forms
+ ~~~~~
+ 
+-* ...
++* :class:`~django.forms.ModelChoiceField` now includes the provided value in
++  the ``params`` argument of a raised
++  :exc:`~django.core.exceptions.ValidationError` for the ``invalid_choice``
++  error message. This allows custom error messages to use the ``%(value)s``
++  placeholder.
+ 
+ Generic Views
+ ~~~~~~~~~~~~~
+diff --git a/tests/forms_tests/tests/test_error_messages.py b/tests/forms_tests/tests/test_error_messages.py
+index 1a6d1386c3..340c39546c 100755
+--- a/tests/forms_tests/tests/test_error_messages.py
++++ b/tests/forms_tests/tests/test_error_messages.py
+@@ -308,3 +308,16 @@ class ModelChoiceFieldErrorMessagesTestCase(TestCase, AssertFormErrorsMixin):
+         self.assertFormErrors(['REQUIRED'], f.clean, '')
+         self.assertFormErrors(['NOT A LIST OF VALUES'], f.clean, '3')
+         self.assertFormErrors(['4 IS INVALID CHOICE'], f.clean, ['4'])
++
++    def test_modelchoicefield_value_placeholder(self):
++        f = ModelChoiceField(
++            queryset=ChoiceModel.objects.all(),
++            error_messages={
++                'invalid_choice': '"%(value)s" is not one of the available choices.',
++            },
++        )
++        self.assertFormErrors(
++            ['"invalid" is not one of the available choices.'],
++            f.clean,
++            'invalid',
++        )
+2026-11-09 06:59:59,904 - INFO - Eval script for django__django-13933 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-13933/eval.sh; copying to container...
+2026-11-09 07:00:05,955 - INFO - Test runtime: 5.98 seconds
+2026-11-09 07:00:05,960 - INFO - Test output for django__django-13933 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-13933/test_output.txt
+2026-11-09 07:00:06,017 - INFO - Git diff after:
+diff --git a/AUTHORS b/AUTHORS
+index a92baaceb9..f5c71c7e30 100755
+--- a/AUTHORS
++++ b/AUTHORS
+@@ -442,6 +442,7 @@ answer newbie questions, and generally made Django that much better:
+     Jeremy Carbaugh <jcarbaugh@gmail.com>
+     Jeremy Dunck <jdunck@gmail.com>
+     Jeremy Lainé <jeremy.laine@m4x.org>
++    Jerin Peter George <jerinpetergeorge@gmail.com>
+     Jesse Young <adunar@gmail.com>
+     Jezeniel Zapanta <jezeniel.zapanta@gmail.com>
+     jhenry <jhenry@theonion.com>
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 422bc5d178..a88c384841 100755
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1284,7 +1284,11 @@ class ModelChoiceField(ChoiceField):
+                 value = getattr(value, key)
+             value = self.queryset.get(**{key: value})
+         except (ValueError, TypeError, self.queryset.model.DoesNotExist):
+-            raise ValidationError(self.error_messages['invalid_choice'], code='invalid_choice')
++            raise ValidationError(
++                self.error_messages['invalid_choice'],
++                code='invalid_choice',
++                params={'value': value},
++            )
+         return value
+ 
+     def validate(self, value):
+diff --git a/docs/ref/forms/fields.txt b/docs/ref/forms/fields.txt
+index b13af1a270..a4f80831ad 100755
+--- a/docs/ref/forms/fields.txt
++++ b/docs/ref/forms/fields.txt
+@@ -1219,6 +1219,9 @@ generating choices. See :ref:`iterating-relationship-choices` for details.
+     * Validates that the given id exists in the queryset.
+     * Error message keys: ``required``, ``invalid_choice``
+ 
++    The ``invalid_choice`` error message may contain ``%(value)s``, which will
++    be replaced with the selected choice.
++
+     Allows the selection of a single model object, suitable for representing a
+     foreign key. Note that the default widget for ``ModelChoiceField`` becomes
+     impractical when the number of entries increases. You should avoid using it
+@@ -1307,6 +1310,11 @@ generating choices. See :ref:`iterating-relationship-choices` for details.
+             def label_from_instance(self, obj):
+                 return "My Object #%i" % obj.id
+ 
++    .. versionchanged:: 4.0
++
++        Support for containing ``%(value)s`` in the ``invalid_choice`` error
++        message was added.
++
+ ``ModelMultipleChoiceField``
+ ----------------------------
+ 
+diff --git a/docs/releases/4.0.txt b/docs/releases/4.0.txt
+index 1e408c97bd..99ad826865 100755
+--- a/docs/releases/4.0.txt
++++ b/docs/releases/4.0.txt
+@@ -135,7 +135,11 @@ File Uploads
+ Forms
+ ~~~~~
+ 
+-* ...
++* :class:`~django.forms.ModelChoiceField` now includes the provided value in
++  the ``params`` argument of a raised
++  :exc:`~django.core.exceptions.ValidationError` for the ``invalid_choice``
++  error message. This allows custom error messages to use the ``%(value)s``
++  placeholder.
+ 
+ Generic Views
+ ~~~~~~~~~~~~~
+2026-11-09 07:00:06,018 - INFO - Git diff changed after running eval script
+2026-11-09 07:00:06,018 - INFO - Grading answer for django__django-13933...
+2026-11-09 07:00:06,033 - INFO - report: {'django__django-13933': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_modelchoicefield_value_placeholder (forms_tests.tests.test_error_messages.ModelChoiceFieldErrorMessagesTestCase)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_modelchoicefield (forms_tests.tests.test_error_messages.ModelChoiceFieldErrorMessagesTestCase)', 'test_booleanfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_charfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_choicefield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_datefield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_datetimefield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_decimalfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_emailfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_error_messages_escaping (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_filefield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_floatfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_generic_ipaddressfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_integerfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_multiplechoicefield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_regexfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_splitdatetimefield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_subclassing_errorlist (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_timefield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)', 'test_urlfield (forms_tests.tests.test_error_messages.FormsErrorMessagesTestCase)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13933: resolved: True
+2026-11-09 07:00:06,035 - INFO - Attempting to stop container sweb.eval.django__django-13933.verified_full_glm53_hermes_R1933...
+2026-11-09 07:00:22,570 - INFO - Container sweb.eval.django__django-13933.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 07:00:22,570 - INFO - Attempting to remove container sweb.eval.django__django-13933.verified_full_glm53_hermes_R1933...
+2026-11-09 07:00:22,621 - INFO - Container sweb.eval.django__django-13933.verified_full_glm53_hermes_R1933 removed successfully.

@@ -1,0 +1,20 @@
+Task terminal-bench/bun-sourcemap-leak: Configured runtime overrides apply only to the agent environment and are not propagated to separate verifier environments (extra_docker_compose: /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml). Bake grading dependencies into the verifier image under tests/ or declare required agent outputs as artifacts.
+Agent 'hermes' does not declare an options_model; leftover kwargs are ignored
+Running command: python3 -m ensurepip --upgrade 2>&1 | tail -3 || true
+Command outputs captured
+Running command: python3 /tmp/get-pip.py --trusted-host mirrors.aliyun.com 2>&1 | tail -8
+Command failed
+Trial bun-sourcemap-leak__pbhcZk5 failed: Command failed (exit 1): python3 /tmp/get-pip.py --trusted-host mirrors.aliyun.com 2>&1 | tail -8
+stdout:     If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    See /usr/share/doc/python3.11/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+
+
+stderr: None
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached

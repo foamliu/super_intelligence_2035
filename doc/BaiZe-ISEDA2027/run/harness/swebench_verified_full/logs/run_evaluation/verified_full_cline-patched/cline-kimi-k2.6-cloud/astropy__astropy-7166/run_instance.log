@@ -1,0 +1,136 @@
+2026-10-30 16:09:48,199 - INFO - Creating container for astropy__astropy-7166...
+2026-10-30 16:09:48,224 - INFO - Container for astropy__astropy-7166 created: 5627a4184e562be5df5b63e0126857917d423e5383b8297318ecb787ebb0814b
+2026-10-30 16:09:54,498 - INFO - Container for astropy__astropy-7166 started: 5627a4184e562be5df5b63e0126857917d423e5383b8297318ecb787ebb0814b
+2026-10-30 16:09:54,500 - INFO - Intermediate patch for astropy__astropy-7166 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-7166/patch.diff, now applying to container...
+2026-10-30 16:09:54,644 - INFO - >>>>> Applied Patch:
+Checking patch astropy/utils/misc.py...
+Checking patch astropy/utils/tests/test_misc.py...
+Applied patch astropy/utils/misc.py cleanly.
+Applied patch astropy/utils/tests/test_misc.py cleanly.
+
+2026-10-30 16:09:55,426 - INFO - Git diff before:
+diff --git a/astropy/utils/misc.py b/astropy/utils/misc.py
+index de3fb01d1..e92e4d68d 100644
+--- a/astropy/utils/misc.py
++++ b/astropy/utils/misc.py
+@@ -528,13 +528,20 @@ class InheritDocstrings(type):
+                 not key.startswith('_'))
+ 
+         for key, val in dct.items():
+-            if (inspect.isfunction(val) and
+-                is_public_member(key) and
+-                val.__doc__ is None):
++            if inspect.isfunction(val):
++                doc_target = val
++            elif isinstance(val, property):
++                doc_target = val
++            elif isinstance(val, (classmethod, staticmethod)):
++                doc_target = val.__func__
++            else:
++                continue
++
++            if is_public_member(key) and doc_target.__doc__ is None:
+                 for base in cls.__mro__[1:]:
+                     super_method = getattr(base, key, None)
+                     if super_method is not None:
+-                        val.__doc__ = super_method.__doc__
++                        doc_target.__doc__ = super_method.__doc__
+                         break
+ 
+         super().__init__(name, bases, dct)
+diff --git a/astropy/utils/tests/test_misc.py b/astropy/utils/tests/test_misc.py
+index 4f632e8d1..950bfe14c 100644
+--- a/astropy/utils/tests/test_misc.py
++++ b/astropy/utils/tests/test_misc.py
+@@ -80,14 +80,50 @@ def test_inherit_docstrings():
+             "FOO"
+             pass
+ 
++        @property
++        def bar(self):
++            "BAR"
++            return 1
++
++        @classmethod
++        def baz(cls):
++            "BAZ"
++            pass
++
++        @staticmethod
++        def qux():
++            "QUX"
++            pass
++
+     class Subclass(Base):
+         def __call__(self, *args):
+             pass
+ 
++        @property
++        def bar(self):
++            return 2
++
++        @classmethod
++        def baz(cls):
++            pass
++
++        @staticmethod
++        def qux():
++            pass
++
+     if Base.__call__.__doc__ is not None:
+         # TODO: Maybe if __doc__ is None this test should be skipped instead?
+         assert Subclass.__call__.__doc__ == "FOO"
+ 
++    if Base.bar.__doc__ is not None:
++        assert Subclass.bar.__doc__ == "BAR"
++
++    if Base.baz.__doc__ is not None:
++        assert Subclass.baz.__doc__ == "BAZ"
++
++    if Base.qux.__doc__ is not None:
++        assert Subclass.qux.__doc__ == "QUX"
++
+ 
+ def test_set_locale():
+     # First, test if the required locales are available
+2026-10-30 16:09:55,428 - INFO - Eval script for astropy__astropy-7166 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-7166/eval.sh; copying to container...
+2026-10-30 16:10:00,665 - INFO - Test runtime: 5.18 seconds
+2026-10-30 16:10:00,667 - INFO - Test output for astropy__astropy-7166 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-7166/test_output.txt
+2026-10-30 16:10:00,748 - INFO - Git diff after:
+diff --git a/astropy/utils/misc.py b/astropy/utils/misc.py
+index de3fb01d1..e92e4d68d 100644
+--- a/astropy/utils/misc.py
++++ b/astropy/utils/misc.py
+@@ -528,13 +528,20 @@ class InheritDocstrings(type):
+                 not key.startswith('_'))
+ 
+         for key, val in dct.items():
+-            if (inspect.isfunction(val) and
+-                is_public_member(key) and
+-                val.__doc__ is None):
++            if inspect.isfunction(val):
++                doc_target = val
++            elif isinstance(val, property):
++                doc_target = val
++            elif isinstance(val, (classmethod, staticmethod)):
++                doc_target = val.__func__
++            else:
++                continue
++
++            if is_public_member(key) and doc_target.__doc__ is None:
+                 for base in cls.__mro__[1:]:
+                     super_method = getattr(base, key, None)
+                     if super_method is not None:
+-                        val.__doc__ = super_method.__doc__
++                        doc_target.__doc__ = super_method.__doc__
+                         break
+ 
+         super().__init__(name, bases, dct)
+2026-10-30 16:10:00,749 - INFO - Git diff changed after running eval script
+2026-10-30 16:10:00,749 - INFO - Grading answer for astropy__astropy-7166...
+2026-10-30 16:10:00,750 - INFO - report: {'astropy__astropy-7166': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/utils/tests/test_misc.py::test_inherit_docstrings'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/utils/tests/test_misc.py::test_isiterable', 'astropy/utils/tests/test_misc.py::test_signal_number_to_name_no_failure', 'astropy/utils/tests/test_misc.py::test_skip_hidden', 'astropy/utils/tests/test_misc.py::test_JsonCustomEncoder', 'astropy/utils/tests/test_misc.py::test_check_broadcast', 'astropy/utils/tests/test_misc.py::test_dtype_bytes_or_chars'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-7166: resolved: True
+2026-10-30 16:10:00,752 - INFO - Attempting to stop container sweb.eval.astropy__astropy-7166.verified_full_cline-patched...
+2026-10-30 16:10:17,008 - INFO - Container sweb.eval.astropy__astropy-7166.verified_full_cline-patched stopped successfully.
+2026-10-30 16:10:17,008 - INFO - Attempting to remove container sweb.eval.astropy__astropy-7166.verified_full_cline-patched...
+2026-10-30 16:10:17,052 - INFO - Container sweb.eval.astropy__astropy-7166.verified_full_cline-patched removed successfully.

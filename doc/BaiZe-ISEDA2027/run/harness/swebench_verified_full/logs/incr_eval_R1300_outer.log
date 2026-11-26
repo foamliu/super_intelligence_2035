@@ -1,0 +1,25 @@
+[R1300] start 16:01:17
+[R1300] === merge codex predictions ===
+codex: 271 patches merged, 271 eval IDs
+[R1300] === codex eval START scikit-learn__scikit-learn-26194 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.45s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.45s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.45s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 4
+Unremoved images: 1
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[R1300] === codex eval DONE rc=0 ===
+[R1300] === regen eval summaries for codex ===
+regen_eval_summaries: codex
+  codex: WROTE eval_codex.json  n=271 resolved=213 failed=58 infra=0
+[R1300] ALL DONE 16:01:46

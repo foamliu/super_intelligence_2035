@@ -1,0 +1,158 @@
+2026-10-30 15:33:30,090 - INFO - Creating container for django__django-12039...
+2026-10-30 15:33:30,115 - INFO - Container for django__django-12039 created: 60d9a32307832c9b2bb6ddf78bb5debaa1db24e7a21804cc618a87ed3d13353b
+2026-10-30 15:33:32,736 - INFO - Container for django__django-12039 started: 60d9a32307832c9b2bb6ddf78bb5debaa1db24e7a21804cc618a87ed3d13353b
+2026-10-30 15:33:32,739 - INFO - Intermediate patch for django__django-12039 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12039/patch.diff, now applying to container...
+2026-10-30 15:33:32,933 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/ddl_references.py...
+Checking patch tests/backends/test_ddl_references.py...
+Applied patch django/db/backends/ddl_references.py cleanly.
+Applied patch tests/backends/test_ddl_references.py cleanly.
+
+2026-10-30 15:33:34,342 - INFO - Git diff before:
+diff --git a/django/db/backends/ddl_references.py b/django/db/backends/ddl_references.py
+index 44e49806f8..260f182507 100644
+--- a/django/db/backends/ddl_references.py
++++ b/django/db/backends/ddl_references.py
+@@ -84,7 +84,10 @@ class Columns(TableColumns):
+     def __str__(self):
+         def col_str(column, idx):
+             try:
+-                return self.quote_name(column) + self.col_suffixes[idx]
++                suffix = self.col_suffixes[idx]
++                if suffix:
++                    return '{} {}'.format(self.quote_name(column), suffix)
++                return self.quote_name(column)
+             except IndexError:
+                 return self.quote_name(column)
+ 
+@@ -114,7 +117,9 @@ class IndexColumns(Columns):
+             # length as self.columns.
+             col = '{} {}'.format(self.quote_name(column), self.opclasses[idx])
+             try:
+-                col = '{} {}'.format(col, self.col_suffixes[idx])
++                suffix = self.col_suffixes[idx]
++                if suffix:
++                    col = '{} {}'.format(col, suffix)
+             except IndexError:
+                 pass
+             return col
+diff --git a/tests/backends/test_ddl_references.py b/tests/backends/test_ddl_references.py
+index d96ebcb57f..0902e26c03 100644
+--- a/tests/backends/test_ddl_references.py
++++ b/tests/backends/test_ddl_references.py
+@@ -1,5 +1,5 @@
+ from django.db.backends.ddl_references import (
+-    Columns, ForeignKeyName, IndexName, Statement, Table,
++    Columns, ForeignKeyName, IndexColumns, IndexName, Statement, Table,
+ )
+ from django.test import SimpleTestCase
+ 
+@@ -56,6 +56,29 @@ class ColumnsTests(TableTests):
+     def test_str(self):
+         self.assertEqual(str(self.reference), 'FIRST_COLUMN, SECOND_COLUMN')
+ 
++    def test_str_col_suffixes(self):
++        reference = Columns(
++            'table', ['first_column', 'second_column'], lambda column: column.upper(),
++            col_suffixes=('DESC', 'ASC'),
++        )
++        self.assertEqual(str(reference), 'FIRST_COLUMN DESC, SECOND_COLUMN ASC')
++
++    def test_str_col_suffixes_empty_string(self):
++        reference = Columns(
++            'table', ['first_column', 'second_column'], lambda column: column.upper(),
++            col_suffixes=('', 'ASC'),
++        )
++        self.assertEqual(str(reference), 'FIRST_COLUMN, SECOND_COLUMN ASC')
++
++
++class IndexColumnsTests(SimpleTestCase):
++    def test_str(self):
++        reference = IndexColumns(
++            'table', ['first_column', 'second_column'], lambda column: column.upper(),
++            col_suffixes=('', 'DESC'), opclasses=('text_pattern_ops', 'varchar_pattern_ops'),
++        )
++        self.assertEqual(str(reference), 'FIRST_COLUMN text_pattern_ops, SECOND_COLUMN varchar_pattern_ops DESC')
++
+ 
+ class IndexNameTests(ColumnsTests):
+     def setUp(self):
+2026-10-30 15:33:34,345 - INFO - Eval script for django__django-12039 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12039/eval.sh; copying to container...
+2026-10-30 15:33:41,070 - INFO - Test runtime: 6.65 seconds
+2026-10-30 15:33:41,074 - INFO - Test output for django__django-12039 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12039/test_output.txt
+2026-10-30 15:33:41,158 - INFO - Git diff after:
+diff --git a/django/db/backends/ddl_references.py b/django/db/backends/ddl_references.py
+index 44e49806f8..260f182507 100644
+--- a/django/db/backends/ddl_references.py
++++ b/django/db/backends/ddl_references.py
+@@ -84,7 +84,10 @@ class Columns(TableColumns):
+     def __str__(self):
+         def col_str(column, idx):
+             try:
+-                return self.quote_name(column) + self.col_suffixes[idx]
++                suffix = self.col_suffixes[idx]
++                if suffix:
++                    return '{} {}'.format(self.quote_name(column), suffix)
++                return self.quote_name(column)
+             except IndexError:
+                 return self.quote_name(column)
+ 
+@@ -114,7 +117,9 @@ class IndexColumns(Columns):
+             # length as self.columns.
+             col = '{} {}'.format(self.quote_name(column), self.opclasses[idx])
+             try:
+-                col = '{} {}'.format(col, self.col_suffixes[idx])
++                suffix = self.col_suffixes[idx]
++                if suffix:
++                    col = '{} {}'.format(col, suffix)
+             except IndexError:
+                 pass
+             return col
+diff --git a/tests/backends/test_ddl_references.py b/tests/backends/test_ddl_references.py
+index d96ebcb57f..0902e26c03 100644
+--- a/tests/backends/test_ddl_references.py
++++ b/tests/backends/test_ddl_references.py
+@@ -1,5 +1,5 @@
+ from django.db.backends.ddl_references import (
+-    Columns, ForeignKeyName, IndexName, Statement, Table,
++    Columns, ForeignKeyName, IndexColumns, IndexName, Statement, Table,
+ )
+ from django.test import SimpleTestCase
+ 
+@@ -56,6 +56,29 @@ class ColumnsTests(TableTests):
+     def test_str(self):
+         self.assertEqual(str(self.reference), 'FIRST_COLUMN, SECOND_COLUMN')
+ 
++    def test_str_col_suffixes(self):
++        reference = Columns(
++            'table', ['first_column', 'second_column'], lambda column: column.upper(),
++            col_suffixes=('DESC', 'ASC'),
++        )
++        self.assertEqual(str(reference), 'FIRST_COLUMN DESC, SECOND_COLUMN ASC')
++
++    def test_str_col_suffixes_empty_string(self):
++        reference = Columns(
++            'table', ['first_column', 'second_column'], lambda column: column.upper(),
++            col_suffixes=('', 'ASC'),
++        )
++        self.assertEqual(str(reference), 'FIRST_COLUMN, SECOND_COLUMN ASC')
++
++
++class IndexColumnsTests(SimpleTestCase):
++    def test_str(self):
++        reference = IndexColumns(
++            'table', ['first_column', 'second_column'], lambda column: column.upper(),
++            col_suffixes=('', 'DESC'), opclasses=('text_pattern_ops', 'varchar_pattern_ops'),
++        )
++        self.assertEqual(str(reference), 'FIRST_COLUMN text_pattern_ops, SECOND_COLUMN varchar_pattern_ops DESC')
++
+ 
+ class IndexNameTests(ColumnsTests):
+     def setUp(self):
+2026-10-30 15:33:41,158 - INFO - Grading answer for django__django-12039...
+2026-10-30 15:33:41,161 - INFO - report: {'django__django-12039': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_descending_columns_list_sql (indexes.tests.SchemaIndexesTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_columns_list_sql (indexes.tests.SchemaIndexesTests)', 'test_index_name (indexes.tests.SchemaIndexesTests)', 'test_index_name_hash (indexes.tests.SchemaIndexesTests)', 'test_index_together (indexes.tests.SchemaIndexesTests)', 'test_index_together_single_list (indexes.tests.SchemaIndexesTests)', 'test_create_index_ignores_opclasses (indexes.tests.SchemaIndexesNotPostgreSQLTests)', 'test_boolean_restriction_partial (indexes.tests.PartialIndexTests)', 'test_integer_restriction_partial (indexes.tests.PartialIndexTests)', 'test_is_null_condition (indexes.tests.PartialIndexTests)', 'test_multiple_conditions (indexes.tests.PartialIndexTests)', 'test_partial_index (indexes.tests.PartialIndexTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12039: resolved: True
+2026-10-30 15:33:41,163 - INFO - Attempting to stop container sweb.eval.django__django-12039.verified_full_opencode...
+2026-10-30 15:33:57,115 - INFO - Container sweb.eval.django__django-12039.verified_full_opencode stopped successfully.
+2026-10-30 15:33:57,115 - INFO - Attempting to remove container sweb.eval.django__django-12039.verified_full_opencode...
+2026-10-30 15:33:57,161 - INFO - Container sweb.eval.django__django-12039.verified_full_opencode removed successfully.

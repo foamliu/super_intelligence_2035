@@ -1,0 +1,69 @@
+2026-11-11 20:04:09,032 - INFO - Creating container for django__django-12050...
+2026-11-11 20:04:09,058 - INFO - Container for django__django-12050 created: d41c9a567439552100dd3e6cdded9383bf70f213c541ad44d11a54a50887e517
+2026-11-11 20:04:09,717 - INFO - Container for django__django-12050 started: d41c9a567439552100dd3e6cdded9383bf70f213c541ad44d11a54a50887e517
+2026-11-11 20:04:09,719 - INFO - Intermediate patch for django__django-12050 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2192/claude-code-glm-5.3-flash/django__django-12050/patch.diff, now applying to container...
+2026-11-11 20:04:09,909 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/query.py...
+Checking patch tests/queries/test_query.py...
+Applied patch django/db/models/sql/query.py cleanly.
+Applied patch tests/queries/test_query.py cleanly.
+
+2026-11-11 20:04:10,777 - INFO - Git diff before:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index ea51912e8b..90475d6fb9 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1073,7 +1073,7 @@ class Query(BaseExpression):
+                         ))
+                 else:
+                     resolved_values.append(sub_value)
+-            value = tuple(resolved_values)
++            value = type(value)(resolved_values)
+         return value
+ 
+     def solve_lookup_type(self, lookup):
+diff --git a/tests/queries/test_query.py b/tests/queries/test_query.py
+index f0d3a6260a..5d6a76a8b7 100644
+--- a/tests/queries/test_query.py
++++ b/tests/queries/test_query.py
+@@ -113,3 +113,15 @@ class TestQuery(SimpleTestCase):
+         clone = query.clone()
+         clone.add_select_related(['note', 'creator__extra'])
+         self.assertEqual(query.select_related, {'creator': {}})
++
++    def test_resolve_lookup_value(self):
++        query = Query(Author)
++        value = query.resolve_lookup_value(
++            [1, 2, 3], can_reuse=set(), allow_joins=False, simple_col=None,
++        )
++        self.assertIsInstance(value, list)
++
++        value = query.resolve_lookup_value(
++            (1, 2, 3), can_reuse=set(), allow_joins=False, simple_col=None,
++        )
++        self.assertIsInstance(value, tuple)
+2026-11-11 20:04:10,780 - INFO - Eval script for django__django-12050 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2192/claude-code-glm-5.3-flash/django__django-12050/eval.sh; copying to container...
+2026-11-11 20:04:17,513 - INFO - Test runtime: 6.65 seconds
+2026-11-11 20:04:17,515 - INFO - Test output for django__django-12050 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2192/claude-code-glm-5.3-flash/django__django-12050/test_output.txt
+2026-11-11 20:04:17,583 - INFO - Git diff after:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index ea51912e8b..90475d6fb9 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1073,7 +1073,7 @@ class Query(BaseExpression):
+                         ))
+                 else:
+                     resolved_values.append(sub_value)
+-            value = tuple(resolved_values)
++            value = type(value)(resolved_values)
+         return value
+ 
+     def solve_lookup_type(self, lookup):
+2026-11-11 20:04:17,583 - INFO - Git diff changed after running eval script
+2026-11-11 20:04:17,583 - INFO - Grading answer for django__django-12050...
+2026-11-11 20:04:17,584 - INFO - report: {'django__django-12050': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_iterable_lookup_value (queries.test_query.TestQuery)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_clone_select_related (queries.test_query.TestQuery)', 'test_complex_query (queries.test_query.TestQuery)', 'test_foreign_key (queries.test_query.TestQuery)', 'test_foreign_key_exclusive (queries.test_query.TestQuery)', 'test_foreign_key_f (queries.test_query.TestQuery)', 'test_multiple_fields (queries.test_query.TestQuery)', 'test_negated_nullable (queries.test_query.TestQuery)', 'test_simple_query (queries.test_query.TestQuery)', 'test_simplecol_query (queries.test_query.TestQuery)', 'test_transform (queries.test_query.TestQuery)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12050: resolved: True
+2026-11-11 20:04:17,586 - INFO - Attempting to stop container sweb.eval.django__django-12050.verified_full_glm53_claude-code_incr_R2192...
+2026-11-11 20:04:33,741 - INFO - Container sweb.eval.django__django-12050.verified_full_glm53_claude-code_incr_R2192 stopped successfully.
+2026-11-11 20:04:33,741 - INFO - Attempting to remove container sweb.eval.django__django-12050.verified_full_glm53_claude-code_incr_R2192...
+2026-11-11 20:04:33,798 - INFO - Container sweb.eval.django__django-12050.verified_full_glm53_claude-code_incr_R2192 removed successfully.

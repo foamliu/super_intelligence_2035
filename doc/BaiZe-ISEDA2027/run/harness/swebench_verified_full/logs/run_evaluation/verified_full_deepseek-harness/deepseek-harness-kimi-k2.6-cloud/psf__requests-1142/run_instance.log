@@ -1,0 +1,72 @@
+2026-10-31 05:43:05,688 - INFO - Creating container for psf__requests-1142...
+2026-10-31 05:43:05,729 - INFO - Container for psf__requests-1142 created: 5380feb3f2be736c194c75b6e0afde87d00327ab96664efb682912fb56940186
+2026-10-31 05:43:08,268 - INFO - Container for psf__requests-1142 started: 5380feb3f2be736c194c75b6e0afde87d00327ab96664efb682912fb56940186
+2026-10-31 05:43:08,271 - INFO - Intermediate patch for psf__requests-1142 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/psf__requests-1142/patch.diff, now applying to container...
+2026-10-31 05:43:08,403 - INFO - >>>>> Applied Patch:
+Checking patch requests/models.py...
+Checking patch test_requests.py...
+Applied patch requests/models.py cleanly.
+Applied patch test_requests.py cleanly.
+
+2026-10-31 05:43:08,482 - INFO - Git diff before:
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..0c99e5d 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -386,7 +386,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+diff --git a/test_requests.py b/test_requests.py
+index c974e98..45a1438 100644
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -280,5 +280,20 @@ class RequestsTestCase(unittest.TestCase):
+         self.assertEqual(r.links['next']['rel'], 'next')
+ 
+ 
++
++    def test_get_no_content_length(self):
++        """Test that GET requests with no body don't include Content-Length header."""
++        req = requests.Request('GET', 'http://example.com')
++        prep = req.prepare()
++        self.assertNotIn('Content-Length', prep.headers)
++
++    def test_post_with_content_length(self):
++        """Test that POST requests with body include Content-Length header."""
++        req = requests.Request('POST', 'http://example.com', data={'key': 'value'})
++        prep = req.prepare()
++        self.assertIn('Content-Length', prep.headers)
++        self.assertEqual(prep.headers['Content-Length'], '9')
++
++
+ if __name__ == '__main__':
+     unittest.main()
+2026-10-31 05:43:08,484 - INFO - Eval script for psf__requests-1142 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/psf__requests-1142/eval.sh; copying to container...
+2026-10-31 05:43:12,843 - INFO - Test runtime: 4.29 seconds
+2026-10-31 05:43:12,844 - INFO - Test output for psf__requests-1142 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/psf__requests-1142/test_output.txt
+2026-10-31 05:43:12,898 - INFO - Git diff after:
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..0c99e5d 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -386,7 +386,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+2026-10-31 05:43:12,898 - INFO - Git diff changed after running eval script
+2026-10-31 05:43:12,898 - INFO - Grading answer for psf__requests-1142...
+2026-10-31 05:43:12,902 - INFO - report: {'psf__requests-1142': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_no_content_length'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_basic_building', 'test_requests.py::RequestsTestCase::test_entry_points', 'test_requests.py::RequestsTestCase::test_invalid_url', 'test_requests.py::RequestsTestCase::test_params_are_added_before_fragment', 'test_requests.py::RequestsTestCase::test_path_is_not_double_encoded'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for psf__requests-1142: resolved: True
+2026-10-31 05:43:12,904 - INFO - Attempting to stop container sweb.eval.psf__requests-1142.verified_full_deepseek-harness...
+2026-10-31 05:43:29,997 - INFO - Container sweb.eval.psf__requests-1142.verified_full_deepseek-harness stopped successfully.
+2026-10-31 05:43:29,997 - INFO - Attempting to remove container sweb.eval.psf__requests-1142.verified_full_deepseek-harness...
+2026-10-31 05:43:30,046 - INFO - Container sweb.eval.psf__requests-1142.verified_full_deepseek-harness removed successfully.

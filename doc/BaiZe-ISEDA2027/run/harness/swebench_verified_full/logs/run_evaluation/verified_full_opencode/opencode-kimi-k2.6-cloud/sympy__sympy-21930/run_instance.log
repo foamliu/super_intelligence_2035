@@ -1,0 +1,69 @@
+2026-10-30 16:00:09,055 - INFO - Creating container for sympy__sympy-21930...
+2026-10-30 16:00:09,075 - INFO - Container for sympy__sympy-21930 created: f5611cfac7f508d1c527d1c973dbe1c5cb616cd1e5cdcc9839bf71ac82571b43
+2026-10-30 16:00:09,672 - INFO - Container for sympy__sympy-21930 started: f5611cfac7f508d1c527d1c973dbe1c5cb616cd1e5cdcc9839bf71ac82571b43
+2026-10-30 16:00:09,674 - INFO - Intermediate patch for sympy__sympy-21930 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-21930/patch.diff, now applying to container...
+2026-10-30 16:00:09,793 - INFO - >>>>> Applied Patch:
+Checking patch sympy/physics/tests/test_secondquant.py...
+Checking patch sympy/printing/latex.py...
+Applied patch sympy/physics/tests/test_secondquant.py cleanly.
+Applied patch sympy/printing/latex.py cleanly.
+
+2026-10-30 16:00:10,467 - INFO - Git diff before:
+diff --git a/sympy/physics/tests/test_secondquant.py b/sympy/physics/tests/test_secondquant.py
+index 39662ee318..969ed8da32 100644
+--- a/sympy/physics/tests/test_secondquant.py
++++ b/sympy/physics/tests/test_secondquant.py
+@@ -95,6 +95,7 @@ def test_create():
+     i, j, n, m = symbols('i,j,n,m')
+     o = Bd(i)
+     assert latex(o) == "b^\\dagger_{i}"
++    assert latex(Bd(i)**2) == r"\left(b^\dagger_{i}\right)^{2}"
+     assert isinstance(o, CreateBoson)
+     o = o.subs(i, j)
+     assert o.atoms(Symbol) == {j}
+@@ -289,6 +290,7 @@ def test_create_f():
+     assert repr(Fd(p)) == 'CreateFermion(p)'
+     assert srepr(Fd(p)) == "CreateFermion(Symbol('p'))"
+     assert latex(Fd(p)) == r'a^\dagger_{p}'
++    assert latex(Fd(p)**2) == r"\left(a^\dagger_{p}\right)^{2}"
+ 
+ 
+ def test_annihilate_f():
+diff --git a/sympy/printing/latex.py b/sympy/printing/latex.py
+index 64d3207d09..92f3e3dbd8 100644
+--- a/sympy/printing/latex.py
++++ b/sympy/printing/latex.py
+@@ -665,7 +665,7 @@ def _helper_print_standard_power(self, expr, template):
+         # issue #12886: add parentheses around superscripts raised
+         # to powers
+         base = self.parenthesize(expr.base, PRECEDENCE['Pow'])
+-        if expr.base.is_Symbol:
++        if expr.base.is_Symbol or "^" in base:
+             base = self.parenthesize_super(base)
+         elif (isinstance(expr.base, Derivative)
+             and base.startswith(r'\left(')
+2026-10-30 16:00:10,479 - INFO - Eval script for sympy__sympy-21930 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-21930/eval.sh; copying to container...
+2026-10-30 16:00:30,904 - INFO - Test runtime: 20.36 seconds
+2026-10-30 16:00:30,905 - INFO - Test output for sympy__sympy-21930 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-21930/test_output.txt
+2026-10-30 16:00:30,986 - INFO - Git diff after:
+diff --git a/sympy/printing/latex.py b/sympy/printing/latex.py
+index 64d3207d09..92f3e3dbd8 100644
+--- a/sympy/printing/latex.py
++++ b/sympy/printing/latex.py
+@@ -665,7 +665,7 @@ def _helper_print_standard_power(self, expr, template):
+         # issue #12886: add parentheses around superscripts raised
+         # to powers
+         base = self.parenthesize(expr.base, PRECEDENCE['Pow'])
+-        if expr.base.is_Symbol:
++        if expr.base.is_Symbol or "^" in base:
+             base = self.parenthesize_super(base)
+         elif (isinstance(expr.base, Derivative)
+             and base.startswith(r'\left(')
+2026-10-30 16:00:30,986 - INFO - Git diff changed after running eval script
+2026-10-30 16:00:30,987 - INFO - Grading answer for sympy__sympy-21930...
+2026-10-30 16:00:30,988 - INFO - report: {'sympy__sympy-21930': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_create', 'test_commutation', 'test_create_f', 'test_NO', 'test_Tensors', 'test_issue_19661']}, 'PASS_TO_PASS': {'success': ['test_PermutationOperator', 'test_index_permutations_with_dummies', 'test_dagger', 'test_operator', 'test_annihilate', 'test_basic_state', 'test_basic_apply', 'test_complex_apply', 'test_number_operator', 'test_inner_product', 'test_symbolic_matrix_elements', 'test_matrix_elements', 'test_fixed_bosonic_basis', 'test_annihilate_f', 'test_create_b', 'test_annihilate_b', 'test_wicks', 'test_sorting', 'test_contraction', 'test_evaluate_deltas', 'test_fully_contracted', 'test_substitute_dummies_without_dummies', 'test_substitute_dummies_NO_operator', 'test_substitute_dummies_SQ_operator', 'test_substitute_dummies_new_indices', 'test_substitute_dummies_substitution_order', 'test_dummy_order_inner_outer_lines_VT1T1T1', 'test_dummy_order_inner_outer_lines_VT1T1T1T1', 'test_get_subNO', 'test_equivalent_internal_lines_VT1T1', 'test_equivalent_internal_lines_VT2conjT2', 'test_equivalent_internal_lines_VT2conjT2_ambiguous_order', 'test_equivalent_internal_lines_VT2', 'test_internal_external_VT2T2', 'test_internal_external_pqrs', 'test_dummy_order_well_defined', 'test_dummy_order_ambiguous', 'test_dummy_order_inner_outer_lines_VT1T1T1_AT', 'test_dummy_order_inner_outer_lines_VT1T1T1T1_AT', 'test_equivalent_internal_lines_VT1T1_AT', 'test_equivalent_internal_lines_VT2conjT2_AT', 'test_equivalent_internal_lines_VT2conjT2_ambiguous_order_AT', 'test_equivalent_internal_lines_VT2_AT', 'test_internal_external_VT2T2_AT', 'test_internal_external_pqrs_AT'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-21930: resolved: False
+2026-10-30 16:00:30,990 - INFO - Attempting to stop container sweb.eval.sympy__sympy-21930.verified_full_opencode...
+2026-10-30 16:00:46,619 - INFO - Container sweb.eval.sympy__sympy-21930.verified_full_opencode stopped successfully.
+2026-10-30 16:00:46,619 - INFO - Attempting to remove container sweb.eval.sympy__sympy-21930.verified_full_opencode...
+2026-10-30 16:00:46,674 - INFO - Container sweb.eval.sympy__sympy-21930.verified_full_opencode removed successfully.

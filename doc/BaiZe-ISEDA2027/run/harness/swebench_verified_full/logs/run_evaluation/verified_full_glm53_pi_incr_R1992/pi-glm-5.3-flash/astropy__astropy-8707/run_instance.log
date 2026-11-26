@@ -1,0 +1,23 @@
+2026-11-09 23:22:47,091 - INFO - Creating container for astropy__astropy-8707...
+2026-11-09 23:22:47,110 - INFO - Container for astropy__astropy-8707 created: de6653cc21c194677f7baff0f9fa34c5bdab0de47d99c2003e9decc4dcc45e05
+2026-11-09 23:22:47,699 - INFO - Container for astropy__astropy-8707 started: de6653cc21c194677f7baff0f9fa34c5bdab0de47d99c2003e9decc4dcc45e05
+2026-11-09 23:22:47,701 - INFO - Intermediate patch for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/astropy__astropy-8707/patch.diff, now applying to container...
+2026-11-09 23:22:47,819 - INFO - >>>>> Applied Patch:
+Checking patch astropy_helpers...
+warning: unable to rmdir 'astropy_helpers': Directory not empty
+Applied patch astropy_helpers cleanly.
+
+2026-11-09 23:22:48,433 - INFO - Git diff before:
+
+2026-11-09 23:22:48,436 - INFO - Eval script for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/astropy__astropy-8707/eval.sh; copying to container...
+2026-11-09 23:22:58,638 - INFO - Test runtime: 10.12 seconds
+2026-11-09 23:22:58,640 - INFO - Test output for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/astropy__astropy-8707/test_output.txt
+2026-11-09 23:22:58,696 - INFO - Git diff after:
+
+2026-11-09 23:22:58,696 - INFO - Grading answer for astropy__astropy-8707...
+2026-11-09 23:22:58,702 - INFO - report: {'astropy__astropy-8707': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_from_bytes']}, 'PASS_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::test_shallow_copy', 'astropy/io/fits/tests/test_header.py::test_init_with_header', 'astropy/io/fits/tests/test_header.py::test_init_with_dict', 'astropy/io/fits/tests/test_header.py::test_init_with_ordereddict', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_rename_keyword', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_constructor_default_args', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_string_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_boolean_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_long_integer_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_floating_point_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_complex_value_card'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-8707: resolved: False
+2026-11-09 23:22:58,704 - INFO - Attempting to stop container sweb.eval.astropy__astropy-8707.verified_full_glm53_pi_incr_R1992...
+2026-11-09 23:23:14,609 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_glm53_pi_incr_R1992 stopped successfully.
+2026-11-09 23:23:14,609 - INFO - Attempting to remove container sweb.eval.astropy__astropy-8707.verified_full_glm53_pi_incr_R1992...
+2026-11-09 23:23:14,663 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_glm53_pi_incr_R1992 removed successfully.

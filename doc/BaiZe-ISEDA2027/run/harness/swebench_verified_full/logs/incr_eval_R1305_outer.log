@@ -1,0 +1,29 @@
+[R1305] start 17:11:23
+[R1305] === merge deepseek-harness predictions ===
+deepseek-harness: 118 patches merged, 118 eval IDs
+[R1305] === deepseek-harness eval START django__django-13821 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s][R1305] start 17:12:01
+[R1305] === merge deepseek-harness predictions ===
+deepseek-harness: 118 patches merged, 118 eval IDs
+[R1305] === deepseek-harness eval START django__django-13821 ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 1
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[R1305] === deepseek-harness eval DONE rc=0 ===
+[R1305] === regen eval summaries for deepseek-harness ===
+regen_eval_summaries: deepseek-harness
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=118 resolved=98 failed=20 infra=0
+[R1305] ALL DONE 17:12:04

@@ -1,0 +1,120 @@
+2026-11-10 18:26:08,788 - INFO - Creating container for django__django-11964...
+2026-11-10 18:26:08,806 - INFO - Container for django__django-11964 created: cbfb25f9f65ed3921772c7c4e493123358818e5373914fbf58038308821b7945
+2026-11-10 18:26:09,733 - INFO - Container for django__django-11964 started: cbfb25f9f65ed3921772c7c4e493123358818e5373914fbf58038308821b7945
+2026-11-10 18:26:09,735 - INFO - Intermediate patch for django__django-11964 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/django__django-11964/patch.diff, now applying to container...
+2026-11-10 18:26:09,856 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/enums.py...
+warning: django/db/models/enums.py has type 100755, expected 100644
+Checking patch docs/releases/3.1.txt...
+warning: docs/releases/3.1.txt has type 100755, expected 100644
+Checking patch tests/model_enums/tests.py...
+warning: tests/model_enums/tests.py has type 100755, expected 100644
+Applied patch django/db/models/enums.py cleanly.
+Applied patch docs/releases/3.1.txt cleanly.
+Applied patch tests/model_enums/tests.py cleanly.
+
+2026-11-10 18:26:11,310 - INFO - Git diff before:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index bbe362a6ab..dbc222a743 100755
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -60,7 +60,13 @@ class ChoicesMeta(enum.EnumMeta):
+ 
+ class Choices(enum.Enum, metaclass=ChoicesMeta):
+     """Class for creating enumerated choices."""
+-    pass
++
++    def __str__(self):
++        """
++        Use value when cast to str, instead the default enum.Enum.__str__()
++        which returns the constant name.
++        """
++        return str(self.value)
+ 
+ 
+ class IntegerChoices(int, Choices):
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 70297b5311..1b980162c8 100755
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -314,3 +314,10 @@ to remove usage of these features.
+ 
+ * Support for ``SimpleTestCase.allow_database_queries`` and
+   ``TransactionTestCase.multi_db`` is removed.
++
++Bugfixes
++========
++
++* Fixed a bug in Django 3.1 where casting ``TextChoices`` and
++  ``IntegerChoices`` items to ``str`` returned the constant name, e.g.
++  ``MyChoices.FIRST_CHOICE``, instead of the item's value (:ticket:`31835`).
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index 6b4bd6e7fd..65a8084b42 100755
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -80,6 +80,9 @@ class ChoicesTests(SimpleTestCase):
+         self.assertIn(1, Suit)
+         self.assertNotIn(0, Suit)
+ 
++    def test_integerchoices_str(self):
++        self.assertEqual(str(Suit.DIAMOND), '1')
++
+     def test_textchoices(self):
+         self.assertEqual(YearInSchool.choices, [
+             ('FR', 'Freshman'), ('SO', 'Sophomore'), ('JR', 'Junior'), ('SR', 'Senior'), ('GR', 'Graduate'),
+@@ -121,6 +124,9 @@ class ChoicesTests(SimpleTestCase):
+         self.assertIn('FR', YearInSchool)
+         self.assertNotIn('XX', YearInSchool)
+ 
++    def test_textchoices_str(self):
++        self.assertEqual(str(YearInSchool.FRESHMAN), 'FR')
++
+     def test_textchoices_blank_value(self):
+         class BlankStr(models.TextChoices):
+             EMPTY = '', '(Empty)'
+2026-11-10 18:26:11,313 - INFO - Eval script for django__django-11964 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/django__django-11964/eval.sh; copying to container...
+2026-11-10 18:26:19,075 - INFO - Test runtime: 7.70 seconds
+2026-11-10 18:26:19,079 - INFO - Test output for django__django-11964 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/django__django-11964/test_output.txt
+2026-11-10 18:26:19,140 - INFO - Git diff after:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index bbe362a6ab..dbc222a743 100755
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -60,7 +60,13 @@ class ChoicesMeta(enum.EnumMeta):
+ 
+ class Choices(enum.Enum, metaclass=ChoicesMeta):
+     """Class for creating enumerated choices."""
+-    pass
++
++    def __str__(self):
++        """
++        Use value when cast to str, instead the default enum.Enum.__str__()
++        which returns the constant name.
++        """
++        return str(self.value)
+ 
+ 
+ class IntegerChoices(int, Choices):
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 70297b5311..1b980162c8 100755
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -314,3 +314,10 @@ to remove usage of these features.
+ 
+ * Support for ``SimpleTestCase.allow_database_queries`` and
+   ``TransactionTestCase.multi_db`` is removed.
++
++Bugfixes
++========
++
++* Fixed a bug in Django 3.1 where casting ``TextChoices`` and
++  ``IntegerChoices`` items to ``str`` returned the constant name, e.g.
++  ``MyChoices.FIRST_CHOICE``, instead of the item's value (:ticket:`31835`).
+2026-11-10 18:26:19,140 - INFO - Git diff changed after running eval script
+2026-11-10 18:26:19,141 - INFO - Grading answer for django__django-11964...
+2026-11-10 18:26:19,152 - INFO - report: {'django__django-11964': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_str (model_enums.tests.ChoicesTests)', 'test_textchoices (model_enums.tests.ChoicesTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_integerchoices (model_enums.tests.ChoicesTests)', 'test_integerchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_containment (model_enums.tests.ChoicesTests)', 'test_integerchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_invalid_definition (model_enums.tests.ChoicesTests)', 'test_textchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_textchoices_blank_value (model_enums.tests.ChoicesTests)', 'test_textchoices_containment (model_enums.tests.ChoicesTests)', 'test_textchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_textchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_bool_unsupported (model_enums.tests.CustomChoicesTests)', 'test_labels_valid (model_enums.tests.CustomChoicesTests)', 'test_timezone_unsupported (model_enums.tests.CustomChoicesTests)', 'test_uuid_unsupported (model_enums.tests.CustomChoicesTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11964: resolved: True
+2026-11-10 18:26:19,154 - INFO - Attempting to stop container sweb.eval.django__django-11964.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 18:26:35,236 - INFO - Container sweb.eval.django__django-11964.verified_full_glm53_cline-patched_incr_R2028 stopped successfully.
+2026-11-10 18:26:35,237 - INFO - Attempting to remove container sweb.eval.django__django-11964.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 18:26:35,294 - INFO - Container sweb.eval.django__django-11964.verified_full_glm53_cline-patched_incr_R2028 removed successfully.

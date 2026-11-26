@@ -1,0 +1,84 @@
+2026-11-12 09:40:26,676 - INFO - Creating container for sympy__sympy-23534...
+2026-11-12 09:40:26,716 - INFO - Container for sympy__sympy-23534 created: 888641d3ec88bf4b2299d90452ec736ee059b5d796afcf8c3b3fe1da0b971466
+2026-11-12 09:40:27,492 - INFO - Container for sympy__sympy-23534 started: 888641d3ec88bf4b2299d90452ec736ee059b5d796afcf8c3b3fe1da0b971466
+2026-11-12 09:40:27,494 - INFO - Intermediate patch for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2252/hermes-glm-5.3-flash/sympy__sympy-23534/patch.diff, now applying to container...
+2026-11-12 09:40:27,625 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/symbol.py...
+Checking patch sympy/core/tests/test_symbol.py...
+Applied patch sympy/core/symbol.py cleanly.
+Applied patch sympy/core/tests/test_symbol.py cleanly.
+
+2026-11-12 09:40:28,413 - INFO - Git diff before:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c2083..707e241371 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -1,3 +1,4 @@
++from sympy.core.function import Function
+ from sympy.core.numbers import (I, Rational, pi)
+ from sympy.core.relational import (GreaterThan, LessThan, StrictGreaterThan, StrictLessThan)
+ from sympy.core.symbol import (Dummy, Symbol, Wild, symbols)
+@@ -327,6 +328,26 @@ def sym(s):
+     raises(ValueError, lambda: symbols('::a'))
+ 
+ 
++def test_symbols_cls_over_iterable():
++    # cls must be forwarded when names is an iterable of names
++    from sympy.core.function import UndefinedFunction
++    q, u = symbols(('q:2', 'u:2'), cls=Function)
++    assert type(q[0]) is UndefinedFunction
++    assert type(u[0]) is UndefinedFunction
++    f, g = symbols(['f', 'g'], cls=Function)
++    assert type(f) is UndefinedFunction
++    assert type(g) is UndefinedFunction
++    (x1, x2), (y1,) = symbols(('x:2', 'y:1'), cls=Function)
++    assert type(x1) is UndefinedFunction
++    assert type(y1) is UndefinedFunction
++    w, = symbols(('w:1',), cls=Wild)
++    assert type(w[0]) is Wild
++    # default cls is unchanged
++    p, r = symbols(('p:2', 'r:2'))
++    assert type(p[0]) is Symbol
++    assert type(r[0]) is Symbol
++
++
+ def test_symbols_become_functions_issue_3539():
+     from sympy.abc import alpha, phi, beta, t
+     raises(TypeError, lambda: beta(2))
+2026-11-12 09:40:28,416 - INFO - Eval script for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2252/hermes-glm-5.3-flash/sympy__sympy-23534/eval.sh; copying to container...
+2026-11-12 09:40:32,433 - INFO - Test runtime: 3.94 seconds
+2026-11-12 09:40:32,435 - INFO - Test output for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2252/hermes-glm-5.3-flash/sympy__sympy-23534/test_output.txt
+2026-11-12 09:40:32,510 - INFO - Git diff after:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+2026-11-12 09:40:32,510 - INFO - Git diff changed after running eval script
+2026-11-12 09:40:32,510 - INFO - Grading answer for sympy__sympy-23534...
+2026-11-12 09:40:32,511 - INFO - report: {'sympy__sympy-23534': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_symbols'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Str', 'test_Symbol', 'test_Dummy', 'test_Dummy_force_dummy_index', 'test_lt_gt', 'test_no_len', 'test_ineq_unequal', 'test_Wild_properties', 'test_symbols_become_functions_issue_3539', 'test_unicode', 'test_uniquely_named_symbol_and_Symbol'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-23534: resolved: True
+2026-11-12 09:40:32,513 - INFO - Attempting to stop container sweb.eval.sympy__sympy-23534.verified_full_glm53_hermes_incr_R2252...
+2026-11-12 09:40:48,749 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_glm53_hermes_incr_R2252 stopped successfully.
+2026-11-12 09:40:48,750 - INFO - Attempting to remove container sweb.eval.sympy__sympy-23534.verified_full_glm53_hermes_incr_R2252...
+2026-11-12 09:40:48,797 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_glm53_hermes_incr_R2252 removed successfully.

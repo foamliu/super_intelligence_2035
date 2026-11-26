@@ -1,0 +1,73 @@
+2026-11-10 20:28:55,969 - INFO - Creating container for sympy__sympy-17318...
+2026-11-10 20:28:56,007 - INFO - Container for sympy__sympy-17318 created: a09a8560eccd140d8bd4d01a45de0ed1a00957d383e446739a8dce768f05f577
+2026-11-10 20:28:57,745 - INFO - Container for sympy__sympy-17318 started: a09a8560eccd140d8bd4d01a45de0ed1a00957d383e446739a8dce768f05f577
+2026-11-10 20:28:57,747 - INFO - Intermediate patch for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/sympy__sympy-17318/patch.diff, now applying to container...
+2026-11-10 20:28:57,891 - INFO - >>>>> Applied Patch:
+Checking patch sympy/simplify/sqrtdenest.py...
+Checking patch sympy/simplify/tests/test_sqrtdenest.py...
+Applied patch sympy/simplify/sqrtdenest.py cleanly.
+Applied patch sympy/simplify/tests/test_sqrtdenest.py cleanly.
+
+2026-11-10 20:28:58,522 - INFO - Git diff before:
+diff --git a/sympy/simplify/sqrtdenest.py b/sympy/simplify/sqrtdenest.py
+index f0b7653ea8..e437987d83 100644
+--- a/sympy/simplify/sqrtdenest.py
++++ b/sympy/simplify/sqrtdenest.py
+@@ -156,7 +156,8 @@ def _sqrt_match(p):
+         res = (p, S.Zero, S.Zero)
+     elif p.is_Add:
+         pargs = sorted(p.args, key=default_sort_key)
+-        if all((x**2).is_Rational for x in pargs):
++        sqargs = [x**2 for x in pargs]
++        if all(sq.is_Rational and sq.is_positive for sq in sqargs):
+             r, b, a = split_surds(p)
+             res = a, b, r
+             return list(res)
+diff --git a/sympy/simplify/tests/test_sqrtdenest.py b/sympy/simplify/tests/test_sqrtdenest.py
+index c30f7a3235..8b9b6aaaf5 100644
+--- a/sympy/simplify/tests/test_sqrtdenest.py
++++ b/sympy/simplify/tests/test_sqrtdenest.py
+@@ -1,4 +1,4 @@
+-from sympy import sqrt, root, S, Symbol, sqrtdenest, Integral, cos
++from sympy import sqrt, root, S, Symbol, sqrtdenest, Integral, cos, I
+ from sympy.simplify.sqrtdenest import _subsets as subsets
+ from sympy.utilities.pytest import slow
+ 
+@@ -181,5 +181,11 @@ def test_issue_5653():
+         sqrt(2 + sqrt(2 + sqrt(2)))) == sqrt(2 + sqrt(2 + sqrt(2)))
+ 
+ 
++def test_issue_12420():
++    assert sqrtdenest((3 - sqrt(2)*sqrt(4 + 3*I) + 3*I)/2) == I
++    e = 3 - sqrt(2)*sqrt(4 + I) + 3*I
++    assert sqrtdenest(e) == e
++
++
+ def test_sqrt_ratcomb():
+     assert sqrtdenest(sqrt(1 + r3) + sqrt(3 + 3*r3) - sqrt(10 + 6*r3)) == 0
+2026-11-10 20:28:58,525 - INFO - Eval script for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/sympy__sympy-17318/eval.sh; copying to container...
+2026-11-10 20:29:14,852 - INFO - Test runtime: 16.24 seconds
+2026-11-10 20:29:14,854 - INFO - Test output for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/sympy__sympy-17318/test_output.txt
+2026-11-10 20:29:14,930 - INFO - Git diff after:
+diff --git a/sympy/simplify/sqrtdenest.py b/sympy/simplify/sqrtdenest.py
+index f0b7653ea8..e437987d83 100644
+--- a/sympy/simplify/sqrtdenest.py
++++ b/sympy/simplify/sqrtdenest.py
+@@ -156,7 +156,8 @@ def _sqrt_match(p):
+         res = (p, S.Zero, S.Zero)
+     elif p.is_Add:
+         pargs = sorted(p.args, key=default_sort_key)
+-        if all((x**2).is_Rational for x in pargs):
++        sqargs = [x**2 for x in pargs]
++        if all(sq.is_Rational and sq.is_positive for sq in sqargs):
+             r, b, a = split_surds(p)
+             res = a, b, r
+             return list(res)
+2026-11-10 20:29:14,930 - INFO - Git diff changed after running eval script
+2026-11-10 20:29:14,930 - INFO - Grading answer for sympy__sympy-17318...
+2026-11-10 20:29:14,930 - INFO - report: {'sympy__sympy-17318': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_12420'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_sqrtdenest', 'test_sqrtdenest2', 'test_sqrtdenest_rec', 'test_issue_6241', 'test_sqrtdenest3', 'test_sqrtdenest4', 'test_sqrt_symbolic_denest', 'test_issue_5857', 'test_subsets', 'test_issue_5653'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-17318: resolved: True
+2026-11-10 20:29:14,932 - INFO - Attempting to stop container sweb.eval.sympy__sympy-17318.verified_full_glm53_opencode_R1933...
+2026-11-10 20:29:30,938 - INFO - Container sweb.eval.sympy__sympy-17318.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-10 20:29:30,938 - INFO - Attempting to remove container sweb.eval.sympy__sympy-17318.verified_full_glm53_opencode_R1933...
+2026-11-10 20:29:30,988 - INFO - Container sweb.eval.sympy__sympy-17318.verified_full_glm53_opencode_R1933 removed successfully.

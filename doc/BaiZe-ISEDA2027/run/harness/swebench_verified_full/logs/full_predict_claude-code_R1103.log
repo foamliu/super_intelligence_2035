@@ -1,0 +1,665 @@
+[verified-full 00:47:23] resume: loaded 500 existing results
+[verified-full 00:47:23] [1/500] django__django-15572 SKIP (predicted, patch=2422B)
+[verified-full 00:47:23] [2/500] PREDICT claude-code on django__django-15629
+[verified-full 00:54:01]   -> no-patch (patch=0B wall=397.8s)
+[verified-full 00:54:01] [3/500] PREDICT claude-code on django__django-15695
+[verified-full 01:18:59]   -> no-patch (patch=0B wall=1497.6s)
+[verified-full 01:18:59] [4/500] django__django-15731 SKIP (predicted, patch=799B)
+[verified-full 01:18:59] [5/500] django__django-15732 SKIP (predicted, patch=3167B)
+[verified-full 01:18:59] [6/500] django__django-15741 SKIP (predicted, patch=507B)
+[verified-full 01:18:59] [7/500] PREDICT claude-code on django__django-15814
+[verified-full 01:36:59]   -> no-patch (patch=0B wall=1080.4s)
+[verified-full 01:36:59] [8/500] django__django-15851 SKIP (predicted, patch=1135B)
+[verified-full 01:36:59] [9/500] django__django-15863 SKIP (predicted, patch=2005B)
+[verified-full 01:36:59] [10/500] PREDICT claude-code on django__django-15916
+[verified-full 01:49:00]   -> no-patch (patch=0B wall=720.2s)
+[verified-full 01:49:00] [11/500] django__django-15930 SKIP (predicted, patch=1902B)
+[verified-full 01:49:00] [12/500] PREDICT claude-code on django__django-15957
+[verified-full 02:19:00]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 02:19:00] [13/500] PREDICT claude-code on django__django-15973
+[verified-full 02:49:01]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 02:49:01] [14/500] django__django-15987 SKIP (predicted, patch=1699B)
+[verified-full 02:49:01] [15/500] PREDICT claude-code on django__django-16032
+[verified-full 03:01:13]   -> no-patch (patch=0B wall=731.9s)
+[verified-full 03:01:13] [16/500] django__django-16082 SKIP (predicted, patch=1812B)
+[verified-full 03:01:13] [17/500] django__django-16100 SKIP (predicted, patch=3893B)
+[verified-full 03:01:13] [18/500] django__django-16116 SKIP (predicted, patch=3942B)
+[verified-full 03:01:13] [19/500] django__django-16136 SKIP (predicted, patch=2380B)
+[verified-full 03:01:13] [20/500] django__django-16139 SKIP (predicted, patch=1463B)
+[verified-full 03:01:13] [21/500] django__django-16145 SKIP (predicted, patch=1201B)
+[verified-full 03:01:13] [22/500] django__django-16255 SKIP (predicted, patch=2879B)
+[verified-full 03:01:13] [23/500] django__django-16256 SKIP (predicted, patch=8028B)
+[verified-full 03:01:13] [24/500] PREDICT claude-code on django__django-16263
+[verified-full 03:17:13]   -> quota-blocked (patch=0B wall=960.4s)
+[verified-full 03:17:13] [25/500] PREDICT claude-code on django__django-16315
+[verified-full 03:47:14]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 03:47:14] [26/500] django__django-16333 SKIP (predicted, patch=2661B)
+[verified-full 03:47:14] [27/500] django__django-16429 SKIP (predicted, patch=1529B)
+[verified-full 03:47:14] [28/500] django__django-16454 SKIP (predicted, patch=2128B)
+[verified-full 03:47:14] [29/500] django__django-16485 SKIP (predicted, patch=548B)
+[verified-full 03:47:14] [30/500] django__django-16493 SKIP (predicted, patch=1467B)
+[verified-full 03:47:14] [31/500] PREDICT claude-code on django__django-16502
+[verified-full 04:08:43]   -> patch-produced (patch=3033B wall=1289.6s)
+[verified-full 04:08:43] [32/500] django__django-16527 SKIP (predicted, patch=1684B)
+[verified-full 04:08:43] [33/500] django__django-16560 SKIP (predicted, patch=18162B)
+[verified-full 04:08:43] [34/500] django__django-16569 SKIP (predicted, patch=688B)
+[verified-full 04:08:43] [35/500] django__django-16595 SKIP (predicted, patch=1549B)
+[verified-full 04:08:43] [36/500] django__django-16612 SKIP (predicted, patch=1826B)
+[verified-full 04:08:43] [37/500] django__django-16631 SKIP (predicted, patch=8355B)
+[verified-full 04:08:43] [38/500] django__django-16642 SKIP (predicted, patch=1291B)
+[verified-full 04:08:43] [39/500] PREDICT claude-code on django__django-16661
+[verified-full 04:33:14]   -> no-patch (patch=0B wall=1470.8s)
+[verified-full 04:33:14] [40/500] django__django-16662 SKIP (predicted, patch=845B)
+[verified-full 04:33:14] [41/500] django__django-16667 SKIP (predicted, patch=1608B)
+[verified-full 04:33:14] [42/500] django__django-16801 SKIP (predicted, patch=769B)
+[verified-full 04:33:14] [43/500] PREDICT claude-code on django__django-16819
+[verified-full 05:00:32]   -> patch-produced (patch=15275B wall=1637.2s)
+[verified-full 05:00:32] [44/500] django__django-16877 SKIP (predicted, patch=3934B)
+[verified-full 05:00:32] [45/500] django__django-16899 SKIP (predicted, patch=2333B)
+[verified-full 05:00:32] [46/500] PREDICT claude-code on django__django-16901
+[verified-full 05:30:32]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 05:30:32] [47/500] django__django-16938 SKIP (predicted, patch=1459B)
+[verified-full 05:30:32] [48/500] PREDICT claude-code on django__django-16950
+[verified-full 05:59:16]   -> patch-produced (patch=4666B wall=1723.6s)
+[verified-full 05:59:16] [49/500] django__django-17029 SKIP (predicted, patch=1266B)
+[verified-full 05:59:16] [50/500] PREDICT claude-code on django__django-17084
+[verified-full 06:07:19]   -> no-patch (patch=0B wall=482.7s)
+[verified-full 06:07:19] [51/500] django__django-17087 SKIP (predicted, patch=1684B)
+[verified-full 06:07:19] [52/500] django__django-7530 SKIP (predicted, patch=3223B)
+[verified-full 06:07:19] [53/500] django__django-9296 SKIP (predicted, patch=1367B)
+[verified-full 06:07:19] [54/500] matplotlib__matplotlib-13989 SKIP (predicted, patch=476B)
+[verified-full 06:07:19] [55/500] matplotlib__matplotlib-14623 SKIP (predicted, patch=934B)
+[verified-full 06:07:19] [56/500] PREDICT claude-code on matplotlib__matplotlib-20488
+[verified-full 06:33:19]   -> no-patch (patch=0B wall=1560.3s)
+[verified-full 06:33:19] [57/500] matplotlib__matplotlib-20676 SKIP (predicted, patch=1096B)
+[verified-full 06:33:19] [58/500] PREDICT claude-code on matplotlib__matplotlib-20826
+[verified-full 06:55:20]   -> no-patch (patch=0B wall=1320.4s)
+[verified-full 06:55:20] [59/500] matplotlib__matplotlib-20859 SKIP (predicted, patch=1293B)
+[verified-full 06:55:20] [60/500] matplotlib__matplotlib-21568 SKIP (predicted, patch=2997B)
+[verified-full 06:55:20] [61/500] matplotlib__matplotlib-22719 SKIP (predicted, patch=679B)
+[verified-full 06:55:20] [62/500] matplotlib__matplotlib-22865 SKIP (predicted, patch=842B)
+[verified-full 06:55:20] [63/500] PREDICT claude-code on matplotlib__matplotlib-22871
+[verified-full 06:59:20]   -> no-patch (patch=0B wall=240.4s)
+[verified-full 06:59:20] [64/500] matplotlib__matplotlib-23299 SKIP (predicted, patch=2886B)
+[verified-full 06:59:20] [65/500] matplotlib__matplotlib-23314 SKIP (predicted, patch=434B)
+[verified-full 06:59:20] [66/500] matplotlib__matplotlib-23412 SKIP (predicted, patch=741B)
+[verified-full 06:59:20] [67/500] matplotlib__matplotlib-23476 SKIP (predicted, patch=654B)
+[verified-full 06:59:20] [68/500] matplotlib__matplotlib-24026 SKIP (predicted, patch=1601B)
+[verified-full 06:59:20] [69/500] matplotlib__matplotlib-24149 SKIP (predicted, patch=729B)
+[verified-full 06:59:20] [70/500] PREDICT claude-code on matplotlib__matplotlib-24177
+[verified-full 07:29:21]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 07:29:21] [71/500] matplotlib__matplotlib-24570 SKIP (predicted, patch=713B)
+[verified-full 07:29:21] [72/500] matplotlib__matplotlib-24627 SKIP (predicted, patch=2958B)
+[verified-full 07:29:21] [73/500] PREDICT claude-code on matplotlib__matplotlib-24637
+[verified-full 07:35:08]   -> patch-produced (patch=944B wall=346.6s)
+[verified-full 07:35:08] [74/500] matplotlib__matplotlib-24870 SKIP (predicted, patch=3048B)
+[verified-full 07:35:08] [75/500] matplotlib__matplotlib-24970 SKIP (predicted, patch=653B)
+[verified-full 07:35:08] [76/500] matplotlib__matplotlib-25122 SKIP (predicted, patch=751B)
+[verified-full 07:35:08] [77/500] matplotlib__matplotlib-25287 SKIP (predicted, patch=1592B)
+[verified-full 07:35:08] [78/500] matplotlib__matplotlib-25311 SKIP (predicted, patch=4061B)
+[verified-full 07:35:08] [79/500] matplotlib__matplotlib-25332 SKIP (predicted, patch=1926B)
+[verified-full 07:35:08] [80/500] matplotlib__matplotlib-25479 SKIP (predicted, patch=1554B)
+[verified-full 07:35:08] [81/500] PREDICT claude-code on matplotlib__matplotlib-25775
+[verified-full 08:05:09]   -> no-patch (patch=0B wall=1801.1s)
+[verified-full 08:05:09] [82/500] matplotlib__matplotlib-25960 SKIP (predicted, patch=1340B)
+[verified-full 08:05:09] [83/500] matplotlib__matplotlib-26113 SKIP (predicted, patch=1441B)
+[verified-full 08:05:09] [84/500] matplotlib__matplotlib-26208 SKIP (predicted, patch=905B)
+[verified-full 08:05:09] [85/500] matplotlib__matplotlib-26291 SKIP (predicted, patch=2271B)
+[verified-full 08:05:09] [86/500] matplotlib__matplotlib-26342 SKIP (predicted, patch=1635B)
+[verified-full 08:05:09] [87/500] matplotlib__matplotlib-26466 SKIP (predicted, patch=428B)
+[verified-full 08:05:09] [88/500] PREDICT claude-code on mwaskom__seaborn-3069
+[verified-full 08:23:17]   -> no-patch (patch=0B wall=1087.8s)
+[verified-full 08:23:17] [89/500] PREDICT claude-code on mwaskom__seaborn-3187
+[verified-full 08:29:17]   -> no-patch (patch=0B wall=360.2s)
+[verified-full 08:29:17] [90/500] pallets__flask-5014 SKIP (predicted, patch=1011B)
+[verified-full 08:29:17] [91/500] psf__requests-1142 SKIP (predicted, patch=3608B)
+[verified-full 08:29:17] [92/500] psf__requests-1724 SKIP (predicted, patch=475B)
+[verified-full 08:29:17] [93/500] psf__requests-1766 SKIP (predicted, patch=451B)
+[verified-full 08:29:17] [94/500] psf__requests-1921 SKIP (predicted, patch=1332B)
+[verified-full 08:29:17] [95/500] psf__requests-2317 SKIP (predicted, patch=831B)
+[verified-full 08:29:17] [96/500] psf__requests-2931 SKIP (predicted, patch=421B)
+[verified-full 08:29:17] [97/500] psf__requests-5414 SKIP (predicted, patch=1297B)
+[verified-full 08:29:17] [98/500] PREDICT claude-code on psf__requests-6028
+[verified-full 08:39:17]   -> quota-blocked (patch=0B wall=600.4s)
+[verified-full 08:39:17] [99/500] pydata__xarray-2905 SKIP (predicted, patch=563B)
+[verified-full 08:39:17] [100/500] pydata__xarray-3095 SKIP (predicted, patch=702B)
+[verified-full 08:39:17] [101/500] pydata__xarray-3151 SKIP (predicted, patch=595B)
+[verified-full 08:39:17] [102/500] pydata__xarray-3305 SKIP (predicted, patch=2224B)
+[verified-full 08:39:17] [103/500] pydata__xarray-3677 SKIP (predicted, patch=2042B)
+[verified-full 08:39:17] [104/500] pydata__xarray-3993 SKIP (predicted, patch=3495B)
+[verified-full 08:39:17] [105/500] pydata__xarray-4075 SKIP (predicted, patch=1108B)
+[verified-full 08:39:17] [106/500] pydata__xarray-4094 SKIP (predicted, patch=604B)
+[verified-full 08:39:17] [107/500] pydata__xarray-4356 SKIP (predicted, patch=838B)
+[verified-full 08:39:17] [108/500] pydata__xarray-4629 SKIP (predicted, patch=501B)
+[verified-full 08:39:17] [109/500] pydata__xarray-4687 SKIP (predicted, patch=1338B)
+[verified-full 08:39:17] [110/500] pydata__xarray-4695 SKIP (predicted, patch=1329B)
+[verified-full 08:39:17] [111/500] PREDICT claude-code on pydata__xarray-4966
+[verified-full 08:45:17]   -> no-patch (patch=0B wall=360.2s)
+[verified-full 08:45:17] [112/500] pydata__xarray-6461 SKIP (predicted, patch=775B)
+[verified-full 08:45:17] [113/500] PREDICT claude-code on pydata__xarray-6599
+[verified-full 09:09:18]   -> no-patch (patch=0B wall=1440.5s)
+[verified-full 09:09:18] [114/500] pydata__xarray-6721 SKIP (predicted, patch=1159B)
+[verified-full 09:09:18] [115/500] pydata__xarray-6744 SKIP (predicted, patch=1649B)
+[verified-full 09:09:18] [116/500] pydata__xarray-6938 SKIP (predicted, patch=1620B)
+[verified-full 09:09:18] [117/500] pydata__xarray-6992 SKIP (predicted, patch=472B)
+[verified-full 09:09:18] [118/500] PREDICT claude-code on pydata__xarray-7229
+[verified-full 09:21:18]   -> no-patch (patch=0B wall=720.4s)
+[verified-full 09:21:18] [119/500] pydata__xarray-7233 SKIP (predicted, patch=579B)
+[verified-full 09:21:18] [120/500] PREDICT claude-code on pydata__xarray-7393
+[verified-full 09:39:52]   -> no-patch (patch=0B wall=1113.3s)
+[verified-full 09:39:52] [121/500] pylint-dev__pylint-4551 SKIP (predicted, patch=2817B)
+[verified-full 09:39:52] [122/500] pylint-dev__pylint-4604 SKIP (predicted, patch=670B)
+[verified-full 09:39:52] [123/500] pylint-dev__pylint-4661 SKIP (predicted, patch=3216B)
+[verified-full 09:39:52] [124/500] pylint-dev__pylint-4970 SKIP (predicted, patch=2033B)
+[verified-full 09:39:52] [125/500] pylint-dev__pylint-6386 SKIP (predicted, patch=1482B)
+[verified-full 09:39:52] [126/500] PREDICT claude-code on pylint-dev__pylint-6528
+[verified-full 10:08:30]   -> patch-produced (patch=3737B wall=1718.3s)
+[verified-full 10:08:30] [127/500] pylint-dev__pylint-6903 SKIP (predicted, patch=6179B)
+[verified-full 10:08:30] [128/500] PREDICT claude-code on pylint-dev__pylint-7080
+[verified-full 10:23:23]   -> no-patch (patch=0B wall=892.5s)
+[verified-full 10:23:23] [129/500] pylint-dev__pylint-7277 SKIP (predicted, patch=1941B)
+[verified-full 10:23:23] [130/500] pylint-dev__pylint-8898 SKIP (predicted, patch=3552B)
+[verified-full 10:23:23] [131/500] pytest-dev__pytest-10051 SKIP (predicted, patch=1376B)
+[verified-full 10:23:23] [132/500] PREDICT claude-code on pytest-dev__pytest-10081
+[verified-full 10:53:23]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 10:53:23] [133/500] pytest-dev__pytest-10356 SKIP (predicted, patch=1156B)
+[verified-full 10:53:23] [134/500] pytest-dev__pytest-5262 SKIP (predicted, patch=1640B)
+[verified-full 10:53:23] [135/500] pytest-dev__pytest-5631 SKIP (predicted, patch=2044B)
+[verified-full 10:53:23] [136/500] pytest-dev__pytest-5787 SKIP (predicted, patch=9790B)
+[verified-full 10:53:23] [137/500] pytest-dev__pytest-5809 SKIP (predicted, patch=1049B)
+[verified-full 10:53:23] [138/500] PREDICT claude-code on pytest-dev__pytest-5840
+[verified-full 11:10:06]   -> patch-produced (patch=1595B wall=1003.0s)
+[verified-full 11:10:06] [139/500] PREDICT claude-code on pytest-dev__pytest-6197
+[verified-full 11:25:21]   -> no-patch (patch=0B wall=914.8s)
+[verified-full 11:25:21] [140/500] pytest-dev__pytest-6202 SKIP (predicted, patch=597B)
+[verified-full 11:25:21] [141/500] pytest-dev__pytest-7205 SKIP (predicted, patch=590B)
+[verified-full 11:25:21] [142/500] PREDICT claude-code on pytest-dev__pytest-7236
+[verified-full 11:45:22]   -> no-patch (patch=0B wall=1201.3s)
+[verified-full 11:45:22] [143/500] pytest-dev__pytest-7324 SKIP (predicted, patch=1674B)
+[verified-full 11:45:22] [144/500] pytest-dev__pytest-7432 SKIP (predicted, patch=2333B)
+[verified-full 11:45:22] [145/500] pytest-dev__pytest-7490 SKIP (predicted, patch=1552B)
+[verified-full 11:45:22] [146/500] pytest-dev__pytest-7521 SKIP (predicted, patch=1060B)
+[verified-full 11:45:22] [147/500] pytest-dev__pytest-7571 SKIP (predicted, patch=1306B)
+[verified-full 11:45:22] [148/500] pytest-dev__pytest-7982 SKIP (predicted, patch=471B)
+[verified-full 11:45:22] [149/500] pytest-dev__pytest-8399 SKIP (predicted, patch=678B)
+[verified-full 11:45:22] [150/500] scikit-learn__scikit-learn-10297 SKIP (predicted, patch=1547B)
+[verified-full 11:45:22] [151/500] scikit-learn__scikit-learn-10844 SKIP (predicted, patch=627B)
+[verified-full 11:45:22] [152/500] scikit-learn__scikit-learn-10908 SKIP (predicted, patch=902B)
+[verified-full 11:45:22] [153/500] scikit-learn__scikit-learn-11310 SKIP (predicted, patch=3448B)
+[verified-full 11:45:22] [154/500] scikit-learn__scikit-learn-11578 SKIP (predicted, patch=668B)
+[verified-full 11:45:22] [155/500] scikit-learn__scikit-learn-12585 SKIP (predicted, patch=1250B)
+[verified-full 11:45:22] [156/500] scikit-learn__scikit-learn-12682 SKIP (predicted, patch=9392B)
+[verified-full 11:45:22] [157/500] scikit-learn__scikit-learn-12973 SKIP (predicted, patch=3657B)
+[verified-full 11:45:22] [158/500] scikit-learn__scikit-learn-13124 SKIP (predicted, patch=2376B)
+[verified-full 11:45:22] [159/500] scikit-learn__scikit-learn-13135 SKIP (predicted, patch=1618B)
+[verified-full 11:45:22] [160/500] scikit-learn__scikit-learn-13142 SKIP (predicted, patch=5104B)
+[verified-full 11:45:22] [161/500] scikit-learn__scikit-learn-13328 SKIP (predicted, patch=1621B)
+[verified-full 11:45:22] [162/500] scikit-learn__scikit-learn-13439 SKIP (predicted, patch=1210B)
+[verified-full 11:45:22] [163/500] scikit-learn__scikit-learn-13496 SKIP (predicted, patch=4944B)
+[verified-full 11:45:22] [164/500] scikit-learn__scikit-learn-13779 SKIP (predicted, patch=609B)
+[verified-full 11:45:22] [165/500] scikit-learn__scikit-learn-14053 SKIP (predicted, patch=2458B)
+[verified-full 11:45:22] [166/500] scikit-learn__scikit-learn-14087 SKIP (predicted, patch=732B)
+[verified-full 11:45:22] [167/500] scikit-learn__scikit-learn-14141 SKIP (predicted, patch=804B)
+[verified-full 11:45:22] [168/500] scikit-learn__scikit-learn-14496 SKIP (predicted, patch=1426B)
+[verified-full 11:45:22] [169/500] scikit-learn__scikit-learn-14629 SKIP (predicted, patch=2908B)
+[verified-full 11:45:22] [170/500] scikit-learn__scikit-learn-14710 SKIP (predicted, patch=2879B)
+[verified-full 11:45:22] [171/500] scikit-learn__scikit-learn-14894 SKIP (predicted, patch=11637B)
+[verified-full 11:45:22] [172/500] scikit-learn__scikit-learn-14983 SKIP (predicted, patch=1135B)
+[verified-full 11:45:22] [173/500] scikit-learn__scikit-learn-15100 SKIP (predicted, patch=1275B)
+[verified-full 11:45:22] [174/500] PREDICT claude-code on scikit-learn__scikit-learn-25102
+[verified-full 12:14:44]   -> patch-produced (patch=21545B wall=1761.0s)
+[verified-full 12:14:44] [175/500] scikit-learn__scikit-learn-25232 SKIP (predicted, patch=3591B)
+[verified-full 12:14:44] [176/500] scikit-learn__scikit-learn-25747 SKIP (predicted, patch=1892B)
+[verified-full 12:14:44] [177/500] scikit-learn__scikit-learn-25931 SKIP (predicted, patch=909B)
+[verified-full 12:14:44] [178/500] scikit-learn__scikit-learn-25973 SKIP (predicted, patch=4372B)
+[verified-full 12:14:44] [179/500] PREDICT claude-code on scikit-learn__scikit-learn-26194
+[verified-full 12:34:23]   -> no-patch (patch=0B wall=1179.0s)
+[verified-full 12:34:23] [180/500] scikit-learn__scikit-learn-26323 SKIP (predicted, patch=1088B)
+[verified-full 12:34:23] [181/500] scikit-learn__scikit-learn-9288 SKIP (predicted, patch=1654B)
+[verified-full 12:34:23] [182/500] sphinx-doc__sphinx-10323 SKIP (predicted, patch=2467B)
+[verified-full 12:34:23] [183/500] sphinx-doc__sphinx-10435 SKIP (predicted, patch=1868B)
+[verified-full 12:34:23] [184/500] sphinx-doc__sphinx-10449 SKIP (predicted, patch=2549B)
+[verified-full 12:34:23] [185/500] sphinx-doc__sphinx-10466 SKIP (predicted, patch=482B)
+[verified-full 12:34:23] [186/500] sphinx-doc__sphinx-10614 SKIP (predicted, patch=2887B)
+[verified-full 12:34:23] [187/500] PREDICT claude-code on sphinx-doc__sphinx-10673
+[verified-full 12:50:23]   -> no-patch (patch=0B wall=960.3s)
+[verified-full 12:50:23] [188/500] sphinx-doc__sphinx-11445 SKIP (predicted, patch=1855B)
+[verified-full 12:50:23] [189/500] sphinx-doc__sphinx-11510 SKIP (predicted, patch=3001B)
+[verified-full 12:50:23] [190/500] PREDICT claude-code on sphinx-doc__sphinx-7440
+[verified-full 13:16:24]   -> no-patch (patch=0B wall=1560.7s)
+[verified-full 13:16:24] [191/500] sphinx-doc__sphinx-7454 SKIP (predicted, patch=1355B)
+[verified-full 13:16:24] [192/500] sphinx-doc__sphinx-7462 SKIP (predicted, patch=1202B)
+[verified-full 13:16:24] [193/500] sphinx-doc__sphinx-7590 SKIP (predicted, patch=4453B)
+[verified-full 13:16:24] [194/500] PREDICT claude-code on sphinx-doc__sphinx-7748
+[verified-full 13:46:24]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 13:46:24] [195/500] sphinx-doc__sphinx-7757 SKIP (predicted, patch=2096B)
+[verified-full 13:46:24] [196/500] sphinx-doc__sphinx-7889 SKIP (predicted, patch=1091B)
+[verified-full 13:46:24] [197/500] sphinx-doc__sphinx-7910 SKIP (predicted, patch=1907B)
+[verified-full 13:46:24] [198/500] sphinx-doc__sphinx-7985 SKIP (predicted, patch=4830B)
+[verified-full 13:46:24] [199/500] sphinx-doc__sphinx-8035 SKIP (predicted, patch=8203B)
+[verified-full 13:46:24] [200/500] sphinx-doc__sphinx-8056 SKIP (predicted, patch=1287B)
+[verified-full 13:46:24] [201/500] sphinx-doc__sphinx-8120 SKIP (predicted, patch=3493B)
+[verified-full 13:46:24] [202/500] sphinx-doc__sphinx-8265 SKIP (predicted, patch=3931B)
+[verified-full 13:46:24] [203/500] sphinx-doc__sphinx-8269 SKIP (predicted, patch=627B)
+[verified-full 13:46:24] [204/500] sphinx-doc__sphinx-8459 SKIP (predicted, patch=765B)
+[verified-full 13:46:24] [205/500] sphinx-doc__sphinx-8475 SKIP (predicted, patch=2528B)
+[verified-full 13:46:24] [206/500] PREDICT claude-code on sphinx-doc__sphinx-8548
+[verified-full 14:01:26]   -> no-patch (patch=0B wall=901.7s)
+[verified-full 14:01:26] [207/500] sphinx-doc__sphinx-8551 SKIP (predicted, patch=5889B)
+[verified-full 14:01:26] [208/500] sphinx-doc__sphinx-8593 SKIP (predicted, patch=3154B)
+[verified-full 14:01:26] [209/500] sphinx-doc__sphinx-8595 SKIP (predicted, patch=1647B)
+[verified-full 14:01:26] [210/500] PREDICT claude-code on sphinx-doc__sphinx-8621
+[verified-full 14:05:26]   -> no-patch (patch=0B wall=240.1s)
+[verified-full 14:05:26] [211/500] sphinx-doc__sphinx-8638 SKIP (predicted, patch=3736B)
+[verified-full 14:05:26] [212/500] sphinx-doc__sphinx-8721 SKIP (predicted, patch=546B)
+[verified-full 14:05:26] [213/500] PREDICT claude-code on sphinx-doc__sphinx-9229
+[verified-full 14:29:27]   -> no-patch (patch=0B wall=1440.6s)
+[verified-full 14:29:27] [214/500] sphinx-doc__sphinx-9230 SKIP (predicted, patch=3976B)
+[verified-full 14:29:27] [215/500] sphinx-doc__sphinx-9258 SKIP (predicted, patch=4143B)
+[verified-full 14:29:27] [216/500] sphinx-doc__sphinx-9281 SKIP (predicted, patch=2255B)
+[verified-full 14:29:27] [217/500] sphinx-doc__sphinx-9320 SKIP (predicted, patch=1328B)
+[verified-full 14:29:27] [218/500] sphinx-doc__sphinx-9367 SKIP (predicted, patch=1159B)
+[verified-full 14:29:27] [219/500] PREDICT claude-code on sphinx-doc__sphinx-9461
+[verified-full 14:43:27]   -> no-patch (patch=0B wall=840.3s)
+[verified-full 14:43:27] [220/500] sphinx-doc__sphinx-9591 SKIP (predicted, patch=3496B)
+[verified-full 14:43:27] [221/500] sphinx-doc__sphinx-9602 SKIP (predicted, patch=8221B)
+[verified-full 14:43:27] [222/500] sphinx-doc__sphinx-9658 SKIP (predicted, patch=1523B)
+[verified-full 14:43:27] [223/500] sphinx-doc__sphinx-9673 SKIP (predicted, patch=3142B)
+[verified-full 14:43:27] [224/500] sphinx-doc__sphinx-9698 SKIP (predicted, patch=1324B)
+[verified-full 14:43:27] [225/500] sphinx-doc__sphinx-9711 SKIP (predicted, patch=2165B)
+[verified-full 14:43:27] [226/500] sympy__sympy-11618 SKIP (predicted, patch=3338B)
+[verified-full 14:43:27] [227/500] sympy__sympy-12096 SKIP (predicted, patch=5326B)
+[verified-full 14:43:27] [228/500] sympy__sympy-12419 SKIP (predicted, patch=486B)
+[verified-full 14:43:27] [229/500] sympy__sympy-12481 SKIP (predicted, patch=1706B)
+[verified-full 14:43:27] [230/500] sympy__sympy-12489 SKIP (predicted, patch=10598B)
+[verified-full 14:43:27] [231/500] PREDICT claude-code on sympy__sympy-13031
+[verified-full 15:06:08]   -> no-patch (patch=0B wall=1360.5s)
+[verified-full 15:06:08] [232/500] sympy__sympy-13091 SKIP (predicted, patch=16753B)
+[verified-full 15:06:08] [233/500] sympy__sympy-13372 SKIP (predicted, patch=766B)
+[verified-full 15:06:08] [234/500] sympy__sympy-13480 SKIP (predicted, patch=586B)
+[verified-full 15:06:08] [235/500] sympy__sympy-13551 SKIP (predicted, patch=2934B)
+[verified-full 15:06:08] [236/500] PREDICT claude-code on sympy__sympy-13615
+[verified-full 15:15:29]   -> no-patch (patch=0B wall=560.6s)
+[verified-full 15:15:29] [237/500] sympy__sympy-13647 SKIP (predicted, patch=714B)
+[verified-full 15:15:29] [238/500] sympy__sympy-13757 SKIP (predicted, patch=899B)
+[verified-full 15:15:29] [239/500] PREDICT claude-code on sympy__sympy-13798
+[verified-full 15:16:23]   -> no-patch (patch=0B wall=53.5s)
+[verified-full 15:16:23] [240/500] sympy__sympy-13852 SKIP (predicted, patch=2037B)
+[verified-full 15:16:23] [241/500] sympy__sympy-13877 SKIP (predicted, patch=4820B)
+[verified-full 15:16:23] [242/500] sympy__sympy-13878 SKIP (predicted, patch=8374B)
+[verified-full 15:16:23] [243/500] PREDICT claude-code on sympy__sympy-13974
+[verified-full 15:35:30]   -> no-patch (patch=0B wall=1146.1s)
+[verified-full 15:35:30] [244/500] PREDICT claude-code on sympy__sympy-14248
+[verified-full 15:49:30]   -> no-patch (patch=0B wall=839.9s)
+[verified-full 15:49:30] [245/500] PREDICT claude-code on sympy__sympy-14531
+[verified-full 16:06:02]   -> patch-produced (patch=4954B wall=991.3s)
+[verified-full 16:06:02] [246/500] PREDICT claude-code on sympy__sympy-14711
+[verified-full 16:09:34]   -> patch-produced (patch=439B wall=211.3s)
+[verified-full 16:09:34] [247/500] sympy__sympy-14976 SKIP (predicted, patch=1509B)
+[verified-full 16:09:34] [248/500] sympy__sympy-15017 SKIP (predicted, patch=3254B)
+[verified-full 16:09:34] [249/500] sympy__sympy-15345 SKIP (predicted, patch=1583B)
+[verified-full 16:09:34] [250/500] PREDICT claude-code on sympy__sympy-15349
+[verified-full 16:21:35]   -> patch-produced (patch=1532B wall=720.7s)
+[verified-full 16:21:35] [251/500] PREDICT claude-code on sympy__sympy-15599
+[verified-full 16:51:36]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 16:51:36] [252/500] sympy__sympy-15809 SKIP (predicted, patch=1348B)
+[verified-full 16:51:36] [253/500] sympy__sympy-15875 SKIP (predicted, patch=1199B)
+[verified-full 16:51:36] [254/500] sympy__sympy-15976 SKIP (predicted, patch=10863B)
+[verified-full 16:51:36] [255/500] sympy__sympy-16450 SKIP (predicted, patch=549B)
+[verified-full 16:51:36] [256/500] PREDICT claude-code on sympy__sympy-16597
+[verified-full 17:13:20]   -> no-patch (patch=0B wall=1304.1s)
+[verified-full 17:13:20] [257/500] sympy__sympy-16766 SKIP (predicted, patch=1554B)
+[verified-full 17:13:20] [258/500] sympy__sympy-16792 SKIP (predicted, patch=862B)
+[verified-full 17:13:20] [259/500] sympy__sympy-16886 SKIP (predicted, patch=460B)
+[verified-full 17:13:20] [260/500] sympy__sympy-17139 SKIP (predicted, patch=442B)
+[verified-full 17:13:20] [261/500] sympy__sympy-17318 SKIP (predicted, patch=382B)
+[verified-full 17:13:20] [262/500] sympy__sympy-17630 SKIP (predicted, patch=2429B)
+[verified-full 17:13:20] [263/500] PREDICT claude-code on sympy__sympy-17655
+[verified-full 17:31:39]   -> no-patch (patch=0B wall=1098.5s)
+[verified-full 17:31:39] [264/500] sympy__sympy-18189 SKIP (predicted, patch=655B)
+[verified-full 17:31:39] [265/500] sympy__sympy-18199 SKIP (predicted, patch=1258B)
+[verified-full 17:31:39] [266/500] sympy__sympy-18211 SKIP (predicted, patch=1666B)
+[verified-full 17:31:39] [267/500] PREDICT claude-code on sympy__sympy-18698
+[verified-full 18:01:40]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 18:01:40] [268/500] sympy__sympy-18763 SKIP (predicted, patch=539B)
+[verified-full 18:01:40] [269/500] sympy__sympy-19040 SKIP (predicted, patch=2275B)
+[verified-full 18:01:40] [270/500] sympy__sympy-19346 SKIP (predicted, patch=2057B)
+[verified-full 18:01:40] [271/500] sympy__sympy-19495 SKIP (predicted, patch=1927B)
+[verified-full 18:01:40] [272/500] sympy__sympy-19637 SKIP (predicted, patch=634B)
+[verified-full 18:01:40] [273/500] sympy__sympy-19783 SKIP (predicted, patch=1657B)
+[verified-full 18:01:40] [274/500] sympy__sympy-19954 SKIP (predicted, patch=702B)
+[verified-full 18:01:40] [275/500] PREDICT claude-code on sympy__sympy-20154
+[verified-full 18:12:40]   -> quota-blocked (patch=4290B wall=659.7s)
+[verified-full 18:12:40] [276/500] sympy__sympy-20428 SKIP (predicted, patch=4139B)
+[verified-full 18:12:40] [277/500] PREDICT claude-code on sympy__sympy-20438
+[verified-full 18:23:50]   -> patch-produced (patch=472B wall=669.6s)
+[verified-full 18:23:50] [278/500] sympy__sympy-20590 SKIP (predicted, patch=476B)
+[verified-full 18:23:50] [279/500] sympy__sympy-20801 SKIP (predicted, patch=574B)
+[verified-full 18:23:50] [280/500] sympy__sympy-20916 SKIP (predicted, patch=2013B)
+[verified-full 18:23:50] [281/500] sympy__sympy-21379 SKIP (predicted, patch=689B)
+[verified-full 18:23:50] [282/500] sympy__sympy-21596 SKIP (predicted, patch=1947B)
+[verified-full 18:23:50] [283/500] PREDICT claude-code on sympy__sympy-21612
+[verified-full 18:53:51]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 18:53:51] [284/500] sympy__sympy-21847 SKIP (predicted, patch=1051B)
+[verified-full 18:53:51] [285/500] sympy__sympy-21930 SKIP (predicted, patch=2376B)
+[verified-full 18:53:51] [286/500] PREDICT claude-code on sympy__sympy-22080
+[verified-full 19:10:35]   -> no-patch (patch=0B wall=1003.4s)
+[verified-full 19:10:35] [287/500] PREDICT claude-code on sympy__sympy-22456
+[verified-full 19:39:31]   -> no-patch (patch=0B wall=1735.5s)
+[verified-full 19:39:31] [288/500] sympy__sympy-22714 SKIP (predicted, patch=705B)
+[verified-full 19:39:31] [289/500] sympy__sympy-22914 SKIP (predicted, patch=1618B)
+[verified-full 19:39:31] [290/500] sympy__sympy-23262 SKIP (predicted, patch=1916B)
+[verified-full 19:39:31] [291/500] PREDICT claude-code on sympy__sympy-23413
+[verified-full 19:49:31]   -> no-patch (patch=0B wall=599.8s)
+[verified-full 19:49:31] [292/500] sympy__sympy-23534 SKIP (predicted, patch=401B)
+[verified-full 19:49:31] [293/500] sympy__sympy-23824 SKIP (predicted, patch=591B)
+[verified-full 19:49:31] [294/500] sympy__sympy-23950 SKIP (predicted, patch=1001B)
+[verified-full 19:49:31] [295/500] sympy__sympy-24066 SKIP (predicted, patch=2190B)
+[verified-full 19:49:31] [296/500] sympy__sympy-24213 SKIP (predicted, patch=691B)
+[verified-full 19:49:31] [297/500] sympy__sympy-24443 SKIP (predicted, patch=2260B)
+[verified-full 19:49:31] [298/500] sympy__sympy-24539 SKIP (predicted, patch=697B)
+[verified-full 19:49:31] [299/500] sympy__sympy-24562 SKIP (predicted, patch=964B)
+[verified-full 19:49:31] [300/500] sympy__sympy-24661 SKIP (predicted, patch=4748B)
+[verified-full 19:49:31] [301/500] astropy__astropy-12907 SKIP (predicted, patch=1784B)
+[verified-full 19:49:31] [302/500] astropy__astropy-13033 SKIP (predicted, patch=4640B)
+[verified-full 19:49:31] [303/500] PREDICT claude-code on astropy__astropy-13236
+[verified-full 20:06:26]   -> patch-produced (patch=2199B wall=1015.1s)
+[verified-full 20:06:26] [304/500] PREDICT claude-code on astropy__astropy-13398
+[verified-full 20:14:41]   -> no-patch (patch=0B wall=494.8s)
+[verified-full 20:14:41] [305/500] astropy__astropy-13453 SKIP (predicted, patch=2408B)
+[verified-full 20:14:41] [306/500] PREDICT claude-code on astropy__astropy-13579
+[verified-full 20:33:13]   -> no-patch (patch=0B wall=1111.6s)
+[verified-full 20:33:13] [307/500] PREDICT claude-code on astropy__astropy-13977
+[verified-full 21:03:14]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 21:03:14] [308/500] astropy__astropy-14096 SKIP (predicted, patch=1156B)
+[verified-full 21:03:14] [309/500] PREDICT claude-code on astropy__astropy-14182
+[verified-full 21:24:51]   -> patch-produced (patch=2241B wall=1297.6s)
+[verified-full 21:24:51] [310/500] astropy__astropy-14309 SKIP (predicted, patch=570B)
+[verified-full 21:24:51] [311/500] astropy__astropy-14365 SKIP (predicted, patch=2298B)
+[verified-full 21:24:51] [312/500] PREDICT claude-code on astropy__astropy-14369
+[verified-full 21:41:37]   -> no-patch (patch=0B wall=1005.1s)
+[verified-full 21:41:37] [313/500] astropy__astropy-14508 SKIP (predicted, patch=4471B)
+[verified-full 21:41:37] [314/500] astropy__astropy-14539 SKIP (predicted, patch=823B)
+[verified-full 21:41:37] [315/500] PREDICT claude-code on astropy__astropy-14598
+[verified-full 21:57:36]   -> no-patch (patch=0B wall=959.3s)
+[verified-full 21:57:36] [316/500] astropy__astropy-14995 SKIP (predicted, patch=2466B)
+[verified-full 21:57:36] [317/500] astropy__astropy-7166 SKIP (predicted, patch=2926B)
+[verified-full 21:57:36] [318/500] astropy__astropy-7336 SKIP (predicted, patch=2079B)
+[verified-full 21:57:36] [319/500] astropy__astropy-7606 SKIP (predicted, patch=461B)
+[verified-full 21:57:36] [320/500] astropy__astropy-7671 SKIP (predicted, patch=1043B)
+[verified-full 21:57:36] [321/500] astropy__astropy-8707 SKIP (predicted, patch=1704B)
+[verified-full 21:57:36] [322/500] astropy__astropy-8872 SKIP (predicted, patch=1675B)
+[verified-full 21:57:36] [323/500] django__django-10097 SKIP (predicted, patch=970B)
+[verified-full 21:57:36] [324/500] PREDICT claude-code on django__django-10554
+[verified-full 22:07:37]   -> no-patch (patch=0B wall=600.5s)
+[verified-full 22:07:37] [325/500] django__django-10880 SKIP (predicted, patch=2066B)
+[verified-full 22:07:37] [326/500] django__django-10914 SKIP (predicted, patch=6023B)
+[verified-full 22:07:37] [327/500] django__django-10973 SKIP (predicted, patch=6727B)
+[verified-full 22:07:37] [328/500] django__django-10999 SKIP (predicted, patch=495B)
+[verified-full 22:07:37] [329/500] django__django-11066 SKIP (predicted, patch=765B)
+[verified-full 22:07:37] [330/500] django__django-11087 SKIP (predicted, patch=2085B)
+[verified-full 22:07:37] [331/500] django__django-11095 SKIP (predicted, patch=5900B)
+[verified-full 22:07:37] [332/500] django__django-11099 SKIP (predicted, patch=1961B)
+[verified-full 22:07:37] [333/500] django__django-11119 SKIP (predicted, patch=1080B)
+[verified-full 22:07:37] [334/500] django__django-11133 SKIP (predicted, patch=1931B)
+[verified-full 22:07:37] [335/500] PREDICT claude-code on django__django-11138
+[verified-full 22:19:37]   -> no-patch (patch=0B wall=720.0s)
+[verified-full 22:19:37] [336/500] django__django-11141 SKIP (predicted, patch=3061B)
+[verified-full 22:19:37] [337/500] django__django-11149 SKIP (predicted, patch=5724B)
+[verified-full 22:19:37] [338/500] django__django-11163 SKIP (predicted, patch=568B)
+[verified-full 22:19:37] [339/500] django__django-11179 SKIP (predicted, patch=612B)
+[verified-full 22:19:37] [340/500] django__django-11206 SKIP (predicted, patch=2726B)
+[verified-full 22:19:37] [341/500] django__django-11211 SKIP (predicted, patch=3281B)
+[verified-full 22:19:37] [342/500] django__django-11239 SKIP (predicted, patch=4894B)
+[verified-full 22:19:37] [343/500] PREDICT claude-code on django__django-11265
+[verified-full 22:39:38]   -> no-patch (patch=0B wall=1200.4s)
+[verified-full 22:39:38] [344/500] django__django-11276 SKIP (predicted, patch=20764B)
+[verified-full 22:39:38] [345/500] django__django-11292 SKIP (predicted, patch=8999B)
+[verified-full 22:39:38] [346/500] django__django-11299 SKIP (predicted, patch=717B)
+[verified-full 22:39:38] [347/500] django__django-11333 SKIP (predicted, patch=615B)
+[verified-full 22:39:38] [348/500] django__django-11400 SKIP (predicted, patch=5558B)
+[verified-full 22:39:38] [349/500] PREDICT claude-code on django__django-11433
+[verified-full 23:01:38]   -> no-patch (patch=0B wall=1320.4s)
+[verified-full 23:01:38] [350/500] django__django-11451 SKIP (predicted, patch=1497B)
+[verified-full 23:01:38] [351/500] django__django-11477 SKIP (predicted, patch=4666B)
+[verified-full 23:01:38] [352/500] PREDICT claude-code on django__django-11490
+[verified-full 23:13:53]   -> patch-produced (patch=1565B wall=734.2s)
+[verified-full 23:13:53] [353/500] django__django-11532 SKIP (predicted, patch=1992B)
+[verified-full 23:13:53] [354/500] django__django-11551 SKIP (predicted, patch=4365B)
+[verified-full 23:13:53] [355/500] PREDICT claude-code on django__django-11555
+[verified-full 23:23:37]   -> no-patch (patch=0B wall=583.8s)
+[verified-full 23:23:37] [356/500] django__django-11603 SKIP (predicted, patch=920B)
+[verified-full 23:23:37] [357/500] django__django-11728 SKIP (predicted, patch=1074B)
+[verified-full 23:23:37] [358/500] PREDICT claude-code on django__django-11734
+[verified-full 23:53:37]   -> no-patch (patch=0B wall=1800.6s)
+[verified-full 23:53:37] [359/500] django__django-11740 SKIP (predicted, patch=2817B)
+[verified-full 23:53:37] [360/500] django__django-11749 SKIP (predicted, patch=3423B)
+[verified-full 23:53:37] [361/500] django__django-11790 SKIP (predicted, patch=1441B)
+[verified-full 23:53:37] [362/500] django__django-11815 SKIP (predicted, patch=4603B)
+[verified-full 23:53:37] [363/500] PREDICT claude-code on django__django-11820
+[verified-full 00:04:43]   -> patch-produced (patch=1286B wall=666.0s)
+[verified-full 00:04:43] [364/500] PREDICT claude-code on django__django-11848
+[verified-full 00:19:38]   -> no-patch (patch=0B wall=894.5s)
+[verified-full 00:19:38] [365/500] django__django-11880 SKIP (predicted, patch=1581B)
+[verified-full 00:19:38] [366/500] PREDICT claude-code on django__django-11885
+[verified-full 00:31:38]   -> no-patch (patch=0B wall=720.3s)
+[verified-full 00:31:38] [367/500] django__django-11951 SKIP (predicted, patch=876B)
+[verified-full 00:31:38] [368/500] PREDICT claude-code on django__django-11964
+[verified-full 00:54:49]   -> patch-produced (patch=632B wall=1390.9s)
+[verified-full 00:54:49] [369/500] django__django-11999 SKIP (predicted, patch=2347B)
+[verified-full 00:54:49] [370/500] django__django-12039 SKIP (predicted, patch=4588B)
+[verified-full 00:54:49] [371/500] django__django-12050 SKIP (predicted, patch=496B)
+[verified-full 00:54:49] [372/500] PREDICT claude-code on django__django-12125
+[verified-full 01:23:56]   -> patch-produced (patch=2967B wall=1746.6s)
+[verified-full 01:23:56] [373/500] django__django-12143 SKIP (predicted, patch=2751B)
+[verified-full 01:23:56] [374/500] django__django-12155 SKIP (predicted, patch=677B)
+[verified-full 01:23:56] [375/500] django__django-12193 SKIP (predicted, patch=1658B)
+[verified-full 01:23:56] [376/500] PREDICT claude-code on django__django-12209
+[verified-full 01:51:42]   -> no-patch (patch=0B wall=1665.7s)
+[verified-full 01:51:42] [377/500] django__django-12262 SKIP (predicted, patch=5105B)
+[verified-full 01:51:42] [378/500] PREDICT claude-code on django__django-12273
+[verified-full 02:11:42]   -> no-patch (patch=0B wall=1200.3s)
+[verified-full 02:11:42] [379/500] django__django-12276 SKIP (predicted, patch=1888B)
+[verified-full 02:11:42] [380/500] django__django-12304 SKIP (predicted, patch=1140B)
+[verified-full 02:11:42] [381/500] django__django-12308 SKIP (predicted, patch=2189B)
+[verified-full 02:11:42] [382/500] django__django-12325 SKIP (predicted, patch=2019B)
+[verified-full 02:11:42] [383/500] PREDICT claude-code on django__django-12406
+[verified-full 02:41:43]   -> no-patch (patch=0B wall=1800.6s)
+[verified-full 02:41:43] [384/500] django__django-12419 SKIP (predicted, patch=7069B)
+[verified-full 02:41:43] [385/500] PREDICT claude-code on django__django-12663
+[verified-full 03:11:44]   -> no-patch (patch=0B wall=1800.6s)
+[verified-full 03:11:44] [386/500] django__django-12708 SKIP (predicted, patch=5185B)
+[verified-full 03:11:44] [387/500] django__django-12713 SKIP (predicted, patch=3284B)
+[verified-full 03:11:44] [388/500] django__django-12741 SKIP (predicted, patch=2602B)
+[verified-full 03:11:44] [389/500] PREDICT claude-code on django__django-12754
+[verified-full 03:41:44]   -> no-patch (patch=0B wall=1800.7s)
+[verified-full 03:41:44] [390/500] django__django-12774 SKIP (predicted, patch=2751B)
+[verified-full 03:41:44] [391/500] django__django-12858 SKIP (predicted, patch=684B)
+[verified-full 03:41:44] [392/500] PREDICT claude-code on django__django-12965
+[verified-full 04:05:45]   -> patch-produced (patch=514B wall=1440.2s)
+[verified-full 04:05:45] [393/500] django__django-13012 SKIP (predicted, patch=566B)
+[verified-full 04:05:45] [394/500] django__django-13023 SKIP (predicted, patch=1254B)
+[verified-full 04:05:45] [395/500] django__django-13028 SKIP (predicted, patch=609B)
+[verified-full 04:05:45] [396/500] django__django-13033 SKIP (predicted, patch=3391B)
+[verified-full 04:05:45] [397/500] django__django-13089 SKIP (predicted, patch=888B)
+[verified-full 04:05:45] [398/500] django__django-13109 SKIP (predicted, patch=2623B)
+[verified-full 04:05:45] [399/500] PREDICT claude-code on django__django-13112
+[verified-full 04:35:45]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 04:35:45] [400/500] django__django-13121 SKIP (predicted, patch=2166B)
+[verified-full 04:35:45] [401/500] PREDICT claude-code on django__django-13128
+[verified-full 04:48:58]   -> patch-produced (patch=929B wall=793.1s)
+[verified-full 04:48:58] [402/500] django__django-13158 SKIP (predicted, patch=1403B)
+[verified-full 04:48:58] [403/500] django__django-13195 SKIP (predicted, patch=6053B)
+[verified-full 04:48:58] [404/500] django__django-13212 SKIP (predicted, patch=6648B)
+[verified-full 04:48:58] [405/500] django__django-13279 SKIP (predicted, patch=1978B)
+[verified-full 04:48:58] [406/500] PREDICT claude-code on django__django-13297
+[verified-full 04:57:42]   -> no-patch (patch=0B wall=523.2s)
+[verified-full 04:57:42] [407/500] django__django-13315 SKIP (predicted, patch=4806B)
+[verified-full 04:57:42] [408/500] django__django-13343 SKIP (predicted, patch=2659B)
+[verified-full 04:57:42] [409/500] PREDICT claude-code on django__django-13344
+[verified-full 05:01:42]   -> no-patch (patch=0B wall=240.0s)
+[verified-full 05:01:42] [410/500] PREDICT claude-code on django__django-13346
+[verified-full 05:05:42]   -> no-patch (patch=0B wall=239.9s)
+[verified-full 05:05:42] [411/500] django__django-13363 SKIP (predicted, patch=1061B)
+[verified-full 05:05:42] [412/500] django__django-13401 SKIP (predicted, patch=4141B)
+[verified-full 05:05:42] [413/500] PREDICT claude-code on django__django-13406
+[verified-full 05:29:41]   -> no-patch (patch=0B wall=1220.0s)
+[verified-full 05:29:41] [414/500] django__django-13410 SKIP (predicted, patch=755B)
+[verified-full 05:29:41] [415/500] django__django-13417 SKIP (predicted, patch=1251B)
+[verified-full 05:29:41] [416/500] PREDICT claude-code on django__django-13449
+[verified-full 05:43:42]   -> no-patch (patch=0B wall=840.3s)
+[verified-full 05:43:42] [417/500] django__django-13512 SKIP (predicted, patch=534B)
+[verified-full 05:43:42] [418/500] PREDICT claude-code on django__django-13513
+[verified-full 05:47:44]   -> no-patch (patch=0B wall=241.6s)
+[verified-full 05:47:44] [419/500] django__django-13516 SKIP (predicted, patch=1817B)
+[verified-full 05:47:44] [420/500] django__django-13551 SKIP (predicted, patch=3283B)
+[verified-full 05:47:44] [421/500] django__django-13568 SKIP (predicted, patch=5859B)
+[verified-full 05:47:44] [422/500] django__django-13569 SKIP (predicted, patch=1560B)
+[verified-full 05:47:44] [423/500] django__django-13590 SKIP (predicted, patch=1806B)
+[verified-full 05:47:44] [424/500] django__django-13658 SKIP (predicted, patch=2493B)
+[verified-full 05:47:44] [425/500] django__django-13670 SKIP (predicted, patch=423B)
+[verified-full 05:47:44] [426/500] django__django-13741 SKIP (predicted, patch=2946B)
+[verified-full 05:47:44] [427/500] django__django-13786 SKIP (predicted, patch=1940B)
+[verified-full 05:47:44] [428/500] django__django-13794 SKIP (predicted, patch=1985B)
+[verified-full 05:47:44] [429/500] django__django-13807 SKIP (predicted, patch=4587B)
+[verified-full 05:47:44] [430/500] django__django-13809 SKIP (predicted, patch=1240B)
+[verified-full 05:47:44] [431/500] django__django-13810 SKIP (predicted, patch=4342B)
+[verified-full 05:47:44] [432/500] PREDICT claude-code on django__django-13820
+[verified-full 06:09:43]   -> no-patch (patch=0B wall=291.6s)
+[verified-full 06:09:43] [433/500] PREDICT claude-code on django__django-13821
+[verified-full 06:35:50]   -> patch-produced (patch=5508B wall=651.3s)
+[verified-full 06:35:50] [434/500] PREDICT claude-code on django__django-13837
+[verified-full 06:35:50]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:50] [435/500] PREDICT claude-code on django__django-13925
+[verified-full 06:35:50]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:50] [436/500] PREDICT claude-code on django__django-13933
+[verified-full 06:35:50]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:50] [437/500] PREDICT claude-code on django__django-13964
+[verified-full 06:35:50]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:50] [438/500] PREDICT claude-code on django__django-14007
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [439/500] PREDICT claude-code on django__django-14011
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [440/500] PREDICT claude-code on django__django-14017
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [441/500] PREDICT claude-code on django__django-14034
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [442/500] PREDICT claude-code on django__django-14053
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [443/500] PREDICT claude-code on django__django-14089
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [444/500] PREDICT claude-code on django__django-14122
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [445/500] PREDICT claude-code on django__django-14140
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [446/500] PREDICT claude-code on django__django-14155
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [447/500] PREDICT claude-code on django__django-14170
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [448/500] PREDICT claude-code on django__django-14238
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [449/500] PREDICT claude-code on django__django-14311
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [450/500] PREDICT claude-code on django__django-14315
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [451/500] PREDICT claude-code on django__django-14349
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [452/500] PREDICT claude-code on django__django-14351
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [453/500] PREDICT claude-code on django__django-14373
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [454/500] PREDICT claude-code on django__django-14376
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [455/500] PREDICT claude-code on django__django-14404
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [456/500] PREDICT claude-code on django__django-14434
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [457/500] PREDICT claude-code on django__django-14493
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [458/500] PREDICT claude-code on django__django-14500
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [459/500] PREDICT claude-code on django__django-14534
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [460/500] PREDICT claude-code on django__django-14539
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [461/500] PREDICT claude-code on django__django-14559
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [462/500] PREDICT claude-code on django__django-14580
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [463/500] PREDICT claude-code on django__django-14608
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [464/500] PREDICT claude-code on django__django-14631
+[verified-full 06:35:51]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:51] [465/500] PREDICT claude-code on django__django-14672
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [466/500] PREDICT claude-code on django__django-14725
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [467/500] PREDICT claude-code on django__django-14752
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [468/500] PREDICT claude-code on django__django-14765
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [469/500] PREDICT claude-code on django__django-14771
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [470/500] PREDICT claude-code on django__django-14787
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [471/500] PREDICT claude-code on django__django-14792
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [472/500] PREDICT claude-code on django__django-14855
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [473/500] PREDICT claude-code on django__django-14915
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [474/500] PREDICT claude-code on django__django-14999
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [475/500] PREDICT claude-code on django__django-15022
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [476/500] PREDICT claude-code on django__django-15037
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [477/500] PREDICT claude-code on django__django-15098
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [478/500] PREDICT claude-code on django__django-15103
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [479/500] PREDICT claude-code on django__django-15104
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [480/500] PREDICT claude-code on django__django-15127
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [481/500] PREDICT claude-code on django__django-15128
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [482/500] PREDICT claude-code on django__django-15161
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [483/500] PREDICT claude-code on django__django-15252
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [484/500] PREDICT claude-code on django__django-15268
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [485/500] PREDICT claude-code on django__django-15277
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [486/500] PREDICT claude-code on django__django-15278
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [487/500] PREDICT claude-code on django__django-15280
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [488/500] PREDICT claude-code on django__django-15315
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [489/500] PREDICT claude-code on django__django-15368
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [490/500] PREDICT claude-code on django__django-15375
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [491/500] PREDICT claude-code on django__django-15380
+[verified-full 06:35:52]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:52] [492/500] PREDICT claude-code on django__django-15382
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] [493/500] PREDICT claude-code on django__django-15467
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] [494/500] PREDICT claude-code on django__django-15499
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] [495/500] PREDICT claude-code on django__django-15503
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] [496/500] PREDICT claude-code on django__django-15525
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] [497/500] PREDICT claude-code on django__django-15554
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] [498/500] PREDICT claude-code on django__django-15561
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] [499/500] PREDICT claude-code on django__django-15563
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] [500/500] PREDICT claude-code on django__django-15569
+[verified-full 06:35:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 06:35:53] merged 358/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_claude-code.json

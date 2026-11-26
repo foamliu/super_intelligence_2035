@@ -1,0 +1,126 @@
+2026-11-09 07:40:51,027 - INFO - Creating container for sphinx-doc__sphinx-9673...
+2026-11-09 07:40:52,207 - INFO - Removed existing container sweb.eval.sphinx-doc__sphinx-9673.verified_full_glm53_hermes_R1933
+2026-11-09 07:40:52,248 - INFO - Container for sphinx-doc__sphinx-9673 created: f8c4c8a8a69aa5d46c077b056f7f204c1345b6437ab730e01202087e402355a9
+2026-11-09 07:40:53,769 - INFO - Container for sphinx-doc__sphinx-9673 started: f8c4c8a8a69aa5d46c077b056f7f204c1345b6437ab730e01202087e402355a9
+2026-11-09 07:40:53,771 - INFO - Intermediate patch for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9673/patch.diff, now applying to container...
+2026-11-09 07:40:53,891 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/ext/autodoc/typehints.py...
+Checking patch tests/test_ext_autodoc_configs.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/ext/autodoc/typehints.py cleanly.
+Applied patch tests/test_ext_autodoc_configs.py cleanly.
+
+2026-11-09 07:40:54,225 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index 49d8dcf81..0f7a51601 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -24,6 +24,9 @@ Bugs fixed
+   is not 'py'
+ * #9644: autodoc: Crashed on getting source info from problematic object
+ * #9655: autodoc: mocked object having doc comment is warned unexpectedly
++* #9651: autodoc: return type field is not generated even if
++  :confval:`autodoc_typehints_description_target` is set to "documented" when
++  its info-field-list contains ``:returns:`` field
+ * #9630: autosummary: Failed to build summary table if :confval:`primary_domain`
+   is not 'py'
+ * #9670: html: Fix download file with special characters
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index af4b47bb0..f4b4dd35e 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -149,14 +149,14 @@ def augment_descriptions_with_types(
+         elif parts[0] == 'type':
+             name = ' '.join(parts[1:])
+             has_type.add(name)
+-        elif parts[0] == 'return':
++        elif parts[0] in ('return', 'returns'):
+             has_description.add('return')
+         elif parts[0] == 'rtype':
+             has_type.add('return')
+ 
+     # Add 'type' for parameters with a description but no declared type.
+     for name in annotations:
+-        if name == 'return':
++        if name in ('return', 'returns'):
+             continue
+         if name in has_description and name not in has_type:
+             field = nodes.field()
+diff --git a/tests/test_ext_autodoc_configs.py b/tests/test_ext_autodoc_configs.py
+index f6436f541..e04cd83b6 100644
+--- a/tests/test_ext_autodoc_configs.py
++++ b/tests/test_ext_autodoc_configs.py
+@@ -844,6 +844,10 @@ def test_autodoc_typehints_description_no_undoc(app):
+     (app.srcdir / 'index.rst').write_text(
+         '.. autofunction:: target.typehints.incr\n'
+         '\n'
++        '.. autofunction:: target.typehints.decr\n'
++        '\n'
++        '   :returns: decremented number\n'
++        '\n'
+         '.. autofunction:: target.typehints.tuple_args\n'
+         '\n'
+         '   :param x: arg\n'
+@@ -852,6 +856,14 @@ def test_autodoc_typehints_description_no_undoc(app):
+     app.build()
+     context = (app.outdir / 'index.txt').read_text()
+     assert ('target.typehints.incr(a, b=1)\n'
++            '\n'
++            'target.typehints.decr(a, b=1)\n'
++            '\n'
++            '   Returns:\n'
++            '      decremented number\n'
++            '\n'
++            '   Return type:\n'
++            '      int\n'
+             '\n'
+             'target.typehints.tuple_args(x)\n'
+             '\n'
+2026-11-09 07:40:54,227 - INFO - Eval script for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9673/eval.sh; copying to container...
+2026-11-09 07:40:59,799 - INFO - Test runtime: 5.50 seconds
+2026-11-09 07:40:59,800 - INFO - Test output for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9673/test_output.txt
+2026-11-09 07:40:59,854 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index 49d8dcf81..0f7a51601 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -24,6 +24,9 @@ Bugs fixed
+   is not 'py'
+ * #9644: autodoc: Crashed on getting source info from problematic object
+ * #9655: autodoc: mocked object having doc comment is warned unexpectedly
++* #9651: autodoc: return type field is not generated even if
++  :confval:`autodoc_typehints_description_target` is set to "documented" when
++  its info-field-list contains ``:returns:`` field
+ * #9630: autosummary: Failed to build summary table if :confval:`primary_domain`
+   is not 'py'
+ * #9670: html: Fix download file with special characters
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index af4b47bb0..f4b4dd35e 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -149,14 +149,14 @@ def augment_descriptions_with_types(
+         elif parts[0] == 'type':
+             name = ' '.join(parts[1:])
+             has_type.add(name)
+-        elif parts[0] == 'return':
++        elif parts[0] in ('return', 'returns'):
+             has_description.add('return')
+         elif parts[0] == 'rtype':
+             has_type.add('return')
+ 
+     # Add 'type' for parameters with a description but no declared type.
+     for name in annotations:
+-        if name == 'return':
++        if name in ('return', 'returns'):
+             continue
+         if name in has_description and name not in has_type:
+             field = nodes.field()
+2026-11-09 07:40:59,854 - INFO - Git diff changed after running eval script
+2026-11-09 07:40:59,854 - INFO - Grading answer for sphinx-doc__sphinx-9673...
+2026-11-09 07:40:59,858 - INFO - report: {'sphinx-doc__sphinx-9673': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_no_undoc'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autoclass_content_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_mixed', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_separated_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_separated_new', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_inherit_docstrings', 'tests/test_ext_autodoc_configs.py::test_autodoc_docstring_signature', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_init', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_both', 'tests/test_ext_autodoc_configs.py::test_mocked_module_imports', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_signature', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none_for_overload', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init_no_undoc', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_for_invalid_node', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_and_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options_with_values'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9673: resolved: True
+2026-11-09 07:40:59,860 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9673.verified_full_glm53_hermes_R1933...
+2026-11-09 07:41:16,228 - INFO - Container sweb.eval.sphinx-doc__sphinx-9673.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 07:41:16,229 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9673.verified_full_glm53_hermes_R1933...
+2026-11-09 07:41:16,277 - INFO - Container sweb.eval.sphinx-doc__sphinx-9673.verified_full_glm53_hermes_R1933 removed successfully.

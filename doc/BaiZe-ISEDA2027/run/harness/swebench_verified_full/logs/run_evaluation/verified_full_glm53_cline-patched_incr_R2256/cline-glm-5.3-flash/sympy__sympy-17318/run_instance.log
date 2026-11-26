@@ -1,0 +1,25 @@
+2026-11-12 10:51:42,455 - INFO - Creating container for sympy__sympy-17318...
+2026-11-12 10:51:42,473 - INFO - Container for sympy__sympy-17318 created: 682d63f57f146581a7159279bad4441624bf1d326fdc304054683f6e2380f754
+2026-11-12 10:51:43,201 - INFO - Container for sympy__sympy-17318 started: 682d63f57f146581a7159279bad4441624bf1d326fdc304054683f6e2380f754
+2026-11-12 10:51:43,202 - INFO - Intermediate patch for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2256/cline-glm-5.3-flash/sympy__sympy-17318/patch.diff, now applying to container...
+2026-11-12 10:51:43,378 - INFO - >>>>> Applied Patch:
+Checking patch repro_12420.py...
+/tmp/patch.diff:43: new blank line at EOF.
++
+Applied patch repro_12420.py cleanly.
+warning: 1 line adds whitespace errors.
+
+2026-11-12 10:51:44,015 - INFO - Git diff before:
+
+2026-11-12 10:51:44,018 - INFO - Eval script for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2256/cline-glm-5.3-flash/sympy__sympy-17318/eval.sh; copying to container...
+2026-11-12 10:51:59,710 - INFO - Test runtime: 15.61 seconds
+2026-11-12 10:51:59,713 - INFO - Test output for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2256/cline-glm-5.3-flash/sympy__sympy-17318/test_output.txt
+2026-11-12 10:51:59,784 - INFO - Git diff after:
+
+2026-11-12 10:51:59,784 - INFO - Grading answer for sympy__sympy-17318...
+2026-11-12 10:51:59,786 - INFO - report: {'sympy__sympy-17318': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_issue_12420']}, 'PASS_TO_PASS': {'success': ['test_sqrtdenest', 'test_sqrtdenest2', 'test_sqrtdenest_rec', 'test_issue_6241', 'test_sqrtdenest3', 'test_sqrtdenest4', 'test_sqrt_symbolic_denest', 'test_issue_5857', 'test_subsets', 'test_issue_5653'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-17318: resolved: False
+2026-11-12 10:51:59,788 - INFO - Attempting to stop container sweb.eval.sympy__sympy-17318.verified_full_glm53_cline-patched_incr_R2256...
+2026-11-12 10:52:15,933 - INFO - Container sweb.eval.sympy__sympy-17318.verified_full_glm53_cline-patched_incr_R2256 stopped successfully.
+2026-11-12 10:52:15,934 - INFO - Attempting to remove container sweb.eval.sympy__sympy-17318.verified_full_glm53_cline-patched_incr_R2256...
+2026-11-12 10:52:15,982 - INFO - Container sweb.eval.sympy__sympy-17318.verified_full_glm53_cline-patched_incr_R2256 removed successfully.

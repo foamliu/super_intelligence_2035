@@ -1,0 +1,173 @@
+2026-11-10 15:16:36,074 - INFO - Creating container for sphinx-doc__sphinx-9230...
+2026-11-10 15:16:36,091 - INFO - Container for sphinx-doc__sphinx-9230 created: 265b6139bfb53aa812b773b2bc22302ace6c9a7bb4d993b7db4987aa0a766eeb
+2026-11-10 15:16:36,722 - INFO - Container for sphinx-doc__sphinx-9230 started: 265b6139bfb53aa812b773b2bc22302ace6c9a7bb4d993b7db4987aa0a766eeb
+2026-11-10 15:16:36,724 - INFO - Intermediate patch for sphinx-doc__sphinx-9230 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sphinx-doc__sphinx-9230/patch.diff, now applying to container...
+2026-11-10 15:16:36,822 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/util/docfields.py...
+Checking patch tests/test_domain_py.py...
+Applied patch sphinx/util/docfields.py cleanly.
+Applied patch tests/test_domain_py.py cleanly.
+
+2026-11-10 15:16:37,253 - INFO - Git diff before:
+diff --git a/sphinx/util/docfields.py b/sphinx/util/docfields.py
+index 3a3367ebe..46a5a2fc1 100644
+--- a/sphinx/util/docfields.py
++++ b/sphinx/util/docfields.py
+@@ -9,7 +9,7 @@
+     :license: BSD, see LICENSE for details.
+ """
+ 
+-from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Type, Union, cast
++from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union, cast
+ 
+ from docutils import nodes
+ from docutils.nodes import Node
+@@ -35,6 +35,30 @@ def _is_single_paragraph(node: nodes.field_body) -> bool:
+     return False
+ 
+ 
++def _split_type_and_name(fieldarg: str) -> Tuple[Optional[str], str]:
++    """Split a field argument into a type and a name.
++
++    The type may contain nested brackets (e.g. ``dict(str, str)``), so the
++    argument is split at the last whitespace that is not nested inside
++    brackets.  If no such whitespace is found, the whole argument is
++    considered a name.
++    """
++    depth = 0
++    pos = -1
++    for i, char in enumerate(fieldarg):
++        if char in '([{':
++            depth += 1
++        elif char in ')]}':
++            depth -= 1
++        elif char.isspace() and depth == 0:
++            pos = i
++
++    if pos == -1:
++        return None, fieldarg
++    else:
++        return fieldarg[:pos].rstrip(), fieldarg[pos:].strip()
++
++
+ class Field:
+     """A doc field that is never grouped.  It can have an argument or not, the
+     argument can be linked using a specified *rolename*.  Field should be used
+@@ -297,11 +321,8 @@ class DocFieldTransformer:
+ 
+             # also support syntax like ``:param type name:``
+             if typedesc.is_typed:
+-                try:
+-                    argtype, argname = fieldarg.split(None, 1)
+-                except ValueError:
+-                    pass
+-                else:
++                argtype, argname = _split_type_and_name(fieldarg)
++                if argtype is not None:
+                     types.setdefault(typename, {})[argname] = \
+                         [nodes.Text(argtype)]
+                     fieldarg = argname
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 569390c40..afc512d9b 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -1008,6 +1008,29 @@ def test_info_field_list_var(app):
+                 refdomain="py", reftype="class", reftarget="int", **{"py:class": "Class"})
+ 
+ 
++def test_info_field_list_with_type_containing_brackets(app):
++    # refs: #9283
++    text = (".. py:function:: foo(opc_meta)\n"
++            "\n"
++            "   :param dict(str, str) opc_meta: (optional)\n")
++    doctree = restructuredtext.parse(app, text)
++
++    assert_node(doctree[2][1][0][0], ([nodes.field_name, "Parameters"],
++                                      [nodes.field_body, nodes.paragraph]))
++    assert_node(doctree[2][1][0][0][1][0],
++                ([addnodes.literal_strong, "opc_meta"],
++                 " (",
++                 [pending_xref, addnodes.literal_emphasis, "dict"],
++                 [addnodes.literal_emphasis, "("],
++                 [pending_xref, addnodes.literal_emphasis, "str"],
++                 [addnodes.literal_emphasis, ", "],
++                 [pending_xref, addnodes.literal_emphasis, "str"],
++                 [addnodes.literal_emphasis, ")"],
++                 ")",
++                 " -- ",
++                 "(optional)"))
++
++
+ @pytest.mark.sphinx(freshenv=True)
+ def test_module_index(app):
+     text = (".. py:module:: docutils\n"
+2026-11-10 15:16:37,255 - INFO - Eval script for sphinx-doc__sphinx-9230 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sphinx-doc__sphinx-9230/eval.sh; copying to container...
+2026-11-10 15:16:43,414 - INFO - Test runtime: 6.10 seconds
+2026-11-10 15:16:43,417 - INFO - Test output for sphinx-doc__sphinx-9230 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sphinx-doc__sphinx-9230/test_output.txt
+2026-11-10 15:16:43,480 - INFO - Git diff after:
+diff --git a/sphinx/util/docfields.py b/sphinx/util/docfields.py
+index 3a3367ebe..46a5a2fc1 100644
+--- a/sphinx/util/docfields.py
++++ b/sphinx/util/docfields.py
+@@ -9,7 +9,7 @@
+     :license: BSD, see LICENSE for details.
+ """
+ 
+-from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Type, Union, cast
++from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union, cast
+ 
+ from docutils import nodes
+ from docutils.nodes import Node
+@@ -35,6 +35,30 @@ def _is_single_paragraph(node: nodes.field_body) -> bool:
+     return False
+ 
+ 
++def _split_type_and_name(fieldarg: str) -> Tuple[Optional[str], str]:
++    """Split a field argument into a type and a name.
++
++    The type may contain nested brackets (e.g. ``dict(str, str)``), so the
++    argument is split at the last whitespace that is not nested inside
++    brackets.  If no such whitespace is found, the whole argument is
++    considered a name.
++    """
++    depth = 0
++    pos = -1
++    for i, char in enumerate(fieldarg):
++        if char in '([{':
++            depth += 1
++        elif char in ')]}':
++            depth -= 1
++        elif char.isspace() and depth == 0:
++            pos = i
++
++    if pos == -1:
++        return None, fieldarg
++    else:
++        return fieldarg[:pos].rstrip(), fieldarg[pos:].strip()
++
++
+ class Field:
+     """A doc field that is never grouped.  It can have an argument or not, the
+     argument can be linked using a specified *rolename*.  Field should be used
+@@ -297,11 +321,8 @@ class DocFieldTransformer:
+ 
+             # also support syntax like ``:param type name:``
+             if typedesc.is_typed:
+-                try:
+-                    argtype, argname = fieldarg.split(None, 1)
+-                except ValueError:
+-                    pass
+-                else:
++                argtype, argname = _split_type_and_name(fieldarg)
++                if argtype is not None:
+                     types.setdefault(typename, {})[argname] = \
+                         [nodes.Text(argtype)]
+                     fieldarg = argname
+2026-11-10 15:16:43,480 - INFO - Git diff changed after running eval script
+2026-11-10 15:16:43,480 - INFO - Grading answer for sphinx-doc__sphinx-9230...
+2026-11-10 15:16:43,492 - INFO - report: {'sphinx-doc__sphinx-9230': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_py.py::test_info_field_list'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs', 'tests/test_domain_py.py::test_domain_py_xrefs_abbreviations', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_domain_py_canonical', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_parse_annotation', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_pyfunction_with_number_literals', 'tests/test_domain_py.py::test_pyfunction_with_union_type_operator', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_exceptions_module_is_ignored', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pydata_with_union_type_operator', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pyclass_options', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pyproperty', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_canonical', 'tests/test_domain_py.py::test_canonical_definition_overrides', 'tests/test_domain_py.py::test_canonical_definition_skip', 'tests/test_domain_py.py::test_canonical_duplicated', 'tests/test_domain_py.py::test_info_field_list_var', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix', 'tests/test_domain_py.py::test_noindexentry', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names_disabled', 'tests/test_domain_py.py::test_warn_missing_reference'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9230: resolved: True
+2026-11-10 15:16:43,495 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9230.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 15:16:59,877 - INFO - Container sweb.eval.sphinx-doc__sphinx-9230.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 15:16:59,877 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9230.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 15:16:59,913 - INFO - Container sweb.eval.sphinx-doc__sphinx-9230.verified_full_glm53_opencode_incr_R2028 removed successfully.

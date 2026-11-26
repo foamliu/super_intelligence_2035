@@ -1,0 +1,29 @@
+3 instances already run, skipping...
+Running 6 instances...
+All instances run.
+Total instances: 9
+Instances submitted: 9
+Instances completed: 9
+Instances incomplete: 0
+Instances resolved: 9
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 9
+Report written to opencode-glm-5.3-flash.verified_full_glm53_opencode_R2145.json
+
+[stderr]
+
+  0%|          | 0/6 [00:00<?, ?it/s]
+ 17%|█▋        | 1/6 [01:25<07:09, 85.80s/it]
+1 ran successfully, 0 failed:  17%|█▋        | 1/6 [01:25<07:09, 85.80s/it]
+2 ran successfully, 0 failed:  33%|███▎      | 2/6 [01:25<02:51, 42.90s/it]
+3 ran successfully, 0 failed:  50%|█████     | 3/6 [01:25<01:25, 28.60s/it]
+4 ran successfully, 0 failed:  67%|██████▋   | 4/6 [01:25<00:42, 21.45s/it]
+4 ran successfully, 0 failed:  83%|████████▎ | 5/6 [02:14<00:26, 26.92s/it]
+5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [02:14<00:26, 26.92s/it]
+6 ran successfully, 0 failed: 100%|██████████| 6/6 [02:14<00:00, 22.44s/it]
+6 ran successfully, 0 failed: 100%|██████████| 6/6 [02:14<00:00, 22.44s/it]

@@ -1,0 +1,196 @@
+2026-10-30 15:51:37,267 - INFO - Creating container for scikit-learn__scikit-learn-25102...
+2026-10-30 15:51:37,292 - INFO - Container for scikit-learn__scikit-learn-25102 created: 4cc0ef4914854fc810ddd484288c8d963d29ae613a5f29c785b6f27e11caf088
+2026-10-30 15:51:52,635 - INFO - Container for scikit-learn__scikit-learn-25102 started: 4cc0ef4914854fc810ddd484288c8d963d29ae613a5f29c785b6f27e11caf088
+2026-10-30 15:51:52,641 - INFO - Intermediate patch for scikit-learn__scikit-learn-25102 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-25102/patch.diff, now applying to container...
+2026-10-30 15:51:54,221 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/feature_selection/_base.py...
+Checking patch sklearn/feature_selection/tests/test_base.py...
+Applied patch sklearn/feature_selection/_base.py cleanly.
+Applied patch sklearn/feature_selection/tests/test_base.py cleanly.
+
+2026-10-30 15:51:55,037 - INFO - Git diff before:
+diff --git a/sklearn/feature_selection/_base.py b/sklearn/feature_selection/_base.py
+index da2185eac..29bacba97 100644
+--- a/sklearn/feature_selection/_base.py
++++ b/sklearn/feature_selection/_base.py
+@@ -14,9 +14,10 @@ from ..base import TransformerMixin
+ from ..cross_decomposition._pls import _PLS
+ from ..utils import (
+     check_array,
+-    safe_mask,
+     safe_sqr,
+ )
++from ..utils import _safe_indexing
++from ..utils._set_output import _get_output_config
+ from ..utils._tags import _safe_tags
+ from ..utils.validation import _check_feature_names_in, check_is_fitted
+ 
+@@ -78,6 +79,11 @@ class SelectorMixin(TransformerMixin, metaclass=ABCMeta):
+         X_r : array of shape [n_samples, n_selected_features]
+             The input samples with only the selected features.
+         """
++        # Preserve X when X is a dataframe and the output is configured to
++        # be pandas.
++        output_config_dense = _get_output_config("transform", estimator=self)["dense"]
++        preserve_X = hasattr(X, "iloc") and output_config_dense == "pandas"
++
+         # note: we use _safe_tags instead of _get_tags because this is a
+         # public Mixin.
+         X = self._validate_data(
+@@ -85,6 +91,7 @@ class SelectorMixin(TransformerMixin, metaclass=ABCMeta):
+             dtype=None,
+             accept_sparse="csr",
+             force_all_finite=not _safe_tags(self, key="allow_nan"),
++            cast_to_ndarray=not preserve_X,
+             reset=False,
+         )
+         return self._transform(X)
+@@ -98,10 +105,10 @@ class SelectorMixin(TransformerMixin, metaclass=ABCMeta):
+                 " too noisy or the selection test too strict.",
+                 UserWarning,
+             )
++            if hasattr(X, "iloc"):
++                return X.iloc[:, :0]
+             return np.empty(0, dtype=X.dtype).reshape((X.shape[0], 0))
+-        if len(mask) != X.shape[1]:
+-            raise ValueError("X has a different shape than during fitting.")
+-        return X[:, safe_mask(X, mask)]
++        return _safe_indexing(X, mask, axis=1)
+ 
+     def inverse_transform(self, X):
+         """Reverse the transformation operation.
+diff --git a/sklearn/feature_selection/tests/test_base.py b/sklearn/feature_selection/tests/test_base.py
+index 9df074942..9869a1c03 100644
+--- a/sklearn/feature_selection/tests/test_base.py
++++ b/sklearn/feature_selection/tests/test_base.py
+@@ -6,23 +6,25 @@ from numpy.testing import assert_array_equal
+ 
+ from sklearn.base import BaseEstimator
+ from sklearn.feature_selection._base import SelectorMixin
+-from sklearn.utils import check_array
+ 
+ 
+ class StepSelector(SelectorMixin, BaseEstimator):
+-    """Retain every `step` features (beginning with 0)"""
++    """Retain every `step` features (beginning with 0).
++
++    If `step < 1`, then no features are selected.
++    """
+ 
+     def __init__(self, step=2):
+         self.step = step
+ 
+     def fit(self, X, y=None):
+-        X = check_array(X, accept_sparse="csc")
+-        self.n_input_feats = X.shape[1]
++        X = self._validate_data(X, accept_sparse="csc")
+         return self
+ 
+     def _get_support_mask(self):
+-        mask = np.zeros(self.n_input_feats, dtype=bool)
+-        mask[:: self.step] = True
++        mask = np.zeros(self.n_features_in_, dtype=bool)
++        if self.step >= 1:
++            mask[:: self.step] = True
+         return mask
+ 
+ 
+@@ -114,3 +116,36 @@ def test_get_support():
+     sel.fit(X, y)
+     assert_array_equal(support, sel.get_support())
+     assert_array_equal(support_inds, sel.get_support(indices=True))
++
++
++def test_output_dataframe():
++    """Check output dtypes for dataframes is consistent with the input dtypes."""
++    pd = pytest.importorskip("pandas")
++
++    X = pd.DataFrame(
++        {
++            "a": pd.Series([1.0, 2.4, 4.5], dtype=np.float32),
++            "b": pd.Series(["a", "b", "a"], dtype="category"),
++            "c": pd.Series(["j", "b", "b"], dtype="category"),
++            "d": pd.Series([3.0, 2.4, 1.2], dtype=np.float64),
++        }
++    )
++
++    for step in [2, 3]:
++        sel = StepSelector(step=step).set_output(transform="pandas")
++        sel.fit(X)
++
++        output = sel.transform(X)
++        for name, dtype in output.dtypes.items():
++            assert dtype == X.dtypes[name]
++
++    # step=0 will select nothing
++    sel0 = StepSelector(step=0).set_output(transform="pandas")
++    sel0.fit(X, y)
++
++    msg = "No features were selected"
++    with pytest.warns(UserWarning, match=msg):
++        output0 = sel0.transform(X)
++
++    assert_array_equal(output0.index, X.index)
++    assert output0.shape == (X.shape[0], 0)
+2026-10-30 15:51:55,043 - INFO - Eval script for scikit-learn__scikit-learn-25102 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-25102/eval.sh; copying to container...
+2026-10-30 15:52:07,295 - INFO - Test runtime: 11.76 seconds
+2026-10-30 15:52:07,303 - INFO - Test output for scikit-learn__scikit-learn-25102 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-25102/test_output.txt
+2026-10-30 15:52:07,809 - INFO - Git diff after:
+diff --git a/sklearn/feature_selection/_base.py b/sklearn/feature_selection/_base.py
+index da2185eac..29bacba97 100644
+--- a/sklearn/feature_selection/_base.py
++++ b/sklearn/feature_selection/_base.py
+@@ -14,9 +14,10 @@ from ..base import TransformerMixin
+ from ..cross_decomposition._pls import _PLS
+ from ..utils import (
+     check_array,
+-    safe_mask,
+     safe_sqr,
+ )
++from ..utils import _safe_indexing
++from ..utils._set_output import _get_output_config
+ from ..utils._tags import _safe_tags
+ from ..utils.validation import _check_feature_names_in, check_is_fitted
+ 
+@@ -78,6 +79,11 @@ class SelectorMixin(TransformerMixin, metaclass=ABCMeta):
+         X_r : array of shape [n_samples, n_selected_features]
+             The input samples with only the selected features.
+         """
++        # Preserve X when X is a dataframe and the output is configured to
++        # be pandas.
++        output_config_dense = _get_output_config("transform", estimator=self)["dense"]
++        preserve_X = hasattr(X, "iloc") and output_config_dense == "pandas"
++
+         # note: we use _safe_tags instead of _get_tags because this is a
+         # public Mixin.
+         X = self._validate_data(
+@@ -85,6 +91,7 @@ class SelectorMixin(TransformerMixin, metaclass=ABCMeta):
+             dtype=None,
+             accept_sparse="csr",
+             force_all_finite=not _safe_tags(self, key="allow_nan"),
++            cast_to_ndarray=not preserve_X,
+             reset=False,
+         )
+         return self._transform(X)
+@@ -98,10 +105,10 @@ class SelectorMixin(TransformerMixin, metaclass=ABCMeta):
+                 " too noisy or the selection test too strict.",
+                 UserWarning,
+             )
++            if hasattr(X, "iloc"):
++                return X.iloc[:, :0]
+             return np.empty(0, dtype=X.dtype).reshape((X.shape[0], 0))
+-        if len(mask) != X.shape[1]:
+-            raise ValueError("X has a different shape than during fitting.")
+-        return X[:, safe_mask(X, mask)]
++        return _safe_indexing(X, mask, axis=1)
+ 
+     def inverse_transform(self, X):
+         """Reverse the transformation operation.
+2026-10-30 15:52:07,810 - INFO - Git diff changed after running eval script
+2026-10-30 15:52:07,810 - INFO - Grading answer for scikit-learn__scikit-learn-25102...
+2026-10-30 15:52:07,866 - INFO - report: {'scikit-learn__scikit-learn-25102': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['sklearn/feature_selection/tests/test_base.py::test_output_dataframe', 'sklearn/feature_selection/tests/test_feature_select.py::test_dataframe_output_dtypes']}, 'PASS_TO_PASS': {'success': ['sklearn/feature_selection/tests/test_base.py::test_inverse_transform_dense', 'sklearn/feature_selection/tests/test_base.py::test_inverse_transform_sparse', 'sklearn/feature_selection/tests/test_base.py::test_get_support', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_oneway_vs_scipy_stats', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_oneway_ints', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_classif', 'sklearn/feature_selection/tests/test_feature_select.py::test_r_regression[True]', 'sklearn/feature_selection/tests/test_feature_select.py::test_r_regression[False]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_input_dtype', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_center', 'sklearn/feature_selection/tests/test_feature_select.py::test_r_regression_force_finite[X0-y0-expected_corr_coef0-True]', 'sklearn/feature_selection/tests/test_feature_select.py::test_r_regression_force_finite[X1-y1-expected_corr_coef1-True]', 'sklearn/feature_selection/tests/test_feature_select.py::test_r_regression_force_finite[X2-y2-expected_corr_coef2-False]', 'sklearn/feature_selection/tests/test_feature_select.py::test_r_regression_force_finite[X3-y3-expected_corr_coef3-False]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_corner_case[X0-y0-expected_f_statistic0-expected_p_values0-True]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_corner_case[X1-y1-expected_f_statistic1-expected_p_values1-True]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_corner_case[X2-y2-expected_f_statistic2-expected_p_values2-True]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_corner_case[X3-y3-expected_f_statistic3-expected_p_values3-True]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_corner_case[X4-y4-expected_f_statistic4-expected_p_values4-False]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_corner_case[X5-y5-expected_f_statistic5-expected_p_values5-False]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_corner_case[X6-y6-expected_f_statistic6-expected_p_values6-False]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_regression_corner_case[X7-y7-expected_f_statistic7-expected_p_values7-False]', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_classif_multi_class', 'sklearn/feature_selection/tests/test_feature_select.py::test_boundary_case_ch2', 'sklearn/feature_selection/tests/test_feature_select.py::test_nans', 'sklearn/feature_selection/tests/test_feature_select.py::test_invalid_k', 'sklearn/feature_selection/tests/test_feature_select.py::test_f_classif_constant_feature'], 'failure': ['sklearn/feature_selection/tests/test_base.py::test_transform_dense', 'sklearn/feature_selection/tests/test_base.py::test_transform_sparse', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_percentile_classif', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_percentile_classif_sparse', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_kbest_classif', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_kbest_all', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_kbest_zero[float32]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_kbest_zero[float64]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_heuristics_classif', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_percentile_regression', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_percentile_regression_full', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_kbest_regression', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_heuristics_regression', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[1-0.001]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[1-0.01]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[1-0.1]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[5-0.001]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[5-0.01]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[5-0.1]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[10-0.001]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[10-0.01]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fdr_regression[10-0.1]', 'sklearn/feature_selection/tests/test_feature_select.py::test_select_fwe_regression', 'sklearn/feature_selection/tests/test_feature_select.py::test_selectkbest_tiebreaking', 'sklearn/feature_selection/tests/test_feature_select.py::test_selectpercentile_tiebreaking', 'sklearn/feature_selection/tests/test_feature_select.py::test_tied_pvalues', 'sklearn/feature_selection/tests/test_feature_select.py::test_scorefunc_multilabel', 'sklearn/feature_selection/tests/test_feature_select.py::test_tied_scores', 'sklearn/feature_selection/tests/test_feature_select.py::test_no_feature_selected', 'sklearn/feature_selection/tests/test_feature_select.py::test_mutual_info_classif', 'sklearn/feature_selection/tests/test_feature_select.py::test_mutual_info_regression']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-25102: resolved: False
+2026-10-30 15:52:07,871 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-25102.verified_full_opencode...
+2026-10-30 15:52:23,755 - INFO - Container sweb.eval.scikit-learn__scikit-learn-25102.verified_full_opencode stopped successfully.
+2026-10-30 15:52:23,755 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-25102.verified_full_opencode...
+2026-10-30 15:52:23,807 - INFO - Container sweb.eval.scikit-learn__scikit-learn-25102.verified_full_opencode removed successfully.

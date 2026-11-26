@@ -1,0 +1,76 @@
+2026-11-12 01:38:49,502 - INFO - Creating container for django__django-14493...
+2026-11-12 01:38:49,538 - INFO - Container for django__django-14493 created: 715644294d78411ba4268b223c50a9bc0490e09861fbada494df2a295d3999e5
+2026-11-12 01:38:50,246 - INFO - Container for django__django-14493 started: 715644294d78411ba4268b223c50a9bc0490e09861fbada494df2a295d3999e5
+2026-11-12 01:38:50,248 - INFO - Intermediate patch for django__django-14493 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2216/pi-glm-5.3-flash/django__django-14493/patch.diff, now applying to container...
+2026-11-12 01:38:50,372 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/staticfiles/storage.py...
+Checking patch tests/staticfiles_tests/test_storage.py...
+Applied patch django/contrib/staticfiles/storage.py cleanly.
+Applied patch tests/staticfiles_tests/test_storage.py cleanly.
+
+2026-11-12 01:38:51,754 - INFO - Git diff before:
+diff --git a/django/contrib/staticfiles/storage.py b/django/contrib/staticfiles/storage.py
+index f957a667b2..720767aa9e 100644
+--- a/django/contrib/staticfiles/storage.py
++++ b/django/contrib/staticfiles/storage.py
+@@ -261,6 +261,7 @@ class HashedFilesMixin:
+ 
+         paths = {path: paths[path] for path in adjustable_paths}
+ 
++        substitutions = False
+         for i in range(self.max_post_process_passes):
+             substitutions = False
+             for name, hashed_name, processed, subst in self._post_process(paths, adjustable_paths, hashed_files):
+diff --git a/tests/staticfiles_tests/test_storage.py b/tests/staticfiles_tests/test_storage.py
+index db655f2453..f125c81cb4 100644
+--- a/tests/staticfiles_tests/test_storage.py
++++ b/tests/staticfiles_tests/test_storage.py
+@@ -497,6 +497,25 @@ class CustomStaticFilesStorage(storage.StaticFilesStorage):
+         super().__init__(*args, **kwargs)
+ 
+ 
++class ZeroMaxPostProcessPassesStorage(storage.ManifestStaticFilesStorage):
++    """
++    Used in TestCollectionZeroMaxPostProcessPasses.
++    """
++    max_post_process_passes = 0
++
++
++@override_settings(
++    STATICFILES_STORAGE='staticfiles_tests.test_storage.ZeroMaxPostProcessPassesStorage',
++)
++class TestCollectionZeroMaxPostProcessPasses(CollectionTestCase):
++    """
++    A storage subclass with max_post_process_passes set to 0 shouldn't
++    crash when running collectstatic (#32829).
++    """
++    def test_max_post_process_passes_0(self):
++        self.assertFileContains('test.txt', 'Can we find')
++
++
+ @unittest.skipIf(sys.platform == 'win32', "Windows only partially supports chmod.")
+ class TestStaticFilePermissions(CollectionTestCase):
+2026-11-12 01:38:51,756 - INFO - Eval script for django__django-14493 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2216/pi-glm-5.3-flash/django__django-14493/eval.sh; copying to container...
+2026-11-12 01:38:59,988 - INFO - Test runtime: 8.16 seconds
+2026-11-12 01:38:59,989 - INFO - Test output for django__django-14493 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2216/pi-glm-5.3-flash/django__django-14493/test_output.txt
+2026-11-12 01:39:00,073 - INFO - Git diff after:
+diff --git a/django/contrib/staticfiles/storage.py b/django/contrib/staticfiles/storage.py
+index f957a667b2..720767aa9e 100644
+--- a/django/contrib/staticfiles/storage.py
++++ b/django/contrib/staticfiles/storage.py
+@@ -261,6 +261,7 @@ class HashedFilesMixin:
+ 
+         paths = {path: paths[path] for path in adjustable_paths}
+ 
++        substitutions = False
+         for i in range(self.max_post_process_passes):
+             substitutions = False
+             for name, hashed_name, processed, subst in self._post_process(paths, adjustable_paths, hashed_files):
+2026-11-12 01:39:00,074 - INFO - Git diff changed after running eval script
+2026-11-12 01:39:00,074 - INFO - Grading answer for django__django-14493...
+2026-11-12 01:39:00,077 - INFO - report: {'django__django-14493': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_collectstatistic_no_post_process_replaced_paths (staticfiles_tests.test_storage.TestCollectionNoPostProcessReplacedPaths)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_hashed_name (staticfiles_tests.test_storage.TestCollectionNoneHashStorage)', 'With storage classes having several file extension patterns, only the', 'test_collect_static_files_default_permissions (staticfiles_tests.test_storage.TestStaticFilePermissions)', 'test_collect_static_files_permissions (staticfiles_tests.test_storage.TestStaticFilePermissions)', 'test_collect_static_files_subclass_of_static_storage (staticfiles_tests.test_storage.TestStaticFilePermissions)', 'test_template_tag_return (staticfiles_tests.test_storage.TestCollectionSimpleStorage)', 'test_template_tag_simple_content (staticfiles_tests.test_storage.TestCollectionSimpleStorage)', 'test_file_change_after_collectstatic (staticfiles_tests.test_storage.TestCollectionHashedFilesCache)', 'test_aggregating_modules (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_clear_empties_manifest (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_css_import_case_insensitive (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_import_loop (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'See #18050', 'test_intermediate_files (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_js_source_map (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_js_source_map_sensitive (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_loaded_cache (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_manifest_does_not_exist (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_manifest_does_not_ignore_permission_error (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_manifest_exists (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_missing_entry (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_module_import (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_parse_cache (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_path_ignored_completely (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_path_with_fragment (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_path_with_querystring (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_path_with_querystring_and_fragment (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'post_processing behaves correctly.', 'post_processing indicates the origin of the error when it fails.', 'test_template_tag_absolute (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'Like test_template_tag_absolute, but for a file in STATIC_ROOT (#26249).', 'test_template_tag_deep_relative (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_template_tag_relative (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_template_tag_return (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_template_tag_simple_content (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_template_tag_url (staticfiles_tests.test_storage.TestCollectionManifestStorage)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14493: resolved: True
+2026-11-12 01:39:00,079 - INFO - Attempting to stop container sweb.eval.django__django-14493.verified_full_glm53_pi_incr_R2216...
+2026-11-12 01:39:16,274 - INFO - Container sweb.eval.django__django-14493.verified_full_glm53_pi_incr_R2216 stopped successfully.
+2026-11-12 01:39:16,275 - INFO - Attempting to remove container sweb.eval.django__django-14493.verified_full_glm53_pi_incr_R2216...
+2026-11-12 01:39:16,328 - INFO - Container sweb.eval.django__django-14493.verified_full_glm53_pi_incr_R2216 removed successfully.

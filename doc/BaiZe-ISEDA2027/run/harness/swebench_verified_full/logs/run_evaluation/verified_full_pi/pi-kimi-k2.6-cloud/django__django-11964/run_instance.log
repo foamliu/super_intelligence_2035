@@ -1,0 +1,283 @@
+2026-10-30 16:48:13,287 - INFO - Creating container for django__django-11964...
+2026-10-30 16:48:13,325 - INFO - Container for django__django-11964 created: 0a5408f1f36d8daac8c9104a41d3ac8a9a77470d2aeef78750838a4509845c68
+2026-10-30 16:48:15,443 - INFO - Container for django__django-11964 started: 0a5408f1f36d8daac8c9104a41d3ac8a9a77470d2aeef78750838a4509845c68
+2026-10-30 16:48:15,445 - INFO - Intermediate patch for django__django-11964 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11964/patch.diff, now applying to container...
+2026-10-30 16:48:15,573 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/enums.py...
+warning: django/db/models/enums.py has type 100755, expected 100644
+Checking patch django/db/models/fields/__init__.py...
+warning: django/db/models/fields/__init__.py has type 100755, expected 100644
+Checking patch tests/model_fields/test_charfield.py...
+warning: tests/model_fields/test_charfield.py has type 100755, expected 100644
+Checking patch tests/model_fields/test_integerfield.py...
+warning: tests/model_fields/test_integerfield.py has type 100755, expected 100644
+Checking patch tests/model_fields/test_textfield.py...
+warning: tests/model_fields/test_textfield.py has type 100755, expected 100644
+Applied patch django/db/models/enums.py cleanly.
+Applied patch django/db/models/fields/__init__.py cleanly.
+Applied patch tests/model_fields/test_charfield.py cleanly.
+Applied patch tests/model_fields/test_integerfield.py cleanly.
+Applied patch tests/model_fields/test_textfield.py cleanly.
+
+2026-10-30 16:48:17,002 - INFO - Git diff before:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index bbe362a6ab..ec0cc6c2bf 100755
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -60,7 +60,8 @@ class ChoicesMeta(enum.EnumMeta):
+ 
+ class Choices(enum.Enum, metaclass=ChoicesMeta):
+     """Class for creating enumerated choices."""
+-    pass
++    def __str__(self):
++        return str(self.value)
+ 
+ 
+ class IntegerChoices(int, Choices):
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index d610dc86f0..0336b93248 100755
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -2,6 +2,12 @@ import collections.abc
+ import copy
+ import datetime
+ import decimal
++import enum
++import operator
++import uuid
++import warnings
++import datetime
++import decimal
+ import operator
+ import uuid
+ import warnings
+@@ -1009,6 +1015,8 @@ class CharField(Field):
+ 
+     def to_python(self, value):
+         if isinstance(value, str) or value is None:
++            if isinstance(value, enum.Enum):
++                return value.value
+             return value
+         return str(value)
+ 
+@@ -1770,6 +1778,8 @@ class IntegerField(Field):
+         if value is None:
+             return value
+         try:
++            if isinstance(value, enum.Enum):
++                return value.value
+             return int(value)
+         except (TypeError, ValueError):
+             raise exceptions.ValidationError(
+@@ -2024,6 +2034,8 @@ class TextField(Field):
+ 
+     def to_python(self, value):
+         if isinstance(value, str) or value is None:
++            if isinstance(value, enum.Enum):
++                return value.value
+             return value
+         return str(value)
+ 
+diff --git a/tests/model_fields/test_charfield.py b/tests/model_fields/test_charfield.py
+index cf3ce0c4c5..0676a89197 100755
+--- a/tests/model_fields/test_charfield.py
++++ b/tests/model_fields/test_charfield.py
+@@ -43,6 +43,20 @@ class TestCharField(TestCase):
+         self.assertEqual(p1, p2)
+         self.assertEqual(p2.title, Event.C)
+ 
++    def test_enum_choices_to_python(self):
++        class Event(models.TextChoices):
++            C = 'Carnival!'
++
++        f = models.CharField(choices=Event.choices, max_length=10)
++        self.assertIsInstance(f.to_python(Event.C), str)
++        self.assertEqual(f.to_python(Event.C), 'Carnival!')
++
++    def test_enum_choices_str(self):
++        class Event(models.TextChoices):
++            C = 'Carnival!'
++
++        p = Post(title=Event.C, body='test')
++        self.assertEqual(str(p.title), 'Carnival!')
+ 
+ class ValidationTests(SimpleTestCase):
+ 
+diff --git a/tests/model_fields/test_integerfield.py b/tests/model_fields/test_integerfield.py
+index 606d71057a..df07a0944e 100755
+--- a/tests/model_fields/test_integerfield.py
++++ b/tests/model_fields/test_integerfield.py
+@@ -132,6 +132,20 @@ class IntegerFieldTests(TestCase):
+         instance = self.model.objects.get()
+         self.assertIsInstance(instance.value, int)
+ 
++    def test_enum_choices_to_python(self):
++        class Event(models.IntegerChoices):
++            C = 1, 'Carnival!'
++
++        f = models.IntegerField(choices=Event.choices)
++        self.assertIsInstance(f.to_python(Event.C), int)
++        self.assertEqual(f.to_python(Event.C), 1)
++
++    def test_enum_choices_str(self):
++        class Event(models.IntegerChoices):
++            C = 1, 'Carnival!'
++
++        instance = self.model(value=Event.C)
++        self.assertEqual(str(instance.value), '1')
+     def test_coercing(self):
+         self.model.objects.create(value='10')
+         instance = self.model.objects.get(value='10')
+diff --git a/tests/model_fields/test_textfield.py b/tests/model_fields/test_textfield.py
+index 82e7af8fd5..9eaa8b21ea 100755
+--- a/tests/model_fields/test_textfield.py
++++ b/tests/model_fields/test_textfield.py
+@@ -29,6 +29,13 @@ class TextFieldTests(TestCase):
+         f = models.TextField()
+         self.assertEqual(f.to_python(1), '1')
+ 
++    def test_enum_choices_to_python(self):
++        class Event(models.TextChoices):
++            C = 'Carnival!'
++
++        f = models.TextField(choices=Event.choices)
++        self.assertIsInstance(f.to_python(Event.C), str)
++        self.assertEqual(f.to_python(Event.C), 'Carnival!')
+     def test_lookup_integer_in_textfield(self):
+         self.assertEqual(Post.objects.filter(body=24).count(), 0)
+2026-10-30 16:48:17,005 - INFO - Eval script for django__django-11964 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11964/eval.sh; copying to container...
+2026-10-30 16:48:25,030 - INFO - Test runtime: 7.95 seconds
+2026-10-30 16:48:25,033 - INFO - Test output for django__django-11964 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11964/test_output.txt
+2026-10-30 16:48:25,099 - INFO - Git diff after:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index bbe362a6ab..ec0cc6c2bf 100755
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -60,7 +60,8 @@ class ChoicesMeta(enum.EnumMeta):
+ 
+ class Choices(enum.Enum, metaclass=ChoicesMeta):
+     """Class for creating enumerated choices."""
+-    pass
++    def __str__(self):
++        return str(self.value)
+ 
+ 
+ class IntegerChoices(int, Choices):
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index d610dc86f0..0336b93248 100755
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -2,6 +2,12 @@ import collections.abc
+ import copy
+ import datetime
+ import decimal
++import enum
++import operator
++import uuid
++import warnings
++import datetime
++import decimal
+ import operator
+ import uuid
+ import warnings
+@@ -1009,6 +1015,8 @@ class CharField(Field):
+ 
+     def to_python(self, value):
+         if isinstance(value, str) or value is None:
++            if isinstance(value, enum.Enum):
++                return value.value
+             return value
+         return str(value)
+ 
+@@ -1770,6 +1778,8 @@ class IntegerField(Field):
+         if value is None:
+             return value
+         try:
++            if isinstance(value, enum.Enum):
++                return value.value
+             return int(value)
+         except (TypeError, ValueError):
+             raise exceptions.ValidationError(
+@@ -2024,6 +2034,8 @@ class TextField(Field):
+ 
+     def to_python(self, value):
+         if isinstance(value, str) or value is None:
++            if isinstance(value, enum.Enum):
++                return value.value
+             return value
+         return str(value)
+ 
+diff --git a/tests/model_fields/test_charfield.py b/tests/model_fields/test_charfield.py
+index cf3ce0c4c5..0676a89197 100755
+--- a/tests/model_fields/test_charfield.py
++++ b/tests/model_fields/test_charfield.py
+@@ -43,6 +43,20 @@ class TestCharField(TestCase):
+         self.assertEqual(p1, p2)
+         self.assertEqual(p2.title, Event.C)
+ 
++    def test_enum_choices_to_python(self):
++        class Event(models.TextChoices):
++            C = 'Carnival!'
++
++        f = models.CharField(choices=Event.choices, max_length=10)
++        self.assertIsInstance(f.to_python(Event.C), str)
++        self.assertEqual(f.to_python(Event.C), 'Carnival!')
++
++    def test_enum_choices_str(self):
++        class Event(models.TextChoices):
++            C = 'Carnival!'
++
++        p = Post(title=Event.C, body='test')
++        self.assertEqual(str(p.title), 'Carnival!')
+ 
+ class ValidationTests(SimpleTestCase):
+ 
+diff --git a/tests/model_fields/test_integerfield.py b/tests/model_fields/test_integerfield.py
+index 606d71057a..df07a0944e 100755
+--- a/tests/model_fields/test_integerfield.py
++++ b/tests/model_fields/test_integerfield.py
+@@ -132,6 +132,20 @@ class IntegerFieldTests(TestCase):
+         instance = self.model.objects.get()
+         self.assertIsInstance(instance.value, int)
+ 
++    def test_enum_choices_to_python(self):
++        class Event(models.IntegerChoices):
++            C = 1, 'Carnival!'
++
++        f = models.IntegerField(choices=Event.choices)
++        self.assertIsInstance(f.to_python(Event.C), int)
++        self.assertEqual(f.to_python(Event.C), 1)
++
++    def test_enum_choices_str(self):
++        class Event(models.IntegerChoices):
++            C = 1, 'Carnival!'
++
++        instance = self.model(value=Event.C)
++        self.assertEqual(str(instance.value), '1')
+     def test_coercing(self):
+         self.model.objects.create(value='10')
+         instance = self.model.objects.get(value='10')
+diff --git a/tests/model_fields/test_textfield.py b/tests/model_fields/test_textfield.py
+index 82e7af8fd5..9eaa8b21ea 100755
+--- a/tests/model_fields/test_textfield.py
++++ b/tests/model_fields/test_textfield.py
+@@ -29,6 +29,13 @@ class TextFieldTests(TestCase):
+         f = models.TextField()
+         self.assertEqual(f.to_python(1), '1')
+ 
++    def test_enum_choices_to_python(self):
++        class Event(models.TextChoices):
++            C = 'Carnival!'
++
++        f = models.TextField(choices=Event.choices)
++        self.assertIsInstance(f.to_python(Event.C), str)
++        self.assertEqual(f.to_python(Event.C), 'Carnival!')
+     def test_lookup_integer_in_textfield(self):
+         self.assertEqual(Post.objects.filter(body=24).count(), 0)
+2026-10-30 16:48:25,099 - INFO - Grading answer for django__django-11964...
+2026-10-30 16:48:25,108 - INFO - report: {'django__django-11964': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_str (model_enums.tests.ChoicesTests)', 'test_textchoices (model_enums.tests.ChoicesTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_integerchoices (model_enums.tests.ChoicesTests)', 'test_integerchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_containment (model_enums.tests.ChoicesTests)', 'test_integerchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_invalid_definition (model_enums.tests.ChoicesTests)', 'test_textchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_textchoices_blank_value (model_enums.tests.ChoicesTests)', 'test_textchoices_containment (model_enums.tests.ChoicesTests)', 'test_textchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_textchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_bool_unsupported (model_enums.tests.CustomChoicesTests)', 'test_labels_valid (model_enums.tests.CustomChoicesTests)', 'test_timezone_unsupported (model_enums.tests.CustomChoicesTests)', 'test_uuid_unsupported (model_enums.tests.CustomChoicesTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11964: resolved: True
+2026-10-30 16:48:25,110 - INFO - Attempting to stop container sweb.eval.django__django-11964.verified_full_pi...
+2026-10-30 16:48:40,767 - INFO - Container sweb.eval.django__django-11964.verified_full_pi stopped successfully.
+2026-10-30 16:48:40,768 - INFO - Attempting to remove container sweb.eval.django__django-11964.verified_full_pi...
+2026-10-30 16:48:40,852 - INFO - Container sweb.eval.django__django-11964.verified_full_pi removed successfully.

@@ -1,0 +1,395 @@
+2026-10-30 16:16:06,030 - INFO - Creating container for django__django-13837...
+2026-10-30 16:16:07,457 - INFO - Removed existing container sweb.eval.django__django-13837.verified_full_cline-patched
+2026-10-30 16:16:07,475 - INFO - Container for django__django-13837 created: 5df78cb94a216396b747484dd8112720f041e71d7e8d3e377505016c0ed9bd14
+2026-10-30 16:16:10,084 - INFO - Container for django__django-13837 started: 5df78cb94a216396b747484dd8112720f041e71d7e8d3e377505016c0ed9bd14
+2026-10-30 16:16:10,087 - INFO - Intermediate patch for django__django-13837 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13837/patch.diff, now applying to container...
+2026-10-30 16:16:10,264 - INFO - >>>>> Applied Patch:
+Checking patch django/utils/autoreload.py...
+Checking patch tests/utils_tests/test_autoreload.py...
+Applied patch django/utils/autoreload.py cleanly.
+Applied patch tests/utils_tests/test_autoreload.py cleanly.
+
+2026-10-30 16:16:11,214 - INFO - Git diff before:
+diff --git a/django/utils/autoreload.py b/django/utils/autoreload.py
+index b8efb9f881..2391c607fe 100644
+--- a/django/utils/autoreload.py
++++ b/django/utils/autoreload.py
+@@ -216,32 +216,31 @@ def get_child_arguments():
+     executable is reported to not have the .exe extension which can cause bugs
+     on reloading.
+     """
+-    import django.__main__
+-    django_main_path = Path(django.__main__.__file__)
+-    py_script = Path(sys.argv[0])
+-
+     args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions]
+-    if py_script == django_main_path:
+-        # The server was started with `python -m django runserver`.
+-        args += ['-m', 'django']
++    main_module = sys.modules['__main__']
++    main_spec = getattr(main_module, '__spec__', None)
++    if main_spec is not None and main_spec.parent:
++        # The server was started with `python -m <parent>`.
++        args += ['-m', main_spec.parent]
+         args += sys.argv[1:]
+-    elif not py_script.exists():
+-        # sys.argv[0] may not exist for several reasons on Windows.
+-        # It may exist with a .exe extension or have a -script.py suffix.
+-        exe_entrypoint = py_script.with_suffix('.exe')
+-        if exe_entrypoint.exists():
+-            # Should be executed directly, ignoring sys.executable.
+-            # TODO: Remove str() when dropping support for PY37.
+-            # args parameter accepts path-like on Windows from Python 3.8.
+-            return [str(exe_entrypoint), *sys.argv[1:]]
+-        script_entrypoint = py_script.with_name('%s-script.py' % py_script.name)
+-        if script_entrypoint.exists():
+-            # Should be executed as usual.
+-            # TODO: Remove str() when dropping support for PY37.
+-            # args parameter accepts path-like on Windows from Python 3.8.
+-            return [*args, str(script_entrypoint), *sys.argv[1:]]
+-        raise RuntimeError('Script %s does not exist.' % py_script)
+     else:
++        py_script = Path(sys.argv[0])
++        if not py_script.exists():
++            # sys.argv[0] may not exist for several reasons on Windows.
++            # It may exist with a .exe extension or have a -script.py suffix.
++            exe_entrypoint = py_script.with_suffix('.exe')
++            if exe_entrypoint.exists():
++                # Should be executed directly, ignoring sys.executable.
++                # TODO: Remove str() when dropping support for PY37.
++                # args parameter accepts path-like on Windows from Python 3.8.
++                return [str(exe_entrypoint), *sys.argv[1:]]
++            script_entrypoint = py_script.with_name('%s-script.py' % py_script.name)
++            if script_entrypoint.exists():
++                # Should be executed as usual.
++                # TODO: Remove str() when dropping support for PY37.
++                # args parameter accepts path-like on Windows from Python 3.8.
++                return [*args, str(script_entrypoint), *sys.argv[1:]]
++            raise RuntimeError('Script %s does not exist.' % py_script)
+         args += sys.argv
+     return args
+ 
+diff --git a/tests/utils_tests/test_autoreload.py b/tests/utils_tests/test_autoreload.py
+index b9f2db7276..d56d905ac4 100644
+--- a/tests/utils_tests/test_autoreload.py
++++ b/tests/utils_tests/test_autoreload.py
+@@ -160,47 +160,73 @@ class TestChildArguments(SimpleTestCase):
+     @mock.patch('sys.argv', [django.__main__.__file__, 'runserver'])
+     @mock.patch('sys.warnoptions', [])
+     def test_run_as_module(self):
+-        self.assertEqual(
+-            autoreload.get_child_arguments(),
+-            [sys.executable, '-m', 'django', 'runserver']
+-        )
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = types.SimpleNamespace(parent='django')
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++            self.assertEqual(
++                autoreload.get_child_arguments(),
++                [sys.executable, '-m', 'django', 'runserver']
++            )
++
++    @mock.patch('sys.argv', ['/some/path/other_package/__main__.py', 'runserver'])
++    @mock.patch('sys.warnoptions', [])
++    def test_run_as_other_module(self):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = types.SimpleNamespace(parent='other_package')
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++            self.assertEqual(
++                autoreload.get_child_arguments(),
++                [sys.executable, '-m', 'other_package', 'runserver']
++            )
+ 
+     @mock.patch('sys.argv', [__file__, 'runserver'])
+     @mock.patch('sys.warnoptions', ['error'])
+     def test_warnoptions(self):
+-        self.assertEqual(
+-            autoreload.get_child_arguments(),
+-            [sys.executable, '-Werror', __file__, 'runserver']
+-        )
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = None
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++            self.assertEqual(
++                autoreload.get_child_arguments(),
++                [sys.executable, '-Werror', __file__, 'runserver']
++            )
+ 
+     @mock.patch('sys.warnoptions', [])
+     def test_exe_fallback(self):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = None
+         with tempfile.TemporaryDirectory() as tmpdir:
+             exe_path = Path(tmpdir) / 'django-admin.exe'
+             exe_path.touch()
+             with mock.patch('sys.argv', [str(exe_path.with_suffix('')), 'runserver']):
+-                self.assertEqual(
+-                    autoreload.get_child_arguments(),
+-                    [str(exe_path), 'runserver']
+-                )
++                with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++                    self.assertEqual(
++                        autoreload.get_child_arguments(),
++                        [str(exe_path), 'runserver']
++                    )
+ 
+     @mock.patch('sys.warnoptions', [])
+     def test_entrypoint_fallback(self):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = None
+         with tempfile.TemporaryDirectory() as tmpdir:
+             script_path = Path(tmpdir) / 'django-admin-script.py'
+             script_path.touch()
+             with mock.patch('sys.argv', [str(script_path.with_name('django-admin')), 'runserver']):
+-                self.assertEqual(
+-                    autoreload.get_child_arguments(),
+-                    [sys.executable, str(script_path), 'runserver']
+-                )
++                with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++                    self.assertEqual(
++                        autoreload.get_child_arguments(),
++                        [sys.executable, str(script_path), 'runserver']
++                    )
+ 
+     @mock.patch('sys.argv', ['does-not-exist', 'runserver'])
+     @mock.patch('sys.warnoptions', [])
+     def test_raises_runtimeerror(self):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = None
+         msg = 'Script does-not-exist does not exist.'
+-        with self.assertRaisesMessage(RuntimeError, msg):
+-            autoreload.get_child_arguments()
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++            with self.assertRaisesMessage(RuntimeError, msg):
++                autoreload.get_child_arguments()
+ 
+ 
+ class TestUtilities(SimpleTestCase):
+@@ -435,18 +461,23 @@ class RestartWithReloaderTests(SimpleTestCase):
+             script.touch()
+             argv = [str(script), 'runserver']
+             mock_call = self.patch_autoreload(argv)
+-            autoreload.restart_with_reloader()
+-            self.assertEqual(mock_call.call_count, 1)
+-            self.assertEqual(
+-                mock_call.call_args[0][0],
+-                [self.executable, '-Wall'] + argv,
+-            )
++            fake_main = types.ModuleType('__main__')
++            fake_main.__spec__ = None
++            with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++                autoreload.restart_with_reloader()
++                self.assertEqual(mock_call.call_count, 1)
++                self.assertEqual(
++                    mock_call.call_args[0][0],
++                    [self.executable, '-Wall'] + argv,
++                )
+ 
+     def test_python_m_django(self):
+         main = '/usr/lib/pythonX.Y/site-packages/django/__main__.py'
+         argv = [main, 'runserver']
+         mock_call = self.patch_autoreload(argv)
+-        with mock.patch('django.__main__.__file__', main):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = types.SimpleNamespace(parent='django')
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
+             autoreload.restart_with_reloader()
+             self.assertEqual(mock_call.call_count, 1)
+             self.assertEqual(mock_call.call_args[0][0], [self.executable, '-Wall', '-m', 'django'] + argv[1:])
+2026-10-30 16:16:11,216 - INFO - Eval script for django__django-13837 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13837/eval.sh; copying to container...
+2026-10-30 16:16:17,365 - INFO - Test runtime: 5.97 seconds
+2026-10-30 16:16:17,366 - INFO - Test output for django__django-13837 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13837/test_output.txt
+2026-10-30 16:16:17,424 - INFO - Git diff after:
+diff --git a/django/utils/autoreload.py b/django/utils/autoreload.py
+index b8efb9f881..2391c607fe 100644
+--- a/django/utils/autoreload.py
++++ b/django/utils/autoreload.py
+@@ -216,32 +216,31 @@ def get_child_arguments():
+     executable is reported to not have the .exe extension which can cause bugs
+     on reloading.
+     """
+-    import django.__main__
+-    django_main_path = Path(django.__main__.__file__)
+-    py_script = Path(sys.argv[0])
+-
+     args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions]
+-    if py_script == django_main_path:
+-        # The server was started with `python -m django runserver`.
+-        args += ['-m', 'django']
++    main_module = sys.modules['__main__']
++    main_spec = getattr(main_module, '__spec__', None)
++    if main_spec is not None and main_spec.parent:
++        # The server was started with `python -m <parent>`.
++        args += ['-m', main_spec.parent]
+         args += sys.argv[1:]
+-    elif not py_script.exists():
+-        # sys.argv[0] may not exist for several reasons on Windows.
+-        # It may exist with a .exe extension or have a -script.py suffix.
+-        exe_entrypoint = py_script.with_suffix('.exe')
+-        if exe_entrypoint.exists():
+-            # Should be executed directly, ignoring sys.executable.
+-            # TODO: Remove str() when dropping support for PY37.
+-            # args parameter accepts path-like on Windows from Python 3.8.
+-            return [str(exe_entrypoint), *sys.argv[1:]]
+-        script_entrypoint = py_script.with_name('%s-script.py' % py_script.name)
+-        if script_entrypoint.exists():
+-            # Should be executed as usual.
+-            # TODO: Remove str() when dropping support for PY37.
+-            # args parameter accepts path-like on Windows from Python 3.8.
+-            return [*args, str(script_entrypoint), *sys.argv[1:]]
+-        raise RuntimeError('Script %s does not exist.' % py_script)
+     else:
++        py_script = Path(sys.argv[0])
++        if not py_script.exists():
++            # sys.argv[0] may not exist for several reasons on Windows.
++            # It may exist with a .exe extension or have a -script.py suffix.
++            exe_entrypoint = py_script.with_suffix('.exe')
++            if exe_entrypoint.exists():
++                # Should be executed directly, ignoring sys.executable.
++                # TODO: Remove str() when dropping support for PY37.
++                # args parameter accepts path-like on Windows from Python 3.8.
++                return [str(exe_entrypoint), *sys.argv[1:]]
++            script_entrypoint = py_script.with_name('%s-script.py' % py_script.name)
++            if script_entrypoint.exists():
++                # Should be executed as usual.
++                # TODO: Remove str() when dropping support for PY37.
++                # args parameter accepts path-like on Windows from Python 3.8.
++                return [*args, str(script_entrypoint), *sys.argv[1:]]
++            raise RuntimeError('Script %s does not exist.' % py_script)
+         args += sys.argv
+     return args
+ 
+diff --git a/tests/utils_tests/test_autoreload.py b/tests/utils_tests/test_autoreload.py
+index b9f2db7276..d56d905ac4 100644
+--- a/tests/utils_tests/test_autoreload.py
++++ b/tests/utils_tests/test_autoreload.py
+@@ -160,47 +160,73 @@ class TestChildArguments(SimpleTestCase):
+     @mock.patch('sys.argv', [django.__main__.__file__, 'runserver'])
+     @mock.patch('sys.warnoptions', [])
+     def test_run_as_module(self):
+-        self.assertEqual(
+-            autoreload.get_child_arguments(),
+-            [sys.executable, '-m', 'django', 'runserver']
+-        )
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = types.SimpleNamespace(parent='django')
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++            self.assertEqual(
++                autoreload.get_child_arguments(),
++                [sys.executable, '-m', 'django', 'runserver']
++            )
++
++    @mock.patch('sys.argv', ['/some/path/other_package/__main__.py', 'runserver'])
++    @mock.patch('sys.warnoptions', [])
++    def test_run_as_other_module(self):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = types.SimpleNamespace(parent='other_package')
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++            self.assertEqual(
++                autoreload.get_child_arguments(),
++                [sys.executable, '-m', 'other_package', 'runserver']
++            )
+ 
+     @mock.patch('sys.argv', [__file__, 'runserver'])
+     @mock.patch('sys.warnoptions', ['error'])
+     def test_warnoptions(self):
+-        self.assertEqual(
+-            autoreload.get_child_arguments(),
+-            [sys.executable, '-Werror', __file__, 'runserver']
+-        )
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = None
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++            self.assertEqual(
++                autoreload.get_child_arguments(),
++                [sys.executable, '-Werror', __file__, 'runserver']
++            )
+ 
+     @mock.patch('sys.warnoptions', [])
+     def test_exe_fallback(self):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = None
+         with tempfile.TemporaryDirectory() as tmpdir:
+             exe_path = Path(tmpdir) / 'django-admin.exe'
+             exe_path.touch()
+             with mock.patch('sys.argv', [str(exe_path.with_suffix('')), 'runserver']):
+-                self.assertEqual(
+-                    autoreload.get_child_arguments(),
+-                    [str(exe_path), 'runserver']
+-                )
++                with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++                    self.assertEqual(
++                        autoreload.get_child_arguments(),
++                        [str(exe_path), 'runserver']
++                    )
+ 
+     @mock.patch('sys.warnoptions', [])
+     def test_entrypoint_fallback(self):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = None
+         with tempfile.TemporaryDirectory() as tmpdir:
+             script_path = Path(tmpdir) / 'django-admin-script.py'
+             script_path.touch()
+             with mock.patch('sys.argv', [str(script_path.with_name('django-admin')), 'runserver']):
+-                self.assertEqual(
+-                    autoreload.get_child_arguments(),
+-                    [sys.executable, str(script_path), 'runserver']
+-                )
++                with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++                    self.assertEqual(
++                        autoreload.get_child_arguments(),
++                        [sys.executable, str(script_path), 'runserver']
++                    )
+ 
+     @mock.patch('sys.argv', ['does-not-exist', 'runserver'])
+     @mock.patch('sys.warnoptions', [])
+     def test_raises_runtimeerror(self):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = None
+         msg = 'Script does-not-exist does not exist.'
+-        with self.assertRaisesMessage(RuntimeError, msg):
+-            autoreload.get_child_arguments()
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++            with self.assertRaisesMessage(RuntimeError, msg):
++                autoreload.get_child_arguments()
+ 
+ 
+ class TestUtilities(SimpleTestCase):
+@@ -435,18 +461,23 @@ class RestartWithReloaderTests(SimpleTestCase):
+             script.touch()
+             argv = [str(script), 'runserver']
+             mock_call = self.patch_autoreload(argv)
+-            autoreload.restart_with_reloader()
+-            self.assertEqual(mock_call.call_count, 1)
+-            self.assertEqual(
+-                mock_call.call_args[0][0],
+-                [self.executable, '-Wall'] + argv,
+-            )
++            fake_main = types.ModuleType('__main__')
++            fake_main.__spec__ = None
++            with mock.patch.dict('sys.modules', {'__main__': fake_main}):
++                autoreload.restart_with_reloader()
++                self.assertEqual(mock_call.call_count, 1)
++                self.assertEqual(
++                    mock_call.call_args[0][0],
++                    [self.executable, '-Wall'] + argv,
++                )
+ 
+     def test_python_m_django(self):
+         main = '/usr/lib/pythonX.Y/site-packages/django/__main__.py'
+         argv = [main, 'runserver']
+         mock_call = self.patch_autoreload(argv)
+-        with mock.patch('django.__main__.__file__', main):
++        fake_main = types.ModuleType('__main__')
++        fake_main.__spec__ = types.SimpleNamespace(parent='django')
++        with mock.patch.dict('sys.modules', {'__main__': fake_main}):
+             autoreload.restart_with_reloader()
+             self.assertEqual(mock_call.call_count, 1)
+             self.assertEqual(mock_call.call_args[0][0], [self.executable, '-Wall', '-m', 'django'] + argv[1:])
+2026-10-30 16:16:17,424 - INFO - Grading answer for django__django-13837...
+2026-10-30 16:16:17,426 - INFO - report: {'django__django-13837': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_run_as_non_django_module (utils_tests.test_autoreload.TestChildArguments)']}, 'PASS_TO_PASS': {'success': ['test_no_exception (utils_tests.test_autoreload.TestRaiseLastException)', 'test_raises_custom_exception (utils_tests.test_autoreload.TestRaiseLastException)', 'test_raises_exception (utils_tests.test_autoreload.TestRaiseLastException)', 'test_raises_exception_with_context (utils_tests.test_autoreload.TestRaiseLastException)', 'test_common_roots (utils_tests.test_autoreload.TestCommonRoots)', 'test_mutates_error_files (utils_tests.test_autoreload.TestCheckErrors)', 'test_watchman_available (utils_tests.test_autoreload.GetReloaderTests)', 'test_watchman_unavailable (utils_tests.test_autoreload.GetReloaderTests)', 'test_calls_start_django (utils_tests.test_autoreload.RunWithReloaderTests)', 'test_calls_sys_exit (utils_tests.test_autoreload.RunWithReloaderTests)', 'test_swallows_keyboard_interrupt (utils_tests.test_autoreload.RunWithReloaderTests)', 'test_entrypoint_fallback (utils_tests.test_autoreload.TestChildArguments)', 'test_exe_fallback (utils_tests.test_autoreload.TestChildArguments)', 'test_raises_runtimeerror (utils_tests.test_autoreload.TestChildArguments)', 'test_run_as_module (utils_tests.test_autoreload.TestChildArguments)', 'test_warnoptions (utils_tests.test_autoreload.TestChildArguments)', 'test_is_django_module (utils_tests.test_autoreload.TestUtilities)', 'test_is_django_path (utils_tests.test_autoreload.TestUtilities)', 'test_sys_paths_absolute (utils_tests.test_autoreload.TestSysPathDirectories)', 'test_sys_paths_directories (utils_tests.test_autoreload.TestSysPathDirectories)', 'test_sys_paths_non_existing (utils_tests.test_autoreload.TestSysPathDirectories)', 'test_sys_paths_with_directories (utils_tests.test_autoreload.TestSysPathDirectories)', 'test_manage_py (utils_tests.test_autoreload.RestartWithReloaderTests)', 'test_python_m_django (utils_tests.test_autoreload.RestartWithReloaderTests)', 'test_run_loop_catches_stopiteration (utils_tests.test_autoreload.BaseReloaderTests)', 'test_run_loop_stop_and_return (utils_tests.test_autoreload.BaseReloaderTests)', 'test_wait_for_apps_ready_checks_for_exception (utils_tests.test_autoreload.BaseReloaderTests)', 'test_wait_for_apps_ready_without_exception (utils_tests.test_autoreload.BaseReloaderTests)', 'test_watch_dir_with_unresolvable_path (utils_tests.test_autoreload.BaseReloaderTests)', 'test_watch_files_with_recursive_glob (utils_tests.test_autoreload.BaseReloaderTests)', 'test_watch_with_glob (utils_tests.test_autoreload.BaseReloaderTests)', 'test_glob (utils_tests.test_autoreload.StatReloaderTests)', 'test_glob_recursive (utils_tests.test_autoreload.StatReloaderTests)', 'test_multiple_globs (utils_tests.test_autoreload.StatReloaderTests)', 'test_multiple_recursive_globs (utils_tests.test_autoreload.StatReloaderTests)', 'test_nested_glob_recursive (utils_tests.test_autoreload.StatReloaderTests)', 'test_overlapping_glob_recursive (utils_tests.test_autoreload.StatReloaderTests)', 'test_overlapping_globs (utils_tests.test_autoreload.StatReloaderTests)', 'test_snapshot_files_ignores_missing_files (utils_tests.test_autoreload.StatReloaderTests)', 'test_snapshot_files_updates (utils_tests.test_autoreload.StatReloaderTests)', 'test_snapshot_files_with_duplicates (utils_tests.test_autoreload.StatReloaderTests)', 'test_tick_does_not_trigger_twice (utils_tests.test_autoreload.StatReloaderTests)', '.pyc and .pyo files are included in the files list.', 'test_check_errors (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'test_check_errors_catches_all_exceptions (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'test_file_added (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'test_main_module_is_resolved (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'test_main_module_without_file_is_not_resolved (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'test_module_without_spec (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'test_path_with_embedded_null_bytes (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'test_paths_are_pathlib_instances (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'iter_all_python_module_file() ignores weakref modules.', 'test_zip_reload (utils_tests.test_autoreload.TestIterModulesAndFiles)', 'test_check_errors_called (utils_tests.test_autoreload.StartDjangoTests)', 'test_echo_on_called (utils_tests.test_autoreload.StartDjangoTests)', 'test_starts_thread_with_args (utils_tests.test_autoreload.StartDjangoTests)', 'test_watchman_becomes_unavailable (utils_tests.test_autoreload.StartDjangoTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13837: resolved: False
+2026-10-30 16:16:17,427 - INFO - Attempting to stop container sweb.eval.django__django-13837.verified_full_cline-patched...
+2026-10-30 16:16:33,643 - INFO - Container sweb.eval.django__django-13837.verified_full_cline-patched stopped successfully.
+2026-10-30 16:16:33,643 - INFO - Attempting to remove container sweb.eval.django__django-13837.verified_full_cline-patched...
+2026-10-30 16:16:33,689 - INFO - Container sweb.eval.django__django-13837.verified_full_cline-patched removed successfully.

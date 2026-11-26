@@ -1,0 +1,149 @@
+2026-11-12 20:30:43,642 - INFO - Creating container for django__django-12304...
+2026-11-12 20:30:43,698 - INFO - Container for django__django-12304 created: 253ef8307577c5e487e64f0ff3db100e20c07d8593aaa665d6bf21034e703c01
+2026-11-12 20:30:44,580 - INFO - Container for django__django-12304 started: 253ef8307577c5e487e64f0ff3db100e20c07d8593aaa665d6bf21034e703c01
+2026-11-12 20:30:44,582 - INFO - Intermediate patch for django__django-12304 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2289b/claude-code-glm-5.3-flash/django__django-12304/patch.diff, now applying to container...
+2026-11-12 20:30:44,720 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/enums.py...
+Checking patch docs/ref/models/fields.txt...
+Checking patch docs/releases/3.1.txt...
+Checking patch tests/model_enums/tests.py...
+Applied patch django/db/models/enums.py cleanly.
+Applied patch docs/ref/models/fields.txt cleanly.
+Applied patch docs/releases/3.1.txt cleanly.
+Applied patch tests/model_enums/tests.py cleanly.
+
+2026-11-12 20:30:46,088 - INFO - Git diff before:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143ddaf..a3da54562f 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -31,6 +31,10 @@ class ChoicesMeta(enum.EnumMeta):
+         # that is passed in as "self" as the value to use when looking up the
+         # label in the choices.
+         cls.label = property(lambda self: cls._value2label_map_.get(self.value))
++        # Because Django templates render callables with no arguments, add
++        # do_not_call_in_templates to the class to prevent the enumeration
++        # classes from being called in templates.
++        cls.do_not_call_in_templates = True
+         return enum.unique(cls)
+ 
+     def __contains__(cls, member):
+diff --git a/docs/ref/models/fields.txt b/docs/ref/models/fields.txt
+index d321506d99..2a460b5b76 100644
+--- a/docs/ref/models/fields.txt
++++ b/docs/ref/models/fields.txt
+@@ -226,6 +226,10 @@ modifications:
+ * The use of :func:`enum.unique()` is enforced to ensure that values cannot be
+   defined multiple times. This is unlikely to be expected in choices for a
+   field.
++* Because enumeration types are callable, ``do_not_call_in_templates`` is set
++  to ``True`` on the classes to allow their use in templates, e.g.::
++
++    {% if student.year_in_school == YearInSchool.FRESHMAN %}
+ 
+ Note that using ``YearInSchool.SENIOR``, ``YearInSchool['SENIOR']``, or
+ ``YearInSchool('SR')`` to access or lookup enum members work as expected, as do
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 3def8920cc..95a8783e95 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -244,6 +244,10 @@ Models
+   :meth:`~.RelatedManager.set` methods now accept callables as values in the
+   ``through_defaults`` argument.
+ 
++* The new :attr:`~django.db.models.Field.choices` enumeration types, e.g.
++  ``models.TextChoices``, are now usable in templates because they are no
++  longer called by the template engine.
++
+ Pagination
+ ~~~~~~~~~~
+ 
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index b9356479de..c5346bd5e3 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -4,6 +4,7 @@ import ipaddress
+ import uuid
+ 
+ from django.db import models
++from django.template import Context, Template
+ from django.test import SimpleTestCase
+ from django.utils.functional import Promise
+ from django.utils.translation import gettext_lazy as _
+@@ -149,6 +150,20 @@ class ChoicesTests(SimpleTestCase):
+                 with self.subTest(member=member):
+                     self.assertEqual(str(test[member.name]), str(member.value))
+ 
++    def test_templates(self):
++        template = Template(
++            '{% if suit == Suit.CLUB %}{{ suit.label }}{% endif %}'
++            '{% if year_in_school == YearInSchool.SENIOR %}'
++            '{{ year_in_school.label }}{% endif %}'
++        )
++        context = Context({
++            'suit': Suit.CLUB,
++            'year_in_school': YearInSchool.SENIOR,
++            'Suit': Suit,
++            'YearInSchool': YearInSchool,
++        })
++        self.assertEqual(template.render(context), 'ClubSenior')
++
+ 
+ class Separator(bytes, models.Choices):
+     FS = b'\x1c', 'File Separator'
+2026-11-12 20:30:46,091 - INFO - Eval script for django__django-12304 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2289b/claude-code-glm-5.3-flash/django__django-12304/eval.sh; copying to container...
+2026-11-12 20:30:52,553 - INFO - Test runtime: 6.37 seconds
+2026-11-12 20:30:52,555 - INFO - Test output for django__django-12304 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2289b/claude-code-glm-5.3-flash/django__django-12304/test_output.txt
+2026-11-12 20:30:52,627 - INFO - Git diff after:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143ddaf..a3da54562f 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -31,6 +31,10 @@ class ChoicesMeta(enum.EnumMeta):
+         # that is passed in as "self" as the value to use when looking up the
+         # label in the choices.
+         cls.label = property(lambda self: cls._value2label_map_.get(self.value))
++        # Because Django templates render callables with no arguments, add
++        # do_not_call_in_templates to the class to prevent the enumeration
++        # classes from being called in templates.
++        cls.do_not_call_in_templates = True
+         return enum.unique(cls)
+ 
+     def __contains__(cls, member):
+diff --git a/docs/ref/models/fields.txt b/docs/ref/models/fields.txt
+index d321506d99..2a460b5b76 100644
+--- a/docs/ref/models/fields.txt
++++ b/docs/ref/models/fields.txt
+@@ -226,6 +226,10 @@ modifications:
+ * The use of :func:`enum.unique()` is enforced to ensure that values cannot be
+   defined multiple times. This is unlikely to be expected in choices for a
+   field.
++* Because enumeration types are callable, ``do_not_call_in_templates`` is set
++  to ``True`` on the classes to allow their use in templates, e.g.::
++
++    {% if student.year_in_school == YearInSchool.FRESHMAN %}
+ 
+ Note that using ``YearInSchool.SENIOR``, ``YearInSchool['SENIOR']``, or
+ ``YearInSchool('SR')`` to access or lookup enum members work as expected, as do
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 3def8920cc..95a8783e95 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -244,6 +244,10 @@ Models
+   :meth:`~.RelatedManager.set` methods now accept callables as values in the
+   ``through_defaults`` argument.
+ 
++* The new :attr:`~django.db.models.Field.choices` enumeration types, e.g.
++  ``models.TextChoices``, are now usable in templates because they are no
++  longer called by the template engine.
++
+ Pagination
+ ~~~~~~~~~~
+2026-11-12 20:30:52,627 - INFO - Git diff changed after running eval script
+2026-11-12 20:30:52,627 - INFO - Grading answer for django__django-12304...
+2026-11-12 20:30:52,627 - INFO - report: {'django__django-12304': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_templates (model_enums.tests.ChoicesTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_integerchoices (model_enums.tests.ChoicesTests)', 'test_integerchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_containment (model_enums.tests.ChoicesTests)', 'test_integerchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_invalid_definition (model_enums.tests.ChoicesTests)', 'test_str (model_enums.tests.ChoicesTests)', 'test_textchoices (model_enums.tests.ChoicesTests)', 'test_textchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_textchoices_blank_value (model_enums.tests.ChoicesTests)', 'test_textchoices_containment (model_enums.tests.ChoicesTests)', 'test_textchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_textchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_bool_unsupported (model_enums.tests.CustomChoicesTests)', 'test_labels_valid (model_enums.tests.CustomChoicesTests)', 'test_timezone_unsupported (model_enums.tests.CustomChoicesTests)', 'test_uuid_unsupported (model_enums.tests.CustomChoicesTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12304: resolved: True
+2026-11-12 20:30:52,629 - INFO - Attempting to stop container sweb.eval.django__django-12304.verified_full_glm53_claude-code_incr_R2289b...
+2026-11-12 20:31:08,787 - INFO - Container sweb.eval.django__django-12304.verified_full_glm53_claude-code_incr_R2289b stopped successfully.
+2026-11-12 20:31:08,787 - INFO - Attempting to remove container sweb.eval.django__django-12304.verified_full_glm53_claude-code_incr_R2289b...
+2026-11-12 20:31:08,842 - INFO - Container sweb.eval.django__django-12304.verified_full_glm53_claude-code_incr_R2289b removed successfully.

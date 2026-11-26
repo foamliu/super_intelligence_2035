@@ -1,0 +1,78 @@
+Running 29 instances...
+All instances run.
+Total instances: 29
+Instances submitted: 29
+Instances completed: 29
+Instances incomplete: 0
+Instances resolved: 5
+Instances unresolved: 24
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 2
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 29
+Report written to codex-glm-5.3-flash.verified_full_glm53_codex_incr_R1992.json
+
+[stderr]
+
+  0%|          | 0/29 [00:00<?, ?it/s]
+  3%|▎         | 1/29 [02:04<58:17, 124.89s/it]
+1 ran successfully, 0 failed:   3%|▎         | 1/29 [02:04<58:17, 124.89s/it]
+1 ran successfully, 0 failed:   7%|▋         | 2/29 [03:58<53:37, 119.17s/it]
+2 ran successfully, 0 failed:   7%|▋         | 2/29 [03:58<53:37, 119.17s/it]
+2 ran successfully, 0 failed:  10%|█         | 3/29 [05:41<49:19, 113.82s/it]
+3 ran successfully, 0 failed:  10%|█         | 3/29 [05:41<49:19, 113.82s/it]
+3 ran successfully, 0 failed:  14%|█▍        | 4/29 [07:19<45:46, 109.87s/it]
+4 ran successfully, 0 failed:  14%|█▍        | 4/29 [07:19<45:46, 109.87s/it]
+4 ran successfully, 0 failed:  17%|█▋        | 5/29 [07:42<37:01, 92.58s/it] 
+5 ran successfully, 0 failed:  17%|█▋        | 5/29 [07:42<37:01, 92.58s/it]
+5 ran successfully, 0 failed:  21%|██        | 6/29 [08:09<31:16, 81.59s/it]
+6 ran successfully, 0 failed:  21%|██        | 6/29 [08:09<31:16, 81.59s/it]
+6 ran successfully, 0 failed:  24%|██▍       | 7/29 [08:32<26:51, 73.25s/it]
+7 ran successfully, 0 failed:  24%|██▍       | 7/29 [08:32<26:51, 73.25s/it]
+7 ran successfully, 0 failed:  28%|██▊       | 8/29 [09:00<23:38, 67.55s/it]
+8 ran successfully, 0 failed:  28%|██▊       | 8/29 [09:00<23:38, 67.55s/it]
+8 ran successfully, 0 failed:  31%|███       | 9/29 [09:28<21:03, 63.17s/it]
+9 ran successfully, 0 failed:  31%|███       | 9/29 [09:28<21:03, 63.17s/it]
+9 ran successfully, 0 failed:  34%|███▍      | 10/29 [14:49<28:10, 88.96s/it]
+10 ran successfully, 0 failed:  34%|███▍      | 10/29 [14:49<28:10, 88.96s/it]
+10 ran successfully, 0 failed:  38%|███▊      | 11/29 [15:15<24:57, 83.22s/it]
+11 ran successfully, 0 failed:  38%|███▊      | 11/29 [15:15<24:57, 83.22s/it]
+11 ran successfully, 0 failed:  41%|████▏     | 12/29 [15:40<22:11, 78.35s/it]
+12 ran successfully, 0 failed:  41%|████▏     | 12/29 [15:40<22:11, 78.35s/it]
+12 ran successfully, 0 failed:  45%|████▍     | 13/29 [16:04<19:46, 74.17s/it]
+13 ran successfully, 0 failed:  45%|████▍     | 13/29 [16:04<19:46, 74.17s/it]
+13 ran successfully, 0 failed:  48%|████▊     | 14/29 [16:29<17:40, 70.70s/it]
+14 ran successfully, 0 failed:  48%|████▊     | 14/29 [16:29<17:40, 70.70s/it]
+14 ran successfully, 0 failed:  52%|█████▏    | 15/29 [16:55<15:48, 67.72s/it]
+15 ran successfully, 0 failed:  52%|█████▏    | 15/29 [16:55<15:48, 67.72s/it]
+15 ran successfully, 0 failed:  55%|█████▌    | 16/29 [17:21<14:06, 65.12s/it]
+16 ran successfully, 0 failed:  55%|█████▌    | 16/29 [17:21<14:06, 65.12s/it]
+16 ran successfully, 0 failed:  59%|█████▊    | 17/29 [17:48<12:33, 62.83s/it]
+17 ran successfully, 0 failed:  59%|█████▊    | 17/29 [17:48<12:34, 62.83s/it]
+17 ran successfully, 0 failed:  62%|██████▏   | 18/29 [18:12<11:07, 60.70s/it]
+18 ran successfully, 0 failed:  62%|██████▏   | 18/29 [18:12<11:07, 60.70s/it]
+18 ran successfully, 0 failed:  66%|██████▌   | 19/29 [18:42<09:50, 59.06s/it]
+19 ran successfully, 0 failed:  66%|██████▌   | 19/29 [18:42<09:50, 59.06s/it]
+19 ran successfully, 0 failed:  69%|██████▉   | 20/29 [19:09<08:37, 57.48s/it]
+20 ran successfully, 0 failed:  69%|██████▉   | 20/29 [19:09<08:37, 57.48s/it]
+20 ran successfully, 0 failed:  72%|███████▏  | 21/29 [21:35<08:13, 61.71s/it]
+21 ran successfully, 0 failed:  72%|███████▏  | 21/29 [21:35<08:13, 61.71s/it]
+21 ran successfully, 0 failed:  76%|███████▌  | 22/29 [23:55<07:36, 65.25s/it]
+22 ran successfully, 0 failed:  76%|███████▌  | 22/29 [23:55<07:36, 65.25s/it]
+22 ran successfully, 0 failed:  79%|███████▉  | 23/29 [25:15<06:35, 65.88s/it]
+23 ran successfully, 0 failed:  79%|███████▉  | 23/29 [25:15<06:35, 65.88s/it]
+23 ran successfully, 0 failed:  83%|████████▎ | 24/29 [26:41<05:33, 66.73s/it]
+24 ran successfully, 0 failed:  83%|████████▎ | 24/29 [26:41<05:33, 66.73s/it]
+24 ran successfully, 0 failed:  86%|████████▌ | 25/29 [29:22<04:42, 70.52s/it]
+25 ran successfully, 0 failed:  86%|████████▌ | 25/29 [29:22<04:42, 70.52s/it]
+25 ran successfully, 0 failed:  90%|████████▉ | 26/29 [30:44<03:32, 70.93s/it]
+26 ran successfully, 0 failed:  90%|████████▉ | 26/29 [30:44<03:32, 70.93s/it]
+26 ran successfully, 0 failed:  93%|█████████▎| 27/29 [33:04<02:27, 73.51s/it]
+27 ran successfully, 0 failed:  93%|█████████▎| 27/29 [33:04<02:27, 73.51s/it]
+27 ran successfully, 0 failed:  97%|█████████▋| 28/29 [33:25<01:11, 71.63s/it]
+28 ran successfully, 0 failed:  97%|█████████▋| 28/29 [33:25<01:11, 71.63s/it]
+28 ran successfully, 0 failed: 100%|██████████| 29/29 [33:55<00:00, 70.18s/it]
+29 ran successfully, 0 failed: 100%|██████████| 29/29 [33:55<00:00, 70.18s/it]
+29 ran successfully, 0 failed: 100%|██████████| 29/29 [33:55<00:00, 70.18s/it]

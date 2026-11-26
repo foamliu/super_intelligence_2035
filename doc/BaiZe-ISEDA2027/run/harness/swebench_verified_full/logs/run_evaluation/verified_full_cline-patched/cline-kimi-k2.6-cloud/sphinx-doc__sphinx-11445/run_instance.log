@@ -1,0 +1,110 @@
+2026-10-30 16:30:33,985 - INFO - Creating container for sphinx-doc__sphinx-11445...
+2026-10-30 16:30:37,907 - INFO - Removed existing container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched
+2026-10-30 16:30:38,108 - INFO - Container for sphinx-doc__sphinx-11445 created: c2a5eb0370f712d06eb6ce24ca66fb5576fe4c1b041e81e2a387f671dceca3e0
+2026-10-30 16:30:55,007 - INFO - Container for sphinx-doc__sphinx-11445 started: c2a5eb0370f712d06eb6ce24ca66fb5576fe4c1b041e81e2a387f671dceca3e0
+2026-10-30 16:30:55,008 - INFO - Intermediate patch for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/patch.diff, now applying to container...
+2026-10-30 16:30:55,490 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/util/rst.py...
+warning: sphinx/util/rst.py has type 100755, expected 100644
+Checking patch tests/test_util_rst.py...
+warning: tests/test_util_rst.py has type 100755, expected 100644
+Applied patch sphinx/util/rst.py cleanly.
+Applied patch tests/test_util_rst.py cleanly.
+
+2026-10-30 16:30:55,996 - INFO - Git diff before:
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a1538325..638337fcf 100755
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,7 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++docinfo_re = re.compile(r':\w+:(?:\s|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+ 
+diff --git a/tests/test_util_rst.py b/tests/test_util_rst.py
+index 40a2ee68b..6a5552b31 100755
+--- a/tests/test_util_rst.py
++++ b/tests/test_util_rst.py
+@@ -78,6 +78,44 @@ def test_prepend_prolog_without_CR(app):
+                                       ('dummy.rst', 1, 'Sphinx is a document generator')]
+ 
+ 
++def test_prepend_prolog_with_role_in_heading(app):
++    # regression test for issue where rst_prolog breaks headings with domain directives
++    prolog = 'this is rst_prolog\nhello reST!'
++    content = StringList([':mod:`mypackage2`',
++                          '=================',
++                          '',
++                          'Content'],
++                         'dummy.rst')
++    prepend_prolog(content, prolog)
++
++    assert list(content.xitems()) == [('<rst_prolog>', 0, 'this is rst_prolog'),
++                                      ('<rst_prolog>', 1, 'hello reST!'),
++                                      ('<generated>', 0, ''),
++                                      ('dummy.rst', 0, ':mod:`mypackage2`'),
++                                      ('dummy.rst', 1, '================='),
++                                      ('dummy.rst', 2, ''),
++                                      ('dummy.rst', 3, 'Content')]
++
++
++def test_prepend_prolog_with_role_in_heading2(app):
++    # regression test for issue where rst_prolog breaks headings with domain directives
++    prolog = 'this is rst_prolog\nhello reST!'
++    content = StringList([':func:`foo`',
++                          '=============',
++                          '',
++                          'Content'],
++                         'dummy.rst')
++    prepend_prolog(content, prolog)
++
++    assert list(content.xitems()) == [('<rst_prolog>', 0, 'this is rst_prolog'),
++                                      ('<rst_prolog>', 1, 'hello reST!'),
++                                      ('<generated>', 0, ''),
++                                      ('dummy.rst', 0, ':func:`foo`'),
++                                      ('dummy.rst', 1, '============='),
++                                      ('dummy.rst', 2, ''),
++                                      ('dummy.rst', 3, 'Content')]
++
++
+ def test_textwidth():
+     assert textwidth('Hello') == 5
+     assert textwidth('русский язык') == 12
+2026-10-30 16:30:56,003 - INFO - Eval script for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/eval.sh; copying to container...
+2026-10-30 16:31:01,655 - INFO - Test runtime: 5.49 seconds
+2026-10-30 16:31:01,668 - INFO - Test output for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/test_output.txt
+2026-10-30 16:31:01,729 - INFO - Git diff after:
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a1538325..638337fcf 100755
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,7 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++docinfo_re = re.compile(r':\w+:(?:\s|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+2026-10-30 16:31:01,729 - INFO - Git diff changed after running eval script
+2026-10-30 16:31:01,729 - INFO - Grading answer for sphinx-doc__sphinx-11445...
+2026-10-30 16:31:01,735 - INFO - report: {'sphinx-doc__sphinx-11445': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_with_newline', 'tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_without_newline'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_util_rst.py::test_escape', 'tests/test_util_rst.py::test_append_epilog', 'tests/test_util_rst.py::test_prepend_prolog', 'tests/test_util_rst.py::test_prepend_prolog_with_CR', 'tests/test_util_rst.py::test_prepend_prolog_without_CR', 'tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections', 'tests/test_util_rst.py::test_textwidth', 'tests/test_util_rst.py::test_heading'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-11445: resolved: True
+2026-10-30 16:31:01,736 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched...
+2026-10-30 16:31:18,820 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched stopped successfully.
+2026-10-30 16:31:18,820 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched...
+2026-10-30 16:31:18,856 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched removed successfully.
+er.errors.APIError: 409 Client Error for http+docker://localhost/v1.47/containers/80eb2828cf1b63de11bf335d9cd39aae2ba1cbcd1ee3016c692dae88e6c481e9/exec: Conflict ("container 80eb2828cf1b63de11bf335d9cd39aae2ba1cbcd1ee3016c692dae88e6c481e9 is not running")
+
+Check (logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/run_instance.log) for more information.
+2026-10-30 16:30:37,907 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched...
+2026-10-30 16:30:37,953 - INFO - Failed to stop container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched: Command '['docker', 'stop', '--time=15', '80eb2828cf1b63de11bf335d9cd39aae2ba1cbcd1ee3016c692dae88e6c481e9']' returned non-zero exit status 1.. Trying to forcefully kill...
+2026-10-30 16:30:37,953 - INFO - Forcefully killing container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched...
+2026-10-30 16:30:38,047 - INFO - Failed to kill container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched: Error response from daemon: cannot kill container: 80eb2828cf1b63de11bf335d9cd39aae2ba1cbcd1ee3016c692dae88e6c481e9: No such container: 80eb2828cf1b63de11bf335d9cd39aae2ba1cbcd1ee3016c692dae88e6c481e9
+
+2026-10-30 16:30:38,047 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched...
+2026-10-30 16:30:38,151 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_cline-patched removed successfully.

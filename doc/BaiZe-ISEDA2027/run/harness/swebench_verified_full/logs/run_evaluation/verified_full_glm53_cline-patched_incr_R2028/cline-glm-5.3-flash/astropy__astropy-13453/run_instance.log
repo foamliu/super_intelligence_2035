@@ -1,0 +1,141 @@
+2026-11-10 08:59:05,470 - INFO - Creating container for astropy__astropy-13453...
+2026-11-10 08:59:07,060 - INFO - Removed existing container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028
+2026-11-10 08:59:07,076 - INFO - Container for astropy__astropy-13453 created: 9cf7fef3d580fc5984ff88cc7cbd0839816f4e6726f50c895ee7dfbabf0ecadd
+2026-11-10 08:59:08,632 - INFO - Container for astropy__astropy-13453 started: 9cf7fef3d580fc5984ff88cc7cbd0839816f4e6726f50c895ee7dfbabf0ecadd
+2026-11-10 08:59:08,633 - INFO - Intermediate patch for astropy__astropy-13453 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/astropy__astropy-13453/patch.diff, now applying to container...
+2026-11-10 08:59:08,797 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES.rst...
+Checking patch astropy/io/ascii/html.py...
+Checking patch astropy/io/ascii/tests/test_html.py...
+Applied patch CHANGES.rst cleanly.
+Applied patch astropy/io/ascii/html.py cleanly.
+Applied patch astropy/io/ascii/tests/test_html.py cleanly.
+
+2026-11-10 08:59:09,331 - INFO - Git diff before:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index ce5ac0094..cf5f7093a 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,3 +1,17 @@
++Version 5.2 (unreleased)
++========================
++
++Bug Fixes
++---------
++
++astropy.io.ascii
++^^^^^^^^^^^^^^^^
++
++- Fix the HTML writer to respect the ``formats`` keyword when writing a table.
++  [#13445]
++
++Version 5.1 (2022-05-23)
++========================
+ Version 5.1 (2022-05-23)
+ ========================
+ 
+diff --git a/astropy/io/ascii/html.py b/astropy/io/ascii/html.py
+index 266cf229c..c5a110514 100644
+--- a/astropy/io/ascii/html.py
++++ b/astropy/io/ascii/html.py
+@@ -349,11 +349,13 @@ class HTML(core.BaseReader):
+         cols = list(table.columns.values())
+ 
+         self.data.header.cols = cols
++        self.data.cols = cols
+ 
+         if isinstance(self.data.fill_values, tuple):
+             self.data.fill_values = [self.data.fill_values]
+ 
+         self.data._set_fill_values(cols)
++        self.data._set_col_formats()
+ 
+         lines = []
+ 
+diff --git a/astropy/io/ascii/tests/test_html.py b/astropy/io/ascii/tests/test_html.py
+index 0515efa06..b9cb59b85 100644
+--- a/astropy/io/ascii/tests/test_html.py
++++ b/astropy/io/ascii/tests/test_html.py
+@@ -728,3 +728,25 @@ def test_read_html_unicode():
+                 '</table>']
+     dat = Table.read(table_in, format='ascii.html')
+     assert np.all(dat['col1'] == ['Δ', 'Δ'])
++    dat = Table.read(table_in, format='ascii.html')
++    assert np.all(dat['col1'] == ['Δ', 'Δ'])
++
++
++@pytest.mark.skipif('not HAS_BS4')
++def test_write_table_html_formats():
++    """
++    Test that the ``formats`` keyword is respected when writing HTML tables.
++
++    Reported in https://github.com/astropy/astropy/issues/13442
++    """
++    t = Table([(1.23875234858e-24, 3.2348748432e-15), (2, 4)], names=('a', 'b'))
++    buffer_output = StringIO()
++    t.write(buffer_output, format='html', formats={'a': lambda x: f'{x:.2e}'})
++
++    # Check that the column values are formatted but the column names are not
++    assert '<td>1.24e-24</td>' in buffer_output.getvalue()
++    assert '<td>3.23e-15</td>' in buffer_output.getvalue()
++    assert '<th>a</th>' in buffer_output.getvalue()
++
++    # Check that the original table column format is unchanged
++    assert t['a'].info.format is None
+2026-11-10 08:59:09,332 - INFO - Eval script for astropy__astropy-13453 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/astropy__astropy-13453/eval.sh; copying to container...
+2026-11-10 09:00:32,415 - INFO - Test runtime: 83.00 seconds
+2026-11-10 09:00:32,417 - INFO - Test output for astropy__astropy-13453 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/astropy__astropy-13453/test_output.txt
+2026-11-10 09:00:32,480 - INFO - Git diff after:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index ce5ac0094..cf5f7093a 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,3 +1,17 @@
++Version 5.2 (unreleased)
++========================
++
++Bug Fixes
++---------
++
++astropy.io.ascii
++^^^^^^^^^^^^^^^^
++
++- Fix the HTML writer to respect the ``formats`` keyword when writing a table.
++  [#13445]
++
++Version 5.1 (2022-05-23)
++========================
+ Version 5.1 (2022-05-23)
+ ========================
+ 
+diff --git a/astropy/io/ascii/html.py b/astropy/io/ascii/html.py
+index 266cf229c..c5a110514 100644
+--- a/astropy/io/ascii/html.py
++++ b/astropy/io/ascii/html.py
+@@ -349,11 +349,13 @@ class HTML(core.BaseReader):
+         cols = list(table.columns.values())
+ 
+         self.data.header.cols = cols
++        self.data.cols = cols
+ 
+         if isinstance(self.data.fill_values, tuple):
+             self.data.fill_values = [self.data.fill_values]
+ 
+         self.data._set_fill_values(cols)
++        self.data._set_col_formats()
+ 
+         lines = []
+2026-11-10 09:00:32,480 - INFO - Git diff changed after running eval script
+2026-11-10 09:00:32,480 - INFO - Grading answer for astropy__astropy-13453...
+2026-11-10 09:00:32,485 - INFO - report: {'astropy__astropy-13453': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/ascii/tests/test_html.py::test_write_table_formatted_columns'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/ascii/tests/test_html.py::test_listwriter', 'astropy/io/ascii/tests/test_html.py::test_htmlinputter_no_bs4', 'astropy/io/ascii/tests/test_html.py::test_multicolumn_write', 'astropy/io/ascii/tests/test_html.py::test_write_no_multicols', 'astropy/io/ascii/tests/test_html.py::test_write_table_html_fill_values', 'astropy/io/ascii/tests/test_html.py::test_write_table_html_fill_values_optional_columns', 'astropy/io/ascii/tests/test_html.py::test_write_table_html_fill_values_masked', 'astropy/io/ascii/tests/test_html.py::test_multicolumn_table_html_fill_values', 'astropy/io/ascii/tests/test_html.py::test_multi_column_write_table_html_fill_values_masked'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-13453: resolved: True
+2026-11-10 09:00:32,487 - INFO - Attempting to stop container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 09:00:48,271 - INFO - Container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028 stopped successfully.
+2026-11-10 09:00:48,271 - INFO - Attempting to remove container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 09:00:48,329 - INFO - Container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028 removed successfully.
+tus 1.. Trying to forcefully kill...
+2026-11-10 08:59:07,089 - INFO - Forcefully killing container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 08:59:07,124 - INFO - Failed to kill container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028: Error response from daemon: cannot kill container: 8056ad265eec8a8443abcbeb356ad2e43661bd8b1f901e1b161e9114609dcee7: No such container: 8056ad265eec8a8443abcbeb356ad2e43661bd8b1f901e1b161e9114609dcee7
+
+2026-11-10 08:59:07,125 - INFO - Attempting to remove container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 08:59:07,146 - INFO - Container sweb.eval.astropy__astropy-13453.verified_full_glm53_cline-patched_incr_R2028 removed successfully.

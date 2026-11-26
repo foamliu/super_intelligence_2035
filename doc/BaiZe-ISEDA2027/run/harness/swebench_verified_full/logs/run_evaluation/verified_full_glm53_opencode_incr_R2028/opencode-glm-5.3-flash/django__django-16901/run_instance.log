@@ -1,0 +1,182 @@
+2026-11-10 12:36:21,355 - INFO - Creating container for django__django-16901...
+2026-11-10 12:36:21,383 - INFO - Container for django__django-16901 created: 1be8ffab8269d29b594c97af8c08cac01a760a74b8fa00c85a02afcc7acfa932
+2026-11-10 12:36:22,086 - INFO - Container for django__django-16901 started: 1be8ffab8269d29b594c97af8c08cac01a760a74b8fa00c85a02afcc7acfa932
+2026-11-10 12:36:22,088 - INFO - Intermediate patch for django__django-16901 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-16901/patch.diff, now applying to container...
+2026-11-10 12:36:22,227 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/where.py...
+Checking patch tests/queries/tests.py...
+Applied patch django/db/models/sql/where.py cleanly.
+Applied patch tests/queries/tests.py cleanly.
+
+2026-11-10 12:36:23,793 - INFO - Git diff before:
+diff --git a/django/db/models/sql/where.py b/django/db/models/sql/where.py
+index aaab1730b7..e0d5a39456 100644
+--- a/django/db/models/sql/where.py
++++ b/django/db/models/sql/where.py
+@@ -6,6 +6,7 @@ from functools import reduce
+ 
+ from django.core.exceptions import EmptyResultSet, FullResultSet
+ from django.db.models.expressions import Case, When
++from django.db.models.functions import Mod
+ from django.db.models.lookups import Exact
+ from django.utils import tree
+ from django.utils.functional import cached_property
+@@ -129,13 +130,13 @@ class WhereNode(tree.Node):
+             # Convert if the database doesn't support XOR:
+             #   a XOR b XOR c XOR ...
+             # to:
+-            #   (a OR b OR c OR ...) AND (a + b + c + ...) == 1
++            #   (a OR b OR c OR ...) AND (a + b + c + ...) % 2 == 1
+             lhs = self.__class__(self.children, OR)
+             rhs_sum = reduce(
+                 operator.add,
+                 (Case(When(c, then=1), default=0) for c in self.children),
+             )
+-            rhs = Exact(1, rhs_sum)
++            rhs = Exact(1, Mod(rhs_sum, 2))
+             return self.__class__([lhs, rhs], AND, self.negated).as_sql(
+                 compiler, connection
+             )
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index 9578777b11..d3cd2965dd 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -2532,6 +2532,47 @@ class QuerySetBitwiseOperationTests(TestCase):
+         qs2 = Classroom.objects.filter(has_blackboard=True).order_by("-name")[:1]
+         self.assertCountEqual(qs1 ^ qs2, [self.room_3, self.room_4])
+ 
++    def test_xor_multiple_conditions(self):
++        tests = [
++            (Q(has_blackboard=True), [self.room_2, self.room_3]),
++            (Q(has_blackboard=True) ^ Q(has_blackboard=True), []),
++            (
++                Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True),
++                [self.room_2, self.room_3],
++            ),
++            (
++                Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True),
++                [],
++            ),
++            (
++                Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True),
++                [self.room_2, self.room_3],
++            ),
++            (
++                ~(
++                    Q(has_blackboard=True)
++                    ^ Q(has_blackboard=True)
++                    ^ Q(has_blackboard=True)
++                ),
++                [self.room_1, self.room_4],
++            ),
++        ]
++        for conditions, expected in tests:
++            with self.subTest(conditions=conditions):
++                self.assertCountEqual(
++                    Classroom.objects.filter(conditions),
++                    expected,
++                )
++
+     def test_subquery_aliases(self):
+         combined = School.objects.filter(pk__isnull=False) & School.objects.filter(
+             Exists(
+2026-11-10 12:36:23,795 - INFO - Eval script for django__django-16901 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-16901/eval.sh; copying to container...
+2026-11-10 12:36:31,187 - INFO - Test runtime: 7.34 seconds
+2026-11-10 12:36:31,190 - INFO - Test output for django__django-16901 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-16901/test_output.txt
+2026-11-10 12:36:31,276 - INFO - Git diff after:
+diff --git a/django/db/models/sql/where.py b/django/db/models/sql/where.py
+index aaab1730b7..e0d5a39456 100644
+--- a/django/db/models/sql/where.py
++++ b/django/db/models/sql/where.py
+@@ -6,6 +6,7 @@ from functools import reduce
+ 
+ from django.core.exceptions import EmptyResultSet, FullResultSet
+ from django.db.models.expressions import Case, When
++from django.db.models.functions import Mod
+ from django.db.models.lookups import Exact
+ from django.utils import tree
+ from django.utils.functional import cached_property
+@@ -129,13 +130,13 @@ class WhereNode(tree.Node):
+             # Convert if the database doesn't support XOR:
+             #   a XOR b XOR c XOR ...
+             # to:
+-            #   (a OR b OR c OR ...) AND (a + b + c + ...) == 1
++            #   (a OR b OR c OR ...) AND (a + b + c + ...) % 2 == 1
+             lhs = self.__class__(self.children, OR)
+             rhs_sum = reduce(
+                 operator.add,
+                 (Case(When(c, then=1), default=0) for c in self.children),
+             )
+-            rhs = Exact(1, rhs_sum)
++            rhs = Exact(1, Mod(rhs_sum, 2))
+             return self.__class__([lhs, rhs], AND, self.negated).as_sql(
+                 compiler, connection
+             )
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index 9578777b11..d3cd2965dd 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -2532,6 +2532,47 @@ class QuerySetBitwiseOperationTests(TestCase):
+         qs2 = Classroom.objects.filter(has_blackboard=True).order_by("-name")[:1]
+         self.assertCountEqual(qs1 ^ qs2, [self.room_3, self.room_4])
+ 
++    def test_xor_multiple_conditions(self):
++        tests = [
++            (Q(has_blackboard=True), [self.room_2, self.room_3]),
++            (Q(has_blackboard=True) ^ Q(has_blackboard=True), []),
++            (
++                Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True),
++                [self.room_2, self.room_3],
++            ),
++            (
++                Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True),
++                [],
++            ),
++            (
++                Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(has_blackboard=True),
++                [self.room_2, self.room_3],
++            ),
++            (
++                ~(
++                    Q(has_blackboard=True)
++                    ^ Q(has_blackboard=True)
++                    ^ Q(has_blackboard=True)
++                ),
++                [self.room_1, self.room_4],
++            ),
++        ]
++        for conditions, expected in tests:
++            with self.subTest(conditions=conditions):
++                self.assertCountEqual(
++                    Classroom.objects.filter(conditions),
++                    expected,
++                )
++
+     def test_subquery_aliases(self):
+         combined = School.objects.filter(pk__isnull=False) & School.objects.filter(
+             Exists(
+2026-11-10 12:36:31,277 - INFO - Grading answer for django__django-16901...
+2026-11-10 12:36:31,278 - INFO - report: {'django__django-16901': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_filter_multiple (xor_lookups.tests.XorLookupsTests.test_filter_multiple)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_empty_in (xor_lookups.tests.XorLookupsTests.test_empty_in)', 'test_exclude (xor_lookups.tests.XorLookupsTests.test_exclude)', 'test_filter (xor_lookups.tests.XorLookupsTests.test_filter)', 'test_filter_negated (xor_lookups.tests.XorLookupsTests.test_filter_negated)', 'test_pk_q (xor_lookups.tests.XorLookupsTests.test_pk_q)', 'test_stages (xor_lookups.tests.XorLookupsTests.test_stages)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16901: resolved: True
+2026-11-10 12:36:31,280 - INFO - Attempting to stop container sweb.eval.django__django-16901.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 12:36:46,979 - INFO - Container sweb.eval.django__django-16901.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 12:36:46,979 - INFO - Attempting to remove container sweb.eval.django__django-16901.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 12:36:47,026 - INFO - Container sweb.eval.django__django-16901.verified_full_glm53_opencode_incr_R2028 removed successfully.

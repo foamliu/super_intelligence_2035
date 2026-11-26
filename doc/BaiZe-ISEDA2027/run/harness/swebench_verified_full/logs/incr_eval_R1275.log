@@ -1,0 +1,36 @@
+=== incr_eval R1275 START Mon Nov  2 09:28:56 AM CST 2026 ===
+[Mon Nov  2 09:28:56 AM CST 2026] --- codex: 2 instances ---
+[incr-eval 09:28:56] === incr_eval for codex: ['scikit-learn__scikit-learn-11578', 'scikit-learn__scikit-learn-12585'] ===
+[incr-eval 09:28:56] merged 251/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_codex.json
+[incr-eval 09:28:56] EVAL codex on 2 instances: ['scikit-learn__scikit-learn-11578', 'scikit-learn__scikit-learn-12585']
+[incr-eval 09:29:26]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_codex_1793582936.log
+[incr-eval 09:29:26]   scikit-learn__scikit-learn-11578: RESOLVED
+[incr-eval 09:29:26]   scikit-learn__scikit-learn-12585: RESOLVED
+[incr-eval 09:29:26] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_codex.json: resolved=196 failed=55 infra=0
+[incr-eval 09:29:26] === incr_eval DONE ===
+[Mon Nov  2 09:29:26 AM CST 2026] --- hermes: 1 instance ---
+[incr-eval 09:29:26] === incr_eval for hermes: ['django__django-13590'] ===
+[incr-eval 09:29:26] merged 113/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_hermes.json
+[incr-eval 09:29:26] EVAL hermes on 1 instances: ['django__django-13590']
+[incr-eval 09:29:57]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_hermes_1793582966.log
+[incr-eval 09:29:57]   django__django-13590: RESOLVED
+[incr-eval 09:29:57] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_hermes.json: resolved=88 failed=25 infra=0
+[incr-eval 09:29:57] === incr_eval DONE ===
+[Mon Nov  2 09:29:57 AM CST 2026] --- deepseek-harness: 1 instance ---
+[incr-eval 09:29:57] === incr_eval for deepseek-harness: ['django__django-13401'] ===
+[incr-eval 09:29:57] merged 102/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json
+[incr-eval 09:29:57] EVAL deepseek-harness on 1 instances: ['django__django-13401']
+[incr-eval 09:30:27]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_deepseek-harness_1793582997.log
+[incr-eval 09:30:27]   django__django-13401: RESOLVED
+[incr-eval 09:30:27] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_deepseek-harness.json: resolved=83 failed=19 infra=0
+[incr-eval 09:30:27] === incr_eval DONE ===
+[Mon Nov  2 09:30:27 AM CST 2026] --- regen eval summaries ---
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=497 resolved=401 failed=96 infra=0)
+  pi: unchanged (n=463 resolved=333 failed=130 infra=0)
+  claude-code: unchanged (n=358 resolved=273 failed=85 infra=0)
+  codex: WROTE eval_codex.json  n=251 resolved=196 failed=55 infra=0
+  hermes: WROTE eval_hermes.json  n=113 resolved=88 failed=25 infra=0
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=102 resolved=83 failed=19 infra=0
+=== incr_eval R1275 DONE Mon Nov  2 09:30:28 AM CST 2026 ===

@@ -1,0 +1,61 @@
+2026-11-07 22:51:48,391 - INFO - Creating container for django__django-11490...
+2026-11-07 22:51:48,455 - INFO - Container for django__django-11490 created: 6ddfec68ae10f89e5796b87a649e7bc479207f29ef39021f2fdbdef619f5e5f4
+2026-11-07 22:51:49,382 - INFO - Container for django__django-11490 started: 6ddfec68ae10f89e5796b87a649e7bc479207f29ef39021f2fdbdef619f5e5f4
+2026-11-07 22:51:49,384 - INFO - Intermediate patch for django__django-11490 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11490/patch.diff, now applying to container...
+2026-11-07 22:51:49,510 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Checking patch tests/queries/test_qs_combinators.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/queries/test_qs_combinators.py cleanly.
+
+2026-11-07 22:51:50,487 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a44adfc760..a791908caf 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -426,6 +426,7 @@ class SQLCompiler:
+                 # must have the same columns list. Set the selects defined on
+                 # the query on all combined queries, if not already set.
+                 if not compiler.query.values_select and self.query.values_select:
++                    compiler.query = compiler.query.clone()
+                     compiler.query.set_values((
+                         *self.query.extra_select,
+                         *self.query.values_select,
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+index 3902db59e2..227972e8c4 100644
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -123,6 +123,9 @@ class QuerySetSetOperationTests(TestCase):
+         self.assertEqual(reserved_name['order'], 2)
+         reserved_name = qs1.union(qs1).values_list('name', 'order', 'id').get()
+         self.assertEqual(reserved_name[:2], ('a', 2))
++        # List of columns can be changed.
++        reserved_name = qs1.union(qs1).values_list('order').get()
++        self.assertEqual(reserved_name, (2,))
+ 
+     def test_union_with_two_annotated_values_list(self):
+         qs1 = Number.objects.filter(num=1).annotate(
+2026-11-07 22:51:50,490 - INFO - Eval script for django__django-11490 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11490/eval.sh; copying to container...
+2026-11-07 22:51:57,258 - INFO - Test runtime: 6.69 seconds
+2026-11-07 22:51:57,260 - INFO - Test output for django__django-11490 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-11490/test_output.txt
+2026-11-07 22:51:57,337 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a44adfc760..a791908caf 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -426,6 +426,7 @@ class SQLCompiler:
+                 # must have the same columns list. Set the selects defined on
+                 # the query on all combined queries, if not already set.
+                 if not compiler.query.values_select and self.query.values_select:
++                    compiler.query = compiler.query.clone()
+                     compiler.query.set_values((
+                         *self.query.extra_select,
+                         *self.query.values_select,
+2026-11-07 22:51:57,337 - INFO - Git diff changed after running eval script
+2026-11-07 22:51:57,337 - INFO - Grading answer for django__django-11490...
+2026-11-07 22:51:57,340 - INFO - report: {'django__django-11490': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_union_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_combining_multiple_models (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_difference (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_intersection (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_union (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_union_empty_result (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_difference_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_difference_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_intersection_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_intersection_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_limits (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_order_raises_on_non_selected_column (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_ordering (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_ordering_by_f_expression (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_qs_with_subcompound_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_difference (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_intersection (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_union (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_distinct (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_extra_and_values_list (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_two_annotated_values_list (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_unsupported_ordering_slicing_raises_db_error (queries.test_qs_combinators.QuerySetSetOperationTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11490: resolved: True
+2026-11-07 22:51:57,343 - INFO - Attempting to stop container sweb.eval.django__django-11490.verified_full_glm53_hermes_R1789...
+2026-11-07 22:52:13,732 - INFO - Container sweb.eval.django__django-11490.verified_full_glm53_hermes_R1789 stopped successfully.
+2026-11-07 22:52:13,732 - INFO - Attempting to remove container sweb.eval.django__django-11490.verified_full_glm53_hermes_R1789...
+2026-11-07 22:52:13,786 - INFO - Container sweb.eval.django__django-11490.verified_full_glm53_hermes_R1789 removed successfully.

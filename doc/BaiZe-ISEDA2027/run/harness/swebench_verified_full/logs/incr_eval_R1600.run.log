@@ -1,0 +1,29 @@
+[R1600 22:20:30] === R1600 incr_eval: 2 genuine cline-patched backlog items ===
+[R1600 22:20:30] --- cline-patched: 2 items ['django__django-17087', 'matplotlib__matplotlib-20676'] ---
+[R1600 22:20:30]   merged 460 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_cline-patched.json
+[R1600 22:20:30]   EVAL run_id=verified_full_cline-patched_rerun_R1600 on 2 instances max_workers=2
+[R1600 22:21:26] === R1600 incr_eval: 2 genuine cline-patched backlog items ===
+[R1600 22:21:26] --- cline-patched: 2 items ['django__django-17087', 'matplotlib__matplotlib-20676'] ---
+[R1600 22:21:26]   merged 460 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_cline-patched.json
+[R1600 22:21:26]   EVAL run_id=verified_full_cline-patched_rerun_R1600 on 2 instances max_workers=2
+[R1600 22:21:30]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_cline-patched_rerun_R1600_1793802086.log
+[R1600 22:21:30]     2 instances already run, skipping...
+[R1600 22:21:30]     Instances submitted: 2
+[R1600 22:21:30]     Instances completed: 2
+[R1600 22:21:30]     Instances resolved: 1
+[R1600 22:21:30]     Instances unresolved: 1
+[R1600 22:21:30]     Instances with errors: 0
+[R1600 22:21:30] === regen_eval_summaries.py cline-patched ===
+[R1600 22:21:30]   regen_eval_summaries: cline-patched
+[R1600 22:21:30]     cline-patched: scanned 5 run dir(s), 460 instances with report.json
+[R1600 22:21:30]     cline-patched: WROTE eval_cline-patched.json  n=469 resolved=338 failed=122 infra=0 no_patch=9)
+[R1600 22:21:30] === gen_report_swebench_verified_full500_zh.py ===
+[R1600 22:21:30]   written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (17110B)
+[R1600 22:21:30]     cline        done=500/500 patch=460 no_patch=31 infra=0 eval=Y resolved=338
+[R1600 22:21:30]     opencode     done=500/500 patch=497 no_patch=-7 infra=0 eval=Y resolved=401
+[R1600 22:21:30]     pi           done=500/500 patch=463 no_patch=4 infra=25 eval=Y resolved=333
+[R1600 22:21:30]     claude-code  done=500/500 patch=358 no_patch=67 infra=67 eval=Y resolved=273
+[R1600 22:21:30]     codex        done=500/500 patch=362 no_patch=120 infra=12 eval=Y resolved=284
+[R1600 22:21:30]     hermes       done=500/500 patch=229 no_patch=84 infra=185 eval=Y resolved=184
+[R1600 22:21:30]     deepseek-harness done=442/500 patch=221 no_patch=2 infra=119 eval=Y resolved=184
+[R1600 22:21:30] === R1600 DONE ===

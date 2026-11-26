@@ -1,0 +1,35 @@
+[incr-eval 00:42:27] === R1610 cline-patched: ['scikit-learn__scikit-learn-25102'] (run_id=verified_full_cline-patched_rerun_R1610) ===
+[incr-eval 00:42:27] merged 473/483 -> predictions/predictions_cline-patched.json
+[incr-eval 00:42:27] EVAL cline-patched on 1: ['scikit-learn__scikit-learn-25102']
+[incr-eval 00:43:31] === R1610 cline-patched: ['scikit-learn__scikit-learn-25102'] (run_id=verified_full_cline-patched_rerun_R1610) ===
+[incr-eval 00:43:31] merged 473/483 -> predictions/predictions_cline-patched.json
+[incr-eval 00:43:31] EVAL cline-patched on 1: ['scikit-learn__scikit-learn-25102']
+[incr-eval 00:43:35] eval rc=0; log -> logs/eval_incr_verified_full_cline-patched_R1610_1793810615.log
+[incr-eval 00:43:35] cline-patched scikit-learn__scikit-learn-25102: RESOLVED
+[incr-eval 00:43:35] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: scanned 12 run dir(s), 473 instances with report.json
+  cline-patched: WROTE eval_cline-patched.json  n=483 resolved=349 failed=124 infra=0 no_patch=10)
+  opencode: scanned 1 run dir(s), 497 instances with report.json
+  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
+  pi: scanned 1 run dir(s), 463 instances with report.json
+  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
+  claude-code: scanned 1 run dir(s), 358 instances with report.json
+  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
+  codex: scanned 2 run dir(s), 362 instances with report.json
+  codex: WROTE eval_codex.json  n=489 resolved=284 failed=78 infra=0 no_patch=127)
+  hermes: scanned 1 run dir(s), 230 instances with report.json
+  hermes: unchanged (n=314 resolved=184 failed=46 infra=0 no_patch=84)
+  deepseek-harness: scanned 9 run dir(s), 229 instances with report.json
+  deepseek-harness: unchanged (n=237 resolved=185 failed=44 infra=0 no_patch=8)
+[incr-eval 00:43:36] === gen report HTML ===
+written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (17110B)
+  cline        done=500/500 patch=473 no_patch=18 infra=0 eval=Y resolved=349
+  opencode     done=500/500 patch=497 no_patch=-7 infra=0 eval=Y resolved=401
+  pi           done=500/500 patch=463 no_patch=4 infra=25 eval=Y resolved=333
+  claude-code  done=500/500 patch=358 no_patch=67 infra=67 eval=Y resolved=273
+  codex        done=500/500 patch=362 no_patch=121 infra=11 eval=Y resolved=284
+  hermes       done=500/500 patch=229 no_patch=84 infra=185 eval=Y resolved=184
+  deepseek-harness done=451/500 patch=227 no_patch=3 infra=119 eval=Y resolved=185
+[incr-eval 00:43:36] === incr_eval R1610 DONE (6s) ===
+SUMMARY: {('cline-patched', 'scikit-learn__scikit-learn-25102'): 'RESOLVED'}

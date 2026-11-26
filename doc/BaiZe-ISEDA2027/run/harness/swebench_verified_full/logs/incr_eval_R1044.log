@@ -1,0 +1,74 @@
+=== incr_eval R1044 START Sat Oct 31 12:50:19 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Sat Oct 31 12:50:19 PM CST 2026] === re-merge claude-code predictions (avoid stale merge) ===
+claude-code: 305 patches merged, 305 eval IDs
+[Sat Oct 31 12:50:19 PM CST 2026] === claude-code eval START 305 instances (stable run_id skips already-done) ===
+304 instances already run, skipping...
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:24<00:00, 24.69s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.69s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.69s/it]
+All instances run.
+Total instances: 305
+Instances submitted: 305
+Instances completed: 305
+Instances incomplete: 0
+Instances resolved: 233
+Instances unresolved: 72
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 11
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 305
+Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json
+[Sat Oct 31 12:50:49 PM CST 2026] === claude-code eval DONE rc=0 ===
+[Sat Oct 31 12:50:49 PM CST 2026] === re-merge codex predictions (avoid stale merge) ===
+codex: 197 patches merged, 197 eval IDs
+[Sat Oct 31 12:50:49 PM CST 2026] === codex eval START 197 instances (stable run_id skips already-done) ===
+195 instances already run, skipping...
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:27<00:27, 27.49s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:27<00:27, 27.49s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:28<00:00, 14.48s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:28<00:00, 14.48s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:28<00:00, 14.48s/it]
+All instances run.
+Total instances: 197
+Instances submitted: 197
+Instances completed: 197
+Instances incomplete: 0
+Instances resolved: 156
+Instances unresolved: 41
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 7
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 197
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[Sat Oct 31 12:51:23 PM CST 2026] === codex eval DONE rc=0 ===
+[Sat Oct 31 12:51:23 PM CST 2026] === re-merge hermes predictions (avoid stale merge) ===
+hermes: 25 patches merged, 25 eval IDs
+[Sat Oct 31 12:51:23 PM CST 2026] === hermes eval START 25 instances (stable run_id skips already-done) ===
+24 instances already run, skipping...
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:21<00:00, 21.68s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:21<00:00, 21.68s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:21<00:00, 21.68s/it]
+All instances run.
+Total instances: 25
+Instances submitted: 25
+Instances completed: 25
+Instances incomplete: 0
+Instances resolved: 18
+Instances unresolved: 7
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 25
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Sat Oct 31 12:51:49 PM CST 2026] === hermes eval DONE rc=0 ===
+[Sat Oct 31 12:51:49 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: WROTE eval_claude-code.json  n=305 resolved=233 failed=72 infra=0
+  codex: WROTE eval_codex.json  n=197 resolved=156 failed=41 infra=0
+  hermes: WROTE eval_hermes.json  n=25 resolved=18 failed=7 infra=0
+  deepseek-harness: unchanged (n=33 resolved=27 failed=6 infra=0)
+=== incr_eval R1044 DONE Sat Oct 31 12:51:50 PM CST 2026 ===

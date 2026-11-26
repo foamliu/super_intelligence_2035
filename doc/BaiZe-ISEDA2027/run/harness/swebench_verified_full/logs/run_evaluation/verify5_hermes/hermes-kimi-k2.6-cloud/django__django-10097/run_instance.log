@@ -1,0 +1,55 @@
+2026-10-31 00:58:16,705 - INFO - Creating container for django__django-10097...
+2026-10-31 00:58:17,755 - INFO - Removed existing container sweb.eval.django__django-10097.verify5_hermes
+2026-10-31 00:58:17,804 - INFO - Container for django__django-10097 created: bcdbcea34b8f00136faf8b7160bed82583c7854afdc81164b65f419bdf9f9ded
+2026-10-31 00:58:18,512 - INFO - Container for django__django-10097 started: bcdbcea34b8f00136faf8b7160bed82583c7854afdc81164b65f419bdf9f9ded
+2026-10-31 00:58:18,514 - INFO - Intermediate patch for django__django-10097 written to logs/run_evaluation/verify5_hermes/hermes-kimi-k2.6-cloud/django__django-10097/patch.diff, now applying to container...
+2026-10-31 00:58:18,668 - INFO - >>>>> Applied Patch:
+Checking patch django/core/validators.py...
+Checking patch tests/validators/invalid_urls.txt...
+Checking patch tests/validators/valid_urls.txt...
+Applied patch django/core/validators.py cleanly.
+Applied patch tests/validators/invalid_urls.txt cleanly.
+Applied patch tests/validators/valid_urls.txt cleanly.
+
+2026-10-31 00:58:19,608 - INFO - Git diff before:
+diff --git a/django/core/validators.py b/django/core/validators.py
+index 92394a7eae..c1c9cd1c87 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -94,7 +94,7 @@ class URLValidator(RegexValidator):
+ 
+     regex = _lazy_re_compile(
+         r'^(?:[a-z0-9\.\-\+]*)://'  # scheme is validated separately
+-        r'(?:\S+(?::\S*)?@)?'  # user:pass authentication
++        r'(?:[^\s:@/]+(?::[^\s:@/]*)?@)?'  # user:pass authentication
+         r'(?:' + ipv4_re + '|' + ipv6_re + '|' + host_re + ')'
+         r'(?::\d{2,5})?'  # port
+         r'(?:[/?#][^\s]*)?'  # resource path
+diff --git a/tests/validators/invalid_urls.txt b/tests/validators/invalid_urls.txt
+index 04a0b5fb1b..4a092034ff 100644
+--- a/tests/validators/invalid_urls.txt
++++ b/tests/validators/invalid_urls.txt
+@@ -57,3 +57,9 @@ http://example.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.
+ http://example.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+ http://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaa
+ https://test.[com
++http://foo@bar@example.com
++http://foo/bar@example.com
++http://foo:bar:baz@example.com
++http://foo:bar@baz@example.com
++http://foo:bar/baz@example.com
++http://invalid-.com/?m=foo@example.com
+diff --git a/tests/validators/valid_urls.txt b/tests/validators/valid_urls.txt
+index 4bc8c03059..f79f948142 100644
+--- a/tests/validators/valid_urls.txt
++++ b/tests/validators/valid_urls.txt
+@@ -48,7 +48,7 @@ http://foo.bar/?q=Test%20URL-encoded%20stuff
+ http://مثال.إختبار
+ http://例子.测试
+ http://उदाहरण.परीक्षा
+-http://-.~_!$&'()*+,;=:%40:80%2f::::::@example.com
++http://-.~_!$&'()*+,;=%40:80%2f@example.com
+ http://xn--7sbb4ac0ad0be6cf.xn--p1ai
+ http://1337.net
+ http://a.b-c.de
+2026-10-31 00:58:19,610 - INFO - Eval script for django__django-10097 written to logs/run_evaluation/verify5_hermes/hermes-kimi-k2.6-cloud/django__django-10097/eval.sh; copying to container...

@@ -1,0 +1,128 @@
+2026-11-12 05:26:55,591 - INFO - Creating container for sphinx-doc__sphinx-9367...
+2026-11-12 05:26:55,620 - INFO - Container for sphinx-doc__sphinx-9367 created: 651ce85d86806258126cf7fd99354e308b149d80eadf024f25404b9287b36e02
+2026-11-12 05:26:56,172 - INFO - Container for sphinx-doc__sphinx-9367 started: 651ce85d86806258126cf7fd99354e308b149d80eadf024f25404b9287b36e02
+2026-11-12 05:26:56,174 - INFO - Intermediate patch for sphinx-doc__sphinx-9367 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2233/cline-glm-5.3-flash/sphinx-doc__sphinx-9367/patch.diff, now applying to container...
+2026-11-12 05:26:56,320 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/pycode/ast.py...
+Checking patch sphinx/util/typing.py...
+Checking patch tests/test_pycode_ast.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/pycode/ast.py cleanly.
+Applied patch sphinx/util/typing.py cleanly.
+Applied patch tests/test_pycode_ast.py cleanly.
+
+2026-11-12 05:26:56,823 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index a0f1bab26..7fc51f525 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -77,6 +77,7 @@ Bugs fixed
+   whitespace (ex. ``Dict[str, str]``)
+ * #8945: when transforming typed fields, call the specified role instead of
+   making an single xref. For C and C++, use the ``expr`` role for typed fields.
++* #9340: pycode: 1-element tuple is rendered as ``(1)`` instead of ``(1,)``
+ 
+ Testing
+ --------
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index f541ec0a9..66559be6b 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -213,8 +213,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "%s %s" % (self.visit(node.op), self.visit(node.operand))
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+-        if node.elts:
++        if len(node.elts) > 1:
+             return "(" + ", ".join(self.visit(e) for e in node.elts) + ")"
++        elif node.elts:
++            return "(" + self.visit(node.elts[0]) + ",)"
+         else:
+             return "()"
+ 
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index 279268aee..db67f1e88 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,11 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    try:
++        from types import Union as types_Union  # type: ignore
++    except ImportError:
++        # types.Union was named types.UnionType before Python 3.14
++        from types import UnionType as types_Union  # type: ignore
+ else:
+     types_Union = None
+ 
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index e80062351..81f8f66a2 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -55,6 +55,7 @@ from sphinx.pycode import ast
+     ("- a", "- a"),                             # USub
+     ("(1, 2, 3)", "(1, 2, 3)"),                   # Tuple
+     ("()", "()"),                               # Tuple (empty)
++    ("(1,)", "(1,)"),                           # Tuple (single element)
+ ])
+ def test_unparse(source, expected):
+     module = ast.parse(source)
+2026-11-12 05:26:56,825 - INFO - Eval script for sphinx-doc__sphinx-9367 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2233/cline-glm-5.3-flash/sphinx-doc__sphinx-9367/eval.sh; copying to container...
+2026-11-12 05:27:00,422 - INFO - Test runtime: 3.52 seconds
+2026-11-12 05:27:00,425 - INFO - Test output for sphinx-doc__sphinx-9367 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2233/cline-glm-5.3-flash/sphinx-doc__sphinx-9367/test_output.txt
+2026-11-12 05:27:00,494 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index a0f1bab26..7fc51f525 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -77,6 +77,7 @@ Bugs fixed
+   whitespace (ex. ``Dict[str, str]``)
+ * #8945: when transforming typed fields, call the specified role instead of
+   making an single xref. For C and C++, use the ``expr`` role for typed fields.
++* #9340: pycode: 1-element tuple is rendered as ``(1)`` instead of ``(1,)``
+ 
+ Testing
+ --------
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index f541ec0a9..66559be6b 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -213,8 +213,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "%s %s" % (self.visit(node.op), self.visit(node.operand))
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+-        if node.elts:
++        if len(node.elts) > 1:
+             return "(" + ", ".join(self.visit(e) for e in node.elts) + ")"
++        elif node.elts:
++            return "(" + self.visit(node.elts[0]) + ",)"
+         else:
+             return "()"
+ 
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index 279268aee..db67f1e88 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,11 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    try:
++        from types import Union as types_Union  # type: ignore
++    except ImportError:
++        # types.Union was named types.UnionType before Python 3.14
++        from types import UnionType as types_Union  # type: ignore
+ else:
+     types_Union = None
+2026-11-12 05:27:00,495 - INFO - Git diff changed after running eval script
+2026-11-12 05:27:00,495 - INFO - Grading answer for sphinx-doc__sphinx-9367...
+2026-11-12 05:27:00,496 - INFO - report: {'sphinx-doc__sphinx-9367': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_pycode_ast.py::test_unparse[(1,)-(1,)]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_pycode_ast.py::test_unparse[a', 'tests/test_pycode_ast.py::test_unparse[os.path-os.path]', 'tests/test_pycode_ast.py::test_unparse[1', "tests/test_pycode_ast.py::test_unparse[b'bytes'-b'bytes']", 'tests/test_pycode_ast.py::test_unparse[object()-object()]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_0]', "tests/test_pycode_ast.py::test_unparse[{'key1':", 'tests/test_pycode_ast.py::test_unparse[...-...]', 'tests/test_pycode_ast.py::test_unparse[Tuple[int,', 'tests/test_pycode_ast.py::test_unparse[~', 'tests/test_pycode_ast.py::test_unparse[lambda', 'tests/test_pycode_ast.py::test_unparse[[1,', 'tests/test_pycode_ast.py::test_unparse[sys-sys]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_1]', 'tests/test_pycode_ast.py::test_unparse[not', 'tests/test_pycode_ast.py::test_unparse[{1,', "tests/test_pycode_ast.py::test_unparse['str'-'str']", 'tests/test_pycode_ast.py::test_unparse[+', 'tests/test_pycode_ast.py::test_unparse[-', 'tests/test_pycode_ast.py::test_unparse[(1,', 'tests/test_pycode_ast.py::test_unparse[()-()]', 'tests/test_pycode_ast.py::test_unparse_None', 'tests/test_pycode_ast.py::test_unparse_py38[lambda', 'tests/test_pycode_ast.py::test_unparse_py38[0x1234-0x1234]', 'tests/test_pycode_ast.py::test_unparse_py38[1_000_000-1_000_000]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9367: resolved: True
+2026-11-12 05:27:00,498 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9367.verified_full_glm53_cline-patched_incr_R2233...
+2026-11-12 05:27:16,571 - INFO - Container sweb.eval.sphinx-doc__sphinx-9367.verified_full_glm53_cline-patched_incr_R2233 stopped successfully.
+2026-11-12 05:27:16,571 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9367.verified_full_glm53_cline-patched_incr_R2233...
+2026-11-12 05:27:16,610 - INFO - Container sweb.eval.sphinx-doc__sphinx-9367.verified_full_glm53_cline-patched_incr_R2233 removed successfully.

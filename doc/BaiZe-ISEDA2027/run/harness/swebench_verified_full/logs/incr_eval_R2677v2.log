@@ -1,0 +1,36 @@
+[R2677-eval 14:37:32] cline: 344 already evaluated
+[R2677-eval 14:37:32] cline: 339 total real, 2 new to eval
+[R2677-eval 14:37:32] cline: launching eval on 2 NEW instances (workers=1, timeout=1800)...
+[R2677-eval 14:37:32] cline: eval_ids = ['django__django-13033', 'django__django-13212']
+[R2677-eval 14:38:28] cline: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_cline-patched_R2677.log
+[R2677-eval 14:38:28]   django__django-13033: failed (capability)
+[R2677-eval 14:38:28]   django__django-13212: failed (capability)
+[R2677-eval 14:38:28] cline: MERGED resolved=254 failed=90 infra=2 total_pred=344 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_cline-patched.json
+[R2677-eval 14:38:28] codex: 153 already evaluated
+[R2677-eval 14:38:28] codex: 137 total real, 0 new to eval
+[R2677-eval 14:38:28] codex: no new instances to eval, skipping
+[R2677-eval 14:38:28] opencode: 500 already evaluated
+[R2677-eval 14:38:28] opencode: 499 total real, 0 new to eval
+[R2677-eval 14:38:28] opencode: no new instances to eval, skipping
+[R2677-eval 14:38:28] claude-code: 360 already evaluated
+[R2677-eval 14:38:28] claude-code: 343 total real, 0 new to eval
+[R2677-eval 14:38:28] claude-code: no new instances to eval, skipping
+[R2677-eval 14:38:28] pi: 300 already evaluated
+[R2677-eval 14:38:29] pi: 298 total real, 2 new to eval
+[R2677-eval 14:38:29] pi: launching eval on 2 NEW instances (workers=1, timeout=1800)...
+[R2677-eval 14:38:29] pi: eval_ids = ['django__django-11163', 'django__django-11179']
+[R2677-eval 14:39:27] pi: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_pi_R2677.log
+[R2677-eval 14:39:27]   django__django-11163: RESOLVED
+[R2677-eval 14:39:27]   django__django-11179: RESOLVED
+[R2677-eval 14:39:27] pi: MERGED resolved=218 failed=81 infra=3 total_pred=303 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_pi.json
+[R2677-eval 14:39:27] hermes: 491 already evaluated
+[R2677-eval 14:39:27] hermes: 486 total real, 1 new to eval
+[R2677-eval 14:39:27] hermes: launching eval on 1 NEW instances (workers=1, timeout=1800)...
+[R2677-eval 14:39:27] hermes: eval_ids = ['sympy__sympy-18189']
+[R2677-eval 14:40:22] hermes: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_hermes_R2677.log
+[R2677-eval 14:40:22]   sympy__sympy-18189: RESOLVED
+[R2677-eval 14:40:22] hermes: MERGED resolved=441 failed=49 infra=2 total_pred=492 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_hermes.json
+[R2677-eval 14:40:22] deepseek: 180 already evaluated
+[R2677-eval 14:40:22] deepseek: 177 total real, 0 new to eval
+[R2677-eval 14:40:22] deepseek: no new instances to eval, skipping
+[R2677-eval 14:40:22] R2677 eval done in 169.9s

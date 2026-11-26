@@ -1,0 +1,19 @@
+441 instances already run, skipping...
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [30:17<00:00, 1817.45s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:17<00:00, 1817.45s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:17<00:00, 1817.45s/it]
+Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
+Check (logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+All instances run.
+Total instances: 442
+Instances submitted: 442
+Instances completed: 441
+Instances incomplete: 0
+Instances resolved: 325
+Instances unresolved: 116
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 19
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 0
+Unremoved images: 442
+Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json

@@ -1,0 +1,132 @@
+2026-11-09 15:56:20,624 - INFO - Creating container for django__django-16136...
+2026-11-09 15:56:20,659 - INFO - Container for django__django-16136 created: ace3d536f67826e60baf264cf3b98fea10e952b6caa13f591877dad10149ba4e
+2026-11-09 15:56:21,684 - INFO - Container for django__django-16136 started: ace3d536f67826e60baf264cf3b98fea10e952b6caa13f591877dad10149ba4e
+2026-11-09 15:56:21,686 - INFO - Intermediate patch for django__django-16136 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-16136/patch.diff, now applying to container...
+2026-11-09 15:56:21,914 - INFO - >>>>> Applied Patch:
+Checking patch django/views/generic/base.py...
+Checking patch docs/releases/4.1.2.txt...
+Checking patch tests/async/tests.py...
+Applied patch django/views/generic/base.py cleanly.
+Applied patch docs/releases/4.1.2.txt cleanly.
+Applied patch tests/async/tests.py cleanly.
+
+2026-11-09 15:56:23,438 - INFO - Git diff before:
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index db1842e3e5..51d2abba87 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -148,7 +148,15 @@ class View:
+             request.path,
+             extra={"status_code": 405, "request": request},
+         )
+-        return HttpResponseNotAllowed(self._allowed_methods())
++        response = HttpResponseNotAllowed(self._allowed_methods())
++        if self.view_is_async:
++
++            async def func():
++                return response
++
++            return func()
++        else:
++            return response
+ 
+     def options(self, request, *args, **kwargs):
+         """Handle responding to requests for the OPTIONS HTTP verb."""
+diff --git a/docs/releases/4.1.2.txt b/docs/releases/4.1.2.txt
+index 57b0b6c6e8..e5c1a42a4c 100644
+--- a/docs/releases/4.1.2.txt
++++ b/docs/releases/4.1.2.txt
+@@ -39,3 +39,7 @@ Bugfixes
+ * Fixed a regression in Django 4.1 that didn't alter a sequence type when
+   altering type of pre-Django 4.1 serial columns on PostgreSQL
+   (:ticket:`34058`).
++
++* Fixed a bug in Django 4.1 that caused a crash of an async view when
++  handling a request with a disallowed HTTP method, e.g. ``GET`` on a view
++  that only supports ``POST`` (:ticket:`33998`).
+diff --git a/tests/async/tests.py b/tests/async/tests.py
+index 66eece4b97..66072c7102 100644
+--- a/tests/async/tests.py
++++ b/tests/async/tests.py
+@@ -6,8 +6,8 @@ from asgiref.sync import async_to_sync
+ 
+ from django.core.cache import DEFAULT_CACHE_ALIAS, caches
+ from django.core.exceptions import ImproperlyConfigured, SynchronousOnlyOperation
+-from django.http import HttpResponse
+-from django.test import SimpleTestCase
++from django.http import HttpResponse, HttpResponseNotAllowed
++from django.test import RequestFactory, SimpleTestCase
+ from django.utils.asyncio import async_unsafe
+ from django.views.generic.base import View
+ 
+@@ -119,6 +119,25 @@ class ViewTests(SimpleTestCase):
+ 
+                 self.assertIsInstance(response, HttpResponse)
+ 
++    def test_http_method_not_allowed_responds_correctly(self):
++        tests = [
++            (SyncView, False),
++            (AsyncView, True),
++        ]
++        for view_cls, is_coroutine in tests:
++            with self.subTest(view_cls=view_cls, is_coroutine=is_coroutine):
++                instance = view_cls()
++                request = RequestFactory().get("/")
++                response = instance.http_method_not_allowed(request)
++                self.assertIs(
++                    asyncio.iscoroutine(response),
++                    is_coroutine,
++                )
++                if is_coroutine:
++                    response = asyncio.run(response)
++
++                self.assertIsInstance(response, HttpResponseNotAllowed)
++
+     def test_base_view_class_is_sync(self):
+         """
+         View and by extension any subclasses that don't define handlers are
+2026-11-09 15:56:23,442 - INFO - Eval script for django__django-16136 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-16136/eval.sh; copying to container...
+2026-11-09 15:56:31,940 - INFO - Test runtime: 8.43 seconds
+2026-11-09 15:56:31,942 - INFO - Test output for django__django-16136 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/django__django-16136/test_output.txt
+2026-11-09 15:56:32,286 - INFO - Git diff after:
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index db1842e3e5..51d2abba87 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -148,7 +148,15 @@ class View:
+             request.path,
+             extra={"status_code": 405, "request": request},
+         )
+-        return HttpResponseNotAllowed(self._allowed_methods())
++        response = HttpResponseNotAllowed(self._allowed_methods())
++        if self.view_is_async:
++
++            async def func():
++                return response
++
++            return func()
++        else:
++            return response
+ 
+     def options(self, request, *args, **kwargs):
+         """Handle responding to requests for the OPTIONS HTTP verb."""
+diff --git a/docs/releases/4.1.2.txt b/docs/releases/4.1.2.txt
+index 57b0b6c6e8..e5c1a42a4c 100644
+--- a/docs/releases/4.1.2.txt
++++ b/docs/releases/4.1.2.txt
+@@ -39,3 +39,7 @@ Bugfixes
+ * Fixed a regression in Django 4.1 that didn't alter a sequence type when
+   altering type of pre-Django 4.1 serial columns on PostgreSQL
+   (:ticket:`34058`).
++
++* Fixed a bug in Django 4.1 that caused a crash of an async view when
++  handling a request with a disallowed HTTP method, e.g. ``GET`` on a view
++  that only supports ``POST`` (:ticket:`33998`).
+2026-11-09 15:56:32,286 - INFO - Git diff changed after running eval script
+2026-11-09 15:56:32,286 - INFO - Grading answer for django__django-16136...
+2026-11-09 15:56:32,287 - INFO - report: {'django__django-16136': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_http_method_not_allowed_responds_correctly (async.tests.ViewTests)', 'test_mixed_views_raise_error (async.tests.ViewTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ["View and by extension any subclasses that don't define handlers are", 'test_options_handler_responds_correctly (async.tests.ViewTests)', 'test_views_are_correctly_marked (async.tests.ViewTests)', 'test_caches_local (async.tests.CacheTest)', 'test_async_unsafe (async.tests.AsyncUnsafeTest)', 'Utility class which turns an awaitable that only works on the thread with', 'test_get_async_connection (async.tests.DatabaseConnectionTest)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16136: resolved: True
+2026-11-09 15:56:32,289 - INFO - Attempting to stop container sweb.eval.django__django-16136.verified_full_glm53_hermes_R1933...
+2026-11-09 15:56:48,466 - INFO - Container sweb.eval.django__django-16136.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 15:56:48,466 - INFO - Attempting to remove container sweb.eval.django__django-16136.verified_full_glm53_hermes_R1933...
+2026-11-09 15:56:48,521 - INFO - Container sweb.eval.django__django-16136.verified_full_glm53_hermes_R1933 removed successfully.

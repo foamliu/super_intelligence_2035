@@ -1,0 +1,162 @@
+2026-11-10 02:43:56,676 - INFO - Creating container for sphinx-doc__sphinx-8269...
+2026-11-10 02:43:56,716 - INFO - Container for sphinx-doc__sphinx-8269 created: 856cdb0a64ddaf9a1db4a4e4de5ba589b5c9320044edff4add3f2bd60cada39f
+2026-11-10 02:43:57,404 - INFO - Container for sphinx-doc__sphinx-8269 started: 856cdb0a64ddaf9a1db4a4e4de5ba589b5c9320044edff4add3f2bd60cada39f
+2026-11-10 02:43:57,406 - INFO - Intermediate patch for sphinx-doc__sphinx-8269 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2026/cline-glm-5.3-flash/sphinx-doc__sphinx-8269/patch.diff, now applying to container...
+2026-11-10 02:43:57,566 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/builders/linkcheck.py...
+Checking patch tests/roots/test-linkcheck-anchor-404/conf.py...
+Checking patch tests/roots/test-linkcheck-anchor-404/index.rst...
+Checking patch tests/test_build_linkcheck.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/builders/linkcheck.py cleanly.
+Applied patch tests/roots/test-linkcheck-anchor-404/conf.py cleanly.
+Applied patch tests/roots/test-linkcheck-anchor-404/index.rst cleanly.
+Applied patch tests/test_build_linkcheck.py cleanly.
+
+2026-11-10 02:43:57,958 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index 22876d43b..bf6fb1569 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -67,6 +67,8 @@ Bugs fixed
+ 
+ * #8188: C, add missing items to internal object types dictionary,
+   e.g., preventing intersphinx from resolving them.
++* #8009: linkcheck: Report HTTP errors instead of "Anchor not found" when
++  ``linkcheck_anchors`` is enabled
+ 
+ 
+ Testing
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index 9b54afc7c..1083e82ec 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -166,6 +166,7 @@ class CheckExternalLinksBuilder(Builder):
+                     # Read the whole document and see if #anchor exists
+                     response = requests.get(req_url, stream=True, config=self.app.config,
+                                             auth=auth_info, **kwargs)
++                    response.raise_for_status()
+                     found = check_anchor(response, unquote(anchor))
+ 
+                     if not found:
+diff --git a/tests/test_build_linkcheck.py b/tests/test_build_linkcheck.py
+index 7d85f10c5..a78f9c611 100644
+--- a/tests/test_build_linkcheck.py
++++ b/tests/test_build_linkcheck.py
+@@ -11,7 +11,9 @@
+ import json
+ import re
+ from unittest import mock
++
+ import pytest
++from requests.exceptions import HTTPError
+ 
+ 
+ @pytest.mark.sphinx('linkcheck', testroot='linkcheck', freshenv=True)
+@@ -160,3 +162,27 @@ def test_linkcheck_request_headers(app, status, warning):
+                 assert headers["X-Secret"] == "open sesami"
+             else:
+                 assert headers["Accept"] == "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8"
++
++
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-anchor-404', freshenv=True)
++def test_linkcheck_anchor_http_error(app, status, warning):
++    """HTTP errors are reported even when ``linkcheck_anchors`` is enabled."""
++    mock_response = mock.MagicMock()
++    mock_response.status_code = 404
++    mock_response.reason = 'Not Found'
++    mock_response.url = 'https://example.com/notfound'
++    mock_response.iter_content.return_value = iter([])
++    mock_response.raise_for_status.side_effect = HTTPError(
++        '404 Client Error: Not Found for url: https://example.com/notfound',
++        response=mock_response)
++
++    with mock.patch.multiple('requests',
++                             get=mock.MagicMock(return_value=mock_response),
++                             head=mock.MagicMock(return_value=mock_response)):
++        app.builder.build_all()
++
++    content = (app.outdir / 'output.txt').read_text()
++    print(content)
++    # The HTTP error should be reported instead of "Anchor not found"
++    assert '404 Client Error: Not Found for url: https://example.com/notfound' in content
++    assert "Anchor 'anchor' not found" not in content
+2026-11-10 02:43:57,960 - INFO - Eval script for sphinx-doc__sphinx-8269 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2026/cline-glm-5.3-flash/sphinx-doc__sphinx-8269/eval.sh; copying to container...
+2026-11-10 02:44:01,324 - INFO - Test runtime: 3.29 seconds
+2026-11-10 02:44:01,326 - INFO - Test output for sphinx-doc__sphinx-8269 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2026/cline-glm-5.3-flash/sphinx-doc__sphinx-8269/test_output.txt
+2026-11-10 02:44:01,389 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index 22876d43b..bf6fb1569 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -67,6 +67,8 @@ Bugs fixed
+ 
+ * #8188: C, add missing items to internal object types dictionary,
+   e.g., preventing intersphinx from resolving them.
++* #8009: linkcheck: Report HTTP errors instead of "Anchor not found" when
++  ``linkcheck_anchors`` is enabled
+ 
+ 
+ Testing
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index 9b54afc7c..1083e82ec 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -166,6 +166,7 @@ class CheckExternalLinksBuilder(Builder):
+                     # Read the whole document and see if #anchor exists
+                     response = requests.get(req_url, stream=True, config=self.app.config,
+                                             auth=auth_info, **kwargs)
++                    response.raise_for_status()
+                     found = check_anchor(response, unquote(anchor))
+ 
+                     if not found:
+diff --git a/tests/test_build_linkcheck.py b/tests/test_build_linkcheck.py
+index 7d85f10c5..a78f9c611 100644
+--- a/tests/test_build_linkcheck.py
++++ b/tests/test_build_linkcheck.py
+@@ -11,7 +11,9 @@
+ import json
+ import re
+ from unittest import mock
++
+ import pytest
++from requests.exceptions import HTTPError
+ 
+ 
+ @pytest.mark.sphinx('linkcheck', testroot='linkcheck', freshenv=True)
+@@ -160,3 +162,27 @@ def test_linkcheck_request_headers(app, status, warning):
+                 assert headers["X-Secret"] == "open sesami"
+             else:
+                 assert headers["Accept"] == "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8"
++
++
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-anchor-404', freshenv=True)
++def test_linkcheck_anchor_http_error(app, status, warning):
++    """HTTP errors are reported even when ``linkcheck_anchors`` is enabled."""
++    mock_response = mock.MagicMock()
++    mock_response.status_code = 404
++    mock_response.reason = 'Not Found'
++    mock_response.url = 'https://example.com/notfound'
++    mock_response.iter_content.return_value = iter([])
++    mock_response.raise_for_status.side_effect = HTTPError(
++        '404 Client Error: Not Found for url: https://example.com/notfound',
++        response=mock_response)
++
++    with mock.patch.multiple('requests',
++                             get=mock.MagicMock(return_value=mock_response),
++                             head=mock.MagicMock(return_value=mock_response)):
++        app.builder.build_all()
++
++    content = (app.outdir / 'output.txt').read_text()
++    print(content)
++    # The HTTP error should be reported instead of "Anchor not found"
++    assert '404 Client Error: Not Found for url: https://example.com/notfound' in content
++    assert "Anchor 'anchor' not found" not in content
+2026-11-10 02:44:01,389 - INFO - Grading answer for sphinx-doc__sphinx-8269...
+2026-11-10 02:44:01,392 - INFO - report: {'sphinx-doc__sphinx-8269': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False, 'infra_failure_reason': 'no_tests_collected'}}
+Result for sphinx-doc__sphinx-8269: resolved: False
+2026-11-10 02:44:01,393 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8269.verified_full_glm53_cline-patched_incr_R2026...
+2026-11-10 02:44:17,552 - INFO - Container sweb.eval.sphinx-doc__sphinx-8269.verified_full_glm53_cline-patched_incr_R2026 stopped successfully.
+2026-11-10 02:44:17,552 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8269.verified_full_glm53_cline-patched_incr_R2026...
+2026-11-10 02:44:17,580 - INFO - Container sweb.eval.sphinx-doc__sphinx-8269.verified_full_glm53_cline-patched_incr_R2026 removed successfully.

@@ -1,0 +1,80 @@
+2026-11-01 13:53:40,661 - INFO - Creating container for astropy__astropy-8872...
+2026-11-01 13:53:40,712 - INFO - Container for astropy__astropy-8872 created: 41c15dacaf5fbb1327f7b145d1da4ce3567d57ca6c3ba44f3d8c09154f384266
+2026-11-01 13:53:42,039 - INFO - Container for astropy__astropy-8872 started: 41c15dacaf5fbb1327f7b145d1da4ce3567d57ca6c3ba44f3d8c09154f384266
+2026-11-01 13:53:42,041 - INFO - Intermediate patch for astropy__astropy-8872 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-8872/patch.diff, now applying to container...
+2026-11-01 13:53:42,197 - INFO - >>>>> Applied Patch:
+Checking patch astropy/units/quantity.py...
+Checking patch astropy/units/tests/test_quantity.py...
+Applied patch astropy/units/quantity.py cleanly.
+Applied patch astropy/units/tests/test_quantity.py cleanly.
+
+2026-11-01 13:53:42,856 - INFO - Git diff before:
+diff --git a/astropy/units/quantity.py b/astropy/units/quantity.py
+index ded609cbe..677f85557 100644
+--- a/astropy/units/quantity.py
++++ b/astropy/units/quantity.py
+@@ -296,7 +296,7 @@ class Quantity(np.ndarray, metaclass=InheritDocstrings):
+                 if not copy:
+                     return value
+ 
+-                if not (np.can_cast(np.float32, value.dtype) or
++                if not (np.issubdtype(value.dtype, np.inexact) or
+                         value.dtype.fields):
+                     dtype = float
+ 
+@@ -377,7 +377,7 @@ class Quantity(np.ndarray, metaclass=InheritDocstrings):
+                             "Numpy numeric type.")
+ 
+         # by default, cast any integer, boolean, etc., to float
+-        if dtype is None and (not (np.can_cast(np.float32, value.dtype)
++        if dtype is None and (not (np.issubdtype(value.dtype, np.inexact)
+                                    or value.dtype.fields)
+                               or value.dtype.kind == 'O'):
+             value = value.astype(float)
+diff --git a/astropy/units/tests/test_quantity.py b/astropy/units/tests/test_quantity.py
+index be18e65c5..b67646b55 100644
+--- a/astropy/units/tests/test_quantity.py
++++ b/astropy/units/tests/test_quantity.py
+@@ -142,6 +142,11 @@ class TestQuantityCreation:
+         a3 = np.array([1., 2.], dtype=np.float32)
+         q3 = u.Quantity(a3, u.yr)
+         assert q3.dtype == a3.dtype
++
++        # and float16, too
++        a3f16 = np.array([1., 2.], dtype=np.float16)
++        q3f16 = u.Quantity(a3f16, u.yr)
++        assert q3f16.dtype == a3f16.dtype
+         # items stored as objects by numpy should be converted to float
+         # by default
+         q4 = u.Quantity(decimal.Decimal('10.25'), u.m)
+2026-11-01 13:53:42,858 - INFO - Eval script for astropy__astropy-8872 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-8872/eval.sh; copying to container...
+2026-11-01 13:53:57,057 - INFO - Test runtime: 14.14 seconds
+2026-11-01 13:53:57,058 - INFO - Test output for astropy__astropy-8872 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-8872/test_output.txt
+2026-11-01 13:53:57,123 - INFO - Git diff after:
+diff --git a/astropy/units/quantity.py b/astropy/units/quantity.py
+index ded609cbe..677f85557 100644
+--- a/astropy/units/quantity.py
++++ b/astropy/units/quantity.py
+@@ -296,7 +296,7 @@ class Quantity(np.ndarray, metaclass=InheritDocstrings):
+                 if not copy:
+                     return value
+ 
+-                if not (np.can_cast(np.float32, value.dtype) or
++                if not (np.issubdtype(value.dtype, np.inexact) or
+                         value.dtype.fields):
+                     dtype = float
+ 
+@@ -377,7 +377,7 @@ class Quantity(np.ndarray, metaclass=InheritDocstrings):
+                             "Numpy numeric type.")
+ 
+         # by default, cast any integer, boolean, etc., to float
+-        if dtype is None and (not (np.can_cast(np.float32, value.dtype)
++        if dtype is None and (not (np.issubdtype(value.dtype, np.inexact)
+                                    or value.dtype.fields)
+                               or value.dtype.kind == 'O'):
+             value = value.astype(float)
+2026-11-01 13:53:57,123 - INFO - Git diff changed after running eval script
+2026-11-01 13:53:57,124 - INFO - Grading answer for astropy__astropy-8872...
+2026-11-01 13:53:57,130 - INFO - report: {'astropy__astropy-8872': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/units/tests/test_quantity.py::TestQuantityCreation::test_preserve_dtype'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/units/tests/test_quantity.py::TestQuantityCreation::test_1', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_2', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_3', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_nan_inf', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_unit_property', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_copy', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_subok', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_order', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_ndmin', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_non_quantity_with_unit', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_creation_via_view', 'astropy/units/tests/test_quantity.py::TestQuantityCreation::test_rshift_warns', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_addition', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_subtraction', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_multiplication', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_division', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_commutativity', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_power', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_matrix_multiplication', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_unary', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_abs', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_incompatible_units', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_non_number_type', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_dimensionless_operations', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_complicated_operation', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_comparison', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_numeric_converters', 'astropy/units/tests/test_quantity.py::TestQuantityOperations::test_array_converters', 'astropy/units/tests/test_quantity.py::test_quantity_conversion', 'astropy/units/tests/test_quantity.py::test_quantity_value_views', 'astropy/units/tests/test_quantity.py::test_quantity_conversion_with_equiv', 'astropy/units/tests/test_quantity.py::test_quantity_conversion_equivalency_passed_on', 'astropy/units/tests/test_quantity.py::test_self_equivalency', 'astropy/units/tests/test_quantity.py::test_si', 'astropy/units/tests/test_quantity.py::test_cgs', 'astropy/units/tests/test_quantity.py::TestQuantityComparison::test_quantity_equality', 'astropy/units/tests/test_quantity.py::TestQuantityComparison::test_quantity_equality_array', 'astropy/units/tests/test_quantity.py::TestQuantityComparison::test_quantity_comparison', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_dimensionless_quantity_repr', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_dimensionless_quantity_str', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_dimensionless_quantity_format', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_scalar_quantity_str', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_scalar_quantity_repr', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_array_quantity_str', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_array_quantity_repr', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_scalar_quantity_format', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_uninitialized_unit_format', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_to_string', 'astropy/units/tests/test_quantity.py::TestQuantityDisplay::test_repr_latex', 'astropy/units/tests/test_quantity.py::test_decompose', 'astropy/units/tests/test_quantity.py::test_decompose_regression', 'astropy/units/tests/test_quantity.py::test_arrays', 'astropy/units/tests/test_quantity.py::test_array_indexing_slicing', 'astropy/units/tests/test_quantity.py::test_array_setslice', 'astropy/units/tests/test_quantity.py::test_inverse_quantity', 'astropy/units/tests/test_quantity.py::test_quantity_mutability', 'astropy/units/tests/test_quantity.py::test_quantity_initialized_with_quantity', 'astropy/units/tests/test_quantity.py::test_quantity_string_unit', 'astropy/units/tests/test_quantity.py::test_quantity_invalid_unit_string', 'astropy/units/tests/test_quantity.py::test_implicit_conversion', 'astropy/units/tests/test_quantity.py::test_implicit_conversion_autocomplete', 'astropy/units/tests/test_quantity.py::test_quantity_iterability', 'astropy/units/tests/test_quantity.py::test_copy', 'astropy/units/tests/test_quantity.py::test_deepcopy', 'astropy/units/tests/test_quantity.py::test_equality_numpy_scalar', 'astropy/units/tests/test_quantity.py::test_quantity_pickelability', 'astropy/units/tests/test_quantity.py::test_quantity_initialisation_from_string', 'astropy/units/tests/test_quantity.py::test_unsupported', 'astropy/units/tests/test_quantity.py::test_unit_identity', 'astropy/units/tests/test_quantity.py::test_quantity_to_view', 'astropy/units/tests/test_quantity.py::test_quantity_tuple_power', 'astropy/units/tests/test_quantity.py::test_quantity_fraction_power', 'astropy/units/tests/test_quantity.py::test_inherit_docstrings', 'astropy/units/tests/test_quantity.py::test_repr_array_of_quantity', 'astropy/units/tests/test_quantity.py::TestQuantityMatplotlib::test_plot', 'astropy/units/tests/test_quantity.py::test_unit_class_override', 'astropy/units/tests/test_quantity.py::TestQuantityMimics::test_mimic_input[QuantityMimic]', 'astropy/units/tests/test_quantity.py::TestQuantityMimics::test_mimic_input[QuantityMimic2]', 'astropy/units/tests/test_quantity.py::TestQuantityMimics::test_mimic_setting[QuantityMimic]', 'astropy/units/tests/test_quantity.py::TestQuantityMimics::test_mimic_setting[QuantityMimic2]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-8872: resolved: True
+2026-11-01 13:53:57,132 - INFO - Attempting to stop container sweb.eval.astropy__astropy-8872.verified_full_hermes...

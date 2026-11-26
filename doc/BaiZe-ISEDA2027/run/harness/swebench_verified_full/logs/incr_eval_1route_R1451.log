@@ -1,0 +1,35 @@
+=== incr_eval_1route R1451 START Tue Nov  3 07:04:15 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Tue Nov  3 07:04:15 PM CST 2026] === merge deepseek-harness predictions ===
+deepseek-harness: 164 real patches merged
+[Tue Nov  3 07:04:15 PM CST 2026] === deepseek-harness eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]=== incr_eval_1route R1451 START Tue Nov  3 07:05:19 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Tue Nov  3 07:05:19 PM CST 2026] === merge deepseek-harness predictions ===
+deepseek-harness: 164 real patches merged
+[Tue Nov  3 07:05:19 PM CST 2026] === deepseek-harness eval START 1 new instances ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 5
+Unremoved images: 1
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[Tue Nov  3 07:05:23 PM CST 2026] === deepseek-harness eval DONE ===
+[Tue Nov  3 07:05:23 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=500 resolved=326 failed=116 infra=0 no_patch=58)
+  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
+  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
+  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
+  codex: unchanged (n=420 resolved=245 failed=66 infra=0 no_patch=109)
+  hermes: unchanged (n=278 resolved=161 failed=45 infra=0 no_patch=72)
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=170 resolved=136 failed=28 infra=0 no_patch=6)
+=== incr_eval_1route R1451 DONE Tue Nov  3 07:05:24 PM CST 2026 ===

@@ -1,0 +1,30 @@
+[incr-eval 23:04:05] === incr_eval R2793 start ===
+[incr-eval 23:04:05] cline: 0 new instances, skip
+[incr-eval 23:04:05] codex: 0 new instances, skip
+[incr-eval 23:04:06] opencode: 0 new instances, skip
+[incr-eval 23:04:06] claude-code: 0 new instances, skip
+[incr-eval 23:04:06] pi: 0 new instances, skip
+[incr-eval 23:04:06] hermes: 0 new instances, skip
+
+=== deepseek R2793 ===
+new instances: 2 ['django__django-16569', 'django__django-16595']
+[incr-eval 23:04:06] deepseek: merged 2 new patches -> predictions_deepseek-harness_new_R2793.json
+[incr-eval 23:04:06] deepseek: EVAL 2 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2793
+[incr-eval 23:06:24] === incr_eval R2793 start ===
+[incr-eval 23:06:25] cline: 0 new instances, skip
+[incr-eval 23:06:25] codex: 0 new instances, skip
+[incr-eval 23:06:25] opencode: 0 new instances, skip
+[incr-eval 23:06:25] claude-code: 0 new instances, skip
+[incr-eval 23:06:25] pi: 0 new instances, skip
+[incr-eval 23:06:25] hermes: 0 new instances, skip
+
+=== deepseek R2793 ===
+new instances: 3 ['django__django-16569', 'django__django-16595', 'django__django-16612']
+[incr-eval 23:06:25] deepseek: merged 3 new patches -> predictions_deepseek-harness_new_R2793.json
+[incr-eval 23:06:25] deepseek: EVAL 3 instances -> run_id=verified_full_glm53_deepseek-harness_incr_R2793
+[incr-eval 23:07:47] deepseek: eval rc=0
+[incr-eval 23:07:47]   django__django-16569: RESOLVED
+[incr-eval 23:07:47]   django__django-16595: RESOLVED
+[incr-eval 23:07:47]   django__django-16612: RESOLVED
+[incr-eval 23:07:47] deepseek: cumulative n=288 resolved=190 failed=98 infra=0 -> eval_glm53_deepseek-harness.json
+[incr-eval 23:07:47] === incr_eval R2793 done: 3 instances, +3resolved +0failed +0infra, spiral_marked=0 ===

@@ -1,0 +1,98 @@
+2026-10-30 16:31:43,094 - INFO - Creating container for sphinx-doc__sphinx-9320...
+2026-10-30 16:31:44,800 - INFO - Removed existing container sweb.eval.sphinx-doc__sphinx-9320.verified_full_cline-patched
+2026-10-30 16:31:44,874 - INFO - Container for sphinx-doc__sphinx-9320 created: 2266c26afb90c62978b0aaa2497831e0696a6fcb3b4207c4b19bae9cdaaa1087
+2026-10-30 16:31:47,094 - INFO - Container for sphinx-doc__sphinx-9320 started: 2266c26afb90c62978b0aaa2497831e0696a6fcb3b4207c4b19bae9cdaaa1087
+2026-10-30 16:31:47,098 - INFO - Intermediate patch for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-9320/patch.diff, now applying to container...
+2026-10-30 16:31:47,224 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/cmd/quickstart.py...
+Checking patch tests/test_quickstart.py...
+Applied patch sphinx/cmd/quickstart.py cleanly.
+Applied patch tests/test_quickstart.py cleanly.
+
+2026-10-30 16:31:47,472 - INFO - Git diff before:
+diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py
+index a40a21073..ee3c96ce6 100644
+--- a/sphinx/cmd/quickstart.py
++++ b/sphinx/cmd/quickstart.py
+@@ -95,6 +95,14 @@ def is_path(x: str) -> str:
+     return x
+ 
+ 
++def is_path_or_empty(x: str) -> str:
++    if x:
++        x = path.expanduser(x)
++        if not path.isdir(x):
++            raise ValidationError(__("Please enter a valid path name."))
++    return x
++
++
+ def allow_empty(x: str) -> str:
+     return x
+ 
+@@ -223,7 +231,7 @@ def ask_user(d: Dict) -> None:
+         print(__('sphinx-quickstart will not overwrite existing Sphinx projects.'))
+         print()
+         d['path'] = do_prompt(__('Please enter a new root path (or just Enter to exit)'),
+-                              '', is_path)
++                              '', is_path_or_empty)
+         if not d['path']:
+             sys.exit(1)
+ 
+diff --git a/tests/test_quickstart.py b/tests/test_quickstart.py
+index 94144ef22..e7deba5f9 100644
+--- a/tests/test_quickstart.py
++++ b/tests/test_quickstart.py
+@@ -250,3 +250,14 @@ def test_extensions(tempdir):
+     ns = {}
+     exec(conffile.read_text(), ns)
+     assert ns['extensions'] == ['foo', 'bar', 'baz']
++
++
++def test_quickstart_existing_conf_py(tempdir):
++    # Create an existing conf.py to trigger the prompt
++    (tempdir / 'conf.py').write_text('# existing conf.py')
++
++    qs.term_input = mock_input({}, needanswer=False)
++    d = {'path': tempdir}
++    with pytest.raises(SystemExit) as excinfo:
++        qs.ask_user(d)
++    assert excinfo.value.code == 1
+2026-10-30 16:31:47,473 - INFO - Eval script for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-9320/eval.sh; copying to container...
+2026-10-30 16:31:51,752 - INFO - Test runtime: 4.22 seconds
+2026-10-30 16:31:51,752 - INFO - Test output for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-9320/test_output.txt
+2026-10-30 16:31:51,836 - INFO - Git diff after:
+diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py
+index a40a21073..ee3c96ce6 100644
+--- a/sphinx/cmd/quickstart.py
++++ b/sphinx/cmd/quickstart.py
+@@ -95,6 +95,14 @@ def is_path(x: str) -> str:
+     return x
+ 
+ 
++def is_path_or_empty(x: str) -> str:
++    if x:
++        x = path.expanduser(x)
++        if not path.isdir(x):
++            raise ValidationError(__("Please enter a valid path name."))
++    return x
++
++
+ def allow_empty(x: str) -> str:
+     return x
+ 
+@@ -223,7 +231,7 @@ def ask_user(d: Dict) -> None:
+         print(__('sphinx-quickstart will not overwrite existing Sphinx projects.'))
+         print()
+         d['path'] = do_prompt(__('Please enter a new root path (or just Enter to exit)'),
+-                              '', is_path)
++                              '', is_path_or_empty)
+         if not d['path']:
+             sys.exit(1)
+2026-10-30 16:31:51,836 - INFO - Git diff changed after running eval script
+2026-10-30 16:31:51,836 - INFO - Grading answer for sphinx-doc__sphinx-9320...
+2026-10-30 16:31:51,841 - INFO - report: {'sphinx-doc__sphinx-9320': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_quickstart.py::test_exits_when_existing_confpy'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_quickstart.py::test_do_prompt', 'tests/test_quickstart.py::test_do_prompt_inputstrip', 'tests/test_quickstart.py::test_do_prompt_with_nonascii', 'tests/test_quickstart.py::test_quickstart_defaults', 'tests/test_quickstart.py::test_quickstart_all_answers', 'tests/test_quickstart.py::test_generated_files_eol', 'tests/test_quickstart.py::test_quickstart_and_build', 'tests/test_quickstart.py::test_default_filename', 'tests/test_quickstart.py::test_extensions'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9320: resolved: True
+2026-10-30 16:31:51,847 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9320.verified_full_cline-patched...
+2026-10-30 16:32:10,759 - INFO - Container sweb.eval.sphinx-doc__sphinx-9320.verified_full_cline-patched stopped successfully.
+2026-10-30 16:32:10,759 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9320.verified_full_cline-patched...
+2026-10-30 16:32:10,798 - INFO - Container sweb.eval.sphinx-doc__sphinx-9320.verified_full_cline-patched removed successfully.

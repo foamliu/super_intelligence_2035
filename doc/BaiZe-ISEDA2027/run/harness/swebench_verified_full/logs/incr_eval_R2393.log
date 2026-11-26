@@ -1,0 +1,32 @@
+[incr-eval 19:39:17] === incr_eval R2393 start ===
+
+=== cline R2393 ===
+new instances: 1 ['django__django-13964']
+[incr-eval 19:39:17] cline: merged 1 new patches -> predictions_cline-patched_new_R2393.json
+[incr-eval 19:39:17] cline: EVAL 1 instances -> run_id=verified_full_glm53_cline-patched_incr_R2393
+[incr-eval 19:39:45] cline: eval rc=0
+[incr-eval 19:39:45]   django__django-13964: RESOLVED
+[incr-eval 19:39:45] cline: cumulative n=332 resolved=249 failed=81 infra=2 -> eval_glm53_cline-patched.json
+[incr-eval 19:39:45] codex: 0 new instances, skip
+[incr-eval 19:39:45] opencode: 0 new instances, skip
+
+=== claude-code R2393 ===
+new instances: 1 ['matplotlib__matplotlib-21568']
+[incr-eval 19:39:45] claude-code: merged 1 new patches -> predictions_claude-code_new_R2393.json
+[incr-eval 19:39:45] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2393
+[incr-eval 19:41:27] === incr_eval R2393 start ===
+[incr-eval 19:41:27] cline: 0 new instances, skip
+[incr-eval 19:41:27] codex: 0 new instances, skip
+[incr-eval 19:41:27] opencode: 0 new instances, skip
+
+=== claude-code R2393 ===
+new instances: 1 ['matplotlib__matplotlib-21568']
+[incr-eval 19:41:27] claude-code: merged 1 new patches -> predictions_claude-code_new_R2393.json
+[incr-eval 19:41:27] claude-code: EVAL 1 instances -> run_id=verified_full_glm53_claude-code_incr_R2393
+[incr-eval 19:43:27] claude-code: eval rc=0
+[incr-eval 19:43:27]   matplotlib__matplotlib-21568: FAILED
+[incr-eval 19:43:27] claude-code: cumulative n=348 resolved=286 failed=58 infra=4 -> eval_glm53_claude-code.json
+[incr-eval 19:43:27] pi: 0 new instances, skip
+[incr-eval 19:43:27] hermes: 0 new instances, skip
+[incr-eval 19:43:27] deepseek: 0 new instances, skip
+[incr-eval 19:43:27] === incr_eval R2393 done: 1 instances, +0resolved +1failed +0infra ===

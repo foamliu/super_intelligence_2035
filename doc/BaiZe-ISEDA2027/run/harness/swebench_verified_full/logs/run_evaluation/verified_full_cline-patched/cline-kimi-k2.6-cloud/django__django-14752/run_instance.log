@@ -1,0 +1,156 @@
+2026-10-30 16:17:27,457 - INFO - Creating container for django__django-14752...
+2026-10-30 16:17:38,220 - INFO - Removed existing container sweb.eval.django__django-14752.verified_full_cline-patched
+2026-10-30 16:17:38,241 - INFO - Container for django__django-14752 created: af4d32a6be435da8635ad09730a9bb298e38660148ec4e9d97651bc4437a2519
+2026-10-30 16:17:43,819 - INFO - Container for django__django-14752 started: af4d32a6be435da8635ad09730a9bb298e38660148ec4e9d97651bc4437a2519
+2026-10-30 16:17:43,826 - INFO - Intermediate patch for django__django-14752 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14752/patch.diff, now applying to container...
+2026-10-30 16:17:43,986 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admin/views/autocomplete.py...
+warning: django/contrib/admin/views/autocomplete.py has type 100755, expected 100644
+Checking patch docs/releases/4.0.txt...
+warning: docs/releases/4.0.txt has type 100755, expected 100644
+Checking patch tests/admin_views/test_autocomplete_view.py...
+warning: tests/admin_views/test_autocomplete_view.py has type 100755, expected 100644
+Applied patch django/contrib/admin/views/autocomplete.py cleanly.
+Applied patch docs/releases/4.0.txt cleanly.
+Applied patch tests/admin_views/test_autocomplete_view.py cleanly.
+
+2026-10-30 16:17:45,035 - INFO - Git diff before:
+diff --git a/django/contrib/admin/views/autocomplete.py b/django/contrib/admin/views/autocomplete.py
+index 3903e4c98c..3d4df692d8 100755
+--- a/django/contrib/admin/views/autocomplete.py
++++ b/django/contrib/admin/views/autocomplete.py
+@@ -26,12 +26,19 @@ class AutocompleteJsonView(BaseListView):
+         context = self.get_context_data()
+         return JsonResponse({
+             'results': [
+-                {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
++                self.serialize_result(obj, to_field_name)
+                 for obj in context['object_list']
+             ],
+             'pagination': {'more': context['page_obj'].has_next()},
+         })
+ 
++    def serialize_result(self, obj, to_field_name):
++        """
++        Convert the provided model instance to a dictionary that is added to
++        the results list.
++        """
++        return {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
++
+     def get_paginator(self, *args, **kwargs):
+         """Use the ModelAdmin's paginator."""
+         return self.model_admin.get_paginator(self.request, *args, **kwargs)
+diff --git a/docs/releases/4.0.txt b/docs/releases/4.0.txt
+index 0fa87b2810..1f4637f6e6 100755
+--- a/docs/releases/4.0.txt
++++ b/docs/releases/4.0.txt
+@@ -82,9 +82,12 @@ Minor features
+ * The new context variable ``model`` which contains the model class for each
+   model is added to the :meth:`.AdminSite.each_context` method.
+ 
+-* The new :attr:`.ModelAdmin.search_help_text` attribute allows specifying a
++* The new :meth:`.ModelAdmin.search_help_text` attribute allows specifying a
+   descriptive text for the search box.
+ 
++* The new :meth:`~django.contrib.admin.views.autocomplete.AutocompleteJsonView.serialize_result`
++  method allows customizing the JSON response of the admin autocomplete view.
++
+ :mod:`django.contrib.admindocs`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/tests/admin_views/test_autocomplete_view.py b/tests/admin_views/test_autocomplete_view.py
+index aa978f7a83..f0fb5e4017 100755
+--- a/tests/admin_views/test_autocomplete_view.py
++++ b/tests/admin_views/test_autocomplete_view.py
+@@ -264,6 +264,37 @@ class AutocompleteJsonViewTests(AdminViewBasicTestCase):
+             with self.assertRaisesMessage(Http404, msg):
+                 site.autocomplete_view(self.factory.get(self.url, {'term': '', **self.opts}))
+ 
++    def test_serialize_result(self):
++        q = Question.objects.create(question='Is this a question?')
++        request = self.factory.get(self.url, {'term': 'is', **self.opts})
++        request.user = self.superuser
++        response = AutocompleteJsonView.as_view(**self.as_view_args)(request)
++        self.assertEqual(response.status_code, 200)
++        data = json.loads(response.content.decode('utf-8'))
++        self.assertEqual(data, {
++            'results': [{'id': str(q.pk), 'text': q.question}],
++            'pagination': {'more': False},
++        })
++
++    def test_serialize_result_extra_fields(self):
++        q = Question.objects.create(question='Is this a question?')
++        request = self.factory.get(self.url, {'term': 'is', **self.opts})
++        request.user = self.superuser
++
++        class CustomAutocompleteJsonView(AutocompleteJsonView):
++            def serialize_result(self, obj, to_field_name):
++                result = super().serialize_result(obj, to_field_name)
++                result['extra'] = obj.question.upper()
++                return result
++
++        response = CustomAutocompleteJsonView.as_view(**self.as_view_args)(request)
++        self.assertEqual(response.status_code, 200)
++        data = json.loads(response.content.decode('utf-8'))
++        self.assertEqual(data, {
++            'results': [{'id': str(q.pk), 'text': q.question, 'extra': q.question.upper()}],
++            'pagination': {'more': False},
++        })
++
+     def test_get_paginator(self):
+         """Search results are paginated."""
+         class PKOrderingQuestionAdmin(QuestionAdmin):
+2026-10-30 16:17:45,046 - INFO - Eval script for django__django-14752 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14752/eval.sh; copying to container...
+2026-10-30 16:17:54,579 - INFO - Test runtime: 9.42 seconds
+2026-10-30 16:17:54,583 - INFO - Test output for django__django-14752 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14752/test_output.txt
+2026-10-30 16:17:54,670 - INFO - Git diff after:
+diff --git a/django/contrib/admin/views/autocomplete.py b/django/contrib/admin/views/autocomplete.py
+index 3903e4c98c..3d4df692d8 100755
+--- a/django/contrib/admin/views/autocomplete.py
++++ b/django/contrib/admin/views/autocomplete.py
+@@ -26,12 +26,19 @@ class AutocompleteJsonView(BaseListView):
+         context = self.get_context_data()
+         return JsonResponse({
+             'results': [
+-                {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
++                self.serialize_result(obj, to_field_name)
+                 for obj in context['object_list']
+             ],
+             'pagination': {'more': context['page_obj'].has_next()},
+         })
+ 
++    def serialize_result(self, obj, to_field_name):
++        """
++        Convert the provided model instance to a dictionary that is added to
++        the results list.
++        """
++        return {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
++
+     def get_paginator(self, *args, **kwargs):
+         """Use the ModelAdmin's paginator."""
+         return self.model_admin.get_paginator(self.request, *args, **kwargs)
+diff --git a/docs/releases/4.0.txt b/docs/releases/4.0.txt
+index 0fa87b2810..1f4637f6e6 100755
+--- a/docs/releases/4.0.txt
++++ b/docs/releases/4.0.txt
+@@ -82,9 +82,12 @@ Minor features
+ * The new context variable ``model`` which contains the model class for each
+   model is added to the :meth:`.AdminSite.each_context` method.
+ 
+-* The new :attr:`.ModelAdmin.search_help_text` attribute allows specifying a
++* The new :meth:`.ModelAdmin.search_help_text` attribute allows specifying a
+   descriptive text for the search box.
+ 
++* The new :meth:`~django.contrib.admin.views.autocomplete.AutocompleteJsonView.serialize_result`
++  method allows customizing the JSON response of the admin autocomplete view.
++
+ :mod:`django.contrib.admindocs`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30 16:17:54,670 - INFO - Git diff changed after running eval script
+2026-10-30 16:17:54,670 - INFO - Grading answer for django__django-14752...
+2026-10-30 16:17:54,685 - INFO - report: {'django__django-14752': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_serialize_result (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_custom_to_field (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_custom_to_field_custom_pk (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_custom_to_field_permission_denied (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_field_does_not_allowed (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_field_does_not_exist (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_field_no_related_field (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'Search results are paginated.', 'Users require the change permission for the related model to the', 'test_limit_choices_to (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_missing_search_fields (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_must_be_logged_in (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'Searching across model relations use QuerySet.distinct() to avoid', 'test_success (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_to_field_resolution_with_fk_pk (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'to_field resolution should correctly resolve for target models using'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14752: resolved: True
+2026-10-30 16:17:54,691 - INFO - Attempting to stop container sweb.eval.django__django-14752.verified_full_cline-patched...
+2026-10-30 16:18:15,895 - INFO - Container sweb.eval.django__django-14752.verified_full_cline-patched stopped successfully.
+2026-10-30 16:18:15,895 - INFO - Attempting to remove container sweb.eval.django__django-14752.verified_full_cline-patched...
+2026-10-30 16:18:16,034 - INFO - Container sweb.eval.django__django-14752.verified_full_cline-patched removed successfully.

@@ -1,0 +1,30 @@
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial bn-fit-modify__aX2WsLB failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial break-filter-js-from-html__Cjyt2dK failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial chess-best-move__ZszG6X7 failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial fix-git__GXYAXH6 failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial log-summary-date-ranges__T7uvtec failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached

@@ -1,0 +1,30 @@
+=== incr_eval R1104b START Sun Nov  1 01:04:14 AM CST 2026 ===
+deepseek-harness: merged 58 patches
+[Sun Nov  1 01:04:14 AM CST 2026] === deepseek eval START 1 instance: django__django-11179 ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:27<00:00, 27.09s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:27<00:00, 27.09s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:27<00:00, 27.09s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[Sun Nov  1 01:04:45 AM CST 2026] === deepseek eval DONE ===
+[Sun Nov  1 01:04:45 AM CST 2026] === regen summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: unchanged (n=337 resolved=260 failed=77 infra=0)
+  codex: unchanged (n=218 resolved=171 failed=47 infra=0)
+  hermes: unchanged (n=44 resolved=32 failed=12 infra=0)
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=58 resolved=46 failed=12 infra=0
+=== incr_eval R1104b DONE Sun Nov  1 01:04:46 AM CST 2026 ===

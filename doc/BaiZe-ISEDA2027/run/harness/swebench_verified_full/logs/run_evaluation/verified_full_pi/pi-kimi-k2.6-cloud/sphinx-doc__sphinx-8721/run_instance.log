@@ -1,0 +1,73 @@
+2026-10-30 17:02:13,827 - INFO - Creating container for sphinx-doc__sphinx-8721...
+2026-10-30 17:02:13,890 - INFO - Container for sphinx-doc__sphinx-8721 created: a025faf77734c047511adafde0bda814ef964fc998ed8c1e29498dcfe12cf3b2
+2026-10-30 17:02:15,001 - INFO - Container for sphinx-doc__sphinx-8721 started: a025faf77734c047511adafde0bda814ef964fc998ed8c1e29498dcfe12cf3b2
+2026-10-30 17:02:15,004 - INFO - Intermediate patch for sphinx-doc__sphinx-8721 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8721/patch.diff, now applying to container...
+2026-10-30 17:02:15,182 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/viewcode.py...
+warning: sphinx/ext/viewcode.py has type 100755, expected 100644
+Checking patch tests/test_ext_viewcode.py...
+warning: tests/test_ext_viewcode.py has type 100755, expected 100644
+Applied patch sphinx/ext/viewcode.py cleanly.
+Applied patch tests/test_ext_viewcode.py cleanly.
+
+2026-10-30 17:02:15,644 - INFO - Git diff before:
+diff --git a/sphinx/ext/viewcode.py b/sphinx/ext/viewcode.py
+index a7d52a91c..060604e25 100755
+--- a/sphinx/ext/viewcode.py
++++ b/sphinx/ext/viewcode.py
+@@ -182,6 +182,8 @@ def collect_pages(app: Sphinx) -> Generator[Tuple[str, Dict[str, Any], str], Non
+     env = app.builder.env
+     if not hasattr(env, '_viewcode_modules'):
+         return
++    if app.builder.name.startswith("epub") and not env.config.viewcode_enable_epub:
++        return
+     highlighter = app.builder.highlighter  # type: ignore
+     urito = app.builder.get_relative_uri
+ 
+diff --git a/tests/test_ext_viewcode.py b/tests/test_ext_viewcode.py
+index 79864095b..55612cd43 100755
+--- a/tests/test_ext_viewcode.py
++++ b/tests/test_ext_viewcode.py
+@@ -102,3 +102,18 @@ def test_local_source_files(app, status, warning):
+ 
+     assert result.count('href="_modules/not_a_package/submodule.html#not_a_package.submodule.Class3.class_attr"') == 1
+     assert result.count('This is the class attribute class_attr') == 1
++
++
++@pytest.mark.sphinx('html', testroot='ext-viewcode')
++def test_viewcode_not_create_epub_module_pages_by_default(make_app, app_params):
++    # test for viewcode creates pages for epub even if
++    # viewcode_enable_epub=False on make html epub
++    args, kwargs = app_params
++    app1 = make_app(*args, **kwargs)
++    app1.build()
++    assert (app1.outdir / '_modules/spam/mod1.html').exists()
++
++    # then build with EPUB using the same doctreedir
++    app2 = make_app('epub', *args[1:], **kwargs)
++    app2.build()
++    assert not (app2.outdir / '_modules').exists()
+2026-10-30 17:02:15,646 - INFO - Eval script for sphinx-doc__sphinx-8721 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8721/eval.sh; copying to container...
+2026-10-30 17:02:22,062 - INFO - Test runtime: 6.34 seconds
+2026-10-30 17:02:22,064 - INFO - Test output for sphinx-doc__sphinx-8721 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sphinx-doc__sphinx-8721/test_output.txt
+2026-10-30 17:02:22,133 - INFO - Git diff after:
+diff --git a/sphinx/ext/viewcode.py b/sphinx/ext/viewcode.py
+index a7d52a91c..060604e25 100755
+--- a/sphinx/ext/viewcode.py
++++ b/sphinx/ext/viewcode.py
+@@ -182,6 +182,8 @@ def collect_pages(app: Sphinx) -> Generator[Tuple[str, Dict[str, Any], str], Non
+     env = app.builder.env
+     if not hasattr(env, '_viewcode_modules'):
+         return
++    if app.builder.name.startswith("epub") and not env.config.viewcode_enable_epub:
++        return
+     highlighter = app.builder.highlighter  # type: ignore
+     urito = app.builder.get_relative_uri
+2026-10-30 17:02:22,133 - INFO - Git diff changed after running eval script
+2026-10-30 17:02:22,133 - INFO - Grading answer for sphinx-doc__sphinx-8721...
+2026-10-30 17:02:22,146 - INFO - report: {'sphinx-doc__sphinx-8721': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_viewcode.py::test_viewcode_epub_default'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_viewcode.py::test_viewcode_epub_enabled', 'tests/test_ext_viewcode.py::test_linkcode', 'tests/test_ext_viewcode.py::test_local_source_files'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8721: resolved: True
+2026-10-30 17:02:22,147 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8721.verified_full_pi...
+2026-10-30 17:02:38,738 - INFO - Container sweb.eval.sphinx-doc__sphinx-8721.verified_full_pi stopped successfully.
+2026-10-30 17:02:38,739 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8721.verified_full_pi...
+2026-10-30 17:02:38,790 - INFO - Container sweb.eval.sphinx-doc__sphinx-8721.verified_full_pi removed successfully.

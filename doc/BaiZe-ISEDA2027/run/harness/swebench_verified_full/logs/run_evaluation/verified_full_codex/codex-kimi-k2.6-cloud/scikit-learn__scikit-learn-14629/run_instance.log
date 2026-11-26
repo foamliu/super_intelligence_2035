@@ -1,0 +1,136 @@
+2026-11-02 12:42:32,354 - INFO - Creating container for scikit-learn__scikit-learn-14629...
+2026-11-02 12:42:32,380 - INFO - Container for scikit-learn__scikit-learn-14629 created: b99615fdb3a02b4648315db8e02b63945bb512e351b8e556abd2fdcf237212e5
+2026-11-02 12:42:34,014 - INFO - Container for scikit-learn__scikit-learn-14629 started: b99615fdb3a02b4648315db8e02b63945bb512e351b8e556abd2fdcf237212e5
+2026-11-02 12:42:34,015 - INFO - Intermediate patch for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-14629/patch.diff, now applying to container...
+2026-11-02 12:42:34,184 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/model_selection/_validation.py...
+Checking patch sklearn/model_selection/tests/test_validation.py...
+Applied patch sklearn/model_selection/_validation.py cleanly.
+Applied patch sklearn/model_selection/tests/test_validation.py cleanly.
+
+2026-11-02 12:42:34,650 - INFO - Git diff before:
+diff --git a/sklearn/model_selection/_validation.py b/sklearn/model_selection/_validation.py
+index 95669a212..3b31f5680 100644
+--- a/sklearn/model_selection/_validation.py
++++ b/sklearn/model_selection/_validation.py
+@@ -855,15 +855,17 @@ def _fit_and_predict(estimator, X, y, train, test, verbose, fit_params,
+     predictions = func(X_test)
+     if method in ['decision_function', 'predict_proba', 'predict_log_proba']:
+         if isinstance(predictions, list):
+-            predictions = [_enforce_prediction_order(
+-                estimator.classes_[i_label], predictions[i_label],
+-                n_classes=len(set(y[:, i_label])), method=method)
+-                for i_label in range(len(predictions))]
++            if hasattr(estimator, 'classes_'):
++                predictions = [_enforce_prediction_order(
++                    estimator.classes_[i_label], predictions[i_label],
++                    n_classes=len(set(y[:, i_label])), method=method)
++                    for i_label in range(len(predictions))]
+         else:
+             # A 2D y array should be a binary label indicator matrix
+             n_classes = len(set(y)) if y.ndim == 1 else y.shape[1]
+-            predictions = _enforce_prediction_order(
+-                estimator.classes_, predictions, n_classes, method)
++            if hasattr(estimator, 'classes_'):
++                predictions = _enforce_prediction_order(
++                    estimator.classes_, predictions, n_classes, method)
+     return predictions, test
+ 
+ 
+diff --git a/sklearn/model_selection/tests/test_validation.py b/sklearn/model_selection/tests/test_validation.py
+index 6fa2e4fee..70adba8d2 100644
+--- a/sklearn/model_selection/tests/test_validation.py
++++ b/sklearn/model_selection/tests/test_validation.py
+@@ -1718,3 +1718,24 @@ def test_score():
+     fit_and_score_args = [None, None, None, two_params_scorer]
+     assert_raise_message(ValueError, error_message,
+                          _score, *fit_and_score_args)
++
++
++def test_cross_val_predict_multioutput_classifier_predict_proba():
++    # Test that cross_val_predict works with MultiOutputClassifier
++    # and method='predict_proba'. Non-regression test for GitHub issue.
++    from sklearn.multioutput import MultiOutputClassifier
++    from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
++    X, y = make_multilabel_classification(n_samples=30, n_labels=3,
++                                          n_classes=4, n_features=5,
++                                          random_state=42)
++    mo_clf = MultiOutputClassifier(LinearDiscriminantAnalysis())
++    # predict should work
++    pred = cross_val_predict(mo_clf, X, y, cv=3)
++    assert pred.shape == y.shape
++    # predict_proba should also work (was raising AttributeError)
++    pred_proba = cross_val_predict(mo_clf, X, y, cv=3,
++                                   method='predict_proba')
++    assert isinstance(pred_proba, list)
++    assert len(pred_proba) == y.shape[1]
++    for p in pred_proba:
++        assert p.shape[0] == X.shape[0]
+2026-11-02 12:42:34,653 - INFO - Eval script for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-14629/eval.sh; copying to container...
+2026-11-02 12:42:43,895 - INFO - Test runtime: 9.17 seconds
+2026-11-02 12:42:43,897 - INFO - Test output for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-14629/test_output.txt
+2026-11-02 12:42:43,968 - INFO - Git diff after:
+diff --git a/sklearn/model_selection/_validation.py b/sklearn/model_selection/_validation.py
+index 95669a212..3b31f5680 100644
+--- a/sklearn/model_selection/_validation.py
++++ b/sklearn/model_selection/_validation.py
+@@ -855,15 +855,17 @@ def _fit_and_predict(estimator, X, y, train, test, verbose, fit_params,
+     predictions = func(X_test)
+     if method in ['decision_function', 'predict_proba', 'predict_log_proba']:
+         if isinstance(predictions, list):
+-            predictions = [_enforce_prediction_order(
+-                estimator.classes_[i_label], predictions[i_label],
+-                n_classes=len(set(y[:, i_label])), method=method)
+-                for i_label in range(len(predictions))]
++            if hasattr(estimator, 'classes_'):
++                predictions = [_enforce_prediction_order(
++                    estimator.classes_[i_label], predictions[i_label],
++                    n_classes=len(set(y[:, i_label])), method=method)
++                    for i_label in range(len(predictions))]
+         else:
+             # A 2D y array should be a binary label indicator matrix
+             n_classes = len(set(y)) if y.ndim == 1 else y.shape[1]
+-            predictions = _enforce_prediction_order(
+-                estimator.classes_, predictions, n_classes, method)
++            if hasattr(estimator, 'classes_'):
++                predictions = _enforce_prediction_order(
++                    estimator.classes_, predictions, n_classes, method)
+     return predictions, test
+ 
+ 
+diff --git a/sklearn/model_selection/tests/test_validation.py b/sklearn/model_selection/tests/test_validation.py
+index 6fa2e4fee..70adba8d2 100644
+--- a/sklearn/model_selection/tests/test_validation.py
++++ b/sklearn/model_selection/tests/test_validation.py
+@@ -1718,3 +1718,24 @@ def test_score():
+     fit_and_score_args = [None, None, None, two_params_scorer]
+     assert_raise_message(ValueError, error_message,
+                          _score, *fit_and_score_args)
++
++
++def test_cross_val_predict_multioutput_classifier_predict_proba():
++    # Test that cross_val_predict works with MultiOutputClassifier
++    # and method='predict_proba'. Non-regression test for GitHub issue.
++    from sklearn.multioutput import MultiOutputClassifier
++    from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
++    X, y = make_multilabel_classification(n_samples=30, n_labels=3,
++                                          n_classes=4, n_features=5,
++                                          random_state=42)
++    mo_clf = MultiOutputClassifier(LinearDiscriminantAnalysis())
++    # predict should work
++    pred = cross_val_predict(mo_clf, X, y, cv=3)
++    assert pred.shape == y.shape
++    # predict_proba should also work (was raising AttributeError)
++    pred_proba = cross_val_predict(mo_clf, X, y, cv=3,
++                                   method='predict_proba')
++    assert isinstance(pred_proba, list)
++    assert len(pred_proba) == y.shape[1]
++    for p in pred_proba:
++        assert p.shape[0] == X.shape[0]
+2026-11-02 12:42:43,969 - INFO - Grading answer for scikit-learn__scikit-learn-14629...
+2026-11-02 12:42:43,970 - INFO - report: {'scikit-learn__scikit-learn-14629': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator1]']}, 'PASS_TO_PASS': {'success': ['sklearn/tests/test_multioutput.py::test_multi_target_regression', 'sklearn/tests/test_multioutput.py::test_multi_target_regression_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_target_regression_one_target', 'sklearn/tests/test_multioutput.py::test_multi_target_sparse_regression', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weights_api', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weight_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_parallelism', 'sklearn/tests/test_multioutput.py::test_multi_output_predict_proba', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_no_first_classes_exception', 'sklearn/tests/test_multioutput.py::test_multi_output_classification', 'sklearn/tests/test_multioutput.py::test_multiclass_multioutput_estimator', 'sklearn/tests/test_multioutput.py::test_multiclass_multioutput_estimator_predict_proba', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_exceptions', 'sklearn/tests/test_multioutput.py::test_classifier_chain_fit_and_predict_with_linear_svc', 'sklearn/tests/test_multioutput.py::test_classifier_chain_fit_and_predict_with_sparse_data', 'sklearn/tests/test_multioutput.py::test_classifier_chain_vs_independent_models', 'sklearn/tests/test_multioutput.py::test_base_chain_fit_and_predict', 'sklearn/tests/test_multioutput.py::test_base_chain_fit_and_predict_with_sparse_data_and_cv', 'sklearn/tests/test_multioutput.py::test_base_chain_random_order', 'sklearn/tests/test_multioutput.py::test_base_chain_crossval_fit_and_predict', 'sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator0]', 'sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator2]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14629: resolved: False
+2026-11-02 12:42:43,972 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_codex...
+2026-11-02 12:43:00,402 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_codex stopped successfully.
+2026-11-02 12:43:00,402 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_codex...
+2026-11-02 12:43:00,439 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_codex removed successfully.

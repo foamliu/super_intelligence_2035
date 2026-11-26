@@ -1,0 +1,263 @@
+2026-10-30 17:04:49,556 - INFO - Creating container for sympy__sympy-16597...
+2026-10-30 17:04:49,583 - INFO - Container for sympy__sympy-16597 created: 5b75355650a773bc4f6f875e7f93ffb15f7bf7375f7cde138f87742f7e0ac3d3
+2026-10-30 17:04:51,120 - INFO - Container for sympy__sympy-16597 started: 5b75355650a773bc4f6f875e7f93ffb15f7bf7375f7cde138f87742f7e0ac3d3
+2026-10-30 17:04:51,122 - INFO - Intermediate patch for sympy__sympy-16597 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-16597/patch.diff, now applying to container...
+2026-10-30 17:04:51,280 - INFO - >>>>> Applied Patch:
+Checking patch sympy/assumptions/ask.py...
+Checking patch sympy/assumptions/ask_generated.py...
+Checking patch sympy/core/assumptions.py...
+Checking patch sympy/core/tests/test_assumptions.py...
+Applied patch sympy/assumptions/ask.py cleanly.
+Applied patch sympy/assumptions/ask_generated.py cleanly.
+Applied patch sympy/core/assumptions.py cleanly.
+Applied patch sympy/core/tests/test_assumptions.py cleanly.
+
+2026-10-30 17:04:51,902 - INFO - Git diff before:
+diff --git a/sympy/assumptions/ask.py b/sympy/assumptions/ask.py
+index 2f72e111e..46d7e8f76 100644
+--- a/sympy/assumptions/ask.py
++++ b/sympy/assumptions/ask.py
+@@ -1483,6 +1483,7 @@ def get_known_facts():
+         Implies(Q.even, ~Q.odd),
+         Equivalent(Q.prime, Q.integer & Q.positive & ~Q.composite),
+         Implies(Q.integer, Q.rational),
++        Implies(Q.integer, Q.finite),
+         Implies(Q.rational, Q.algebraic),
+         Implies(Q.algebraic, Q.complex),
+         Equivalent(Q.transcendental | Q.algebraic, Q.complex),
+diff --git a/sympy/assumptions/ask_generated.py b/sympy/assumptions/ask_generated.py
+index 3d9772a1d..4950d601a 100644
+--- a/sympy/assumptions/ask_generated.py
++++ b/sympy/assumptions/ask_generated.py
+@@ -25,6 +25,7 @@ def get_known_facts_cnf():
+         Q.even | ~Q.zero,
+         Q.extended_real | ~Q.infinite,
+         Q.extended_real | ~Q.real,
++        Q.finite | ~Q.integer,
+         Q.fullrank | ~Q.invertible,
+         Q.hermitian | ~Q.real,
+         Q.integer | ~Q.even,
+@@ -98,15 +99,15 @@ def get_known_facts_dict():
+         Q.diagonal: set([Q.diagonal, Q.lower_triangular, Q.normal, Q.square,
+         Q.symmetric, Q.triangular, Q.upper_triangular]),
+         Q.even: set([Q.algebraic, Q.complex, Q.even, Q.extended_real,
+-        Q.hermitian, Q.integer, Q.rational, Q.real]),
++        Q.finite, Q.hermitian, Q.integer, Q.rational, Q.real]),
+         Q.extended_real: set([Q.extended_real]),
+         Q.finite: set([Q.finite]),
+         Q.fullrank: set([Q.fullrank]),
+         Q.hermitian: set([Q.hermitian]),
+         Q.imaginary: set([Q.antihermitian, Q.complex, Q.imaginary]),
+         Q.infinite: set([Q.extended_real, Q.infinite]),
+-        Q.integer: set([Q.algebraic, Q.complex, Q.extended_real, Q.hermitian,
+-        Q.integer, Q.rational, Q.real]),
++        Q.integer: set([Q.algebraic, Q.complex, Q.extended_real, Q.finite,
++        Q.hermitian, Q.integer, Q.rational, Q.real]),
+         Q.integer_elements: set([Q.complex_elements, Q.integer_elements,
+         Q.real_elements]),
+         Q.invertible: set([Q.fullrank, Q.invertible, Q.square]),
+@@ -123,17 +124,17 @@ def get_known_facts_dict():
+         Q.nonzero: set([Q.complex, Q.extended_real, Q.hermitian, Q.nonzero,
+         Q.real]),
+         Q.normal: set([Q.normal, Q.square]),
+-        Q.odd: set([Q.algebraic, Q.complex, Q.extended_real, Q.hermitian,
+-        Q.integer, Q.nonzero, Q.odd, Q.rational, Q.real]),
++        Q.odd: set([Q.algebraic, Q.complex, Q.extended_real, Q.finite,
++        Q.hermitian, Q.integer, Q.nonzero, Q.odd, Q.rational, Q.real]),
+         Q.orthogonal: set([Q.fullrank, Q.invertible, Q.normal, Q.orthogonal,
+         Q.positive_definite, Q.square, Q.unitary]),
+         Q.positive: set([Q.complex, Q.extended_real, Q.hermitian,
+         Q.nonnegative, Q.nonzero, Q.positive, Q.real]),
+         Q.positive_definite: set([Q.fullrank, Q.invertible,
+         Q.positive_definite, Q.square]),
+-        Q.prime: set([Q.algebraic, Q.complex, Q.extended_real, Q.hermitian,
+-        Q.integer, Q.nonnegative, Q.nonzero, Q.positive, Q.prime,
+-        Q.rational, Q.real]),
++        Q.prime: set([Q.algebraic, Q.complex, Q.extended_real, Q.finite,
++        Q.hermitian, Q.integer, Q.nonnegative, Q.nonzero, Q.positive,
++        Q.prime, Q.rational, Q.real]),
+         Q.rational: set([Q.algebraic, Q.complex, Q.extended_real, Q.hermitian,
+         Q.rational, Q.real]),
+         Q.real: set([Q.complex, Q.extended_real, Q.hermitian, Q.real]),
+@@ -148,6 +149,6 @@ def get_known_facts_dict():
+         Q.unitary]),
+         Q.upper_triangular: set([Q.triangular, Q.upper_triangular]),
+         Q.zero: set([Q.algebraic, Q.complex, Q.even, Q.extended_real,
+-        Q.hermitian, Q.integer, Q.nonnegative, Q.nonpositive,
+-        Q.rational, Q.real, Q.zero]),
++        Q.finite, Q.hermitian, Q.integer, Q.nonnegative,
++        Q.nonpositive, Q.rational, Q.real, Q.zero]),
+     }
+diff --git a/sympy/core/assumptions.py b/sympy/core/assumptions.py
+index ce4dd30f2..0444eb039 100644
+--- a/sympy/core/assumptions.py
++++ b/sympy/core/assumptions.py
+@@ -163,6 +163,7 @@
+ _assume_rules = FactRules([
+ 
+     'integer        ->  rational',
++    'integer        ->  finite',
+     'rational       ->  real',
+     'rational       ->  algebraic',
+     'algebraic      ->  complex',
+diff --git a/sympy/core/tests/test_assumptions.py b/sympy/core/tests/test_assumptions.py
+index 4db1c1c24..46e11216f 100644
+--- a/sympy/core/tests/test_assumptions.py
++++ b/sympy/core/tests/test_assumptions.py
+@@ -98,26 +98,26 @@ def test_infinity():
+     oo = S.Infinity
+ 
+     assert oo.is_commutative is True
+-    assert oo.is_integer is None
++    assert oo.is_integer is False
+     assert oo.is_rational is None
+     assert oo.is_algebraic is None
+     assert oo.is_transcendental is None
+     assert oo.is_real is True
+     assert oo.is_complex is True
+-    assert oo.is_noninteger is None
++    assert oo.is_noninteger is True
+     assert oo.is_irrational is None
+     assert oo.is_imaginary is False
+     assert oo.is_positive is True
+     assert oo.is_negative is False
+     assert oo.is_nonpositive is False
+     assert oo.is_nonnegative is True
+-    assert oo.is_even is None
+-    assert oo.is_odd is None
++    assert oo.is_even is False
++    assert oo.is_odd is False
+     assert oo.is_finite is False
+     assert oo.is_infinite is True
+     assert oo.is_comparable is True
+     assert oo.is_prime is False
+-    assert oo.is_composite is None
++    assert oo.is_composite is False
+     assert oo.is_number is True
+ 
+ 
+@@ -125,21 +125,21 @@ def test_neg_infinity():
+     mm = S.NegativeInfinity
+ 
+     assert mm.is_commutative is True
+-    assert mm.is_integer is None
++    assert mm.is_integer is False
+     assert mm.is_rational is None
+     assert mm.is_algebraic is None
+     assert mm.is_transcendental is None
+     assert mm.is_real is True
+     assert mm.is_complex is True
+-    assert mm.is_noninteger is None
++    assert mm.is_noninteger is True
+     assert mm.is_irrational is None
+     assert mm.is_imaginary is False
+     assert mm.is_positive is False
+     assert mm.is_negative is True
+     assert mm.is_nonpositive is True
+     assert mm.is_nonnegative is False
+-    assert mm.is_even is None
+-    assert mm.is_odd is None
++    assert mm.is_even is False
++    assert mm.is_odd is False
+     assert mm.is_finite is False
+     assert mm.is_infinite is True
+     assert mm.is_comparable is True
+2026-10-30 17:04:51,905 - INFO - Eval script for sympy__sympy-16597 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-16597/eval.sh; copying to container...
+2026-10-30 17:05:07,813 - INFO - Test runtime: 15.83 seconds
+2026-10-30 17:05:07,816 - INFO - Test output for sympy__sympy-16597 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-16597/test_output.txt
+2026-10-30 17:05:07,894 - INFO - Git diff after:
+diff --git a/sympy/assumptions/ask.py b/sympy/assumptions/ask.py
+index 2f72e111e..46d7e8f76 100644
+--- a/sympy/assumptions/ask.py
++++ b/sympy/assumptions/ask.py
+@@ -1483,6 +1483,7 @@ def get_known_facts():
+         Implies(Q.even, ~Q.odd),
+         Equivalent(Q.prime, Q.integer & Q.positive & ~Q.composite),
+         Implies(Q.integer, Q.rational),
++        Implies(Q.integer, Q.finite),
+         Implies(Q.rational, Q.algebraic),
+         Implies(Q.algebraic, Q.complex),
+         Equivalent(Q.transcendental | Q.algebraic, Q.complex),
+diff --git a/sympy/assumptions/ask_generated.py b/sympy/assumptions/ask_generated.py
+index 3d9772a1d..4950d601a 100644
+--- a/sympy/assumptions/ask_generated.py
++++ b/sympy/assumptions/ask_generated.py
+@@ -25,6 +25,7 @@ def get_known_facts_cnf():
+         Q.even | ~Q.zero,
+         Q.extended_real | ~Q.infinite,
+         Q.extended_real | ~Q.real,
++        Q.finite | ~Q.integer,
+         Q.fullrank | ~Q.invertible,
+         Q.hermitian | ~Q.real,
+         Q.integer | ~Q.even,
+@@ -98,15 +99,15 @@ def get_known_facts_dict():
+         Q.diagonal: set([Q.diagonal, Q.lower_triangular, Q.normal, Q.square,
+         Q.symmetric, Q.triangular, Q.upper_triangular]),
+         Q.even: set([Q.algebraic, Q.complex, Q.even, Q.extended_real,
+-        Q.hermitian, Q.integer, Q.rational, Q.real]),
++        Q.finite, Q.hermitian, Q.integer, Q.rational, Q.real]),
+         Q.extended_real: set([Q.extended_real]),
+         Q.finite: set([Q.finite]),
+         Q.fullrank: set([Q.fullrank]),
+         Q.hermitian: set([Q.hermitian]),
+         Q.imaginary: set([Q.antihermitian, Q.complex, Q.imaginary]),
+         Q.infinite: set([Q.extended_real, Q.infinite]),
+-        Q.integer: set([Q.algebraic, Q.complex, Q.extended_real, Q.hermitian,
+-        Q.integer, Q.rational, Q.real]),
++        Q.integer: set([Q.algebraic, Q.complex, Q.extended_real, Q.finite,
++        Q.hermitian, Q.integer, Q.rational, Q.real]),
+         Q.integer_elements: set([Q.complex_elements, Q.integer_elements,
+         Q.real_elements]),
+         Q.invertible: set([Q.fullrank, Q.invertible, Q.square]),
+@@ -123,17 +124,17 @@ def get_known_facts_dict():
+         Q.nonzero: set([Q.complex, Q.extended_real, Q.hermitian, Q.nonzero,
+         Q.real]),
+         Q.normal: set([Q.normal, Q.square]),
+-        Q.odd: set([Q.algebraic, Q.complex, Q.extended_real, Q.hermitian,
+-        Q.integer, Q.nonzero, Q.odd, Q.rational, Q.real]),
++        Q.odd: set([Q.algebraic, Q.complex, Q.extended_real, Q.finite,
++        Q.hermitian, Q.integer, Q.nonzero, Q.odd, Q.rational, Q.real]),
+         Q.orthogonal: set([Q.fullrank, Q.invertible, Q.normal, Q.orthogonal,
+         Q.positive_definite, Q.square, Q.unitary]),
+         Q.positive: set([Q.complex, Q.extended_real, Q.hermitian,
+         Q.nonnegative, Q.nonzero, Q.positive, Q.real]),
+         Q.positive_definite: set([Q.fullrank, Q.invertible,
+         Q.positive_definite, Q.square]),
+-        Q.prime: set([Q.algebraic, Q.complex, Q.extended_real, Q.hermitian,
+-        Q.integer, Q.nonnegative, Q.nonzero, Q.positive, Q.prime,
+-        Q.rational, Q.real]),
++        Q.prime: set([Q.algebraic, Q.complex, Q.extended_real, Q.finite,
++        Q.hermitian, Q.integer, Q.nonnegative, Q.nonzero, Q.positive,
++        Q.prime, Q.rational, Q.real]),
+         Q.rational: set([Q.algebraic, Q.complex, Q.extended_real, Q.hermitian,
+         Q.rational, Q.real]),
+         Q.real: set([Q.complex, Q.extended_real, Q.hermitian, Q.real]),
+@@ -148,6 +149,6 @@ def get_known_facts_dict():
+         Q.unitary]),
+         Q.upper_triangular: set([Q.triangular, Q.upper_triangular]),
+         Q.zero: set([Q.algebraic, Q.complex, Q.even, Q.extended_real,
+-        Q.hermitian, Q.integer, Q.nonnegative, Q.nonpositive,
+-        Q.rational, Q.real, Q.zero]),
++        Q.finite, Q.hermitian, Q.integer, Q.nonnegative,
++        Q.nonpositive, Q.rational, Q.real, Q.zero]),
+     }
+diff --git a/sympy/core/assumptions.py b/sympy/core/assumptions.py
+index ce4dd30f2..0444eb039 100644
+--- a/sympy/core/assumptions.py
++++ b/sympy/core/assumptions.py
+@@ -163,6 +163,7 @@
+ _assume_rules = FactRules([
+ 
+     'integer        ->  rational',
++    'integer        ->  finite',
+     'rational       ->  real',
+     'rational       ->  algebraic',
+     'algebraic      ->  complex',
+2026-10-30 17:05:07,895 - INFO - Git diff changed after running eval script
+2026-10-30 17:05:07,895 - INFO - Grading answer for sympy__sympy-16597...
+2026-10-30 17:05:07,896 - INFO - report: {'sympy__sympy-16597': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_infinity', 'test_neg_infinity', 'test_other_symbol']}, 'PASS_TO_PASS': {'success': ['test_symbol_unset', 'test_zero', 'test_one', 'test_negativeone', 'test_zoo', 'test_nan', 'test_pos_rational', 'test_neg_rational', 'test_pi', 'test_E', 'test_I', 'test_symbol_real', 'test_symbol_imaginary', 'test_symbol_zero', 'test_symbol_positive', 'test_neg_symbol_positive', 'test_symbol_nonpositive', 'test_neg_symbol_nonpositive', 'test_symbol_falsepositive', 'test_symbol_falsepositive_mul', 'test_neg_symbol_falsepositive', 'test_neg_symbol_falsenegative', 'test_symbol_falsepositive_real', 'test_neg_symbol_falsepositive_real', 'test_symbol_falsenonnegative', 'test_symbol_falsenonnegative_real', 'test_neg_symbol_falsenonnegative_real', 'test_prime', 'test_composite', 'test_prime_symbol', 'test_symbol_noncommutative', 'test_issue_3825', 'test_issue_4822', 'test_hash_vs_typeinfo', 'test_hash_vs_typeinfo_2', 'test_hash_vs_eq', 'test_Add_is_pos_neg', 'test_Add_is_imaginary', 'test_Add_is_algebraic', 'test_Mul_is_algebraic', 'test_Pow_is_algebraic', 'test_Mul_is_prime_composite', 'test_Pow_is_pos_neg', 'test_Pow_is_prime_composite', 'test_Mul_is_infinite', 'test_special_is_rational', 'test_sanitize_assumptions', 'test_special_assumptions', 'test_inconsistent', 'test_issue_6631', 'test_issue_2730', 'test_issue_4149', 'test_issue_2920', 'test_issue_7899', 'test_issue_8075', 'test_issue_8642', 'test_issues_8632_8633_8638_8675_8992', 'test_issue_9115_9150', 'test_issue_9165', 'test_issue_10024', 'test_issue_10302', 'test_complex_reciprocal_imaginary', 'test_Min', 'test_Max', 'test_minmax_assumptions', 'test_issue_8413', 'test_root', 'test_real_root', 'test_rewrite_MaxMin_as_Heaviside', 'test_rewrite_MaxMin_as_Piecewise', 'test_issue_11099', 'test_issue_12638', 'test_instantiation_evaluation', 'test_rewrite_as_Abs'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-16597: resolved: False
+2026-10-30 17:05:07,898 - INFO - Attempting to stop container sweb.eval.sympy__sympy-16597.verified_full_pi...
+2026-10-30 17:05:23,628 - INFO - Container sweb.eval.sympy__sympy-16597.verified_full_pi stopped successfully.
+2026-10-30 17:05:23,628 - INFO - Attempting to remove container sweb.eval.sympy__sympy-16597.verified_full_pi...
+2026-10-30 17:05:23,679 - INFO - Container sweb.eval.sympy__sympy-16597.verified_full_pi removed successfully.

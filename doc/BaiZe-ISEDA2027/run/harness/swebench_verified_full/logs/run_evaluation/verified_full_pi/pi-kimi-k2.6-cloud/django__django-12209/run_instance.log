@@ -1,0 +1,320 @@
+2026-11-01 16:57:52,592 - INFO - Creating container for django__django-12209...
+2026-11-01 16:57:52,610 - INFO - Container for django__django-12209 created: 4565fe8d11bb1d9383b32fca7f7a11869789fffe4e7ff12bc280a5559d5242c3
+2026-11-01 16:57:53,227 - INFO - Container for django__django-12209 started: 4565fe8d11bb1d9383b32fca7f7a11869789fffe4e7ff12bc280a5559d5242c3
+2026-11-01 16:57:53,230 - INFO - Intermediate patch for django__django-12209 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12209/patch.diff, now applying to container...
+2026-11-01 16:57:53,374 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+Checking patch tests/basic/models.py...
+Checking patch tests/basic/tests.py...
+Checking patch tests/fixtures/fixtures/uuid_pk.json...
+Checking patch tests/fixtures/tests.py...
+Applied patch django/db/models/base.py cleanly.
+Applied patch tests/basic/models.py cleanly.
+Applied patch tests/basic/tests.py cleanly.
+Applied patch tests/fixtures/fixtures/uuid_pk.json cleanly.
+Applied patch tests/fixtures/tests.py cleanly.
+
+2026-11-01 16:57:54,659 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a0..2b0d82f21a 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -414,7 +414,7 @@ class Model(metaclass=ModelBase):
+ 
+         # Set up the storage for instance state
+         self._state = ModelState()
+-
++        self._state._pk_set_explicitly = False
+         # There is a rather weird disparity here; if kwargs, it's set, then args
+         # overrides it. It should be one or the other; don't duplicate the work
+         # The reason for the kwargs check is that standard iterator passes in by
+@@ -433,6 +433,8 @@ class Model(metaclass=ModelBase):
+                 if val is _DEFERRED:
+                     continue
+                 _setattr(self, field.attname, val)
++                if field.primary_key:
++                    self._state._pk_set_explicitly = True
+         else:
+             # Slower, kwargs-ready version.
+             fields_iter = iter(opts.fields)
+@@ -440,6 +442,8 @@ class Model(metaclass=ModelBase):
+                 if val is _DEFERRED:
+                     continue
+                 _setattr(self, field.attname, val)
++                if field.primary_key:
++                    self._state._pk_set_explicitly = True
+                 kwargs.pop(field.name, None)
+ 
+         # Now we're left with the unprocessed fields that *must* come from
+@@ -462,6 +466,9 @@ class Model(metaclass=ModelBase):
+                             val = kwargs.pop(field.attname)
+                         except KeyError:
+                             val = field.get_default()
++                        else:
++                            if field.primary_key:
++                                self._state._pk_set_explicitly = True
+                 else:
+                     try:
+                         val = kwargs.pop(field.attname)
+@@ -471,6 +478,9 @@ class Model(metaclass=ModelBase):
+                         # get_default() to be evaluated, and then not used.
+                         # Refs #12057.
+                         val = field.get_default()
++                    else:
++                        if field.primary_key:
++                            self._state._pk_set_explicitly = True
+             else:
+                 val = field.get_default()
+ 
+@@ -494,6 +504,8 @@ class Model(metaclass=ModelBase):
+                     if prop in property_names or opts.get_field(prop):
+                         if kwargs[prop] is not _DEFERRED:
+                             _setattr(self, prop, kwargs[prop])
++                            if prop == 'pk':
++                                self._state._pk_set_explicitly = True
+                         del kwargs[prop]
+                 except (AttributeError, FieldDoesNotExist):
+                     pass
+@@ -569,6 +581,7 @@ class Model(metaclass=ModelBase):
+         return getattr(self, meta.pk.attname)
+ 
+     def _set_pk_val(self, value):
++        self._state._pk_set_explicitly = True
+         return setattr(self, self._meta.pk.attname, value)
+ 
+     pk = property(_get_pk_val, _set_pk_val)
+@@ -852,7 +865,8 @@ class Model(metaclass=ModelBase):
+             not force_insert and
+             self._state.adding and
+             self._meta.pk.default and
+-            self._meta.pk.default is not NOT_PROVIDED
++            self._meta.pk.default is not NOT_PROVIDED and
++            not self._state._pk_set_explicitly
+         ):
+             force_insert = True
+         # If possible, try an UPDATE. If that doesn't update anything, do an INSERT.
+diff --git a/tests/basic/models.py b/tests/basic/models.py
+index 7b2b1aee54..21deedec38 100644
+--- a/tests/basic/models.py
++++ b/tests/basic/models.py
+@@ -46,3 +46,8 @@ class SelfRef(models.Model):
+ 
+ class PrimaryKeyWithDefault(models.Model):
+     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
++
++
++class PrimaryKeyWithDefaultAndData(models.Model):
++    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
++    name = models.CharField(max_length=100)
+diff --git a/tests/basic/tests.py b/tests/basic/tests.py
+index 5eada343e1..30b6c2a167 100644
+--- a/tests/basic/tests.py
++++ b/tests/basic/tests.py
+@@ -13,9 +13,8 @@ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+     Article, ArticleSelectOnSave, FeaturedArticle, PrimaryKeyWithDefault,
+-    SelfRef,
+-)
+-
++    PrimaryKeyWithDefaultAndData, SelfRef,
++    )
+ 
+ class ModelInstanceCreationTests(TestCase):
+ 
+@@ -139,6 +138,21 @@ class ModelInstanceCreationTests(TestCase):
+         with self.assertNumQueries(1):
+             PrimaryKeyWithDefault().save()
+ 
++    def test_save_primary_with_default_explicit_pk(self):
++        # An UPDATE is performed when an explicit pk is set.
++        obj = PrimaryKeyWithDefaultAndData.objects.create(name='original')
++        obj2 = PrimaryKeyWithDefaultAndData(pk=obj.pk, name='updated')
++        with self.assertNumQueries(1):
++            obj2.save()
++        obj.refresh_from_db()
++        self.assertEqual(obj.name, 'updated')
++
++    def test_save_primary_with_default_explicit_pk_no_data(self):
++        obj = PrimaryKeyWithDefault.objects.create()
++        obj2 = PrimaryKeyWithDefault(pk=obj.pk)
++        with self.assertNumQueries(1):
++            obj2.save()
++        self.assertEqual(PrimaryKeyWithDefault.objects.count(), 1)
+ 
+ class ModelTest(TestCase):
+     def test_objects_attribute_is_only_available_on_the_class_itself(self):
+diff --git a/tests/fixtures/tests.py b/tests/fixtures/tests.py
+index 02dd38e635..85a21d6d8b 100644
+--- a/tests/fixtures/tests.py
++++ b/tests/fixtures/tests.py
+@@ -803,3 +803,12 @@ class ForwardReferenceTests(TestCase):
+             t1.other_things.order_by('key'),
+             ['<NaturalKeyThing: t2>', '<NaturalKeyThing: t3>']
+         )
++
++
++class PrimaryKeyUUIDFixtureTests(TestCase):
++    def test_loaddata_uuid_pk_with_explicit_pk(self):
++        management.call_command('loaddata', 'uuid_pk.json', verbosity=0)
++        self.assertEqual(PrimaryKeyUUIDModel.objects.count(), 1)
++        # Loading again should not raise an error.
++        management.call_command('loaddata', 'uuid_pk.json', verbosity=0)
++        self.assertEqual(PrimaryKeyUUIDModel.objects.count(), 1)
+2026-11-01 16:57:54,662 - INFO - Eval script for django__django-12209 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12209/eval.sh; copying to container...
+2026-11-01 16:58:02,219 - INFO - Test runtime: 7.50 seconds
+2026-11-01 16:58:02,222 - INFO - Test output for django__django-12209 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12209/test_output.txt
+2026-11-01 16:58:02,296 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a0..2b0d82f21a 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -414,7 +414,7 @@ class Model(metaclass=ModelBase):
+ 
+         # Set up the storage for instance state
+         self._state = ModelState()
+-
++        self._state._pk_set_explicitly = False
+         # There is a rather weird disparity here; if kwargs, it's set, then args
+         # overrides it. It should be one or the other; don't duplicate the work
+         # The reason for the kwargs check is that standard iterator passes in by
+@@ -433,6 +433,8 @@ class Model(metaclass=ModelBase):
+                 if val is _DEFERRED:
+                     continue
+                 _setattr(self, field.attname, val)
++                if field.primary_key:
++                    self._state._pk_set_explicitly = True
+         else:
+             # Slower, kwargs-ready version.
+             fields_iter = iter(opts.fields)
+@@ -440,6 +442,8 @@ class Model(metaclass=ModelBase):
+                 if val is _DEFERRED:
+                     continue
+                 _setattr(self, field.attname, val)
++                if field.primary_key:
++                    self._state._pk_set_explicitly = True
+                 kwargs.pop(field.name, None)
+ 
+         # Now we're left with the unprocessed fields that *must* come from
+@@ -462,6 +466,9 @@ class Model(metaclass=ModelBase):
+                             val = kwargs.pop(field.attname)
+                         except KeyError:
+                             val = field.get_default()
++                        else:
++                            if field.primary_key:
++                                self._state._pk_set_explicitly = True
+                 else:
+                     try:
+                         val = kwargs.pop(field.attname)
+@@ -471,6 +478,9 @@ class Model(metaclass=ModelBase):
+                         # get_default() to be evaluated, and then not used.
+                         # Refs #12057.
+                         val = field.get_default()
++                    else:
++                        if field.primary_key:
++                            self._state._pk_set_explicitly = True
+             else:
+                 val = field.get_default()
+ 
+@@ -494,6 +504,8 @@ class Model(metaclass=ModelBase):
+                     if prop in property_names or opts.get_field(prop):
+                         if kwargs[prop] is not _DEFERRED:
+                             _setattr(self, prop, kwargs[prop])
++                            if prop == 'pk':
++                                self._state._pk_set_explicitly = True
+                         del kwargs[prop]
+                 except (AttributeError, FieldDoesNotExist):
+                     pass
+@@ -569,6 +581,7 @@ class Model(metaclass=ModelBase):
+         return getattr(self, meta.pk.attname)
+ 
+     def _set_pk_val(self, value):
++        self._state._pk_set_explicitly = True
+         return setattr(self, self._meta.pk.attname, value)
+ 
+     pk = property(_get_pk_val, _set_pk_val)
+@@ -852,7 +865,8 @@ class Model(metaclass=ModelBase):
+             not force_insert and
+             self._state.adding and
+             self._meta.pk.default and
+-            self._meta.pk.default is not NOT_PROVIDED
++            self._meta.pk.default is not NOT_PROVIDED and
++            not self._state._pk_set_explicitly
+         ):
+             force_insert = True
+         # If possible, try an UPDATE. If that doesn't update anything, do an INSERT.
+diff --git a/tests/basic/models.py b/tests/basic/models.py
+index 7b2b1aee54..21deedec38 100644
+--- a/tests/basic/models.py
++++ b/tests/basic/models.py
+@@ -46,3 +46,8 @@ class SelfRef(models.Model):
+ 
+ class PrimaryKeyWithDefault(models.Model):
+     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
++
++
++class PrimaryKeyWithDefaultAndData(models.Model):
++    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
++    name = models.CharField(max_length=100)
+diff --git a/tests/basic/tests.py b/tests/basic/tests.py
+index 5eada343e1..30b6c2a167 100644
+--- a/tests/basic/tests.py
++++ b/tests/basic/tests.py
+@@ -13,9 +13,8 @@ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+     Article, ArticleSelectOnSave, FeaturedArticle, PrimaryKeyWithDefault,
+-    SelfRef,
+-)
+-
++    PrimaryKeyWithDefaultAndData, SelfRef,
++    )
+ 
+ class ModelInstanceCreationTests(TestCase):
+ 
+@@ -139,6 +138,21 @@ class ModelInstanceCreationTests(TestCase):
+         with self.assertNumQueries(1):
+             PrimaryKeyWithDefault().save()
+ 
++    def test_save_primary_with_default_explicit_pk(self):
++        # An UPDATE is performed when an explicit pk is set.
++        obj = PrimaryKeyWithDefaultAndData.objects.create(name='original')
++        obj2 = PrimaryKeyWithDefaultAndData(pk=obj.pk, name='updated')
++        with self.assertNumQueries(1):
++            obj2.save()
++        obj.refresh_from_db()
++        self.assertEqual(obj.name, 'updated')
++
++    def test_save_primary_with_default_explicit_pk_no_data(self):
++        obj = PrimaryKeyWithDefault.objects.create()
++        obj2 = PrimaryKeyWithDefault(pk=obj.pk)
++        with self.assertNumQueries(1):
++            obj2.save()
++        self.assertEqual(PrimaryKeyWithDefault.objects.count(), 1)
+ 
+ class ModelTest(TestCase):
+     def test_objects_attribute_is_only_available_on_the_class_itself(self):
+diff --git a/tests/fixtures/tests.py b/tests/fixtures/tests.py
+index 02dd38e635..85a21d6d8b 100644
+--- a/tests/fixtures/tests.py
++++ b/tests/fixtures/tests.py
+@@ -803,3 +803,12 @@ class ForwardReferenceTests(TestCase):
+             t1.other_things.order_by('key'),
+             ['<NaturalKeyThing: t2>', '<NaturalKeyThing: t3>']
+         )
++
++
++class PrimaryKeyUUIDFixtureTests(TestCase):
++    def test_loaddata_uuid_pk_with_explicit_pk(self):
++        management.call_command('loaddata', 'uuid_pk.json', verbosity=0)
++        self.assertEqual(PrimaryKeyUUIDModel.objects.count(), 1)
++        # Loading again should not raise an error.
++        management.call_command('loaddata', 'uuid_pk.json', verbosity=0)
++        self.assertEqual(PrimaryKeyUUIDModel.objects.count(), 1)
+2026-11-01 16:58:02,297 - INFO - Grading answer for django__django-12209...
+2026-11-01 16:58:02,301 - INFO - report: {'django__django-12209': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['partial(func, *args, **keywords) - new function with partial application'], 'failure': []}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12209: resolved: True
+2026-11-01 16:58:02,303 - INFO - Attempting to stop container sweb.eval.django__django-12209.verified_full_pi...
+2026-11-01 16:58:18,158 - INFO - Container sweb.eval.django__django-12209.verified_full_pi stopped successfully.
+2026-11-01 16:58:18,158 - INFO - Attempting to remove container sweb.eval.django__django-12209.verified_full_pi...
+2026-11-01 16:58:18,222 - INFO - Container sweb.eval.django__django-12209.verified_full_pi removed successfully.

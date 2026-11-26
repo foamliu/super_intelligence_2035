@@ -1,0 +1,82 @@
+2026-10-31 13:42:35,626 - INFO - Creating container for sphinx-doc__sphinx-11445...
+2026-10-31 13:42:35,674 - INFO - Container for sphinx-doc__sphinx-11445 created: 303e1c4afbe27b5a25cbdd9275d9a0d903be62f901778a8e158b8151381e8e10
+2026-10-31 13:42:36,419 - INFO - Container for sphinx-doc__sphinx-11445 started: 303e1c4afbe27b5a25cbdd9275d9a0d903be62f901778a8e158b8151381e8e10
+2026-10-31 13:42:36,424 - INFO - Intermediate patch for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/patch.diff, now applying to container...
+2026-10-31 13:42:36,530 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/util/rst.py...
+warning: sphinx/util/rst.py has type 100755, expected 100644
+Checking patch tests/test_util_rst.py...
+warning: tests/test_util_rst.py has type 100755, expected 100644
+Applied patch sphinx/util/rst.py cleanly.
+Applied patch tests/test_util_rst.py cleanly.
+
+2026-10-31 13:42:37,010 - INFO - Git diff before:
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a1538325..420816ae7 100755
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,7 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++docinfo_re = re.compile(r'^:\w+:(?:\s|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+ 
+diff --git a/tests/test_util_rst.py b/tests/test_util_rst.py
+index 40a2ee68b..9e4757a06 100755
+--- a/tests/test_util_rst.py
++++ b/tests/test_util_rst.py
+@@ -107,3 +107,27 @@ def test_heading():
+         'русский язык\n'
+         '======================='
+     )
++
++
++def test_prepend_prolog_skips_role_like_headings(app):
++    """If rst_prolog is set, role-like headings should not be treated as docinfo."""
++    prolog = 'this is rst_prolog'
++    content = StringList([':mod:`mypackage2`',
++                          '=================',
++                          '',
++                          'Content',
++                          '',
++                          'Subheading',
++                          '----------'],
++                         'mypackage.rst')
++    prepend_prolog(content, prolog)
++
++    assert list(content.xitems()) == [('<rst_prolog>', 0, 'this is rst_prolog'),
++                                      ('<generated>', 0, ''),
++                                      ('mypackage.rst', 0, ':mod:`mypackage2`'),
++                                      ('mypackage.rst', 1, '================='),
++                                      ('mypackage.rst', 2, ''),
++                                      ('mypackage.rst', 3, 'Content'),
++                                      ('mypackage.rst', 4, ''),
++                                      ('mypackage.rst', 5, 'Subheading'),
++                                      ('mypackage.rst', 6, '----------')]
+2026-10-31 13:42:37,013 - INFO - Eval script for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/eval.sh; copying to container...
+2026-10-31 13:42:45,879 - INFO - Test runtime: 8.79 seconds
+2026-10-31 13:42:45,882 - INFO - Test output for sphinx-doc__sphinx-11445 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/sphinx-doc__sphinx-11445/test_output.txt
+2026-10-31 13:42:45,941 - INFO - Git diff after:
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a1538325..420816ae7 100755
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,7 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++docinfo_re = re.compile(r'^:\w+:(?:\s|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+2026-10-31 13:42:45,941 - INFO - Git diff changed after running eval script
+2026-10-31 13:42:45,941 - INFO - Grading answer for sphinx-doc__sphinx-11445...
+2026-10-31 13:42:45,947 - INFO - report: {'sphinx-doc__sphinx-11445': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_with_newline', 'tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_without_newline'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_util_rst.py::test_escape', 'tests/test_util_rst.py::test_append_epilog', 'tests/test_util_rst.py::test_prepend_prolog', 'tests/test_util_rst.py::test_prepend_prolog_with_CR', 'tests/test_util_rst.py::test_prepend_prolog_without_CR', 'tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections', 'tests/test_util_rst.py::test_textwidth', 'tests/test_util_rst.py::test_heading'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-11445: resolved: True
+2026-10-31 13:42:45,949 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-11445.verified_full_deepseek-harness...
+2026-10-31 13:43:01,536 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_deepseek-harness stopped successfully.
+2026-10-31 13:43:01,537 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-11445.verified_full_deepseek-harness...
+2026-10-31 13:43:01,575 - INFO - Container sweb.eval.sphinx-doc__sphinx-11445.verified_full_deepseek-harness removed successfully.

@@ -1,0 +1,166 @@
+2026-11-12 05:26:33,528 - INFO - Creating container for sphinx-doc__sphinx-9320...
+2026-11-12 05:26:33,551 - INFO - Container for sphinx-doc__sphinx-9320 created: d11903195325977a87f8ef2ffdea8dd0d3ae096b34e7714e4c28b0cb166a4662
+2026-11-12 05:26:34,280 - INFO - Container for sphinx-doc__sphinx-9320 started: d11903195325977a87f8ef2ffdea8dd0d3ae096b34e7714e4c28b0cb166a4662
+2026-11-12 05:26:34,282 - INFO - Intermediate patch for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2233/cline-glm-5.3-flash/sphinx-doc__sphinx-9320/patch.diff, now applying to container...
+2026-11-12 05:26:34,421 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/cmd/quickstart.py...
+Checking patch tests/test_quickstart.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/cmd/quickstart.py cleanly.
+Applied patch tests/test_quickstart.py cleanly.
+
+2026-11-12 05:26:34,898 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index 7e8658017..ec1403553 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -76,6 +76,8 @@ Bugs fixed
+   whitespace (ex. ``Dict[str, str]``)
+ * #8945: when transforming typed fields, call the specified role instead of
+   making an single xref. For C and C++, use the ``expr`` role for typed fields.
++* #9409: quickstart: Allow to exit by pressing Enter when an existing conf.py
++  has been found in the selected root path
+ 
+ Testing
+ --------
+diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py
+index a40a21073..e92d89219 100644
+--- a/sphinx/cmd/quickstart.py
++++ b/sphinx/cmd/quickstart.py
+@@ -95,6 +95,12 @@ def is_path(x: str) -> str:
+     return x
+ 
+ 
++def is_path_or_empty(x: str) -> str:
++    if x == '':
++        return x
++    return is_path(x)
++
++
+ def allow_empty(x: str) -> str:
+     return x
+ 
+@@ -223,9 +229,9 @@ def ask_user(d: Dict) -> None:
+         print(__('sphinx-quickstart will not overwrite existing Sphinx projects.'))
+         print()
+         d['path'] = do_prompt(__('Please enter a new root path (or just Enter to exit)'),
+-                              '', is_path)
++                              '', is_path_or_empty)
+         if not d['path']:
+-            sys.exit(1)
++            raise SystemExit(1)
+ 
+     if 'sep' not in d:
+         print()
+diff --git a/tests/test_quickstart.py b/tests/test_quickstart.py
+index 94144ef22..bb8b7e028 100644
+--- a/tests/test_quickstart.py
++++ b/tests/test_quickstart.py
+@@ -92,6 +92,52 @@ def test_do_prompt_with_nonascii():
+     assert result == '\u30c9\u30a4\u30c4'
+ 
+ 
++def test_quickstart_with_existing_confpy_exit(tempdir):
++    """Regression test for #9409: pressing Enter at the "new root path" prompt
++    must exit sphinx-quickstart."""
++    (tempdir / 'conf.py').write_text('')
++    answers = {
++        'Please enter a new root path': '',
++    }
++    qs.term_input = mock_input(answers)
++
++    d = {'path': tempdir}
++    with pytest.raises(SystemExit) as excinfo:
++        qs.ask_user(d)
++    assert excinfo.value.code == 1
++
++
++def test_quickstart_with_existing_confpy_new_path(tempdir):
++    (tempdir / 'conf.py').write_text('')
++    new_path = tempdir / 'documentation'
++    new_path.makedirs()
++    answers = {
++        'Please enter a new root path': str(new_path),
++        'Project name': 'Sphinx Test',
++        'Author name': 'Georg Brandl',
++    }
++    qs.term_input = mock_input(answers)
++
++    d = {'path': tempdir}
++    qs.ask_user(d)
++    assert d['path'] == str(new_path)
++
++
++def test_quickstart_with_existing_confpy_invalid_path(tempdir):
++    # a non-empty invalid path must still be rejected
++    (tempdir / 'conf.py').write_text('')
++    answers = {
++        'Please enter a new root path': '/nonexistent-path-for-quickstart-test',
++    }
++    qs.term_input = mock_input(answers)
++
++    d = {'path': tempdir}
++    # do_prompt asks the same question again, which mock_input reports as
++    # a missing answer for an already-called prompt
++    with pytest.raises(AssertionError):
++        qs.ask_user(d)
++
++
+ def test_quickstart_defaults(tempdir):
+     answers = {
+         'Root path': tempdir,
+2026-11-12 05:26:34,901 - INFO - Eval script for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2233/cline-glm-5.3-flash/sphinx-doc__sphinx-9320/eval.sh; copying to container...
+2026-11-12 05:26:39,396 - INFO - Test runtime: 4.43 seconds
+2026-11-12 05:26:39,399 - INFO - Test output for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2233/cline-glm-5.3-flash/sphinx-doc__sphinx-9320/test_output.txt
+2026-11-12 05:26:39,472 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index 7e8658017..ec1403553 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -76,6 +76,8 @@ Bugs fixed
+   whitespace (ex. ``Dict[str, str]``)
+ * #8945: when transforming typed fields, call the specified role instead of
+   making an single xref. For C and C++, use the ``expr`` role for typed fields.
++* #9409: quickstart: Allow to exit by pressing Enter when an existing conf.py
++  has been found in the selected root path
+ 
+ Testing
+ --------
+diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py
+index a40a21073..e92d89219 100644
+--- a/sphinx/cmd/quickstart.py
++++ b/sphinx/cmd/quickstart.py
+@@ -95,6 +95,12 @@ def is_path(x: str) -> str:
+     return x
+ 
+ 
++def is_path_or_empty(x: str) -> str:
++    if x == '':
++        return x
++    return is_path(x)
++
++
+ def allow_empty(x: str) -> str:
+     return x
+ 
+@@ -223,9 +229,9 @@ def ask_user(d: Dict) -> None:
+         print(__('sphinx-quickstart will not overwrite existing Sphinx projects.'))
+         print()
+         d['path'] = do_prompt(__('Please enter a new root path (or just Enter to exit)'),
+-                              '', is_path)
++                              '', is_path_or_empty)
+         if not d['path']:
+-            sys.exit(1)
++            raise SystemExit(1)
+ 
+     if 'sep' not in d:
+         print()
+2026-11-12 05:26:39,472 - INFO - Git diff changed after running eval script
+2026-11-12 05:26:39,472 - INFO - Grading answer for sphinx-doc__sphinx-9320...
+2026-11-12 05:26:39,480 - INFO - report: {'sphinx-doc__sphinx-9320': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_quickstart.py::test_exits_when_existing_confpy'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_quickstart.py::test_do_prompt', 'tests/test_quickstart.py::test_do_prompt_inputstrip', 'tests/test_quickstart.py::test_do_prompt_with_nonascii', 'tests/test_quickstart.py::test_quickstart_defaults', 'tests/test_quickstart.py::test_quickstart_all_answers', 'tests/test_quickstart.py::test_generated_files_eol', 'tests/test_quickstart.py::test_quickstart_and_build', 'tests/test_quickstart.py::test_default_filename', 'tests/test_quickstart.py::test_extensions'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9320: resolved: True
+2026-11-12 05:26:39,482 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9320.verified_full_glm53_cline-patched_incr_R2233...
+2026-11-12 05:26:55,532 - INFO - Container sweb.eval.sphinx-doc__sphinx-9320.verified_full_glm53_cline-patched_incr_R2233 stopped successfully.
+2026-11-12 05:26:55,533 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9320.verified_full_glm53_cline-patched_incr_R2233...
+2026-11-12 05:26:55,583 - INFO - Container sweb.eval.sphinx-doc__sphinx-9320.verified_full_glm53_cline-patched_incr_R2233 removed successfully.

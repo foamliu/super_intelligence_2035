@@ -1,0 +1,88 @@
+2026-10-30 16:30:41,007 - INFO - Creating container for sphinx-doc__sphinx-7889...
+2026-10-30 16:30:41,057 - INFO - Container for sphinx-doc__sphinx-7889 created: 58ed8f4518b9703d463126e6d9a8006196e7b7c8ed867e6833f9df9931069bec
+2026-10-30 16:30:57,460 - INFO - Container for sphinx-doc__sphinx-7889 started: 58ed8f4518b9703d463126e6d9a8006196e7b7c8ed867e6833f9df9931069bec
+2026-10-30 16:30:57,462 - INFO - Intermediate patch for sphinx-doc__sphinx-7889 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-7889/patch.diff, now applying to container...
+2026-10-30 16:30:57,945 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/autodoc/mock.py...
+Checking patch tests/test_ext_autodoc_mock.py...
+Applied patch sphinx/ext/autodoc/mock.py cleanly.
+Applied patch tests/test_ext_autodoc_mock.py cleanly.
+
+2026-10-30 16:30:58,515 - INFO - Git diff before:
+diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py
+index 98a3a3a96..865f7845d 100644
+--- a/sphinx/ext/autodoc/mock.py
++++ b/sphinx/ext/autodoc/mock.py
+@@ -52,7 +52,7 @@ class _MockObject:
+     def __mro_entries__(self, bases: Tuple) -> Tuple:
+         return (self.__class__,)
+ 
+-    def __getitem__(self, key: str) -> "_MockObject":
++    def __getitem__(self, key: Any) -> "_MockObject":
+         return _make_subclass(key, self.__display_name__, self.__class__)()
+ 
+     def __getattr__(self, key: str) -> "_MockObject":
+@@ -70,6 +70,7 @@ class _MockObject:
+ 
+ def _make_subclass(name: str, module: str, superclass: Any = _MockObject,
+                    attributes: Any = None) -> Any:
++    name = str(name)
+     attrs = {'__module__': module, '__display_name__': module + '.' + name}
+     attrs.update(attributes or {})
+ 
+diff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py
+index 4760493cf..c01d6307d 100644
+--- a/tests/test_ext_autodoc_mock.py
++++ b/tests/test_ext_autodoc_mock.py
+@@ -14,6 +14,8 @@ from importlib import import_module
+ 
+ import pytest
+ 
++from typing import TypeVar
++
+ from sphinx.ext.autodoc.mock import _MockModule, _MockObject, mock
+ 
+ 
+@@ -117,3 +119,10 @@ def test_mock_decorator():
+     assert func.__doc__ == "docstring"
+     assert Foo.meth.__doc__ == "docstring"
+     assert Bar.__doc__ == "docstring"
++
++
++def test_MockObject_getitem_with_TypeVar():
++    mock = _MockObject()
++    T = TypeVar('T')
++    assert isinstance(mock[T], _MockObject)
++    assert repr(mock[T]).startswith('_MockObject.')
+2026-10-30 16:30:58,518 - INFO - Eval script for sphinx-doc__sphinx-7889 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-7889/eval.sh; copying to container...
+2026-10-30 16:31:02,057 - INFO - Test runtime: 3.43 seconds
+2026-10-30 16:31:02,059 - INFO - Test output for sphinx-doc__sphinx-7889 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-7889/test_output.txt
+2026-10-30 16:31:02,106 - INFO - Git diff after:
+diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py
+index 98a3a3a96..865f7845d 100644
+--- a/sphinx/ext/autodoc/mock.py
++++ b/sphinx/ext/autodoc/mock.py
+@@ -52,7 +52,7 @@ class _MockObject:
+     def __mro_entries__(self, bases: Tuple) -> Tuple:
+         return (self.__class__,)
+ 
+-    def __getitem__(self, key: str) -> "_MockObject":
++    def __getitem__(self, key: Any) -> "_MockObject":
+         return _make_subclass(key, self.__display_name__, self.__class__)()
+ 
+     def __getattr__(self, key: str) -> "_MockObject":
+@@ -70,6 +70,7 @@ class _MockObject:
+ 
+ def _make_subclass(name: str, module: str, superclass: Any = _MockObject,
+                    attributes: Any = None) -> Any:
++    name = str(name)
+     attrs = {'__module__': module, '__display_name__': module + '.' + name}
+     attrs.update(attributes or {})
+2026-10-30 16:31:02,106 - INFO - Git diff changed after running eval script
+2026-10-30 16:31:02,106 - INFO - Grading answer for sphinx-doc__sphinx-7889...
+2026-10-30 16:31:02,107 - INFO - report: {'sphinx-doc__sphinx-7889': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_mock.py::test_MockObject'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_mock.py::test_MockModule', 'tests/test_ext_autodoc_mock.py::test_mock', 'tests/test_ext_autodoc_mock.py::test_mock_does_not_follow_upper_modules', 'tests/test_ext_autodoc_mock.py::test_abc_MockObject', 'tests/test_ext_autodoc_mock.py::test_mock_decorator'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7889: resolved: True
+2026-10-30 16:31:02,109 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7889.verified_full_cline-patched...
+2026-10-30 16:31:19,626 - INFO - Container sweb.eval.sphinx-doc__sphinx-7889.verified_full_cline-patched stopped successfully.
+2026-10-30 16:31:19,626 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7889.verified_full_cline-patched...
+2026-10-30 16:31:19,668 - INFO - Container sweb.eval.sphinx-doc__sphinx-7889.verified_full_cline-patched removed successfully.

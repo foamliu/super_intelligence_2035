@@ -1,0 +1,67 @@
+2026-11-02 10:59:02,550 - INFO - Creating container for scikit-learn__scikit-learn-13328...
+2026-11-02 10:59:02,569 - INFO - Container for scikit-learn__scikit-learn-13328 created: 0a373e2b6caa460d8155939350bff667ada1cb2de4666922d300d95acfebe187
+2026-11-02 10:59:03,260 - INFO - Container for scikit-learn__scikit-learn-13328 started: 0a373e2b6caa460d8155939350bff667ada1cb2de4666922d300d95acfebe187
+2026-11-02 10:59:03,262 - INFO - Intermediate patch for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-13328/patch.diff, now applying to container...
+2026-11-02 10:59:03,390 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/linear_model/huber.py...
+Checking patch sklearn/linear_model/tests/test_huber.py...
+Applied patch sklearn/linear_model/huber.py cleanly.
+Applied patch sklearn/linear_model/tests/test_huber.py cleanly.
+
+2026-11-02 10:59:03,829 - INFO - Git diff before:
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index 65c686400..285913684 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -251,7 +251,8 @@ class HuberRegressor(LinearModel, RegressorMixin, BaseEstimator):
+         self : object
+         """
+         X, y = check_X_y(
+-            X, y, copy=False, accept_sparse=['csr'], y_numeric=True)
++            X, y, copy=False, accept_sparse=['csr'], y_numeric=True,
++            dtype=[np.float64, np.float32])
+         if sample_weight is not None:
+             sample_weight = np.array(sample_weight)
+             check_consistent_length(y, sample_weight)
+diff --git a/sklearn/linear_model/tests/test_huber.py b/sklearn/linear_model/tests/test_huber.py
+index 6a8b26133..9181418f6 100644
+--- a/sklearn/linear_model/tests/test_huber.py
++++ b/sklearn/linear_model/tests/test_huber.py
+@@ -199,3 +199,11 @@ def test_huber_better_r2_score():
+ 
+     # The huber model should also fit poorly on the outliers.
+     assert_greater(ridge_outlier_score, huber_outlier_score)
++
++def test_huber_bool_input():
++    # Test that HuberRegressor handles boolean X without error
++    X = np.array([[True, False], [False, True], [True, True], [False, False]])
++    y = np.array([1.0, 2.0, 3.0, 4.0])
++    huber = HuberRegressor()
++    huber.fit(X, y)
++    assert huber.coef_.dtype == np.float64
+2026-11-02 10:59:03,832 - INFO - Eval script for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-13328/eval.sh; copying to container...
+2026-11-02 10:59:08,562 - INFO - Test runtime: 4.62 seconds
+2026-11-02 10:59:08,565 - INFO - Test output for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/scikit-learn__scikit-learn-13328/test_output.txt
+2026-11-02 10:59:08,636 - INFO - Git diff after:
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index 65c686400..285913684 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -251,7 +251,8 @@ class HuberRegressor(LinearModel, RegressorMixin, BaseEstimator):
+         self : object
+         """
+         X, y = check_X_y(
+-            X, y, copy=False, accept_sparse=['csr'], y_numeric=True)
++            X, y, copy=False, accept_sparse=['csr'], y_numeric=True,
++            dtype=[np.float64, np.float32])
+         if sample_weight is not None:
+             sample_weight = np.array(sample_weight)
+             check_consistent_length(y, sample_weight)
+2026-11-02 10:59:08,636 - INFO - Git diff changed after running eval script
+2026-11-02 10:59:08,636 - INFO - Grading answer for scikit-learn__scikit-learn-13328...
+2026-11-02 10:59:08,637 - INFO - report: {'scikit-learn__scikit-learn-13328': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/linear_model/tests/test_huber.py::test_huber_bool'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/linear_model/tests/test_huber.py::test_huber_equals_lr_for_high_epsilon', 'sklearn/linear_model/tests/test_huber.py::test_huber_max_iter', 'sklearn/linear_model/tests/test_huber.py::test_huber_gradient', 'sklearn/linear_model/tests/test_huber.py::test_huber_sample_weights', 'sklearn/linear_model/tests/test_huber.py::test_huber_sparse', 'sklearn/linear_model/tests/test_huber.py::test_huber_scaling_invariant', 'sklearn/linear_model/tests/test_huber.py::test_huber_and_sgd_same_results', 'sklearn/linear_model/tests/test_huber.py::test_huber_warm_start', 'sklearn/linear_model/tests/test_huber.py::test_huber_better_r2_score'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-13328: resolved: True
+2026-11-02 10:59:08,639 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_codex...
+2026-11-02 10:59:24,673 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_codex stopped successfully.
+2026-11-02 10:59:24,673 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_codex...
+2026-11-02 10:59:24,713 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_codex removed successfully.

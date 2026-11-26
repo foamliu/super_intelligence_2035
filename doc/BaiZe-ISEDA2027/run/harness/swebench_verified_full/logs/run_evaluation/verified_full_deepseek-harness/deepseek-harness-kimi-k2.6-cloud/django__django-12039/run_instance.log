@@ -1,0 +1,80 @@
+2026-11-01 15:29:15,282 - INFO - Creating container for django__django-12039...
+2026-11-01 15:29:15,325 - INFO - Container for django__django-12039 created: 39ae7622e9da301eaeb7c8a96243957b5439cde548078ed4fa60f30a2842cbdf
+2026-11-01 15:29:16,120 - INFO - Container for django__django-12039 started: 39ae7622e9da301eaeb7c8a96243957b5439cde548078ed4fa60f30a2842cbdf
+2026-11-01 15:29:16,123 - INFO - Intermediate patch for django__django-12039 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-12039/patch.diff, now applying to container...
+2026-11-01 15:29:16,237 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/ddl_references.py...
+Applied patch django/db/backends/ddl_references.py cleanly.
+
+2026-11-01 15:29:17,571 - INFO - Git diff before:
+diff --git a/django/db/backends/ddl_references.py b/django/db/backends/ddl_references.py
+index 44e49806f8..784e9b68c2 100644
+--- a/django/db/backends/ddl_references.py
++++ b/django/db/backends/ddl_references.py
+@@ -84,7 +84,10 @@ class Columns(TableColumns):
+     def __str__(self):
+         def col_str(column, idx):
+             try:
+-                return self.quote_name(column) + self.col_suffixes[idx]
++                col_suffix = self.col_suffixes[idx]
++                if col_suffix:
++                    return '%s %s' % (self.quote_name(column), col_suffix)
++                return self.quote_name(column)
+             except IndexError:
+                 return self.quote_name(column)
+ 
+@@ -112,9 +115,11 @@ class IndexColumns(Columns):
+         def col_str(column, idx):
+             # Index.__init__() guarantees that self.opclasses is the same
+             # length as self.columns.
+-            col = '{} {}'.format(self.quote_name(column), self.opclasses[idx])
++            col = '%s %s' % (self.quote_name(column), self.opclasses[idx])
+             try:
+-                col = '{} {}'.format(col, self.col_suffixes[idx])
++                col_suffix = self.col_suffixes[idx]
++                if col_suffix:
++                    col = '%s %s' % (col, col_suffix)
+             except IndexError:
+                 pass
+             return col
+2026-11-01 15:29:17,573 - INFO - Eval script for django__django-12039 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-12039/eval.sh; copying to container...
+2026-11-01 15:29:24,237 - INFO - Test runtime: 6.59 seconds
+2026-11-01 15:29:24,239 - INFO - Test output for django__django-12039 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-12039/test_output.txt
+2026-11-01 15:29:24,302 - INFO - Git diff after:
+diff --git a/django/db/backends/ddl_references.py b/django/db/backends/ddl_references.py
+index 44e49806f8..784e9b68c2 100644
+--- a/django/db/backends/ddl_references.py
++++ b/django/db/backends/ddl_references.py
+@@ -84,7 +84,10 @@ class Columns(TableColumns):
+     def __str__(self):
+         def col_str(column, idx):
+             try:
+-                return self.quote_name(column) + self.col_suffixes[idx]
++                col_suffix = self.col_suffixes[idx]
++                if col_suffix:
++                    return '%s %s' % (self.quote_name(column), col_suffix)
++                return self.quote_name(column)
+             except IndexError:
+                 return self.quote_name(column)
+ 
+@@ -112,9 +115,11 @@ class IndexColumns(Columns):
+         def col_str(column, idx):
+             # Index.__init__() guarantees that self.opclasses is the same
+             # length as self.columns.
+-            col = '{} {}'.format(self.quote_name(column), self.opclasses[idx])
++            col = '%s %s' % (self.quote_name(column), self.opclasses[idx])
+             try:
+-                col = '{} {}'.format(col, self.col_suffixes[idx])
++                col_suffix = self.col_suffixes[idx]
++                if col_suffix:
++                    col = '%s %s' % (col, col_suffix)
+             except IndexError:
+                 pass
+             return col
+2026-11-01 15:29:24,303 - INFO - Grading answer for django__django-12039...
+2026-11-01 15:29:24,304 - INFO - report: {'django__django-12039': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_descending_columns_list_sql (indexes.tests.SchemaIndexesTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_columns_list_sql (indexes.tests.SchemaIndexesTests)', 'test_index_name (indexes.tests.SchemaIndexesTests)', 'test_index_name_hash (indexes.tests.SchemaIndexesTests)', 'test_index_together (indexes.tests.SchemaIndexesTests)', 'test_index_together_single_list (indexes.tests.SchemaIndexesTests)', 'test_create_index_ignores_opclasses (indexes.tests.SchemaIndexesNotPostgreSQLTests)', 'test_boolean_restriction_partial (indexes.tests.PartialIndexTests)', 'test_integer_restriction_partial (indexes.tests.PartialIndexTests)', 'test_is_null_condition (indexes.tests.PartialIndexTests)', 'test_multiple_conditions (indexes.tests.PartialIndexTests)', 'test_partial_index (indexes.tests.PartialIndexTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12039: resolved: True
+2026-11-01 15:29:24,306 - INFO - Attempting to stop container sweb.eval.django__django-12039.verified_full_deepseek-harness...
+2026-11-01 15:29:40,864 - INFO - Container sweb.eval.django__django-12039.verified_full_deepseek-harness stopped successfully.
+2026-11-01 15:29:40,864 - INFO - Attempting to remove container sweb.eval.django__django-12039.verified_full_deepseek-harness...
+2026-11-01 15:29:40,927 - INFO - Container sweb.eval.django__django-12039.verified_full_deepseek-harness removed successfully.

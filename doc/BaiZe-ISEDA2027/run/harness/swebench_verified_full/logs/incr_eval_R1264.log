@@ -1,0 +1,61 @@
+=== incr_eval R1264 Mon Nov  2 07:19:13 AM CST 2026 === (codex pytest-7324 + hermes django-13417)
+[Mon Nov  2 07:19:13 AM CST 2026] === merge codex predictions ===
+codex: 240 real patches merged
+[Mon Nov  2 07:19:13 AM CST 2026] === codex eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]=== incr_eval R1264 Mon Nov  2 07:21:38 AM CST 2026 === (codex pytest-7324 + hermes django-13417)
+[Mon Nov  2 07:21:38 AM CST 2026] === merge codex predictions ===
+codex: 240 real patches merged
+[Mon Nov  2 07:21:39 AM CST 2026] === codex eval START 1 new instances ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 8
+Unremoved images: 1
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[Mon Nov  2 07:21:43 AM CST 2026] === codex eval DONE ===
+[Mon Nov  2 07:21:43 AM CST 2026] === merge hermes predictions ===
+hermes: 107 real patches merged
+[Mon Nov  2 07:21:43 AM CST 2026] === hermes eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:26<00:00, 26.44s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.44s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.44s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Mon Nov  2 07:22:13 AM CST 2026] === hermes eval DONE ===
+[Mon Nov  2 07:22:13 AM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=497 resolved=401 failed=96 infra=0)
+  pi: unchanged (n=463 resolved=333 failed=130 infra=0)
+  claude-code: unchanged (n=358 resolved=273 failed=85 infra=0)
+  codex: WROTE eval_codex.json  n=240 resolved=186 failed=54 infra=0
+  hermes: WROTE eval_hermes.json  n=107 resolved=84 failed=23 infra=0
+  deepseek-harness: unchanged (n=99 resolved=80 failed=19 infra=0)
+[Mon Nov  2 07:22:14 AM CST 2026] === gen report HTML ===
+  pi           done=500/500 patch=463 no_patch=4 infra=25 eval=Y resolved=333
+  claude-code  done=500/500 patch=358 no_patch=67 infra=67 eval=Y resolved=273
+  codex        done=500/500 patch=240 no_patch=68 infra=187 eval=Y resolved=186
+  hermes       done=197/500 patch=106 no_patch=47 infra=43 eval=Y resolved=84
+  deepseek-harness done=263/500 patch=97 no_patch=4 infra=118 eval=Y resolved=80
+=== incr_eval R1264 DONE Mon Nov  2 07:22:14 AM CST 2026 ===

@@ -1,0 +1,118 @@
+2026-11-09 23:43:16,300 - INFO - Creating container for pylint-dev__pylint-8898...
+2026-11-09 23:43:16,320 - INFO - Container for pylint-dev__pylint-8898 created: e1ca20bfa7d16df2ffe3d59b5c03412080a54f7434f50bfad6f2a97fcc6ea853
+2026-11-09 23:43:16,787 - INFO - Container for pylint-dev__pylint-8898 started: e1ca20bfa7d16df2ffe3d59b5c03412080a54f7434f50bfad6f2a97fcc6ea853
+2026-11-09 23:43:16,789 - INFO - Intermediate patch for pylint-dev__pylint-8898 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/pylint-dev__pylint-8898/patch.diff, now applying to container...
+2026-11-09 23:43:16,936 - INFO - >>>>> Applied Patch:
+Checking patch doc/user_guide/configuration/all-options.rst...
+Checking patch pylint/checkers/base/name_checker/checker.py...
+Checking patch pylint/config/argument.py...
+Applied patch doc/user_guide/configuration/all-options.rst cleanly.
+Applied patch pylint/checkers/base/name_checker/checker.py cleanly.
+Applied patch pylint/config/argument.py cleanly.
+
+2026-11-09 23:43:17,492 - INFO - Git diff before:
+diff --git a/doc/user_guide/configuration/all-options.rst b/doc/user_guide/configuration/all-options.rst
+index e09c940ef..b647a67da 100644
+--- a/doc/user_guide/configuration/all-options.rst
++++ b/doc/user_guide/configuration/all-options.rst
+@@ -333,7 +333,7 @@ Standard Checkers
+ 
+ --bad-names-rgxs
+ """"""""""""""""
+-*Bad variable names regexes, separated by a comma. If names match any regex, they will always be refused*
++*Bad variable names regexes, separated by a comma. If names match any regex, they will always be refused. Commas inside the regexes can be escaped with a backslash.*
+ 
+ **Default:** ``""``
+ 
+diff --git a/pylint/checkers/base/name_checker/checker.py b/pylint/checkers/base/name_checker/checker.py
+index 42a7c6b2e..e10cb873c 100644
+--- a/pylint/checkers/base/name_checker/checker.py
++++ b/pylint/checkers/base/name_checker/checker.py
+@@ -232,7 +232,7 @@ class NameChecker(_BasicChecker):
+                 "type": "regexp_csv",
+                 "metavar": "<names>",
+                 "help": "Bad variable names regexes, separated by a comma. If names match any regex,"
+-                " they will always be refused",
++                " they will always be refused. Commas inside the regexes can be escaped with a backslash.",
+             },
+         ),
+         (
+diff --git a/pylint/config/argument.py b/pylint/config/argument.py
+index 30a5fd175..c66eac5e8 100644
+--- a/pylint/config/argument.py
++++ b/pylint/config/argument.py
+@@ -112,10 +112,15 @@ def _regex_transformer(value: str) -> Pattern[str]:
+ 
+ 
+ def _regexp_csv_transfomer(value: str) -> Sequence[Pattern[str]]:
+-    """Transforms a comma separated list of regular expressions."""
++    """Transforms a comma separated list of regular expressions.
++
++    Commas inside the regular expressions can be escaped with a backslash.
++    """
+     patterns: list[Pattern[str]] = []
+-    for pattern in _csv_transformer(value):
+-        patterns.append(_regex_transformer(pattern))
++    for pattern in re.split(r"(?<!\\),", value):
++        pattern = pattern.strip().replace("\\,", ",")
++        if pattern:
++            patterns.append(_regex_transformer(pattern))
+     return patterns
+2026-11-09 23:43:17,495 - INFO - Eval script for pylint-dev__pylint-8898 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/pylint-dev__pylint-8898/eval.sh; copying to container...
+2026-11-09 23:43:27,075 - INFO - Test runtime: 9.51 seconds
+2026-11-09 23:43:27,077 - INFO - Test output for pylint-dev__pylint-8898 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/pylint-dev__pylint-8898/test_output.txt
+2026-11-09 23:43:27,163 - INFO - Git diff after:
+diff --git a/doc/user_guide/configuration/all-options.rst b/doc/user_guide/configuration/all-options.rst
+index e09c940ef..b647a67da 100644
+--- a/doc/user_guide/configuration/all-options.rst
++++ b/doc/user_guide/configuration/all-options.rst
+@@ -333,7 +333,7 @@ Standard Checkers
+ 
+ --bad-names-rgxs
+ """"""""""""""""
+-*Bad variable names regexes, separated by a comma. If names match any regex, they will always be refused*
++*Bad variable names regexes, separated by a comma. If names match any regex, they will always be refused. Commas inside the regexes can be escaped with a backslash.*
+ 
+ **Default:** ``""``
+ 
+diff --git a/pylint/checkers/base/name_checker/checker.py b/pylint/checkers/base/name_checker/checker.py
+index 42a7c6b2e..e10cb873c 100644
+--- a/pylint/checkers/base/name_checker/checker.py
++++ b/pylint/checkers/base/name_checker/checker.py
+@@ -232,7 +232,7 @@ class NameChecker(_BasicChecker):
+                 "type": "regexp_csv",
+                 "metavar": "<names>",
+                 "help": "Bad variable names regexes, separated by a comma. If names match any regex,"
+-                " they will always be refused",
++                " they will always be refused. Commas inside the regexes can be escaped with a backslash.",
+             },
+         ),
+         (
+diff --git a/pylint/config/argument.py b/pylint/config/argument.py
+index 30a5fd175..c66eac5e8 100644
+--- a/pylint/config/argument.py
++++ b/pylint/config/argument.py
+@@ -112,10 +112,15 @@ def _regex_transformer(value: str) -> Pattern[str]:
+ 
+ 
+ def _regexp_csv_transfomer(value: str) -> Sequence[Pattern[str]]:
+-    """Transforms a comma separated list of regular expressions."""
++    """Transforms a comma separated list of regular expressions.
++
++    Commas inside the regular expressions can be escaped with a backslash.
++    """
+     patterns: list[Pattern[str]] = []
+-    for pattern in _csv_transformer(value):
+-        patterns.append(_regex_transformer(pattern))
++    for pattern in re.split(r"(?<!\\),", value):
++        pattern = pattern.strip().replace("\\,", ",")
++        if pattern:
++            patterns.append(_regex_transformer(pattern))
+     return patterns
+2026-11-09 23:43:27,163 - INFO - Grading answer for pylint-dev__pylint-8898...
+2026-11-09 23:43:27,164 - INFO - report: {'pylint-dev__pylint-8898': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['tests/config/test_config.py::test_csv_regex_error']}, 'PASS_TO_PASS': {'success': ['tests/config/test_config.py::test_can_read_toml_env_variable', 'tests/config/test_config.py::test_unknown_message_id', 'tests/config/test_config.py::test_unknown_option_name', 'tests/config/test_config.py::test_unknown_short_option_name', 'tests/config/test_config.py::test_unknown_confidence', 'tests/config/test_config.py::test_empty_confidence', 'tests/config/test_config.py::test_unknown_yes_no', 'tests/config/test_config.py::test_unknown_py_version', 'tests/config/test_config.py::test_csv_regex_comma_in_quantifier[foo-expected0]', 'tests/config/test_config.py::test_csv_regex_comma_in_quantifier[foo,bar-expected1]', 'tests/config/test_config.py::test_regex_error', 'tests/config/test_config.py::test_short_verbose', 'tests/config/test_config.py::test_argument_separator', 'tests/config/test_config.py::test_clear_cache_post_run', 'tests/config/test_config.py::test_enable_all_disable_all_mutually_exclusive', 'tests/config/test_config.py::test_disable_before_enable_all_takes_effect', 'tests/config/test_config.py::test_enable_before_disable_all_takes_effect'], 'failure': ['tests/config/test_config.py::test_csv_regex_comma_in_quantifier[foo,']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pylint-dev__pylint-8898: resolved: False
+2026-11-09 23:43:27,166 - INFO - Attempting to stop container sweb.eval.pylint-dev__pylint-8898.verified_full_glm53_pi_incr_R1992...
+2026-11-09 23:43:43,334 - INFO - Container sweb.eval.pylint-dev__pylint-8898.verified_full_glm53_pi_incr_R1992 stopped successfully.
+2026-11-09 23:43:43,334 - INFO - Attempting to remove container sweb.eval.pylint-dev__pylint-8898.verified_full_glm53_pi_incr_R1992...
+2026-11-09 23:43:43,370 - INFO - Container sweb.eval.pylint-dev__pylint-8898.verified_full_glm53_pi_incr_R1992 removed successfully.

@@ -1,0 +1,147 @@
+2026-10-28 12:37:16,041 - INFO - Creating container for sympy__sympy-11618...
+2026-10-28 12:37:16,063 - INFO - Container for sympy__sympy-11618 created: b6da33479c16a879baa5ca8938aecf1f15256e266290e0d8b3f7577d16d7030c
+2026-10-28 12:37:17,059 - INFO - Container for sympy__sympy-11618 started: b6da33479c16a879baa5ca8938aecf1f15256e266290e0d8b3f7577d16d7030c
+2026-10-28 12:37:17,061 - INFO - Intermediate patch for sympy__sympy-11618 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-11618/patch.diff, now applying to container...
+2026-10-28 12:37:17,199 - INFO - >>>>> Applied Patch:
+Checking patch sympy/geometry/point.py...
+Checking patch sympy/geometry/tests/test_point.py...
+Applied patch sympy/geometry/point.py cleanly.
+Applied patch sympy/geometry/tests/test_point.py cleanly.
+
+2026-10-28 12:37:17,588 - INFO - Git diff before:
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 593048464..dec67f218 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -11,7 +11,7 @@
+ from __future__ import division, print_function
+ 
+ from sympy.core import S, sympify
+-from sympy.core.compatibility import iterable
++from sympy.core.compatibility import iterable, zip_longest
+ from sympy.core.containers import Tuple
+ from sympy.simplify import nsimplify, simplify
+ from sympy.geometry.exceptions import GeometryError
+@@ -266,8 +266,8 @@ def distance(self, p):
+         sqrt(x**2 + y**2)
+ 
+         """
+-        return sqrt(sum([(a - b)**2 for a, b in zip(
+-            self.args, p.args if isinstance(p, Point) else p)]))
++        return sqrt(sum([(a - b)**2 for a, b in zip_longest(
++            self.args, p.args if isinstance(p, Point) else p, fillvalue=S.Zero)]))
+ 
+     def taxicab_distance(self, p):
+         """The Taxicab Distance from self to point p.
+@@ -300,7 +300,7 @@ def taxicab_distance(self, p):
+ 
+         """
+         p = Point(p)
+-        return sum(abs(a - b) for a, b in zip(self.args, p.args))
++        return sum(abs(a - b) for a, b in zip_longest(self.args, p.args, fillvalue=S.Zero))
+ 
+     def midpoint(self, p):
+         """The midpoint between self and point p.
+@@ -329,7 +329,7 @@ def midpoint(self, p):
+         Point2D(7, 3)
+ 
+         """
+-        return Point([simplify((a + b)*S.Half) for a, b in zip(self.args, p.args)])
++        return Point([simplify((a + b)*S.Half) for a, b in zip_longest(self.args, p.args, fillvalue=S.Zero)])
+ 
+     def evalf(self, prec=None, **options):
+         """Evaluate the coordinates of the point.
+@@ -406,7 +406,7 @@ def intersection(self, o):
+     def dot(self, p2):
+         """Return dot product of self with another Point."""
+         p2 = Point(p2)
+-        return Add(*[a*b for a,b in zip(self, p2)])
++        return Add(*[a*b for a,b in zip_longest(self, p2, fillvalue=S.Zero)])
+ 
+     def equals(self, other):
+         """Returns whether the coordinates of self and other agree."""
+diff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py
+index c7b2d30f1..31dc6902a 100644
+--- a/sympy/geometry/tests/test_point.py
++++ b/sympy/geometry/tests/test_point.py
+@@ -260,3 +260,17 @@ def test_concyclic_doctest_bug():
+     p3, p4 = Point(0, 1), Point(-1, 2)
+     assert Point.is_concyclic(p1, p2, p3)
+     assert not Point.is_concyclic(p1, p2, p3, p4)
++
++def test_distance_mixed_dimension():
++    # issue: distance between 2D and 3D points ignored the 3rd coordinate
++    p1 = Point(2, 0)
++    p2 = Point(1, 0, 2)
++    assert p1.distance(p2) == sqrt(5)
++    assert p2.distance(p1) == sqrt(5)
++    # taxicab_distance should also work across dimensions
++    assert p1.taxicab_distance(p2) == 3
++    assert p2.taxicab_distance(p1) == 3
++    # midpoint should work across dimensions
++    assert p1.midpoint(p2) == Point3D(Rational(3, 2), 0, 1)
++    # dot should work across dimensions
++    assert p1.dot(p2) == 2
+2026-10-28 12:37:17,591 - INFO - Eval script for sympy__sympy-11618 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-11618/eval.sh; copying to container...
+2026-10-28 12:37:22,234 - INFO - Test runtime: 4.57 seconds
+2026-10-28 12:37:22,236 - INFO - Test output for sympy__sympy-11618 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-11618/test_output.txt
+2026-10-28 12:37:22,311 - INFO - Git diff after:
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 593048464..dec67f218 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -11,7 +11,7 @@
+ from __future__ import division, print_function
+ 
+ from sympy.core import S, sympify
+-from sympy.core.compatibility import iterable
++from sympy.core.compatibility import iterable, zip_longest
+ from sympy.core.containers import Tuple
+ from sympy.simplify import nsimplify, simplify
+ from sympy.geometry.exceptions import GeometryError
+@@ -266,8 +266,8 @@ def distance(self, p):
+         sqrt(x**2 + y**2)
+ 
+         """
+-        return sqrt(sum([(a - b)**2 for a, b in zip(
+-            self.args, p.args if isinstance(p, Point) else p)]))
++        return sqrt(sum([(a - b)**2 for a, b in zip_longest(
++            self.args, p.args if isinstance(p, Point) else p, fillvalue=S.Zero)]))
+ 
+     def taxicab_distance(self, p):
+         """The Taxicab Distance from self to point p.
+@@ -300,7 +300,7 @@ def taxicab_distance(self, p):
+ 
+         """
+         p = Point(p)
+-        return sum(abs(a - b) for a, b in zip(self.args, p.args))
++        return sum(abs(a - b) for a, b in zip_longest(self.args, p.args, fillvalue=S.Zero))
+ 
+     def midpoint(self, p):
+         """The midpoint between self and point p.
+@@ -329,7 +329,7 @@ def midpoint(self, p):
+         Point2D(7, 3)
+ 
+         """
+-        return Point([simplify((a + b)*S.Half) for a, b in zip(self.args, p.args)])
++        return Point([simplify((a + b)*S.Half) for a, b in zip_longest(self.args, p.args, fillvalue=S.Zero)])
+ 
+     def evalf(self, prec=None, **options):
+         """Evaluate the coordinates of the point.
+@@ -406,7 +406,7 @@ def intersection(self, o):
+     def dot(self, p2):
+         """Return dot product of self with another Point."""
+         p2 = Point(p2)
+-        return Add(*[a*b for a,b in zip(self, p2)])
++        return Add(*[a*b for a,b in zip_longest(self, p2, fillvalue=S.Zero)])
+ 
+     def equals(self, other):
+         """Returns whether the coordinates of self and other agree."""
+2026-10-28 12:37:22,311 - INFO - Git diff changed after running eval script
+2026-10-28 12:37:22,311 - INFO - Grading answer for sympy__sympy-11618...
+2026-10-28 12:37:22,325 - INFO - report: {'sympy__sympy-11618': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_11617'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_point3D', 'test_Point2D', 'test_issue_9214', 'test_transform'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-11618: resolved: True
+2026-10-28 12:37:22,326 - INFO - Attempting to stop container sweb.eval.sympy__sympy-11618.verified_full_pi...
+2026-10-28 12:37:37,797 - INFO - Container sweb.eval.sympy__sympy-11618.verified_full_pi stopped successfully.
+2026-10-28 12:37:37,797 - INFO - Attempting to remove container sweb.eval.sympy__sympy-11618.verified_full_pi...
+2026-10-28 12:37:37,845 - INFO - Container sweb.eval.sympy__sympy-11618.verified_full_pi removed successfully.

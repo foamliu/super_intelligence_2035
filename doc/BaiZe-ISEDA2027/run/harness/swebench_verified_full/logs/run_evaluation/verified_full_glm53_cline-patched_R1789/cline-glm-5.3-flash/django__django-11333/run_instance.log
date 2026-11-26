@@ -1,0 +1,179 @@
+2026-11-07 19:57:13,519 - INFO - Creating container for django__django-11333...
+2026-11-07 19:57:15,173 - INFO - Removed existing container sweb.eval.django__django-11333.verified_full_glm53_cline-patched_R1789
+2026-11-07 19:57:15,240 - INFO - Container for django__django-11333 created: 62fed487b500242b1c06f576574dbd4adc276ed07420e2281df3b287df7ab04c
+2026-11-07 19:57:17,385 - INFO - Container for django__django-11333 started: 62fed487b500242b1c06f576574dbd4adc276ed07420e2281df3b287df7ab04c
+2026-11-07 19:57:17,387 - INFO - Intermediate patch for django__django-11333 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1789/cline-glm-5.3-flash/django__django-11333/patch.diff, now applying to container...
+2026-11-07 19:57:17,552 - INFO - >>>>> Applied Patch:
+Checking patch django/urls/base.py...
+Checking patch django/urls/resolvers.py...
+Checking patch tests/urlpatterns_reverse/tests.py...
+Applied patch django/urls/base.py cleanly.
+Applied patch django/urls/resolvers.py cleanly.
+Applied patch tests/urlpatterns_reverse/tests.py cleanly.
+
+2026-11-07 19:57:18,519 - INFO - Git diff before:
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..dd9b2e4c22 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -7,7 +7,7 @@ from django.utils.functional import lazy
+ from django.utils.translation import override
+ 
+ from .exceptions import NoReverseMatch, Resolver404
+-from .resolvers import get_ns_resolver, get_resolver
++from .resolvers import _get_cached_resolver, get_ns_resolver, get_resolver
+ from .utils import get_callable
+ 
+ # SCRIPT_NAME prefixes for each thread are stored here. If there's no entry for
+@@ -92,7 +92,7 @@ reverse_lazy = lazy(reverse, str)
+ 
+ def clear_url_caches():
+     get_callable.cache_clear()
+-    get_resolver.cache_clear()
++    _get_cached_resolver.cache_clear()
+     get_ns_resolver.cache_clear()
+ 
+ 
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index 247e3680c0..ca1d169609 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -64,9 +64,7 @@ class ResolverMatch:
+ 
+ 
+ @functools.lru_cache(maxsize=None)
+-def get_resolver(urlconf=None):
+-    if urlconf is None:
+-        urlconf = settings.ROOT_URLCONF
++def _get_cached_resolver(urlconf):
+     return URLResolver(RegexPattern(r'^/'), urlconf)
+ 
+ 
+@@ -81,6 +79,17 @@ def get_ns_resolver(ns_pattern, resolver, converters):
+     return URLResolver(RegexPattern(r'^/'), [ns_resolver])
+ 
+ 
++def get_resolver(urlconf=None):
++    """
++    Return a URLResolver for the given urlconf_name.
++    If the argument is None, return the resolver for the current urlconf
++    (as set by set_urlconf()).
++    """
++    if urlconf is None:
++        urlconf = settings.ROOT_URLCONF
++    return _get_cached_resolver(urlconf)
++
++
+ class LocaleRegexDescriptor:
+     def __init__(self, attr):
+         self.attr = attr
+diff --git a/tests/urlpatterns_reverse/tests.py b/tests/urlpatterns_reverse/tests.py
+index d26923ab9d..f2a6869c2a 100644
+--- a/tests/urlpatterns_reverse/tests.py
++++ b/tests/urlpatterns_reverse/tests.py
+@@ -507,6 +507,17 @@ class ResolverTests(SimpleTestCase):
+         thread.join()
+         self.assertNotEqual(resolver._reverse_dict, {})
+ 
++    def test_get_resolver_cache(self):
++        """
++        get_resolver() returns the same cached URLResolver instance whether
++        it is called with None (e.g. before set_urlconf() has been called)
++        or with settings.ROOT_URLCONF, so URLResolver._populate() isn't run
++        multiple times (#32938).
++        """
++        resolver = get_resolver(None)
++        self.assertIs(get_resolver(), resolver)
++        self.assertIs(get_resolver(settings.ROOT_URLCONF), resolver)
++
+ 
+ @override_settings(ROOT_URLCONF='urlpatterns_reverse.reverse_lazy_urls')
+ class ReverseLazyTest(TestCase):
+2026-11-07 19:57:18,521 - INFO - Eval script for django__django-11333 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1789/cline-glm-5.3-flash/django__django-11333/eval.sh; copying to container...
+2026-11-07 19:57:25,015 - INFO - Test runtime: 6.40 seconds
+2026-11-07 19:57:25,016 - INFO - Test output for django__django-11333 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1789/cline-glm-5.3-flash/django__django-11333/test_output.txt
+2026-11-07 19:57:25,101 - INFO - Git diff after:
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..dd9b2e4c22 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -7,7 +7,7 @@ from django.utils.functional import lazy
+ from django.utils.translation import override
+ 
+ from .exceptions import NoReverseMatch, Resolver404
+-from .resolvers import get_ns_resolver, get_resolver
++from .resolvers import _get_cached_resolver, get_ns_resolver, get_resolver
+ from .utils import get_callable
+ 
+ # SCRIPT_NAME prefixes for each thread are stored here. If there's no entry for
+@@ -92,7 +92,7 @@ reverse_lazy = lazy(reverse, str)
+ 
+ def clear_url_caches():
+     get_callable.cache_clear()
+-    get_resolver.cache_clear()
++    _get_cached_resolver.cache_clear()
+     get_ns_resolver.cache_clear()
+ 
+ 
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index 247e3680c0..ca1d169609 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -64,9 +64,7 @@ class ResolverMatch:
+ 
+ 
+ @functools.lru_cache(maxsize=None)
+-def get_resolver(urlconf=None):
+-    if urlconf is None:
+-        urlconf = settings.ROOT_URLCONF
++def _get_cached_resolver(urlconf):
+     return URLResolver(RegexPattern(r'^/'), urlconf)
+ 
+ 
+@@ -81,6 +79,17 @@ def get_ns_resolver(ns_pattern, resolver, converters):
+     return URLResolver(RegexPattern(r'^/'), [ns_resolver])
+ 
+ 
++def get_resolver(urlconf=None):
++    """
++    Return a URLResolver for the given urlconf_name.
++    If the argument is None, return the resolver for the current urlconf
++    (as set by set_urlconf()).
++    """
++    if urlconf is None:
++        urlconf = settings.ROOT_URLCONF
++    return _get_cached_resolver(urlconf)
++
++
+ class LocaleRegexDescriptor:
+     def __init__(self, attr):
+         self.attr = attr
+diff --git a/tests/urlpatterns_reverse/tests.py b/tests/urlpatterns_reverse/tests.py
+index d26923ab9d..f2a6869c2a 100644
+--- a/tests/urlpatterns_reverse/tests.py
++++ b/tests/urlpatterns_reverse/tests.py
+@@ -507,6 +507,17 @@ class ResolverTests(SimpleTestCase):
+         thread.join()
+         self.assertNotEqual(resolver._reverse_dict, {})
+ 
++    def test_get_resolver_cache(self):
++        """
++        get_resolver() returns the same cached URLResolver instance whether
++        it is called with None (e.g. before set_urlconf() has been called)
++        or with settings.ROOT_URLCONF, so URLResolver._populate() isn't run
++        multiple times (#32938).
++        """
++        resolver = get_resolver(None)
++        self.assertIs(get_resolver(), resolver)
++        self.assertIs(get_resolver(settings.ROOT_URLCONF), resolver)
++
+ 
+ @override_settings(ROOT_URLCONF='urlpatterns_reverse.reverse_lazy_urls')
+ class ReverseLazyTest(TestCase):
+2026-11-07 19:57:25,101 - INFO - Grading answer for django__django-11333...
+2026-11-07 19:57:25,102 - INFO - report: {'django__django-11333': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_resolver_cache_default__root_urlconf (urlpatterns.test_resolvers.ResolverCacheTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_str (urlpatterns.test_resolvers.RegexPatternTests)', 'test_str (urlpatterns.test_resolvers.RoutePatternTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11333: resolved: True
+2026-11-07 19:57:25,103 - INFO - Attempting to stop container sweb.eval.django__django-11333.verified_full_glm53_cline-patched_R1789...
+2026-11-07 19:57:41,834 - INFO - Container sweb.eval.django__django-11333.verified_full_glm53_cline-patched_R1789 stopped successfully.
+2026-11-07 19:57:41,834 - INFO - Attempting to remove container sweb.eval.django__django-11333.verified_full_glm53_cline-patched_R1789...
+2026-11-07 19:57:41,932 - INFO - Container sweb.eval.django__django-11333.verified_full_glm53_cline-patched_R1789 removed successfully.

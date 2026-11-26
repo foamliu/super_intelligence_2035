@@ -1,0 +1,98 @@
+2026-11-12 17:49:28,892 - INFO - Creating container for sympy__sympy-19346...
+2026-11-12 17:49:28,933 - INFO - Container for sympy__sympy-19346 created: b0f49ab6ff35afe98d1bdd60845c6640a433c496d5bb0094a483776efdcd32f9
+2026-11-12 17:49:29,609 - INFO - Container for sympy__sympy-19346 started: b0f49ab6ff35afe98d1bdd60845c6640a433c496d5bb0094a483776efdcd32f9
+2026-11-12 17:49:29,612 - INFO - Intermediate patch for sympy__sympy-19346 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2282/opencode-glm-5.3-flash/sympy__sympy-19346/patch.diff, now applying to container...
+2026-11-12 17:49:29,789 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/repr.py...
+Checking patch sympy/printing/tests/test_repr.py...
+Applied patch sympy/printing/repr.py cleanly.
+Applied patch sympy/printing/tests/test_repr.py cleanly.
+
+2026-11-12 17:49:30,510 - INFO - Git diff before:
+diff --git a/sympy/printing/repr.py b/sympy/printing/repr.py
+index c936a692c0..04cfee5c3e 100644
+--- a/sympy/printing/repr.py
++++ b/sympy/printing/repr.py
+@@ -144,6 +144,16 @@ def _print_EmptySequence(self, expr):
+     def _print_list(self, expr):
+         return "[%s]" % self.reprify(expr, ", ")
+ 
++    def _print_dict(self, expr):
++        sep = ", "
++        dict_kvs = ["%s: %s" % (self.doprint(key), self.doprint(value)) for key, value in expr.items()]
++        return "{%s}" % sep.join(dict_kvs)
++
++    def _print_set(self, expr):
++        if not expr:
++            return "set()"
++        return "{%s}" % self.reprify(expr, ", ")
++
+     def _print_MatrixBase(self, expr):
+         # special case for some empty matrices
+         if (expr.rows == 0) ^ (expr.cols == 0):
+diff --git a/sympy/printing/tests/test_repr.py b/sympy/printing/tests/test_repr.py
+index f749683ff7..687f3e06ee 100644
+--- a/sympy/printing/tests/test_repr.py
++++ b/sympy/printing/tests/test_repr.py
+@@ -193,6 +193,29 @@ def test_tuple():
+     sT((x, y), "(Symbol('x'), Symbol('y'))")
+ 
+ 
++def test_dict():
++    from sympy.abc import x, y, z
++    d = {}
++    assert srepr(d) == "{}"
++    d = {x: y}
++    assert srepr(d) == "{Symbol('x'): Symbol('y')}"
++    d = {x: y, y: z}
++    assert srepr(d) in (
++        "{Symbol('x'): Symbol('y'), Symbol('y'): Symbol('z')}",
++        "{Symbol('y'): Symbol('z'), Symbol('x'): Symbol('y')}",
++    )
++    d = {x: {y: z}}
++    assert srepr(d) == "{Symbol('x'): {Symbol('y'): Symbol('z')}}"
++
++
++def test_set():
++    from sympy.abc import x, y
++    s = set()
++    assert srepr(s) == "set()"
++    s = {x, y}
++    assert srepr(s) in ("{Symbol('x'), Symbol('y')}", "{Symbol('y'), Symbol('x')}")
++
++
+ def test_WildFunction():
+     sT(WildFunction('w'), "WildFunction('w')")
+2026-11-12 17:49:30,513 - INFO - Eval script for sympy__sympy-19346 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2282/opencode-glm-5.3-flash/sympy__sympy-19346/eval.sh; copying to container...
+2026-11-12 17:49:35,032 - INFO - Test runtime: 4.46 seconds
+2026-11-12 17:49:35,035 - INFO - Test output for sympy__sympy-19346 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2282/opencode-glm-5.3-flash/sympy__sympy-19346/test_output.txt
+2026-11-12 17:49:35,104 - INFO - Git diff after:
+diff --git a/sympy/printing/repr.py b/sympy/printing/repr.py
+index c936a692c0..04cfee5c3e 100644
+--- a/sympy/printing/repr.py
++++ b/sympy/printing/repr.py
+@@ -144,6 +144,16 @@ def _print_EmptySequence(self, expr):
+     def _print_list(self, expr):
+         return "[%s]" % self.reprify(expr, ", ")
+ 
++    def _print_dict(self, expr):
++        sep = ", "
++        dict_kvs = ["%s: %s" % (self.doprint(key), self.doprint(value)) for key, value in expr.items()]
++        return "{%s}" % sep.join(dict_kvs)
++
++    def _print_set(self, expr):
++        if not expr:
++            return "set()"
++        return "{%s}" % self.reprify(expr, ", ")
++
+     def _print_MatrixBase(self, expr):
+         # special case for some empty matrices
+         if (expr.rows == 0) ^ (expr.cols == 0):
+2026-11-12 17:49:35,104 - INFO - Git diff changed after running eval script
+2026-11-12 17:49:35,104 - INFO - Grading answer for sympy__sympy-19346...
+2026-11-12 17:49:35,107 - INFO - report: {'sympy__sympy-19346': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_dict'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_printmethod', 'test_more_than_255_args_issue_10259', 'test_Function', 'test_Geometry', 'test_Singletons', 'test_Integer', 'test_list', 'test_Matrix', 'test_empty_Matrix', 'test_Rational', 'test_Float', 'test_Symbol', 'test_Symbol_two_assumptions', 'test_Symbol_no_special_commutative_treatment', 'test_Wild', 'test_Dummy', 'test_Dummy_assumption', 'test_Dummy_from_Symbol', 'test_tuple', 'test_WildFunction', 'test_settins', 'test_AlgebraicNumber', 'test_PolyRing', 'test_FracField', 'test_PolyElement', 'test_FracElement', 'test_FractionField', 'test_PolynomialRingBase', 'test_DMP', 'test_FiniteExtension', 'test_ExtensionElement', 'test_BooleanAtom', 'test_Integers', 'test_Naturals', 'test_Naturals0', 'test_Reals', 'test_matrix_expressions', 'test_Cycle', 'test_Permutation', 'test_diffgeom'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-19346: resolved: True
+2026-11-12 17:49:35,109 - INFO - Attempting to stop container sweb.eval.sympy__sympy-19346.verified_full_glm53_opencode_incr_R2282...
+2026-11-12 17:49:51,107 - INFO - Container sweb.eval.sympy__sympy-19346.verified_full_glm53_opencode_incr_R2282 stopped successfully.
+2026-11-12 17:49:51,107 - INFO - Attempting to remove container sweb.eval.sympy__sympy-19346.verified_full_glm53_opencode_incr_R2282...
+2026-11-12 17:49:51,154 - INFO - Container sweb.eval.sympy__sympy-19346.verified_full_glm53_opencode_incr_R2282 removed successfully.

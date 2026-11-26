@@ -1,0 +1,26 @@
+2 instances already run, skipping...
+Running 2 instances...
+All instances run.
+Total instances: 4
+Instances submitted: 4
+Instances completed: 3
+Instances incomplete: 0
+Instances resolved: 3
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 1
+Unremoved images: 4
+Report written to logs/evaluation/verified_full_glm53_cline-patched_incr_R2690/results.json
+
+[stderr]
+<unknown>:0: DeprecationError: 2026-11-04: Python 3.10 is EOL and Modal will not support it in version 1.7.0. Please upgrade your local Python to 3.11 or later.
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+ 50%|█████     | 1/2 [00:39<00:39, 39.58s/it]
+1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:39<00:39, 39.58s/it]
+1 ran successfully, 0 failed: 100%|██████████| 2/2 [01:06<00:00, 33.07s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [01:06<00:00, 33.07s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [01:06<00:00, 33.07s/it]

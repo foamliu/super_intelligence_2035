@@ -1,0 +1,76 @@
+2026-10-31 13:42:10,287 - INFO - Creating container for sympy__sympy-16766...
+2026-10-31 13:42:10,308 - INFO - Container for sympy__sympy-16766 created: 5e81901cc12132b5174e6cb662aa7d4597c1b80da321348170eab7a28594d266
+2026-10-31 13:42:10,770 - INFO - Container for sympy__sympy-16766 started: 5e81901cc12132b5174e6cb662aa7d4597c1b80da321348170eab7a28594d266
+2026-10-31 13:42:10,772 - INFO - Intermediate patch for sympy__sympy-16766 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-16766/patch.diff, now applying to container...
+2026-10-31 13:42:10,945 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/pycode.py...
+Checking patch sympy/printing/tests/test_pycode.py...
+Applied patch sympy/printing/pycode.py cleanly.
+Applied patch sympy/printing/tests/test_pycode.py cleanly.
+
+2026-10-31 13:42:11,592 - INFO - Git diff before:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index a3f031073..a284707d6 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -357,6 +357,10 @@ def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+ 
++    def _print_Indexed(self, expr):
++        base, *index = expr.args
++        return "{}[{}]".format(str(base), ", ".join([self._print(ind) for ind in index]))
++
+ 
+ for k in PythonCodePrinter._kf:
+     setattr(PythonCodePrinter, '_print_%s' % k, _print_known_func)
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index f1a9a3789..e7b3dab46 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -11,6 +11,7 @@
+ from sympy.printing.pycode import (
+     MpmathPrinter, NumPyPrinter, PythonCodePrinter, pycode, SciPyPrinter
+ )
++from sympy.tensor import IndexedBase
+ from sympy.utilities.pytest import raises
+ 
+ x, y, z = symbols('x y z')
+@@ -34,6 +35,10 @@ def test_PythonCodePrinter():
+                         (3, Gt(x, 0)), evaluate=False)) == '((2) if (x <= 0) else'\
+                                                         ' (3) if (x > 0) else None)'
+     assert prntr.doprint(sign(x)) == '(0.0 if x == 0 else math.copysign(1, x))'
++    p = IndexedBase('p')
++    assert prntr.doprint(p[0]) == 'p[0]'
++    assert prntr.doprint(p[x, y]) == 'p[x, y]'
++
+ 
+ 
+ def test_MpmathPrinter():
+2026-10-31 13:42:11,595 - INFO - Eval script for sympy__sympy-16766 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-16766/eval.sh; copying to container...
+2026-10-31 13:42:16,239 - INFO - Test runtime: 4.55 seconds
+2026-10-31 13:42:16,241 - INFO - Test output for sympy__sympy-16766 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-16766/test_output.txt
+2026-10-31 13:42:16,297 - INFO - Git diff after:
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index a3f031073..a284707d6 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -357,6 +357,10 @@ def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+ 
++    def _print_Indexed(self, expr):
++        base, *index = expr.args
++        return "{}[{}]".format(str(base), ", ".join([self._print(ind) for ind in index]))
++
+ 
+ for k in PythonCodePrinter._kf:
+     setattr(PythonCodePrinter, '_print_%s' % k, _print_known_func)
+2026-10-31 13:42:16,297 - INFO - Git diff changed after running eval script
+2026-10-31 13:42:16,297 - INFO - Grading answer for sympy__sympy-16766...
+2026-10-31 13:42:16,298 - INFO - report: {'sympy__sympy-16766': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_PythonCodePrinter'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_MpmathPrinter', 'test_NumPyPrinter', 'test_SciPyPrinter', 'test_pycode_reserved_words', 'test_printmethod', 'test_codegen_ast_nodes', 'test_issue_14283'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-16766: resolved: True
+2026-10-31 13:42:16,300 - INFO - Attempting to stop container sweb.eval.sympy__sympy-16766.verified_full_hermes...
+2026-10-31 13:42:31,756 - INFO - Container sweb.eval.sympy__sympy-16766.verified_full_hermes stopped successfully.
+2026-10-31 13:42:31,756 - INFO - Attempting to remove container sweb.eval.sympy__sympy-16766.verified_full_hermes...
+2026-10-31 13:42:31,811 - INFO - Container sweb.eval.sympy__sympy-16766.verified_full_hermes removed successfully.

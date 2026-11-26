@@ -1,0 +1,84 @@
+2026-11-09 06:22:17,234 - INFO - Creating container for sphinx-doc__sphinx-8459...
+2026-11-09 06:22:18,720 - INFO - Removed existing container sweb.eval.sphinx-doc__sphinx-8459.verified_full_glm53_claude-code_R1933
+2026-11-09 06:22:18,738 - INFO - Container for sphinx-doc__sphinx-8459 created: 3f11969cda4a4d94aeb64d8896f215796136d3bd24c7bded5f7960090a78e60d
+2026-11-09 06:22:21,139 - INFO - Container for sphinx-doc__sphinx-8459 started: 3f11969cda4a4d94aeb64d8896f215796136d3bd24c7bded5f7960090a78e60d
+2026-11-09 06:22:21,140 - INFO - Intermediate patch for sphinx-doc__sphinx-8459 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8459/patch.diff, now applying to container...
+2026-11-09 06:22:21,261 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/autodoc/typehints.py...
+Checking patch tests/test_ext_autodoc_configs.py...
+Applied patch sphinx/ext/autodoc/typehints.py cleanly.
+Applied patch tests/test_ext_autodoc_configs.py cleanly.
+
+2026-11-09 06:22:21,508 - INFO - Git diff before:
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index 70cbc3ba1..e6451b52c 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -27,7 +27,7 @@ def record_typehints(app: Sphinx, objtype: str, name: str, obj: Any,
+         if callable(obj):
+             annotations = app.env.temp_data.setdefault('annotations', {})
+             annotation = annotations.setdefault(name, OrderedDict())
+-            sig = inspect.signature(obj)
++            sig = inspect.signature(obj, type_aliases=app.config.autodoc_type_aliases)
+             for param in sig.parameters.values():
+                 if param.annotation is not param.empty:
+                     annotation[param.name] = typing.stringify(param.annotation)
+diff --git a/tests/test_ext_autodoc_configs.py b/tests/test_ext_autodoc_configs.py
+index 496059b7c..553b1bfce 100644
+--- a/tests/test_ext_autodoc_configs.py
++++ b/tests/test_ext_autodoc_configs.py
+@@ -690,6 +690,25 @@ def test_autodoc_typehints_description_for_invalid_node(app):
+     restructuredtext.parse(app, text)  # raises no error
+ 
+ 
++@pytest.mark.skipif(sys.version_info < (3, 7), reason='python 3.7+ is required.')
++@pytest.mark.sphinx('text', testroot='ext-autodoc',
++                    confoverrides={'autodoc_typehints': "description"})
++def test_autodoc_typehints_description_with_type_aliases(app):
++    app.config.autodoc_type_aliases = {'myint': 'myint'}
++    app.build()
++    context = (app.outdir / 'index.txt').read_text()
++    assert ('target.typehints.incr(a, b=1)\n'
++            '\n'
++            '   Parameters:\n'
++            '      * **a** (*myint*) --\n'
++            '\n'
++            '      * **b** (*myint*) --\n'
++            '\n'
++            '   Return type:\n'
++            '      myint\n'
++            in context)
++
++
+ @pytest.mark.skipif(sys.version_info < (3, 7), reason='python 3.7+ is required.')
+ @pytest.mark.sphinx('text', testroot='ext-autodoc')
+ def test_autodoc_type_aliases(app):
+2026-11-09 06:22:21,509 - INFO - Eval script for sphinx-doc__sphinx-8459 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8459/eval.sh; copying to container...
+2026-11-09 06:22:27,086 - INFO - Test runtime: 5.52 seconds
+2026-11-09 06:22:27,087 - INFO - Test output for sphinx-doc__sphinx-8459 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8459/test_output.txt
+2026-11-09 06:22:27,158 - INFO - Git diff after:
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index 70cbc3ba1..e6451b52c 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -27,7 +27,7 @@ def record_typehints(app: Sphinx, objtype: str, name: str, obj: Any,
+         if callable(obj):
+             annotations = app.env.temp_data.setdefault('annotations', {})
+             annotation = annotations.setdefault(name, OrderedDict())
+-            sig = inspect.signature(obj)
++            sig = inspect.signature(obj, type_aliases=app.config.autodoc_type_aliases)
+             for param in sig.parameters.values():
+                 if param.annotation is not param.empty:
+                     annotation[param.name] = typing.stringify(param.annotation)
+2026-11-09 06:22:27,158 - INFO - Git diff changed after running eval script
+2026-11-09 06:22:27,158 - INFO - Grading answer for sphinx-doc__sphinx-8459...
+2026-11-09 06:22:27,164 - INFO - report: {'sphinx-doc__sphinx-8459': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_and_type_aliases'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autoclass_content_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_init', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_inherit_docstrings', 'tests/test_ext_autodoc_configs.py::test_autodoc_docstring_signature', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_init', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_both', 'tests/test_ext_autodoc_configs.py::test_mocked_module_imports', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_signature', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none_for_overload', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_for_invalid_node', 'tests/test_ext_autodoc_configs.py::test_autodoc_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options_with_values'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8459: resolved: True
+2026-11-09 06:22:27,166 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8459.verified_full_glm53_claude-code_R1933...
+2026-11-09 06:22:43,670 - INFO - Container sweb.eval.sphinx-doc__sphinx-8459.verified_full_glm53_claude-code_R1933 stopped successfully.
+2026-11-09 06:22:43,671 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8459.verified_full_glm53_claude-code_R1933...
+2026-11-09 06:22:43,721 - INFO - Container sweb.eval.sphinx-doc__sphinx-8459.verified_full_glm53_claude-code_R1933 removed successfully.
+al.sphinx-doc__sphinx-8459.verified_full_glm53_claude-code_R1933: Error response from daemon: cannot kill container: 1acc8ad5b364af9964f3207a45a009c63c2415643630daf06c9a17f7dd720c85: No such container: 1acc8ad5b364af9964f3207a45a009c63c2415643630daf06c9a17f7dd720c85
+
+2026-11-09 06:22:18,777 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8459.verified_full_glm53_claude-code_R1933...
+2026-11-09 06:22:18,819 - INFO - Container sweb.eval.sphinx-doc__sphinx-8459.verified_full_glm53_claude-code_R1933 removed successfully.

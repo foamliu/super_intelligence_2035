@@ -1,0 +1,107 @@
+2026-11-03 07:21:42,616 - INFO - Creating container for pytest-dev__pytest-7571...
+2026-11-03 07:21:42,692 - INFO - Container for pytest-dev__pytest-7571 created: ce83fb420e5fd6011264440b3087d02217e105b4a4dca98bdf3bf444a459d36b
+2026-11-03 07:21:43,846 - INFO - Container for pytest-dev__pytest-7571 started: ce83fb420e5fd6011264440b3087d02217e105b4a4dca98bdf3bf444a459d36b
+2026-11-03 07:21:43,848 - INFO - Intermediate patch for pytest-dev__pytest-7571 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/pytest-dev__pytest-7571/patch.diff, now applying to container...
+2026-11-03 07:21:44,052 - INFO - >>>>> Applied Patch:
+Checking patch src/_pytest/logging.py...
+Checking patch testing/logging/test_fixture.py...
+Applied patch src/_pytest/logging.py cleanly.
+Applied patch testing/logging/test_fixture.py cleanly.
+
+2026-11-03 07:21:44,196 - INFO - Git diff before:
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index 11031f2f2..3c56f8c37 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -346,6 +346,7 @@ class LogCaptureFixture:
+         self._item = item
+         # dict of log name -> log level
+         self._initial_logger_levels = {}  # type: Dict[Optional[str], int]
++        self._initial_handler_level = None  # type: Optional[int]
+ 
+     def _finalize(self) -> None:
+         """Finalizes the fixture.
+@@ -356,6 +357,8 @@ class LogCaptureFixture:
+         for logger_name, level in self._initial_logger_levels.items():
+             logger = logging.getLogger(logger_name)
+             logger.setLevel(level)
++        if self._initial_handler_level is not None:
++            self.handler.setLevel(self._initial_handler_level)
+ 
+     @property
+     def handler(self) -> LogCaptureHandler:
+@@ -433,6 +436,8 @@ class LogCaptureFixture:
+         logger_obj = logging.getLogger(logger)
+         # save the original log-level to restore it during teardown
+         self._initial_logger_levels.setdefault(logger, logger_obj.level)
++        if self._initial_handler_level is None:
++            self._initial_handler_level = self.handler.level
+         logger_obj.setLevel(level)
+         self.handler.setLevel(level)
+ 
+diff --git a/testing/logging/test_fixture.py b/testing/logging/test_fixture.py
+index da5303302..d2aea46d7 100644
+--- a/testing/logging/test_fixture.py
++++ b/testing/logging/test_fixture.py
+@@ -50,6 +50,23 @@ def test_change_level_undo(testdir):
+     result.stdout.no_fnmatch_line("*log from test2*")
+ 
+ 
++def test_change_level_undo_handler_level(testdir):
++    """Ensure that 'set_level' on the handler is undone after the end of the test (issue #7568)."""
++    testdir.makepyfile(
++        """
++        import logging
++
++        def test1(caplog):
++            caplog.set_level(42)
++
++        def test2(caplog):
++            assert caplog.handler.level == 0
++    """
++    )
++    result = testdir.runpytest()
++    assert result.ret == 0
++
++
+ def test_with_statement(caplog):
+     with caplog.at_level(logging.INFO):
+         logger.debug("handler DEBUG level")
+2026-11-03 07:21:44,199 - INFO - Eval script for pytest-dev__pytest-7571 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/pytest-dev__pytest-7571/eval.sh; copying to container...
+2026-11-03 07:21:57,879 - INFO - Test runtime: 13.61 seconds
+2026-11-03 07:21:57,882 - INFO - Test output for pytest-dev__pytest-7571 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/pytest-dev__pytest-7571/test_output.txt
+2026-11-03 07:21:57,937 - INFO - Git diff after:
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index 11031f2f2..3c56f8c37 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -346,6 +346,7 @@ class LogCaptureFixture:
+         self._item = item
+         # dict of log name -> log level
+         self._initial_logger_levels = {}  # type: Dict[Optional[str], int]
++        self._initial_handler_level = None  # type: Optional[int]
+ 
+     def _finalize(self) -> None:
+         """Finalizes the fixture.
+@@ -356,6 +357,8 @@ class LogCaptureFixture:
+         for logger_name, level in self._initial_logger_levels.items():
+             logger = logging.getLogger(logger_name)
+             logger.setLevel(level)
++        if self._initial_handler_level is not None:
++            self.handler.setLevel(self._initial_handler_level)
+ 
+     @property
+     def handler(self) -> LogCaptureHandler:
+@@ -433,6 +436,8 @@ class LogCaptureFixture:
+         logger_obj = logging.getLogger(logger)
+         # save the original log-level to restore it during teardown
+         self._initial_logger_levels.setdefault(logger, logger_obj.level)
++        if self._initial_handler_level is None:
++            self._initial_handler_level = self.handler.level
+         logger_obj.setLevel(level)
+         self.handler.setLevel(level)
+2026-11-03 07:21:57,937 - INFO - Git diff changed after running eval script
+2026-11-03 07:21:57,937 - INFO - Grading answer for pytest-dev__pytest-7571...
+2026-11-03 07:21:57,940 - INFO - report: {'pytest-dev__pytest-7571': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['testing/logging/test_fixture.py::test_change_level_undos_handler_level'], 'failure': []}, 'PASS_TO_PASS': {'success': ['testing/logging/test_fixture.py::test_change_level', 'testing/logging/test_fixture.py::test_with_statement', 'testing/logging/test_fixture.py::test_log_access', 'testing/logging/test_fixture.py::test_messages', 'testing/logging/test_fixture.py::test_record_tuples', 'testing/logging/test_fixture.py::test_unicode', 'testing/logging/test_fixture.py::test_clear', 'testing/logging/test_fixture.py::test_caplog_captures_for_all_stages', 'testing/logging/test_fixture.py::test_fixture_help', 'testing/logging/test_fixture.py::test_change_level_undo', 'testing/logging/test_fixture.py::test_ini_controls_global_log_level', 'testing/logging/test_fixture.py::test_caplog_can_override_global_log_level', 'testing/logging/test_fixture.py::test_caplog_captures_despite_exception', 'testing/logging/test_fixture.py::test_log_report_captures_according_to_config_option_upon_failure'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pytest-dev__pytest-7571: resolved: True
+2026-11-03 07:21:57,941 - INFO - Attempting to stop container sweb.eval.pytest-dev__pytest-7571.verified_full_hermes...

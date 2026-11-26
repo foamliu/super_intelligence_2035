@@ -1,0 +1,31 @@
+=== incr_eval_1route R1458 START Tue Nov  3 08:38:39 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Tue Nov  3 08:38:39 PM CST 2026] === merge codex predictions ===
+codex: 317 real patches merged
+[Tue Nov  3 08:38:40 PM CST 2026] === codex eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [02:05<00:00, 125.01s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [02:05<00:00, 125.01s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [02:05<00:00, 125.01s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 2
+Unremoved images: 1
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[Tue Nov  3 08:40:49 PM CST 2026] === codex eval DONE ===
+[Tue Nov  3 08:40:49 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=500 resolved=326 failed=116 infra=0 no_patch=58)
+  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
+  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
+  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
+  codex: WROTE eval_codex.json  n=427 resolved=251 failed=66 infra=0 no_patch=110)
+  hermes: unchanged (n=283 resolved=163 failed=45 infra=0 no_patch=75)
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=173 resolved=138 failed=28 infra=1 no_patch=6)
+=== incr_eval_1route R1458 DONE Tue Nov  3 08:40:50 PM CST 2026 ===

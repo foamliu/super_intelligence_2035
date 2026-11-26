@@ -1,0 +1,128 @@
+2026-10-30 16:31:26,878 - INFO - Creating container for sphinx-doc__sphinx-9258...
+2026-10-30 16:31:26,896 - INFO - Container for sphinx-doc__sphinx-9258 created: 3960c4f9806f3799ca738e6dfded74cadc4148f73de907b66859d16051b00a77
+2026-10-30 16:31:34,029 - INFO - Container for sphinx-doc__sphinx-9258 started: 3960c4f9806f3799ca738e6dfded74cadc4148f73de907b66859d16051b00a77
+2026-10-30 16:31:34,030 - INFO - Intermediate patch for sphinx-doc__sphinx-9258 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-9258/patch.diff, now applying to container...
+2026-10-30 16:31:34,139 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/domains/python.py...
+Checking patch sphinx/util/typing.py...
+Checking patch tests/test_domain_py.py...
+Applied patch sphinx/domains/python.py cleanly.
+Applied patch sphinx/util/typing.py cleanly.
+Applied patch tests/test_domain_py.py cleanly.
+
+2026-10-30 16:31:34,539 - INFO - Git diff before:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 7d39d80ed..ba021b36b 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -304,7 +304,7 @@ class PyXrefMixin:
+     def make_xrefs(self, rolename: str, domain: str, target: str,
+                    innernode: Type[TextlikeNode] = nodes.emphasis,
+                    contnode: Node = None, env: BuildEnvironment = None) -> List[Node]:
+-        delims = r'(\s*[\[\]\(\),](?:\s*or\s)?\s*|\s+or\s+|\.\.\.)'
++        delims = r'(\s*[\[\]\(\),](?:\s*or\s)?\s*|\s+or\s+|\s*\|\s*|\.\.\.)'
+         delims_re = re.compile(delims)
+         sub_targets = re.split(delims, target)
+ 
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index af6edcae0..7217e29b8 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -33,8 +33,8 @@ else:
+             ref = _ForwardRef(self.arg)
+             return ref._eval_type(globalns, localns)
+ 
+-if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++if sys.version_info >= (3, 10):
++    from types import UnionType as types_Union
+ else:
+     types_Union = None
+ 
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 2614c8ff6..327a6e780 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -1009,6 +1009,43 @@ def test_info_field_list(app):
+                 **{"py:module": "example", "py:class": "Class"})
+ 
+ 
++def test_info_field_list_type_with_union(app):
++    text = (".. py:module:: example\n"
++            ".. py:class:: Class\n"
++            "\n"
++            "   :param text: a text\n"
++            "   :type text: bytes | str\n")
++    doctree = restructuredtext.parse(app, text)
++
++    assert_node(doctree, (nodes.target,
++                          addnodes.index,
++                          addnodes.index,
++                          [desc, ([desc_signature, ([desc_annotation, "class "],
++                                                    [desc_addname, "example."],
++                                                    [desc_name, "Class"])],
++                                  [desc_content, nodes.field_list, nodes.field])]))
++    assert_node(doctree[3][1][0][0],
++                ([nodes.field_name, "Parameters"],
++                 [nodes.field_body, nodes.paragraph]))
++
++    # :param text: + :type text: bytes | str
++    assert_node(doctree[3][1][0][0][1][0],
++                ([addnodes.literal_strong, "text"],
++                 " (",
++                 [pending_xref, addnodes.literal_emphasis, "bytes"],
++                 [addnodes.literal_emphasis, " | "],
++                 [pending_xref, addnodes.literal_emphasis, "str"],
++                 ")",
++                 " -- ",
++                 "a text"))
++    assert_node(doctree[3][1][0][0][1][0][2], pending_xref,
++                refdomain="py", reftype="class", reftarget="bytes",
++                **{"py:module": "example", "py:class": "Class"})
++    assert_node(doctree[3][1][0][0][1][0][4], pending_xref,
++                refdomain="py", reftype="class", reftarget="str",
++                **{"py:module": "example", "py:class": "Class"})
++
++
+ def test_info_field_list_var(app):
+     text = (".. py:class:: Class\n"
+             "\n"
+2026-10-30 16:31:34,542 - INFO - Eval script for sphinx-doc__sphinx-9258 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-9258/eval.sh; copying to container...
+2026-10-30 16:31:41,528 - INFO - Test runtime: 6.93 seconds
+2026-10-30 16:31:41,530 - INFO - Test output for sphinx-doc__sphinx-9258 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-9258/test_output.txt
+2026-10-30 16:31:41,579 - INFO - Git diff after:
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 7d39d80ed..ba021b36b 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -304,7 +304,7 @@ class PyXrefMixin:
+     def make_xrefs(self, rolename: str, domain: str, target: str,
+                    innernode: Type[TextlikeNode] = nodes.emphasis,
+                    contnode: Node = None, env: BuildEnvironment = None) -> List[Node]:
+-        delims = r'(\s*[\[\]\(\),](?:\s*or\s)?\s*|\s+or\s+|\.\.\.)'
++        delims = r'(\s*[\[\]\(\),](?:\s*or\s)?\s*|\s+or\s+|\s*\|\s*|\.\.\.)'
+         delims_re = re.compile(delims)
+         sub_targets = re.split(delims, target)
+ 
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index af6edcae0..7217e29b8 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -33,8 +33,8 @@ else:
+             ref = _ForwardRef(self.arg)
+             return ref._eval_type(globalns, localns)
+ 
+-if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++if sys.version_info >= (3, 10):
++    from types import UnionType as types_Union
+ else:
+     types_Union = None
+2026-10-30 16:31:41,579 - INFO - Git diff changed after running eval script
+2026-10-30 16:31:41,579 - INFO - Grading answer for sphinx-doc__sphinx-9258...
+2026-10-30 16:31:41,586 - INFO - report: {'sphinx-doc__sphinx-9258': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_py.py::test_info_field_list_piped_type'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs', 'tests/test_domain_py.py::test_domain_py_xrefs_abbreviations', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_domain_py_canonical', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_parse_annotation', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_pyfunction_with_number_literals', 'tests/test_domain_py.py::test_pyfunction_with_union_type_operator', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_exceptions_module_is_ignored', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pydata_with_union_type_operator', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pyclass_options', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pyproperty', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_canonical', 'tests/test_domain_py.py::test_canonical_definition_overrides', 'tests/test_domain_py.py::test_canonical_definition_skip', 'tests/test_domain_py.py::test_canonical_duplicated', 'tests/test_domain_py.py::test_info_field_list', 'tests/test_domain_py.py::test_info_field_list_var', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix', 'tests/test_domain_py.py::test_noindexentry', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names_disabled', 'tests/test_domain_py.py::test_warn_missing_reference'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9258: resolved: True
+2026-10-30 16:31:41,588 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9258.verified_full_cline-patched...
+2026-10-30 16:31:59,170 - INFO - Container sweb.eval.sphinx-doc__sphinx-9258.verified_full_cline-patched stopped successfully.
+2026-10-30 16:31:59,170 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9258.verified_full_cline-patched...
+2026-10-30 16:31:59,228 - INFO - Container sweb.eval.sphinx-doc__sphinx-9258.verified_full_cline-patched removed successfully.

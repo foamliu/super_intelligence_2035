@@ -1,0 +1,97 @@
+2026-11-01 10:16:52,632 - INFO - Creating container for astropy__astropy-14182...
+2026-11-01 10:16:53,629 - INFO - Removed existing container sweb.eval.astropy__astropy-14182.verified_full_hermes
+2026-11-01 10:16:53,651 - INFO - Container for astropy__astropy-14182 created: c7edfbf6bc7ba7d3c88157f7689fce2cf2c57572b7ee12a534dcf4cdbb3c407b
+2026-11-01 10:16:54,561 - INFO - Container for astropy__astropy-14182 started: c7edfbf6bc7ba7d3c88157f7689fce2cf2c57572b7ee12a534dcf4cdbb3c407b
+2026-11-01 10:16:54,562 - INFO - Intermediate patch for astropy__astropy-14182 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-14182/patch.diff, now applying to container...
+2026-11-01 10:16:54,676 - INFO - >>>>> Applied Patch:
+/tmp/patch.diff:41: trailing whitespace.
+                        
+Checking patch astropy/io/ascii/rst.py...
+warning: astropy/io/ascii/rst.py has type 100755, expected 100644
+Checking patch astropy/io/ascii/tests/test_rst.py...
+warning: astropy/io/ascii/tests/test_rst.py has type 100755, expected 100644
+Applied patch astropy/io/ascii/rst.py cleanly.
+Applied patch astropy/io/ascii/tests/test_rst.py cleanly.
+warning: 1 line adds whitespace errors.
+
+2026-11-01 10:16:55,204 - INFO - Git diff before:
+diff --git a/astropy/io/ascii/rst.py b/astropy/io/ascii/rst.py
+index abdeba8ef..8c443d879 100755
+--- a/astropy/io/ascii/rst.py
++++ b/astropy/io/ascii/rst.py
+@@ -57,10 +57,13 @@ class RST(FixedWidth):
+     data_class = SimpleRSTData
+     header_class = SimpleRSTHeader
+ 
+-    def __init__(self):
+-        super().__init__(delimiter_pad=None, bookend=False)
++    def __init__(self, header_rows=None):
++        super().__init__(delimiter_pad=None, bookend=False, header_rows=header_rows)
++        self.data.start_line = len(self.header.header_rows) + 2
+ 
+     def write(self, lines):
+         lines = super().write(lines)
+-        lines = [lines[1]] + lines + [lines[1]]
++        header_rows = getattr(self.header, "header_rows", ["name"])
++        position_line_idx = len(header_rows)
++        lines = [lines[position_line_idx]] + lines + [lines[position_line_idx]]
+         return lines
+diff --git a/astropy/io/ascii/tests/test_rst.py b/astropy/io/ascii/tests/test_rst.py
+index 84d6fed40..2a4bad1e4 100755
+--- a/astropy/io/ascii/tests/test_rst.py
++++ b/astropy/io/ascii/tests/test_rst.py
+@@ -185,3 +185,21 @@ Col1      Col2 Col3 Col4
+ ==== ========= ==== ====
+ """,
+     )
++
++
++def test_write_header_rows():
++    """Write a table as a SimpleRST Table with header_rows"""
++    out = StringIO()
++    ascii.write(dat, out, Writer=ascii.RST, header_rows=["name", "unit"])
++    assert_equal_splitlines(
++        out.getvalue(),
++        """\
++==== ========= ==== ====
++Col1      Col2 Col3 Col4
++                        
++==== ========= ==== ====
++ 1.2   "hello"    1    a
++ 2.4 's worlds    2    2
++==== ========= ==== ====
++""",
++    )
+2026-11-01 10:16:55,206 - INFO - Eval script for astropy__astropy-14182 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-14182/eval.sh; copying to container...
+2026-11-01 10:18:47,610 - INFO - Test runtime: 112.33 seconds
+2026-11-01 10:18:47,615 - INFO - Test output for astropy__astropy-14182 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-14182/test_output.txt
+2026-11-01 10:18:47,687 - INFO - Git diff after:
+diff --git a/astropy/io/ascii/rst.py b/astropy/io/ascii/rst.py
+index abdeba8ef..8c443d879 100755
+--- a/astropy/io/ascii/rst.py
++++ b/astropy/io/ascii/rst.py
+@@ -57,10 +57,13 @@ class RST(FixedWidth):
+     data_class = SimpleRSTData
+     header_class = SimpleRSTHeader
+ 
+-    def __init__(self):
+-        super().__init__(delimiter_pad=None, bookend=False)
++    def __init__(self, header_rows=None):
++        super().__init__(delimiter_pad=None, bookend=False, header_rows=header_rows)
++        self.data.start_line = len(self.header.header_rows) + 2
+ 
+     def write(self, lines):
+         lines = super().write(lines)
+-        lines = [lines[1]] + lines + [lines[1]]
++        header_rows = getattr(self.header, "header_rows", ["name"])
++        position_line_idx = len(header_rows)
++        lines = [lines[position_line_idx]] + lines + [lines[position_line_idx]]
+         return lines
+2026-11-01 10:18:47,687 - INFO - Git diff changed after running eval script
+2026-11-01 10:18:47,687 - INFO - Grading answer for astropy__astropy-14182...
+2026-11-01 10:18:47,696 - INFO - report: {'astropy__astropy-14182': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/ascii/tests/test_rst.py::test_rst_with_header_rows'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/ascii/tests/test_rst.py::test_read_normal', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_names', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_names_include', 'astropy/io/ascii/tests/test_rst.py::test_read_normal_exclude', 'astropy/io/ascii/tests/test_rst.py::test_read_unbounded_right_column', 'astropy/io/ascii/tests/test_rst.py::test_read_unbounded_right_column_header', 'astropy/io/ascii/tests/test_rst.py::test_read_right_indented_table', 'astropy/io/ascii/tests/test_rst.py::test_trailing_spaces_in_row_definition', 'astropy/io/ascii/tests/test_rst.py::test_write_normal'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-14182: resolved: True
+2026-11-01 10:18:47,697 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14182.verified_full_hermes...
+2026-11-01 10:19:03,853 - INFO - Container sweb.eval.astropy__astropy-14182.verified_full_hermes stopped successfully.
+2026-11-01 10:19:03,853 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14182.verified_full_hermes...
+2026-11-01 10:19:03,901 - INFO - Container sweb.eval.astropy__astropy-14182.verified_full_hermes removed successfully.

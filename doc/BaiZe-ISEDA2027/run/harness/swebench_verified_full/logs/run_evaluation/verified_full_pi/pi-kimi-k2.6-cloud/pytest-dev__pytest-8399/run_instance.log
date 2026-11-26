@@ -1,0 +1,116 @@
+2026-11-02 01:57:04,606 - INFO - Creating container for pytest-dev__pytest-8399...
+2026-11-02 01:57:04,629 - INFO - Container for pytest-dev__pytest-8399 created: 153d44338c1fe7e273c8131cfd4b2867a309edc392081cdf4bcc5f824ef8bc1f
+2026-11-02 01:57:05,334 - INFO - Container for pytest-dev__pytest-8399 started: 153d44338c1fe7e273c8131cfd4b2867a309edc392081cdf4bcc5f824ef8bc1f
+2026-11-02 01:57:05,337 - INFO - Intermediate patch for pytest-dev__pytest-8399 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pytest-dev__pytest-8399/patch.diff, now applying to container...
+2026-11-02 01:57:05,455 - INFO - >>>>> Applied Patch:
+Checking patch src/_pytest/unittest.py...
+Checking patch testing/python/fixtures.py...
+Applied patch src/_pytest/unittest.py cleanly.
+Applied patch testing/python/fixtures.py cleanly.
+
+2026-11-02 01:57:05,640 - INFO - Git diff before:
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 719eb4e88..3f88d7a9e 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -144,7 +144,7 @@ def _make_xunit_fixture(
+         scope=scope,
+         autouse=True,
+         # Use a unique name to speed up lookup.
+-        name=f"unittest_{setup_name}_fixture_{obj.__qualname__}",
++        name=f"_unittest_{setup_name}_fixture_{obj.__qualname__}",
+     )
+     def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:
+         if _is_skipped(self):
+diff --git a/testing/python/fixtures.py b/testing/python/fixtures.py
+index 3d5099c53..bf3b2db10 100644
+--- a/testing/python/fixtures.py
++++ b/testing/python/fixtures.py
+@@ -3399,6 +3399,29 @@ class TestShowFixtures:
+             *hello world*
+         """
+         )
++    def test_show_fixtures_unittest_hidden(self, pytester: Pytester) -> None:
++        p = pytester.makepyfile(
++            '''
++            import unittest
++
++            class Tests(unittest.TestCase):
++                @classmethod
++                def setUpClass(cls):
++                    pass
++
++                def test_1(self):
++                    pass
++            '''
++        )
++        result = pytester.runpytest("--fixtures", p)
++        result.stdout.no_fnmatch_line("*unittest_setUpClass_fixture*")
++        result.stdout.no_fnmatch_line("*_unittest_setUpClass_fixture*")
++        result = pytester.runpytest("--fixtures", "-v", p)
++        result.stdout.fnmatch_lines(
++            [
++                "*_unittest_setUpClass_fixture*",
++            ]
++        )
+ 
+     def test_show_fixtures_trimmed_doc(self, pytester: Pytester) -> None:
+         p = pytester.makepyfile(
+2026-11-02 01:57:05,642 - INFO - Eval script for pytest-dev__pytest-8399 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pytest-dev__pytest-8399/eval.sh; copying to container...
+2026-11-02 01:57:19,145 - INFO - Test runtime: 13.44 seconds
+2026-11-02 01:57:19,147 - INFO - Test output for pytest-dev__pytest-8399 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/pytest-dev__pytest-8399/test_output.txt
+2026-11-02 01:57:19,222 - INFO - Git diff after:
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 719eb4e88..3f88d7a9e 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -144,7 +144,7 @@ def _make_xunit_fixture(
+         scope=scope,
+         autouse=True,
+         # Use a unique name to speed up lookup.
+-        name=f"unittest_{setup_name}_fixture_{obj.__qualname__}",
++        name=f"_unittest_{setup_name}_fixture_{obj.__qualname__}",
+     )
+     def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:
+         if _is_skipped(self):
+diff --git a/testing/python/fixtures.py b/testing/python/fixtures.py
+index 3d5099c53..bf3b2db10 100644
+--- a/testing/python/fixtures.py
++++ b/testing/python/fixtures.py
+@@ -3399,6 +3399,29 @@ class TestShowFixtures:
+             *hello world*
+         """
+         )
++    def test_show_fixtures_unittest_hidden(self, pytester: Pytester) -> None:
++        p = pytester.makepyfile(
++            '''
++            import unittest
++
++            class Tests(unittest.TestCase):
++                @classmethod
++                def setUpClass(cls):
++                    pass
++
++                def test_1(self):
++                    pass
++            '''
++        )
++        result = pytester.runpytest("--fixtures", p)
++        result.stdout.no_fnmatch_line("*unittest_setUpClass_fixture*")
++        result.stdout.no_fnmatch_line("*_unittest_setUpClass_fixture*")
++        result = pytester.runpytest("--fixtures", "-v", p)
++        result.stdout.fnmatch_lines(
++            [
++                "*_unittest_setUpClass_fixture*",
++            ]
++        )
+ 
+     def test_show_fixtures_trimmed_doc(self, pytester: Pytester) -> None:
+         p = pytester.makepyfile(
+2026-11-02 01:57:19,222 - INFO - Grading answer for pytest-dev__pytest-8399...
+2026-11-02 01:57:19,236 - INFO - report: {'pytest-dev__pytest-8399': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['testing/test_unittest.py::test_fixtures_setup_setUpClass_issue8394'], 'failure': []}, 'PASS_TO_PASS': {'success': ['testing/test_unittest.py::test_simple_unittest', 'testing/test_unittest.py::test_runTest_method', 'testing/test_unittest.py::test_isclasscheck_issue53', 'testing/test_unittest.py::test_setup', 'testing/test_unittest.py::test_setUpModule', 'testing/test_unittest.py::test_setUpModule_failing_no_teardown', 'testing/test_unittest.py::test_new_instances', 'testing/test_unittest.py::test_function_item_obj_is_instance', 'testing/test_unittest.py::test_teardown', 'testing/test_unittest.py::test_teardown_issue1649', 'testing/test_unittest.py::test_unittest_skip_issue148', 'testing/test_unittest.py::test_method_and_teardown_failing_reporting', 'testing/test_unittest.py::test_setup_failure_is_shown', 'testing/test_unittest.py::test_setup_setUpClass', 'testing/test_unittest.py::test_setup_class', 'testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Error]', 'testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Failure]', 'testing/test_unittest.py::test_testcase_custom_exception_info[Error]', 'testing/test_unittest.py::test_testcase_custom_exception_info[Failure]', 'testing/test_unittest.py::test_testcase_totally_incompatible_exception_info', 'testing/test_unittest.py::test_module_level_pytestmark', 'testing/test_unittest.py::test_djangolike_testcase', 'testing/test_unittest.py::test_unittest_not_shown_in_traceback', 'testing/test_unittest.py::test_unorderable_types', 'testing/test_unittest.py::test_unittest_typerror_traceback', 'testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[pytest]', 'testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[unittest]', 'testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[pytest]', 'testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[unittest]', 'testing/test_unittest.py::test_unittest_setup_interaction[return]', 'testing/test_unittest.py::test_unittest_setup_interaction[yield]', 'testing/test_unittest.py::test_non_unittest_no_setupclass_support', 'testing/test_unittest.py::test_no_teardown_if_setupclass_failed', 'testing/test_unittest.py::test_cleanup_functions', 'testing/test_unittest.py::test_issue333_result_clearing', 'testing/test_unittest.py::test_unittest_raise_skip_issue748', 'testing/test_unittest.py::test_unittest_skip_issue1169', 'testing/test_unittest.py::test_class_method_containing_test_issue1558', 'testing/test_unittest.py::test_usefixtures_marker_on_unittest[builtins.object]', 'testing/test_unittest.py::test_usefixtures_marker_on_unittest[unittest.TestCase]', 'testing/test_unittest.py::test_testcase_handles_init_exceptions', 'testing/test_unittest.py::test_error_message_with_parametrized_fixtures', 'testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip.py-1', 'testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_class.py-1', 'testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_module.py-1', 'testing/test_unittest.py::test_BdbQuit', 'testing/test_unittest.py::test_exit_outcome', 'testing/test_unittest.py::test_trace', 'testing/test_unittest.py::test_pdb_teardown_called', 'testing/test_unittest.py::test_pdb_teardown_skipped[@unittest.skip]', 'testing/test_unittest.py::test_pdb_teardown_skipped[@pytest.mark.skip]', 'testing/test_unittest.py::test_async_support', 'testing/test_unittest.py::test_do_class_cleanups_on_success', 'testing/test_unittest.py::test_do_class_cleanups_on_setupclass_failure', 'testing/test_unittest.py::test_do_class_cleanups_on_teardownclass_failure', 'testing/test_unittest.py::test_do_cleanups_on_success', 'testing/test_unittest.py::test_do_cleanups_on_setup_failure', 'testing/test_unittest.py::test_do_cleanups_on_teardown_failure', 'testing/test_unittest.py::test_plain_unittest_does_not_support_async'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pytest-dev__pytest-8399: resolved: True
+2026-11-02 01:57:19,238 - INFO - Attempting to stop container sweb.eval.pytest-dev__pytest-8399.verified_full_pi...
+2026-11-02 01:57:35,499 - INFO - Container sweb.eval.pytest-dev__pytest-8399.verified_full_pi stopped successfully.
+2026-11-02 01:57:35,499 - INFO - Attempting to remove container sweb.eval.pytest-dev__pytest-8399.verified_full_pi...
+2026-11-02 01:57:35,557 - INFO - Container sweb.eval.pytest-dev__pytest-8399.verified_full_pi removed successfully.
