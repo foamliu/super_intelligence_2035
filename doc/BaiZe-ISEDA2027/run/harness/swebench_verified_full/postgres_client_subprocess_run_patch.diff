@@ -1,0 +1,37 @@
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index abc123..def456 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -1,4 +1,5 @@
+ import os
++import subprocess
+ from django.db.backends.base.client import BaseDatabaseClient
+ 
+ 
+@@ -12,20 +13,14 @@ class DatabaseClient(BaseDatabaseClient):
+         args = [self.executable_name]
+         if db:
+             args += ["--dbname", db]
++        options = []
+         if user:
+-            args += ["--username", user]
++            options += ["--username", user]
+         if passwd:
+             args += ["--no-password"]
+         if host:
+-            args += ["--host", host]
++            options += ["--host", host]
+         if port:
+-            args += ["--port", str(port)]
+-        if passwd:
+-            os.environ['PGPASSWORD'] = passwd
+-        try:
+-            return subprocess.call(args)
+-        finally:
+-            if passwd:
+-                del os.environ['PGPASSWORD']
++            options += ["--port", str(port)]
++        env = os.environ.copy()
++        if passwd:
++            env["PGPASSWORD"] = passwd
++        return subprocess.run(args + options, env=env).returncode
