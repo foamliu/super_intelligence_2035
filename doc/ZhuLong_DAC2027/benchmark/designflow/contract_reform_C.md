@@ -243,3 +243,57 @@ FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强�
 **R2-readiness 结论**：6 OPT 全部 R2-READY——解冻后可直接为每条加 `check_live(sess)`：在 .75 跑真工具（calibredrv/skipper/rules_syntax_checker）交叉验证 mock 输出一致性（≤3 条/轮，§4 预算）。无 BLOCKED。
 
 **冻结纪律**：本轮 0 改动 reference/*/check.py、0 改动 cases/*.json、0 改 EDA-Flow-Bench 仓库；仅更新 designflow/live_eval_review_C.tsv（evidence 列，§1.1 明确允许）+ 本文件 + MEMORY。
+
+### R2 设计草案（r1230 · 冻结窗口只读 prep · 解冻后 ≤2 轮可执行）
+
+**背景**：r1229 R2-prep 已证 4 真二进制 PRESENT+FUNCTIONAL on .75。本节把「6 OPT 全 R2-ready」落到**逐条可执行设计**：每条给出 check_live 的 (a) .75 真工具命令 (b) 交叉验证对象 (c) 断言 (d) live-neg (e) 风险/降级。解冻后照此执行，无需再设计。
+
+**判分契约约束（§3）**：原 `check` → `_check_static_impl` 一字不动；`check_static` 包 try/except 收口三元组；`check_live(sess)` 经 eda_flow 在 .75 真跑；`judge_layers` 追加 `L2.live`；JSON `test` 字段与 check.py sha 同步；≥1 live-neg（静态全过、实跑产物错）。
+
+---
+
+#### R2.1 批次（解冻首轮 · 3 条 · calibredrv + rules_checker 家族 · 低风险）
+
+**1. DummyDeck-001**（calibredrv_mock · `CALIBREDRV_BIN` env 可换真二进制）
+- .75 命令：`calibredrv -a layout peek <gds_B> -layers` + 同 gds_A；版本 v2020.1_36.18（= mock 校准版本）。
+- 交叉验证：mock `calibredrv_mock.py <gds_B> -layers` 的 LAYER/DATATYPE 集合 == 真工具输出。r1229 已在 tiny.gds 证逐字一致，本条扩到 case 真实 hidden-B/A。
+- check_live 断言（≥2 独立可 FAIL）：① 真 calibredrv 在 gds_B 上 layer 集合 == mock 解析（逐 layer/datatype 对）② 同断言在 gds_A 上成立 ③ 真 calibredrv 退出码 0（GDS 合法）。
+- live-neg：喂一个 LAYER record 故意错位（layer 号改坏）的 GDS → 真工具与 mock 必须都报不同 layer 集；候选若伪造 layer 数据 → 静态过但 check_live 抓到真工具 layer 集不符。
+- 风险：低。env-swap 机制已就绪，r1229 cross-val 已通。
+
+**2. PowerFill-001**（calibredrv_mock · 同 env-swap · 13 静态断言含 cross-input guard cond m）
+- .75 命令：`calibredrv -a layout peek <gds_B> -topcell -cellcount -bbox -units -precision -format -layers` + 同 gds_A。
+- 交叉验证：真工具 topcell/cellcount/bbox/units/precision/format/layers == mock 解析 == check.py 内 GT_B/GT_A（三者一致 ⇒ mock 保真 ⇒ 静态 GT 硬证据）。
+- check_live 断言：① 真 calibredrv gds_B topcell==testa_opt1 / cellcount==31 / bbox==GT_B ② 同 gds_A topcell==testa_via1 / cellcount==29 ③ filesize(真工具报)==GT_B 243712。
+- live-neg：候选 pf_audit.py 喂 GT_B 硬编码值但真工具跑 gds_B 报不同 cellcount → check_live FAIL（静态 cond d/e 过、live 抓）。
+- 风险：低。
+
+**3. DummyQA-001**（rules_syntax_checker_mock · check.py cond h 已有真工具基建！）
+- 现状：check.py L95-130 `_resolve_rc()` 优先真 `/apps/mentor/.../rules_syntax_checker`，fallback mock；cond h 断言「真 rules_syntax_checker 对 b_syntax_good=exit0 / b_syntax_bad=exit≠0」。eval host 无真二进制 ⇒ cond h 跑 mock（自测 mock）；.75 有真二进制 ⇒ cond h 跑真工具。
+- check_live 升级：在 .75 显式 RC=真路径，跑 cond h 的真工具路径，断言 ① b_syntax_good 真 exit0 ② b_syntax_bad 真 exit≠0 ③ mock exit == 真 exit（3 个 hidden deck 逐个比对）。
+- live-neg：mock 对某 deck 误判 exit0（应 exit1）→ check_live 真工具 exit1 抓到 mock 保真度破裂。
+- 风险：最低（基建已在 check.py，check_live 仅「在 .75 强制走真二进制」）。
+
+---
+
+#### R2.2 批次（解冻次轮 · 3 条 · skipper 家族 · PROBE-THEN-DECIDE）
+
+**关键不确定**：r1229 只确认 skipper 二进制 **PRESENT**（`/apps/empyrean/tools/skipper/bin/skipper`），**未确认 headless/batch 模式可跑**（skipper 是 GUI 应用）。mock 是用 tclsh8.6 + 合成 db* procs 驱动候选 Tcl，并非直接调真 skipper。⇒ R2.2 首步必须探真 skipper 是否有 batch CLI（如 `skipper -b <tcl> <gds>` 或 `skipper -noterm` 之类）能 dbImport+dbLibSummary 并打印结果。
+
+**4-6. DummyMeas-001 / GDSBump2-001 / PGLayout-001**（skipper_mock · db* API）
+- 探针（解冻后 R2.2 第一步，≤5 min）：.75 跑 `skipper --help` / `skipper -noterm dummy.tcl LTM.gds` 看是否非 GUI 跑通 + 产出 dbLibSummary 文本。
+  - **若 headless 可跑** → check_live：真 skipper dbImport gds_B + dbLibSummary/dbLibLayers/dbCellGetBBox 输出 == mock 解析（topcell/cell count/layer 表/bbox）。
+    - live-neg：mock layer 表少一层 → 真工具报全 layer → check_live FAIL。
+    - 风险：中（真 skipper db* 语义 vs mock 合成 procs 可能有细节差，需逐 proc 比对；GDSBump2 涉及 dbLayerMove 写回 + dbLibExport，真工具 round-trip 与 mock 导出字节比对）。
+  - **若 GUI-only 不可 headless** → 降级结论：记 `BLOCKED: skipper GUI-no-headless-mode`（铁律 2 infra，不写能力结论），3 条 OPT **收口为「mock sufficient」**：Q1=faithful（mock GDSII parser 经 calibredrv 交叉验证语义保真，r1229 已证 LAYER/DATATYPE record 解析与真工具一致）+ Q2=not-fooled（cross-input guard + 独立 re-parse）⇒ 静态判分已足够，保持 `[L0,L1]`，不加 check_live，不改判分。此为 OPT verdict 的合法收口路径（§2 OPT 行「做不了写清缺什么」）。
+
+---
+
+#### 收口判定（解冻后 2 轮内必达）
+
+- **R2.1 3 条**（calibredrv×2 + rules_checker×1）：解冻即做，预期全 PASS → 3 条升 `L2.live`，`judge_layers=[L0,L1,L2.live]`，§5 七项全勾。
+- **R2.2 3 条**（skipper×3）：探针决断 —— headless 可跑则升 L2.live；GUI-only 则 OPT 收口 mock-sufficient（不加层、不改判分）。
+- **最坏情况**：6 OPT 中 3 条升 L2.live + 3 条收口 mock-sufficient（BLOCKED:skipper-GUI）。无论哪种，6 OPT 全部「有结论」⇒ LIVE 收口条件满足（§8 收口「OPT 有结论」）。
+- **报 zhulong**：若有 N 条升 L2.live ⇒ A 汇总通报「Lite-500 C 侧 N 条判分层变更 [L0,L1]→[L0,L1,L2.live]」，是否重跑由 zhulong 定（§6.6）。
+
+**冻结纪律**：本节为只读设计草案，0 改 check.py / cases/*.json / EDA-Flow-Bench 仓库。解冻凭据 = `run/MEMORY_ZHULONG.md` 首行 r3' 收口（§1.1）。
