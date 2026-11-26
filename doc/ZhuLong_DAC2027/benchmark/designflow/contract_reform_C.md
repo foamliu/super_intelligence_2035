@@ -297,3 +297,61 @@ FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强�
 - **报 zhulong**：若有 N 条升 L2.live ⇒ A 汇总通报「Lite-500 C 侧 N 条判分层变更 [L0,L1]→[L0,L1,L2.live]」，是否重跑由 zhulong 定（§6.6）。
 
 **冻结纪律**：本节为只读设计草案，0 改 check.py / cases/*.json / EDA-Flow-Bench 仓库。解冻凭据 = `run/MEMORY_ZHULONG.md` 首行 r3' 收口（§1.1）。
+
+---
+
+### R2-prep 交叉验证实证（r1231 · 冻结窗口只读 .75 探针 · 2026-11-26）
+
+> 冻结窗口仍活（zhulong r3' PID1498010 进行中，283/500=56.6% · ETA~00:08 Nov-27，`run/MEMORY_ZHULONG.md` 首行未收口）。本轮纯只读 .75 探针（r1229 先例，§1.1 允许），0 改 check.py/cases/*.json/EDA-Flow-Bench 仓库。目的：把 6 OPT 的 Q1/Q2 从「自述/r1229 工具可达」推进到「逐 mock 实证保真」，解冻后 R2 改造零惊喜。
+
+#### A. DummyQA-001 · rules_syntax_checker_mock vs 真 rules_syntax_checker v2020.1_36.18（实证 Q1=yes）
+
+- **方法**：eda_flow open_session(hfhds201) → 写 9 个 SVRF deck（5 visible + 4 hidden-B）→ 真二进制 `/apps/mentor/calibre/2020.1_36/aoi_cal_2020.1_36.18/bin/rules_syntax_checker` 逐 deck 跑，记 exit code；与本地 mock 逐 deck 比。
+- **结果（9/9 deck）**：
+
+  | deck | mock rc | real rc | 一致 |
+  |:--|--:|--:|:--:|
+  | good_syntax | 0 | 0 | ✅ |
+  | bad_syntax | 1 | 1 | ✅ |
+  | good_layer | 0 | 0 | ✅ |
+  | bad_layer（visible）| 0 | **1** | ❌ |
+  | many_switches | 0 | 0 | ✅ |
+  | hidden/b_syntax_good | 0 | 0 | ✅ |
+  | hidden/b_syntax_bad | 1 | 1 | ✅ |
+  | hidden/b_layer_good | 0 | 0 | ✅ |
+  | hidden/b_layer_bad | 0 | 0 | ✅ |
+
+- **bad_layer（visible）分歧分析 = 不影响判分**：真工具把 6 类 layer-map 冲突中的部分当 syntax error（rc=1），mock 只查 statement-keyword whitelist（rc=0）。但 check.py 的 layer 检查走 **纯 Python** `parse_layers`+`detect`（候选 harness `check_layer`，**不调 rules_syntax_checker**），assertion (g) 断言 6 conflicts/3 types 由纯 Python 出；真工具重跑 cond (h) **只覆盖 syntax deck**（sg/sb），不碰 layer deck。且 check.py 用的是 **hidden-B** layer deck（b_layer_bad mock==real rc=0），visible bad_layer 根本不进工具调用。⇒ 分歧落在 check.py 不经工具走的 deck 上，0 判分影响。
+- **check.py 已优先真二进制**：`_resolve_rc()` 默认路径 = `/apps/mentor/.../rules_syntax_checker`（与 .75 实测路径逐字一致），mock 仅 eval-host(36.15 无 Calibre) fallback。⇒ .75 上 check.py 本就跑真工具，mock 只静态层兜底。
+- **结论**：Q1=yes（实证，9 deck 中 8 一致 + 1 分歧不影响判分）· Q2=not-fooled（cond h 独立真工具重跑 + layer 纯 Python 检测需真实冲突逻辑）。**R2.1 DummyQA 风险 = 最低（已实证）**，解冻即升 L2.live。
+
+#### B. 3 skipper OPT（DummyMeas/GDSBump2/PGLayout）· 真 skipper v2020.06.sp3 headless 探针（PROBE-THEN-DECIDE 已决断）
+
+- **r1229 遗留不确定**：「skipper 是 GUI 应用，未确认 headless/batch 可跑」。本轮探针回答：**不是 GUI-only**。
+- **实证**（hfhds201 / .75）：
+  1. `skipper -noterm <script.tcl>` headless 跑通（`-help` 自身即 headless 执行，加载 load_procs.tcl/alias.tcl/procs_ski.tcl/gui_ext.tcl，RC=0）。
+  2. License checkout OK：`SKI_EDITOR` + `SKI_VIEWER` 均成功。
+  3. `info commands db*` = **206 个 db* 命令**，含 mock 仿真的**全部** API：dbImport / dbLibLayers / dbLibTopCell / dbLibGetAllCells / dbCellGetByName / dbCellGetBBox / dbFigQuery / dbFigGet / dbLayerMove / dbLibExport / dbLibGetId / dbLibGetName（候选 gds_bump2.tcl 用的都在）。
+  4. 版本 v2020.06.sp3（Built Jul 19 2021）= skipper_mock 注释「r1087 calibrated vs real skipper 2020.06.sp3」同版本。
+- **dbImport GDS 兼容性 = 唯一待解冻验证项**：
+  - 合成 mini `mos_a.gds`（PGLayout A-set，306B）→ 真 skipper `Load failed: Boundary`（坐标退化：<4 distinct 点）；mock 接受。⇒ **Q1 nuance：skipper_mock 比 真 skipper 对 GDS 几何更宽松**。
+  - 手搓 `clean.gds`（正确 record 含 flag byte）→ `Unknown data format, abort loading`（skipper 格式自检比 mock 严）。
+  - **决定性验证（解冻后 R2.2 首步）**：真 skipper dbImport 是否接受 **hidden-B GDS**（GDSBump2 hidden_B.gds/hidden_B2.gds · PGLayout mos_b.gds/res_b.gds · DummyMeas LTM.gds）。本轮 hidden-B GDS 体积大未传 .75；解冻后 ≤5 min 可定。
+- **R2.2 决断更新**（取代旧「PROBE-THEN-DECIDE: GUI?」）：
+  - **GUI-only 分支已排除**（headless+API+license 全证）。
+  - **若 hidden-B GDS 真 skipper dbImport 通过** → 3 条升 L2.live（check_live：真 skipper dbImport gds_B + dbLibLayers/dbLibTopCell/dbCellGetBBox == mock 解析；live-neg：mock 漏层→真工具报全层→FAIL）。
+  - **若 hidden-B GDS dbImport 不通过**（GDS 格式不兼容）→ 3 条收口 **mock-sufficient**，记 `BLOCKED: skipper-GDS-compat`（infra，铁律 2，不写能力结论），保持 `[L0,L1]`。Q1 nuance（mock 比 real 宽松）写进 tsv evidence。
+  - 最坏 3 条 mock-sufficient + 3 条（R2.1）升 L2.live = 6 OPT 全「有结论」⇒ LIVE 收口条件满足。
+
+#### C. 6 OPT 实证状态汇总（r1231 后）
+
+| OPT case | mock | 真工具实证 | Q1 | Q2 | R2 路径 |
+|:--|:--|:--|:--|:--|:--|
+| DummyDeck-001 | calibredrv_mock | r1229 cross-val ✅ | yes(实证) | not-fooled | R2.1 升 L2.live |
+| PowerFill-001 | calibredrv_mock | r1229 cross-val ✅ | yes(实证) | not-fooled | R2.1 升 L2.live |
+| DummyQA-001 | rules_syntax_checker_mock | **r1231 9-deck 实证 ✅** | yes(实证) | not-fooled | R2.1 升 L2.live（最低风险） |
+| DummyMeas-001 | skipper_mock | r1231 headless+API ✅ / GDS-compat 待验 | yes(待 hidden-B 验) | not-fooled | R2.2 决于 GDS-compat |
+| GDSBump2-001 | skipper_mock | r1231 headless+API ✅ / GDS-compat 待验 | yes(待 hidden-B 验) | not-fooled | R2.2 决于 GDS-compat |
+| PGLayout-001 | skipper_mock | r1231 headless+API ✅ / GDS-compat 待验 | yes(待 hidden-B 验) | not-fooled | R2.2 决于 GDS-compat |
+
+**冻结纪律**：本轮 0 改 check.py/cases/*.json/EDA-Flow-Bench 仓库；仅更新 contract_reform_C.md + live_eval_review_C.tsv evidence + 本 MEMORY。解冻凭据 = `run/MEMORY_ZHULONG.md` 首行 r3' 收口。
