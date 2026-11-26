@@ -468,3 +468,70 @@ def check_live(sess):
   - ⑦ L5 不退化：hidden-B 由 check_live 从本地 workdir/hidden 读取并 upload_text 到 sess.workdir（不进 SUT 沙箱）；`check_live` 不读 `reference/`；SKIP_RUN deploy 自检 workdir clean（无 check.py/reference/hidden 泄漏）。
 - **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
 - **心跳**：`LIVE: B review=126/126 · REQ=40(done 7) · OPT=8(done 0) · NA=76 · L2.live 6→7`。
+
+---
+
+## R1 再复核（2026-11-27 r1301 · 3 条 Type A→B 误判修正 · 只读）
+
+> 本轮为 R2 改造的前置再复核。在准备对剩余 33 条 Type A 逐条改造时，深读 3 条候选 check.py
+> 的候选调用签名，发现 r1291 的 Type A 清单误把这 3 条（候选**不 author** deck）归入 Type A。
+> 按 §2.1 规则 3（旧结论必须复验，冲突以本轮落盘证据为准）+ r1290/r1291 Type B→OPT 先例
+> （CTLESpec/NetlistLintHsp/PostsimPortAudit/PostsimToggleDiag/SimExpl/RcurrDirClassify）降级。
+> **只读**：仅改 `live_eval_review_B.tsv` verdict/reason/evidence 列 + 本节，🚫 未碰
+> `reference/*/check.py` / `cases/*.json`（无 judge_layers 变更 ⇒ 无 `live_eval_changes.tsv` 登记）。
+
+### 判据（Type A vs Type B，r1291 自己的口径）
+
+> r1291 方法：「`subprocess.run([sys.executable, <cand>, ...])` 的参数 —— 传 spec+cell/netlist+params
+> （候选**自建** deck → Type A）vs 传 tb/deck/netlist 文件路径（候选**跑给定** deck → Type B）」。
+
+3 条的候选调用都传**文件路径**（tb / netlist / tr0），不是 spec+cell/params ⇒ 按该口径即 Type B。
+Type B ⇒ 候选不 author deck ⇒ Q2「shape-right-physics-wrong deck 会判过」**不成立** ⇒ 非 REQ ⇒ OPT。
+
+### 降级 1：Tr0TrTfMeas-001（hspice-mock · 候选=纯 tr0 解析器）REQ→OPT
+
+- **候选调用**：`_run_tool(tool, tr0_path, rep)` → `python3 tr0_trtf_meas.py <tr0_path> <rep>`（check.py L311-314）。
+  候选收 **tr0 文件路径**，解析波形测 tr/tf，**不 author deck、不 run hspice**。
+- **deck 归属**：`_DECK_B_SRC`（check.py L61）**内嵌于 check.py，judge 拥有**；JUDGE 跑 hspice(mock)→tr0_B；候选只解析 tr0_B。
+- **ref 证实**：`tr0_trtf_meas_ref.py` 的 `main(tr0_path, report_path)` = 纯解析器（parse_tr0 + crossings + measure_signal）。
+- **Q2 N/A**：候选不 author deck（无注入 garbage physics 入口）；不能 hardcode GT_B（SUT 瞎；cond k cross-input 在 tr0_A 上 rerun 期望 GT_A；cond l 插值守卫）。
+- **Q1 保真**：`_TR0_B_PREGEN` 注释明示「Captured on .75 (hfhds201) via hspice deck_B.sp -o lis_B on 2026-11-25，byte-verified to GT_B」；mock 逐字写回。
+- **judge 有牙**：cond k/l cross-input + cond m 单位/合理性 + cond n 确定性。
+- **r1291 误判根因**：r1291 Type A 清单按「hspice-mock 家族」批量归 Type A，未核候选调用签名（候选收 tr0 路径 = Type B，按 r1291 自己的口径）。
+- **verdict**：LIVE-REQ → **LIVE-OPT**（mock==real 对 judge-owned 嵌入 deck；候选纯解析器无工具调用；真跑增益边际）。
+
+### 降级 2：CTLEAC-001（finesim-mock · 候选=跑给定 tb 的 spec 自检器）REQ→OPT
+
+- **候选调用**：`subprocess.run([cand, tb_ctle_ac_B.sp, spec_B.json, report])`（check.py L414）。
+  候选收 **judge-built tb 文件路径**，跑 finesim + 解析 + spec 自检，**不 author tb**。
+- **tb 归属**：`_stage_hidden` L354 `open("tb_ctle_ac_B.sp","w").write(_tb_b_template(ndec))` —— **judge 从模板构建**，候选只读。
+- **Q2 N/A**：候选不 author tb（无注入 garbage physics 入口）；不能 hardcode GT（SUT 瞎；judge `_ground_truth` 独立跑 finesim on gt_tb.sp 算 GT_B；multi-ndec rerun cond 强制真跑+解析）。
+- **Q1 保真**：`_GT_B`/`_GT` 注释明示 .75-captured；mock 按 tb 签名回放。
+- **judge 有牙**：multi-ndec 重跑 + judge 独立 GT 比对。
+- **r1291 误判根因**：r1291 把 finesim-mock 家族（CTLEAC/FineSimModelScopeFix/NoRefCktFix/WorkflowRunner）全归 Type A；但 CTLEAC 候选收 **provided tb**（非 fix 任务里候选改写 broken deck）。FineSimModelScopeFix/NoRefCktFix/WorkflowRunner 是「fix」语义（候选 author fixed deck）= 真 Type A；CTLEAC 是「check provided tb」= Type B。r1291 未区分。
+- **verdict**：LIVE-REQ → **LIVE-OPT**（同 CTLESpec r1290 模式：mock==real 对 judge-built tb；真跑增益边际）。
+
+### 降级 3：OpampChar-001（hspice-mock · 候选=跑给定完整 netlist 的 .measure 提取器）REQ→OPT
+
+- **候选调用**：`_run_candidate(py_path, netlist, simdir)` → `subprocess.run([sys.executable, py_path, netlist, simdir])`（check.py L278-281）。
+  候选收 **完整 netlist 文件路径**（含 `.subckt OPAMP` + `.ac dec 200 1 100meg` + 7 条 `.measure ac`，prompt 明示），跑 hspice + 解析 .ma0，**不 author deck/.measure/stimulus**。
+- **netlist 归属**：hidden B netlist 由 judge 提供（完整 deck，prompt 确认）；候选只跑+解析。
+- **Q2 N/A**：候选不 author deck（netlist 提供完整，无注入 garbage physics 入口）；不能 hardcode GT（SUT 瞎；judge `_hspice_gt(netlist)` L252 独立跑 hspice 算 GT 比对候选 report）。
+- **Q1 保真**：`_GT_MA0` 注释明示「captured from real HSPICE V-2023.12-SP1-1 on .75」；mock 逐字回放 .ma0。
+- **judge 有牙**：judge 独立 `_hspice_gt` 比对 + 跨输入（A 可见/B 隐藏，值不同）。
+- **r1291 误判根因**：r1291 见 `_run_candidate(py, netlist, simdir)` 误以为候选从 netlist 自建 deck；实为候选跑**提供的完整** netlist（含 .measure），按 r1291 口径 = Type B。
+- **verdict**：LIVE-REQ → **LIVE-OPT**（mock==real 对 provided 完整 netlist；真跑增益边际）。
+
+### 与 r1291 的差异
+
+| 项 | r1291 | r1301 | 依据 |
+|:--|:--|:--|:--|
+| REQ 合计 | 40 | **37** | 3 条 Type B 误判修正（Tr0TrTfMeas/CTLEAC/OpampChar） |
+| OPT 合计 | 8 | **11** | +3 降级 |
+| Type A/B 区分 | 41 A / 5 B | **38 A / 8 B** | r1291 未逐条核候选调用签名，3 条收文件路径的误归 A |
+
+### 待办（R2 续）
+
+- 真 Type A 剩 **30 条**待改造（38 − 7 done − 1 DffSetupHoldChar(done) = 30；按 hspice-mock 家族优先 ≤6-8/轮）。
+- 3 条降级**不动 judge_layers**（仍 [L0,L1]）⇒ 无 `live_eval_changes.tsv` 登记（OPT 不加 L2.live）。
+- 心跳：`LIVE: B review=126/126 · REQ=37(done 7) · OPT=11(done 0) · NA=76 · L2.live 7→7`。
