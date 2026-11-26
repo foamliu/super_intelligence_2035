@@ -447,3 +447,44 @@ eda_flow open_session(hfhds201) → 4 个 hidden-B GDS 经 `echo <b64> | base64 
 **与旧 P4 差异**：旧 P4 判 DummyQA=T2（mock 桩，待审）。本轮重判：mock 保真度经 .75 真工具 5-deck 交叉验证确认（Q1=yes 实证），但静态 cond (h) 在 eval host 用 mock、.75 用真工具——升 L2.live 后 check_live 显式强制 .75 真工具 + mock 保真度断言 + 2 个 live-only 隐藏 deck 抓硬编。 verdict 从 OPT 升 REQ（实跑改造已交付）。
 
 **登记**：`live_eval_changes.tsv` 追加 1 行（jl_before=[L0,L1] → jl_after=[L0,L1,L2.live]）。
+
+### R2.1 落盘 · DummyDeck-001 升 L2.live（r1235 · 2026-11-26）
+
+**轮(r1235)** LIVE R2.1 第 2 条：DummyDeck-001（calibredrv_mock 家族）从 OPT 升 REQ。冻结已解除（2026-11-26 20:5x 用户裁定），本条紧接 r1234 DummyQA 之后交付。
+
+**非侵入包装**（CONTRACT_REFORM_GUIDE §3）：原 `check` → `_check_static_impl`（14 条静态断言 (a)-(n) 一字不动）+ `check_static` try/except 收口三元组 + `check_live(deliverable, workdir, sess)` 新增 7 条独立实跑断言 + `check` 兼容包装。
+
+**check_live 7 条独立断言**（每条可独立 FAIL）：
+- (live_1) 真 calibredrv 在 QA_B.gds 上 exit 0（GDS stream 合法）
+- (live_2) 真 calibredrv 在 QA_A.gds 上 exit 0
+- (live_3) QA_B 上真工具 layer 集 == mock 解析（逐 layer/datatype 对，mock 保真度）
+- (live_4) QA_A 上真工具 layer 集 == mock 解析（mock 保真度）
+- (live_5) 候选用真 calibredrv 在 B 上 exit 0 + report_B.json 产出
+- (live_6) 候选 report_B gds_layers == 真工具在 QA_B 的 layer 集（候选真驱动了工具，未伪造）
+- (live_7) 候选在 A 上用真 calibredrv：report_A gds_layers == 真工具在 QA_A 的 layer 集（抓 hard-code-B：A 真 4 layers {10,11,12,20} ≠ B 7 layers {40,41,42,50,55,60,70}）
+
+**关键设计**：静态 cond (k) 只交叉校验 B 的 gds_layers（候选 gds_layers vs mock-on-QA-B），cond (m) cross-input guard 只查 generated/failed/verdict **不查 A 的 gds_layers**。⇒ 一个把 gds_layers 报表字段硬编为 B 集合（fillzone 逻辑仍用真工具输出保持正确）的候选能骗过静态全 14 条，但在 A 上 report_A.gds_layers = B 的 7 层 ≠ 真工具 A 的 4 层 → check_live (live_7) 抓到。这是静态层缺、L2.live 层补的独立牙。
+
+**.75 实证**（hfhds201 / 真 Mentor calibredrv v2020.1_36.18）：
+- GDS 传输 md5 双侧一致：QA_A=e0eb8b64e0180afa40e18bf75668f14a / QA_B=c20677c84206809b7301d461045fb3e9（36.15 origin == .75 transferred）。
+- 真 calibredrv `peek -layers`：QA_A → `{10 0} {11 0} {12 0} {20 0}` (rc=0)；QA_B → `{40 0} {41 0} {42 0} {50 0} {55 5} {60 3} {70 0}` (rc=0)。
+- mock 同 GDS 输出**逐字一致**（real == mock per pair，4/4 + 7/7）⇒ Q1=yes 实证（r1229 tiny.gds 跨验证扩展到真 case GDS）。
+
+**live-neg** `negative/live_hardcode_b_layers.py`（ref 一字改：diagnose() 后 override `rep["gds_layers"]` 为 B 硬编集，fillzone 逻辑仍用真工具输出）：
+- 静态：B 上 gds_layers=B 集==mock-on-QA-B → cond (k) PASS；A 上 cond (m) 不查 gds_layers、fillzone 用真工具 A 输出 → verdict 正确 → 全 14 条 PASS（negative_selftest 验证 rc=0）。
+- 实跑：A 上 report_A.gds_layers = B 硬编 7 层 ≠ 真工具 A 4 层 → (live_7) FAIL（negative_selftest A-run 验证 gotA=[(40,0),...,(70,0)] ≠ realA=[(10,0),(11,0),(12,0),(20,0)]）。
+
+**§5 验收全勾**：
+- ① .75 真跑 ref check_live PASS（7/7 live conds，hostname=hfhds201，real exit 0/0，real==mock）✓
+- ② ≥3 neg 全 FAIL distinct + 1 live-neg（5 naive 静态 FAIL distinct first-fail + 1 live-neg 静态 PASS / live_7 实跑 FAIL）✓
+- ③ 确定性：真 calibredrv 同 GDS 同输出（md5-verified GDS）；静态 cond (l) 3-seed 重跑 ✓
+- ④ SKIP_RUN=1 部署 OK（workdir clean, 无 leak）；check_static(refzip) PASS（14/14）✓
+- ⑤ judge_layers / test 字段 / check.py sha 三方同步（7ba60bccbfe61c7e）✓
+- ⑥ 断言 14→14+7=21（只增不减），阈值不放宽，条件不删 ✓
+- ⑦ L5 不退化：hidden-B 不外泄（check_live 从判分 workdir 读 hidden/ + asset_a/，不上传到 SUT 沙箱）；check_live 读 submit.zip + mock（判分基建）；沙箱不含 .jsonl/test 字段 ✓
+
+**并发落盘说明**：check.py 在 0390ef4eb（并发 shard A loop 拾取工作树 check.py 自动提交）落盘，本 shard C commit 0a4e984f5 补 case JSON judge_layers+test sha 同步 + live-neg + negative_selftest 登记。两 commit 合计完成 DummyDeck-001 L2.live 改造。
+
+**登记**：`live_eval_changes.tsv` 追加 1 行（jl_before=[L0,L1] → jl_after=[L0,L1,L2.live]，repo_commit=0a4e984f5）。
+
+**R2.1 进度**：2/3（DummyQA r1234 + DummyDeck r1235 done；剩 PowerFill-001）。R2 剩余 4 OPT（1 calibredrv PowerFill + 3 skipper）。
