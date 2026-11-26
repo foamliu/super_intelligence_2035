@@ -1,5 +1,17 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> ## 🔴 2026-11-26 20:5x 用户裁定 · **designflow 为主、本线评测为辅 · 不设等待** · 覆盖前令中一切「等 designflow 收敛再跑」的表述
+>
+> **用户原话**：「designflow 等待 zhulong 评测是不对的，我的本意就是以 designflow 为主，zhulong 评测为辅，目标是随着 designflow 对于 lite-500 的修复逐渐收敛，评测结果会稳定下来。从来没说过要等。」
+>
+> **含义（本线只需做三件事）**
+> 1. **不等**：designflow 随时可能改 `check.py`/`cases`。🚫 不要因为「怕它改」而延迟起跑，也🚫 不要要求 designflow 等本线跑完。
+> 2. **记 `repo_commit`**：每轮 run **起跑时**记录 EDA-Flow-Bench 的 `git rev-parse HEAD`（写进 status 目录旁的一行 `repo_commit=<sha>` 与 MEMORY 心跳），这是事后判「同口径」的唯一凭据。
+> 3. **跨改动的 run 标 `MIXED`**：若本轮 run 期间 `designflow/live_eval_changes.tsv` 新增了行（或 `repo_commit` 在 run 中途变了）⇒ 该轮结果**标 `MIXED`，不进 3-run mean±std**，下一轮重跑即自动收敛。🚫 不许把 `MIXED` 轮当干净轮入账，🚫 也不许为了「避免 MIXED」而停跑。
+>
+> **口径**：其余全不变（500 cases / workers / maxTokens / 不拼接 / 不 `--skip-done` / 不动题与判分 / 不改论文宏）。3-run 统计只取 `CLEAN` 轮，这是「随着 designflow 收敛、结果稳定」的落地方式。
+
+
 > 🔴 **2026-11-25 用户令（最新）— 当前 r1 重跑#3 完成后，整组 doubao-pro 3-run 重跑一遍 · 最高优先 · 覆盖 standby**
 
 > **用户原话**：「今晚 doubao-pro 3-run 跑完后，重新跑一遍。理由：designflow 在持续做框架重构和 Case 修复」
