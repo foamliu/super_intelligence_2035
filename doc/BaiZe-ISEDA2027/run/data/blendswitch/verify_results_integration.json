@@ -1,56 +1,224 @@
 {
-  "test_file": "tests/test_blend_hot_switch_integration.py",
+  "test_file": "test_blend_hot_switch_integration.py",
   "environment": {
     "python": "/nas_train/app.e0031982/miniforge3/envs/py310/bin/python",
-    "numpy": "1.26.4",
-    "machine": "10.239.2.12 (whag0pgpuap12)",
-    "date": "2026-11-26 (re-verified; import fix 27d6c18)",
-    "repo": "/nas_train/app.e0031982/code/Megatron-LM-blendswitch",
-    "branch": "blend-hot-switch",
-    "commit": "27d6c18",
-    "base_commit": "14c215d"
+    "numpy": "2.2.6",
+    "machine": "whag0pgpuap12",
+    "date": "2026-11-26",
+    "megatron_available": true
   },
   "results": {
     "test_zero_overlap": {
-      "status": "PASS",
-      "total_overlap": 0,
-      "s1_weights": [0.74, 0.19, 0.07],
-      "s2_weights": [0.40, 0.40, 0.20],
-      "s1_consumed": 35000,
-      "s2_consumed": 50000,
-      "per_source": [
-        {"source": 0, "s1_docs": 25900, "s2_docs": 20000, "overlap": 0},
-        {"source": 1, "s1_docs": 6650, "s2_docs": 20000, "overlap": 0},
-        {"source": 2, "s1_docs": 2450, "s2_docs": 10000, "overlap": 0}
-      ]
+      "per_source": {
+        "0": {
+          "source_key": "en_v1_4",
+          "s1_docs": 32500,
+          "s2_docs": 26119,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 32500,
+          "s1_source_idx": 0
+        },
+        "1": {
+          "source_key": "ufw_l1_en_hq",
+          "s1_docs": 2500,
+          "s2_docs": 2239,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 2500,
+          "s1_source_idx": 1
+        },
+        "2": {
+          "source_key": "ufw_zh",
+          "s1_docs": 2000,
+          "s2_docs": 1493,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 2000,
+          "s1_source_idx": 2
+        },
+        "3": {
+          "source_key": "math_l1",
+          "s1_docs": 2500,
+          "s2_docs": 1866,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 2500,
+          "s1_source_idx": 3
+        },
+        "4": {
+          "source_key": "math_l3",
+          "s1_docs": 1000,
+          "s2_docs": 1119,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 1000,
+          "s1_source_idx": 4
+        },
+        "5": {
+          "source_key": "code_l2",
+          "s1_docs": 7500,
+          "s2_docs": 13433,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 7500,
+          "s1_source_idx": 5
+        },
+        "6": {
+          "source_key": "code_l3",
+          "s1_docs": 2000,
+          "s2_docs": 3731,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 2000,
+          "s1_source_idx": 6
+        }
+      },
+      "total_s1_docs": 50000,
+      "total_s2_docs": 50000,
+      "total_overlap_docs": 0,
+      "overlap_rate": 0.0,
+      "epoch_wrap_warnings": []
     },
     "test_ratio_compliance": {
-      "status": "PASS",
-      "target_weights": [0.40, 0.40, 0.20],
-      "actual_ratios": [0.4, 0.4, 0.2],
-      "max_deviation_pp": 0.0000,
-      "threshold_pp": 1.0,
-      "num_batches": 5000,
-      "micro_batch_size": 4
+      "num_samples_analyzed": 20000,
+      "per_source": {
+        "0": {
+          "source_key": "en_v1_4",
+          "count": 10448,
+          "actual_ratio": 0.5224,
+          "target_ratio": 0.5223880597014924,
+          "deviation_pct": 0.0011940298507595593
+        },
+        "1": {
+          "source_key": "ufw_l1_en_hq",
+          "count": 896,
+          "actual_ratio": 0.0448,
+          "target_ratio": 0.044776119402985065,
+          "deviation_pct": 0.0023880597014934446
+        },
+        "2": {
+          "source_key": "ufw_zh",
+          "count": 597,
+          "actual_ratio": 0.02985,
+          "target_ratio": 0.02985074626865671,
+          "deviation_pct": 7.462686567073773e-05
+        },
+        "3": {
+          "source_key": "math_l1",
+          "count": 746,
+          "actual_ratio": 0.0373,
+          "target_ratio": 0.03731343283582089,
+          "deviation_pct": 0.0013432835820892386
+        },
+        "4": {
+          "source_key": "math_l3",
+          "count": 448,
+          "actual_ratio": 0.0224,
+          "target_ratio": 0.022388059701492533,
+          "deviation_pct": 0.0011940298507467223
+        },
+        "5": {
+          "source_key": "code_l2",
+          "count": 5373,
+          "actual_ratio": 0.26865,
+          "target_ratio": 0.2686567164179104,
+          "deviation_pct": 0.0006716417910390682
+        },
+        "6": {
+          "source_key": "code_l3",
+          "count": 1492,
+          "actual_ratio": 0.0746,
+          "target_ratio": 0.07462686567164178,
+          "deviation_pct": 0.002686567164178477
+        }
+      },
+      "max_deviation_pct": 0.002686567164178477,
+      "pass": true
     },
-    "test_flag_off_equivalence": {
-      "status": "PASS",
-      "description": "Two independent builds with same weights produce byte-identical dataset_index and dataset_sample_index"
-    },
+    "test_flag_off_equivalence": true,
     "test_new_source_zero_overlap": {
-      "status": "PASS",
-      "total_overlap": 0,
-      "new_source_index": 3,
-      "shared_mask": [true, true, true, false]
+      "per_source": {
+        "0": {
+          "source_key": "en_v1_4",
+          "s1_docs": 7000,
+          "s2_docs": 4000,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 7000,
+          "s1_source_idx": 0
+        },
+        "1": {
+          "source_key": "ufw_l1_en_hq",
+          "s1_docs": 2000,
+          "s2_docs": 3000,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 2000,
+          "s1_source_idx": 1
+        },
+        "2": {
+          "source_key": "ufw_zh",
+          "s1_docs": 1000,
+          "s2_docs": 1500,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": true,
+          "cursor_offset": 1000,
+          "s1_source_idx": 2
+        },
+        "3": {
+          "source_key": "new_a",
+          "s1_docs": 0,
+          "s2_docs": 1000,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": false,
+          "cursor_offset": 0,
+          "s1_source_idx": -1
+        },
+        "4": {
+          "source_key": "new_b",
+          "s1_docs": 0,
+          "s2_docs": 500,
+          "overlap_docs": 0,
+          "overlap_rate": 0.0,
+          "shared": false,
+          "cursor_offset": 0,
+          "s1_source_idx": -1
+        }
+      },
+      "total_s1_docs": 10000,
+      "total_s2_docs": 10000,
+      "total_overlap_docs": 0,
+      "overlap_rate": 0.0,
+      "epoch_wrap_warnings": []
     },
-    "test_checkpoint_roundtrip": {
-      "status": "PASS",
-      "description": "BlendSwitcher.to_json() / from_json() preserves consumed_per_source, new_weights, new_size, switched"
+    "test_checkpoint_roundtrip": true,
+    "test_stock_sampler_epoch_bug": true,
+    "test_blended_dataset_compatibility": {
+      "skipped": false
     }
   },
+  "statuses": {
+    "test_zero_overlap_status": "PASS",
+    "test_ratio_compliance_status": "PASS",
+    "test_flag_off_equivalence_status": "PASS",
+    "test_new_source_zero_overlap_status": "PASS",
+    "test_checkpoint_roundtrip_status": "PASS",
+    "test_stock_sampler_epoch_bug_status": "PASS",
+    "test_blended_dataset_compatibility_status": "PASS"
+  },
   "summary": {
-    "tests_passed": 5,
-    "tests_total": 5,
     "all_passed": true,
     "zero_overlap_confirmed": true,
     "ratio_compliance_confirmed": true,

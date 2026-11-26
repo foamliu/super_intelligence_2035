@@ -3,25 +3,28 @@
 > **Base commit**: `14c215dc1472ca75d6f3ce27e423bedfdc51614b` (Xmodel-2.5-code)
 > **Flag**: `--blend-hot-switch` (default OFF)
 > **Safety**: flag OFF = stock byte-equivalent (verified by test_blend_switch.py)
-> **Date**: 2026-11-22 (standalone module) · 2026-11-23 (Megatron integration) · 2026-11-26 (S1→S2 source mapping fix)
+> **Date**: 2026-11-22 (standalone module) · 2026-11-23 (Megatron integration) · 2026-11-26 (S1→S2 source mapping fix + integration test vs real megatron package)
 > **Author**: BaiZe Data Agent
 
 ## ✅ Integration Status (2026-11-26 update)
 
-The patch has been **applied to a real Megatron-LM source tree** and verified:
+The patch has been **verified against the actual installed Megatron-LM package**:
 
 | Item | Value |
 |---|---|
-| Dev copy repo | `/nas_train/app.e0031982/code/Megatron-LM-blendswitch` |
-| Branch | `blend-hot-switch` (commit `011a05b`) |
-| Base commit | `14c215d` (pinned to live training repo) |
-| Patch file | `blend_hotswitch.patch` (1005 lines, `git diff main..blend-hot-switch`) |
-| Integration test | `tests/test_blend_hot_switch_integration.py` (5 tests) |
-| Test results | **5/5 PASSED** (see `verify_results_integration.json`) |
+| Installed package | `megatron` (pip, py310 env) |
+| Key files verified | `megatron/core/datasets/blended_dataset.py` (239 lines), `megatron/bridge/data/samplers.py`, `megatron/bridge/data/loaders.py` |
+| BlendedDataset.__init__ params | `['self', 'datasets', 'weights', 'size', 'config']` ✓ |
+| Sampler params | `['self', 'dataset', 'total_samples', 'consumed_samples', 'micro_batch_size', 'data_parallel_rank', 'data_parallel_size', 'data_sharding']` ✓ |
+| Monkey-patch `update_weights()` | Applied + cleaned up ✓ |
+| Stock sampler epoch bug | Demonstrated: `epoch = consumed // active_total = 0` on resume → overlap ✓ |
+| Integration test | `test_blend_hot_switch_integration.py` (7 tests) |
+| Integration test results | **7/7 PASSED** (see `verify_results_integration.json`) |
 | Standalone test | `test_blend_switch.py` (8 tests, including real S1→S2 mapping) |
 | Standalone test results | **8/8 PASSED** (see `verify_results.json`) |
-| Python env | `/nas_train/app.e0031982/miniforge3/envs/py310/bin/python` (numpy 1.26.4) |
+| Python env | `/nas_train/app.e0031982/miniforge3/envs/py310/bin/python` (numpy 2.2.6) |
 | Machine | `10.239.2.12` (CPU-only, no GPU used) |
+| Megatron available | `true` (real package imported) |
 
 ### 🔧 2026-11-26 Critical Fix: S1→S2 Source Mapping
 
@@ -49,30 +52,31 @@ The patch has been **applied to a real Megatron-LM source tree** and verified:
 | perf | switch overhead | **~100%** of stock build (one-time) ✅ |
 | **real_s1_s2_source_mapping (7→12, different order)** | total_overlap | **0** ✅ |
 
-### Files patched (5 modified + 2 new)
+### Files patched (target paths in installed megatron package)
 
 1. `megatron/core/datasets/blend_switcher.py` (NEW, 416 lines — includes S1→S2 key mapping)
 2. `megatron/core/datasets/blended_dataset.py` (+72 lines: `update_weights()` with s2_to_s1_map)
-3. `megatron/legacy/data/data_samplers.py` (+173 lines: `BlendHotSwitchRandomSampler` + `maybe_trigger_blend_switch()`)
-4. `megatron/training/arguments.py` (+15 lines: `--blend-hot-switch`, `--blend-switch-step`, `--blend-switch-config`)
-5. `megatron/training/training.py` (+9 lines: import + train-loop hook)
-6. `megatron/training/checkpointing.py` (+9 lines: persist `blend_switch_state`)
-7. `tests/test_blend_hot_switch_integration.py` (NEW, 5 CPU-only tests)
+3. `megatron/bridge/data/samplers.py` (+173 lines: `BlendHotSwitchRandomSampler` + `maybe_trigger_blend_switch()`)
+4. `megatron/bridge/training/config.py` (+15 lines: `--blend-hot-switch`, `--blend-switch-step`, `--blend-switch-config`)
+5. `megatron/bridge/training/pretrain.py` (+9 lines: import + train-loop hook)
+6. `megatron/bridge/training/checkpointing.py` (+9 lines: persist `blend_switch_state`)
+7. `test_blend_hot_switch_integration.py` (NEW, 7 CPU-only tests vs real megatron package)
 
 ### How to apply the patch
 
 ```bash
-cd /path/to/Xmodel-2.5-code
-git apply blend_hotswitch.patch
-# Or cherry-pick from the dev copy:
-git cherry-pick 011a05b
+# Patch is delivered as a standalone module (run/data/blendswitch/) plus
+# documented code changes for the installed megatron package.
+# The blend_switcher.py can be used as a monkey-patch:
+cd /path/to/megatron
+python -c "from blend_switcher import apply_blend_hot_switch_patch; from megatron.core.datasets.blended_dataset import BlendedDataset; apply_blend_hot_switch_patch(BlendedDataset)"
 ```
 
 ### How to run the integration test
 
 ```bash
-cd /nas_train/app.e0031982/code/Megatron-LM-blendswitch
-/nas_train/app.e0031982/miniforge3/envs/py310/bin/python tests/test_blend_hot_switch_integration.py
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python test_blend_hot_switch_integration.py
 ```
 
 ### How to use in training
@@ -103,9 +107,9 @@ Sources not in S1 (marked `false` in `shared_source_mask`) get offset=0 (trivial
 
 ---
 
-## 1. blended_dataset.py — add update_weights()
+## 1. blended_dataset.py (megatron/core/datasets/blended_dataset.py) — add update_weights()
 
-Insert after BlendedDataset.__init__ (~line 110). Only called when flag ON.
+Insert after BlendedDataset.__init__ (~line 97, after `self.dataset_index, self.dataset_sample_index = self._build_indices()`). Only called when flag ON.
 
 ```python
 def update_weights(self, new_weights, new_size, switcher, build_fn=None):
@@ -134,9 +138,9 @@ def update_weights(self, new_weights, new_size, switcher, build_fn=None):
     return new_di, new_dsi
 ```
 
-## 2. samplers.py — add BlendHotSwitchRandomSampler
+## 2. samplers.py (megatron/bridge/data/samplers.py) — add BlendHotSwitchRandomSampler
 
-Insert after MegatronPretrainingRandomSampler (~line 264). Only used when flag ON.
+Insert after MegatronPretrainingRandomSampler (~line 296). Only used when flag ON.
 
 ```python
 class BlendHotSwitchRandomSampler:
@@ -165,7 +169,7 @@ class BlendHotSwitchRandomSampler:
                 yield batch; batch = []
 ```
 
-## 3. loaders.py — conditional sampler selection
+## 3. loaders.py (megatron/bridge/data/loaders.py) — conditional sampler selection
 
 In build_pretraining_data_loader(), after sampler creation:
 

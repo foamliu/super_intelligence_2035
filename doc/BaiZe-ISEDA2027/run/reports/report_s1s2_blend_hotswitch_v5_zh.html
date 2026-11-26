@@ -25,7 +25,7 @@ code{background:#f0f0f0;padding:1px 3px;border-radius:2px;font-size:10px}
 <b>代码证据</b>: <code>blend_switcher.py</code> + <code>test_blend_switch.py</code>（CPU 验证通过）· base commit <code>14c215dc</code><br>
 <b>v4 修正</b>: v4 报告保留不删，本报告为 v5</p>
 
-<div class="summary"><b>一句话结论</b>：方案 F 作为<b>自定义 Megatron 改造</b>（非 stock）已实现并通过 CPU 验证：<b>零重叠 = 0</b>（7 源共享，实测 <code>overlap_docs=0</code>），比例偏差 <code>0.0087% ≤ 1%</code>，flag-off 与 stock 逐字节等价。patch + 验证脚本 + 结果 JSON 三件套已交付。</div>
+<div class="summary"><b>一句话结论</b>：方案 F 作为<b>自定义 Megatron 改造</b>（非 stock）已实现并通过 CPU 验证：<b>零重叠 = 0</b>（7 源共享 + 7→12 源映射，实测 <code>overlap_docs=0</code>），比例偏差 <code>0.0087% ≤ 1%</code>，flag-off 与 stock 逐字节等价。8/8 standalone + 7/7 集成测试（真实 megatron 包）全 PASS。patch + 验证脚本 + 结果 JSON 三件套已交付。</div>
 
 <h2>§1 三层主结论（修正 v4 缺陷①）</h2>
 <table>
@@ -101,15 +101,28 @@ code{background:#f0f0f0;padding:1px 3px;border-radius:2px;font-size:10px}
 <tr><td>epoch_wrap（honest report）</td><td class="amber">overlap=50, warned</td><td>如实报</td><td class="green">✅</td></tr>
 <tr><td>json_roundtrip</td><td class="green">state preserved</td><td>==</td><td class="green">✅</td></tr>
 <tr><td>perf（switch only）</td><td class="green">0.14s one-time</td><td>&lt;2% step</td><td class="green">✅</td></tr>
+<tr style="font-weight:700;"><td>real_s1_s2_mapping（7→12源不同序）</td><td class="green">overlap=0</td><td>=0</td><td class="green">✅</td></tr>
 </table>
-<div class="info">7/7 测试通过。结果 JSON: <code>data/blendswitch/verify_results.json</code></div>
+<div class="info">8/8 standalone 测试通过。结果 JSON: <code>data/blendswitch/verify_results.json</code></div>
+<h3>5.2 集成测试（真实 Megatron-LM 包）</h3>
+<table>
+<tr><th>测试</th><th>结果</th><th>判据</th><th>通过?</th></tr>
+<tr><td>zero_overlap（7 共享源）</td><td class="green">overlap=0</td><td>=0</td><td class="green">✅</td></tr>
+<tr><td>ratio_compliance（5000 batch×mbs4）</td><td class="green">max dev=0.003%</td><td>≤1%</td><td class="green">✅</td></tr>
+<tr><td>flag_off_equivalence</td><td class="green">byte-identical</td><td>==</td><td class="green">✅</td></tr>
+<tr><td>new_source_zero_overlap</td><td class="green">overlap=0</td><td>=0</td><td class="green">✅</td></tr>
+<tr><td>checkpoint_roundtrip</td><td class="green">state preserved</td><td>==</td><td class="green">✅</td></tr>
+<tr><td>stock_sampler_epoch_bug</td><td class="green">bug demonstrated</td><td>root cause</td><td class="green">✅</td></tr>
+<tr><td>blended_dataset_compatibility</td><td class="green">__init__/_build_indices/monkey-patch</td><td>compatible</td><td class="green">✅</td></tr>
+</table>
+<div class="info">7/7 集成测试通过（真实 megatron 包，py310 env）。结果 JSON: <code>data/blendswitch/verify_results_integration.json</code></div>
 
 <h2>§6 WBS（修正 v4 缺陷③）</h2>
 <table>
 <tr><th style="width:24px;">#</th><th>任务</th><th>预计h</th><th>实际h</th><th>依赖</th><th>风险</th></tr>
 <tr><td>W1</td><td>源码分析（blended_dataset/samplers/gpt_dataset/loaders）</td><td>3</td><td>3</td><td>—</td><td>低</td></tr>
 <tr><td>W2</td><td>BlendSwitcher 核心实现</td><td>4</td><td>4</td><td>W1</td><td>中：游标映射正确性</td></tr>
-<tr><td>W3</td><td>CPU 验证脚本（7 测试）</td><td>3</td><td>3</td><td>W2</td><td>低</td></tr>
+<tr><td>W3</td><td>CPU 验证脚本（8 standalone + 7 integration）</td><td>3</td><td>4</td><td>W2</td><td>低</td></tr>
 <tr><td>W4</td><td>patch 文档（blended_dataset/samplers/loaders）</td><td>2</td><td>2</td><td>W2</td><td>低</td></tr>
 <tr><td>W5</td><td>离线验证器 validate_overlap.py</td><td>2</td><td>2</td><td>W2</td><td>低</td></tr>
 <tr><td>W6</td><td>v5 报告 + v4 修正</td><td>3</td><td>3</td><td>W3</td><td>低</td></tr>
@@ -132,23 +145,25 @@ code{background:#f0f0f0;padding:1px 3px;border-radius:2px;font-size:10px}
 <tr><td>flag-off 等价</td><td>byte-identical</td><td>✅</td><td class="green">✅ Go</td></tr>
 <tr><td>step time 偏差</td><td>≤2%</td><td>待 GPU</td><td class="amber">⏳ 待 W7</td></tr>
 <tr><td>显存增量</td><td>≤5%</td><td>待 GPU</td><td class="amber">⏳ 待 W7</td></tr>
-<tr><td>11-27 截止</td><td>patch+验证完成</td><td>W1-W6 ✅</td><td class="green">✅ 按期</td></tr>
+<tr><td>11-27 截止</td><td>patch+验证完成</td><td>W1-W6 ✅ + 集成 7/7</td><td class="green">✅ 按期</td></tr>
 </table>
-<div class="summary"><b>结论</b>：CPU 验证全通过，patch 已就绪。Go-No-Go = <b>Go</b>（CPU 阶段）。GPU smoke test（W7）为确认项，不阻塞 patch 交付。</div>
+<div class="summary"><b>结论</b>：CPU 验证全通过（8/8 standalone + 7/7 集成测试），patch 已就绪。Go-No-Go = <b>Go</b>（CPU 阶段）。GPU smoke test（W7）为确认项，不阻塞 patch 交付。</div>
 
 <h2>§9 交付物清单</h2>
 <table>
 <tr><th>文件</th><th>路径</th><th>说明</th></tr>
 <tr><td>核心实现</td><td><code>data/blendswitch/blend_switcher.py</code></td><td>BlendSwitcher + Mixin + Sampler</td></tr>
-<tr><td>验证脚本</td><td><code>data/blendswitch/test_blend_switch.py</code></td><td>7 测试 CPU-only</td></tr>
-<tr><td>结果 JSON</td><td><code>data/blendswitch/verify_results.json</code></td><td>overlap=0, dev=0.0087%</td></tr>
+<tr><td>验证脚本</td><td><code>data/blendswitch/test_blend_switch.py</code></td><td>8 测试 CPU-only</td></tr>
+<tr><td>集成测试</td><td><code>data/blendswitch/test_blend_hot_switch_integration.py</code></td><td>7 测试 vs 真实 megatron 包</td></tr>
+<tr><td>结果 JSON</td><td><code>data/blendswitch/verify_results.json</code></td><td>8/8 PASS, overlap=0, dev=0.0087%</td></tr>
+<tr><td>集成结果</td><td><code>data/blendswitch/verify_results_integration.json</code></td><td>7/7 PASS, megatron_available=true</td></tr>
 <tr><td>离线验证器</td><td><code>data/blendswitch/validate_overlap.py</code></td><td>读 S1+S2 → 求交 → JSON</td></tr>
 <tr><td>patch 文档</td><td><code>data/blendswitch/README_PATCH.md</code></td><td>4 处 patch + flag-off 证明</td></tr>
 <tr><td>v5 报告</td><td><code>reports/report_s1s2_blend_hotswitch_v5_zh.html</code></td><td>本文件</td></tr>
 </table>
 
 <div class="ft">
-v5 报告 · 2026-11-22 · BaiZe Data Agent · base commit 14c215dc · v4 保留不删<br>
+v5 报告 · 2026-11-22（2026-11-26 更新：集成测试 7/7 PASS）· BaiZe Data Agent · base commit 14c215dc · v4 保留不删<br>
 锚点：F 自定义改造 · per-source 游标映射 · 零重叠=0 实测 · 11-27 截止
 </div>
 </body></html>
