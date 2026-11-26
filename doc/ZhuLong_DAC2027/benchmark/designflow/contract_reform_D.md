@@ -22,7 +22,50 @@
 
 ## 心跳
 
-`CONTRACT: P1=1/1 done · P2=4 L2.live (TrMatchHelper-001 + FullAdderSchemBuild-001 + OpenDmViewsProduce-001 + AeDelCellCurCellProduce-001 done) · P3=497/608 judge_layers`
+`CONTRACT: P1=1/1 done · P2=5 L2.live (TrMatchHelper-001 + FullAdderSchemBuild-001 + OpenDmViewsProduce-001 + AeDelCellCurCellProduce-001 + SelFigReport-001 done) · P3=497/608 judge_layers`
+
+## r1446 交付：P2 第 5 条 check_live（SelFigReport-001）
+
+- **候选选择**：对余 9 条 api 子类候选逐个核验 reference_solution 是否真调 pyAether
+  （p2_pool 的 `pyAether-import` 指标来自关键字扫描，含假阳性）。核验结果：
+  **仅 SelFigReport-001 真调 pyAether**（`sel_fig_report_ref.py` 里 `import pyAether as ae` +
+  `ae.aeGetCurDesign()` + `cv.getSelectedFigs()`）。其余 8 条（WtmWriteCheckReviewQA /
+  AutoPR / DirectivePairAudit / ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose /
+  McpSseApiDocParseProduce / VerdictJoinPassLib）的 reference solution 均无真实 pyAether
+  调用——指标来自 check.py 注释/docstring 的关键字误命中，应归 P3（mock）。本轮选
+  SelFigReport-001 实现 check_live（与 r1442-r1445 API 覆盖不重叠：r1442=match-helper,
+  r1443=schematic-build, r1444=dm-views-open, r1445=cell-delete-current, 本轮=cur-design-selected-figs）。
+- **原 check 状态**：已是 raise-on-fail（`_cond` raise AssertionError）+ `return True`，
+  无 teeth bug；负样本 6 条全 FAIL（negative_selftest 走 `check()` compat 仍全 FAIL，无需改）。
+- **非侵入包装**：`_check_static_impl` = 原 check 函数体逐字保留；`check_static` 三元组
+  包装；`check_live` 新增；`check` 兼容包装。无需 abspath 修复（check.py 读 `workdir/spec_A.json`
+  + `workdir/hidden`，框架 cd 到 g1/g2（workdir='.'）下 spec_A.json+hidden 均在，相对路径解析正确）。
+- **check_live 策略** = strategy 1（fake-input graceful probe + spec-driven 探针）：
+  upload submit.zip → .75 import 真实 pyAether 验证 `aeGetCurDesign` 属性存在 → monkey-patch
+  `ae.aeGetCurDesign` 返回 LIVE fake cv（`type(LIVE_CV_TYPE, ...)` 动态类，`__name__`=
+  `emyLiveProbe`，`getSelectedFigs` 返回 3 个 LIVE fig：Bus/Pin/Label）→ SIGALRM 90s →
+  设 sys.argv 调候选 `main()`（候选 `import pyAether as ae` 在 main 内，拿已 patch 的模块）→
+  断言 aeGetCurDesign+getSelectedFigs 被调 + exit0 + report 4 键齐全 + cv_type==`emyLiveProbe`
+  （forces `type(cv).__name__`，非硬编码 emyDesign）+ n_selected==3 + 3 fig 的
+  objType/n_points/width/layerName/selFigPoint 全匹配 LIVE spec（Bus 2pts/0.42/LiveLyr/[T,F,T]，
+  Pin 1pt/0.77/PinLyr/[F]，Label 无 points/width→n_points=0/width=null/TxtLyr/[T]）+
+  report blob 含 `emyLiveProbe`。
+- **关键设计**：LIVE spec 与 A/B/B2/B3 结构性不相交——A/B/B2/B3 全用 cv_type=`emyDesign` +
+  objType∈{Path,ArrayInst,Rect,Polygon}；LIVE 用 cv_type=`emyLiveProbe` + objType∈{Bus,Pin,Label}
+  + 3 figs（A=2, B=1, B2=2, B3=0）。硬编码 A/B 的候选（如 naive_hardcode_a 写死 Path/M2/emyDesign）
+  在 LIVE 下 cv_type/objType/layerName 全错 → FAIL；忽略 pyAether 的候选（naive_static_figs）
+  aeGetCurDesign 未调 → FAIL。
+- **自验**（全 PASS）：check_static REF PASS（L0+L1，原 16 条件 a-p 全过）；
+  negative_selftest 6 neg ALL FAIL（empty_shell/print_expected/core_deleted/naive_hardcode_a/
+  naive_no_selfig/naive_static_figs 走 `check()` compat 全 FAIL）；check_live(ref) via .75
+  PASS（status=ok，aeGetCurDesign=1/getSelectedFigs=1/exit0/cv_type=emyLiveProbe/n_selected=3，
+  infra_fail=0）；check_live(naive_static_figs) FAIL（aeGetCurDesign 未调 + cv_type=emyDesign +
+  n_selected=2）；check_live(naive_hardcode_a) FAIL（cv_type=emyDesign + fig0 objType=Path≠Bus +
+  layerName=M2≠LiveLyr + fig2 objType=Path≠Label）；**框架完整 L0+L1+L2.live 路径 PASS**
+  （importlib 加载 check.py → check_static(submit.zip,'.')→(True,'','') → EDASession check_live→
+  (True,'','')，infra_fail=0）。pure ASCII 探针代码。
+- **case JSON**：metadata.judge_layers=[L0,L1,L2.live] + test 同步（21133 chars）+
+  check_sha256=d33fd210...d161edbc + check_size=21169。
 
 ## r1445 交付：P2 第 4 条 check_live（AeDelCellCurCellProduce-001）
 
@@ -121,10 +164,26 @@
 
 ## 下一轮计划
 
-1. P2：从余 9 条 api 子类候选中选下一条（WtmWriteCheckReviewQA(pyAether-import=2) / AutoPR / DirectivePairAudit / ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce / SelFigReport / VerdictJoinPassLib 等，均 pyAether-import=1），按 AeDelCellCurCellProduce/OpenDmViewsProduce 模板实现 `check_live`
-2. P3：继续逐批把 sim-keyword 子类中确属 mock 的 case 补声明（需逐题读 check.py 区分 netlist-text 假阳性 vs 真二进制调用）
-3. 造新题让位给 P2（运维令：P1>P2>P3，造题让位 P1/P2）
+1. P2 api 子类 13 条中已核验：5 条真调 pyAether 已完成 check_live（TrMatchHelper /
+   FullAdderSchemBuild / OpenDmViewsProduce / AeDelCellCurCellProduce / SelFigReport）；
+   **余 8 条（WtmWriteCheckReviewQA / AutoPR / DirectivePairAudit / ExprLogicCheck /
+   FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce / VerdictJoinPassLib）
+   经 r1446 逐题核验 reference_solution 均无真实 pyAether 调用——指标来自 check.py
+   注释/docstring 关键字误命中，应归 P3（mock），不再做 check_live**。⇒ **P2 api 子类
+   已穷尽，D shard P2 实质闭合**（剩余真 EDA 候选须从 sim-keyword 97 条逐题深读发掘，
+   多为 netlist 文本/注释假阳性，工作量大收益低，转 P4 适合性分析主导）。
+2. P3：把上述 8 条假阳性 api 候选 + sim-keyword 子类中确属 mock 的 case 批量补声明
+   `judge_layers=["L0","L1"]`（需逐题读 check.py 区分 netlist-text 假阳性 vs 真二进制调用）。
+3. 造新题让位给 P2（运维令：P1>P2>P3）。P2 api 子类既已穷尽，下一轮转 P3 批量声明 +
+   P4 实跑适合性分析。
 
-## P2 api 子类 13 条（强候选）
+## P2 api 子类 13 条（强候选 · r1446 核验后）
 
-见 `contract_reform_p2_pool_D.tsv` subclass=api 行（AeDelCellCurCellProduce / SelFigReport / OpenDmViewsProduce / TrMatchHelper / FullAdderSchemBuild / WtmWriteCheckReviewQA / AutoPR / DirectivePairAudit / ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce / VerdictJoinPassLib）。
+见 `contract_reform_p2_pool_D.tsv` subclass=api 行。r1446 逐题核验 reference_solution
+真实 pyAether 调用情况：
+- **真调 pyAether（5 条，已完成 check_live）**：TrMatchHelper / FullAdderSchemBuild /
+  OpenDmViewsProduce / AeDelCellCurCellProduce / SelFigReport
+- **假阳性（8 条，归 P3 mock）**：WtmWriteCheckReviewQA / AutoPR / DirectivePairAudit /
+  ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce /
+  VerdictJoinPassLib（指标来自 check.py 注释/docstring 关键字误命中，reference_solution
+  无 `import pyAether` / `ae.<api>` 真实调用）
