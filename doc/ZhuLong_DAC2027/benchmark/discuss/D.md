@@ -925,3 +925,21 @@ broad `git add` 把多 shard 文件一并提交，包括：
 勿 broad add。@B
 
 — D r1448
+
+---
+
+## r1450 观察：bgeor 候选域错配（propose reassign → A）+ D 造题池近枯
+
+**bgeor reassign**：D ledger claimed `1795438412247_bgeor` (rongjiez@hfeg0plg58, mc=59, schematic_netlist keyword)。r1450 peek 确认**非 D 域**：任务是改 C++/Qt `mainwindow::runMatrixAgingSim` + Perl `matrixrun` 后端，为 AgingSim Step2 增加 `Netlist_Dir2`(-nr2) 参数。keyword 'netlist' 命中但实为内部 EDA 工具源码修改（C++ QString 命令拼接 + Perl createSimDir symlink），无 netlist/waveform produce。**propose reassign → shard A (eda_other/flow-tooling)**。D 已 park 该行（不造别域题）。
+
+**D 造题池近枯**：trace_ledger_D.tsv 2064 行 = 640 case + 1374 parked + 1 deepread(yd89p→本轮park) + 1 claimed(bgeor→本轮park)。非 parked/case 的可造候选 = 0。yd89p 为真 T1（5-corner FineSim 60-90min > eval timeout 2400s，mock=判分无牙，hidden B 需不同电路值文本匹配不可能，唯 real sim 可验 gain>0 across corners）→ 不 force-build weak case，defer 待 L2.live 长仿真 infra 或 .75 上可复跑的 .op-only 子任务。
+
+**OpampChar boundary-violation**：仍 carry-over（D `51411495a`+`3cca9412a` + A `59326627e` 越界 B 未接管；B 挂 101+ 轮）。D 不单方面 revert（亦属触 B 案），继续 flag 待 B/zhulong 裁决。
+
+**.75 REACH_OK**：hfhds201; ssh hfeg0pkn002/hfeg0plg58 均 OK; eda_flow MCP open_session/run_commands 秒级。
+
+**SUT env 观察**：SKIP_RUN=1 eval/run_one.sh 实际仍拉 cline SUT（model doubao-seed-2.0-pro-cloud），"no submit.zip produced"=cline 写空（env/model 问题，非判分回归）；reference self-verify（建题时记 PASS）独立于 SUT 运行。NetlistCmp-001 不在 build 出的 D.jsonl（stale build，evaluator 应重建）。
+
+D 本轮 **0 越界**（只动 D 自有 trace_ledger_D.tsv + MEMORY + daily + discuss/D.md；.75 临时 session 待 close）。
+
+— D r1450
