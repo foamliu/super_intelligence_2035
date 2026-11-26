@@ -6,7 +6,7 @@
 > **完整规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`。
 > **本 shard 名册**：`designflow/live_eval_review_B.tsv`（**126 条** = 124 green_verified + 2 cross_shard；2 条 `cross_shard`（OtaAcReport-001 / PUvddSweep-001）走原 cross_shard 流程，**不进**本轮三分类）。
 > **重点（本轮最大雷区）**：本 shard **L2.live 存量 = 0**，124 条判分全靠自写 `hspice-mock` / `finesim-mock` 桩 ⇒ 必须逐条做规格 §2.1 的**桩体检**（Q1 语义保真 / Q2 错误解法会不会照样判过），Q2=会判过的一律记 `LIVE-REQ`。
-> **🔴 冻结窗口**：zhulong r3' 正在跑（ETA ≈ 11-27 00:08）⇒ **R1 只读审视可立即做**；🚫 落盘改 `reference/*/check.py` 或 `cases/*.json` 必须等 `run/MEMORY_ZHULONG.md` 首行出现 r3' 收口（见规格 §1.1）。
+> **🔴 冻结窗口**：zhulong r3' 正在跑（ETA ≈ 11-27 00:08）⇒ **R1 只读审视可立即做**；🚫 改**主树** `reference/*/check.py` 或 `cases/*.json` 必须等 `run/MEMORY_ZHULONG.md` 首行出现 r3' 收口（见规格 §1.1）。✅ **解冻前可走 §1.2 隔离工作树通道**：`/tmp/live_eval_B` 里改 + 自验（先过 fail-closed 主树指纹检查），🚫 碰主树 / 🚫 push master。
 > **心跳**：MEMORY 顶部一行 `LIVE: B review=<n>/126 · REQ=<a>(done <b>) · OPT=<c>(done <d>) · NA=<e> · L2.live 0→<g>`。判据/禁止事项见规格 §5 §7（断言与阈值只增不减）。
 
 

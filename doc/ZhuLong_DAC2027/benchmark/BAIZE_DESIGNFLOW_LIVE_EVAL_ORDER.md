@@ -41,6 +41,31 @@
 
 ---
 
+### 1.2 ✅ 隔离工作树通道（解冻前即可「改造 + 自验」，只是不许「合入」）
+
+**冻结的是主工作树，不是实跑能力。** 两个资源必须分清：
+
+| 资源 | 是谁的 | 与 zhulong 关系 |
+|:--|:--|:--|
+| `.75`（`hfhds201`）+ `eda_flow` MCP（hspice/finesim/vcs/vlogan/calibre） | **designflow 自己的 EDA 沙盒** | **无关**，随时可用（A r1314 / C r1229 / D r1478 已在用） |
+| `36.15`（`hfeg0tedaap02`）的 `/nasdata/app.e0031982/code/EDA-Flow-Bench/` | designflow agent 的 **cwd**，也是 zhulong `eval/run_batch.sh` 的 **cwd** | **同一棵工作树** ⇒ 改 `check.py`/`cases` = 半程换尺 |
+
+| 允许（现在就能做） | 🚫 禁止（等 r3' 收口） |
+|:--|:--|
+| ① `/tmp` 下 `git worktree add --detach` 一份**隔离树**，在隔离树里改 `reference/<id>/check.py` / `cases/*.json` / `negative/` | ① 改**主树**任何 `benchmarks/` `reference/` `cases/` 文件 |
+| ② 在隔离树内跑 `SKIP_RUN=1 eval/run_one.sh ...` 静态自验 + `.75` L2.live ref 自验 | ② 在主树 `git pull` / `checkout` / `rebase`（会掀掉 zhulong 正在读的文件） |
+| ③ 改动 commit 到**隔离树的本地分支**（不 push） | ③ `git push origin master`（master = zhulong 工作树分支） |
+| ④ 收口后：`git fetch` → cherry-pick 到主树/origin → 再 push | ④ 收口前 merge 进 master |
+
+**fail-closed 前置（每 shard 第一次走通道必须先过）**：在隔离树跑一次 `run_one.sh`，前后各取一次**主树指纹**——
+`git -C /nasdata/app.e0031982/code/EDA-Flow-Bench status --porcelain`（前后必须逐字节一致）+
+`ls -l --time-style=full-iso eval/status*.jsonl`（mtime 不得变）。
+**任何一项变了 ⇒ 该 shard 立即退回严格等待**（说明 `run_one.sh` 会写主树共享路径，会污染 zhulong 的 status 台账），并在 MEMORY 记 `隔离通道不可用: <证据>`。
+
+**命名/清理**：隔离树固定 `/tmp/live_eval_<shard>`，收口后 `git worktree remove`，🚫 常驻、🚫 在里面放 assets 大文件。
+
+---
+
 ## 2. 三分类判据（逐条填 `live_verdict`，必须带理由）
 
 **本质问（每条都问一遍）**：
