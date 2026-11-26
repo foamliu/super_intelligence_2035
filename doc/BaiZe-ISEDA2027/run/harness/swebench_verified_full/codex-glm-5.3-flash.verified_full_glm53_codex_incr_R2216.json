@@ -1,0 +1,11 @@
+{
+  "harness": "codex",
+  "run_id": "verified_full_glm53_codex_incr_R2216",
+  "round": "R2216",
+  "n": 1,
+  "resolved": [
+    "django__django-14140"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

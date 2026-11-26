@@ -1,0 +1,83 @@
+diff --git a/src/_pytest/pathlib.py b/src/_pytest/pathlib.py
+index 0403b69..e54b7f0 100644
+--- a/src/_pytest/pathlib.py
++++ b/src/_pytest/pathlib.py
+@@ -11,7 +11,6 @@ from functools import partial
+ from os.path import expanduser
+ from os.path import expandvars
+ from os.path import isabs
+-from os.path import normcase
+ from os.path import sep
+ from posixpath import sep as posix_sep
+ 
+@@ -343,4 +342,9 @@ def unique_path(path):
+ 
+     This is needed only for ``py.path.local``; ``pathlib.Path`` handles this
+     natively with ``resolve()``."""
+-    return type(path)(normcase(str(path.realpath())))
++    p = Path(str(path))
++    try:
++        p = p.resolve()
++    except (OSError, ValueError):
++        p = p.absolute()
++    return type(path)(str(p))
+diff --git a/testing/test_conftest.py b/testing/test_conftest.py
+index 9888f54..7dd854d 100644
+--- a/testing/test_conftest.py
++++ b/testing/test_conftest.py
+@@ -292,6 +292,26 @@ def test_conftest_badcase(testdir):
+     assert result.ret == ExitCode.NO_TESTS_COLLECTED
+ 
+ 
++@pytest.mark.skipif(
++    os.path.normcase("x") != os.path.normcase("X"),
++    reason="only relevant for case insensitive file systems",
++)
++def test_conftest_badcase_with_packages(testdir):
++    """Check conftest.py loading when directory casing is wrong and packages are involved."""
++    testdir.tmpdir.mkdir("RootPkg").mkdir("subpkg")
++    source = {
++        "RootPkg/__init__.py": "",
++        "RootPkg/subpkg/__init__.py": "",
++        "RootPkg/subpkg/conftest.py": "",
++        "RootPkg/subpkg/test_foo.py": "def test(): pass",
++    }
++    testdir.makepyfile(**source)
++
++    testdir.tmpdir.join("rootpkg/subpkg").chdir()
++    result = testdir.runpytest()
++    assert result.ret == ExitCode.OK
++
++
+ def test_no_conftest(testdir):
+     testdir.makeconftest("assert 0")
+     result = testdir.runpytest("--noconftest")
+diff --git a/testing/test_pathlib.py b/testing/test_pathlib.py
+index 45daeae..5bc1b48 100644
+--- a/testing/test_pathlib.py
++++ b/testing/test_pathlib.py
+@@ -8,6 +8,7 @@ from _pytest.pathlib import fnmatch_ex
+ from _pytest.pathlib import get_lock_path
+ from _pytest.pathlib import maybe_delete_a_numbered_dir
+ from _pytest.pathlib import Path
++from _pytest.pathlib import unique_path
+ 
+ 
+ class TestPort:
+@@ -89,3 +90,16 @@ def test_access_denied_during_cleanup(tmp_path, monkeypatch):
+     lock_path = get_lock_path(path)
+     maybe_delete_a_numbered_dir(path)
+     assert not lock_path.is_file()
++
++
++@pytest.mark.skipif(
++    os.path.normcase("x") != os.path.normcase("X"),
++    reason="only relevant for case insensitive file systems",
++)
++def test_unique_path_preserves_case(tmp_path):
++    """unique_path should preserve the actual filesystem case (#5792)."""
++    mixed = tmp_path / "MixedCase"
++    mixed.mkdir()
++    wrong = py.path.local(str(tmp_path / "mixedcase"))
++    result = unique_path(wrong)
++    assert "MixedCase" in str(result)

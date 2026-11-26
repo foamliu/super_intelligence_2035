@@ -1,0 +1,55 @@
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index 30616c0172..64f27a61d9 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -563,6 +563,50 @@ class MigrationAutodetector:
+                 if isinstance(base, str) and "." in base:
+                     base_app_label, base_name = base.split(".", 1)
+                     dependencies.append((base_app_label, base_name, None, True))
++            # Depend on the removal of fields of base models that are moved to
++            # the subclass to avoid clashes with inherited fields when the
++            # subclass is created before the base fields are removed.
++            seen_bases = set()
++            pending_bases = list(model_state.bases)
++            while pending_bases:
++                base = pending_bases.pop()
++                if isinstance(base, str):
++                    if "." in base:
++                        base_app_label, base_name = base.split(".", 1)
++                    else:
++                        base_app_label, base_name = app_label, base
++                elif (
++                    isinstance(base, type) and
++                    issubclass(base, models.Model) and
++                    hasattr(base, "_meta")
++                ):
++                    base_app_label, base_name = base._meta.app_label, base._meta.model_name
++                else:
++                    continue
++                if base_app_label is None or base_name is None:
++                    continue
++                base_key = (base_app_label, base_name.lower())
++                if base_key in seen_bases:
++                    continue
++                seen_bases.add(base_key)
++                base_model_state = self.to_state.models.get(base_key)
++                if base_model_state is None:
++                    # The base is an abstract model or a model of an unmigrated
++                    # app; it has no removable fields.
++                    continue
++                pending_bases.extend(base_model_state.bases)
++                old_base_model_state = self.from_state.models.get(base_key)
++                if old_base_model_state is None:
++                    # The base is a new model; it has no fields to remove.
++                    continue
++                for field_name in model_state.fields:
++                    if (
++                        field_name in old_base_model_state.fields and
++                        field_name not in base_model_state.fields
++                    ):
++                        dependencies.append(
++                            (base_app_label, base_name.lower(), field_name, False)
++                        )
+             # Depend on the other end of the primary key if it's a relation
+             if primary_key_rel:
+                 dependencies.append((

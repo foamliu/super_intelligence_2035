@@ -1,0 +1,47 @@
+diff --git a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+index bf92569..12a4ff2 100644
+--- a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
++++ b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+@@ -147,6 +147,7 @@ def _make_cell_set_template_code():
+     else:
+         return types.CodeType(
+             co.co_argcount,
++            co.co_posonlyargcount,
+             co.co_kwonlyargcount,
+             co.co_nlocals,
+             co.co_stacksize,
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index 65c6864..6c95666 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -251,7 +251,8 @@ class HuberRegressor(LinearModel, RegressorMixin, BaseEstimator):
+         self : object
+         """
+         X, y = check_X_y(
+-            X, y, copy=False, accept_sparse=['csr'], y_numeric=True)
++            X, y, copy=False, accept_sparse=['csr'], y_numeric=True,
++            dtype=np.float64)
+         if sample_weight is not None:
+             sample_weight = np.array(sample_weight)
+             check_consistent_length(y, sample_weight)
+diff --git a/sklearn/linear_model/tests/test_huber.py b/sklearn/linear_model/tests/test_huber.py
+index 6a8b261..569266f 100644
+--- a/sklearn/linear_model/tests/test_huber.py
++++ b/sklearn/linear_model/tests/test_huber.py
+@@ -179,6 +179,16 @@ def test_huber_warm_start():
+     assert huber_warm.n_iter_ == 0
+ 
+ 
++def test_huber_boolean_input():
++    # Test that fitting with a boolean X does not raise
++    rng = np.random.RandomState(0)
++    X, y = make_regression(n_samples=200, n_features=2, noise=4.0,
++                           random_state=0)
++    X_bool = X > 0
++    huber = HuberRegressor().fit(X_bool, y)
++    assert huber.coef_.dtype == np.float64
++
++
+ def test_huber_better_r2_score():
+     # Test that huber returns a better r2 score than non-outliers"""
+     X, y = make_regression_with_outliers()

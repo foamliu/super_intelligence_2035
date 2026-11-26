@@ -1,0 +1,57 @@
+diff --git a/django/db/migrations/loader.py b/django/db/migrations/loader.py
+index 95a5062ec9..2cb84a4c1c 100644
+--- a/django/db/migrations/loader.py
++++ b/django/db/migrations/loader.py
+@@ -88,15 +88,16 @@ class MigrationLoader:
+                     continue
+                 raise
+             else:
+-                # Empty directories are namespaces.
+-                # getattr() needed on PY36 and older (replace w/attribute access).
+-                if getattr(module, '__file__', None) is None:
+-                    self.unmigrated_apps.add(app_config.label)
+-                    continue
+                 # Module is not a package (e.g. migrations.py).
+                 if not hasattr(module, '__path__'):
+                     self.unmigrated_apps.add(app_config.label)
+                     continue
++                # Empty directories are namespaces. Namespace packages have an
++                # iterable but non-list __path__ whereas regular packages have
++                # a list __path__.
++                if not isinstance(module.__path__, list):
++                    self.unmigrated_apps.add(app_config.label)
++                    continue
+                 # Force a reload if it's already loaded (tests need this)
+                 if was_loaded:
+                     reload(module)
+diff --git a/tests/migrations/test_loader.py b/tests/migrations/test_loader.py
+index 27a052ddac..66d55c9f12 100644
+--- a/tests/migrations/test_loader.py
++++ b/tests/migrations/test_loader.py
+@@ -1,4 +1,5 @@
+ import compileall
++import importlib
+ import os
+ 
+ from django.db import connection, connections
+@@ -512,6 +513,20 @@ class LoaderTests(TestCase):
+         migrations = [name for app, name in loader.disk_migrations if app == 'migrations']
+         self.assertEqual(migrations, [])
+ 
++    @override_settings(MIGRATION_MODULES={'migrations': 'migrations.test_migrations'})
++    def test_loading_non_namespace_package_without___file__(self):
++        """
++        Migrations load from regular packages that don't have __file__, as in
++        frozen environments.
++        """
++        module = importlib.import_module('migrations.test_migrations')
++        del module.__file__
++        self.addCleanup(setattr, module, '__file__', module.__spec__.origin)
++        loader = MigrationLoader(connection)
++        loader.load_disk()
++        migrations = [name for app, name in loader.disk_migrations if app == 'migrations']
++        self.assertEqual(migrations, ['0001_initial', '0002_second'])
++
+ 
+ class PycLoaderTests(MigrationTestBase):
+ 

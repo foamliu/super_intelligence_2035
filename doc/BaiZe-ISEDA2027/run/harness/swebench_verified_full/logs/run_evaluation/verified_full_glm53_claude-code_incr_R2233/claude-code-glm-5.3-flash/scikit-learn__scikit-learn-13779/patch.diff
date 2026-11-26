@@ -1,0 +1,47 @@
+diff --git a/sklearn/ensemble/tests/test_voting.py b/sklearn/ensemble/tests/test_voting.py
+index 2a19bc9a..87192c15 100644
+--- a/sklearn/ensemble/tests/test_voting.py
++++ b/sklearn/ensemble/tests/test_voting.py
+@@ -362,6 +362,28 @@ def test_sample_weight_kwargs():
+     eclf.fit(X, y, sample_weight=np.ones((len(y),)))
+ 
+ 
++@pytest.mark.filterwarnings('ignore: Default solver will be changed')  # 0.22
++@pytest.mark.filterwarnings('ignore: Default multi_class will')  # 0.22
++@pytest.mark.filterwarnings('ignore:The default value of n_estimators')
++def test_sample_weight_with_none_estimator():
++    """Check that passing sample_weight does not fail when an estimator is
++    set to None."""
++    clf1 = LogisticRegression(random_state=123)
++    clf2 = RandomForestClassifier(random_state=123)
++    voter = VotingClassifier(estimators=[('lr', clf1), ('rf', clf2)],
++                             voting='soft')
++    voter.fit(X, y, sample_weight=np.ones((len(y),)))
++    voter.set_params(lr=None)
++    voter.fit(X, y, sample_weight=np.ones((len(y),)))
++
++    reg1 = DummyRegressor()
++    reg2 = DummyRegressor()
++    voter_r = VotingRegressor(estimators=[('lr', reg1), ('rf', reg2)])
++    voter_r.fit(X_r, y_r, sample_weight=np.ones((len(y_r),)))
++    voter_r.set_params(lr=None)
++    voter_r.fit(X_r, y_r, sample_weight=np.ones((len(y_r),)))
++
++
+ @pytest.mark.filterwarnings('ignore: Default solver will be changed')  # 0.22
+ @pytest.mark.filterwarnings('ignore: Default multi_class will')  # 0.22
+ @pytest.mark.filterwarnings('ignore:The default value of n_estimators')
+diff --git a/sklearn/ensemble/voting.py b/sklearn/ensemble/voting.py
+index 7afa7180..821ede77 100644
+--- a/sklearn/ensemble/voting.py
++++ b/sklearn/ensemble/voting.py
+@@ -78,7 +78,8 @@ class _BaseVoting(_BaseComposition, TransformerMixin):
+ 
+         if sample_weight is not None:
+             for name, step in self.estimators:
+-                if not has_fit_parameter(step, 'sample_weight'):
++                if step is not None and not has_fit_parameter(step,
++                                                              'sample_weight'):
+                     raise ValueError('Underlying estimator \'%s\' does not'
+                                      ' support sample weights.' % name)
+ 

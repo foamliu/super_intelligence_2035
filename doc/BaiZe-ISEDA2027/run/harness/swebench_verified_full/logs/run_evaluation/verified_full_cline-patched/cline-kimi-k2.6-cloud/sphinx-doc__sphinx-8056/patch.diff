@@ -1,0 +1,87 @@
+diff --git a/sphinx/ext/napoleon/docstring.py b/sphinx/ext/napoleon/docstring.py
+index b3daa06f..abf5cd72 100644
+--- a/sphinx/ext/napoleon/docstring.py
++++ b/sphinx/ext/napoleon/docstring.py
+@@ -392,15 +392,16 @@ class GoogleDocstring:
+         lines = []
+         for _name, _type, _desc in fields:
+             _desc = self._strip_empty(_desc)
+-            if any(_desc):
+-                _desc = self._fix_field_desc(_desc)
+-                field = ':%s %s: ' % (field_role, _name)
+-                lines.extend(self._format_block(field, _desc))
+-            else:
+-                lines.append(':%s %s:' % (field_role, _name))
++            _descs = self._fix_field_desc(_desc) if any(_desc) else _desc
++            for _name in _name.split(', '):
++                if any(_descs):
++                    field = ':%s %s: ' % (field_role, _name)
++                    lines.extend(self._format_block(field, _descs))
++                else:
++                    lines.append(':%s %s:' % (field_role, _name))
+ 
+-            if _type:
+-                lines.append(':%s %s: %s' % (type_role, _name, _type))
++                if _type:
++                    lines.append(':%s %s: %s' % (type_role, _name, _type))
+         return lines + ['']
+ 
+     def _format_field(self, _name: str, _type: str, _desc: List[str]) -> List[str]:
+diff --git a/tests/test_ext_napoleon_docstring.py b/tests/test_ext_napoleon_docstring.py
+index bf3c878a..27df3f76 100644
+--- a/tests/test_ext_napoleon_docstring.py
++++ b/tests/test_ext_napoleon_docstring.py
+@@ -1093,6 +1093,25 @@ Do as you please
+ 
+ :keyword gotham_is_yours: shall interfere.
+ :kwtype gotham_is_yours: None
++"""
++        self.assertEqual(expected, actual)
++
++    def test_multiple_params(self):
++        docstring = """\
++One line summary.
++
++Args:
++    x1, x2 (array_like): Input arrays, description of `x1`, `x2`.
++"""
++        config = Config(napoleon_use_param=True)
++        actual = str(GoogleDocstring(docstring, config))
++        expected = """\
++One line summary.
++
++:param x1: Input arrays, description of `x1`, `x2`.
++:type x1: array_like
++:param x2: Input arrays, description of `x1`, `x2`.
++:type x2: array_like
+ """
+         self.assertEqual(expected, actual)
+ 
+@@ -2201,6 +2220,27 @@ definition_after_normal_text : int
+         actual = str(NumpyDocstring(docstring, config))
+         self.assertEqual(expected, actual)
+ 
++    def test_multiple_params(self):
++        docstring = """\
++One line summary.
++
++Parameters
++----------
++x1, x2 : array_like
++    Input arrays, description of `x1`, `x2`.
++"""
++        config = Config(napoleon_use_param=True)
++        actual = str(NumpyDocstring(docstring, config))
++        expected = """\
++One line summary.
++
++:param x1: Input arrays, description of `x1`, `x2`.
++:type x1: :class:`array_like`
++:param x2: Input arrays, description of `x1`, `x2`.
++:type x2: :class:`array_like`
++"""
++        self.assertEqual(expected, actual)
++
+ 
+ @contextmanager
+ def warns(warning, match):

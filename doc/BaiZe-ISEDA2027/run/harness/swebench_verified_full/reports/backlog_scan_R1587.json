@@ -1,0 +1,13 @@
+{
+  "round": "R1587",
+  "total_backlog": 0,
+  "per_harness": {
+    "cline-patched": [],
+    "codex": [],
+    "deepseek-harness": [],
+    "opencode": [],
+    "pi": [],
+    "claude-code": [],
+    "hermes": []
+  }
+}

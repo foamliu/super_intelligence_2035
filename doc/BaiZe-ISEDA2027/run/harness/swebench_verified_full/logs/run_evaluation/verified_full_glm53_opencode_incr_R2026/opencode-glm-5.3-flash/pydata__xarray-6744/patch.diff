@@ -1,0 +1,96 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index f0b1c34..eb7061d 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -38,6 +38,8 @@ Deprecations
+ Bug fixes
+ ~~~~~~~~~
+ 
++- Manually iterating over a ``Rolling`` object now respects the ``center`` argument
++  (:issue:`6738`).
+ - :py:meth:`xarray.save_mfdataset` now passes ``**kwargs`` on to ``to_netcdf``,
+   allowing the ``encoding`` and ``unlimited_dims`` options with ``save_mfdataset``.
+   (:issue:`6684`)
+diff --git a/xarray/core/rolling.py b/xarray/core/rolling.py
+index aef290f..8199f08 100644
+--- a/xarray/core/rolling.py
++++ b/xarray/core/rolling.py
+@@ -270,16 +270,24 @@ class DataArrayRolling(Rolling["DataArray"]):
+     def __iter__(self) -> Iterator[tuple[RollingKey, DataArray]]:
+         if self.ndim > 1:
+             raise ValueError("__iter__ is only supported for 1d-rolling")
+-        stops = np.arange(1, len(self.window_labels) + 1)
+-        starts = stops - int(self.window[0])
+-        starts[: int(self.window[0])] = 0
++
++        window = int(self.window[0])
++        if self.center[0]:
++            offset_before = window // 2
++        else:
++            offset_before = window - 1
++        offset_after = window - 1 - offset_before
++
++        stops = np.arange(1, len(self.window_labels) + 1) + offset_after
++        starts = stops - window
++        starts[:offset_before] = 0
+         for (label, start, stop) in zip(self.window_labels, starts, stops):
+-            window = self.obj.isel({self.dim[0]: slice(start, stop)})
++            window_da = self.obj.isel({self.dim[0]: slice(start, stop)})
+ 
+-            counts = window.count(dim=self.dim[0])
+-            window = window.where(counts >= self.min_periods)
++            counts = window_da.count(dim=self.dim[0])
++            window_da = window_da.where(counts >= self.min_periods)
+ 
+-            yield (label, window)
++            yield (label, window_da)
+ 
+     def construct(
+         self,
+diff --git a/xarray/tests/test_rolling.py b/xarray/tests/test_rolling.py
+index 2d6efff..51029f0 100644
+--- a/xarray/tests/test_rolling.py
++++ b/xarray/tests/test_rolling.py
+@@ -26,9 +26,11 @@ pytestmark = [
+ 
+ 
+ class TestDataArrayRolling:
++    @pytest.mark.parametrize("center", (True, False))
++    @pytest.mark.parametrize("window", (1, 2, 3, 4, 7))
+     @pytest.mark.parametrize("da", (1, 2), indirect=True)
+-    def test_rolling_iter(self, da) -> None:
+-        rolling_obj = da.rolling(time=7)
++    def test_rolling_iter(self, da, center, window) -> None:
++        rolling_obj = da.rolling(time=window, center=center)
+         rolling_obj_mean = rolling_obj.mean()
+ 
+         assert len(rolling_obj.window_labels) == len(da["time"])
+@@ -40,14 +42,20 @@ class TestDataArrayRolling:
+             actual = rolling_obj_mean.isel(time=i)
+             expected = window_da.mean("time")
+ 
+-            # TODO add assert_allclose_with_nan, which compares nan position
+-            # as well as the closeness of the values.
+-            assert_array_equal(actual.isnull(), expected.isnull())
+-            if (~actual.isnull()).sum() > 0:
+-                np.allclose(
+-                    actual.values[actual.values.nonzero()],
+-                    expected.values[expected.values.nonzero()],
+-                )
++            # compares nan positions as well as the closeness of the values
++            np.testing.assert_allclose(actual.values, expected.values)
++
++    def test_rolling_iter_center(self) -> None:
++        # GH6738: manual iteration should respect center=True
++        da = DataArray(np.arange(1, 10), dims="x")
++
++        for center in (True, False):
++            rolling_obj = da.rolling(x=3, center=center)
++            expected = rolling_obj.mean().values
++            actual = np.array(
++                [window.mean().values.item() for label, window in rolling_obj]
++            )
++            assert_array_equal(actual, expected)
+ 
+     @pytest.mark.parametrize("da", (1,), indirect=True)
+     def test_rolling_repr(self, da) -> None:

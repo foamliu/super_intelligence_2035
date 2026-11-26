@@ -1,0 +1,56 @@
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c1..2aca8bab 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c20..6fb6ae50 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -1,4 +1,5 @@
+ from sympy.core.numbers import (I, Rational, pi)
++from sympy.core.function import Function, FunctionClass
+ from sympy.core.relational import (GreaterThan, LessThan, StrictGreaterThan, StrictLessThan)
+ from sympy.core.symbol import (Dummy, Symbol, Wild, symbols)
+ from sympy.core.sympify import sympify  # can't import as S yet
+@@ -327,6 +328,32 @@ def sym(s):
+     raises(ValueError, lambda: symbols('::a'))
+ 
+ 
++def test_symbols_become_functions_issue_23522():
++    # regression test for issue 23522: when ``names`` is an iterable of
++    # strings, the ``cls`` keyword was not forwarded in the recursive
++    # call, so iterable input silently produced Symbols (or the default
++    # class) instead of the requested class.
++    f, g = symbols(('f:2', 'g:2'), cls=Function)
++    assert isinstance(f[0], FunctionClass)
++    assert isinstance(f[1], FunctionClass)
++    assert isinstance(g[0], FunctionClass)
++    assert isinstance(g[1], FunctionClass)
++
++    d, e = symbols(['d:2', 'e:2'], cls=Dummy)
++    assert isinstance(d[0], Dummy) and isinstance(d[1], Dummy)
++    assert isinstance(e[0], Dummy) and isinstance(e[1], Dummy)
++
++    w, v = symbols(('w:2', 'v:2'), cls=Wild)
++    assert isinstance(w[0], Wild) and isinstance(w[1], Wild)
++    assert isinstance(v[0], Wild) and isinstance(v[1], Wild)
++
++    a, b = symbols(('a:2', 'b:2'))
++    assert isinstance(a[0], Symbol) and isinstance(a[1], Symbol)
++    assert isinstance(b[0], Symbol) and isinstance(b[1], Symbol)
++
++    assert symbols(('f', 'g'), cls=Function) == symbols('f,g', cls=Function)
++
++
+ def test_symbols_become_functions_issue_3539():
+     from sympy.abc import alpha, phi, beta, t
+     raises(TypeError, lambda: beta(2))

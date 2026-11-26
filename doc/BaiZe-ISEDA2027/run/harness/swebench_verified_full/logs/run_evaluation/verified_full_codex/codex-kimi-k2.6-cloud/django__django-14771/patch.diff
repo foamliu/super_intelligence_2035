@@ -1,0 +1,93 @@
+diff --git a/django/utils/autoreload.py b/django/utils/autoreload.py
+index cc65c043a..f8af679ba 100644
+--- a/django/utils/autoreload.py
++++ b/django/utils/autoreload.py
+@@ -219,7 +219,9 @@ def get_child_arguments():
+     import __main__
+     py_script = Path(sys.argv[0])
+ 
+-    args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions]
++    args = [sys.executable]
++    args += ['-X%s' % key if value is True else '-X%s=%s' % (key, value) for key, value in sys._xoptions.items()]
++    args += ['-W%s' % o for o in sys.warnoptions]
+     # __spec__ is set when the server was started with the `-m` option,
+     # see https://docs.python.org/3/reference/import.html#main-spec
+     # __spec__ may not exist, e.g. when running in a Conda env.
+diff --git a/tests/utils_tests/test_autoreload.py b/tests/utils_tests/test_autoreload.py
+index 7c28a9d4d..fc1ea7a91 100644
+--- a/tests/utils_tests/test_autoreload.py
++++ b/tests/utils_tests/test_autoreload.py
+@@ -169,6 +169,7 @@ class TestIterModulesAndFiles(SimpleTestCase):
+ class TestChildArguments(SimpleTestCase):
+     @mock.patch.dict(sys.modules, {'__main__': django.__main__})
+     @mock.patch('sys.argv', [django.__main__.__file__, 'runserver'])
++    @mock.patch('sys._xoptions', {})
+     @mock.patch('sys.warnoptions', [])
+     def test_run_as_module(self):
+         self.assertEqual(
+@@ -178,6 +179,7 @@ class TestChildArguments(SimpleTestCase):
+ 
+     @mock.patch.dict(sys.modules, {'__main__': test_main})
+     @mock.patch('sys.argv', [test_main.__file__, 'runserver'])
++    @mock.patch('sys._xoptions', {})
+     @mock.patch('sys.warnoptions', [])
+     def test_run_as_non_django_module(self):
+         self.assertEqual(
+@@ -187,6 +189,7 @@ class TestChildArguments(SimpleTestCase):
+ 
+     @mock.patch.dict(sys.modules, {'__main__': test_main_module})
+     @mock.patch('sys.argv', [test_main.__file__, 'runserver'])
++    @mock.patch('sys._xoptions', {})
+     @mock.patch('sys.warnoptions', [])
+     def test_run_as_non_django_module_non_package(self):
+         self.assertEqual(
+@@ -196,6 +199,7 @@ class TestChildArguments(SimpleTestCase):
+ 
+     @mock.patch('__main__.__spec__', None)
+     @mock.patch('sys.argv', [__file__, 'runserver'])
++    @mock.patch('sys._xoptions', {})
+     @mock.patch('sys.warnoptions', ['error'])
+     def test_warnoptions(self):
+         self.assertEqual(
+@@ -204,6 +208,17 @@ class TestChildArguments(SimpleTestCase):
+         )
+ 
+     @mock.patch('__main__.__spec__', None)
++    @mock.patch('sys.argv', [__file__, 'runserver'])
++    @mock.patch('sys._xoptions', {'utf8': True})
++    @mock.patch('sys.warnoptions', [])
++    def test_xoptions(self):
++        self.assertEqual(
++            autoreload.get_child_arguments(),
++            [sys.executable, '-Xutf8', __file__, 'runserver']
++        )
++
++    @mock.patch('__main__.__spec__', None)
++    @mock.patch('sys._xoptions', {})
+     @mock.patch('sys.warnoptions', [])
+     def test_exe_fallback(self):
+         with tempfile.TemporaryDirectory() as tmpdir:
+@@ -216,6 +231,7 @@ class TestChildArguments(SimpleTestCase):
+                 )
+ 
+     @mock.patch('__main__.__spec__', None)
++    @mock.patch('sys._xoptions', {})
+     @mock.patch('sys.warnoptions', [])
+     def test_entrypoint_fallback(self):
+         with tempfile.TemporaryDirectory() as tmpdir:
+@@ -229,6 +245,7 @@ class TestChildArguments(SimpleTestCase):
+ 
+     @mock.patch('__main__.__spec__', None)
+     @mock.patch('sys.argv', ['does-not-exist', 'runserver'])
++    @mock.patch('sys._xoptions', {})
+     @mock.patch('sys.warnoptions', [])
+     def test_raises_runtimeerror(self):
+         msg = 'Script does-not-exist does not exist.'
+@@ -236,6 +253,7 @@ class TestChildArguments(SimpleTestCase):
+             autoreload.get_child_arguments()
+ 
+     @mock.patch('sys.argv', [__file__, 'runserver'])
++    @mock.patch('sys._xoptions', {})
+     @mock.patch('sys.warnoptions', [])
+     def test_module_no_spec(self):
+         module = types.ModuleType('test_module')

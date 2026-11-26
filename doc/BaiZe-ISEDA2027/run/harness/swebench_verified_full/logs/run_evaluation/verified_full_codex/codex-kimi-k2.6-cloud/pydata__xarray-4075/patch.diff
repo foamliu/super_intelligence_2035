@@ -1,0 +1,13 @@
+diff --git a/xarray/core/weighted.py b/xarray/core/weighted.py
+index 996d2e4..82bd5f8 100644
+--- a/xarray/core/weighted.py
++++ b/xarray/core/weighted.py
+@@ -107,7 +107,7 @@ class Weighted:
+             )
+ 
+         self.obj = obj
+-        self.weights = weights
++        self.weights = weights.astype(int) if weights.dtype == bool else weights
+ 
+     @staticmethod
+     def _reduce(

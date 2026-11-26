@@ -1,0 +1,34 @@
+diff --git a/sklearn/ensemble/tests/test_voting.py b/sklearn/ensemble/tests/test_voting.py
+index 2a19bc9a..2a7393f6 100644
+--- a/sklearn/ensemble/tests/test_voting.py
++++ b/sklearn/ensemble/tests/test_voting.py
+@@ -347,6 +347,11 @@ def test_sample_weight():
+     msg = ('Underlying estimator \'knn\' does not support sample weights.')
+     assert_raise_message(ValueError, msg, eclf3.fit, X, y, sample_weight)
+ 
++    # check that an estimator can be set to None and removed
++    # with sample_weight passed
++    eclf3.set_params(knn=None)
++    eclf3.fit(X, y, sample_weight)
++
+ 
+ def test_sample_weight_kwargs():
+     """Check that VotingClassifier passes sample_weight as kwargs"""
+diff --git a/sklearn/ensemble/voting.py b/sklearn/ensemble/voting.py
+index 7afa7180..f6470b00 100644
+--- a/sklearn/ensemble/voting.py
++++ b/sklearn/ensemble/voting.py
+@@ -78,9 +78,10 @@ class _BaseVoting(_BaseComposition, TransformerMixin):
+ 
+         if sample_weight is not None:
+             for name, step in self.estimators:
+-                if not has_fit_parameter(step, 'sample_weight'):
+-                    raise ValueError('Underlying estimator \'%s\' does not'
+-                                     ' support sample weights.' % name)
++                if step is not None:
++                    if not has_fit_parameter(step, 'sample_weight'):
++                        raise ValueError('Underlying estimator \'%s\' does not'
++                                         ' support sample weights.' % name)
+ 
+         names, clfs = zip(*self.estimators)
+         self._validate_names(names)

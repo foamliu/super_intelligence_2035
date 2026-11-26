@@ -1,0 +1,41 @@
+{
+    "id": "b2538942-411a-4407-b960-e80968f7ed76",
+    "started_at": "2026-10-19T08:19:08.586250",
+    "updated_at": "2026-10-19T08:25:06.751459",
+    "finished_at": "2026-10-19T08:25:06.751459",
+    "n_total_trials": 5,
+    "stats": {
+        "n_completed_trials": 5,
+        "n_errored_trials": 5,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "hermes__tb_pilot_dataset_G6SwkJ": {
+                "n_trials": 0,
+                "n_errors": 5,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {},
+                "exception_stats": {
+                    "RuntimeError": [
+                        "bn-fit-modify__MG4VshT",
+                        "break-filter-js-from-html__cesHFuj",
+                        "chess-best-move__mumnehy",
+                        "fix-git__PVDo2D2",
+                        "log-summary-date-ranges__zyJ6dkD"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

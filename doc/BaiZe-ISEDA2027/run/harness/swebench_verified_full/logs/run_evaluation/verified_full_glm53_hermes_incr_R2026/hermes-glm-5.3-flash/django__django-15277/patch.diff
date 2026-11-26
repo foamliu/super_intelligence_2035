@@ -1,0 +1,37 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index f30b52334..88c9ca9f2 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -1010,7 +1010,8 @@ class CharField(Field):
+     def __init__(self, *args, db_collation=None, **kwargs):
+         super().__init__(*args, **kwargs)
+         self.db_collation = db_collation
+-        self.validators.append(validators.MaxLengthValidator(self.max_length))
++        if self.max_length is not None:
++            self.validators.append(validators.MaxLengthValidator(self.max_length))
+ 
+     def check(self, **kwargs):
+         databases = kwargs.get('databases') or []
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 13c7e2b21..6f43d23bb 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -8,6 +8,7 @@ from decimal import Decimal
+ from unittest import mock
+ 
+ from django.core.exceptions import FieldError
++from django.core import validators
+ from django.db import DatabaseError, NotSupportedError, connection
+ from django.db.models import (
+     AutoField, Avg, BinaryField, BooleanField, Case, CharField, Count,
+@@ -1846,6 +1847,10 @@ class ValueTests(TestCase):
+             with self.subTest(type=type(value)):
+                 expr = Value(value)
+                 self.assertIsInstance(expr.output_field, output_field_type)
++                self.assertNotIn(
++                    validators.MaxLengthValidator,
++                    [type(validator) for validator in expr.output_field.validators],
++                )
+ 
+     def test_resolve_output_field_failure(self):
+         msg = 'Cannot resolve expression type, unknown output_field'

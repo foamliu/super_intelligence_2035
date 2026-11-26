@@ -1,0 +1,54 @@
+diff --git a/sympy/core/mod.py b/sympy/core/mod.py
+index eae25630..3195b898 100644
+--- a/sympy/core/mod.py
++++ b/sympy/core/mod.py
+@@ -139,6 +139,37 @@ def doit(p, q):
+                 net = prod_mod1*prod_mod
+                 return prod_non_mod*cls(net, q)
+ 
++            # New logic for cases like Mod(3*i, 2) where there's no existing Mod in the product
++            # Only apply if mod_l is empty (no existing Mods in the product)
++            # AND we're not dealing with simple -1 extraction (which is handled later)
++            # AND we're not dealing with Floats (which have their own handling)
++            # AND gcd(p, q) == 1 (otherwise GCD extraction should happen first)
++            if not mod_l and not p.could_extract_minus_sign() and gcd(p, q) == 1:
++                # Check if any of the original terms are Floats before wrapping
++                # Also check if q contains a Float, since wrapping with a Float q introduces Floats
++                has_float_p = any(i.is_Float for i in non_mod_l)
++                has_float_q = any(i.is_Float for i in q.args) if isinstance(q, Mul) else q.is_Float
++                if not has_float_p and not has_float_q:
++                    was = non_mod_l[:]
++                    non_mod_l = [cls(x, q) for x in non_mod_l]
++                    # Only trigger if wrapping produced at least one non-Mod (i.e., simplified to a number)
++                    # AND at least one Mod (i.e., there's something to distribute)
++                    has_mod = any(isinstance(i, cls) for i in non_mod_l)
++                    has_non_mod = any(not isinstance(i, cls) for i in non_mod_l)
++                    if was != non_mod_l and has_mod and has_non_mod:
++                        # finding distributive term
++                        mod = []
++                        non_mod = []
++                        for j in non_mod_l:
++                            if isinstance(j, cls):
++                                mod.append(j.args[0])
++                            else:
++                                non_mod.append(j)
++                        prod_mod = Mul(*mod)
++                        prod_non_mod = Mul(*non_mod)
++                        net = prod_mod
++                        return prod_non_mod*cls(net, q)
++
+         # XXX other possibilities?
+ 
+         # extract gcd; any further simplification should be done by the user
+diff --git a/sympy/core/tests/test_arit.py b/sympy/core/tests/test_arit.py
+index 04d3b1ab..05e2d197 100644
+--- a/sympy/core/tests/test_arit.py
++++ b/sympy/core/tests/test_arit.py
+@@ -1624,6 +1624,7 @@ def test_Mod():
+     i = Symbol('i', integer=True)
+     assert (3*i*x) % (2*i*y) == i*Mod(3*x, 2*y)
+     assert Mod(4*i, 4) == 0
++    assert Mod(3*i, 2) == Mod(i, 2)
+ 
+     # issue 8677
+     n = Symbol('n', integer=True, positive=True)

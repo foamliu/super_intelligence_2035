@@ -1,0 +1,67 @@
+diff --git a/sklearn/tree/export.py b/sklearn/tree/export.py
+index 1fe11e59..bcf32caf 100644
+--- a/sklearn/tree/export.py
++++ b/sklearn/tree/export.py
+@@ -889,11 +889,6 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+     else:
+         value_fmt = "{}{} value: {}\n"
+ 
+-    if feature_names:
+-        feature_names_ = [feature_names[i] for i in tree_.feature]
+-    else:
+-        feature_names_ = ["feature_{}".format(i) for i in tree_.feature]
+-
+     export_text.report = ""
+ 
+     def _add_leaf(value, class_name, indent):
+@@ -928,7 +923,10 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+             info_fmt_right = info_fmt
+ 
+             if tree_.feature[node] != _tree.TREE_UNDEFINED:
+-                name = feature_names_[node]
++                if feature_names is not None:
++                    name = feature_names[tree_.feature[node]]
++                else:
++                    name = "feature_{}".format(tree_.feature[node])
+                 threshold = tree_.threshold[node]
+                 threshold = "{1:.{0}f}".format(decimals, threshold)
+                 export_text.report += right_child_fmt.format(indent,
+diff --git a/sklearn/tree/tests/test_export.py b/sklearn/tree/tests/test_export.py
+index 503431f4..97f82c1a 100644
+--- a/sklearn/tree/tests/test_export.py
++++ b/sklearn/tree/tests/test_export.py
+@@ -397,6 +397,34 @@ def test_export_text():
+     assert export_text(reg, decimals=1, show_weights=True) == expected_report
+ 
+ 
++def test_export_text_single_feature():
++    # Check that export_text works with a single feature
++    # (regression test for issue #9742)
++    X_single = [[-2], [-1], [-1], [1], [1], [2]]
++    y_single = [-1, -1, -1, 1, 1, 1]
++
++    clf = DecisionTreeClassifier(max_depth=1, random_state=0)
++    clf.fit(X_single, y_single)
++
++    # test with feature name
++    expected_report = dedent("""
++    |--- feature_a <= 0.00
++    |   |--- class: -1
++    |--- feature_a >  0.00
++    |   |--- class: 1
++    """).lstrip()
++    assert export_text(clf, feature_names=['feature_a']) == expected_report
++
++    # test without feature name
++    expected_report = dedent("""
++    |--- feature_0 <= 0.00
++    |   |--- class: -1
++    |--- feature_0 >  0.00
++    |   |--- class: 1
++    """).lstrip()
++    assert export_text(clf) == expected_report
++
++
+ def test_plot_tree_entropy(pyplot):
+     # mostly smoke tests
+     # Check correctness of export_graphviz for criterion = entropy

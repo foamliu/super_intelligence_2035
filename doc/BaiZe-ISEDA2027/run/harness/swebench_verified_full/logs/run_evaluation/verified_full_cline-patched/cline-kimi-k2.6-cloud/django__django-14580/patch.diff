@@ -1,0 +1,50 @@
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index e19c881cd..072a2efc1 100644
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -273,7 +273,7 @@ class TupleSerializer(BaseSequenceSerializer):
+ class TypeSerializer(BaseSerializer):
+     def serialize(self):
+         special_cases = [
+-            (models.Model, "models.Model", []),
++            (models.Model, "models.Model", ["from django.db import models"]),
+             (type(None), 'type(None)', []),
+         ]
+         for case, string, imports in special_cases:
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index a590ff439..21903a0e2 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -658,6 +658,32 @@ class WriterTests(SimpleTestCase):
+     def test_serialize_type_none(self):
+         self.assertSerializedEqual(type(None))
+ 
++    def test_serialize_model_model(self):
++        self.assertSerializedResultEqual(
++            models.Model,
++            ('models.Model', {'from django.db import models'}),
++        )
++
++    def test_create_model_bases_with_model_model(self):
++        """
++        A CreateModel operation with bases containing models.Model generates
++        a valid migration file with the required import.
++        """
++        migration = type("Migration", (migrations.Migration,), {
++            "operations": [
++                migrations.CreateModel(
++                    "MyModel",
++                    [],
++                    bases=(decimal.Decimal, models.Model),
++                ),
++            ],
++        })
++        writer = MigrationWriter(migration)
++        output = writer.as_string()
++        self.assertIn('bases=(decimal.Decimal, models.Model)', output)
++        result = self.safe_exec(output)
++        self.assertIn("Migration", result)
++
+     def test_simple_migration(self):
+         """
+         Tests serializing a simple migration.

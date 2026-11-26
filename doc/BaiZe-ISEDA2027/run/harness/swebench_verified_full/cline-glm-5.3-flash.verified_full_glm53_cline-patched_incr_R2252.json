@@ -1,0 +1,11 @@
+{
+  "harness": "cline",
+  "run_id": "verified_full_glm53_cline-patched_incr_R2252",
+  "round": "R2252",
+  "n": 1,
+  "resolved": [
+    "sympy__sympy-16766"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

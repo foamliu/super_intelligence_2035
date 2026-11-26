@@ -1,0 +1,62 @@
+2026-11-19 23:59:53,969 - INFO - Creating container for matplotlib__matplotlib-23314...
+2026-11-19 23:59:54,025 - INFO - Container for matplotlib__matplotlib-23314 created: 2edfa281476363a39690392a77beffb332b8aa6e9689679f5bf9c5f63bcb4a2f
+2026-11-19 23:59:54,976 - INFO - Container for matplotlib__matplotlib-23314 started: 2edfa281476363a39690392a77beffb332b8aa6e9689679f5bf9c5f63bcb4a2f
+2026-11-19 23:59:54,978 - INFO - Intermediate patch for matplotlib__matplotlib-23314 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2796/deepseek-harness-glm-5.3-flash/matplotlib__matplotlib-23314/patch.diff, now applying to container...
+2026-11-19 23:59:55,164 - INFO - >>>>> Applied Patch:
+Checking patch lib/mpl_toolkits/mplot3d/axes3d.py...
+warning: lib/mpl_toolkits/mplot3d/axes3d.py has type 100755, expected 100644
+Checking patch lib/mpl_toolkits/tests/test_mplot3d.py...
+warning: lib/mpl_toolkits/tests/test_mplot3d.py has type 100755, expected 100644
+Applied patch lib/mpl_toolkits/mplot3d/axes3d.py cleanly.
+Applied patch lib/mpl_toolkits/tests/test_mplot3d.py cleanly.
+
+2026-11-19 23:59:57,161 - INFO - Git diff before:
+diff --git a/lib/mpl_toolkits/mplot3d/axes3d.py b/lib/mpl_toolkits/mplot3d/axes3d.py
+index 9db44b7994..5479bc1af0 100755
+--- a/lib/mpl_toolkits/mplot3d/axes3d.py
++++ b/lib/mpl_toolkits/mplot3d/axes3d.py
+@@ -387,6 +387,8 @@ class Axes3D(Axes):
+ 
+     @martist.allow_rasterization
+     def draw(self, renderer):
++        if not self.get_visible():
++            return
+         self._unstale_viewLim()
+ 
+         # draw the background patch
+diff --git a/lib/mpl_toolkits/tests/test_mplot3d.py b/lib/mpl_toolkits/tests/test_mplot3d.py
+index 966eb50b21..b14c903e8f 100755
+--- a/lib/mpl_toolkits/tests/test_mplot3d.py
++++ b/lib/mpl_toolkits/tests/test_mplot3d.py
+@@ -251,6 +251,18 @@ def test_mixedsubplots():
+     ax.set_zlim3d(-1, 1)
+ 
+ 
++@check_figures_equal(extensions=['png'])
++def test_axes3d_set_visible(fig_test, fig_ref):
++    ax_test = fig_test.add_subplot(211, projection="3d")
++    ax_test.scatter(1, 1, 1)
++    ax_test.set_visible(False)
++    ax_test = fig_test.add_subplot(212, projection="3d")
++    ax_test.scatter(1, 1, 1)
++
++    ax_ref = fig_ref.add_subplot(212, projection="3d")
++    ax_ref.scatter(1, 1, 1)
++
++
+ @check_figures_equal(extensions=['png'])
+ def test_tight_layout_text(fig_test, fig_ref):
+     # text is currently ignored in tight layout. So the order of text() and
+2026-11-19 23:59:57,164 - INFO - Eval script for matplotlib__matplotlib-23314 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2796/deepseek-harness-glm-5.3-flash/matplotlib__matplotlib-23314/eval.sh; copying to container...
+2026-11-20 00:29:57,355 - INFO - Test runtime: 1_800.09 seconds
+2026-11-20 00:29:57,362 - INFO - Test output for matplotlib__matplotlib-23314 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2796/deepseek-harness-glm-5.3-flash/matplotlib__matplotlib-23314/test_output.txt
+2026-11-20 00:29:57,364 - INFO - Traceback (most recent call last):
+  File "/home/app.e0031982/.local/lib/python3.10/site-packages/swebench/harness/run_evaluation.py", line 377, in run_instance
+    raise EvaluationError(
+swebench.harness.utils.EvaluationError: Error in evaluation for matplotlib__matplotlib-23314: Test timed out after 1800 seconds.
+Check (logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2796/deepseek-harness-glm-5.3-flash/matplotlib__matplotlib-23314/run_instance.log) for more information.
+
+2026-11-20 00:29:57,364 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-23314.verified_full_glm53_deepseek-harness_incr_R2796...
+2026-11-20 00:30:13,486 - INFO - Container sweb.eval.matplotlib__matplotlib-23314.verified_full_glm53_deepseek-harness_incr_R2796 stopped successfully.
+2026-11-20 00:30:13,486 - INFO - Attempting to remove container sweb.eval.matplotlib__matplotlib-23314.verified_full_glm53_deepseek-harness_incr_R2796...
+2026-11-20 00:30:13,548 - INFO - Container sweb.eval.matplotlib__matplotlib-23314.verified_full_glm53_deepseek-harness_incr_R2796 removed successfully.

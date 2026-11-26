@@ -1,0 +1,40 @@
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909..01dcea821 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -172,7 +172,9 @@ def translate_url(url, lang_code):
+         to_be_reversed = "%s:%s" % (match.namespace, match.url_name) if match.namespace else match.url_name
+         with override(lang_code):
+             try:
+-                url = reverse(to_be_reversed, args=match.args, kwargs=match.kwargs)
++                args = tuple(a for a in match.args if a is not None)
++                kwargs = {k: v for k, v in match.kwargs.items() if v is not None}
++                url = reverse(to_be_reversed, args=args, kwargs=kwargs)
+             except NoReverseMatch:
+                 pass
+             else:
+diff --git a/tests/i18n/patterns/tests.py b/tests/i18n/patterns/tests.py
+index 6ed2c4ffe..10fc92806 100644
+--- a/tests/i18n/patterns/tests.py
++++ b/tests/i18n/patterns/tests.py
+@@ -162,6 +162,10 @@ class URLTranslationTests(URLTestCaseBase):
+         with translation.override('nl'):
+             self.assertEqual(translate_url('/nl/gebruikers/', 'en'), '/en/users/')
+             self.assertEqual(translation.get_language(), 'nl')
++        # Optional named groups.
++        with translation.override('en'):
++            self.assertEqual(translate_url('/en/optional/', 'nl'), '/nl/optional/')
++            self.assertEqual(translate_url('/en/optional/foo/', 'nl'), '/nl/optional/foo/')
+ 
+ 
+ class URLNamespaceTests(URLTestCaseBase):
+diff --git a/tests/i18n/patterns/urls/default.py b/tests/i18n/patterns/urls/default.py
+index b0c2f2585..b76a25847 100644
+--- a/tests/i18n/patterns/urls/default.py
++++ b/tests/i18n/patterns/urls/default.py
+@@ -17,4 +17,5 @@ urlpatterns += i18n_patterns(
+     path('prefixed.xml', view, name='prefixed_xml'),
+     re_path(_(r'^users/$'), view, name='users'),
+     re_path(_(r'^account/'), include('i18n.patterns.urls.namespace', namespace='account')),
++    re_path(_(r'^optional/(?:(?P<slug>[\w-]+)/)?$'), view, name='optional'),
+ )

@@ -1,0 +1,117 @@
+diff --git a/sympy/core/tests/test_relational.py b/sympy/core/tests/test_relational.py
+index 63a8705c..fe80de4f 100644
+--- a/sympy/core/tests/test_relational.py
++++ b/sympy/core/tests/test_relational.py
+@@ -8,6 +8,7 @@
+                                    StrictLessThan, Rel, Eq, Lt, Le,
+                                    Gt, Ge, Ne)
+ from sympy.sets.sets import Interval, FiniteSet
++from sympy.sets.conditionset import ConditionSet
+ 
+ from itertools import combinations
+ 
+@@ -426,6 +427,11 @@ def test_univariate_relational_as_set():
+ 
+     assert (x**2 >= 4).as_set() == Interval(-oo, -2) + Interval(2, oo)
+ 
++    # unsolved equations are returned as a ConditionSet
++    n = Symbol('n')
++    assert Eq(n*cos(n) - 3*sin(n), 0).as_set() == \
++        ConditionSet(n, Eq(n*cos(n) - 3*sin(n), 0), S.Reals)
++
+ 
+ @XFAIL
+ def test_multivariate_relational_as_set():
+diff --git a/sympy/solvers/inequalities.py b/sympy/solvers/inequalities.py
+index 9127d217..2f38d7dc 100644
+--- a/sympy/solvers/inequalities.py
++++ b/sympy/solvers/inequalities.py
+@@ -8,6 +8,7 @@
+ from sympy.core.relational import Relational, Eq, Ge, Lt
+ from sympy.sets import Interval
+ from sympy.sets.sets import FiniteSet, Union, EmptySet, Intersection
++from sympy.sets.conditionset import ConditionSet
+ from sympy.core.singleton import S
+ from sympy.core.function import expand_mul
+ 
+@@ -426,6 +427,10 @@ def solve_univariate_inequality(expr, gen, relational=True, domain=S.Reals, cont
+     :func:`sympy.solvers.solveset.solvify`. Also, the solution returned for trigonometric inequalities
+     are restricted in its periodic interval.
+ 
++    When an equation (an ``Eq``) cannot be solved and ``relational=False``,
++    a ``ConditionSet`` representing the solutions of the equation over the
++    given domain is returned instead of raising an error.
++
+     See Also
+     ========
+ 
+@@ -435,7 +440,7 @@ def solve_univariate_inequality(expr, gen, relational=True, domain=S.Reals, cont
+     ========
+ 
+     >>> from sympy.solvers.inequalities import solve_univariate_inequality
+-    >>> from sympy import Symbol, sin, Interval, S
++    >>> from sympy import Symbol, sin, cos, Eq, Interval, S
+     >>> x = Symbol('x')
+ 
+     >>> solve_univariate_inequality(x**2 >= 4, x)
+@@ -451,6 +456,13 @@ def solve_univariate_inequality(expr, gen, relational=True, domain=S.Reals, cont
+     >>> solve_univariate_inequality(sin(x) > 0, x, relational=False)
+     Interval.open(0, pi)
+ 
++    An unsolved equation is returned as a ConditionSet:
++
++    >>> from sympy.abc import n
++    >>> solve_univariate_inequality(Eq(n*cos(n) - 3*sin(n), 0), n,
++    ...     relational=False)
++    ConditionSet(n, Eq(n*cos(n) - 3*sin(n), 0), Reals)
++
+     """
+     from sympy import im
+     from sympy.calculus.util import (continuous_domain, periodicity,
+@@ -525,7 +537,19 @@ def solve_univariate_inequality(expr, gen, relational=True, domain=S.Reals, cont
+                 if solns is None:
+                     # in which case we raise ValueError
+                     raise ValueError
+-            except (ValueError, NotImplementedError):
++            except NotImplementedError:
++                # solveset was unable to solve the equation and returned a
++                # ConditionSet. If the relational is an equation and a set
++                # was requested, that ConditionSet is an exact representation
++                # of the solution set so return it rather than raising an
++                # error.
++                if isinstance(expr, Eq) and not relational:
++                    return ConditionSet(_gen, expr.subs(gen, _gen), _domain)
++                raise NotImplementedError(filldedent('''
++                    The inequality, %s, cannot be solved using
++                    solve_univariate_inequality.
++                    ''' % expr.subs(gen, Symbol('x'))))
++            except ValueError:
+                 # replace gen with generic x since it's
+                 # univariate anyway
+                 raise NotImplementedError(filldedent('''
+diff --git a/sympy/solvers/tests/test_inequalities.py b/sympy/solvers/tests/test_inequalities.py
+index 4c8a31a5..10b7d6d7 100644
+--- a/sympy/solvers/tests/test_inequalities.py
++++ b/sympy/solvers/tests/test_inequalities.py
+@@ -3,7 +3,7 @@
+ from sympy import (And, Eq, FiniteSet, Ge, Gt, Interval, Le, Lt, Ne, oo, I,
+                    Or, S, sin, cos, tan, sqrt, Symbol, Union, Integral, Sum,
+                    Function, Poly, PurePoly, pi, root, log, exp, Dummy, Abs,
+-                   Piecewise, Rational)
++                   Piecewise, Rational, ConditionSet)
+ from sympy.solvers.inequalities import (reduce_inequalities,
+                                         solve_poly_inequality as psolve,
+                                         reduce_rational_inequalities,
+@@ -323,6 +323,12 @@ def test_solve_univariate_inequality():
+     raises(NotImplementedError, lambda: isolve(
+         Eq(cos(x)**2 + sin(x)**2, 1), x))
+ 
++    # unsolved equations are returned as a ConditionSet
++    m = Symbol('m')
++    assert isolve(Eq(m*cos(m) - 3*sin(m), 0), m, relational=False) == \
++        ConditionSet(m, Eq(m*cos(m) - 3*sin(m), 0), S.Reals)
++    raises(NotImplementedError, lambda: isolve(Eq(m*cos(m) - 3*sin(m), 0), m))
++
+ 
+ def test_trig_inequalities():
+     # all the inequalities are solved in a periodic interval.

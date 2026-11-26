@@ -1,0 +1,43 @@
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index a3f03107..5a144d56 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -357,6 +357,11 @@ def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+ 
++    def _print_Indexed(self, expr):
++        base, *index = expr.args
++        return "{}[{}]".format(str(base), ", ".join(
++            [self._print(ind) for ind in index]))
++
+ 
+ for k in PythonCodePrinter._kf:
+     setattr(PythonCodePrinter, '_print_%s' % k, _print_known_func)
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index f1a9a378..ef09fd1e 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -3,6 +3,7 @@
+ 
+ from sympy.codegen import Assignment
+ from sympy.codegen.ast import none
++from sympy.tensor import IndexedBase
+ from sympy.core import Expr, Mod, symbols, Eq, Le, Gt, zoo, oo, Rational
+ from sympy.core.numbers import pi
+ from sympy.functions import acos, Piecewise, sign
+@@ -36,6 +37,14 @@ def test_PythonCodePrinter():
+     assert prntr.doprint(sign(x)) == '(0.0 if x == 0 else math.copysign(1, x))'
+ 
+ 
++def test_PythonCodePrinter_indexed():
++    prntr = PythonCodePrinter()
++    p = IndexedBase('p')
++    x, y = symbols('x y')
++    assert prntr.doprint(p[0]) == 'p[0]'
++    assert prntr.doprint(p[x, y]) == 'p[x, y]'
++
++
+ def test_MpmathPrinter():
+     p = MpmathPrinter()
+     assert p.doprint(sign(x)) == 'mpmath.sign(x)'

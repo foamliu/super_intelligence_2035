@@ -1,0 +1,91 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index b99f03cd88..649aa0fd5f 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1338,7 +1338,8 @@ class Query(BaseExpression):
+             if isinstance(child, Node):
+                 child_clause, needed_inner = self._add_q(
+                     child, used_aliases, branch_negated,
+-                    current_negated, allow_joins, split_subq)
++                    current_negated, allow_joins, split_subq,
++                    simple_col=simple_col)
+                 joinpromoter.add_votes(needed_inner)
+             else:
+                 child_clause, needed_inner = self.build_filter(
+diff --git a/tests/constraints/models.py b/tests/constraints/models.py
+index f316b95161..bc33ef2452 100644
+--- a/tests/constraints/models.py
++++ b/tests/constraints/models.py
+@@ -20,3 +20,16 @@ class Product(models.Model):
+                 condition=models.Q(color__isnull=True),
+             ),
+         ]
++
++
++class ChildProduct(models.Model):
++    field_1 = models.IntegerField(blank=True, null=True)
++    flag = models.BooleanField(blank=False, null=False)
++
++    class Meta:
++        constraints = [
++            models.CheckConstraint(
++                check=models.Q(flag__exact=True, field_1__isnull=False) | models.Q(flag__exact=False),
++                name='field_1_has_value_if_flag_set',
++            ),
++        ]
+diff --git a/tests/constraints/tests.py b/tests/constraints/tests.py
+index b7aeb1e7f0..db01c060bd 100644
+--- a/tests/constraints/tests.py
++++ b/tests/constraints/tests.py
+@@ -3,7 +3,7 @@ from django.db import IntegrityError, connection, models
+ from django.db.models.constraints import BaseConstraint
+ from django.test import SimpleTestCase, TestCase, skipUnlessDBFeature
+ 
+-from .models import Product
++from .models import ChildProduct, Product
+ 
+ 
+ def get_constraints(table):
+@@ -79,6 +79,13 @@ class CheckConstraintTests(TestCase):
+         expected_name = 'price_gt_discounted_price'
+         self.assertIn(expected_name, constraints)
+ 
++    @skipUnlessDBFeature('supports_table_check_constraints')
++    def test_database_constraint_with_nested_q(self):
++        ChildProduct.objects.create(field_1=1, flag=True)
++        ChildProduct.objects.create(field_1=None, flag=False)
++        with self.assertRaises(IntegrityError):
++            ChildProduct.objects.create(field_1=None, flag=True)
++
+ 
+ class UniqueConstraintTests(TestCase):
+     @classmethod
+diff --git a/tests/schema/tests.py b/tests/schema/tests.py
+index 0533b32859..7427c0590a 100644
+--- a/tests/schema/tests.py
++++ b/tests/schema/tests.py
+@@ -1541,6 +1541,24 @@ class SchemaTests(TransactionTestCase):
+         # Ensure the m2m table is still there.
+         self.assertEqual(len(self.column_classes(LocalM2M)), 1)
+ 
++    def test_check_constraint_sql_with_nested_q(self):
++        class TestConstraint(Model):
++            field_1 = IntegerField(blank=True, null=True)
++            flag = BooleanField()
++
++            class Meta:
++                app_label = 'schema'
++
++        constraint = CheckConstraint(
++            check=Q(flag=True, field_1__isnull=False) | Q(flag=False),
++            name='field_1_has_value_if_flag_set',
++        )
++        with connection.schema_editor() as editor:
++            self.assertEqual(
++                constraint._get_check_sql(TestConstraint, editor),
++                '(("field_1" IS NOT NULL AND "flag" = 1) OR "flag" = 0)',
++            )
++
+     @skipUnlessDBFeature('supports_column_check_constraints')
+     def test_check_constraints(self):
+         """

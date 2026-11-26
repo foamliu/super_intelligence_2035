@@ -1,0 +1,40 @@
+diff --git a/lib/matplotlib/colors.py b/lib/matplotlib/colors.py
+index 2d3072da0..4fd5d0541 100644
+--- a/lib/matplotlib/colors.py
++++ b/lib/matplotlib/colors.py
+@@ -727,6 +727,14 @@ class Colormap:
+                 xa = xa.astype(int)
+         # Set the over-range indices before the under-range;
+         # otherwise the under-range values get converted to over-range.
++        # xa may be an integer array with a dtype too small to hold the
++        # out-of-range sentinel indices; convert it to a signed integer type
++        # that can always hold them.  Clip first so that huge unsigned values
++        # do not wrap around when converted to a signed dtype.
++        if xa.dtype.kind == "u":
++            np.clip(xa, 0, self.N, out=xa)
++        if xa.dtype.kind in "ui":
++            xa = xa.astype(np.int64)
+         xa[xa > self.N - 1] = self._i_over
+         xa[xa < 0] = self._i_under
+         xa[mask_bad] = self._i_bad
+diff --git a/lib/matplotlib/tests/test_colors.py b/lib/matplotlib/tests/test_colors.py
+index ff893e71a..b5759ac4a 100644
+--- a/lib/matplotlib/tests/test_colors.py
++++ b/lib/matplotlib/tests/test_colors.py
+@@ -1399,6 +1399,16 @@ def test_get_under_over_bad():
+     assert_array_equal(cmap.get_bad(), cmap(np.nan))
+ 
+ 
++@pytest.mark.parametrize('dtype', np.sctypes['uint'] + np.sctypes['int'])
++def test_colormap_integer_dtype(dtype):
++    cmap = mpl.colormaps['viridis']
++    values = np.array([-1, 0, 1, 2, 255, 256, 257], dtype=dtype)
++    with np.errstate(over='ignore', invalid='ignore'):
++        result = cmap(values)
++    expected = cmap(values.astype(np.int64))
++    assert_array_equal(result, expected)
++
++
+ @pytest.mark.parametrize('kind', ('over', 'under', 'bad'))
+ def test_non_mutable_get_values(kind):
+     cmap = copy.copy(mpl.colormaps['viridis'])

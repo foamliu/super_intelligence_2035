@@ -1,0 +1,61 @@
+diff --git a/django/db/migrations/writer.py b/django/db/migrations/writer.py
+index a59f0c8dcb..6cb634ad8f 100644
+--- a/django/db/migrations/writer.py
++++ b/django/db/migrations/writer.py
+@@ -174,8 +174,12 @@ class MigrationWriter:
+             imports.add("from django.db import migrations")
+ 
+         # Sort imports by the package / module to be imported (the part after
+-        # "from" in "from ... import ..." or after "import" in "import ...").
+-        sorted_imports = sorted(imports, key=lambda i: i.split()[1])
++        # "from" in "from ... import ..." or after "import" in "import ...")
++        # and place all "import module" statements before "from module import
++        # objects" in each section.
++        sorted_imports = sorted(
++            imports, key=lambda i: (i.startswith("from "), i.split()[1])
++        )
+         items["imports"] = "\n".join(sorted_imports) + "\n" if imports else ""
+         if migration_imports:
+             items["imports"] += (
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index 1c11c68e97..501d0df1e4 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -7,6 +7,7 @@ import os
+ import pathlib
+ import re
+ import sys
++import time
+ import uuid
+ import zoneinfo
+ from types import NoneType
+@@ -896,7 +897,8 @@ class WriterTests(SimpleTestCase):
+ 
+     def test_sorted_imports(self):
+         """
+-        #24155 - Tests ordering of imports.
++        #24155 - Tests ordering of imports. "import module" statements are
++        placed before "from module import objects" statements.
+         """
+         migration = type(
+             "Migration",
+@@ -912,13 +914,18 @@ class WriterTests(SimpleTestCase):
+                             ),
+                         ),
+                     ),
++                    migrations.AddField(
++                        "mymodel",
++                        "myfield2",
++                        models.FilePathField(path="/tmp"),
++                    ),
+                 ]
+             },
+         )
+         writer = MigrationWriter(migration)
+         output = writer.as_string()
+         self.assertIn(
+-            "import datetime\nfrom django.db import migrations, models\n",
++            "import datetime\nimport time\nfrom django.db import migrations, models\n",
+             output,
+         )
+ 

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "matplotlib__matplotlib-23314",
+    "model_name_or_path": "cline-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/lib/mpl_toolkits/mplot3d/axes3d.py b/lib/mpl_toolkits/mplot3d/axes3d.py\nindex 9db44b79..5479bc1a 100644\n--- a/lib/mpl_toolkits/mplot3d/axes3d.py\n+++ b/lib/mpl_toolkits/mplot3d/axes3d.py\n@@ -387,6 +387,8 @@ class Axes3D(Axes):\n \n     @martist.allow_rasterization\n     def draw(self, renderer):\n+        if not self.get_visible():\n+            return\n         self._unstale_viewLim()\n \n         # draw the background patch\ndiff --git a/lib/mpl_toolkits/tests/test_mplot3d.py b/lib/mpl_toolkits/tests/test_mplot3d.py\nindex 966eb50b..f933fb7a 100644\n--- a/lib/mpl_toolkits/tests/test_mplot3d.py\n+++ b/lib/mpl_toolkits/tests/test_mplot3d.py\n@@ -28,6 +28,14 @@ def test_aspect_equal_error():\n         ax.set_aspect('equal')\n \n \n+def test_invisible_axes():\n+    # invisible axes should not respond to events\n+    fig, ax = plt.subplots(subplot_kw={'projection': '3d'})\n+    assert fig.canvas.inaxes((200, 200)) is not None\n+    ax.set_visible(False)\n+    assert fig.canvas.inaxes((200, 200)) is None\n+\n+\n @mpl3d_image_comparison(['bar3d.png'])\n def test_bar3d():\n     fig = plt.figure()\n"
+  }
+]

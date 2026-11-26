@@ -1,0 +1,81 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 2428218696..76b9104c01 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -933,10 +933,10 @@ class Model(metaclass=ModelBase):
+                         "%s() prohibited to prevent data loss due to unsaved "
+                         "related object '%s'." % (operation_name, field.name)
+                     )
+-                elif getattr(self, field.attname) is None:
++                elif getattr(self, field.attname) in field.target_field.empty_values:
+                     # Use pk from related object if it has been saved after
+                     # an assignment.
+-                    setattr(self, field.attname, obj.pk)
++                    setattr(self, field.attname, getattr(obj, field.target_field.attname))
+                 # If the relationship's pk/to_field was changed, clear the
+                 # cached relationship.
+                 if getattr(obj, field.target_field.attname) != getattr(self, field.attname):
+diff --git a/tests/many_to_one/models.py b/tests/many_to_one/models.py
+index e9f8fbff76..703400863e 100644
+--- a/tests/many_to_one/models.py
++++ b/tests/many_to_one/models.py
+@@ -81,6 +81,17 @@ class ToFieldChild(models.Model):
+     parent = models.ForeignKey(Parent, models.CASCADE, to_field='name', related_name='to_field_children')
+ 
+ 
++class StringPrimaryKeyParent(models.Model):
++    name = models.CharField(primary_key=True, max_length=20)
++
++    def __str__(self):
++        return self.name
++
++
++class StringPrimaryKeyChild(models.Model):
++    parent = models.ForeignKey(StringPrimaryKeyParent, models.CASCADE)
++
++
+ # Multiple paths to the same model (#7110, #7125)
+ class Category(models.Model):
+     name = models.CharField(max_length=20)
+diff --git a/tests/many_to_one/tests.py b/tests/many_to_one/tests.py
+index 3c7cd0c3fa..58aa94ce9b 100644
+--- a/tests/many_to_one/tests.py
++++ b/tests/many_to_one/tests.py
+@@ -8,8 +8,8 @@ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+     Article, Category, Child, ChildNullableParent, City, Country, District,
+-    First, Parent, Record, Relation, Reporter, School, Student, Third,
+-    ToFieldChild,
++    First, Parent, Record, Relation, Reporter, School, StringPrimaryKeyChild,
++    StringPrimaryKeyParent, Student, Third, ToFieldChild,
+ )
+ 
+ 
+@@ -549,6 +549,26 @@ class ManyToOneTests(TestCase):
+         self.assertEqual(child.parent, parent)
+         self.assertEqual(child.parent_id, parent.name)
+ 
++    def test_save_fk_after_parent_with_non_numeric_pk(self):
++        parent = StringPrimaryKeyParent()
++        child = StringPrimaryKeyChild(parent=parent)
++        parent.name = 'jeff'
++        parent.save()
++        child.save()
++        child.refresh_from_db()
++        self.assertEqual(child.parent, parent)
++        self.assertEqual(child.parent_id, 'jeff')
++
++    def test_save_to_field_fk_after_parent_with_non_numeric_to_field(self):
++        parent = Parent()
++        child = ToFieldChild(parent=parent)
++        parent.name = 'jeff'
++        parent.save()
++        child.save()
++        child.refresh_from_db()
++        self.assertEqual(child.parent, parent)
++        self.assertEqual(child.parent_id, 'jeff')
++
+     def test_fk_to_bigautofield(self):
+         ch = City.objects.create(name='Chicago')
+         District.objects.create(city=ch, name='Far South')

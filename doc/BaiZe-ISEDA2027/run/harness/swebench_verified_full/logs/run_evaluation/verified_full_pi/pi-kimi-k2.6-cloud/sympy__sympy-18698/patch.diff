@@ -1,0 +1,71 @@
+diff --git a/sympy/polys/polytools.py b/sympy/polys/polytools.py
+index c9e77a901..60a8a0896 100644
+--- a/sympy/polys/polytools.py
++++ b/sympy/polys/polytools.py
+@@ -5874,6 +5874,19 @@ def sqf_part(f, *gens, **args):
+         return result
+ 
+ 
++def _sorted_factors(factors, method):
++    """Sort a list of ``(expr, exp)`` pairs. """
++    if method == 'sqf':
++        def key(obj):
++            poly, exp = obj
++            rep = poly.rep.rep
++            return (exp, len(rep), len(poly.gens), rep)
++    else:
++        def key(obj):
++            poly, exp = obj
++            rep = poly.rep.rep
++            return (len(rep), len(poly.gens), exp, rep)
++
+ def _sorted_factors(factors, method):
+     """Sort a list of ``(expr, exp)`` pairs. """
+     if method == 'sqf':
+@@ -5890,6 +5903,21 @@ def key(obj):
+     return sorted(factors, key=key)
+ 
+ 
++def _combine_sqf_factors(factors):
++    """Combine ``(poly, exp)`` pairs with the same exponent. """
++    if not factors:
++        return factors
++    result = []
++    current_poly, current_exp = factors[0]
++    for poly, exp in factors[1:]:
++        if exp == current_exp:
++            current_poly = current_poly * poly
++        else:
++            result.append((current_poly, current_exp))
++            current_poly, current_exp = poly, exp
++    result.append((current_poly, current_exp))
++    return result
++
+ def _factors_product(factors):
+     """Multiply a list of ``(expr, exp)`` pairs. """
+     return Mul(*[f.as_expr()**k for f, k in factors])
+@@ -5998,6 +6026,10 @@ def _generic_factor_list(expr, gens, args, method):
+         fp = _sorted_factors(fp, method)
+         fq = _sorted_factors(fq, method)
+ 
++        if method == 'sqf':
++            fp = _combine_sqf_factors(fp)
++            fq = _combine_sqf_factors(fq)
++
+         if not opt.polys:
+             fp = [(f.as_expr(), k) for f, k in fp]
+             fq = [(f.as_expr(), k) for f, k in fq]
+diff --git a/sympy/polys/tests/test_polytools.py b/sympy/polys/tests/test_polytools.py
+index 82e5f4d6d..abe480f40 100644
+--- a/sympy/polys/tests/test_polytools.py
++++ b/sympy/polys/tests/test_polytools.py
+@@ -3273,8 +3273,7 @@ def test_to_rational_coeffs():
+ def test_factor_terms():
+     # issue 7067
+     assert factor_list(x*(x + y)) == (1, [(x, 1), (x + y, 1)])
+-    assert sqf_list(x*(x + y)) == (1, [(x, 1), (x + y, 1)])
+-
++    assert sqf_list(x*(x + y)) == (1, [(x**2 + x*y, 1)])
+ 
+ def test_as_list():
+     # issue 14496

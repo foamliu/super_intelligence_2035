@@ -1,0 +1,49 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index c84a054..c938b5c 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -66,6 +66,7 @@ Bug fixes
+ - Omit warning about specified dask chunks separating chunks on disk when the
+   underlying array is empty (e.g., because of an empty dimension) (:issue:`6401`).
+   By `Joseph K Aicher <https://github.com/jaicher>`_.
++- Fix ``xr.where`` with scalar ``x`` and ``keep_attrs=True`` (:issue:`6413`).
+ - Fixed the poor html repr performance on large multi-indexes (:pull:`6400`).
+   By `Benoît Bovy <https://github.com/benbovy>`_.
+ - Allow fancy indexing of duck dask arrays along multiple dimensions. (:pull:`6414`)
+diff --git a/xarray/core/computation.py b/xarray/core/computation.py
+index 7676d8e..1249ae7 100644
+--- a/xarray/core/computation.py
++++ b/xarray/core/computation.py
+@@ -1829,7 +1829,7 @@ def where(cond, x, y, keep_attrs=None):
+     if keep_attrs is True:
+         # keep the attributes of x, the second parameter, by default to
+         # be consistent with the `where` method of `DataArray` and `Dataset`
+-        keep_attrs = lambda attrs, context: attrs[1]
++        keep_attrs = lambda attrs, context: attrs[1] if len(attrs) > 1 else attrs[0]
+ 
+     # alignment for three arguments is complicated, so don't support it yet
+     return apply_ufunc(
+diff --git a/xarray/tests/test_computation.py b/xarray/tests/test_computation.py
+index 6a86738..411bcb4 100644
+--- a/xarray/tests/test_computation.py
++++ b/xarray/tests/test_computation.py
+@@ -1929,6 +1929,19 @@ def test_where_attrs() -> None:
+     assert_identical(expected, actual)
+ 
+ 
++@pytest.mark.parametrize("x", [1, np.array(1)])
++def test_where_attrs_scalar(x) -> None:
++    # regression test for GH6413
++    cond = xr.DataArray([True, False], dims="x", attrs={"attr": "cond"})
++    actual = xr.where(cond, x, 0, keep_attrs=True)
++    expected = xr.DataArray([1, 0], dims="x", attrs={"attr": "cond"})
++    assert_identical(expected, actual)
++
++    actual = xr.where(cond, x, 0)
++    expected = xr.DataArray([1, 0], dims="x")
++    assert_identical(expected, actual)
++
++
+ @pytest.mark.parametrize("use_dask", [True, False])
+ @pytest.mark.parametrize("use_datetime", [True, False])
+ def test_polyval(use_dask, use_datetime) -> None:

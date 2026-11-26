@@ -1,0 +1,55 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 81f8f79c7..33e6b3b6a 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -1211,13 +1211,16 @@ class Exists(Subquery):
+ 
+     def as_sql(self, compiler, connection, template=None, **extra_context):
+         query = self.query.exists(using=connection.alias)
+-        sql, params = super().as_sql(
+-            compiler,
+-            connection,
+-            template=template,
+-            query=query,
+-            **extra_context,
+-        )
++        try:
++            sql, params = super().as_sql(
++                compiler,
++                connection,
++                template=template,
++                query=query,
++                **extra_context,
++            )
++        except EmptyResultSet:
++            sql, params = '0 = 1', []
+         if self.negated:
+             sql = 'NOT {}'.format(sql)
+         return sql, params
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 5cf9dd1ea..3620131b9 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -857,6 +857,22 @@ class BasicExpressionsTests(TestCase):
+         self.gmbh.save()
+         self.assertCountEqual(Employee.objects.filter(Q(Exists(is_poc))), [self.max])
+ 
++    def test_exists_with_empty_queryset(self):
++        # Negated Exists on empty queryset should not remove the whole WHERE
++        # block (#33018-like).
++        frank = self.foobar_ltd.ceo
++        self.assertCountEqual(
++            Employee.objects.filter(~Exists(Employee.objects.none()), firstname='Frank'),
++            [frank],
++        )
++        self.assertCountEqual(
++            Employee.objects.filter(Exists(Employee.objects.none()), firstname='Frank'),
++            [],
++        )
++        self.assertCountEqual(
++            Employee.objects.filter(Exists(Employee.objects.none()) | Q(firstname='Frank')),
++            [frank],
++        )
+ 
+ class IterableLookupInnerExpressionsTests(TestCase):
+     @classmethod

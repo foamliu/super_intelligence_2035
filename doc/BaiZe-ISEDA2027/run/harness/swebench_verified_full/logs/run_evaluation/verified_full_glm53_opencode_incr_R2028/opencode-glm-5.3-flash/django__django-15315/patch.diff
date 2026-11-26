@@ -1,0 +1,50 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index 88c9ca9f28..fcea1597ef 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -542,11 +542,7 @@ class Field(RegisterLookupMixin):
+         return NotImplemented
+ 
+     def __hash__(self):
+-        return hash((
+-            self.creation_counter,
+-            self.model._meta.app_label if hasattr(self, 'model') else None,
+-            self.model._meta.model_name if hasattr(self, 'model') else None,
+-        ))
++        return hash(self.creation_counter)
+ 
+     def __deepcopy__(self, memodict):
+         # We don't have to deepcopy very much here, since most things are not
+diff --git a/tests/model_fields/tests.py b/tests/model_fields/tests.py
+index 5208b40dc9..9b58229247 100644
+--- a/tests/model_fields/tests.py
++++ b/tests/model_fields/tests.py
+@@ -102,6 +102,17 @@ class BasicFieldTests(SimpleTestCase):
+         name, path, args, kwargs = Nested.Field().deconstruct()
+         self.assertEqual(path, 'model_fields.tests.Nested.Field')
+ 
++    def test_field_hash_immutable(self):
++        """Field.__hash__() is immutable and doesn't change on set_attributes_from_name()."""
++        field = models.Field()
++        field_hash = hash(field)
++        field.set_attributes_from_name('name')
++        self.assertEqual(hash(field), field_hash)
++        # Hash is usable in dicts before and after assignment to a model.
++        d = {field: 1}
++        field.set_attributes_from_name('name2')
++        self.assertIn(field, d)
++
+     def test_abstract_inherited_fields(self):
+         """Field instances from abstract models are not equal."""
+         class AbstractModel(models.Model):
+@@ -128,10 +139,6 @@ class BasicFieldTests(SimpleTestCase):
+         self.assertLess(abstract_model_field, inherit2_model_field)
+         self.assertLess(inherit1_model_field, inherit2_model_field)
+ 
+-        self.assertNotEqual(hash(abstract_model_field), hash(inherit1_model_field))
+-        self.assertNotEqual(hash(abstract_model_field), hash(inherit2_model_field))
+-        self.assertNotEqual(hash(inherit1_model_field), hash(inherit2_model_field))
+-
+ 
+ class ChoicesTests(SimpleTestCase):
+ 

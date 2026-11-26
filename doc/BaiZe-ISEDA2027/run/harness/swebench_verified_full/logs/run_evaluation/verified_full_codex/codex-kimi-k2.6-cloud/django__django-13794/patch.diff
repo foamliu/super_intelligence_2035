@@ -1,0 +1,66 @@
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 1c844580c..a201b1214 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -21,6 +21,7 @@ from django.utils.text import (
+ )
+ from django.utils.timesince import timesince, timeuntil
+ from django.utils.translation import gettext, ngettext
++from django.utils.functional import Promise
+ 
+ from .base import Variable, VariableDoesNotExist
+ from .library import Library
+@@ -678,6 +679,12 @@ def add(value, arg):
+         return int(value) + int(arg)
+     except (ValueError, TypeError):
+         try:
++            if isinstance(value, Promise) and isinstance(arg, Promise):
++                return value._proxy____cast() + arg._proxy____cast()
++            elif isinstance(value, Promise):
++                return value._proxy____cast() + arg
++            elif isinstance(arg, Promise):
++                return value + arg._proxy____cast()
+             return value + arg
+         except Exception:
+             return ''
+diff --git a/tests/template_tests/filter_tests/test_add.py b/tests/template_tests/filter_tests/test_add.py
+index 0fcc661f4..d5545b0dd 100644
+--- a/tests/template_tests/filter_tests/test_add.py
++++ b/tests/template_tests/filter_tests/test_add.py
+@@ -1,6 +1,7 @@
+ from datetime import date, timedelta
+ 
+ from django.template.defaultfilters import add
++from django.utils.functional import lazystr
+ from django.test import SimpleTestCase
+ 
+ from ..utils import setup
+@@ -51,3 +52,28 @@ class FunctionTests(SimpleTestCase):
+ 
+     def test_add(self):
+         self.assertEqual(add('1', '2'), 3)
++
++class LazyStringTests(SimpleTestCase):
++    """
++    Tests for concatenating strings with lazy strings.
++    """
++
++    @setup({'add08': '{{ val|add:arg }}'})
++    def test_add08(self):
++        output = self.engine.render_to_string('add08', {'val': lazystr('hello'), 'arg': ' world'})
++        self.assertEqual(output, 'hello world')
++
++    @setup({'add09': '{{ val|add:arg }}'})
++    def test_add09(self):
++        output = self.engine.render_to_string('add09', {'val': 'hello', 'arg': lazystr(' world')})
++        self.assertEqual(output, 'hello world')
++
++    @setup({'add10': '{{ val|add:arg }}'})
++    def test_add10(self):
++        output = self.engine.render_to_string('add10', {'val': lazystr('hello'), 'arg': lazystr(' world')})
++        self.assertEqual(output, 'hello world')
++
++    def test_add_lazy(self):
++        self.assertEqual(add(lazystr('hello'), ' world'), 'hello world')
++        self.assertEqual(add('hello', lazystr(' world')), 'hello world')
++        self.assertEqual(add(lazystr('hello'), lazystr(' world')), 'hello world')

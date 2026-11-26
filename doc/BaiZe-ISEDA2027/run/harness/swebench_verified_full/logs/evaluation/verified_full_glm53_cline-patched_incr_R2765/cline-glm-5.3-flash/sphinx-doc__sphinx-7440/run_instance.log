@@ -1,0 +1,241 @@
+2026-11-19 15:22:41,921 - INFO - Creating container for sphinx-doc__sphinx-7440...
+2026-11-19 15:22:41,964 - INFO - Container for sphinx-doc__sphinx-7440 created: 0ade4edad5e8b42205520708933c57c4823adb50c2844e064edb2d1d06d908b6
+2026-11-19 15:22:42,767 - INFO - Container for sphinx-doc__sphinx-7440 started: 0ade4edad5e8b42205520708933c57c4823adb50c2844e064edb2d1d06d908b6
+2026-11-19 15:22:42,769 - INFO - Intermediate patch for sphinx-doc__sphinx-7440 written to logs/evaluation/verified_full_glm53_cline-patched_incr_R2765/cline-glm-5.3-flash/sphinx-doc__sphinx-7440/patch.diff, now applying to container...
+2026-11-19 15:22:42,961 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/domains/std.py...
+Checking patch tests/test_domain_std.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/domains/std.py cleanly.
+Applied patch tests/test_domain_std.py cleanly.
+
+2026-11-19 15:22:43,409 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index a7950b8e0..2bc797013 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -16,6 +16,7 @@ Features added
+ Bugs fixed
+ ----------
+ 
++* #7414: glossary: Warning for duplicate terms with different cases
+ * #7428: py domain: a reference to class ``None`` emits a nitpicky warning
+ * #7438: C++, fix merging overloaded functions in parallel builds.
+ * #7422: autodoc: fails with ValueError when using autodoc_mock_imports
+diff --git a/sphinx/domains/std.py b/sphinx/domains/std.py
+index d820cfe5c..b04d84c7c 100644
+--- a/sphinx/domains/std.py
++++ b/sphinx/domains/std.py
+@@ -305,7 +305,7 @@ def make_glossary_term(env: "BuildEnvironment", textnodes: Iterable[Node], index
+         term['ids'].append(node_id)
+ 
+     std = cast(StandardDomain, env.get_domain('std'))
+-    std.note_object('term', termtext.lower(), node_id, location=term)
++    std.note_object('term', termtext, node_id, location=term)
+ 
+     # add an index entry too
+     indexnode = addnodes.index()
+@@ -923,6 +923,23 @@ class StandardDomain(Domain):
+         return make_refnode(builder, fromdocname, docname,
+                             labelid, contnode)
+ 
++    def _lookup_term_object(self, name: str) -> Tuple[str, str]:
++        """Lookup a glossary term case-insensitively.
++
++        Terms are registered with their original text, but the :term: role
++        lowercases its target.  So this tries the exact name first, and then
++        falls back to a case-insensitive search.
++        """
++        if ('term', name) in self.objects:
++            return self.objects['term', name]
++
++        lowered = name.lower()
++        for (objtype, objname), value in self.objects.items():
++            if objtype == 'term' and objname.lower() == lowered:
++                return value
++
++        return ('', '')
++
+     def _resolve_obj_xref(self, env: "BuildEnvironment", fromdocname: str,
+                           builder: "Builder", typ: str, target: str,
+                           node: pending_xref, contnode: Element) -> Element:
+@@ -933,6 +950,11 @@ class StandardDomain(Domain):
+                 break
+         else:
+             docname, labelid = '', ''
++            if 'term' in objtypes:
++                # terms are registered with their original text, but the
++                # :term: role lowercases its target.  So retry the lookup
++                # case-insensitively (refs: #7414)
++                docname, labelid = self._lookup_term_object(target)
+         if not docname:
+             return None
+         return make_refnode(builder, fromdocname, docname,
+@@ -951,14 +973,21 @@ class StandardDomain(Domain):
+                 results.append(('std:' + role, res))
+         # all others
+         for objtype in self.object_types:
+-            key = (objtype, target)
+             if objtype == 'term':
+-                key = (objtype, ltarget)
+-            if key in self.objects:
++                # terms are registered with their original text, but the
++                # :term: role lowercases its target.  So lookup the term
++                # case-insensitively (refs: #7414)
++                docname, labelid = self._lookup_term_object(target)
++                if not docname:
++                    continue
++            else:
++                key = (objtype, target)
++                if key not in self.objects:
++                    continue
+                 docname, labelid = self.objects[key]
+-                results.append(('std:' + self.role_for_objtype(objtype),
+-                                make_refnode(builder, fromdocname, docname,
+-                                             labelid, contnode)))
++            results.append(('std:' + self.role_for_objtype(objtype),
++                            make_refnode(builder, fromdocname, docname,
++                                         labelid, contnode)))
+         return results
+ 
+     def get_objects(self) -> Iterator[Tuple[str, str, str, str, str, int]]:
+diff --git a/tests/test_domain_std.py b/tests/test_domain_std.py
+index aa1d29eb1..53fef01d2 100644
+--- a/tests/test_domain_std.py
++++ b/tests/test_domain_std.py
+@@ -188,6 +188,33 @@ def test_glossary_warning(app, status, warning):
+             "other instance in case4" in warning.getvalue())
+ 
+ 
++@pytest.mark.sphinx('html', freshenv=True)
++def test_glossary_terms_with_different_case(app, status, warning):
++    """Terms in a glossary are case-sensitive (refs: #7414)."""
++    text = (".. glossary::\n"
++            "\n"
++            "   MySQL\n"
++            "       A world-wide popular open source database.\n"
++            "\n"
++            "   mysql\n"
++            "       The official MySQL command line tool.\n")
++    restructuredtext.parse(app, text)
++    assert "WARNING: duplicate term description of" not in warning.getvalue()
++
++    # both terms are registered as distinct objects
++    objects = list(app.env.get_domain("std").get_objects())
++    term_names = {obj[0] for obj in objects if obj[2] == "term"}
++    assert term_names == {"MySQL", "mysql"}
++
++    # :term: references are case-insensitive
++    domain = app.env.get_domain("std")
++    for target in ("MySQL", "mysql", "MYSQL"):
++        node = pending_xref("", nodes.inline("MySQL", "MySQL"),
++                            refdomain="std", reftype="term", reftarget=target)
++        assert domain.resolve_xref(app.env, "index", app.builder,
++                                   "term", target, node, node[0]) is not None
++
++
+ def test_glossary_comment(app):
+     text = (".. glossary::\n"
+             "\n"
+2026-11-19 15:22:43,411 - INFO - Eval script for sphinx-doc__sphinx-7440 written to logs/evaluation/verified_full_glm53_cline-patched_incr_R2765/cline-glm-5.3-flash/sphinx-doc__sphinx-7440/eval.sh; copying to container...
+2026-11-19 15:22:48,376 - INFO - Test runtime: 4.88 seconds
+2026-11-19 15:22:48,377 - INFO - Test output for sphinx-doc__sphinx-7440 written to logs/evaluation/verified_full_glm53_cline-patched_incr_R2765/cline-glm-5.3-flash/sphinx-doc__sphinx-7440/test_output.txt
+2026-11-19 15:22:48,448 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index a7950b8e0..2bc797013 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -16,6 +16,7 @@ Features added
+ Bugs fixed
+ ----------
+ 
++* #7414: glossary: Warning for duplicate terms with different cases
+ * #7428: py domain: a reference to class ``None`` emits a nitpicky warning
+ * #7438: C++, fix merging overloaded functions in parallel builds.
+ * #7422: autodoc: fails with ValueError when using autodoc_mock_imports
+diff --git a/sphinx/domains/std.py b/sphinx/domains/std.py
+index d820cfe5c..b04d84c7c 100644
+--- a/sphinx/domains/std.py
++++ b/sphinx/domains/std.py
+@@ -305,7 +305,7 @@ def make_glossary_term(env: "BuildEnvironment", textnodes: Iterable[Node], index
+         term['ids'].append(node_id)
+ 
+     std = cast(StandardDomain, env.get_domain('std'))
+-    std.note_object('term', termtext.lower(), node_id, location=term)
++    std.note_object('term', termtext, node_id, location=term)
+ 
+     # add an index entry too
+     indexnode = addnodes.index()
+@@ -923,6 +923,23 @@ class StandardDomain(Domain):
+         return make_refnode(builder, fromdocname, docname,
+                             labelid, contnode)
+ 
++    def _lookup_term_object(self, name: str) -> Tuple[str, str]:
++        """Lookup a glossary term case-insensitively.
++
++        Terms are registered with their original text, but the :term: role
++        lowercases its target.  So this tries the exact name first, and then
++        falls back to a case-insensitive search.
++        """
++        if ('term', name) in self.objects:
++            return self.objects['term', name]
++
++        lowered = name.lower()
++        for (objtype, objname), value in self.objects.items():
++            if objtype == 'term' and objname.lower() == lowered:
++                return value
++
++        return ('', '')
++
+     def _resolve_obj_xref(self, env: "BuildEnvironment", fromdocname: str,
+                           builder: "Builder", typ: str, target: str,
+                           node: pending_xref, contnode: Element) -> Element:
+@@ -933,6 +950,11 @@ class StandardDomain(Domain):
+                 break
+         else:
+             docname, labelid = '', ''
++            if 'term' in objtypes:
++                # terms are registered with their original text, but the
++                # :term: role lowercases its target.  So retry the lookup
++                # case-insensitively (refs: #7414)
++                docname, labelid = self._lookup_term_object(target)
+         if not docname:
+             return None
+         return make_refnode(builder, fromdocname, docname,
+@@ -951,14 +973,21 @@ class StandardDomain(Domain):
+                 results.append(('std:' + role, res))
+         # all others
+         for objtype in self.object_types:
+-            key = (objtype, target)
+             if objtype == 'term':
+-                key = (objtype, ltarget)
+-            if key in self.objects:
++                # terms are registered with their original text, but the
++                # :term: role lowercases its target.  So lookup the term
++                # case-insensitively (refs: #7414)
++                docname, labelid = self._lookup_term_object(target)
++                if not docname:
++                    continue
++            else:
++                key = (objtype, target)
++                if key not in self.objects:
++                    continue
+                 docname, labelid = self.objects[key]
+-                results.append(('std:' + self.role_for_objtype(objtype),
+-                                make_refnode(builder, fromdocname, docname,
+-                                             labelid, contnode)))
++            results.append(('std:' + self.role_for_objtype(objtype),
++                            make_refnode(builder, fromdocname, docname,
++                                         labelid, contnode)))
+         return results
+ 
+     def get_objects(self) -> Iterator[Tuple[str, str, str, str, str, int]]:
+2026-11-19 15:22:48,449 - INFO - Git diff changed after running eval script
+2026-11-19 15:22:48,449 - INFO - Grading answer for sphinx-doc__sphinx-7440...
+2026-11-19 15:22:48,460 - INFO - report: {'sphinx-doc__sphinx-7440': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_std.py::test_glossary'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_std.py::test_process_doc_handle_figure_caption', 'tests/test_domain_std.py::test_process_doc_handle_table_title', 'tests/test_domain_std.py::test_get_full_qualified_name', 'tests/test_domain_std.py::test_glossary_warning', 'tests/test_domain_std.py::test_glossary_comment', 'tests/test_domain_std.py::test_glossary_comment2', 'tests/test_domain_std.py::test_glossary_sorted', 'tests/test_domain_std.py::test_glossary_alphanumeric', 'tests/test_domain_std.py::test_glossary_conflicted_labels', 'tests/test_domain_std.py::test_cmdoption', 'tests/test_domain_std.py::test_multiple_cmdoptions', 'tests/test_domain_std.py::test_disabled_docref'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7440: resolved: True
+2026-11-19 15:22:48,462 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7440.verified_full_glm53_cline-patched_incr_R2765...
+2026-11-19 15:23:04,732 - INFO - Container sweb.eval.sphinx-doc__sphinx-7440.verified_full_glm53_cline-patched_incr_R2765 stopped successfully.
+2026-11-19 15:23:04,732 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7440.verified_full_glm53_cline-patched_incr_R2765...
+2026-11-19 15:23:04,772 - INFO - Container sweb.eval.sphinx-doc__sphinx-7440.verified_full_glm53_cline-patched_incr_R2765 removed successfully.

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-15875",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/core/add.py b/sympy/core/add.py\nindex 83a5f2ae..2d67cbd6 100644\n--- a/sympy/core/add.py\n+++ b/sympy/core/add.py\n@@ -560,8 +560,12 @@ def _eval_is_zero(self):\n         if b.is_zero:\n             if not im_or_z and not im:\n                 return True\n-            if im and not im_or_z:\n-                return False\n+            if im_or_z:\n+                return None\n+            if im:\n+                return self.func(*[\n+                    a*S.ImaginaryUnit for a in self.args if a.is_imaginary\n+                ]).is_zero\n         if b.is_zero is False:\n             return False\n \ndiff --git a/sympy/core/tests/test_arit.py b/sympy/core/tests/test_arit.py\nindex e2398a4e..96e46d23 100644\n--- a/sympy/core/tests/test_arit.py\n+++ b/sympy/core/tests/test_arit.py\n@@ -1986,6 +1986,12 @@ def test_Add_is_zero():\n     x, y = symbols('x y', zero=True)\n     assert (x + y).is_zero\n \n+    # issue 15872: is_zero should not return False on expressions\n+    # where the imaginary parts cancel\n+    e = -2*I + (1 + I)**2\n+    assert e.is_zero is True\n+    assert ((1 + I)**2 - 2*I).is_zero is True\n+\n \n def test_issue_14392():\n     assert (sin(zoo)**2).as_real_imag() == (nan, nan)\n"
+  }
+]

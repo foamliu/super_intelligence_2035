@@ -1,0 +1,33 @@
+diff --git a/django/db/backends/base/schema.py b/django/db/backends/base/schema.py
+index ad2f5a7da1..6df7a5ea0b 100644
+--- a/django/db/backends/base/schema.py
++++ b/django/db/backends/base/schema.py
+@@ -1251,7 +1251,9 @@ class BaseDatabaseSchemaEditor:
+         else:
+             sql = self.sql_create_unique
+         if columns:
+-            columns = self._index_columns(table, columns, col_suffixes=(), opclasses=opclasses)
++            columns = self._index_columns(
++                model._meta.db_table, columns, col_suffixes=(), opclasses=opclasses
++            )
+         else:
+             columns = Expressions(model._meta.db_table, expressions, compiler, self.quote_value)
+         return Statement(
+diff --git a/tests/schema/tests.py b/tests/schema/tests.py
+index c5f5bd2e85..03259a25e5 100644
+--- a/tests/schema/tests.py
++++ b/tests/schema/tests.py
+@@ -1966,6 +1966,13 @@ class SchemaTests(TransactionTestCase):
+         finally:
+             TagUniqueRename._meta.db_table = old_table_name
+ 
++    def test_unique_constraint_references_column(self):
++        table = Author._meta.db_table
++        with connection.schema_editor() as editor:
++            sql = editor._create_unique_sql(Author, ['name'], 'name_uniq')
++        self.assertIs(sql.references_column(table, 'name'), True)
++        self.assertIs(sql.references_column(table, 'other'), False)
++
+     @isolate_apps('schema')
+     @skipUnlessDBFeature('supports_foreign_keys')
+     def test_unique_no_unnecessary_fk_drops(self):

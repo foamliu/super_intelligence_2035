@@ -1,0 +1,14 @@
+{
+  "harness": "hermes",
+  "run_id": "verified_full_glm53_hermes_incr_R2298",
+  "round": "R2298",
+  "n": 4,
+  "resolved": [
+    "pytest-dev__pytest-5840",
+    "pytest-dev__pytest-7236",
+    "sphinx-doc__sphinx-8593",
+    "sphinx-doc__sphinx-8638"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

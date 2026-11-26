@@ -1,0 +1,83 @@
+diff --git a/django/db/backends/sqlite3/base.py b/django/db/backends/sqlite3/base.py
+index 31e8a55a4..ce1a575a6 100644
+--- a/django/db/backends/sqlite3/base.py
++++ b/django/db/backends/sqlite3/base.py
+@@ -559,6 +559,8 @@ def _sqlite_format_dtdelta(conn, lhs, rhs):
+             out = real_lhs - real_rhs
+     except (ValueError, TypeError):
+         return None
++    if isinstance(lhs, int) and isinstance(rhs, int):
++        return duration_microseconds(out)
+     # typecast_timestamp returns a date or a datetime without timezone.
+     # It will be formatted as "%Y-%m-%d" or "%Y-%m-%d %H:%M:%S[.%f]"
+     return str(out)
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index a156c5e88..473bf3d18 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -9,6 +9,7 @@ from django.db.models import fields
+ from django.db.models.constants import LOOKUP_SEP
+ from django.db.models.query_utils import Q
+ from django.utils.deconstruct import deconstructible
++from django.utils.duration import duration_microseconds
+ from django.utils.functional import cached_property
+ from django.utils.hashable import make_hashable
+ 
+@@ -495,12 +496,34 @@ class DurationExpression(CombinedExpression):
+         connection.ops.check_expression_support(self)
+         expressions = []
+         expression_params = []
+-        sql, params = self.compile(self.lhs, compiler, connection)
+-        expressions.append(sql)
+-        expression_params.extend(params)
+-        sql, params = self.compile(self.rhs, compiler, connection)
+-        expressions.append(sql)
+-        expression_params.extend(params)
++        lhs_is_duration = isinstance(self.lhs, DurationValue)
++        if not lhs_is_duration:
++            try:
++                lhs_is_duration = self.lhs.output_field.get_internal_type() == 'DurationField'
++            except FieldError:
++                lhs_is_duration = False
++        rhs_is_duration = isinstance(self.rhs, DurationValue)
++        if not rhs_is_duration:
++            try:
++                rhs_is_duration = self.rhs.output_field.get_internal_type() == 'DurationField'
++            except FieldError:
++                rhs_is_duration = False
++        if lhs_is_duration and rhs_is_duration and not connection.features.has_native_duration_field:
++            for side in (self.lhs, self.rhs):
++                if isinstance(side, DurationValue):
++                    expressions.append('%s')
++                    expression_params.append(duration_microseconds(side.value))
++                else:
++                    sql, params = compiler.compile(side)
++                    expressions.append(sql)
++                    expression_params.extend(params)
++        else:
++            sql, params = self.compile(self.lhs, compiler, connection)
++            expressions.append(sql)
++            expression_params.extend(params)
++            sql, params = self.compile(self.rhs, compiler, connection)
++            expressions.append(sql)
++            expression_params.extend(params)
+         # order of precedence
+         expression_wrapper = '(%s)'
+         sql = connection.ops.combine_duration_expression(self.connector, expressions)
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 459a87797..42911ab47 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1648,6 +1648,12 @@ class FTimeDeltaTests(TestCase):
+         e0 = Experiment.objects.get(name='e0')
+         self.assertEqual(e0.start, expected_start)
+ 
++    def test_duration_expressions(self):
++        for delta in self.deltas:
++            with self.subTest(delta=delta):
++                qs = Experiment.objects.annotate(duration=F('estimated_time') + delta)
++                self.assertEqual(qs.get(name='e0').duration, self.e0.estimated_time + delta)
++
+ 
+ class ValueTests(TestCase):
+     def test_update_TimeField_using_Value(self):

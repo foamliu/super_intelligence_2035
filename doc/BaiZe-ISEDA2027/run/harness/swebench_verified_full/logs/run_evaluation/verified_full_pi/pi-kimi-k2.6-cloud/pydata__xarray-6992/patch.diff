@@ -1,0 +1,43 @@
+diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py
+index 620f32f..607dc06 100644
+--- a/xarray/core/dataset.py
++++ b/xarray/core/dataset.py
+@@ -365,7 +365,7 @@ class DataVariables(Mapping[Any, "DataArray"]):
+         )
+ 
+     def __len__(self) -> int:
+-        return len(self._dataset._variables) - len(self._dataset._coord_names)
++        return sum(1 for key in self._dataset._variables if key not in self._dataset._coord_names)
+ 
+     def __contains__(self, key: Hashable) -> bool:
+         return key in self._dataset._variables and key not in self._dataset._coord_names
+@@ -4177,8 +4177,7 @@ class Dataset(
+         }
+         variables.update(new_variables)
+ 
+-        coord_names = set(new_variables) | self._coord_names
+-
++        coord_names = self._coord_names - set(drop_variables) | set(new_variables)
+         return self._replace(variables, coord_names=coord_names, indexes=indexes)
+ 
+     def reorder_levels(
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index fc2806c..76b96d3 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3260,6 +3260,15 @@ class TestDataset:
+         assert_identical(obj, ds, check_default_indexes=False)
+         assert len(obj.xindexes) == 0
+ 
++    def test_reset_index_drop_stale_coords(self) -> None:
++        # GH #?? - reset_index with drop=True should not leave stale coord names
++        ds = Dataset(coords={"a": ("x", [1, 2, 3]), "b": ("x", ["a", "b", "c"])})
++        obj = ds.set_index(z=["a", "b"]).reset_index("z", drop=True)
++        assert "z" not in obj._coord_names
++        assert "z" not in obj._variables
++        # repr should not raise
++        repr(obj)
++
+     def test_reorder_levels(self) -> None:
+         ds = create_test_multiindex()
+         mindex = ds["x"].to_index()

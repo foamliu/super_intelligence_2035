@@ -1,0 +1,76 @@
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index ad32437630..eae09eb65a 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -1422,7 +1422,7 @@ class MigrationAutodetector:
+         dependencies = [(dep_app_label, dep_object_name, None, True)]
+         if getattr(field.remote_field, "through", None):
+             through_app_label, through_object_name = resolve_relation(
+-                remote_field_model,
++                field.remote_field.through,
+                 app_label,
+                 model_name,
+             )
+diff --git a/tests/migrations/test_autodetector.py b/tests/migrations/test_autodetector.py
+index 4911e41150..de4e507613 100644
+--- a/tests/migrations/test_autodetector.py
++++ b/tests/migrations/test_autodetector.py
+@@ -3585,6 +3585,58 @@ class AutodetectorTests(BaseAutodetectorTests):
+             changes, "testapp", 0, 3, model_name="author", name="publishers"
+         )
+ 
++    def test_create_with_through_model_in_other_app(self):
++        """
++        Adding a m2m with a through model that references models defined in
++        other apps should generate a dependency on the app that contains the
++        through model, since it must be part of the migration state for the
++        field to be added (#33950).
++        """
++        book_with_through_in_third_app = ModelState(
++            "otherapp",
++            "Book",
++            [
++                ("id", models.AutoField(primary_key=True)),
++                (
++                    "authors",
++                    models.ManyToManyField(
++                        "testapp.Author", through="thirdapp.Attribution"
++                    ),
++                ),
++            ],
++        )
++        attribution = ModelState(
++            "thirdapp",
++            "Attribution",
++            [
++                ("id", models.AutoField(primary_key=True)),
++                ("author", models.ForeignKey("testapp.Author", models.CASCADE)),
++                ("book", models.ForeignKey("otherapp.Book", models.CASCADE)),
++            ],
++        )
++        changes = self.get_changes(
++            [],
++            [self.author_name, book_with_through_in_third_app, attribution],
++        )
++        # The m2m field cannot be added in the same migration that creates
++        # Book, as the through model depends on it.
++        self.assertNumberMigrations(changes, "otherapp", 2)
++        self.assertOperationTypes(changes, "otherapp", 0, ["CreateModel"])
++        self.assertOperationTypes(changes, "otherapp", 1, ["AddField"])
++        self.assertOperationAttributes(
++            changes, "otherapp", 1, 0, model_name="book", name="authors"
++        )
++        self.assertMigrationDependencies(
++            changes,
++            "otherapp",
++            1,
++            [
++                ("otherapp", "auto_1"),
++                ("testapp", "auto_1"),
++                ("thirdapp", "auto_1"),
++            ],
++        )
++
+     def test_many_to_many_removed_before_through_model(self):
+         """
+         Removing a ManyToManyField and the "through" model in the same change

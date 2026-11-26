@@ -1,0 +1,59 @@
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..0fb07e5415 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -172,7 +172,8 @@ def translate_url(url, lang_code):
+         to_be_reversed = "%s:%s" % (match.namespace, match.url_name) if match.namespace else match.url_name
+         with override(lang_code):
+             try:
+-                url = reverse(to_be_reversed, args=match.args, kwargs=match.kwargs)
++                filtered_kwargs = {k: v for k, v in match.kwargs.items() if v is not None}
++                url = reverse(to_be_reversed, args=match.args, kwargs=filtered_kwargs)
+             except NoReverseMatch:
+                 pass
+             else:
+diff --git a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo
+index 5eac50466c..6d8362d5ff 100644
+Binary files a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo and b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.mo differ
+diff --git a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
+index a938e3371d..678329af0d 100644
+--- a/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
++++ b/tests/i18n/patterns/locale/nl/LC_MESSAGES/django.po
+@@ -29,6 +29,10 @@ msgstr "^vertaald/(?P<slug>[\\w-]+)/$"
+ msgid "^users/$"
+ msgstr "^gebruikers/$"
+ 
++#: urls/default.py:18
++msgid "^users/(?P<username>[\\w-]+)/$"
++msgstr "^gebruikers/(?P<username>[\\w-]+)/$"
++
+ #: urls/default.py:18 urls/wrong.py:7
+ msgid "^account/"
+ msgstr "^profiel/"
+diff --git a/tests/i18n/patterns/tests.py b/tests/i18n/patterns/tests.py
+index 6ed2c4ffeb..f241995f7f 100644
+--- a/tests/i18n/patterns/tests.py
++++ b/tests/i18n/patterns/tests.py
+@@ -163,6 +163,11 @@ class URLTranslationTests(URLTestCaseBase):
+             self.assertEqual(translate_url('/nl/gebruikers/', 'en'), '/en/users/')
+             self.assertEqual(translation.get_language(), 'nl')
+ 
++    def test_translate_url_with_optional_named_groups(self):
++        with translation.override('en'):
++            self.assertEqual(translate_url('/en/users/', 'nl'), '/nl/gebruikers/')
++            self.assertEqual(translate_url('/en/users/tom/', 'nl'), '/nl/gebruikers/tom/')
++
+ 
+ class URLNamespaceTests(URLTestCaseBase):
+     """
+diff --git a/tests/i18n/patterns/urls/default.py b/tests/i18n/patterns/urls/default.py
+index b0c2f2585e..c3767c3091 100644
+--- a/tests/i18n/patterns/urls/default.py
++++ b/tests/i18n/patterns/urls/default.py
+@@ -16,5 +16,6 @@ urlpatterns += i18n_patterns(
+     path('prefixed/', view, name='prefixed'),
+     path('prefixed.xml', view, name='prefixed_xml'),
+     re_path(_(r'^users/$'), view, name='users'),
++    re_path(_(r'^users/(?P<username>[\w-]+)/$'), view, name='users-with-username'),
+     re_path(_(r'^account/'), include('i18n.patterns.urls.namespace', namespace='account')),
+ )

@@ -1,0 +1,12 @@
+{
+  "harness": "hermes",
+  "run_id": "verified_full_glm53_hermes_incr_R2195",
+  "round": "R2195",
+  "n": 2,
+  "resolved": [
+    "sympy__sympy-17630",
+    "sympy__sympy-19040"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

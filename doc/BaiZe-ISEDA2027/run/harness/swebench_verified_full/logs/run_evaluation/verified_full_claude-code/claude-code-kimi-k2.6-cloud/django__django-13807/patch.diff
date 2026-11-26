@@ -1,0 +1,87 @@
+diff --git a/django/db/backends/sqlite3/base.py b/django/db/backends/sqlite3/base.py
+index 2eeaf98c0..e8b7133a6 100644
+--- a/django/db/backends/sqlite3/base.py
++++ b/django/db/backends/sqlite3/base.py
+@@ -327,19 +327,23 @@ class DatabaseWrapper(BaseDatabaseWrapper):
+                     violations = cursor.execute('PRAGMA foreign_key_check').fetchall()
+                 else:
+                     violations = chain.from_iterable(
+-                        cursor.execute('PRAGMA foreign_key_check(%s)' % table_name).fetchall()
++                        cursor.execute(
++                            'PRAGMA foreign_key_check(%s)' % self.ops.quote_name(table_name)
++                        ).fetchall()
+                         for table_name in table_names
+                     )
+                 # See https://www.sqlite.org/pragma.html#pragma_foreign_key_check
+                 for table_name, rowid, referenced_table_name, foreign_key_index in violations:
+                     foreign_key = cursor.execute(
+-                        'PRAGMA foreign_key_list(%s)' % table_name
++                        'PRAGMA foreign_key_list(%s)' % self.ops.quote_name(table_name)
+                     ).fetchall()[foreign_key_index]
+                     column_name, referenced_column_name = foreign_key[3:5]
+                     primary_key_column_name = self.introspection.get_primary_key_column(cursor, table_name)
+                     primary_key_value, bad_value = cursor.execute(
+                         'SELECT %s, %s FROM %s WHERE rowid = %%s' % (
+-                            primary_key_column_name, column_name, table_name
++                            self.ops.quote_name(primary_key_column_name),
++                            self.ops.quote_name(column_name),
++                            self.ops.quote_name(table_name),
+                         ),
+                         (rowid,),
+                     ).fetchone()
+diff --git a/tests/backends/sqlite/tests.py b/tests/backends/sqlite/tests.py
+index 17a58f32a..1651c3d37 100644
+--- a/tests/backends/sqlite/tests.py
++++ b/tests/backends/sqlite/tests.py
+@@ -8,7 +8,7 @@ from sqlite3 import dbapi2
+ from unittest import mock
+ 
+ from django.core.exceptions import ImproperlyConfigured
+-from django.db import NotSupportedError, connection, transaction
++from django.db import IntegrityError, NotSupportedError, connection, transaction
+ from django.db.models import Aggregate, Avg, CharField, StdDev, Sum, Variance
+ from django.db.utils import ConnectionHandler
+ from django.test import (
+@@ -263,3 +263,42 @@ class ThreadSharing(TransactionTestCase):
+         thread.start()
+         thread.join()
+         self.assertEqual(Object.objects.count(), 2)
++
++
++@unittest.skipUnless(connection.vendor == 'sqlite', 'SQLite tests')
++class CheckConstraintsTests(TransactionTestCase):
++    available_apps = ['backends']
++
++    def test_check_constraints_keyword_table_name(self):
++        """
++        check_constraints() quotes table names in PRAGMA foreign_key_check
++        and foreign_key_list to avoid syntax errors when table names are SQL
++        reserved words.
++        """
++        with connection.cursor() as cursor:
++            cursor.execute('CREATE TABLE "order" (id INTEGER PRIMARY KEY)')
++            cursor.execute('CREATE TABLE "group" (id INTEGER PRIMARY KEY, order_id INTEGER REFERENCES "order"(id))')
++        # This should not raise a syntax error.
++        connection.check_constraints(table_names=['order', 'group'])
++
++    def test_check_constraints_keyword_table_name_invalid_fk(self):
++        """
++        check_constraints() raises IntegrityError when bad data is in the DB
++        and table names are SQL reserved words.
++        """
++        with connection.cursor() as cursor:
++            cursor.execute('CREATE TABLE "select" (id INTEGER PRIMARY KEY)')
++            cursor.execute('CREATE TABLE "where" (id INTEGER PRIMARY KEY, select_id INTEGER REFERENCES "select"(id))')
++        connection.disable_constraint_checking()
++        try:
++            with connection.cursor() as cursor:
++                cursor.execute('INSERT INTO "where" (id, select_id) VALUES (1, 999)')
++        finally:
++            connection.enable_constraint_checking()
++        msg = (
++            "The row in table 'where' with primary key '1' has an "
++            "invalid foreign key: where.select_id contains a value '999' that "
++            "does not have a corresponding value in select.id."
++        )
++        with self.assertRaisesMessage(IntegrityError, msg):
++            connection.check_constraints(table_names=['where'])

@@ -1,0 +1,146 @@
+diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py
+index ae82d26340..5e70117742 100644
+--- a/django/db/models/deletion.py
++++ b/django/db/models/deletion.py
+@@ -67,9 +67,10 @@ class Collector:
+         # Initially, {model: {instances}}, later values become lists.
+         self.data = {}
+         self.field_updates = {}  # {model: {(field, value): {instances}}}
+-        # fast_deletes is a list of queryset-likes that can be deleted without
+-        # fetching the objects into memory.
+-        self.fast_deletes = []
++        # fast_deletes is a dict of queryset-likes that can be deleted without
++        # fetching the objects into memory, keyed by model to allow combining
++        # queries targeting the same table.
++        self.fast_deletes = {}
+ 
+         # Tracks deletion-order dependency for databases without transactions
+         # or ability to defer constraint checks. Only concrete model classes
+@@ -117,6 +118,18 @@ class Collector:
+             model, {}).setdefault(
+             (field, value), set()).update(objs)
+ 
++    def add_fast_delete(self, qs):
++        """
++        Add a queryset to the fast delete collection. If a queryset for the
++        same model already exists, combine them to reduce the number of
++        roundtrips to the database.
++        """
++        model = qs.model
++        if model in self.fast_deletes:
++            self.fast_deletes[model] |= qs
++        else:
++            self.fast_deletes[model] = qs
++
+     def _has_signal_listeners(self, model):
+         return (
+             signals.pre_delete.has_listeners(model) or
+@@ -191,7 +204,7 @@ class Collector:
+         If 'keep_parents' is True, data of parent model's will be not deleted.
+         """
+         if self.can_fast_delete(objs):
+-            self.fast_deletes.append(objs)
++            self.add_fast_delete(objs)
+             return
+         new_objs = self.add(objs, source, nullable,
+                             reverse_dependency=reverse_dependency)
+@@ -225,7 +238,7 @@ class Collector:
+                 for batch in batches:
+                     sub_objs = self.related_objects(related, batch)
+                     if self.can_fast_delete(sub_objs, from_field=field):
+-                        self.fast_deletes.append(sub_objs)
++                        self.add_fast_delete(sub_objs)
+                     else:
+                         related_model = related.related_model
+                         # Non-referenced fields can be deferred if no signal
+@@ -310,7 +323,7 @@ class Collector:
+                     )
+ 
+             # fast deletes
+-            for qs in self.fast_deletes:
++            for qs in self.fast_deletes.values():
+                 count = qs._raw_delete(using=self.using)
+                 deleted_counter[qs.model._meta.label] += count
+ 
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index 505fd843d7..a77a49401e 100644
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -7,7 +7,7 @@ from django.test import TestCase, skipIfDBFeature, skipUnlessDBFeature
+ 
+ from .models import (
+     MR, A, Avatar, Base, Child, HiddenUser, HiddenUserProfile, M, M2MFrom,
+-    M2MTo, MRNull, Origin, Parent, R, RChild, RChildChild, Referrer, S, T,
++    M2MTo, MRNull, Origin, Parent, R, RChild, RChildChild, Referrer, S, SecondReferrer, T,
+     User, create_a, get_default_r,
+ )
+ 
+@@ -331,15 +331,10 @@ class DeletionTests(TestCase):
+         TEST_SIZE = 2000
+         objs = [Avatar() for i in range(0, TEST_SIZE)]
+         Avatar.objects.bulk_create(objs)
+-        # Calculate the number of queries needed.
+-        batch_size = connection.ops.bulk_batch_size(['pk'], objs)
+-        # The related fetches are done in batches.
+-        batches = ceil(len(objs) / batch_size)
+-        # One query for Avatar.objects.all() and then one related fast delete for
+-        # each batch.
+-        fetches_to_mem = 1 + batches
++        # One query for Avatar.objects.all() and one combined related fast delete
++        # (fast deletes targeting the same model are combined into a single query).
+         # The Avatar objects are going to be deleted in batches of GET_ITERATOR_CHUNK_SIZE
+-        queries = fetches_to_mem + TEST_SIZE // GET_ITERATOR_CHUNK_SIZE
++        queries = 2 + TEST_SIZE // GET_ITERATOR_CHUNK_SIZE
+         self.assertNumQueries(queries, Avatar.objects.all().delete)
+         self.assertFalse(Avatar.objects.exists())
+ 
+@@ -349,14 +344,11 @@ class DeletionTests(TestCase):
+         for i in range(TEST_SIZE):
+             T.objects.create(s=s)
+ 
+-        batch_size = max(connection.ops.bulk_batch_size(['pk'], range(TEST_SIZE)), 1)
+-
+-        # TEST_SIZE / batch_size (select related `T` instances)
+-        # + 1 (select related `U` instances)
++        # 1 (select related `T` instances)
++        # + 1 (combined fast delete for `U` instances)
+         # + TEST_SIZE / GET_ITERATOR_CHUNK_SIZE (delete `T` instances in batches)
+         # + 1 (delete `s`)
+-        expected_num_queries = ceil(TEST_SIZE / batch_size)
+-        expected_num_queries += ceil(TEST_SIZE / GET_ITERATOR_CHUNK_SIZE) + 2
++        expected_num_queries = 3 + ceil(TEST_SIZE / GET_ITERATOR_CHUNK_SIZE)
+ 
+         self.assertNumQueries(expected_num_queries, s.delete)
+         self.assertFalse(S.objects.exists())
+@@ -582,3 +574,16 @@ class FastDeleteTests(TestCase):
+                 User.objects.filter(avatar__desc='missing').delete(),
+                 (0, {'delete.User': 0})
+             )
++
++    def test_fast_delete_combined_by_model(self):
++        """
++        Fast deletes targeting the same model are combined into a single query.
++        """
++        origin = Origin.objects.create()
++        referrer = Referrer.objects.create(origin=origin, unique_field=1, large_field='x')
++        SecondReferrer.objects.create(referrer=referrer, other_referrer=referrer)
++        # 1 query to fast-delete the SecondReferrer instances (combined from
++        # both FK relations), 1 query to delete the referrer.
++        self.assertNumQueries(2, referrer.delete)
++        self.assertFalse(SecondReferrer.objects.exists())
++        self.assertFalse(Referrer.objects.exists())
+diff --git a/tests/delete/tests_combine_quick.py b/tests/delete/tests_combine_quick.py
+new file mode 100644
+index 0000000000..d49de37870
+--- /dev/null
++++ b/tests/delete/tests_combine_quick.py
+@@ -0,0 +1,9 @@
++from django.test import TestCase
++from .models import User
++
++class QuickCombineTest(TestCase):
++    def test_qs_ior(self):
++        qs1 = User.objects.filter(id=1)
++        qs2 = User.objects.filter(id=2)
++        qs1 |= qs2
++        self.assertIn('OR', str(qs1.query))

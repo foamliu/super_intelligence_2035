@@ -1,0 +1,15 @@
+diff --git a/sympy/sets/sets.py b/sympy/sets/sets.py
+index 3c4aa86e36..6802b5826c 100644
+--- a/sympy/sets/sets.py
++++ b/sympy/sets/sets.py
+@@ -859,6 +859,10 @@ def _measure(self):
+             measure *= s.measure
+         return measure
+ 
++    def _eval_is_subset(self, other):
++        if self.is_finite_set:
++            return fuzzy_and(other.contains(e) for e in self)
++
+     def __len__(self):
+         return reduce(lambda a, b: a*b, (len(s) for s in self.args))
+ 

@@ -1,0 +1,73 @@
+diff --git a/django/contrib/auth/forms.py b/django/contrib/auth/forms.py
+index b9eb33329..9ce0c5415 100644
+--- a/django/contrib/auth/forms.py
++++ b/django/contrib/auth/forms.py
+@@ -56,6 +56,7 @@ class ReadOnlyPasswordHashField(forms.Field):
+ 
+     def __init__(self, *args, **kwargs):
+         kwargs.setdefault("required", False)
++        kwargs.setdefault("disabled", True)
+         super().__init__(*args, **kwargs)
+ 
+     def bound_data(self, data, initial):
+@@ -163,13 +164,6 @@ class UserChangeForm(forms.ModelForm):
+         if user_permissions:
+             user_permissions.queryset = user_permissions.queryset.select_related('content_type')
+ 
+-    def clean_password(self):
+-        # Regardless of what the user provides, return the initial value.
+-        # This is done here, rather than on the field, because the
+-        # field does not have access to the initial value
+-        return self.initial.get('password')
+-
+-
+ class AuthenticationForm(forms.Form):
+     """
+     Base class for authenticating users. Extend this to get a form that accepts
+diff --git a/docs/releases/3.2.txt b/docs/releases/3.2.txt
+index 7d374da0a..fb6325e80 100644
+--- a/docs/releases/3.2.txt
++++ b/docs/releases/3.2.txt
+@@ -83,6 +83,10 @@ Minor features
+ :mod:`django.contrib.auth`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++* :class:`~django.contrib.auth.forms.ReadOnlyPasswordHashField` is now
++  ``disabled`` by default. As a result, the ``clean_password()`` method on
++  ``UserChangeForm`` is no longer needed and has been removed.
++
+ * The default iteration count for the PBKDF2 password hasher is increased from
+   216,000 to 260,000.
+ 
+diff --git a/docs/topics/auth/customizing.txt b/docs/topics/auth/customizing.txt
+index 6ab830546..6e513d75d 100644
+--- a/docs/topics/auth/customizing.txt
++++ b/docs/topics/auth/customizing.txt
+@@ -1137,12 +1137,6 @@ code would be required in the app's ``admin.py`` file::
+             model = MyUser
+             fields = ('email', 'password', 'date_of_birth', 'is_active', 'is_admin')
+ 
+-        def clean_password(self):
+-            # Regardless of what the user provides, return the initial value.
+-            # This is done here, rather than on the field, because the
+-            # field does not have access to the initial value
+-            return self.initial["password"]
+-
+ 
+     class UserAdmin(BaseUserAdmin):
+         # The forms to add and change user instances
+diff --git a/tests/auth_tests/test_forms.py b/tests/auth_tests/test_forms.py
+index 88b4b3266..817677ae5 100644
+--- a/tests/auth_tests/test_forms.py
++++ b/tests/auth_tests/test_forms.py
+@@ -1024,6 +1024,10 @@ class ReadOnlyPasswordHashTest(SimpleTestCase):
+         field = ReadOnlyPasswordHashField()
+         self.assertFalse(field.has_changed('aaa', 'bbb'))
+ 
++    def test_disabled(self):
++        field = ReadOnlyPasswordHashField()
++        self.assertTrue(field.disabled)
++
+ 
+ class AdminPasswordChangeFormTest(TestDataMixin, TestCase):
+ 

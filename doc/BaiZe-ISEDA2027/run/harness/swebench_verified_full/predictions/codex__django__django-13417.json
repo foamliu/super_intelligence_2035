@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13417",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/models/query.py b/django/db/models/query.py\nindex 85cd8311a..bc364229c 100644\n--- a/django/db/models/query.py\n+++ b/django/db/models/query.py\n@@ -1224,7 +1224,8 @@ class QuerySet:\n             return True\n         if self.query.extra_order_by or self.query.order_by:\n             return True\n-        elif self.query.default_ordering and self.query.get_meta().ordering:\n+        elif (self.query.default_ordering and self.query.get_meta().ordering and\n+              self.query.group_by is None):\n             return True\n         else:\n             return False\ndiff --git a/tests/queries/tests.py b/tests/queries/tests.py\nindex f9a57b088..97dbeac65 100644\n--- a/tests/queries/tests.py\n+++ b/tests/queries/tests.py\n@@ -2084,6 +2084,12 @@ class QuerysetOrderedTests(unittest.TestCase):\n         self.assertIs(qs.ordered, False)\n         self.assertIs(qs.order_by('num_notes').ordered, True)\n \n+    def test_annotated_ordering_with_default_ordering(self):\n+        qs = Tag.objects.annotate(num_notes=Count('pk'))\n+        self.assertIs(qs.ordered, False)\n+        self.assertIs(qs.order_by('name').ordered, True)\n+        self.assertIs(qs.order_by('num_notes').ordered, True)\n+\n \n @skipUnlessDBFeature('allow_sliced_subqueries_with_in')\n class SubqueryTests(TestCase):\n"
+  }
+]

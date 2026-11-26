@@ -1,0 +1,49 @@
+diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py
+index 22fbd3f..9c7a5f6 100644
+--- a/sklearn/feature_extraction/tests/test_text.py
++++ b/sklearn/feature_extraction/tests/test_text.py
+@@ -259,6 +259,22 @@ def test_countvectorizer_custom_vocabulary():
+         assert_equal(X.shape[1], len(terms))
+ 
+ 
++def test_countvectorizer_custom_vocabulary_get_feature_names():
++    """Test get_feature_names and inverse_transform with a fixed vocabulary
++    before fit."""
++    vocab = {"pizza": 0, "beer": 1}
++    vect = CountVectorizer(vocabulary=vocab)
++    # get_feature_names should work without calling fit first
++    # when a vocabulary is provided
++    feature_names = vect.get_feature_names()
++    assert_equal(feature_names, ["pizza", "beer"])
++    # inverse_transform should also work
++    X = vect.transform(["pizza beer pizza"])
++    X_inv = vect.inverse_transform(X)
++
++    assert_equal(len(X_inv), 1)
++
++
+ def test_countvectorizer_custom_vocabulary_pipeline():
+     what_we_like = ["pizza", "beer"]
+     pipe = Pipeline([
+diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py
+index 9b1ebd6..2430b65 100644
+--- a/sklearn/feature_extraction/text.py
++++ b/sklearn/feature_extraction/text.py
+@@ -973,6 +973,8 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):
+         X_inv : list of arrays, len = n_samples
+             List of arrays of terms.
+         """
++        if not hasattr(self, 'vocabulary_'):
++            self._validate_vocabulary()
+         self._check_vocabulary()
+ 
+         if sp.issparse(X):
+@@ -993,6 +995,8 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):
+ 
+     def get_feature_names(self):
+         """Array mapping from feature integer indices to feature name"""
++        if not hasattr(self, 'vocabulary_'):
++            self._validate_vocabulary()
+         self._check_vocabulary()
+ 
+         return [t for t, i in sorted(six.iteritems(self.vocabulary_),

@@ -1,0 +1,50 @@
+diff --git a/sympy/printing/latex.py b/sympy/printing/latex.py
+index ad4d7d96..c6ff1b16 100644
+--- a/sympy/printing/latex.py
++++ b/sympy/printing/latex.py
+@@ -157,10 +157,12 @@ def __init__(self, settings=None):
+         }
+ 
+         self._settings['mul_symbol_latex'] = \
+-            mul_symbol_table[self._settings['mul_symbol']]
++            mul_symbol_table.get(self._settings['mul_symbol'],
++                                 self._settings['mul_symbol'])
+ 
+         self._settings['mul_symbol_latex_numbers'] = \
+-            mul_symbol_table[self._settings['mul_symbol'] or 'dot']
++            mul_symbol_table.get(self._settings['mul_symbol'] or 'dot',
++                                 self._settings['mul_symbol'])
+ 
+         self._delim_dict = {'(': ')', '[': ']'}
+ 
+@@ -2155,11 +2157,16 @@ def latex(expr, **settings):
+     \frac{1}{2 \pi} \int r\, dr
+ 
+     mul_symbol: The symbol to use for multiplication. Can be one of None,
+-    "ldot", "dot", or "times".
++    "ldot", "dot", or "times", or a custom string.
+ 
+     >>> print(latex((2*tau)**sin(Rational(7,2)), mul_symbol="times"))
+     \left(2 \times \tau\right)^{\sin{\left (\frac{7}{2} \right )}}
+ 
++    ``mul_symbol`` can also be an arbitrary string, which is then used
++    verbatim as the multiplication symbol between factors.
++    >>> print(latex((2*tau)**sin(Rational(7,2)), mul_symbol="\\,"))
++    \left(2\,\tau\right)^{\sin{\left (\frac{7}{2} \right )}}
++
+     inv_trig_style: How inverse trig functions should be displayed. Can be one
+     of "abbreviated", "full", or "power". Defaults to "abbreviated".
+ 
+diff --git a/sympy/printing/tests/test_latex.py b/sympy/printing/tests/test_latex.py
+index ef4724e9..e5a03839 100644
+--- a/sympy/printing/tests/test_latex.py
++++ b/sympy/printing/tests/test_latex.py
+@@ -990,6 +990,8 @@ def test_latex_mul_symbol():
+     assert latex(4*x, mul_symbol='times') == "4 \\times x"
+     assert latex(4*x, mul_symbol='dot') == "4 \\cdot x"
+     assert latex(4*x, mul_symbol='ldot') == r"4 \,.\, x"
++    assert latex(4*x, mul_symbol='\\\\,') == r"4\\,x"
++    assert latex(4*x, mul_symbol=r' \, ') == r"4 \, x"
+ 
+ 
+ def test_latex_issue_4381():

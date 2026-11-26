@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-9367",
+    "model_name_or_path": "cline-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py\nindex f541ec0a..713f4426 100644\n--- a/sphinx/pycode/ast.py\n+++ b/sphinx/pycode/ast.py\n@@ -214,7 +214,10 @@ class _UnparseVisitor(ast.NodeVisitor):\n \n     def visit_Tuple(self, node: ast.Tuple) -> str:\n         if node.elts:\n-            return \"(\" + \", \".join(self.visit(e) for e in node.elts) + \")\"\n+            if len(node.elts) == 1:\n+                return \"(\" + self.visit(node.elts[0]) + \",)\"\n+            else:\n+                return \"(\" + \", \".join(self.visit(e) for e in node.elts) + \")\"\n         else:\n             return \"()\"\n \ndiff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py\nindex e8006235..81f8f66a 100644\n--- a/tests/test_pycode_ast.py\n+++ b/tests/test_pycode_ast.py\n@@ -55,6 +55,7 @@ from sphinx.pycode import ast\n     (\"- a\", \"- a\"),                             # USub\n     (\"(1, 2, 3)\", \"(1, 2, 3)\"),                   # Tuple\n     (\"()\", \"()\"),                               # Tuple (empty)\n+    (\"(1,)\", \"(1,)\"),                           # Tuple (single element)\n ])\n def test_unparse(source, expected):\n     module = ast.parse(source)\n"
+  }
+]

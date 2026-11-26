@@ -1,0 +1,66 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 5dcf923c..bc7e6959 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1171,6 +1171,9 @@ class ModelChoiceIteratorValue:
+             other = other.value
+         return self.value == other
+ 
++    def __hash__(self):
++        return hash(self.value)
++
+ 
+ class ModelChoiceIterator:
+     def __init__(self, field):
+diff --git a/tests/model_forms/test_modelchoicefield.py b/tests/model_forms/test_modelchoicefield.py
+index 2a0c05d8..f25bf104 100644
+--- a/tests/model_forms/test_modelchoicefield.py
++++ b/tests/model_forms/test_modelchoicefield.py
+@@ -1,8 +1,9 @@
+ import datetime
++import json
+ 
+ from django import forms
+ from django.core.exceptions import ValidationError
+-from django.forms.models import ModelChoiceIterator
++from django.forms.models import ModelChoiceIterator, ModelChoiceIteratorValue
+ from django.forms.widgets import CheckboxSelectMultiple
+ from django.template import Context, Template
+ from django.test import TestCase
+@@ -341,6 +342,36 @@ class ModelChoiceFieldTests(TestCase):
+ </div>""" % (self.c1.pk, self.c2.pk, self.c3.pk),
+         )
+ 
++    def test_modelchoiceiteratorvalue_hashable(self):
++        show_fields = {self.c1.pk: ['first_name', 'last_name']}
++
++        class CustomSelect(forms.Select):
++            def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
++                option = super().create_option(name, value, label, selected, index, subindex, attrs)
++                if value and value in show_fields:
++                    option['attrs']['data-fields'] = json.dumps(show_fields[value])
++                return option
++
++        class CustomForm(forms.Form):
++            category = forms.ModelChoiceField(Category.objects.all(), widget=CustomSelect)
++
++        self.assertHTMLEqual(
++            str(CustomForm()['category']),
++            '''<select name="category" required id="id_category">
++<option selected value="">---------</option>
++<option value="%d" data-fields="[&quot;first_name&quot;, &quot;last_name&quot;]">Entertainment</option>
++<option value="%d">A test</option>
++<option value="%d">Third</option>
++</select>''' % (self.c1.pk, self.c2.pk, self.c3.pk),
++        )
++
++        # The value and its raw counterpart hash and compare equally.
++        value = list(CustomForm().fields['category'].choices)[1][0]
++        self.assertIsInstance(value, ModelChoiceIteratorValue)
++        self.assertEqual(hash(value), hash(self.c1.pk))
++        self.assertIn(value, show_fields)
++        self.assertEqual(show_fields[value], ['first_name', 'last_name'])
++
+     def test_choices_not_fetched_when_not_rendering(self):
+         with self.assertNumQueries(1):
+             field = forms.ModelChoiceField(Category.objects.order_by('-name'))

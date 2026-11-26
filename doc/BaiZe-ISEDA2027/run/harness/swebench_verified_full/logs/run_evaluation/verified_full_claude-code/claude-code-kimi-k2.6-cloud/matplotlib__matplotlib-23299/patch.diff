@@ -1,0 +1,76 @@
+diff --git a/lib/matplotlib/__init__.py b/lib/matplotlib/__init__.py
+index c268a567..2886e60a 100644
+--- a/lib/matplotlib/__init__.py
++++ b/lib/matplotlib/__init__.py
+@@ -1059,6 +1059,11 @@ def rc_context(rc=None, fname=None):
+     """
+     Return a context manager for temporarily changing rcParams.
+ 
++    The :rc:`backend` will not be reset by the context manager.
++
++    rcParams changed both through the context manager invocation and
++    in the body of the context will be reset on context exit.
++
+     Parameters
+     ----------
+     rc : dict
+@@ -1086,8 +1091,16 @@ def rc_context(rc=None, fname=None):
+          with mpl.rc_context(fname='print.rc'):
+              plt.plot(x, y)  # uses 'print.rc'
+ 
++    Setting in the context body::
++
++        with mpl.rc_context():
++            # will be reset
++            mpl.rcParams['lines.linewidth'] = 5
++            plt.plot(x, y)
++
+     """
+-    orig = rcParams.copy()
++    orig = dict(rcParams.copy())
++    del orig['backend']
+     try:
+         if fname:
+             rc_file(fname)
+diff --git a/lib/matplotlib/tests/test_rcparams.py b/lib/matplotlib/tests/test_rcparams.py
+index 99856b34..0fdf95fb 100644
+--- a/lib/matplotlib/tests/test_rcparams.py
++++ b/lib/matplotlib/tests/test_rcparams.py
+@@ -584,3 +584,37 @@ def test_deprecation(monkeypatch):
+     # Note that the warning suppression actually arises from the
+     # iteration over the updater rcParams being protected by
+     # suppress_matplotlib_deprecation_warning, rather than any explicit check.
++
++
++def test_rc_context_backend():
++    """Test that rc_context does not reset the backend."""
++    backend = mpl.rcParams['backend']
++    with mpl.rc_context():
++        assert mpl.rcParams['backend'] == backend
++    assert mpl.rcParams['backend'] == backend
++
++
++def test_rc_context_backend_not_restored(tmpdir):
++    """
++    Test that backend set within rc_context is not reverted on exit.
++
++    When the backend was _auto_backend_sentinel, the previous behavior
++    restored it via dict.update, bypassing RcParams.__setitem__.
++    A later call to get_backend() would then resolve the sentinel
++    and call switch_backend('agg'), which calls close('all'),
++    destroying figures created in the rc_context.
++    """
++    env = {**os.environ, "MPLBACKEND": "", "MPLCONFIGDIR": str(tmpdir)}
++    proc = subprocess.run(
++        [sys.executable, "-c",
++         "import matplotlib as mpl; "
++         "from matplotlib import pyplot as plt, get_backend, rc_context; "
++         "with rc_context(): "
++         "    fig = plt.figure(); "
++         "before = len(plt._pylab_helpers.Gcf.figs); "
++         "get_backend(); "
++         "after = len(plt._pylab_helpers.Gcf.figs); "
++         "assert before == after, f'{before} != {after}'; "
++         "print('ok')"],
++        env=env, check=True, capture_output=True, text=True)
++    assert proc.stdout.strip() == "ok"

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-7889",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py\nindex 98a3a3a9..1b4d67b4 100644\n--- a/sphinx/ext/autodoc/mock.py\n+++ b/sphinx/ext/autodoc/mock.py\n@@ -52,7 +52,7 @@ class _MockObject:\n     def __mro_entries__(self, bases: Tuple) -> Tuple:\n         return (self.__class__,)\n \n-    def __getitem__(self, key: str) -> \"_MockObject\":\n+    def __getitem__(self, key: Any) -> \"_MockObject\":\n         return _make_subclass(key, self.__display_name__, self.__class__)()\n \n     def __getattr__(self, key: str) -> \"_MockObject\":\n@@ -68,8 +68,9 @@ class _MockObject:\n         return self.__display_name__\n \n \n-def _make_subclass(name: str, module: str, superclass: Any = _MockObject,\n+def _make_subclass(name: Any, module: str, superclass: Any = _MockObject,\n                    attributes: Any = None) -> Any:\n+    name = str(name)\n     attrs = {'__module__': module, '__display_name__': module + '.' + name}\n     attrs.update(attributes or {})\n \n"
+  }
+]

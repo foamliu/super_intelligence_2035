@@ -1,0 +1,127 @@
+diff --git a/ChangeLog b/ChangeLog
+index 97af302af..22eb6d8f2 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -10,6 +10,11 @@ Release date: TBA
+ ..
+   Put new features here and also in 'doc/whatsnew/2.11.rst'
+ 
++* Setting ``min-similarity-lines`` to ``0`` now disables the duplicate-code check
++  instead of raising ``R0801`` for every block of code.
++
++  Closes #4687
++
+ * The python3 porting mode checker and it's ``py3k`` option were removed. You can still find it in older pylint
+   versions.
+ 
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c893..b493f4152 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -366,6 +366,12 @@ class Similar:
+         self.ignore_docstrings = ignore_docstrings
+         self.ignore_imports = ignore_imports
+         self.ignore_signatures = ignore_signatures
++        if self.min_lines == 0:
++            # Note: min_lines==0 is the documented way to disable the similarity
++            # checker. Signatures must also be ignored, so that files that only
++            # contain function or class definitions produce empty linesets
++            # instead of linesets with meaningless signature lines.
++            self.ignore_signatures = True
+         self.linesets: List["LineSet"] = []
+ 
+     def append_stream(self, streamid: str, stream: TextIO, encoding=None) -> None:
+@@ -739,7 +745,7 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+                 "default": DEFAULT_MIN_SIMILARITY_LINE,
+                 "type": "int",
+                 "metavar": "<int>",
+-                "help": "Minimum lines number of a similarity.",
++                "help": "Minimum lines number of a similarity. Setting this to 0 disables the duplicate-code check entirely.",
+             },
+         ),
+         (
+@@ -830,6 +836,10 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+ 
+     def close(self):
+         """compute and display similarities on closing (i.e. end of parsing)"""
++        if self.min_lines == 0:
++            # Note: min_lines==0 is the documented way to disable the similarity
++            # checker: no similarities are searched for and no message is emitted.
++            return
+         total = sum(len(lineset) for lineset in self.linesets)
+         duplicated = 0
+         stats = self.stats
+@@ -857,6 +867,10 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+         """Reduces and recombines data into a format that we can report on
+ 
+         The partner function of get_map_data()"""
++        if self.min_lines == 0:
++            # Note: min_lines==0 is the documented way to disable the similarity
++            # checker: nothing has to be recombined or reported.
++            return
+         recombined = SimilarChecker(linter)
+         recombined.min_lines = self.min_lines
+         recombined.ignore_comments = self.ignore_comments
+diff --git a/tests/checkers/unittest_similar.py b/tests/checkers/unittest_similar.py
+index 4ddf2029a..ad990c9ed 100644
+--- a/tests/checkers/unittest_similar.py
++++ b/tests/checkers/unittest_similar.py
+@@ -74,6 +74,34 @@ TOTAL lines=62 duplicates=10 percent=16.13
+     )
+ 
+ 
++def test_disable_similarities_via_min_similarity_lines_zero() -> None:
++    """Setting min-similarity-lines to 0 disables the duplicate-code check."""
++    output = StringIO()
++    with redirect_stdout(output), pytest.raises(SystemExit) as ex:
++        similar.Run(["--duplicates", "0", SIMILAR1, SIMILAR2])
++    assert ex.value.code == 0
++    assert (
++        output.getvalue().strip()
++        == """
++TOTAL lines=62 duplicates=0 percent=0.00
++""".strip()
++    )
++
++
++def test_disable_similarities_via_min_similarity_lines_zero_with_signatures_only_files() -> None:
++    """min-similarity-lines=0 also works for files with signatures only."""
++    output = StringIO()
++    with redirect_stdout(output), pytest.raises(SystemExit) as ex:
++        similar.Run(["--duplicates", "0", EMPTY_FUNCTION_1, EMPTY_FUNCTION_2])
++    assert ex.value.code == 0
++    assert (
++        output.getvalue().strip()
++        == """
++TOTAL lines=14 duplicates=0 percent=0.00
++""".strip()
++    )
++
++
+ def test_ignore_docstrings() -> None:
+     output = StringIO()
+     with redirect_stdout(output), pytest.raises(SystemExit) as ex:
+@@ -393,6 +421,23 @@ def test_no_args() -> None:
+             pytest.fail("not system exit")
+ 
+ 
++def test_similar_checker_min_similarity_lines_zero() -> None:
++    """SimilarChecker does not emit duplicate-code when min-similarity-lines is 0."""
++    linter = PyLinter(reporter=Reporter())
++    checker = similar.SimilarChecker(linter)
++    linter.register_checker(checker)
++    checker.set_option("min-similarity-lines", 0)
++    assert checker.min_lines == 0
++    linter.open()
++    checker.open()
++    for source_fname in (SIMILAR1, SIMILAR2):
++        with open(source_fname, encoding="utf-8") as stream:
++            checker.append_stream(source_fname, stream)
++    checker.close()
++    assert not linter.reporter.messages
++    assert linter.stats["nb_duplicated_lines"] == 0
++
++
+ def test_get_map_data() -> None:
+     """Tests that a SimilarChecker respects the MapReduceMixin interface"""
+     linter = PyLinter(reporter=Reporter())

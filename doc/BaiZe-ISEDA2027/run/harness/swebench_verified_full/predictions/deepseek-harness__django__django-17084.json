@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-17084",
+    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py\nindex 13a6809dd..a5f1c7123 100644\n--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -436,6 +436,10 @@ class Query(BaseExpression):\n             )\n             or having\n         )\n+        has_existing_window = any(\n+            getattr(annotation, \"contains_over_clause\", False)\n+            for annotation in self.annotations.values()\n+        )\n         # Decide if we need to use a subquery.\n         #\n         # Existing aggregations would cause incorrect results as\n@@ -452,6 +456,7 @@ class Query(BaseExpression):\n             or has_existing_aggregation\n             or refs_subquery\n             or qualify\n+            or has_existing_window\n             or self.distinct\n             or self.combinator\n         ):\n"
+  }
+]

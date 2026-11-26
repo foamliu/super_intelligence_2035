@@ -1,0 +1,77 @@
+diff --git a/doc/api/next_api_changes/behavior/99999-ABC.rst b/doc/api/next_api_changes/behavior/99999-ABC.rst
+new file mode 100644
+index 000000000..4a74cd961
+--- /dev/null
++++ b/doc/api/next_api_changes/behavior/99999-ABC.rst
+@@ -0,0 +1,7 @@
++Legends can be added to SubFigures
++==================================
++
++Previously, `.SubFigure.legend` raised a TypeError because `.Legend` only
++accepted `.Axes` and `.Figure` as parent.  Legends are now supported for
++SubFigures as well; the legend is placed using the SubFigure's coordinate
++system.
+diff --git a/lib/matplotlib/legend.py b/lib/matplotlib/legend.py
+index 44ab02469..678c6c3cf 100644
+--- a/lib/matplotlib/legend.py
++++ b/lib/matplotlib/legend.py
+@@ -332,8 +332,9 @@ class Legend(Artist):
+         """
+         Parameters
+         ----------
+-        parent : `~matplotlib.axes.Axes` or `.Figure`
+-            The artist that contains the legend.
++        parent : `~matplotlib.axes.Axes` or `.FigureBase`
++            The artist that contains the legend.  `.FigureBase` covers both
++            `.Figure` and `.SubFigure`.
+ 
+         handles : list of `.Artist`
+             A list of Artists (lines, patches) to be added to the legend.
+@@ -360,7 +361,7 @@ class Legend(Artist):
+         """
+         # local import only to avoid circularity
+         from matplotlib.axes import Axes
+-        from matplotlib.figure import Figure
++        from matplotlib.figure import FigureBase
+ 
+         super().__init__()
+ 
+@@ -434,7 +435,7 @@ class Legend(Artist):
+             self.isaxes = True
+             self.axes = parent
+             self.set_figure(parent.figure)
+-        elif isinstance(parent, Figure):
++        elif isinstance(parent, FigureBase):
+             self.isaxes = False
+             self.set_figure(parent)
+         else:
+diff --git a/lib/matplotlib/tests/test_figure.py b/lib/matplotlib/tests/test_figure.py
+index ad2fdf7fe..69608ce3a 100644
+--- a/lib/matplotlib/tests/test_figure.py
++++ b/lib/matplotlib/tests/test_figure.py
+@@ -933,6 +933,25 @@ def test_subfigure():
+     fig.suptitle('Figure suptitle', fontsize='xx-large')
+ 
+ 
++def test_subfigure_legend():
++    fig = plt.figure()
++    subfig = fig.subfigures()
++    ax = subfig.subplots()
++    ax.plot([0, 1, 2], [0, 1, 2], label='test')
++    leg = subfig.legend()
++    assert subfig.legends == [leg]
++    assert leg.parent is subfig
++    assert leg.figure is subfig
++    fig.canvas.draw()
++    # the legend should be drawn inside the subfigure
++    leg_bbox = leg.get_window_extent()
++    subfig_bbox = subfig.bbox
++    assert leg_bbox.x0 >= subfig_bbox.x0
++    assert leg_bbox.x1 <= subfig_bbox.x1
++    assert leg_bbox.y0 >= subfig_bbox.y0
++    assert leg_bbox.y1 <= subfig_bbox.y1
++
++
+ def test_subfigure_tightbbox():
+     # test that we can get the tightbbox with a subfigure...
+     fig = plt.figure(constrained_layout=True)

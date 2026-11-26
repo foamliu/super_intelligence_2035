@@ -1,0 +1,11 @@
+{
+  "harness": "hermes",
+  "run_id": "verified_full_glm53_hermes_incr_R2189",
+  "round": "R2189",
+  "n": 1,
+  "resolved": [
+    "sphinx-doc__sphinx-8721"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

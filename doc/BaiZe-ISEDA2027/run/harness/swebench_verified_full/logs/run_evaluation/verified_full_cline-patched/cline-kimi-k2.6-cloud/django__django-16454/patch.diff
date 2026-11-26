@@ -1,0 +1,130 @@
+diff --git a/django/core/management/base.py b/django/core/management/base.py
+index abc6f79a..60460fbe 100644
+--- a/django/core/management/base.py
++++ b/django/core/management/base.py
+@@ -5,7 +5,7 @@ be executed through ``django-admin`` or ``manage.py``).
+ import argparse
+ import os
+ import sys
+-from argparse import ArgumentParser, HelpFormatter
++from argparse import ArgumentParser, HelpFormatter, _SubParsersAction
+ from io import TextIOBase
+ 
+ import django
+@@ -43,6 +43,20 @@ class SystemCheckError(CommandError):
+     pass
+ 
+ 
++class _CommandSubParsersAction(_SubParsersAction):
++    def __init__(
++        self, *, called_from_command_line=None, missing_args_message=None, **kwargs
++    ):
++        self.called_from_command_line = called_from_command_line
++        self.missing_args_message = missing_args_message
++        super().__init__(**kwargs)
++
++    def add_parser(self, name, **kwargs):
++        kwargs.setdefault("called_from_command_line", self.called_from_command_line)
++        kwargs.setdefault("missing_args_message", self.missing_args_message)
++        return super().add_parser(name, **kwargs)
++
++
+ class CommandParser(ArgumentParser):
+     """
+     Customized ArgumentParser class to improve some error messages and prevent
+@@ -71,6 +85,16 @@ class CommandParser(ArgumentParser):
+         else:
+             raise CommandError("Error: %s" % message)
+ 
++    def add_subparsers(self, **kwargs):
++        if "parser_class" not in kwargs:
++            kwargs["parser_class"] = type(self)
++        action_class = kwargs.get("action")
++        if action_class is None or action_class is _CommandSubParsersAction:
++            kwargs.setdefault("action", _CommandSubParsersAction)
++            kwargs.setdefault("called_from_command_line", self.called_from_command_line)
++            kwargs.setdefault("missing_args_message", self.missing_args_message)
++        return super().add_subparsers(**kwargs)
++
+ 
+ def handle_default_options(options):
+     """
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index e4063238..e151a927 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -9,6 +9,7 @@ from django.apps import apps
+ from django.core import management
+ from django.core.checks import Tags
+ from django.core.management import BaseCommand, CommandError, find_commands
++from django.core.management.base import CommandParser
+ from django.core.management.utils import (
+     find_command,
+     get_random_secret_key,
+@@ -406,6 +407,51 @@ class CommandTests(SimpleTestCase):
+         with self.assertRaisesMessage(CommandError, msg):
+             management.call_command("subparser_dest", subcommand="foo", bar=12)
+ 
++    def test_subparser_missing_required_argument(self):
++        msg = "Error: the following arguments are required: bar"
++        with self.assertRaisesMessage(CommandError, msg):
++            management.call_command("subparser", "foo")
++
++    def test_subparser_error_formatting(self):
++        """
++        Subparsers inherit called_from_command_line and missing_args_message.
++        """
++        parser = CommandParser(
++            prog="manage.py test",
++            called_from_command_line=True,
++            missing_args_message="Missing args",
++        )
++        subparsers = parser.add_subparsers()
++        sub = subparsers.add_parser("foo")
++        sub.add_argument("bar")
++        with self.assertRaises(SystemExit):
++            parser.parse_args(["foo"])
++        # Programmatic usage raises CommandError.
++        parser2 = CommandParser(
++            prog="manage.py test",
++            called_from_command_line=False,
++            missing_args_message="Missing args",
++        )
++        subparsers2 = parser2.add_subparsers()
++        sub2 = subparsers2.add_parser("foo")
++        sub2.add_argument("bar")
++        msg = "Error: the following arguments are required: bar"
++        with self.assertRaisesMessage(CommandError, msg):
++            parser2.parse_args(["foo"])
++
++    def test_nested_subparser_error_formatting(self):
++        parser = CommandParser(
++            prog="manage.py test",
++            called_from_command_line=True,
++        )
++        subparsers = parser.add_subparsers()
++        sub = subparsers.add_parser("foo")
++        nested_parsers = sub.add_subparsers()
++        nested = nested_parsers.add_parser("bar")
++        nested.add_argument("baz")
++        with self.assertRaises(SystemExit):
++            parser.parse_args(["foo", "bar"])
++
+     def test_create_parser_kwargs(self):
+         """BaseCommand.create_parser() passes kwargs to CommandParser."""
+         epilog = "some epilog text"
+@@ -468,6 +514,14 @@ class CommandRunTests(AdminScriptTestCase):
+         self.assertNoOutput(err)
+         self.assertEqual(out.strip(), "Set foo")
+ 
++    def test_subparser_missing_argument_from_command_line(self):
++        self.write_settings("settings.py", apps=["user_commands"])
++        out, err = self.run_manage(["subparser", "foo"])
++        self.assertEqual(out, "")
++        self.assertIn("usage:", err)
++        self.assertIn("the following arguments are required: bar", err)
++        self.assertNotIn("Traceback", err)
++
+ 
+ class UtilsTests(SimpleTestCase):
+     def test_no_existent_external_program(self):

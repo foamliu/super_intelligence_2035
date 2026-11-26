@@ -1,0 +1,32 @@
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index 3a72ab60..3d335438 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -428,6 +428,12 @@ def _print_sign(self, e):
+         return '(0.0 if {e} == 0 else {f}(1, {e}))'.format(
+             f=self._module_format('math.copysign'), e=self._print(e.args[0]))
+ 
++    def _print_Min(self, expr):
++        return "min({})".format(", ".join(self._print(arg) for arg in expr.args))
++
++    def _print_Max(self, expr):
++        return "max({})".format(", ".join(self._print(arg) for arg in expr.args))
++
+     def _print_Not(self, expr):
+         PREC = precedence(expr)
+         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index 9c1285d7..e2deb692 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -58,6 +58,10 @@ def test_PythonCodePrinter():
+     assert prntr.doprint((2,3)) == "(2, 3)"
+     assert prntr.doprint([2,3]) == "[2, 3]"
+ 
++    from sympy.functions.elementary.miscellaneous import Min, Max
++    assert prntr.doprint(Min(x, y)) == 'min(x, y)'
++    assert prntr.doprint(Max(x, y, z)) == 'max(x, y, z)'
++
+ 
+ def test_PythonCodePrinter_standard():
+     prntr = PythonCodePrinter()

@@ -1,0 +1,120 @@
+{
+    "id": "278d387c-1ba1-439e-8613-6b0eb1a3e5e0",
+    "task_name": "chess-best-move",
+    "trial_name": "chess-best-move__ZszG6X7",
+    "trial_uri": "file:///nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_deepseek-harness/2026-10-19__08-41-56/chess-best-move__ZszG6X7",
+    "task_id": {
+        "path": "/tmp/tb_pilot_dataset_G6SwkJ/chess-best-move"
+    },
+    "source": "tb_pilot_dataset_G6SwkJ",
+    "task_checksum": "a31d482d846322d57f0e3ee3c56d4ff2171fe39908dadd8092d036f17114fbef",
+    "config": {
+        "task": {
+            "path": "/tmp/tb_pilot_dataset_G6SwkJ/chess-best-move",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "tb_pilot_dataset_G6SwkJ"
+        },
+        "trial_name": "chess-best-move__ZszG6X7",
+        "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_deepseek-harness/2026-10-19__08-41-56",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "terminalbench.agents.deepseek_harness:DeepseekHarnessTB",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "stream": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [
+                "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+            ],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "09a41cb7-5523-4003-a3c8-94c0e7a1059f",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "deepseek-harness",
+        "version": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAttributeError: module 'deepseek_harness' has no attribute '__version__'",
+        "model_info": null
+    },
+    "agent_result": {
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null,
+        "model_usage": null,
+        "rollout_details": null,
+        "metadata": {
+            "stdout": "  File \"/tmp/dsh_runner.py\", line 9\n    api_key=02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-4402-4c19-88d1-a3d4ebbf9a9f,\n                 ^\nSyntaxError: invalid decimal literal\n\n",
+            "stderr": "",
+            "exit_code": 1
+        }
+    },
+    "verifier_result": null,
+    "verifier_environment_mode": "shared",
+    "exception_info": {
+        "exception_type": "RuntimeError",
+        "exception_message": "DeepSeek-Harness exited with code 1: ",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/trial/trial.py\", line 500, in run\n    await self._run()\n  File \"/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/trial/single_step.py\", line 40, in _run\n    await self._run_agent()\n  File \"/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/trial/single_step.py\", line 76, in _run_agent\n    await self._run_agent_phase(\n    ...<5 lines>...\n    )\n  File \"/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/trial/trial.py\", line 651, in _run_agent_phase\n    await asyncio.wait_for(\n    ...<6 lines>...\n    )\n  File \"/home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py\", line 488, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/agents/deepseek_harness.py\", line 138, in run\n    raise RuntimeError(\n    ...<2 lines>...\n    )\nRuntimeError: DeepSeek-Harness exited with code 1: \n",
+        "occurred_at": "2026-10-19T00:45:55.461839Z"
+    },
+    "started_at": "2026-10-19T00:44:57.204917Z",
+    "finished_at": "2026-10-19T00:46:06.200606Z",
+    "environment_setup": {
+        "started_at": "2026-10-19T00:44:57.207064Z",
+        "finished_at": "2026-10-19T00:44:58.257008Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-10-19T00:44:58.257043Z",
+        "finished_at": "2026-10-19T00:45:54.609929Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-10-19T00:45:54.610044Z",
+        "finished_at": "2026-10-19T00:45:54.885278Z"
+    },
+    "verifier": null,
+    "step_results": null
+}

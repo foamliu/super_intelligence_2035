@@ -1,0 +1,69 @@
+diff --git a/django/db/models/functions/datetime.py b/django/db/models/functions/datetime.py
+index b6594b043..2d27ac155 100644
+--- a/django/db/models/functions/datetime.py
++++ b/django/db/models/functions/datetime.py
+@@ -292,8 +292,7 @@ class TruncDate(TruncBase):
+     def as_sql(self, compiler, connection):
+         # Cast to date rather than truncate to date.
+         lhs, lhs_params = compiler.compile(self.lhs)
+-        tzname = timezone.get_current_timezone_name() if settings.USE_TZ else None
+-        sql = connection.ops.datetime_cast_date_sql(lhs, tzname)
++        sql = connection.ops.datetime_cast_date_sql(lhs, self.get_tzname())
+         return sql, lhs_params
+ 
+ 
+@@ -305,8 +304,7 @@ class TruncTime(TruncBase):
+     def as_sql(self, compiler, connection):
+         # Cast to time rather than truncate to time.
+         lhs, lhs_params = compiler.compile(self.lhs)
+-        tzname = timezone.get_current_timezone_name() if settings.USE_TZ else None
+-        sql = connection.ops.datetime_cast_time_sql(lhs, tzname)
++        sql = connection.ops.datetime_cast_time_sql(lhs, self.get_tzname())
+         return sql, lhs_params
+ 
+ 
+diff --git a/tests/db_functions/datetime/test_extract_trunc.py b/tests/db_functions/datetime/test_extract_trunc.py
+index f8ebb81cb..7ea6bc11f 100644
+--- a/tests/db_functions/datetime/test_extract_trunc.py
++++ b/tests/db_functions/datetime/test_extract_trunc.py
+@@ -1133,6 +1133,40 @@ class DateFunctionWithTimeZoneTests(DateFunctionTests):
+         self.assertEqual(model.melb_year.year, 2016)
+         self.assertEqual(model.pacific_year.year, 2015)
+ 
++    def test_trunc_date_with_timezone(self):
++        start_datetime = datetime(2015, 6, 15, 23, 30, 0, 0)
++        start_datetime = timezone.make_aware(start_datetime, is_dst=False)
++        self.create_model(start_datetime, start_datetime)
++        melb = pytz.timezone('Australia/Melbourne')
++
++        model = DTModel.objects.annotate(
++            melb_date=TruncDate('start_datetime', tzinfo=melb),
++            utc_date=TruncDate('start_datetime'),
++        ).order_by('start_datetime').get()
++
++        self.assertEqual(model.start_datetime, start_datetime)
++        self.assertEqual(model.utc_date, start_datetime.date())
++        self.assertEqual(model.melb_date, start_datetime.astimezone(melb).date())
++        self.assertEqual(model.utc_date, datetime(2015, 6, 15).date())
++        self.assertEqual(model.melb_date, datetime(2015, 6, 16).date())
++
++    def test_trunc_time_with_timezone(self):
++        start_datetime = datetime(2015, 6, 15, 23, 30, 0, 0)
++        start_datetime = timezone.make_aware(start_datetime, is_dst=False)
++        self.create_model(start_datetime, start_datetime)
++        melb = pytz.timezone('Australia/Melbourne')
++
++        model = DTModel.objects.annotate(
++            melb_time=TruncTime('start_datetime', tzinfo=melb),
++            utc_time=TruncTime('start_datetime'),
++        ).order_by('start_datetime').get()
++
++        self.assertEqual(model.start_datetime, start_datetime)
++        self.assertEqual(model.utc_time, start_datetime.time())
++        self.assertEqual(model.melb_time, start_datetime.astimezone(melb).time())
++        self.assertEqual(model.utc_time, datetime(2015, 6, 15, 23, 30).time())
++        self.assertEqual(model.melb_time, datetime(2015, 6, 15, 9, 30).time())
++
+     def test_trunc_ambiguous_and_invalid_times(self):
+         sao = pytz.timezone('America/Sao_Paulo')
+         utc = pytz.timezone('UTC')

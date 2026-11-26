@@ -1,0 +1,19 @@
+diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py
+index 25eab7f..ae74738 100644
+--- a/src/_pytest/capture.py
++++ b/src/_pytest/capture.py
+@@ -447,6 +447,14 @@ class EncodedFile(object):
+         """Ensure that file.name is a string."""
+         return repr(self.buffer)
+ 
++    @property
++    def mode(self):
++        """The mode of the file, without 'b' since this is a text stream."""
++        mode = getattr(self.buffer, "mode", "")
++        if "b" in mode:
++            mode = mode.replace("b", "")
++        return mode
++
+     def __getattr__(self, name):
+         return getattr(object.__getattribute__(self, "buffer"), name)
+ 

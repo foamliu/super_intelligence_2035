@@ -1,0 +1,39 @@
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index 65c6864..94cfcbc 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -9,6 +9,7 @@ from ..base import BaseEstimator, RegressorMixin
+ from .base import LinearModel
+ from ..utils import check_X_y
+ from ..utils import check_consistent_length
++from ..utils.validation import FLOAT_DTYPES
+ from ..utils import axis0_safe_slice
+ from ..utils.extmath import safe_sparse_dot
+ 
+@@ -251,7 +252,8 @@ class HuberRegressor(LinearModel, RegressorMixin, BaseEstimator):
+         self : object
+         """
+         X, y = check_X_y(
+-            X, y, copy=False, accept_sparse=['csr'], y_numeric=True)
++            X, y, copy=False, accept_sparse=['csr'], dtype=FLOAT_DTYPES,
++            y_numeric=True)
+         if sample_weight is not None:
+             sample_weight = np.array(sample_weight)
+             check_consistent_length(y, sample_weight)
+diff --git a/sklearn/linear_model/tests/test_huber.py b/sklearn/linear_model/tests/test_huber.py
+index 6a8b261..96b1b5b 100644
+--- a/sklearn/linear_model/tests/test_huber.py
++++ b/sklearn/linear_model/tests/test_huber.py
+@@ -199,3 +199,12 @@ def test_huber_better_r2_score():
+ 
+     # The huber model should also fit poorly on the outliers.
+     assert_greater(ridge_outlier_score, huber_outlier_score)
++
++
++def test_huber_boolean_input():
++    # Test that HuberRegressor handles boolean input without error.
++    X, y = make_regression_with_outliers()
++    X_bool = X > 0
++    huber = HuberRegressor()
++    huber.fit(X_bool, y)
++    assert huber.coef_.dtype == np.float64

@@ -1,0 +1,145 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 844c01e9..41a44839 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -804,6 +804,14 @@ class Model(metaclass=ModelBase):
+         inserted = False
+         for parent, field in meta.parents.items():
+             # Make sure the link fields are synced between parent and self.
++            if field and not self._state.adding:
++                # If the primary key has been reset on an existing instance,
++                # reset the parent link field as well so that both tables
++                # are treated as new inserts.
++                if (getattr(self, parent._meta.pk.attname) is None or
++                        getattr(self, field.attname) is None):
++                    setattr(self, parent._meta.pk.attname, None)
++                    setattr(self, field.attname, None)
+             if (field and getattr(self, parent._meta.pk.attname) is None and
+                     getattr(self, field.attname) is not None):
+                 setattr(self, parent._meta.pk.attname, getattr(self, field.attname))
+diff --git a/tests/model_inheritance/models.py b/tests/model_inheritance/models.py
+index a4f9cfe6..8a581465 100644
+--- a/tests/model_inheritance/models.py
++++ b/tests/model_inheritance/models.py
+@@ -194,3 +194,13 @@ class Child(Parent):
+ 
+ class GrandChild(Child):
+     pass
++
++
++# Model for testing primary key reset on child models.
++class ExplicitPKBase(models.Model):
++    uid = models.AutoField(primary_key=True, editable=False)
++    f = models.BooleanField(default=False)
++
++
++class ExplicitPKChild(ExplicitPKBase):
++    pass
+diff --git a/tests/model_inheritance/tests.py b/tests/model_inheritance/tests.py
+index 5eef0f5b..61df6d25 100644
+--- a/tests/model_inheritance/tests.py
++++ b/tests/model_inheritance/tests.py
+@@ -6,9 +6,9 @@ from django.test import SimpleTestCase, TestCase
+ from django.test.utils import CaptureQueriesContext, isolate_apps
+ 
+ from .models import (
+-    Base, Chef, CommonInfo, GrandChild, GrandParent, ItalianRestaurant,
+-    MixinModel, ParkingLot, Place, Post, Restaurant, Student, SubBase,
+-    Supplier, Title, Worker,
++    Base, Chef, Child, CommonInfo, ExplicitPKBase, ExplicitPKChild, GrandChild,
++    GrandParent, ItalianRestaurant, MixinModel, Parent, ParkingLot, Place,
++    Post, Restaurant, Student, SubBase, Supplier, Title, Worker,
+ )
+ 
+ 
+@@ -522,3 +522,90 @@ class InheritanceUniqueTests(TestCase):
+         msg = 'Grand parent with this First name and Last name already exists.'
+         with self.assertRaisesMessage(ValidationError, msg):
+             grand_child.validate_unique()
++
++
++class ModelInheritancePKResetTests(TestCase):
++    def test_reset_parent_pk_on_child_model(self):
++        """
++        Resetting the parent's primary key on a child model instance should
++        create a new object on save().
++        """
++        child = ExplicitPKChild.objects.create(f=True)
++        parent = ExplicitPKBase.objects.get(pk=child.pk)
++        obj = parent.explicitpkchild
++        obj.uid = None
++        obj.f = False
++        obj.save()
++        # A new object should have been created.
++        self.assertEqual(ExplicitPKBase.objects.count(), 2)
++        self.assertEqual(ExplicitPKChild.objects.count(), 2)
++        # The original object should be unchanged.
++        original = ExplicitPKBase.objects.get(pk=child.pk)
++        self.assertTrue(original.f)
++
++    def test_reset_child_pk_on_child_model(self):
++        """
++        Resetting the child model's primary key (the parent link field)
++        should create a new object on save().
++        """
++        child = ExplicitPKChild.objects.create(f=True)
++        obj = ExplicitPKChild.objects.get(pk=child.pk)
++        obj.pk = None
++        obj.f = False
++        obj.save()
++        self.assertEqual(ExplicitPKBase.objects.count(), 2)
++        self.assertEqual(ExplicitPKChild.objects.count(), 2)
++        original = ExplicitPKBase.objects.get(pk=child.pk)
++        self.assertTrue(original.f)
++
++    def test_reset_both_pks_on_child_model(self):
++        """
++        Resetting both the parent and child primary keys should create a new
++        object on save().
++        """
++        child = ExplicitPKChild.objects.create(f=True)
++        obj = ExplicitPKChild.objects.get(pk=child.pk)
++        obj.uid = None
++        obj.pk = None
++        obj.f = False
++        obj.save()
++        self.assertEqual(ExplicitPKBase.objects.count(), 2)
++        self.assertEqual(ExplicitPKChild.objects.count(), 2)
++        original = ExplicitPKBase.objects.get(pk=child.pk)
++        self.assertTrue(original.f)
++
++    def test_normal_save_after_pk_reset_on_parent(self):
++        """
++        A normal save() on a child model that hasn't had its PK reset should
++        still update the existing row.
++        """
++        child = ExplicitPKChild.objects.create(f=True)
++        obj = ExplicitPKChild.objects.get(pk=child.pk)
++        obj.f = False
++        obj.save()
++        self.assertEqual(ExplicitPKBase.objects.count(), 1)
++        self.assertEqual(ExplicitPKChild.objects.count(), 1)
++        updated = ExplicitPKBase.objects.get(pk=child.pk)
++        self.assertFalse(updated.f)
++
++    def test_reset_pk_on_multi_level_inheritance(self):
++        """
++        Resetting the primary key on a model with multi-level inheritance
++        should create a new object on save().
++        """
++        grandchild = GrandChild.objects.create(
++            email='grandchild@example.com',
++            first_name='grand',
++            last_name='child',
++        )
++        obj = GrandChild.objects.get(pk=grandchild.pk)
++        obj.pk = None
++        obj.email = 'grandchild2@example.com'
++        obj.first_name = 'grand2'
++        obj.save()
++        self.assertEqual(GrandParent.objects.count(), 2)
++        self.assertEqual(Parent.objects.count(), 2)
++        self.assertEqual(Child.objects.count(), 2)
++        self.assertEqual(GrandChild.objects.count(), 2)
++        original = GrandParent.objects.get(pk=grandchild.pk)
++        self.assertEqual(original.email, 'grandchild@example.com')

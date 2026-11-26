@@ -1,0 +1,45 @@
+diff --git a/django/core/management/__init__.py b/django/core/management/__init__.py
+index 1ba093e51f..07cd9c7a86 100644
+--- a/django/core/management/__init__.py
++++ b/django/core/management/__init__.py
+@@ -344,7 +344,11 @@ class ManagementUtility:
+         # Preprocess options to extract --settings and --pythonpath.
+         # These options could affect the commands that are available, so they
+         # must be processed early.
+-        parser = CommandParser(usage='%(prog)s subcommand [options] [args]', add_help=False, allow_abbrev=False)
++        parser = CommandParser(
++            prog=self.prog_name,
++            usage='%(prog)s subcommand [options] [args]',
++            add_help=False, allow_abbrev=False,
++        )
+         parser.add_argument('--settings')
+         parser.add_argument('--pythonpath')
+         parser.add_argument('args', nargs='*')  # catch-all
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index 9262e2717a..c9f6d5cafc 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -1,4 +1,5 @@
+ import os
++import sys
+ from io import StringIO
+ from unittest import mock
+ 
+@@ -407,6 +408,17 @@ class UtilsTests(SimpleTestCase):
+         with self.assertRaisesMessage(CommandError, msg):
+             popen_wrapper(['a_42_command_that_doesnt_exist_42'])
+ 
++    def test_preprocess_options_prog_name(self):
++        """
++        ManagementUtility passes the program name from its argv, not sys.argv,
++        to the parser used for preprocessing options.
++        """
++        with mock.patch.object(sys, 'argv', [None]):
++            utility = management.ManagementUtility(['manage.py', '--settings'])
++            with captured_stderr() as stderr, self.assertRaises(SystemExit):
++                utility.execute()
++        self.assertIn('manage.py', stderr.getvalue())
++
+     def test_get_random_secret_key(self):
+         key = get_random_secret_key()
+         self.assertEqual(len(key), 50)

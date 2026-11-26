@@ -1,0 +1,51 @@
+diff --git a/lib/matplotlib/mlab.py b/lib/matplotlib/mlab.py
+index 3552904c3..b90c7ada6 100644
+--- a/lib/matplotlib/mlab.py
++++ b/lib/matplotlib/mlab.py
+@@ -427,7 +427,7 @@ def _spectral_helper(x, y=None, NFFT=None, Fs=None, detrend_func=None,
+             result /= (np.abs(window)**2).sum()
+         else:
+             # In this case, preserve power in the segment, not amplitude
+-            result /= np.abs(window).sum()**2
++            result /= window.sum()**2
+ 
+     t = np.arange(NFFT/2, len(x) - NFFT/2 + 1, NFFT - noverlap)/Fs
+ 
+diff --git a/lib/matplotlib/tests/test_mlab.py b/lib/matplotlib/tests/test_mlab.py
+index 86beb5c8c..56d40df59 100644
+--- a/lib/matplotlib/tests/test_mlab.py
++++ b/lib/matplotlib/tests/test_mlab.py
+@@ -715,6 +715,33 @@ class TestSpectral:
+                         spec_n/self.Fs*win.sum()**2,
+                         atol=1e-08)
+ 
++    def test_psd_windowarray_scale_by_freq_negative_window(self):
++        # Test that windows with negative values (like flattop) are handled
++        # correctly; see https://github.com/matplotlib/matplotlib/issues/XXXXX
++        win = np.ones(self.NFFT_density_real)
++        win[::2] = -0.5  # create a window with negative values but non-zero sum
++
++        spec_s, fsp_s = mlab.psd(x=self.y,
++                                 NFFT=self.NFFT_density,
++                                 Fs=self.Fs,
++                                 noverlap=self.nover_density,
++                                 pad_to=self.pad_to_density,
++                                 sides=self.sides,
++                                 window=win,
++                                 scale_by_freq=True)
++        spec_n, fsp_n = mlab.psd(x=self.y,
++                                 NFFT=self.NFFT_density,
++                                 Fs=self.Fs,
++                                 noverlap=self.nover_density,
++                                 pad_to=self.pad_to_density,
++                                 sides=self.sides,
++                                 window=win,
++                                 scale_by_freq=False)
++        assert_array_equal(fsp_s, fsp_n)
++        assert_allclose(spec_s*(win**2).sum(),
++                        spec_n/self.Fs*win.sum()**2,
++                        atol=1e-08)
++
+     @pytest.mark.parametrize(
+         "kind", ["complex", "magnitude", "angle", "phase"])
+     def test_spectrum(self, kind):

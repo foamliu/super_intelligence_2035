@@ -1,0 +1,68 @@
+diff --git a/django/db/migrations/loader.py b/django/db/migrations/loader.py
+index 8c308621d2..d075fcc5df 100644
+--- a/django/db/migrations/loader.py
++++ b/django/db/migrations/loader.py
+@@ -84,11 +84,6 @@ class MigrationLoader:
+                     continue
+                 raise
+             else:
+-                # Empty directories are namespaces.
+-                # getattr() needed on PY36 and older (replace w/attribute access).
+-                if getattr(module, '__file__', None) is None:
+-                    self.unmigrated_apps.add(app_config.label)
+-                    continue
+                 # Module is not a package (e.g. migrations.py).
+                 if not hasattr(module, '__path__'):
+                     self.unmigrated_apps.add(app_config.label)
+diff --git a/tests/migrations/faulty_migrations/namespace/foo/__init__.py b/tests/migrations/faulty_migrations/namespace/foo/__init__.py
+deleted file mode 100644
+index e69de29bb2..0000000000
+diff --git a/tests/migrations/test_loader.py b/tests/migrations/test_loader.py
+index 0f0a590e7c..a007aa99fd 100644
+--- a/tests/migrations/test_loader.py
++++ b/tests/migrations/test_loader.py
+@@ -189,13 +189,13 @@ class LoaderTests(TestCase):
+                 "App with migrations module file not in unmigrated apps."
+             )
+ 
+-    def test_load_empty_dir(self):
+-        with override_settings(MIGRATION_MODULES={"migrations": "migrations.faulty_migrations.namespace"}):
+-            loader = MigrationLoader(connection)
+-            self.assertIn(
+-                "migrations", loader.unmigrated_apps,
+-                "App missing __init__.py in migrations module not in unmigrated apps."
+-            )
++    @override_settings(MIGRATION_MODULES={"migrations": "migrations.test_migrations_namespace_package"})
++    def test_load_namespace_package(self):
++        """Migrations in namespace packages are discovered (#25912)."""
++        loader = MigrationLoader(connection)
++        loader.load_disk()
++        migrations = [name for app, name in loader.disk_migrations if app == 'migrations']
++        self.assertEqual(migrations, ['0001_initial'])
+ 
+     @override_settings(
+         INSTALLED_APPS=['migrations.migrations_test_apps.migrated_app'],
+diff --git a/tests/migrations/test_migrations_namespace_package/0001_initial.py b/tests/migrations/test_migrations_namespace_package/0001_initial.py
+new file mode 100644
+index 0000000000..24e325288c
+--- /dev/null
++++ b/tests/migrations/test_migrations_namespace_package/0001_initial.py
+@@ -0,0 +1,18 @@
++from django.db import migrations, models
++
++
++class Migration(migrations.Migration):
++
++    initial = True
++
++    dependencies = []
++
++    operations = [
++        migrations.CreateModel(
++            name='Author',
++            fields=[
++                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
++                ('name', models.CharField(max_length=255)),
++            ],
++        ),
++    ]

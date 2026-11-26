@@ -1,0 +1,120 @@
+diff --git a/changelog/2434.bugfix.rst b/changelog/2434.bugfix.rst
+new file mode 100644
+index 0000000..d8d4cfe
+--- /dev/null
++++ b/changelog/2434.bugfix.rst
+@@ -0,0 +1,3 @@
++Fixed a bug where the collection of tests that patch an array
++with ``@patch(target='XXXXXX', new=np.array([...]))`` would raise
++a ``ValueError``.
+diff --git a/src/_pytest/compat.py b/src/_pytest/compat.py
+index d238061..52ffc36 100644
+--- a/src/_pytest/compat.py
++++ b/src/_pytest/compat.py
+@@ -64,13 +64,18 @@ def num_mock_patch_args(function):
+     patchings = getattr(function, "patchings", None)
+     if not patchings:
+         return 0
+-    mock_modules = [sys.modules.get("mock"), sys.modules.get("unittest.mock")]
+-    if any(mock_modules):
+-        sentinels = [m.DEFAULT for m in mock_modules if m is not None]
+-        return len(
+-            [p for p in patchings if not p.attribute_name and p.new in sentinels]
+-        )
+-    return len(patchings)
++
++    mock_sentinel = getattr(sys.modules.get("mock"), "DEFAULT", object())
++    ut_mock_sentinel = getattr(sys.modules.get("unittest.mock"), "DEFAULT", object())
++
++    return len(
++        [
++            p
++            for p in patchings
++            if not p.attribute_name
++            and (p.new is mock_sentinel or p.new is ut_mock_sentinel)
++        ]
++    )
+ 
+ 
+ def getfuncargnames(function, is_method=False, cls=None):
+diff --git a/testing/python/integration.py b/testing/python/integration.py
+index a6b8ddd..8b60162 100644
+--- a/testing/python/integration.py
++++ b/testing/python/integration.py
+@@ -119,6 +119,25 @@ class TestMockDecoration:
+         values = getfuncargnames(f)
+         assert values == ("y", "z")
+ 
++    def test_mock_patch_with_numpy_array(self, testdir):
++        # Regression test for #2434: using a numpy array as ``new`` in a
++        # mock.patch decorator used to raise ValueError at collection time.
++        pytest.importorskip("numpy")
++        testdir.makepyfile(
++            """
++            import numpy
++            from unittest.mock import patch
++
++            @patch(target='os.path.abspath', new=numpy.array([-5.5, 3.0]))
++            def test_hello():
++                pass
++        """
++        )
++        # --assert=plain keeps this test independent of the assertion
++        # rewriting machinery.
++        reprec = testdir.inline_run("--assert=plain")
++        reprec.assertoutcome(passed=1)
++
+     def test_unittest_mock(self, testdir):
+         testdir.makepyfile(
+             """
+diff --git a/testing/test_compat.py b/testing/test_compat.py
+index 9e7d05c..78e431a 100644
+--- a/testing/test_compat.py
++++ b/testing/test_compat.py
+@@ -5,6 +5,7 @@ import pytest
+ from _pytest.compat import _PytestWrapper
+ from _pytest.compat import get_real_func
+ from _pytest.compat import is_generator
++from _pytest.compat import num_mock_patch_args
+ from _pytest.compat import safe_getattr
+ from _pytest.compat import safe_isclass
+ from _pytest.outcomes import OutcomeException
+@@ -147,3 +148,38 @@ def test_safe_isclass():
+             assert False, "Should be ignored"
+ 
+     assert safe_isclass(CrappyClass()) is False
++
++
++def test_num_mock_patch_args():
++    """Patching without an explicit ``new`` consumes one function argument."""
++    from unittest.mock import patch
++
++    @patch("_pytest.compat.NOTSET")
++    def f(x):
++        pass  # pragma: no cover
++
++    assert num_mock_patch_args(f) == 1
++
++
++def test_num_mock_patch_args_explicit_new():
++    """Patching with an explicit ``new`` value consumes no function argument."""
++    from unittest.mock import patch
++
++    @patch("_pytest.compat.NOTSET", new="not a sentinel")
++    def f(x):
++        pass  # pragma: no cover
++
++    assert num_mock_patch_args(f) == 0
++
++
++def test_num_mock_patch_args_numpy_array():
++    """Regression test for #2434: patching with a numpy array as ``new``
++    must not raise ValueError (ambiguous truth value) during collection."""
++    np = pytest.importorskip("numpy")
++    from unittest.mock import patch
++
++    @patch(target="_pytest.compat.NOTSET", new=np.array([-5.5, 3.0]))
++    def f(x):
++        pass  # pragma: no cover
++
++    assert num_mock_patch_args(f) == 0

@@ -1,0 +1,54 @@
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index 30616c017..b98a4f537 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -563,6 +563,18 @@ class MigrationAutodetector:
+                 if isinstance(base, str) and "." in base:
+                     base_app_label, base_name = base.split(".", 1)
+                     dependencies.append((base_app_label, base_name, None, True))
++                    # If a base model is losing a field that we're adding,
++                    # we need to wait for the removal before creating this
++                    # model to avoid a FieldError clash.
++                    base_name_lower = base_name.lower()
++                    for name in model_state.fields:
++                        if name in related_fields:
++                            continue
++                        if (
++                            (base_app_label, base_name_lower, name) in self.old_field_keys and
++                            (base_app_label, base_name_lower, name) not in self.new_field_keys
++                        ):
++                            dependencies.append((base_app_label, base_name, name, False))
+             # Depend on the other end of the primary key if it's a relation
+             if primary_key_rel:
+                 dependencies.append((
+diff --git a/tests/migrations/test_autodetector.py b/tests/migrations/test_autodetector.py
+index daff57fc2..73362f223 100644
+--- a/tests/migrations/test_autodetector.py
++++ b/tests/migrations/test_autodetector.py
+@@ -2454,3 +2454,26 @@ class AutodetectorTests(TestCase):
+         self.assertNumberMigrations(changes, 'app', 1)
+         self.assertOperationTypes(changes, 'app', 0, ['DeleteModel'])
+         self.assertOperationAttributes(changes, 'app', 0, 0, name='Dog')
++    def test_field_moved_to_subclass(self):
++        """
++        Moving a field to a new subclass should generate RemoveField before
++        CreateModel to avoid a FieldError clash.
++        """
++        readable_with_title = ModelState('app', 'Readable', [
++            ("id", models.AutoField(primary_key=True)),
++            ("title", models.CharField(max_length=200)),
++        ])
++        readable_empty = ModelState('app', 'Readable', [
++            ("id", models.AutoField(primary_key=True)),
++        ])
++        book_with_title = ModelState('app', 'Book', [
++            ("title", models.CharField(max_length=200)),
++        ], bases=('app.Readable',))
++        changes = self.get_changes(
++            [readable_with_title],
++            [readable_empty, book_with_title],
++        )
++        self.assertNumberMigrations(changes, 'app', 1)
++        self.assertOperationTypes(changes, 'app', 0, ['RemoveField', 'CreateModel'])
++        self.assertOperationAttributes(changes, 'app', 0, 0, model_name='readable', name='title')
++        self.assertOperationAttributes(changes, 'app', 0, 1, name='Book')

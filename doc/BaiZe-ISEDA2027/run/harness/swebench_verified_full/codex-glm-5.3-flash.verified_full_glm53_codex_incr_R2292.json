@@ -1,0 +1,11 @@
+{
+  "harness": "codex",
+  "run_id": "verified_full_glm53_codex_incr_R2292",
+  "round": "R2292",
+  "n": 1,
+  "resolved": [
+    "pytest-dev__pytest-6202"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

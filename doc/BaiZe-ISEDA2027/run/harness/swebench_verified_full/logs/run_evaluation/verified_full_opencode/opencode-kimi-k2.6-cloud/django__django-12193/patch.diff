@@ -1,0 +1,46 @@
+diff --git a/django/forms/widgets.py b/django/forms/widgets.py
+index 6fe220be..ddd052be 100644
+--- a/django/forms/widgets.py
++++ b/django/forms/widgets.py
+@@ -524,6 +524,8 @@ class CheckboxInput(Input):
+         if self.check_test(value):
+             if attrs is None:
+                 attrs = {}
++            else:
++                attrs = attrs.copy()
+             attrs['checked'] = True
+         return super().get_context(name, value, attrs)
+ 
+diff --git a/tests/forms_tests/widget_tests/test_checkboxinput.py b/tests/forms_tests/widget_tests/test_checkboxinput.py
+index 6483b7f2..6a03777e 100644
+--- a/tests/forms_tests/widget_tests/test_checkboxinput.py
++++ b/tests/forms_tests/widget_tests/test_checkboxinput.py
+@@ -89,3 +89,12 @@ class CheckboxInputTest(WidgetTest):
+     def test_value_omitted_from_data(self):
+         self.assertIs(self.widget.value_omitted_from_data({'field': 'value'}, {}, 'field'), False)
+         self.assertIs(self.widget.value_omitted_from_data({}, {}, 'field'), False)
++
++    def test_get_context_does_not_mutate_attrs(self):
++        """
++        CheckboxInput.get_context() shouldn't mutate the attrs dict passed to
++        it, so that the same attrs can be reused for multiple widgets.
++        """
++        attrs = {'class': 'my-class'}
++        self.widget.get_context('is_cool', True, attrs)
++        self.assertNotIn('checked', attrs)
+diff --git a/tests/postgres_tests/test_array.py b/tests/postgres_tests/test_array.py
+index 481d93f8..7c369905 100644
+--- a/tests/postgres_tests/test_array.py
++++ b/tests/postgres_tests/test_array.py
+@@ -1130,3 +1130,11 @@ class TestSplitFormWidget(PostgreSQLWidgetTestCase):
+         self.assertIs(widget.value_omitted_from_data({'field_0': 'value'}, {}, 'field'), False)
+         self.assertIs(widget.value_omitted_from_data({'field_1': 'value'}, {}, 'field'), False)
+         self.assertIs(widget.value_omitted_from_data({'field_0': 'value', 'field_1': 'value'}, {}, 'field'), False)
++
++    def test_render_checkbox(self):
++        widget = SplitArrayWidget(forms.CheckboxInput(), size=3)
++        context = widget.get_context('array', [True, False, True])
++        subwidgets = context['widget']['subwidgets']
++        self.assertIn('checked', subwidgets[0]['attrs'])
++        self.assertNotIn('checked', subwidgets[1]['attrs'])
++        self.assertIn('checked', subwidgets[2]['attrs'])

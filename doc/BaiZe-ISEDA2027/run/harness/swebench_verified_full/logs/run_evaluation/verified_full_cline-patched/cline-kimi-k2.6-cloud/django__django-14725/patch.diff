@@ -1,0 +1,371 @@
+diff --git a/django/contrib/contenttypes/forms.py b/django/contrib/contenttypes/forms.py
+index 92a58d49f..5116eb974 100644
+--- a/django/contrib/contenttypes/forms.py
++++ b/django/contrib/contenttypes/forms.py
+@@ -54,7 +54,7 @@ def generic_inlineformset_factory(model, form=ModelForm,
+                                   ct_field="content_type", fk_field="object_id",
+                                   fields=None, exclude=None,
+                                   extra=3, can_order=False, can_delete=True,
+-                                  max_num=None, formfield_callback=None,
++                                  can_create=True, max_num=None, formfield_callback=None,
+                                   validate_max=False, for_concrete_model=True,
+                                   min_num=None, validate_min=False,
+                                   absolute_max=None, can_delete_extra=True):
+@@ -74,7 +74,7 @@ def generic_inlineformset_factory(model, form=ModelForm,
+     FormSet = modelformset_factory(
+         model, form=form, formfield_callback=formfield_callback,
+         formset=formset, extra=extra, can_delete=can_delete,
+-        can_order=can_order, fields=fields, exclude=exclude, max_num=max_num,
++        can_create=can_create, can_order=can_order, fields=fields, exclude=exclude, max_num=max_num,
+         validate_max=validate_max, min_num=min_num, validate_min=validate_min,
+         absolute_max=absolute_max, can_delete_extra=can_delete_extra,
+     )
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 7effb202e..86c096d2f 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -568,6 +568,10 @@ class BaseModelFormSet(BaseFormSet):
+     A ``FormSet`` for editing a queryset and/or adding new objects to it.
+     """
+     model = None
++    can_create = True
++    default_error_messages = {
++        'no_new_objects': _('New object creation is not allowed in this formset.'),
++    }
+ 
+     # Set of fields that must be unique among forms of this set.
+     unique_fields = set()
+@@ -681,6 +685,13 @@ class BaseModelFormSet(BaseFormSet):
+     save.alters_data = True
+ 
+     def clean(self):
++        if not self.can_create:
++            for form in self.extra_forms:
++                if form.has_changed():
++                    raise ValidationError(
++                        self.error_messages['no_new_objects'],
++                        code='no_new_objects',
++                    )
+         self.validate_unique()
+ 
+     def validate_unique(self):
+@@ -813,6 +824,8 @@ class BaseModelFormSet(BaseFormSet):
+ 
+     def save_new_objects(self, commit=True):
+         self.new_objects = []
++        if not self.can_create:
++            return self.new_objects
+         for form in self.extra_forms:
+             if not form.has_changed():
+                 continue
+@@ -871,7 +884,7 @@ class BaseModelFormSet(BaseFormSet):
+ 
+ def modelformset_factory(model, form=ModelForm, formfield_callback=None,
+                          formset=BaseModelFormSet, extra=1, can_delete=False,
+-                         can_order=False, max_num=None, fields=None, exclude=None,
++                         can_order=False, can_create=True, max_num=None, fields=None, exclude=None,
+                          widgets=None, validate_max=False, localized_fields=None,
+                          labels=None, help_texts=None, error_messages=None,
+                          min_num=None, validate_min=False, field_classes=None,
+@@ -896,6 +909,7 @@ def modelformset_factory(model, form=ModelForm, formfield_callback=None,
+                               absolute_max=absolute_max, can_delete_extra=can_delete_extra,
+                               renderer=renderer)
+     FormSet.model = model
++    FormSet.can_create = can_create
+     return FormSet
+ 
+ 
+@@ -1072,7 +1086,7 @@ def _get_foreign_key(parent_model, model, fk_name=None, can_fail=False):
+ def inlineformset_factory(parent_model, model, form=ModelForm,
+                           formset=BaseInlineFormSet, fk_name=None,
+                           fields=None, exclude=None, extra=3, can_order=False,
+-                          can_delete=True, max_num=None, formfield_callback=None,
++                          can_delete=True, can_create=True, max_num=None, formfield_callback=None,
+                           widgets=None, validate_max=False, localized_fields=None,
+                           labels=None, help_texts=None, error_messages=None,
+                           min_num=None, validate_min=False, field_classes=None,
+@@ -1093,6 +1107,7 @@ def inlineformset_factory(parent_model, model, form=ModelForm,
+         'formset': formset,
+         'extra': extra,
+         'can_delete': can_delete,
++        'can_create': can_create,
+         'can_order': can_order,
+         'fields': fields,
+         'exclude': exclude,
+diff --git a/docs/ref/contrib/contenttypes.txt b/docs/ref/contrib/contenttypes.txt
+index c23f538b3..06cd35c50 100644
+--- a/docs/ref/contrib/contenttypes.txt
++++ b/docs/ref/contrib/contenttypes.txt
+@@ -496,7 +496,7 @@ The :mod:`django.contrib.contenttypes.forms` module provides:
+ 
+ .. class:: BaseGenericInlineFormSet
+ 
+-.. function:: generic_inlineformset_factory(model, form=ModelForm, formset=BaseGenericInlineFormSet, ct_field="content_type", fk_field="object_id", fields=None, exclude=None, extra=3, can_order=False, can_delete=True, max_num=None, formfield_callback=None, validate_max=False, for_concrete_model=True, min_num=None, validate_min=False, absolute_max=None, can_delete_extra=True)
++.. function:: generic_inlineformset_factory(model, form=ModelForm, formset=BaseGenericInlineFormSet, ct_field="content_type", fk_field="object_id", fields=None, exclude=None, extra=3, can_order=False, can_delete=True, can_create=True, max_num=None, formfield_callback=None, validate_max=False, for_concrete_model=True, min_num=None, validate_min=False, absolute_max=None, can_delete_extra=True)
+ 
+     Returns a ``GenericInlineFormSet`` using
+     :func:`~django.forms.models.modelformset_factory`.
+diff --git a/docs/releases/4.1.txt b/docs/releases/4.1.txt
+index f5e7a07bb..0e61d8d72 100644
+--- a/docs/releases/4.1.txt
++++ b/docs/releases/4.1.txt
+@@ -189,6 +189,12 @@ Forms
+   labels in ``<legend>`` tags via the new ``tag`` argument of
+   :meth:`~django.forms.BoundField.label_tag`.
+ 
++* The new ``can_create`` parameter for
++  :func:`~django.forms.models.modelformset_factory`,
++  :func:`~django.forms.models.inlineformset_factory`, and
++  :func:`~django.contrib.contenttypes.forms.generic_inlineformset_factory`
++  allows disabling the creation of new objects in model formsets.
++
+ Generic Views
+ ~~~~~~~~~~~~~
+ 
+diff --git a/docs/topics/forms/modelforms.txt b/docs/topics/forms/modelforms.txt
+index cf79fc69c..f06e8719c 100644
+--- a/docs/topics/forms/modelforms.txt
++++ b/docs/topics/forms/modelforms.txt
+@@ -953,8 +953,11 @@ extra forms displayed.
+ 
+ Also, ``extra=0`` doesn't prevent creation of new model instances as you can
+ :ref:`add additional forms with JavaScript <understanding-the-managementform>`
+-or send additional POST data. Formsets :ticket:`don't yet provide functionality
+-<26142>` for an "edit only" view that prevents creation of new instances.
++or send additional POST data. Use ``can_create=False`` on the formset class or
++pass ``can_create=False`` to :func:`~django.forms.models.modelformset_factory`
++to prevent the creation of new instances::
++
++    >>> AuthorFormSet = modelformset_factory(Author, fields=('name',), extra=0, can_create=False)
+ 
+ If the value of ``max_num`` is greater than the number of existing related
+ objects, up to ``extra`` additional blank forms will be added to the formset,
+diff --git a/tests/generic_relations/test_forms.py b/tests/generic_relations/test_forms.py
+index e8caeba1f..c2fbc323e 100644
+--- a/tests/generic_relations/test_forms.py
++++ b/tests/generic_relations/test_forms.py
+@@ -295,3 +295,53 @@ id="id_generic_relations-taggeditem-content_type-object_id-1-id"></p>""" % tagge
+         self.assertEqual(len(formset), 2)
+         self.assertNotIn('DELETE', formset.forms[0].fields)
+         self.assertNotIn('DELETE', formset.forms[1].fields)
++
++    def test_can_create_false_prevents_creation(self):
++        GenericFormSet = generic_inlineformset_factory(
++            TaggedItem,
++            can_create=False,
++            extra=0,
++        )
++        platypus = Animal.objects.create(
++            common_name='Platypus',
++            latin_name='Ornithorhynchus anatinus',
++        )
++        data = {
++            'form-TOTAL_FORMS': '1',
++            'form-INITIAL_FORMS': '0',
++            'form-MAX_NUM_FORMS': '',
++            'form-0-tag': 'shiny',
++        }
++        formset = GenericFormSet(data, instance=platypus, prefix='form')
++        self.assertIs(formset.is_valid(), False)
++        self.assertEqual(
++            formset.non_form_errors(),
++            ['New object creation is not allowed in this formset.'],
++        )
++        self.assertEqual(TaggedItem.objects.count(), 0)
++
++    def test_can_create_false_existing_objects_still_saved(self):
++        GenericFormSet = generic_inlineformset_factory(
++            TaggedItem,
++            can_create=False,
++            extra=1,
++        )
++        platypus = Animal.objects.create(
++            common_name='Platypus',
++            latin_name='Ornithorhynchus anatinus',
++        )
++        tag = platypus.tags.create(tag='shiny')
++        data = {
++            'form-TOTAL_FORMS': '2',
++            'form-INITIAL_FORMS': '1',
++            'form-MAX_NUM_FORMS': '',
++            'form-0-id': str(tag.id),
++            'form-0-tag': 'furry',
++            'form-1-tag': '',
++        }
++        formset = GenericFormSet(data, instance=platypus, prefix='form')
++        self.assertIs(formset.is_valid(), True)
++        saved = formset.save()
++        self.assertEqual(len(saved), 1)
++        self.assertEqual(saved[0].tag, 'furry')
++        self.assertEqual(TaggedItem.objects.count(), 1)
+diff --git a/tests/inline_formsets/tests.py b/tests/inline_formsets/tests.py
+index 1769bc0f4..49a610dc5 100644
+--- a/tests/inline_formsets/tests.py
++++ b/tests/inline_formsets/tests.py
+@@ -202,3 +202,76 @@ class InlineFormsetFactoryTest(TestCase):
+         PoemFormSet = inlineformset_factory(Poet, Poem, form=PoemModelForm, fields=('name',), extra=0)
+         formset = PoemFormSet(None, instance=poet)
+         formset.forms  # Trigger form instantiation to run the assert above.
++
++
++class CanCreateTests(TestCase):
++    def test_can_create_true_allows_creation(self):
++        PoemFormSet = inlineformset_factory(Poet, Poem, fields='__all__', extra=0)
++        poet = Poet.objects.create(name='test')
++        data = {
++            'poem_set-TOTAL_FORMS': '1',
++            'poem_set-INITIAL_FORMS': '0',
++            'poem_set-MAX_NUM_FORMS': '',
++            'poem_set-0-name': 'Brevity is the soul of wit',
++        }
++        formset = PoemFormSet(data, instance=poet)
++        self.assertIs(formset.is_valid(), True)
++        saved = formset.save()
++        self.assertEqual(len(saved), 1)
++        self.assertEqual(Poem.objects.count(), 1)
++
++    def test_can_create_false_prevents_creation(self):
++        PoemFormSet = inlineformset_factory(Poet, Poem, fields='__all__', extra=0, can_create=False)
++        poet = Poet.objects.create(name='test')
++        data = {
++            'poem_set-TOTAL_FORMS': '1',
++            'poem_set-INITIAL_FORMS': '0',
++            'poem_set-MAX_NUM_FORMS': '',
++            'poem_set-0-name': 'Brevity is the soul of wit',
++        }
++        formset = PoemFormSet(data, instance=poet)
++        self.assertIs(formset.is_valid(), False)
++        self.assertEqual(
++            formset.non_form_errors(),
++            ['New object creation is not allowed in this formset.'],
++        )
++        self.assertEqual(Poem.objects.count(), 0)
++
++    def test_can_create_false_existing_objects_still_saved(self):
++        poet = Poet.objects.create(name='test')
++        poem = poet.poem_set.create(name='Brevity is the soul of wit')
++        PoemFormSet = inlineformset_factory(Poet, Poem, fields='__all__', extra=1, can_create=False)
++        data = {
++            'poem_set-TOTAL_FORMS': '2',
++            'poem_set-INITIAL_FORMS': '1',
++            'poem_set-MAX_NUM_FORMS': '',
++            'poem_set-0-id': str(poem.pk),
++            'poem_set-0-name': 'Conscience doth make cowards of us all',
++            'poem_set-1-name': '',
++        }
++        formset = PoemFormSet(data, instance=poet)
++        self.assertIs(formset.is_valid(), True)
++        saved = formset.save()
++        self.assertEqual(len(saved), 1)
++        self.assertEqual(saved[0].name, 'Conscience doth make cowards of us all')
++        self.assertEqual(Poem.objects.count(), 1)
++
++    def test_can_create_false_tampered_post_data(self):
++        poet = Poet.objects.create(name='test')
++        poem = poet.poem_set.create(name='Brevity is the soul of wit')
++        PoemFormSet = inlineformset_factory(Poet, Poem, fields='__all__', extra=0, can_create=False)
++        data = {
++            'poem_set-TOTAL_FORMS': '2',
++            'poem_set-INITIAL_FORMS': '1',
++            'poem_set-MAX_NUM_FORMS': '',
++            'poem_set-0-id': str(poem.pk),
++            'poem_set-0-name': 'Conscience doth make cowards of us all',
++            'poem_set-1-name': 'To be or not to be',
++        }
++        formset = PoemFormSet(data, instance=poet)
++        self.assertIs(formset.is_valid(), False)
++        self.assertEqual(
++            formset.non_form_errors(),
++            ['New object creation is not allowed in this formset.'],
++        )
++        self.assertEqual(Poem.objects.get(pk=poem.pk).name, 'Brevity is the soul of wit')
+diff --git a/tests/model_formsets/tests.py b/tests/model_formsets/tests.py
+index bb1a8a8a5..de94f4ecd 100644
+--- a/tests/model_formsets/tests.py
++++ b/tests/model_formsets/tests.py
+@@ -2021,3 +2021,85 @@ class TestModelFormsetOverridesTroughFormMeta(TestCase):
+         BookFormSet = modelformset_factory(Author, fields='__all__', renderer=renderer)
+         formset = BookFormSet()
+         self.assertEqual(formset.renderer, renderer)
++
++
++class CanCreateTests(TestCase):
++    def test_can_create_true_allows_creation(self):
++        AuthorFormSet = modelformset_factory(Author, fields='__all__', extra=0)
++        data = {
++            'form-TOTAL_FORMS': '1',
++            'form-INITIAL_FORMS': '0',
++            'form-MAX_NUM_FORMS': '',
++            'form-0-name': 'Charles Baudelaire',
++        }
++        formset = AuthorFormSet(data)
++        self.assertIs(formset.is_valid(), True)
++        saved = formset.save()
++        self.assertEqual(len(saved), 1)
++        self.assertEqual(Author.objects.count(), 1)
++
++    def test_can_create_false_prevents_creation(self):
++        AuthorFormSet = modelformset_factory(Author, fields='__all__', extra=0, can_create=False)
++        data = {
++            'form-TOTAL_FORMS': '1',
++            'form-INITIAL_FORMS': '0',
++            'form-MAX_NUM_FORMS': '',
++            'form-0-name': 'Charles Baudelaire',
++        }
++        formset = AuthorFormSet(data)
++        self.assertIs(formset.is_valid(), False)
++        self.assertEqual(
++            formset.non_form_errors(),
++            ['New object creation is not allowed in this formset.'],
++        )
++        self.assertEqual(Author.objects.count(), 0)
++
++    def test_can_create_false_blank_extra_forms_valid(self):
++        AuthorFormSet = modelformset_factory(Author, fields='__all__', extra=1, can_create=False)
++        data = {
++            'form-TOTAL_FORMS': '1',
++            'form-INITIAL_FORMS': '0',
++            'form-MAX_NUM_FORMS': '',
++            'form-0-name': '',
++        }
++        formset = AuthorFormSet(data)
++        self.assertIs(formset.is_valid(), True)
++        self.assertEqual(Author.objects.count(), 0)
++
++    def test_can_create_false_existing_objects_still_saved(self):
++        author = Author.objects.create(name='Charles Baudelaire')
++        AuthorFormSet = modelformset_factory(Author, fields='__all__', extra=1, can_create=False)
++        data = {
++            'form-TOTAL_FORMS': '2',
++            'form-INITIAL_FORMS': '1',
++            'form-MAX_NUM_FORMS': '',
++            'form-0-id': str(author.pk),
++            'form-0-name': 'Paul Verlaine',
++            'form-1-name': '',
++        }
++        formset = AuthorFormSet(data, queryset=Author.objects.all())
++        self.assertIs(formset.is_valid(), True)
++        saved = formset.save()
++        self.assertEqual(len(saved), 1)
++        self.assertEqual(saved[0].name, 'Paul Verlaine')
++        self.assertEqual(Author.objects.count(), 1)
++
++    def test_can_create_false_tampered_post_data(self):
++        author = Author.objects.create(name='Charles Baudelaire')
++        AuthorFormSet = modelformset_factory(Author, fields='__all__', extra=0, can_create=False)
++        data = {
++            'form-TOTAL_FORMS': '2',
++            'form-INITIAL_FORMS': '1',
++            'form-MAX_NUM_FORMS': '',
++            'form-0-id': str(author.pk),
++            'form-0-name': 'Paul Verlaine',
++            'form-1-name': 'Arthur Rimbaud',
++        }
++        formset = AuthorFormSet(data, queryset=Author.objects.all())
++        self.assertIs(formset.is_valid(), False)
++        self.assertEqual(
++            formset.non_form_errors(),
++            ['New object creation is not allowed in this formset.'],
++        )
++        # Existing object should not be saved because the formset is invalid.
++        self.assertEqual(Author.objects.get(pk=author.pk).name, 'Charles Baudelaire')

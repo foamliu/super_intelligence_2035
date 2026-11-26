@@ -1,0 +1,89 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5f07a4208a..52604b1842 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -2011,14 +2011,19 @@ class ModelAdmin(BaseModelAdmin):
+             )
+             if formset.is_valid():
+                 changecount = 0
+-                for form in formset.forms:
+-                    if form.has_changed():
+-                        obj = self.save_form(request, form, change=True)
+-                        self.save_model(request, obj, form, change=True)
+-                        self.save_related(request, form, formsets=[], change=True)
+-                        change_msg = self.construct_change_message(request, form, None)
+-                        self.log_change(request, obj, change_msg)
+-                        changecount += 1
++                with transaction.atomic(using=router.db_for_write(self.model)):
++                    for form in formset.forms:
++                        if form.has_changed():
++                            obj = self.save_form(request, form, change=True)
++                            self.save_model(request, obj, form, change=True)
++                            self.save_related(
++                                request, form, formsets=[], change=True
++                            )
++                            change_msg = self.construct_change_message(
++                                request, form, None
++                            )
++                            self.log_change(request, obj, change_msg)
++                            changecount += 1
+ 
+                 if changecount:
+                     msg = ngettext(
+diff --git a/tests/admin_changelist/tests.py b/tests/admin_changelist/tests.py
+index b85d5383cd..3404fd3ccd 100644
+--- a/tests/admin_changelist/tests.py
++++ b/tests/admin_changelist/tests.py
+@@ -1169,6 +1169,52 @@ class ChangeListTests(TestCase):
+             # Check only the first few characters since the UUID may have dashes.
+             self.assertIn(str(a.pk)[:8], context.captured_queries[4]["sql"])
+ 
++    def test_changelist_view_list_editable_rollback(self):
++        """A failure during list_editable processing rolls back all changes."""
++        a = Swallow.objects.create(origin="Swallow A", load=4, speed=1)
++        b = Swallow.objects.create(origin="Swallow B", load=2, speed=2)
++        superuser = self._create_superuser("superuser")
++        self.client.force_login(superuser)
++        changelist_url = reverse("admin:admin_changelist_swallow_changelist")
++        data = {
++            "form-TOTAL_FORMS": "2",
++            "form-INITIAL_FORMS": "2",
++            "form-MIN_NUM_FORMS": "0",
++            "form-MAX_NUM_FORMS": "1000",
++            "form-0-uuid": str(a.pk),
++            "form-0-load": "10.0",
++            "form-0-speed": "10.0",
++            "form-1-uuid": str(b.pk),
++            "form-1-load": "20.0",
++            "form-1-speed": "20.0",
++            "_save": "Save",
++        }
++
++        class FailOnSecondSave(SwallowAdmin):
++            def save_model(self, request, obj, form, change):
++                if obj.pk == b.pk:
++                    raise ValueError("Failed to save second object.")
++                super().save_model(request, obj, form, change)
++
++        custom_site.unregister(Swallow)
++        custom_site.register(Swallow, FailOnSecondSave)
++        try:
++            response = self.client.post(changelist_url, data, raise_request_exception=False)
++            self.assertIsNotNone(
++                getattr(response, "exc_info", None),
++                "Expected an exception during list_editable save.",
++            )
++        finally:
++            custom_site.unregister(Swallow)
++            custom_site.register(Swallow, SwallowAdmin)
++
++        a.refresh_from_db()
++        b.refresh_from_db()
++        self.assertEqual(a.load, 4)
++        self.assertEqual(a.speed, 1)
++        self.assertEqual(b.load, 2)
++        self.assertEqual(b.speed, 2)
++
+     def test_deterministic_order_for_unordered_model(self):
+         """
+         The primary key is used in the ordering of the changelist's results to

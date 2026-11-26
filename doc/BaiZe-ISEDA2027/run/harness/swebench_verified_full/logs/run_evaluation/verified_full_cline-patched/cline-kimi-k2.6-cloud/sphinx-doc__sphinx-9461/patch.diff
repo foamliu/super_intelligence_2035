@@ -1,0 +1,139 @@
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 1cecb1f79..bd0eafdb7 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -2663,6 +2663,19 @@ class PropertyDocumenter(DocstringStripSignatureMixin, ClassLevelDocumenter):  #
+                             ) -> bool:
+         return inspect.isproperty(member) and isinstance(parent, ClassDocumenter)
+ 
++    def import_object(self, raiseerror: bool = False) -> bool:
++        ret = super().import_object(raiseerror)
++        if (ret and self.parent and not inspect.isproperty(self.object) and
++                hasattr(self.parent, '__mro__')):
++            for cls in self.parent.__mro__:
++                if self.object_name in cls.__dict__:
++                    attr = cls.__dict__[self.object_name]
++                    if (isinstance(attr, classmethod) and
++                            isinstance(getattr(attr, '__func__', None), property)):
++                        self.object = attr.__func__
++                    break
++        return ret
++
+     def document_members(self, all_members: bool = False) -> None:
+         pass
+ 
+diff --git a/sphinx/ext/autodoc/importer.py b/sphinx/ext/autodoc/importer.py
+index 1a8ea0973..387b23e6e 100644
+--- a/sphinx/ext/autodoc/importer.py
++++ b/sphinx/ext/autodoc/importer.py
+@@ -287,6 +287,14 @@ def get_class_members(subject: Any, objpath: List[str], attrgetter: Callable
+         except AttributeError:
+             continue
+ 
++    # classmethod wrapping property (Python 3.9+)
++    for name, value in obj_dict.items():
++        if (isinstance(value, classmethod) and
++                isinstance(getattr(value, '__func__', None), property)):
++            unmangled = unmangle(subject, name)
++            if unmangled:
++                members[unmangled] = ObjectMember(unmangled, value.__func__, class_=subject)
++
+     try:
+         for cls in getmro(subject):
+             try:
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index 4e1b184e0..a9fcdc07b 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,7 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    from types import UnionType as types_Union
+ else:
+     types_Union = None
+ 
+diff --git a/tests/roots/test-ext-autodoc/target/properties.py b/tests/roots/test-ext-autodoc/target/properties.py
+index 409fc2b5d..c4e2781f0 100644
+--- a/tests/roots/test-ext-autodoc/target/properties.py
++++ b/tests/roots/test-ext-autodoc/target/properties.py
+@@ -4,3 +4,13 @@ class Foo:
+     @property
+     def prop(self) -> int:
+         """docstring"""
++
++
++class Bar:
++    """docstring"""
++
++    @classmethod
++    @property
++    def class_prop(cls) -> int:
++        """docstring"""
++        return 1
+diff --git a/tests/test_ext_autodoc_autoclass.py b/tests/test_ext_autodoc_autoclass.py
+index 59ee1a948..9dca831e6 100644
+--- a/tests/test_ext_autodoc_autoclass.py
++++ b/tests/test_ext_autodoc_autoclass.py
+@@ -221,6 +221,28 @@ def test_properties(app):
+     ]
+ 
+ 
++@pytest.mark.skipif(sys.version_info < (3, 9), reason='Requires Python 3.9 or greater')
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_classmethod_property(app):
++    options = {"members": None}
++    actual = do_autodoc(app, 'class', 'target.properties.Bar', options)
++    assert list(actual) == [
++        '',
++        '.. py:class:: Bar()',
++        '   :module: target.properties',
++        '',
++        '   docstring',
++        '',
++        '',
++        '   .. py:property:: Bar.class_prop',
++        '      :module: target.properties',
++        '      :type: int',
++        '',
++        '      docstring',
++        '',
++    ]
++
++
+ @pytest.mark.sphinx('html', testroot='ext-autodoc')
+ def test_slots_attribute(app):
+     options = {"members": None}
+diff --git a/tests/test_ext_autodoc_autoproperty.py b/tests/test_ext_autodoc_autoproperty.py
+index ee25aa8b7..10f378819 100644
+--- a/tests/test_ext_autodoc_autoproperty.py
++++ b/tests/test_ext_autodoc_autoproperty.py
+@@ -9,6 +9,8 @@
+     :license: BSD, see LICENSE for details.
+ """
+ 
++import sys
++
+ import pytest
+ 
+ from .test_ext_autodoc import do_autodoc
+@@ -26,3 +28,18 @@ def test_properties(app):
+         '   docstring',
+         '',
+     ]
++
++
++@pytest.mark.skipif(sys.version_info < (3, 9), reason='Requires Python 3.9 or greater')
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_classmethod_property(app):
++    actual = do_autodoc(app, 'property', 'target.properties.Bar.class_prop')
++    assert list(actual) == [
++        '',
++        '.. py:property:: Bar.class_prop',
++        '   :module: target.properties',
++        '   :type: int',
++        '',
++        '   docstring',
++        '',
++    ]

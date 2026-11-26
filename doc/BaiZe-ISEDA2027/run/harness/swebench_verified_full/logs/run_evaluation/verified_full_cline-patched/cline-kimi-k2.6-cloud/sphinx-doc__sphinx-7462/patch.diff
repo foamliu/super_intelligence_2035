@@ -1,0 +1,70 @@
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 3ca730e..b279d05 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -96,13 +96,17 @@ def _parse_annotation(annotation: str) -> List[Node]:
+         elif isinstance(node, ast.Index):
+             return unparse(node.value)
+         elif isinstance(node, ast.List):
+-            result = [addnodes.desc_sig_punctuation('', '[')]  # type: List[Node]
+-            for elem in node.elts:
+-                result.extend(unparse(elem))
+-                result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
+-            result.append(addnodes.desc_sig_punctuation('', ']'))
+-            return result
++            if node.elts:
++                result = [addnodes.desc_sig_punctuation('', '[')]  # type: List[Node]
++                for elem in node.elts:
++                    result.extend(unparse(elem))
++                    result.append(addnodes.desc_sig_punctuation('', ', '))
++                result.pop()
++                result.append(addnodes.desc_sig_punctuation('', ']'))
++                return result
++            else:
++                return [addnodes.desc_sig_punctuation('', '['),
++                        addnodes.desc_sig_punctuation('', ']')]
+         elif isinstance(node, ast.Module):
+             return sum((unparse(e) for e in node.body), [])
+         elif isinstance(node, ast.Name):
+@@ -114,12 +118,16 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             result.append(addnodes.desc_sig_punctuation('', ']'))
+             return result
+         elif isinstance(node, ast.Tuple):
+-            result = []
+-            for elem in node.elts:
+-                result.extend(unparse(elem))
+-                result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
+-            return result
++            if node.elts:
++                result = []
++                for elem in node.elts:
++                    result.extend(unparse(elem))
++                    result.append(addnodes.desc_sig_punctuation('', ', '))
++                result.pop()
++                return result
++            else:
++                return [addnodes.desc_sig_punctuation('', '('),
++                        addnodes.desc_sig_punctuation('', ')')]
+         else:
+             raise SyntaxError  # unsupported syntax
+ 
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index cc3d3cf..e330ba6 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -255,6 +255,13 @@ def test_parse_annotation():
+                           [pending_xref, "int"],
+                           [desc_sig_punctuation, "]"]))
+ 
++    doctree = _parse_annotation("Tuple[()]")
++    assert_node(doctree, ([pending_xref, "Tuple"],
++                          [desc_sig_punctuation, "["],
++                          [desc_sig_punctuation, "("],
++                          [desc_sig_punctuation, ")"],
++                          [desc_sig_punctuation, "]"]))
++
+     doctree = _parse_annotation("Callable[[int, int], int]")
+     assert_node(doctree, ([pending_xref, "Callable"],
+                           [desc_sig_punctuation, "["],

@@ -1,0 +1,129 @@
+diff --git a/django/core/serializers/base.py b/django/core/serializers/base.py
+index da85cb4b9..517d2cad8 100644
+--- a/django/core/serializers/base.py
++++ b/django/core/serializers/base.py
+@@ -336,7 +336,9 @@ def build_instance(Model, data, db):
+         and hasattr(default_manager, "get_by_natural_key")
+         and hasattr(Model, "natural_key")
+     ):
+-        natural_key = Model(**data).natural_key()
++        obj = Model(**data)
++        obj._state.db = db
++        natural_key = obj.natural_key()
+         try:
+             data[Model._meta.pk.attname] = Model._meta.pk.to_python(
+                 default_manager.db_manager(db).get_by_natural_key(*natural_key).pk
+diff --git a/tests/serializers/models/natural.py b/tests/serializers/models/natural.py
+index 1e439b34e..72c0af936 100644
+--- a/tests/serializers/models/natural.py
++++ b/tests/serializers/models/natural.py
+@@ -73,3 +73,36 @@ class FKAsPKNoNaturalKey(models.Model):
+ 
+     def natural_key(self):
+         raise NotImplementedError("This method was not expected to be called.")
++
++
++class NaturalKeyParentManager(models.Manager):
++    def get_by_natural_key(self, data):
++        return self.get(data=data)
++
++
++class NaturalKeyParent(models.Model):
++    data = models.CharField(max_length=100, unique=True)
++    objects = NaturalKeyParentManager()
++
++    def natural_key(self):
++        return (self.data,)
++
++
++class NaturalKeyChildManager(models.Manager):
++    def get_by_natural_key(self, data, parent_data):
++        return self.get(data=data, parent__data=parent_data)
++
++
++class NaturalKeyChild(models.Model):
++    data = models.CharField(max_length=100)
++    parent = models.ForeignKey(NaturalKeyParent, models.CASCADE)
++
++    objects = NaturalKeyChildManager()
++
++    class Meta:
++        unique_together = (("data", "parent"),)
++
++    def natural_key(self):
++        return (self.data,) + self.parent.natural_key()
++
++    natural_key.dependencies = ["serializers.NaturalKeyParent"]
+diff --git a/tests/serializers/test_natural.py b/tests/serializers/test_natural.py
+index 6b6cfae6f..60543d6e1 100644
+--- a/tests/serializers/test_natural.py
++++ b/tests/serializers/test_natural.py
+@@ -7,6 +7,8 @@ from .models import (
+     FKAsPKNoNaturalKey,
+     FKDataNaturalKey,
+     NaturalKeyAnchor,
++    NaturalKeyChild,
++    NaturalKeyParent,
+     NaturalKeyThing,
+     NaturalPKWithDefault,
+ )
+@@ -17,6 +19,10 @@ class NaturalKeySerializerTests(TestCase):
+     pass
+ 
+ 
++class NaturalKeyOnNonDefaultDatabaseTests(TestCase):
++    databases = {"default", "other"}
++
++
+ def natural_key_serializer_test(self, format):
+     # Create all the objects defined in the test data
+     with connection.constraint_checks_disabled():
+@@ -248,6 +254,39 @@ def fk_as_pk_natural_key_not_called(self, format):
+         self.assertEqual(obj.object.pk, o1.pk)
+ 
+ 
++def natural_key_with_fk_on_non_default_database_test(self, format):
++    """
++    Deserializing into a non-default database doesn't query the default
++    database when the natural key of an object follows a foreign key.
++    """
++    author = NaturalKeyParent.objects.using("other").create(data="JR Tolkien")
++    book = NaturalKeyChild.objects.using("other").create(
++        data="The Ring", parent=author
++    )
++    string_data = serializers.serialize(
++        format,
++        [author, book],
++        use_natural_foreign_keys=True,
++        use_natural_primary_keys=True,
++    )
++    # Empty the "other" database, then deserialize into it. The default
++    # database doesn't contain the related author, so if the natural key of
++    # the book (which requires fetching the related author) was resolved
++    # against the default database, deserialization would fail.
++    book.delete(using="other")
++    author.delete(using="other")
++    with self.assertNumQueries(0, using="default"):
++        for obj in serializers.deserialize(format, string_data, using="other"):
++            obj.save(using="other")
++    self.assertEqual(NaturalKeyParent.objects.using("other").get().data, "JR Tolkien")
++    book = NaturalKeyChild.objects.using("other").get()
++    self.assertEqual(book.data, "The Ring")
++    self.assertEqual(book.parent.data, "JR Tolkien")
++    # Check that nothing was created in the default database.
++    self.assertFalse(NaturalKeyParent.objects.exists())
++    self.assertFalse(NaturalKeyChild.objects.exists())
++
++
+ # Dynamically register tests for each serializer
+ register_tests(
+     NaturalKeySerializerTests,
+@@ -282,3 +321,8 @@ register_tests(
+     "test_%s_fk_as_pk_natural_key_not_called",
+     fk_as_pk_natural_key_not_called,
+ )
++register_tests(
++    NaturalKeyOnNonDefaultDatabaseTests,
++    "test_%s_natural_key_with_fk_on_non_default_database",
++    natural_key_with_fk_on_non_default_database_test,
++)

@@ -1,0 +1,42 @@
+diff --git a/sklearn/model_selection/_split.py b/sklearn/model_selection/_split.py
+index 24394f86..74259de7 100644
+--- a/sklearn/model_selection/_split.py
++++ b/sklearn/model_selection/_split.py
+@@ -620,7 +620,7 @@ class StratifiedKFold(_BaseKFold):
+         super().__init__(n_splits, shuffle, random_state)
+ 
+     def _make_test_folds(self, X, y=None):
+-        rng = self.random_state
++        rng = check_random_state(self.random_state)
+         y = np.asarray(y)
+         type_of_target_y = type_of_target(y)
+         allowed_target_types = ('binary', 'multiclass')
+diff --git a/sklearn/model_selection/tests/test_split.py b/sklearn/model_selection/tests/test_split.py
+index 5981df28..6e880357 100644
+--- a/sklearn/model_selection/tests/test_split.py
++++ b/sklearn/model_selection/tests/test_split.py
+@@ -494,6 +494,24 @@ def test_shuffle_stratifiedkfold():
+     check_cv_coverage(kf0, X_40, y, groups=None, expected_n_splits=5)
+ 
+ 
++def test_shuffle_stratifiedkfold_fold_composition():
++    # Non-regression test for #13124: with shuffle=True, changing the
++    # random_state must change the composition of the folds themselves,
++    # not merely the order in which identical folds are generated. When
++    # n_splits equals the number of samples per class, each fold contains
++    # exactly one sample per class, so a buggy shuffling strategy (using
++    # the same permutation for every class) yields the same set of folds
++    # for every random_state.
++    X = np.ones(20)
++    y = [0] * 10 + [1] * 10
++    folds_by_seed = []
++    for seed in (0, 1):
++        cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)
++        folds_by_seed.append(
++            sorted(tuple(test) for _, test in cv.split(X, y)))
++    assert_not_equal(folds_by_seed[0], folds_by_seed[1])
++
++
+ def test_kfold_can_detect_dependent_samples_on_digits():  # see #2372
+     # The digits samples are dependent: they are apparently grouped by authors
+     # although we don't have any information on the groups segment locations

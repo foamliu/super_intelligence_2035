@@ -1,0 +1,74 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 242821869..3c5efe878 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -933,7 +933,7 @@ class Model(metaclass=ModelBase):
+                         "%s() prohibited to prevent data loss due to unsaved "
+                         "related object '%s'." % (operation_name, field.name)
+                     )
+-                elif getattr(self, field.attname) is None:
++                elif getattr(self, field.attname) in field.target_field.empty_values:
+                     # Use pk from related object if it has been saved after
+                     # an assignment.
+                     setattr(self, field.attname, obj.pk)
+diff --git a/tests/many_to_one/models.py b/tests/many_to_one/models.py
+index e9f8fbff7..772a96958 100644
+--- a/tests/many_to_one/models.py
++++ b/tests/many_to_one/models.py
+@@ -77,6 +77,14 @@ class ChildNullableParent(models.Model):
+     parent = models.ForeignKey(Parent, models.CASCADE, null=True)
+ 
+ 
++class CharFieldPK(models.Model):
++    sku = models.CharField(primary_key=True, max_length=50)
++
++
++class Order(models.Model):
++    product = models.ForeignKey(CharFieldPK, models.CASCADE)
++
++
+ class ToFieldChild(models.Model):
+     parent = models.ForeignKey(Parent, models.CASCADE, to_field='name', related_name='to_field_children')
+ 
+diff --git a/tests/many_to_one/tests.py b/tests/many_to_one/tests.py
+index 3c7cd0c3f..08bcaae94 100644
+--- a/tests/many_to_one/tests.py
++++ b/tests/many_to_one/tests.py
+@@ -7,8 +7,8 @@ from django.test import TestCase
+ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+-    Article, Category, Child, ChildNullableParent, City, Country, District,
+-    First, Parent, Record, Relation, Reporter, School, Student, Third,
++    Article, Category, CharFieldPK, Child, ChildNullableParent, City, Country, District,
++    First, Order, Parent, Record, Relation, Reporter, School, Student, Third,
+     ToFieldChild,
+ )
+ 
+@@ -549,6 +549,26 @@ class ManyToOneTests(TestCase):
+         self.assertEqual(child.parent, parent)
+         self.assertEqual(child.parent_id, parent.name)
+ 
++    def test_save_fk_after_parent_with_charfield_pk(self):
++        product = CharFieldPK()
++        order = Order(product=product)
++        product.sku = 'foo'
++        product.save()
++        order.save()
++        order.refresh_from_db()
++        self.assertEqual(order.product, product)
++        self.assertEqual(order.product_id, product.sku)
++
++    def test_save_fk_after_parent_with_charfield_pk_and_transaction(self):
++        with transaction.atomic():
++            order = Order()
++            order.product = CharFieldPK()
++            order.product.sku = 'foo'
++            order.product.save()
++            order.save()
++            self.assertFalse(Order.objects.filter(product_id='').exists())
++            self.assertTrue(Order.objects.filter(product=order.product).exists())
++
+     def test_fk_to_bigautofield(self):
+         ch = City.objects.create(name='Chicago')
+         District.objects.create(city=ch, name='Far South')

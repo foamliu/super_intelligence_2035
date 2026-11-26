@@ -1,0 +1,65 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 69a5fbf38..db7df891e 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -249,16 +249,17 @@ class BaseModelAdmin(metaclass=forms.MediaDefiningClass):
+             return None
+         db = kwargs.get('using')
+ 
+-        autocomplete_fields = self.get_autocomplete_fields(request)
+-        if db_field.name in autocomplete_fields:
+-            kwargs['widget'] = AutocompleteSelectMultiple(db_field.remote_field, self.admin_site, using=db)
+-        elif db_field.name in self.raw_id_fields:
+-            kwargs['widget'] = widgets.ManyToManyRawIdWidget(db_field.remote_field, self.admin_site, using=db)
+-        elif db_field.name in [*self.filter_vertical, *self.filter_horizontal]:
+-            kwargs['widget'] = widgets.FilteredSelectMultiple(
+-                db_field.verbose_name,
+-                db_field.name in self.filter_vertical
+-            )
++        if 'widget' not in kwargs:
++            autocomplete_fields = self.get_autocomplete_fields(request)
++            if db_field.name in autocomplete_fields:
++                kwargs['widget'] = AutocompleteSelectMultiple(db_field.remote_field, self.admin_site, using=db)
++            elif db_field.name in self.raw_id_fields:
++                kwargs['widget'] = widgets.ManyToManyRawIdWidget(db_field.remote_field, self.admin_site, using=db)
++            elif db_field.name in [*self.filter_vertical, *self.filter_horizontal]:
++                kwargs['widget'] = widgets.FilteredSelectMultiple(
++                    db_field.verbose_name,
++                    db_field.name in self.filter_vertical
++                )
+ 
+         if 'queryset' not in kwargs:
+             queryset = self.get_field_queryset(db, db_field, request)
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index 6934bf2b3..f67a542c2 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -13,7 +13,7 @@ from django.contrib.admin.widgets import (
+ )
+ from django.contrib.auth.models import User
+ from django.db import models
+-from django.forms.widgets import Select
++from django.forms.widgets import Select, SelectMultiple
+ from django.test import SimpleTestCase, TestCase
+ from django.test.utils import isolate_apps
+ 
+@@ -459,6 +459,19 @@ class ModelAdminTests(TestCase):
+         # Without the override this would be ForeignKeyRawIdWidget.
+         self.assertIsInstance(band_widget, Select)
+ 
++    def test_widget_override_in_formfield_for_manytomany(self):
++        class SongAdmin(ModelAdmin):
++            def formfield_for_manytomany(self, db_field, request, **kwargs):
++                if db_field.name == 'featuring':
++                    kwargs['widget'] = SelectMultiple
++                return super().formfield_for_manytomany(db_field, request, **kwargs)
++
++        ma = SongAdmin(Song, self.site)
++        field = ma.formfield_for_manytomany(Song._meta.get_field('featuring'), request=None)
++        # Without the override this would be FilteredSelectMultiple or
++        # SelectMultiple wrapped by RelatedFieldWidgetWrapper.
++        self.assertIsInstance(field.widget, SelectMultiple)
++
+     def test_queryset_override(self):
+         # If the queryset of a ModelChoiceField in a custom form is overridden,
+         # RelatedFieldWidgetWrapper doesn't mess that up.

@@ -1,0 +1,69 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5240b07cd..1706ecc6c 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -37,6 +37,7 @@ from django.core.exceptions import (
+ )
+ from django.core.paginator import Paginator
+ from django.db import models, router, transaction
++from django.db.models import ForeignKey
+ from django.db.models.constants import LOOKUP_SEP
+ from django.forms.formsets import DELETION_FIELD_NAME, all_valid
+ from django.forms.models import (
+@@ -473,6 +474,21 @@ class BaseModelAdmin(metaclass=forms.MediaDefiningClass):
+                 # This is not a relational field, so further parts
+                 # must be transforms.
+                 break
++            # A ForeignKey used as a primary key is skipped from the relation
++            # parts above because it's the target of the previous relation,
++            # e.g. "restaurant__place" is collapsed to "restaurant" (the same
++            # way "restaurant__id" is), mirroring concrete model inheritance.
++            # However, when the lookup continues past such a field, e.g.
++            # "restaurant__place__country", the skipped part is the link
++            # between the two related models and must be kept, otherwise a
++            # nonexistent collapsed lookup ("restaurant__country") would be
++            # validated instead.
++            if (
++                isinstance(field, ForeignKey)
++                and field.primary_key
++                and field not in model._meta.parents.values()
++            ):
++                relation_parts.append(part)
+             prev_field = field
+             model = field.path_infos[-1].to_opts.model
+ 
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index c6b4a565c..d5a164028 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -123,6 +123,30 @@ class ModelAdminTests(TestCase):
+         ma = BandAdmin(Band, self.site)
+         self.assertTrue(ma.lookup_allowed("name__nonexistent", "test_value"))
+ 
++    @isolate_apps("modeladmin")
++    def test_lookup_allowed_foreign_primary(self):
++        class Country(models.Model):
++            name = models.CharField(max_length=256)
++
++        class Place(models.Model):
++            country = models.ForeignKey(Country, models.CASCADE)
++
++        class Restaurant(models.Model):
++            place = models.OneToOneField(Place, models.CASCADE, primary_key=True)
++
++        class Waiter(models.Model):
++            restaurant = models.ForeignKey(Restaurant, models.CASCADE)
++
++        class WaiterAdmin(ModelAdmin):
++            list_filter = [
++                "restaurant__place__country",
++            ]
++
++        ma = WaiterAdmin(Waiter, self.site)
++        self.assertIs(
++            ma.lookup_allowed("restaurant__place__country", "test_value"), True
++        )
++
+     @isolate_apps("modeladmin")
+     def test_lookup_allowed_onetoone(self):
+         class Department(models.Model):

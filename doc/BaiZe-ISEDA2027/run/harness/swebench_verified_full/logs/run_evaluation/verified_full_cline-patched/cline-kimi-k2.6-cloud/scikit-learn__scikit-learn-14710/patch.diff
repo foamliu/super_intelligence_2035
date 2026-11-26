@@ -1,0 +1,45 @@
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8c..3170e400 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if hasattr(self, 'classes_'):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if hasattr(self, 'classes_'):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd..dd260548 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -415,3 +415,20 @@ def test_infinite_values_missing_values():
+ 
+     assert stump_clf.fit(X, y_isinf).score(X, y_isinf) == 1
+     assert stump_clf.fit(X, y_isnan).score(X, y_isnan) == 1
++
++
++@pytest.mark.parametrize('validation_fraction', [None, 0.1])
++def test_string_target_early_stopping(validation_fraction):
++    # Non-regression test for issue #15788
++    # Make sure that early stopping works with string targets
++    X = np.random.randn(100, 10)
++    y = np.array(['x'] * 50 + ['y'] * 50, dtype=object)
++    gb = HistGradientBoostingClassifier(
++        n_iter_no_change=5,
++        validation_fraction=validation_fraction,
++        scoring='accuracy',
++        max_iter=50,
++        random_state=0
++    )
++    gb.fit(X, y)
++    assert gb.n_iter_ < 50

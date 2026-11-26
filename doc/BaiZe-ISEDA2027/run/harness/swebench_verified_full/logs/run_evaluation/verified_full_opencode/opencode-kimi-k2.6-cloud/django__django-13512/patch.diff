@@ -1,0 +1,68 @@
+diff --git a/django/db/models/fields/json.py b/django/db/models/fields/json.py
+index a249f4cdbf..2beedafabf 100644
+--- a/django/db/models/fields/json.py
++++ b/django/db/models/fields/json.py
+@@ -81,7 +81,7 @@ class JSONField(CheckFieldDefaultMixin, Field):
+     def get_prep_value(self, value):
+         if value is None:
+             return value
+-        return json.dumps(value, cls=self.encoder)
++        return json.dumps(value, cls=self.encoder, ensure_ascii=False)
+ 
+     def get_transform(self, name):
+         transform = super().get_transform(name)
+@@ -92,7 +92,7 @@ class JSONField(CheckFieldDefaultMixin, Field):
+     def validate(self, value, model_instance):
+         super().validate(value, model_instance)
+         try:
+-            json.dumps(value, cls=self.encoder)
++            json.dumps(value, cls=self.encoder, ensure_ascii=False)
+         except TypeError:
+             raise exceptions.ValidationError(
+                 self.error_messages['invalid'],
+diff --git a/django/forms/fields.py b/django/forms/fields.py
+index 9de2c60b35..8ba0013871 100644
+--- a/django/forms/fields.py
++++ b/django/forms/fields.py
+@@ -1258,7 +1258,7 @@ class JSONField(CharField):
+     def prepare_value(self, value):
+         if isinstance(value, InvalidJSONInput):
+             return value
+-        return json.dumps(value, cls=self.encoder)
++        return json.dumps(value, cls=self.encoder, ensure_ascii=False)
+ 
+     def has_changed(self, initial, data):
+         if super().has_changed(initial, data):
+@@ -1266,6 +1266,6 @@ class JSONField(CharField):
+         # For purposes of seeing whether something has changed, True isn't the
+         # same as 1 and the order of keys doesn't matter.
+         return (
+-            json.dumps(initial, sort_keys=True, cls=self.encoder) !=
+-            json.dumps(self.to_python(data), sort_keys=True, cls=self.encoder)
++            json.dumps(initial, sort_keys=True, cls=self.encoder, ensure_ascii=False) !=
++            json.dumps(self.to_python(data), sort_keys=True, cls=self.encoder, ensure_ascii=False)
+         )
+diff --git a/tests/admin_utils/tests.py b/tests/admin_utils/tests.py
+index a7594deda8..579ac574d3 100644
+--- a/tests/admin_utils/tests.py
++++ b/tests/admin_utils/tests.py
+@@ -187,6 +187,7 @@ class UtilsTests(SimpleTestCase):
+             (['a', 'b'], '["a", "b"]'),
+             ('a', '"a"'),
+             ({('a', 'b'): 'c'}, "{('a', 'b'): 'c'}"),  # Invalid JSON.
++            ({'key': '中国'}, '{"key": "中国"}'),
+         ]
+         for value, display_value in tests:
+             with self.subTest(value=value):
+diff --git a/tests/forms_tests/field_tests/test_jsonfield.py b/tests/forms_tests/field_tests/test_jsonfield.py
+index 915b180d0c..07f990569b 100644
+--- a/tests/forms_tests/field_tests/test_jsonfield.py
++++ b/tests/forms_tests/field_tests/test_jsonfield.py
+@@ -29,6 +29,7 @@ class JSONFieldTest(SimpleTestCase):
+         self.assertEqual(field.prepare_value({'a': 'b'}), '{"a": "b"}')
+         self.assertEqual(field.prepare_value(None), 'null')
+         self.assertEqual(field.prepare_value('foo'), '"foo"')
++        self.assertEqual(field.prepare_value({'key': '中国'}), '{"key": "中国"}')
+ 
+     def test_widget(self):
+         field = JSONField()

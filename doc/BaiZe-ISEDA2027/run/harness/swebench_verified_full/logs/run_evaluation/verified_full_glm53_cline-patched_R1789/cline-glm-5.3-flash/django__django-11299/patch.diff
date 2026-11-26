@@ -1,0 +1,151 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index b99f03cd88..293dc88663 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1338,7 +1338,8 @@ class Query(BaseExpression):
+             if isinstance(child, Node):
+                 child_clause, needed_inner = self._add_q(
+                     child, used_aliases, branch_negated,
+-                    current_negated, allow_joins, split_subq)
++                    current_negated, allow_joins, split_subq, simple_col,
++                )
+                 joinpromoter.add_votes(needed_inner)
+             else:
+                 child_clause, needed_inner = self.build_filter(
+diff --git a/repro_bug.py b/repro_bug.py
+new file mode 100644
+index 0000000000..ee78c66613
+--- /dev/null
++++ b/repro_bug.py
+@@ -0,0 +1,60 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++from django.db.models.sql.query import Query
++
++
++class TestConstraint(models.Model):
++    field_1 = models.IntegerField(blank=True, null=True)
++    flag = models.BooleanField(blank=False, null=False)
++
++    class Meta:
++        app_label = 'app'
++        constraints = [
++            models.CheckConstraint(
++                check=models.Q(flag__exact=True, field_1__isnull=False) |
++                      models.Q(flag__exact=False),
++                name='field_1_has_value_if_flag_set',
++            ),
++        ]
++
++
++q = models.Q(flag__exact=True, field_1__isnull=False) | models.Q(flag__exact=False)
++print("Q object:", q)
++
++query = Query(model=TestConstraint)
++where = query.build_where(q)
++print("Where tree:", where)
++
++
++def dump(node, indent=0):
++    from django.db.models.sql.where import WhereNode
++    from django.db.models.expressions import Col, SimpleCol
++    pad = '  ' * indent
++    if isinstance(node, WhereNode):
++        print('{}{} connector={} negated={}'.format(pad, type(node).__name__, node.connector, node.negated))
++        for child in node.children:
++            dump(child, indent + 1)
++    else:
++        lhs = getattr(node, 'lhs', None)
++        lhs_desc = type(lhs).__name__
++        if isinstance(lhs, (Col, SimpleCol)):
++            lhs_desc += ' -> ' + lhs.__class__.__name__
++        print('{}{} lhs={} rhs={!r}'.format(pad, type(node).__name__, lhs_desc, getattr(node, 'rhs', None)))
++
++
++dump(where)
++
++constraint = TestConstraint._meta.constraints[0]
++schema_editor = connection.schema_editor()
++sql = constraint._get_check_sql(TestConstraint, schema_editor)
++print("\nGenerated check SQL:", sql)
+diff --git a/tests/constraints/tests.py b/tests/constraints/tests.py
+index b7aeb1e7f0..1f1a980d71 100644
+--- a/tests/constraints/tests.py
++++ b/tests/constraints/tests.py
+@@ -79,6 +79,23 @@ class CheckConstraintTests(TestCase):
+         expected_name = 'price_gt_discounted_price'
+         self.assertIn(expected_name, constraints)
+ 
++    def test_or_and_condition_sql(self):
++        # A check constraint that combines OR and AND conditions must not
++        # include table-qualified column names, because the constraint SQL
++        # is reused when the table is remade under a different name (e.g. on
++        # SQLite during migrations).
++        constraint = models.CheckConstraint(
++            check=models.Q(price__gt=models.F('discounted_price'), name__contains='red') |
++                  models.Q(price__lt=5),
++            name='or_and_condition_check',
++        )
++        schema_editor = connection.schema_editor()
++        sql = str(constraint.create_sql(Product, schema_editor))
++        qn = connection.ops.quote_name
++        self.assertIn('CONSTRAINT %s CHECK' % qn('or_and_condition_check'), sql)
++        self.assertIn('%s > %s' % (qn('price'), qn('discounted_price')), sql)
++        self.assertNotIn('%s.' % qn(Product._meta.db_table), sql)
++
+ 
+ class UniqueConstraintTests(TestCase):
+     @classmethod
+diff --git a/tests/queries/test_query.py b/tests/queries/test_query.py
+index bef79c992e..5e230b4c53 100644
+--- a/tests/queries/test_query.py
++++ b/tests/queries/test_query.py
+@@ -7,7 +7,7 @@ from django.db.models.fields.related_lookups import RelatedIsNull
+ from django.db.models.functions import Lower
+ from django.db.models.lookups import Exact, GreaterThan, IsNull, LessThan
+ from django.db.models.sql.query import Query
+-from django.db.models.sql.where import OR
++from django.db.models.sql.where import AND, OR
+ from django.test import SimpleTestCase
+ from django.test.utils import register_lookup
+ 
+@@ -91,3 +91,29 @@ class TestQuery(SimpleTestCase):
+         self.assertIsInstance(b_isnull, RelatedIsNull)
+         self.assertIsInstance(b_isnull.lhs, SimpleCol)
+         self.assertEqual(b_isnull.lhs.target, ObjectC._meta.get_field('objectb'))
++
++    def test_nested_q_simplecol(self):
++        query = Query(Item)
++        where = query.build_where(
++            Q(modified__gt=F('created'), created__isnull=False) |
++            Q(modified__isnull=False)
++        )
++        self.assertEqual(where.connector, OR)
++        # Conditions of a nested Q() (the AND branch) must also be resolved
++        # to SimpleCol to avoid table-qualified column references, e.g. in
++        # check constraints.
++        and_branch = where.children[0]
++        self.assertEqual(and_branch.connector, AND)
++        isnull_lookup, gt_lookup = and_branch.children
++        self.assertIsInstance(gt_lookup, GreaterThan)
++        self.assertIsInstance(gt_lookup.lhs, SimpleCol)
++        self.assertIsInstance(gt_lookup.rhs, SimpleCol)
++        self.assertEqual(gt_lookup.lhs.target, Item._meta.get_field('modified'))
++        self.assertEqual(gt_lookup.rhs.target, Item._meta.get_field('created'))
++        self.assertIsInstance(isnull_lookup, IsNull)
++        self.assertIsInstance(isnull_lookup.lhs, SimpleCol)
++        self.assertEqual(isnull_lookup.lhs.target, Item._meta.get_field('created'))
++        or_lookup = where.children[1]
++        self.assertIsInstance(or_lookup, IsNull)
++        self.assertIsInstance(or_lookup.lhs, SimpleCol)
++        self.assertEqual(or_lookup.lhs.target, Item._meta.get_field('modified'))

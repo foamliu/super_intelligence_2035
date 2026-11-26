@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-7521",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 3f9c60f..f538b67 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -388,6 +388,7 @@ class FDCaptureBinary:\n                 TemporaryFile(buffering=0),  # type: ignore[arg-type]\n                 encoding=\"utf-8\",\n                 errors=\"replace\",\n+                newline=\"\",\n                 write_through=True,\n             )\n             if targetfd in patchsysdict:\ndiff --git a/testing/test_capture.py b/testing/test_capture.py\nindex a3bd4b6..8a96323 100644\n--- a/testing/test_capture.py\n+++ b/testing/test_capture.py\n@@ -912,6 +912,16 @@ class TestFDCapture:\n         cap.done()\n         assert s == \"hello\\n\"\n \n+    def test_carriage_return(self):\n+        cap = capture.FDCapture(1)\n+        cap.start()\n+        sys.stdout.write(\"hello\\r\")\n+        sys.stdout.write(\"world\\n\")\n+        sys.stdout.write(\"foo\\r\\n\")\n+        s = cap.snap()\n+        cap.done()\n+        assert s == \"hello\\rworld\\nfoo\\r\\n\"\n+\n     def test_stdin(self):\n         cap = capture.FDCapture(0)\n         cap.start()\n"
+  }
+]

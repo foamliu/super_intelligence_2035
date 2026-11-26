@@ -1,0 +1,96 @@
+diff --git a/seaborn/_core/plot.py b/seaborn/_core/plot.py
+index 4f0290a..667b223 100644
+--- a/seaborn/_core/plot.py
++++ b/seaborn/_core/plot.py
+@@ -25,7 +25,7 @@ from seaborn._marks.base import Mark
+ from seaborn._stats.base import Stat
+ from seaborn._core.data import PlotData
+ from seaborn._core.moves import Move
+-from seaborn._core.scales import Scale
++from seaborn._core.scales import Nominal, Scale
+ from seaborn._core.subplots import Subplots
+ from seaborn._core.groupby import GroupBy
+ from seaborn._core.properties import PROPERTIES, Property
+@@ -1238,7 +1238,6 @@ class Plotter:
+             # This only affects us when sharing *paired* axes. This is a novel/niche
+             # behavior, so we will raise rather than hack together a workaround.
+             if axis is not None and Version(mpl.__version__) < Version("3.4.0"):
+-                from seaborn._core.scales import Nominal
+                 paired_axis = axis in p._pair_spec.get("structure", {})
+                 cat_scale = isinstance(scale, Nominal)
+                 ok_dim = {"x": "col", "y": "row"}[axis]
+@@ -1644,6 +1643,22 @@ class Plotter:
+                         hi = cast(float, hi) + 0.5
+                     ax.set(**{f"{axis}lim": (lo, hi)})
+ 
++                # Categorical axes have a specific margin, no grid, and inverted y
++                scale = self._scales.get(axis_key)
++                if isinstance(scale, Nominal):
++                    axis_obj = getattr(ax, f"{axis}axis")
++                    axis_obj.grid(False)
++
++                    if axis_key not in p._limits:
++                        n = len(getattr(ax, f"get_{axis}ticks")())
++                        if n:
++                            if axis == "x":
++                                ax.set_xlim(-.5, n - .5)
++                                ax.set_autoscalex_on(False)
++                            else:
++                                ax.set_ylim(n - .5, -.5)
++                                ax.set_autoscaley_on(False)
++
+         engine_default = None if p._target is not None else "tight"
+         layout_engine = p._layout_spec.get("engine", engine_default)
+         set_layout_engine(self._figure, layout_engine)
+diff --git a/tests/_core/test_plot.py b/tests/_core/test_plot.py
+index 03a6491..f7f144a 100644
+--- a/tests/_core/test_plot.py
++++ b/tests/_core/test_plot.py
+@@ -1211,6 +1211,47 @@ class TestPlotting:
+             expected = " | ".join([cols[i % 2].upper(), rows[i // 2].upper()])
+             assert ax.get_title() == expected
+ 
++    def test_nominal_x_axis(self, long_df):
++
++        p = Plot(long_df, x="a", y="z").plot()
++        ax = p._figure.axes[0]
++        n = len(categorical_order(long_df["a"]))
++        assert ax.get_xlim() == (-.5, n - .5)
++        assert ax.xaxis.get_tick_params().get("gridOn") is False
++
++    def test_nominal_y_axis(self, long_df):
++
++        p = Plot(long_df, x="z", y="a").plot()
++        ax = p._figure.axes[0]
++        n = len(categorical_order(long_df["a"]))
++        assert ax.get_ylim() == (n - .5, -.5)
++        assert ax.yaxis_inverted()
++        assert ax.yaxis.get_tick_params().get("gridOn") is False
++
++    def test_nominal_axis_with_explicit_scale(self, long_df):
++
++        p = Plot(long_df, x="z", y="a").scale(y=Nominal()).plot()
++        ax = p._figure.axes[0]
++        n = len(categorical_order(long_df["a"]))
++        assert ax.get_ylim() == (n - .5, -.5)
++        assert ax.yaxis_inverted()
++        assert ax.yaxis.get_tick_params().get("gridOn") is False
++
++    def test_nominal_axis_with_user_limits(self):
++
++        p = Plot(x=["a", "b", "c", "d"], y=[1, 2, 3, 4]).limit(x=("b", "c")).plot()
++        ax = p._figure.axes[0]
++        assert ax.get_xlim() == (0.5, 2.5)
++        assert ax.xaxis.get_tick_params().get("gridOn") is False
++
++    def test_continuous_axis_not_modified(self, long_df):
++
++        p = Plot(long_df, x="x", y="y").plot()
++        ax = p._figure.axes[0]
++        # Continuous axes should not have grid forced off
++        assert ax.xaxis.get_tick_params().get("gridOn") is not False
++        assert ax.yaxis.get_tick_params().get("gridOn") is not False
++
+ 
+ class TestFacetInterface:
+ 

@@ -1,0 +1,265 @@
+diff --git a/django/contrib/contenttypes/fields.py b/django/contrib/contenttypes/fields.py
+index 542368de3b..e03f4fdd03 100644
+--- a/django/contrib/contenttypes/fields.py
++++ b/django/contrib/contenttypes/fields.py
+@@ -2,6 +2,8 @@ import functools
+ import itertools
+ from collections import defaultdict
+ 
++from asgiref.sync import sync_to_async
++
+ from django.contrib.contenttypes.models import ContentType
+ from django.core import checks
+ from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
+@@ -763,4 +765,25 @@ def create_generic_related_manager(superclass, rel):
+ 
+         update_or_create.alters_data = True
+ 
++        async def acreate(self, **kwargs):
++            return await sync_to_async(self.create)(**kwargs)
++
++        acreate.alters_data = True
++
++        async def aget_or_create(self, defaults=None, **kwargs):
++            return await sync_to_async(self.get_or_create)(
++                defaults=defaults,
++                **kwargs,
++            )
++
++        aget_or_create.alters_data = True
++
++        async def aupdate_or_create(self, defaults=None, **kwargs):
++            return await sync_to_async(self.update_or_create)(
++                defaults=defaults,
++                **kwargs,
++            )
++
++        aupdate_or_create.alters_data = True
++
+     return GenericRelatedObjectManager
+diff --git a/django/db/models/fields/related_descriptors.py b/django/db/models/fields/related_descriptors.py
+index c5d87f647a..5857c0d265 100644
+--- a/django/db/models/fields/related_descriptors.py
++++ b/django/db/models/fields/related_descriptors.py
+@@ -63,6 +63,8 @@ and two directions (forward and reverse) for a total of six combinations.
+    ``ReverseManyToManyDescriptor``, use ``ManyToManyDescriptor`` instead.
+ """
+ 
++from asgiref.sync import sync_to_async
++
+ from django.core.exceptions import FieldError
+ from django.db import (
+     DEFAULT_DB_ALIAS,
+@@ -809,6 +811,27 @@ def create_reverse_many_to_one_manager(superclass, rel):
+ 
+         update_or_create.alters_data = True
+ 
++        async def acreate(self, **kwargs):
++            return await sync_to_async(self.create)(**kwargs)
++
++        acreate.alters_data = True
++
++        async def aget_or_create(self, defaults=None, **kwargs):
++            return await sync_to_async(self.get_or_create)(
++                defaults=defaults,
++                **kwargs,
++            )
++
++        aget_or_create.alters_data = True
++
++        async def aupdate_or_create(self, defaults=None, **kwargs):
++            return await sync_to_async(self.update_or_create)(
++                defaults=defaults,
++                **kwargs,
++            )
++
++        aupdate_or_create.alters_data = True
++
+         # remove() and clear() are only provided if the ForeignKey can have a
+         # value of null.
+         if rel.field.null:
+@@ -1217,6 +1240,30 @@ def create_forward_many_to_many_manager(superclass, rel, reverse):
+ 
+         update_or_create.alters_data = True
+ 
++        async def acreate(self, *, through_defaults=None, **kwargs):
++            return await sync_to_async(self.create)(
++                through_defaults=through_defaults,
++                **kwargs,
++            )
++
++        acreate.alters_data = True
++
++        async def aget_or_create(self, *, through_defaults=None, **kwargs):
++            return await sync_to_async(self.get_or_create)(
++                through_defaults=through_defaults,
++                **kwargs,
++            )
++
++        aget_or_create.alters_data = True
++
++        async def aupdate_or_create(self, *, through_defaults=None, **kwargs):
++            return await sync_to_async(self.update_or_create)(
++                through_defaults=through_defaults,
++                **kwargs,
++            )
++
++        aupdate_or_create.alters_data = True
++
+         def _get_target_ids(self, target_field_name, objs):
+             """
+             Return the set of ids of `objs` that the target field references.
+diff --git a/tests/async/models.py b/tests/async/models.py
+index 8cb051258c..8def121c5d 100644
+--- a/tests/async/models.py
++++ b/tests/async/models.py
+@@ -6,6 +6,10 @@ class RelatedModel(models.Model):
+     simple = models.ForeignKey("SimpleModel", models.CASCADE, null=True)
+ 
+ 
++class M2MModel(models.Model):
++    simples = models.ManyToManyField("SimpleModel")
++
++
+ class SimpleModel(models.Model):
+     field = models.IntegerField()
+     created = models.DateTimeField(default=timezone.now)
+diff --git a/tests/async/test_async_queryset.py b/tests/async/test_async_queryset.py
+index 253183ea10..167169e04f 100644
+--- a/tests/async/test_async_queryset.py
++++ b/tests/async/test_async_queryset.py
+@@ -8,7 +8,7 @@ from django.db import NotSupportedError, connection
+ from django.db.models import Sum
+ from django.test import TestCase, skipIfDBFeature, skipUnlessDBFeature
+ 
+-from .models import SimpleModel
++from .models import M2MModel, RelatedModel, SimpleModel
+ 
+ 
+ class AsyncQuerySetTest(TestCase):
+@@ -246,3 +246,63 @@ class AsyncQuerySetTest(TestCase):
+         sql = "SELECT id, field FROM async_simplemodel WHERE created=%s"
+         qs = SimpleModel.objects.raw(sql, [self.s1.created])
+         self.assertEqual([o async for o in qs], [self.s1])
++
++
++class AsyncRelatedManagerTest(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        cls.s1 = SimpleModel.objects.create(field=1)
++
++    async def test_acreate(self):
++        related = await self.s1.relatedmodel_set.acreate()
++        self.assertEqual(related.simple, self.s1)
++
++    async def test_aget_or_create(self):
++        related, created = await self.s1.relatedmodel_set.aget_or_create()
++        self.assertIs(created, True)
++        self.assertEqual(related.simple, self.s1)
++        related, created = await self.s1.relatedmodel_set.aget_or_create(
++            id=related.id
++        )
++        self.assertIs(created, False)
++
++    async def test_aupdate_or_create(self):
++        related, created = await self.s1.relatedmodel_set.aupdate_or_create()
++        self.assertIs(created, True)
++        self.assertEqual(related.simple, self.s1)
++        related, created = await self.s1.relatedmodel_set.aupdate_or_create(
++            id=related.id
++        )
++        self.assertIs(created, False)
++
++
++class AsyncManyToManyRelatedManagerTest(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        cls.s1 = SimpleModel.objects.create(field=1)
++        cls.m2m = M2MModel.objects.create()
++
++    async def test_acreate(self):
++        related = await self.m2m.simples.acreate(field=2)
++        self.assertEqual(await self.m2m.simples.acount(), 1)
++        self.assertEqual(related, await self.m2m.simples.aget())
++
++    async def test_aget_or_create(self):
++        related, created = await self.m2m.simples.aget_or_create(field=2)
++        self.assertIs(created, True)
++        self.assertEqual(await self.m2m.simples.acount(), 1)
++        related, created = await self.m2m.simples.aget_or_create(
++            id=related.id, defaults={"field": 3}
++        )
++        self.assertIs(created, False)
++        self.assertEqual(await self.m2m.simples.acount(), 1)
++
++    async def test_aupdate_or_create(self):
++        related, created = await self.m2m.simples.aupdate_or_create(field=2)
++        self.assertIs(created, True)
++        self.assertEqual(await self.m2m.simples.acount(), 1)
++        related, created = await self.m2m.simples.aupdate_or_create(
++            id=related.id, defaults={"field": 3}
++        )
++        self.assertIs(created, False)
++        self.assertEqual(await self.m2m.simples.acount(), 1)
+diff --git a/tests/generic_relations/tests.py b/tests/generic_relations/tests.py
+index 29307237a2..89ae8fbc67 100644
+--- a/tests/generic_relations/tests.py
++++ b/tests/generic_relations/tests.py
+@@ -96,6 +96,57 @@ class GenericRelationsTests(TestCase):
+         # shouldn't had changed the tag
+         self.assertEqual(tag.tag, "stinky")
+ 
++    async def test_generic_acreate(self):
++        from asgiref.sync import sync_to_async
++
++        count = await sync_to_async(self.bacon.tags.count)()
++        tag = await self.bacon.tags.acreate(tag="stinky")
++        self.assertEqual(await sync_to_async(self.bacon.tags.count)(), count + 1)
++        self.assertEqual(await sync_to_async(lambda: tag.content_object)(), self.bacon)
++
++    async def test_generic_aget_or_create_when_created(self):
++        from asgiref.sync import sync_to_async
++
++        count = await sync_to_async(self.bacon.tags.count)()
++        tag, created = await self.bacon.tags.aget_or_create(tag="stinky")
++        self.assertTrue(created)
++        self.assertEqual(await sync_to_async(self.bacon.tags.count)(), count + 1)
++
++    async def test_generic_aget_or_create_when_exists(self):
++        from asgiref.sync import sync_to_async
++
++        count = await sync_to_async(self.bacon.tags.count)()
++        tag = await sync_to_async(self.bacon.tags.create)(tag="stinky")
++        self.assertEqual(await sync_to_async(self.bacon.tags.count)(), count + 1)
++        tag, created = await self.bacon.tags.aget_or_create(
++            id=tag.id, defaults={"tag": "juicy"}
++        )
++        self.assertFalse(created)
++        self.assertEqual(await sync_to_async(self.bacon.tags.count)(), count + 1)
++        # shouldn't had changed the tag
++        self.assertEqual(tag.tag, "stinky")
++
++    async def test_generic_aupdate_or_create_when_created(self):
++        from asgiref.sync import sync_to_async
++
++        count = await sync_to_async(self.bacon.tags.count)()
++        tag, created = await self.bacon.tags.aupdate_or_create(tag="stinky")
++        self.assertTrue(created)
++        self.assertEqual(await sync_to_async(self.bacon.tags.count)(), count + 1)
++
++    async def test_generic_aupdate_or_create_when_updated(self):
++        from asgiref.sync import sync_to_async
++
++        count = await sync_to_async(self.bacon.tags.count)()
++        tag = await sync_to_async(self.bacon.tags.create)(tag="stinky")
++        self.assertEqual(await sync_to_async(self.bacon.tags.count)(), count + 1)
++        tag, created = await self.bacon.tags.aupdate_or_create(
++            defaults={"tag": "juicy"}, id=tag.id
++        )
++        self.assertFalse(created)
++        self.assertEqual(await sync_to_async(self.bacon.tags.count)(), count + 1)
++        self.assertEqual(tag.tag, "juicy")
++
+     def test_generic_relations_m2m_mimic(self):
+         """
+         Objects with declared GenericRelations can be tagged directly -- the

@@ -1,0 +1,33 @@
+diff --git a/django/contrib/admin/utils.py b/django/contrib/admin/utils.py
+index e4ddc8f01..c27628a13 100644
+--- a/django/contrib/admin/utils.py
++++ b/django/contrib/admin/utils.py
+@@ -398,6 +398,8 @@ def display_for_field(value, field, empty_value_display):
+         return formats.number_format(value)
+     elif isinstance(field, models.FileField) and value:
+         return format_html('<a href="{}">{}</a>', value.url, value)
++    elif isinstance(field, models.JSONField):
++        return field.formfield().prepare_value(value)
+     else:
+         return display_for_value(value, empty_value_display)
+ 
+diff --git a/tests/admin_utils/tests.py b/tests/admin_utils/tests.py
+index 463ba9556..5a7aff91d 100644
+--- a/tests/admin_utils/tests.py
++++ b/tests/admin_utils/tests.py
+@@ -216,6 +216,15 @@ class UtilsTests(SimpleTestCase):
+         )
+         self.assertEqual(display_for_value(True, ''), 'True')
+         self.assertEqual(display_for_value(False, ''), 'False')
++    def test_json_field_display_for_field(self):
++        display_value = display_for_field({'foo': 'bar'}, models.JSONField(), self.empty_value)
++        self.assertEqual(display_value, '{"foo": "bar"}')
++
++        display_value = display_for_field([1, 2, 3], models.JSONField(), self.empty_value)
++        self.assertEqual(display_value, '[1, 2, 3]')
++
++        display_value = display_for_field(forms.fields.InvalidJSONInput('invalid'), models.JSONField(), self.empty_value)
++        self.assertEqual(display_value, 'invalid')
+ 
+     def test_label_for_field(self):
+         """

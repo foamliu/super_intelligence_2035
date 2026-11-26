@@ -1,0 +1,59 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index ce18098fd..12a01541c 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1124,7 +1124,7 @@ class Query(BaseExpression):
+ 
+     def check_filterable(self, expression):
+         """Raise an error if expression cannot be used in a WHERE clause."""
+-        if not getattr(expression, 'filterable', True):
++        if isinstance(expression, BaseExpression) and not expression.filterable:
+             raise NotSupportedError(
+                 expression.__class__.__name__ + ' is disallowed in the filter '
+                 'clause.'
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index cd31453d0..635a5ba9c 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -8,7 +8,9 @@ from threading import Lock
+ from django.core.exceptions import EmptyResultSet, FieldError
+ from django.db import DEFAULT_DB_ALIAS, connection
+ from django.db.models import Count, Exists, F, OuterRef, Q
+-from django.db.models.expressions import RawSQL
++from django.db.models.expressions import BaseExpression, RawSQL
++from django.db.models.sql.query import Query
++from django.db import NotSupportedError
+ from django.db.models.sql.constants import LOUTER
+ from django.db.models.sql.where import NothingNode, WhereNode
+ from django.test import SimpleTestCase, TestCase, skipUnlessDBFeature
+@@ -3974,3 +3976,30 @@ class Ticket23622Tests(TestCase):
+             set(Ticket23605A.objects.filter(qy).values_list('pk', flat=True))
+         )
+         self.assertSequenceEqual(Ticket23605A.objects.filter(qx), [a2])
++
++
++class CheckFilterableTests(SimpleTestCase):
++    def test_non_expression_with_filterable_attribute(self):
++        """
++        Objects that aren't expressions but happen to have a filterable
++        attribute (e.g. model instances) must not be rejected.
++        Refs #31793.
++        """
++        class FakeModel:
++            filterable = False
++
++        query = Query(None)
++        # Should not raise.
++        query.check_filterable(FakeModel())
++
++    def test_non_filterable_expression(self):
++        """
++        BaseExpression subclasses with filterable=False are still rejected.
++        """
++        class NonFilterableExpression(BaseExpression):
++            filterable = False
++
++        query = Query(None)
++        msg = 'NonFilterableExpression is disallowed in the filter clause.'
++        with self.assertRaisesMessage(NotSupportedError, msg):
++            query.check_filterable(NonFilterableExpression())

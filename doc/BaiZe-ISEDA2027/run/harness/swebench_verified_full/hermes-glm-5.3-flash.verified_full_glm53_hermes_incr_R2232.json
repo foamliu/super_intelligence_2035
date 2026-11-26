@@ -1,0 +1,12 @@
+{
+  "harness": "hermes",
+  "run_id": "verified_full_glm53_hermes_incr_R2232",
+  "round": "R2232",
+  "n": 2,
+  "resolved": [
+    "matplotlib__matplotlib-25960",
+    "matplotlib__matplotlib-26113"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

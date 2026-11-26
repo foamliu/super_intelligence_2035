@@ -1,0 +1,133 @@
+diff --git a/CHANGES b/CHANGES
+index 894b9447a..59901e7e9 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -33,6 +33,9 @@ Bugs fixed
+ * #7846: html theme: XML-invalid files were generated
+ * #7869: :rst:role:`abbr` role without an explanation will show the explanation
+   from the previous abbr role
++* #4404: napoleon: decorated ``__init__`` and other members are not documented
++  when ``napoleon_include_init_with_doc`` (or the private/special variants) is
++  enabled
+ * C and C++, removed ``noindex`` directive option as it did
+   nothing.
+ 
+diff --git a/sphinx/ext/napoleon/__init__.py b/sphinx/ext/napoleon/__init__.py
+index 10b1ff3a3..cc70b1307 100644
+--- a/sphinx/ext/napoleon/__init__.py
++++ b/sphinx/ext/napoleon/__init__.py
+@@ -8,6 +8,7 @@
+     :license: BSD, see LICENSE for details.
+ """
+ 
++import inspect
+ from typing import Any, Dict, List
+ 
+ from sphinx import __display_version__ as __version__
+@@ -438,7 +439,7 @@ def _skip_member(app: Sphinx, what: str, name: str, obj: Any,
+                         mod_path = cls_path.split('.')
+                         cls = functools.reduce(getattr, mod_path, mod)
+                     else:
+-                        cls = obj.__globals__[cls_path]
++                        cls = inspect.unwrap(obj).__globals__[cls_path]
+                 except Exception:
+                     cls_is_owner = False
+                 else:
+diff --git a/tests/napoleon_decorator.py b/tests/napoleon_decorator.py
+new file mode 100644
+index 000000000..f8efed9a8
+--- /dev/null
++++ b/tests/napoleon_decorator.py
+@@ -0,0 +1,23 @@
++"""
++    napoleon_decorator
++    ~~~~~~~~~~~~~~~~~~
++
++    Helper module for :file:`tests/test_ext_napoleon.py`.
++
++    The decorator lives in a separate module so that the ``__globals__`` of
++    the decorated methods do not contain the classes that use it, mimicking
++    real-world decorators (e.g. ``functools.wraps`` based ones) imported from
++    another module or package.
++
++    :copyright: Copyright 2007-2020 by the Sphinx team, see AUTHORS.
++    :license: BSD, see LICENSE for details.
++"""
++
++import functools
++
++
++def _decorator(f):
++    @functools.wraps(f)
++    def wrapper(*args, **kwargs):
++        return f(*args, **kwargs)
++    return wrapper
+diff --git a/tests/test_ext_napoleon.py b/tests/test_ext_napoleon.py
+index 7c3379757..4bcb13245 100644
+--- a/tests/test_ext_napoleon.py
++++ b/tests/test_ext_napoleon.py
+@@ -16,6 +16,8 @@ from unittest import TestCase, mock
+ from sphinx.application import Sphinx
+ from sphinx.ext.napoleon import _process_docstring, _skip_member, Config, setup
+ 
++from napoleon_decorator import _decorator
++
+ 
+ def _private_doc():
+     """module._private_doc.DOCSTRING"""
+@@ -51,6 +53,20 @@ class SampleClass:
+         pass
+ 
+ 
++class SampleDecoratedClass:
++    @_decorator
++    def __init__(self):
++        """SampleDecoratedClass.__init__.DOCSTRING"""
++
++    @_decorator
++    def _private_doc(self):
++        """SampleDecoratedClass._private_doc.DOCSTRING"""
++
++    @_decorator
++    def __special_doc__(self):
++        """SampleDecoratedClass.__special_doc__.DOCSTRING"""
++
++
+ class SampleError(Exception):
+     def _private_doc(self):
+         """SampleError._private_doc.DOCSTRING"""
+@@ -130,8 +146,10 @@ class SkipMemberTest(TestCase):
+             self.assertEqual(None, _skip_member(app, what, member, obj, skip,
+                                                 mock.Mock()))
+         else:
+-            self.assertFalse(_skip_member(app, what, member, obj, skip,
+-                                          mock.Mock()))
++            # napoleon must explicitly return False (not None) to keep
++            # autodoc from skipping the member
++            self.assertIs(False, _skip_member(app, what, member, obj, skip,
++                                              mock.Mock()))
+         setattr(app.config, config_name, False)
+         self.assertEqual(None, _skip_member(app, what, member, obj, skip,
+                                             mock.Mock()))
+@@ -165,6 +183,21 @@ class SkipMemberTest(TestCase):
+                         SampleClass.__special_doc__, False,
+                         'napoleon_include_special_with_doc')
+ 
++    def test_class_decorated_init_doc(self):
++        self.assertSkip('class', '__init__',
++                        SampleDecoratedClass.__init__, False,
++                        'napoleon_include_init_with_doc')
++
++    def test_class_decorated_private_doc(self):
++        self.assertSkip('class', '_private_doc',
++                        SampleDecoratedClass._private_doc, False,
++                        'napoleon_include_private_with_doc')
++
++    def test_class_decorated_special_doc(self):
++        self.assertSkip('class', '__special_doc__',
++                        SampleDecoratedClass.__special_doc__, False,
++                        'napoleon_include_special_with_doc')
++
+     def test_class_special_undoc(self):
+         self.assertSkip('class', '__special_undoc__',
+                         SampleClass.__special_undoc__, True,

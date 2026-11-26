@@ -1,0 +1,76 @@
+diff --git a/changelog/7569.bugfix.rst b/changelog/7569.bugfix.rst
+new file mode 100644
+index 0000000..f876def
+--- /dev/null
++++ b/changelog/7569.bugfix.rst
+@@ -0,0 +1 @@
++Fix a regression where :meth:`caplog.set_level <_pytest.logging.LogCaptureFixture.set_level>` would not restore the log handler level at the end of the test, leaking it to subsequent tests.
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index 11031f2..02a4da1 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -344,6 +344,7 @@ class LogCaptureFixture:
+     def __init__(self, item: nodes.Node) -> None:
+         """Creates a new funcarg."""
+         self._item = item
++        self._initial_handler_level = None  # type: Optional[int]
+         # dict of log name -> log level
+         self._initial_logger_levels = {}  # type: Dict[Optional[str], int]
+ 
+@@ -353,6 +354,8 @@ class LogCaptureFixture:
+         This restores the log levels changed by :meth:`set_level`.
+         """
+         # restore log levels
++        if self._initial_handler_level is not None:
++            self.handler.setLevel(self._initial_handler_level)
+         for logger_name, level in self._initial_logger_levels.items():
+             logger = logging.getLogger(logger_name)
+             logger.setLevel(level)
+@@ -434,6 +437,8 @@ class LogCaptureFixture:
+         # save the original log-level to restore it during teardown
+         self._initial_logger_levels.setdefault(logger, logger_obj.level)
+         logger_obj.setLevel(level)
++        if self._initial_handler_level is None:
++            self._initial_handler_level = self.handler.level
+         self.handler.setLevel(level)
+ 
+     @contextmanager
+diff --git a/testing/logging/test_fixture.py b/testing/logging/test_fixture.py
+index da53033..9879e37 100644
+--- a/testing/logging/test_fixture.py
++++ b/testing/logging/test_fixture.py
+@@ -50,6 +50,34 @@ def test_change_level_undo(testdir):
+     result.stdout.no_fnmatch_line("*log from test2*")
+ 
+ 
++def test_change_level_undos_handler_level(testdir):
++    """Ensure that 'set_level' is undone after the end of the test (handler).
++
++    Issue #7569. Tests the handler level specifically.
++    """
++    testdir.makepyfile(
++        """
++        import logging
++
++        def test1(caplog):
++            assert caplog.handler.level == 0
++            caplog.set_level(9999)
++            caplog.set_level(41)
++            assert caplog.handler.level == 41
++
++        def test2(caplog):
++            assert caplog.handler.level == 0
++
++        def test3(caplog):
++            assert caplog.handler.level == 0
++            caplog.set_level(43)
++            assert caplog.handler.level == 43
++    """
++    )
++    result = testdir.runpytest()
++    result.assert_outcomes(passed=3)
++
++
+ def test_with_statement(caplog):
+     with caplog.at_level(logging.INFO):
+         logger.debug("handler DEBUG level")

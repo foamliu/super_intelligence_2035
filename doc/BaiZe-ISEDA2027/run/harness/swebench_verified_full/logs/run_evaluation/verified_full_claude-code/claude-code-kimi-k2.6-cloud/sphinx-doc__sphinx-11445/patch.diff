@@ -1,0 +1,44 @@
+diff --git a/sphinx/util/rst.py b/sphinx/util/rst.py
+index 7a15383..638337f 100644
+--- a/sphinx/util/rst.py
++++ b/sphinx/util/rst.py
+@@ -25,7 +25,7 @@ except ImportError:
+ 
+ logger = logging.getLogger(__name__)
+ 
+-docinfo_re = re.compile(':\\w+:.*?')
++docinfo_re = re.compile(r':\w+:(?:\s|$)')
+ symbols_re = re.compile(r'([!-\-/:-@\[-`{-~])')  # symbols without dot(0x2e)
+ SECTIONING_CHARS = ['=', '-', '~']
+ 
+diff --git a/tests/test_util_rst.py b/tests/test_util_rst.py
+index 40a2ee6..f4af6d2 100644
+--- a/tests/test_util_rst.py
++++ b/tests/test_util_rst.py
+@@ -48,6 +48,26 @@ def test_prepend_prolog(app):
+                                       ('dummy.rst', 4, 'Sphinx is a document generator')]
+ 
+ 
++def test_prepend_prolog_with_docinfo_like_heading(app):
++    # Ensure docinfo-like headings (e.g. :mod:`foo`) are not treated as docinfo
++    prolog = 'this is rst_prolog\nhello reST!'
++    content = StringList([':mod:`mypackage2`',
++                          '=================',
++                          '',
++                          'hello Sphinx world'],
++                         'dummy.rst')
++    prepend_prolog(content, prolog)
++
++    # The prolog should be inserted BEFORE the heading, not after it
++    assert list(content.xitems()) == [('<rst_prolog>', 0, 'this is rst_prolog'),
++                                      ('<rst_prolog>', 1, 'hello reST!'),
++                                      ('<generated>', 0, ''),
++                                      ('dummy.rst', 0, ':mod:`mypackage2`'),
++                                      ('dummy.rst', 1, '================='),
++                                      ('dummy.rst', 2, ''),
++                                      ('dummy.rst', 3, 'hello Sphinx world')]
++
++
+ def test_prepend_prolog_with_CR(app):
+     # prolog having CR at tail
+     prolog = 'this is rst_prolog\nhello reST!\n'

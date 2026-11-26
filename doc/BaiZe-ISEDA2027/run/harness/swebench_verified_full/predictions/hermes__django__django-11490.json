@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-11490",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py\nindex a44adfc76..3d2f6706b 100644\n--- a/django/db/models/sql/compiler.py\n+++ b/django/db/models/sql/compiler.py\n@@ -426,6 +426,9 @@ class SQLCompiler:\n                 # must have the same columns list. Set the selects defined on\n                 # the query on all combined queries, if not already set.\n                 if not compiler.query.values_select and self.query.values_select:\n+                    # If the combined query doesn't have its select list set\n+                    # yet, clone it to avoid mutating the original query.\n+                    compiler = compiler.query.clone().get_compiler(self.using, self.connection)\n                     compiler.query.set_values((\n                         *self.query.extra_select,\n                         *self.query.values_select,\n"
+  }
+]

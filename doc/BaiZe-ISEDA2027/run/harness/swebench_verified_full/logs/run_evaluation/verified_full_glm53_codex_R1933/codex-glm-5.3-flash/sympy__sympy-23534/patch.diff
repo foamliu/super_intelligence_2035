@@ -1,0 +1,39 @@
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c1..2aca8bab 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c20..e140564f 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -1,5 +1,6 @@
+ from sympy.core.numbers import (I, Rational, pi)
+ from sympy.core.relational import (GreaterThan, LessThan, StrictGreaterThan, StrictLessThan)
++from sympy.core.function import Function
+ from sympy.core.symbol import (Dummy, Symbol, Wild, symbols)
+ from sympy.core.sympify import sympify  # can't import as S yet
+ from sympy.core.symbol import uniquely_named_symbol, _symbol, Str
+@@ -336,6 +337,14 @@ def test_symbols_become_functions_issue_3539():
+     raises(TypeError, lambda: phi(t))
+ 
+ 
++def test_symbols_become_functions_in_containers():
++    q, u = symbols(('q:2', 'u:2'), cls=Function)
++    assert all(type(s) is type(Function('f')) for s in q + u)
++    f, g = symbols(['f:2', 'g:2'], cls=Function)
++    assert f == (Function('f0'), Function('f1'))
++    assert g == (Function('g0'), Function('g1'))
++
++
+ def test_unicode():
+     xu = Symbol('x')
+     x = Symbol('x')

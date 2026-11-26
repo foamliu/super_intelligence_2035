@@ -1,0 +1,113 @@
+{
+    "id": "441b655f-8a8e-4a09-aa09-b62c2fd03524",
+    "started_at": "2026-11-07T06:37:40.609090",
+    "updated_at": "2026-11-07T08:51:21.614192",
+    "finished_at": "2026-11-07T08:51:21.614192",
+    "n_total_trials": 66,
+    "stats": {
+        "n_completed_trials": 66,
+        "n_errored_trials": 18,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "hermes__terminal-bench-4.0": {
+                "n_trials": 48,
+                "n_errors": 18,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0": [
+                            "atrx-vep-crispr__dpxWgvu",
+                            "biped-contact-dynamics__d2UxiEM",
+                            "bun-sourcemap-leak__FLYKyWS",
+                            "cad-model__dSbFFQD",
+                            "cargo-flight-dispatch__vyf4bkq",
+                            "coq-block-bound__Q2xMea7",
+                            "ctr-optimization__wquyCo9",
+                            "data-anonymization__oPUGN6W",
+                            "embedding-drift-monitor__7B8wKGF",
+                            "fin-saccr-rwa__wKXkVqp",
+                            "foodstuff-beta-activity__jJB9Pq7",
+                            "formal-crypto__dFnktUq",
+                            "freecad-impeller__NTJh5vc",
+                            "freecad-platform-drawing__nK7Gjvg",
+                            "freecad-spring-clip__Ch5d4un",
+                            "freight-dispatch-shift__CPYESRn",
+                            "heat-pump-warranty__uoDLwoP",
+                            "hof-topology-interpenetration__VdcbCBQ",
+                            "html-js-filter__ekJyFJ4",
+                            "interleaved-vigenere__WApZ2CL",
+                            "intrastat-meldung__wsp36Cq",
+                            "jax-speedrun-gpu__hYhraFU",
+                            "ks-solver-cpp__L2wbb7Y",
+                            "layout-config-recreation__Tg5yGaN",
+                            "layout-config-recreation2__iUZUBvS",
+                            "live-database-cutover__HcExUrY",
+                            "mp-checkpoint-consolidation__FvHhvWZ",
+                            "music-harmony__9JJyALC",
+                            "mvcc-lsm-compaction__zsKH2xt",
+                            "ontology-kg-querying__C9CxzrV",
+                            "payments-pipeline-fix__sTkmy64",
+                            "photonic-waveguide-routing__s4J8Hb3",
+                            "pretrain-shard-corruption__YpZDdhn",
+                            "production-planning__ig8mVve",
+                            "protein-autointerp-disulfide__UXwnzQq",
+                            "retro-console-soc__CdNPQyn",
+                            "satb-audio-transcription__YfhabE6",
+                            "session-window-debug__WRr3Nta",
+                            "sglang-qwen-burst__WaSYgqX",
+                            "shadow-relay__Uviwe5q",
+                            "sound-change-cascade__T8XsXCy",
+                            "telecom-entity-resolution__6LPStSC",
+                            "uefi-bootkit__BbWkVDB",
+                            "vba-userform-port__VHY7GTN",
+                            "vf2-speedup-networkx__Y9jK2sL",
+                            "vllm-deepseek-streaming__HTqZCpS",
+                            "wal-recovery-ordering__jWfeizn",
+                            "wdm-design__VNpsmPU"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "RuntimeError": [
+                        "batched-eval-parity__xq7efaE",
+                        "kv-live-surgery__2xwayoc",
+                        "lake-temp-glm__ZiUuAbq",
+                        "legacy-utility-triage__JQu9Yuc",
+                        "risk-scorer-replay__kaUexJi",
+                        "rs-archive-clone__wt3uZJ6"
+                    ],
+                    "ValueError": [
+                        "cumulative-layout-shift__KbYHUQM",
+                        "medical-claims-processing__XjftVbB"
+                    ],
+                    "NonZeroAgentExitCodeError": [
+                        "distributed-dedup__697r8aX",
+                        "fp8-rmsnorm-gemm__5kSUNq4",
+                        "glycan-ms2-elucidation__o6QTYdS",
+                        "gsea-proteomics__NMFzkWx",
+                        "math-eval-grader__eUeC6Dt",
+                        "nextjs-performance__mWCrgyh",
+                        "react-lead-form__bZacJfG",
+                        "roy-polymorph-cn__oMfNApe",
+                        "takens-embedding-lean__n3NhLuj"
+                    ],
+                    "VerifierTimeoutError": [
+                        "vpp-loss-divergence__8fABejG"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

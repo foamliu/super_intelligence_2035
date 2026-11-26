@@ -1,0 +1,63 @@
+diff --git a/sklearn/ensemble/iforest.py b/sklearn/ensemble/iforest.py
+index 8a1bd362..2db2d63f 100644
+--- a/sklearn/ensemble/iforest.py
++++ b/sklearn/ensemble/iforest.py
+@@ -91,6 +91,11 @@ class IsolationForest(BaseBagging, OutlierMixin):
+         ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
+         for more details.
+ 
++    warm_start : bool, optional (default=False)
++        When set to ``True``, reuse the solution of the previous call to fit
++        and add more estimators to the ensemble, otherwise, just fit a whole
++        new forest. See :term:`the Glossary <warm_start>`.
++
+     behaviour : str, default='old'
+         Behaviour of the ``decision_function`` which can be either 'old' or
+         'new'. Passing ``behaviour='new'`` makes the ``decision_function``
+@@ -172,6 +177,7 @@ class IsolationForest(BaseBagging, OutlierMixin):
+                  bootstrap=False,
+                  n_jobs=None,
+                  behaviour='old',
++                 warm_start=False,
+                  random_state=None,
+                  verbose=0):
+         super().__init__(
+@@ -186,6 +192,7 @@ class IsolationForest(BaseBagging, OutlierMixin):
+             max_samples=max_samples,
+             max_features=max_features,
+             n_jobs=n_jobs,
++            warm_start=warm_start,
+             random_state=random_state,
+             verbose=verbose)
+ 
+diff --git a/sklearn/ensemble/tests/test_iforest.py b/sklearn/ensemble/tests/test_iforest.py
+index 67ba2d7f..71bdd424 100644
+--- a/sklearn/ensemble/tests/test_iforest.py
++++ b/sklearn/ensemble/tests/test_iforest.py
+@@ -359,3 +359,26 @@ def test_iforest_chunks_works2(
+ ):
+     test_iforest_works(contamination)
+     assert mocked_get_chunk.call_count == n_predict_calls
++
++@pytest.mark.filterwarnings('ignore:default contamination')
++@pytest.mark.filterwarnings('ignore:behaviour="old"')
++def test_warm_start():
++    # Test if fitting incrementally with warm start gives a forest of the
++    # right size and the same results as a normal fit.
++    rng = check_random_state(0)
++    X = rng.randn(100, 5)
++
++    clf_ws = IsolationForest(n_estimators=5, warm_start=True,
++                             random_state=rng)
++    clf_ws.fit(X)
++    assert_equal(len(clf_ws.estimators_), 5)
++
++    clf_ws.set_params(n_estimators=10)
++    clf_ws.fit(X)
++    assert_equal(len(clf_ws.estimators_), 10)
++
++    # Test that a forest without warm_start is reset to a forest with 10
++    # estimators.
++    clf_no_ws = IsolationForest(n_estimators=10, random_state=rng)
++    clf_no_ws.fit(X)
++    assert_equal(len(clf_no_ws.estimators_), 10)

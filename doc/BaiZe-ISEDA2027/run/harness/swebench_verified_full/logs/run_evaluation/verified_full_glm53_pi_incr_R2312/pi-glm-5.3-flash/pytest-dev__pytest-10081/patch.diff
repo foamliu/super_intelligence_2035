@@ -1,0 +1,82 @@
+diff --git a/changelog/10060.bugfix.rst b/changelog/10060.bugfix.rst
+new file mode 100644
+index 0000000..64f2ca8
+--- /dev/null
++++ b/changelog/10060.bugfix.rst
+@@ -0,0 +1 @@
++``unittest.TestCase.tearDown`` is no longer called for test classes decorated with ``@unittest.skip`` when running with ``--pdb``.
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 851e494..0579c3c 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -316,7 +316,15 @@ class TestCaseFunction(Function):
+             # Arguably we could always postpone tearDown(), but this changes the moment where the
+             # TestCase instance interacts with the results object, so better to only do it
+             # when absolutely needed.
+-            if self.config.getoption("usepdb") and not _is_skipped(self.obj):
++            if (
++                self.config.getoption("usepdb")
++                and not _is_skipped(self.obj)
++                # We need to also check for the class-level skip mark, because
++                # self.obj is the test method, which is not marked when the
++                # skip is applied to the class (attribute lookup on the
++                # TestCase instance falls back to the class).
++                and not _is_skipped(self._testcase)
++            ):
+                 self._explicit_tearDown = self._testcase.tearDown
+                 setattr(self._testcase, "tearDown", lambda *args: None)
+ 
+diff --git a/testing/test_unittest.py b/testing/test_unittest.py
+index fb31281..a9f4fe6 100644
+--- a/testing/test_unittest.py
++++ b/testing/test_unittest.py
+@@ -1241,19 +1241,31 @@ def test_pdb_teardown_called(pytester: Pytester, monkeypatch: MonkeyPatch) -> No
+ 
+ 
+ @pytest.mark.parametrize("mark", ["@unittest.skip", "@pytest.mark.skip"])
++@pytest.mark.parametrize("location", ["method", "class"])
+ def test_pdb_teardown_skipped(
+-    pytester: Pytester, monkeypatch: MonkeyPatch, mark: str
++    pytester: Pytester, monkeypatch: MonkeyPatch, mark: str, location: str
+ ) -> None:
+-    """With --pdb, setUp and tearDown should not be called for skipped tests."""
++    """With --pdb, setUp and tearDown should not be called for skipped tests
++    (#7215, #10060)."""
+     tracked: List[str] = []
+     monkeypatch.setattr(pytest, "test_pdb_teardown_skipped", tracked, raising=False)
++    if location == "class":
++        class_line = f'{mark}("skipped for reasons")\n        class MyTestCase(unittest.TestCase):'
++        test_def = "            def test_1(self):\n                pass"
++    else:
++        class_line = "class MyTestCase(unittest.TestCase):"
++        test_def = (
++            f'            {mark}("skipped for reasons")\n'
++            "            def test_1(self):\n"
++            "                pass"
++        )
+ 
+     pytester.makepyfile(
+         """
+         import unittest
+         import pytest
+ 
+-        class MyTestCase(unittest.TestCase):
++        {class_line}
+ 
+             def setUp(self):
+                 pytest.test_pdb_teardown_skipped.append("setUp:" + self.id())
+@@ -1261,12 +1273,9 @@ def test_pdb_teardown_skipped(
+             def tearDown(self):
+                 pytest.test_pdb_teardown_skipped.append("tearDown:" + self.id())
+ 
+-            {mark}("skipped for reasons")
+-            def test_1(self):
+-                pass
+-
++{test_def}
+     """.format(
+-            mark=mark
++            mark=mark, class_line=class_line, test_def=test_def
+         )
+     )
+     result = pytester.runpytest_inprocess("--pdb")

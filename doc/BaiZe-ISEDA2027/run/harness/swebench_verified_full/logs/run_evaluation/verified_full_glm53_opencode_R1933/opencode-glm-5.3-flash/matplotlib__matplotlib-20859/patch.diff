@@ -1,0 +1,53 @@
+diff --git a/lib/matplotlib/legend.py b/lib/matplotlib/legend.py
+index 44ab0246..a1947194 100644
+--- a/lib/matplotlib/legend.py
++++ b/lib/matplotlib/legend.py
+@@ -332,7 +332,7 @@ class Legend(Artist):
+         """
+         Parameters
+         ----------
+-        parent : `~matplotlib.axes.Axes` or `.Figure`
++        parent : `~matplotlib.axes.Axes` or `.FigureBase`
+             The artist that contains the legend.
+ 
+         handles : list of `.Artist`
+@@ -360,7 +360,7 @@ class Legend(Artist):
+         """
+         # local import only to avoid circularity
+         from matplotlib.axes import Axes
+-        from matplotlib.figure import Figure
++        from matplotlib.figure import FigureBase
+ 
+         super().__init__()
+ 
+@@ -434,7 +434,7 @@ class Legend(Artist):
+             self.isaxes = True
+             self.axes = parent
+             self.set_figure(parent.figure)
+-        elif isinstance(parent, Figure):
++        elif isinstance(parent, FigureBase):
+             self.isaxes = False
+             self.set_figure(parent)
+         else:
+diff --git a/lib/matplotlib/tests/test_figure.py b/lib/matplotlib/tests/test_figure.py
+index ad2fdf7f..3be871d7 100644
+--- a/lib/matplotlib/tests/test_figure.py
++++ b/lib/matplotlib/tests/test_figure.py
+@@ -942,6 +942,17 @@ def test_subfigure_tightbbox():
+             fig.get_tightbbox(fig.canvas.get_renderer()).width, 0.1)
+ 
+ 
++def test_subfigure_legend():
++    # test that a legend can be added to a subfigure
++    fig = plt.figure()
++    sub = fig.subfigures(1, 2)
++    axs = sub[0].subplots()
++    axs.plot([0, 1], [0, 1], label='x')
++    leg = sub[0].legend()
++    assert leg.parent is sub[0]
++    fig.canvas.draw()
++
++
+ @image_comparison(['test_subfigure_ss.png'], style='mpl20',
+                   savefig_kwarg={'facecolor': 'teal'},
+                   remove_text=False)

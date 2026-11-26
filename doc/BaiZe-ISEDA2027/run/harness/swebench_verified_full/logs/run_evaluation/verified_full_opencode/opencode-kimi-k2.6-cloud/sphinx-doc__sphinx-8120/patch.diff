@@ -1,0 +1,56 @@
+diff --git a/sphinx/application.py b/sphinx/application.py
+index 385b74d8..197a1dc5 100644
+--- a/sphinx/application.py
++++ b/sphinx/application.py
+@@ -293,7 +293,7 @@ class Sphinx:
+                 if catalog.domain == 'sphinx' and catalog.is_outdated():
+                     catalog.write_mo(self.config.language)
+ 
+-            locale_dirs = [None, path.join(package_dir, 'locale')] + list(repo.locale_dirs)
++            locale_dirs = [None] + list(repo.locale_dirs) + [path.join(package_dir, 'locale')]
+             self.translator, has_translation = locale.init(locale_dirs, self.config.language)
+             if has_translation or self.config.language == 'en':
+                 # "en" never needs to be translated
+diff --git a/tests/test_locale.py b/tests/test_locale.py
+index a744a5ff..08bfc402 100644
+--- a/tests/test_locale.py
++++ b/tests/test_locale.py
+@@ -9,6 +9,7 @@
+ """
+ 
+ import pytest
++from babel.messages import mofile, pofile
+ 
+ from sphinx import locale
+ 
+@@ -63,3 +64,30 @@ def test_add_message_catalog(app, rootdir):
+     assert _('Hello world') == 'HELLO WORLD'
+     assert _('Hello sphinx') == 'Hello sphinx'
+     assert _('Hello reST') == 'Hello reST'
++
++
++def test_init_priority(tempdir):
++    # Create builtin locale dir with a translation
++    builtin_dir = tempdir / 'builtin' / 'en' / 'LC_MESSAGES'
++    builtin_dir.makedirs()
++    builtin_po = builtin_dir / 'myext.po'
++    builtin_po.write_text('msgid "Hello world"\nmsgstr "BUILTIN HELLO"\n')
++    with open(builtin_po, 'r') as f:
++        catalog = pofile.read_po(f)
++    with open(builtin_dir / 'myext.mo', 'wb') as f:
++        mofile.write_mo(f, catalog)
++
++    # Create user locale dir with a conflicting translation
++    user_dir = tempdir / 'user' / 'en' / 'LC_MESSAGES'
++    user_dir.makedirs()
++    user_po = user_dir / 'myext.po'
++    user_po.write_text('msgid "Hello world"\nmsgstr "USER HELLO"\n')
++    with open(user_po, 'r') as f:
++        catalog = pofile.read_po(f)
++    with open(user_dir / 'myext.mo', 'wb') as f:
++        mofile.write_mo(f, catalog)
++
++    # user dir first -> user translation should win
++    locale.init([str(tempdir / 'user'), str(tempdir / 'builtin')], 'en', 'myext')
++    _ = locale.get_translation('myext')
++    assert _('Hello world') == 'USER HELLO'

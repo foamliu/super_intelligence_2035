@@ -1,0 +1,38 @@
+diff --git a/sphinx/writers/latex.py b/sphinx/writers/latex.py
+index e0c7d56f8..a4f0800c9 100644
+--- a/sphinx/writers/latex.py
++++ b/sphinx/writers/latex.py
+@@ -1713,6 +1713,10 @@ class LaTeXTranslator(SphinxTranslator):
+                                 r'\sphinxcode{\sphinxupquote{')
+         # get consistent trailer
+         hlcode = hlcode.rstrip()[:-14]  # strip \end{Verbatim}
++        # strip leading and trailing newlines to avoid extraneous spaces
++        hlcode = hlcode.replace(r'\sphinxcode{\sphinxupquote{' + '\n',
++                                r'\sphinxcode{\sphinxupquote{')
++        hlcode = hlcode.rstrip('\n')
+         self.body.append(hlcode)
+         self.body.append('}}')
+         raise nodes.SkipNode
+diff --git a/tests/test_build_latex.py b/tests/test_build_latex.py
+index dd0db8aef..7843dd463 100644
+--- a/tests/test_build_latex.py
++++ b/tests/test_build_latex.py
+@@ -1608,7 +1608,7 @@ def test_latex_code_role(app):
+     content = (app.outdir / 'python.tex').read_text()
+ 
+     common_content = (
+-        r'\PYG{k}{def} '
++        r'\PYG{k}{def}\PYG{+w}{ }'
+         r'\PYG{n+nf}{foo}'
+         r'\PYG{p}{(}'
+         r'\PYG{l+m+mi}{1} '
+@@ -1623,7 +1623,7 @@ def test_latex_code_role(app):
+         r'\PYG{p}{)}'
+         r'\PYG{p}{:} '
+         r'\PYG{k}{pass}')
+-    assert (r'Inline \sphinxcode{\sphinxupquote{' + '\n' +
+-            common_content + '\n}} code block') in content
++    assert (r'Inline \sphinxcode{\sphinxupquote{' +
++            common_content + '}} code block') in content
+     assert (r'\begin{sphinxVerbatim}[commandchars=\\\{\}]' +
+             '\n' + common_content + '\n' + r'\end{sphinxVerbatim}') in content

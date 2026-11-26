@@ -1,0 +1,36 @@
+diff --git a/sympy/solvers/diophantine.py b/sympy/solvers/diophantine.py
+index 6092e35da..b43f5c1dc 100644
+--- a/sympy/solvers/diophantine.py
++++ b/sympy/solvers/diophantine.py
+@@ -182,7 +182,7 @@ def diophantine(eq, param=symbols("t", integer=True), syms=None,
+             if syms != var:
+                 dict_sym_index = dict(zip(syms, range(len(syms))))
+                 return {tuple([t[dict_sym_index[i]] for i in var])
+-                            for t in diophantine(eq, param)}
++                            for t in diophantine(eq, param, permute=permute)}
+         n, d = eq.as_numer_denom()
+         if n.is_number:
+             return set()
+diff --git a/sympy/solvers/tests/test_diophantine.py b/sympy/solvers/tests/test_diophantine.py
+index e4e8972ae..016863842 100644
+--- a/sympy/solvers/tests/test_diophantine.py
++++ b/sympy/solvers/tests/test_diophantine.py
+@@ -27,6 +27,7 @@
+ t_0, t_1, t_2, t_3, t_4, t_5, t_6 = symbols("t_:7", integer=True)
+ m1, m2, m3 = symbols('m1:4', integer=True)
+ n1 = symbols('n1', integer=True)
++m, n = symbols('m, n', integer=True)
+ 
+ 
+ def diop_simplify(eq):
+@@ -494,6 +495,10 @@ def test_diophantine():
+ 
+     assert diophantine(x - y) == diophantine(Eq(x, y))
+     assert diophantine(3*x*pi - 2*y*pi) == set([(2*t_0, 3*t_0)])
++    # issue permute=True must be passed when syms reorder
++    eq = n**4 + m**4 - 2**4 - 3**4
++    assert diophantine(eq, syms=(m, n), permute=True) == \
++           diophantine(eq, syms=(n, m), permute=True)
+     eq = x**2 + y**2 + z**2 - 14
+     base_sol = set([(1, 2, 3)])
+     assert diophantine(eq) == base_sol

@@ -1,0 +1,66 @@
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bb..b9c89d9d 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -2,14 +2,9 @@
+ A few practical conventions common to all printers.
+ """
+ 
+-import re
+-
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
+-
+-
+ def split_super_sub(text):
+     """Split a symbol name into a name, superscripts and subscripts
+ 
+@@ -62,11 +57,13 @@ def split_super_sub(text):
+ 
+     # make a little exception when a name ends with digits, i.e. treat them
+     # as a subscript too.
+-    m = _name_with_digits_p.match(name)
+-    if m:
+-        name, sub = m.groups()
++    i = len(name)
++    while i > 0 and '0' <= name[i - 1] <= '9':
++        i -= 1
++    if i > 0 and i < len(name) and name[:i].isalpha():
++        sub = name[i:]
++        name = name[:i]
+         subs.insert(0, sub)
+-
+     return name, supers, subs
+ 
+ 
+diff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py
+index 42fae775..ea5f43d9 100644
+--- a/sympy/printing/pretty/tests/test_pretty.py
++++ b/sympy/printing/pretty/tests/test_pretty.py
+@@ -277,7 +277,8 @@ def test_upretty_multiindex():
+     assert upretty( Symbol('Y00') ) == 'Y₀₀'
+     assert upretty( Symbol('Y_00') ) == 'Y₀₀'
+     assert upretty( Symbol('F^+-') ) == 'F⁺⁻'
+-
++    assert upretty( Symbol('\u03c90') ) == 'ω₀'
++    assert upretty( Symbol('\u03c912') ) == 'ω₁₂'
+ 
+ def test_upretty_sub_super():
+     assert upretty( Symbol('beta_1_2') ) == 'β₁ ₂'
+diff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py
+index 87689aa8..28baf271 100644
+--- a/sympy/printing/tests/test_conventions.py
++++ b/sympy/printing/tests/test_conventions.py
+@@ -30,7 +30,9 @@ def test_super_sub():
+     assert split_super_sub("alpha_11") == ("alpha", [], ["11"])
+     assert split_super_sub("alpha_11_11") == ("alpha", [], ["11", "11"])
+     assert split_super_sub("") == ("", [], [])
+-
++    assert split_super_sub("\u03c90") == ("\u03c9", [], ["0"])
++    assert split_super_sub("\u03c912") == ("\u03c9", [], ["12"])
++    assert split_super_sub("\u03b10") == ("\u03b1", [], ["0"])
+ 
+ def test_requires_partial():
+     x, y, z, t, nu = symbols('x y z t nu')

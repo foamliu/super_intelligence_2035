@@ -1,0 +1,51 @@
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 9bafff11c..f87e27045 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -166,16 +166,28 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "{" + ", ".join(self.visit(e) for e in node.elts) + "}"
+ 
+     def visit_Subscript(self, node: ast.Subscript) -> str:
++        def is_simple_tuple(value: ast.expr) -> bool:
++            return (isinstance(value, ast.Tuple) and
++                    bool(value.elts) and
++                    not any(isinstance(elt, ast.Starred) for elt in value.elts))
++
++        # On py<3.9, a tuple subscript is wrapped in ast.Index
++        slice_ = node.slice.value if isinstance(node.slice, ast.Index) else node.slice
++        if is_simple_tuple(slice_):
++            elts = ", ".join(self.visit(e) for e in slice_.elts)
++            return "%s[%s]" % (self.visit(node.value), elts)
+         return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
+ 
+     def visit_UnaryOp(self, node: ast.UnaryOp) -> str:
+         return "%s %s" % (self.visit(node.op), self.visit(node.operand))
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+-        if node.elts:
+-            return ", ".join(self.visit(e) for e in node.elts)
+-        else:
++        if len(node.elts) == 0:
+             return "()"
++        elif len(node.elts) == 1:
++            return "(%s,)" % self.visit(node.elts[0])
++        else:
++            return "(%s)" % ", ".join(self.visit(e) for e in node.elts)
+ 
+     if sys.version_info >= (3, 6):
+         def visit_Constant(self, node: ast.Constant) -> str:
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index 9b12d24d5..2a5b4f162 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -53,8 +53,9 @@ from sphinx.pycode import ast
+     ("+ a", "+ a"),                             # UAdd
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub
+-    ("(1, 2, 3)", "1, 2, 3"),                   # Tuple
++    ("(1, 2, 3)", "(1, 2, 3)"),                 # Tuple
+     ("()", "()"),                               # Tuple (empty)
++    ("(1,)", "(1,)"),                           # Tuple (single item)
+ ])
+ def test_unparse(source, expected):
+     module = ast.parse(source)

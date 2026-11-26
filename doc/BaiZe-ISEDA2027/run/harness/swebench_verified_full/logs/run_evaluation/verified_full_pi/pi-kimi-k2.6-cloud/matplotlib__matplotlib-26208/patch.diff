@@ -1,0 +1,388 @@
+diff --git a/debug_repro.py b/debug_repro.py
+new file mode 100644
+index 000000000..cd8d365ca
+--- /dev/null
++++ b/debug_repro.py
+@@ -0,0 +1,35 @@
++import matplotlib
++matplotlib.use('Agg')
++import matplotlib.pyplot as plt
++import traceback
++import numpy as np
++
++def print_datalim(*ax):
++    for ax_ in ax:
++        print(ax_.dataLim.intervaly, end=' / ')
++    print()
++
++df1_index = ['16 May', '17 May']
++df1_values = [-22.717708333333402, 26.584999999999937]
++df2_values = [-0.08501399999999998, -2.9833019999999966]
++
++fig, ax1 = plt.subplots()
++
++# Monkeypatch ax1.dataLim.set_points to catch when it becomes null
++original_set_points = ax1.dataLim.set_points
++def traced_set_points(points):
++    if np.isinf(points).all():
++        print("ax1.dataLim.set_points called with inf!")
++        traceback.print_stack(limit=20)
++    return original_set_points(points)
++
++ax1.dataLim.set_points = traced_set_points
++
++ax1.stackplot(df1_index, df1_values)
++print_datalim(ax1)
++
++ax2 = ax1.twinx()
++print_datalim(ax1, ax2)
++
++ax2.plot(df1_index, df2_values)
++print_datalim(ax1, ax2)
+diff --git a/lib/matplotlib/axis.py b/lib/matplotlib/axis.py
+index e1cb06f93..e4b5da591 100644
+--- a/lib/matplotlib/axis.py
++++ b/lib/matplotlib/axis.py
+@@ -1737,6 +1737,8 @@ class Axis(martist.Artist):
+         if u == self.units:
+             return
+         for axis in self._get_shared_axis():
++            if u == axis.units:
++                continue
+             axis.units = u
+             axis._update_axisinfo()
+             axis.callbacks.process('units')
+diff --git a/lib/matplotlib/category.py b/lib/matplotlib/category.py
+index 4ac2379ea..a201a1dcb 100644
+--- a/lib/matplotlib/category.py
++++ b/lib/matplotlib/category.py
+@@ -224,6 +224,10 @@ class UnitData:
+                       'that are all parsable as floats or dates. If these '
+                       'strings should be plotted as numbers, cast to the '
+                       'appropriate data type before plotting.')
++    def __eq__(self, other):
++        if not isinstance(other, UnitData):
++            return NotImplemented
++        return self._mapping == other._mapping
+ 
+ 
+ # Register the converter with Matplotlib's unit framework
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index 4f0175281..7bc12033a 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -7138,6 +7138,18 @@ def test_twinx_knows_limits():
+     assert_array_equal(xtwin.viewLim.intervalx, ax2.viewLim.intervalx)
+ 
+ 
++def test_twinx_with_stackplot_datalim():
++    # Regression test for: twinned axis plot should not reset
++    # dataLim of sibling axis containing a stackplot.
++    fig, ax1 = plt.subplots()
++    ax1.stackplot(['a', 'b'], [-22.7, 26.5])
++    assert np.isfinite(ax1.dataLim.intervaly).all()
++
++    ax2 = ax1.twinx()
++    ax2.plot(['a', 'b'], [-0.08, -2.98])
++    assert np.isfinite(ax1.dataLim.intervaly).all()
++
++
+ def test_zero_linewidth():
+     # Check that setting a zero linewidth doesn't error
+     plt.plot([0, 1], [0, 1], ls='--', lw=0)
+diff --git a/repro.py b/repro.py
+new file mode 100644
+index 000000000..68934c07e
+--- /dev/null
++++ b/repro.py
+@@ -0,0 +1,23 @@
++import matplotlib
++matplotlib.use('Agg')
++import matplotlib.pyplot as plt
++
++def print_datalim(*ax):
++    for ax_ in ax:
++        print(ax_.dataLim.intervaly, end=' / ')
++    print()
++
++df1_index = ['16 May', '17 May']  # == df2_index
++df1_values = [-22.717708333333402, 26.584999999999937]
++df2_values = [-0.08501399999999998, -2.9833019999999966]
++
++fig, ax1 = plt.subplots()
++
++ax1.stackplot(df1_index, df1_values)
++print_datalim(ax1)
++
++ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
++print_datalim(ax1, ax2)
++
++ax2.plot(df1_index, df2_values)
++print_datalim(ax1, ax2)
+diff --git a/run_category_direct.py b/run_category_direct.py
+new file mode 100644
+index 000000000..d562cdbd4
+--- /dev/null
++++ b/run_category_direct.py
+@@ -0,0 +1,25 @@
++import warnings
++import sys
++sys.path.insert(0, 'lib')
++
++_orig_warn = warnings.warn
++def _patched_warn(message, category=None, *args, **kwargs):
++    if category is not None and category.__name__ == 'MatplotlibDeprecationWarning':
++        return
++    return _orig_warn(message, category, *args, **kwargs)
++warnings.warn = _patched_warn
++
++import matplotlib
++matplotlib.use('Agg')
++
++from matplotlib.tests.test_category import TestUnitData
++
++t = TestUnitData()
++for name, (data, locs) in zip(t.ids, t.data):
++    t.test_unit(data, locs)
++print("TestUnitData.test_unit passed")
++
++t.test_update()
++print("TestUnitData.test_update passed")
++
++print("All category tests passed")
+diff --git a/run_category_tests.py b/run_category_tests.py
+new file mode 100644
+index 000000000..c30b526c0
+--- /dev/null
++++ b/run_category_tests.py
+@@ -0,0 +1,8 @@
++import warnings
++warnings.filterwarnings('ignore')
++import matplotlib
++matplotlib.use('Agg')
++import sys
++sys.path.insert(0, 'lib')
++import pytest
++pytest.main(['-v', 'lib/matplotlib/tests/test_category.py'])
+diff --git a/run_test.py b/run_test.py
+new file mode 100644
+index 000000000..349f57487
+--- /dev/null
++++ b/run_test.py
+@@ -0,0 +1,19 @@
++import warnings
++warnings.filterwarnings('ignore')
++import matplotlib
++matplotlib.use('Agg')
++import matplotlib.pyplot as plt
++import numpy as np
++
++def test_twinx_with_stackplot_datalim():
++    fig, ax1 = plt.subplots()
++    ax1.stackplot(['a', 'b'], [-22.7, 26.5])
++    assert np.isfinite(ax1.dataLim.intervaly).all(), f"ax1.dataLim y not finite before twinx: {ax1.dataLim.intervaly}"
++
++    ax2 = ax1.twinx()
++    ax2.plot(['a', 'b'], [-0.08, -2.98])
++    assert np.isfinite(ax1.dataLim.intervaly).all(), f"ax1.dataLim y not finite after twinx plot: {ax1.dataLim.intervaly}"
++    print("PASS")
++
++if __name__ == "__main__":
++    test_twinx_with_stackplot_datalim()
+diff --git a/run_test_direct.py b/run_test_direct.py
+new file mode 100644
+index 000000000..dc5c9199b
+--- /dev/null
++++ b/run_test_direct.py
+@@ -0,0 +1,22 @@
++import warnings
++import sys
++sys.path.insert(0, 'lib')
++
++# Monkeypatch warnings.warn to ignore MatplotlibDeprecationWarning
++_orig_warn = warnings.warn
++def _patched_warn(message, category=None, *args, **kwargs):
++    if category is not None and issubclass(category, Exception):
++        # still raise if it's an error
++        pass
++    if category is not None and category.__name__ == 'MatplotlibDeprecationWarning':
++        return
++    return _orig_warn(message, category, *args, **kwargs)
++warnings.warn = _patched_warn
++
++import matplotlib
++matplotlib.use('Agg')
++
++# Now import the test module and run our specific test
++from matplotlib.tests.test_axes import test_twinx_with_stackplot_datalim
++test_twinx_with_stackplot_datalim()
++print("test_twinx_with_stackplot_datalim passed")
+diff --git a/run_units_datetime.py b/run_units_datetime.py
+new file mode 100644
+index 000000000..b35301f2d
+--- /dev/null
++++ b/run_units_datetime.py
+@@ -0,0 +1,19 @@
++import warnings
++import sys
++sys.path.insert(0, 'lib')
++
++_orig_warn = warnings.warn
++def _patched_warn(message, category=None, *args, **kwargs):
++    if category is not None and category.__name__ == 'MatplotlibDeprecationWarning':
++        return
++    return _orig_warn(message, category, *args, **kwargs)
++warnings.warn = _patched_warn
++
++import matplotlib
++matplotlib.use('Agg')
++
++from matplotlib.tests.test_units import test_shared_axis_datetime, test_shared_axis_categorical
++test_shared_axis_datetime()
++print("test_shared_axis_datetime passed")
++test_shared_axis_categorical()
++print("test_shared_axis_categorical passed")
+diff --git a/run_units_direct.py b/run_units_direct.py
+new file mode 100644
+index 000000000..239c3a686
+--- /dev/null
++++ b/run_units_direct.py
+@@ -0,0 +1,17 @@
++import warnings
++import sys
++sys.path.insert(0, 'lib')
++
++_orig_warn = warnings.warn
++def _patched_warn(message, category=None, *args, **kwargs):
++    if category is not None and category.__name__ == 'MatplotlibDeprecationWarning':
++        return
++    return _orig_warn(message, category, *args, **kwargs)
++warnings.warn = _patched_warn
++
++import matplotlib
++matplotlib.use('Agg')
++
++from matplotlib.tests.test_units import test_shared_axis_categorical
++test_shared_axis_categorical()
++print("test_shared_axis_categorical passed")
+diff --git a/test_eq.py b/test_eq.py
+new file mode 100644
+index 000000000..f747a35e9
+--- /dev/null
++++ b/test_eq.py
+@@ -0,0 +1,23 @@
++from collections import OrderedDict
++import itertools
++
++class UnitData:
++    def __init__(self, data=None):
++        self._mapping = OrderedDict()
++        self._counter = itertools.count()
++        if data is not None:
++            for val in OrderedDict.fromkeys(data):
++                if val not in self._mapping:
++                    self._mapping[val] = next(self._counter)
++
++    def __eq__(self, other):
++        if not isinstance(other, UnitData):
++            return NotImplemented
++        return self._mapping == other._mapping
++
++u1 = UnitData(['a', 'b'])
++u2 = UnitData(['a', 'b'])
++u3 = UnitData(['b', 'a'])
++print(u1 == u2)
++print(u1 == u3)
++print(hash(u1))
+diff --git a/test_eq_none.py b/test_eq_none.py
+new file mode 100644
+index 000000000..cab943ec9
+--- /dev/null
++++ b/test_eq_none.py
+@@ -0,0 +1,7 @@
++class A:
++    def __eq__(self, other):
++        return NotImplemented
++
++a = A()
++print(a == None)
++print(None == a)
+diff --git a/test_fix.py b/test_fix.py
+new file mode 100644
+index 000000000..5249b8f0a
+--- /dev/null
++++ b/test_fix.py
+@@ -0,0 +1,47 @@
++import matplotlib
++matplotlib.use('Agg')
++import matplotlib.pyplot as plt
++from matplotlib.category import UnitData
++
++# Monkeypatch UnitData.__eq__
++def unitdata_eq(self, other):
++    if not isinstance(other, UnitData):
++        return NotImplemented
++    return self._mapping == other._mapping
++
++UnitData.__eq__ = unitdata_eq
++
++# Monkeypatch axis.set_units
++import matplotlib.axis as maxis
++orig_set_units = maxis.Axis.set_units
++def fixed_set_units(self, u):
++    if u == self.units:
++        return
++    for axis in self._get_shared_axis():
++        if u == axis.units:
++            continue
++        axis.units = u
++        axis._update_axisinfo()
++        axis.callbacks.process('units')
++        axis.stale = True
++
++maxis.Axis.set_units = fixed_set_units
++
++def print_datalim(*ax):
++    for ax_ in ax:
++        print(ax_.dataLim.intervaly, end=' / ')
++    print()
++
++df1_index = ['16 May', '17 May']
++df1_values = [-22.717708333333402, 26.584999999999937]
++df2_values = [-0.08501399999999998, -2.9833019999999966]
++
++fig, ax1 = plt.subplots()
++ax1.stackplot(df1_index, df1_values)
++print_datalim(ax1)
++
++ax2 = ax1.twinx()
++print_datalim(ax1, ax2)
++
++ax2.plot(df1_index, df2_values)
++print_datalim(ax1, ax2)
+diff --git a/test_unitdata_eq.py b/test_unitdata_eq.py
+new file mode 100644
+index 000000000..eca78edd3
+--- /dev/null
++++ b/test_unitdata_eq.py
+@@ -0,0 +1,20 @@
++import sys
++sys.path.insert(0, 'lib')
++from matplotlib.category import UnitData
++
++u1 = UnitData(['a', 'b'])
++u2 = UnitData(['a', 'b'])
++u3 = UnitData(['b', 'a'])
++
++assert u1 == u2
++assert not (u1 == u3)
++assert u1 != u3
++assert u1 != None
++assert not (u1 == None)
++
++# Test update
++u1.update(['c'])
++u4 = UnitData(['a', 'b', 'c'])
++assert u1 == u4
++
++print("UnitData eq tests pass")

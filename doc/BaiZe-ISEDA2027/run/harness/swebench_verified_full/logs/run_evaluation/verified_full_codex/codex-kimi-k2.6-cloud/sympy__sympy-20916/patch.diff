@@ -1,0 +1,57 @@
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bb..8e6bad7c 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -2,13 +2,9 @@
+ A few practical conventions common to all printers.
+ """
+ 
+-import re
+-
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
+-
+ 
+ def split_super_sub(text):
+     """Split a symbol name into a name, superscripts and subscripts
+@@ -62,10 +58,15 @@ def split_super_sub(text):
+ 
+     # make a little exception when a name ends with digits, i.e. treat them
+     # as a subscript too.
+-    m = _name_with_digits_p.match(name)
+-    if m:
+-        name, sub = m.groups()
+-        subs.insert(0, sub)
++    i = len(name) - 1
++    while i >= 0 and name[i].isdigit():
++        i -= 1
++    if i >= 0 and i != len(name) - 1:
++        # name ends with digits and prefix is all letters
++        if all(c.isalpha() for c in name[:i + 1]):
++            sub = name[i + 1:]
++            name = name[:i + 1]
++            subs.insert(0, sub)
+ 
+     return name, supers, subs
+ 
+diff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py
+index 87689aa8..56e39107 100644
+--- a/sympy/printing/tests/test_conventions.py
++++ b/sympy/printing/tests/test_conventions.py
+@@ -32,6 +32,14 @@ def test_super_sub():
+     assert split_super_sub("") == ("", [], [])
+ 
+ 
++
++
++def test_split_super_sub_unicode_digits():
++    # Issue: pprint unicode did not format subscripts on Greek letters
++    # because the regex _name_with_digits_p only matched ASCII letters.
++    assert split_super_sub("ω0") == ("ω", [], ["0"])
++    assert split_super_sub("α1") == ("α", [], ["1"])
++    assert split_super_sub("ω123") == ("ω", [], ["123"])
+ def test_requires_partial():
+     x, y, z, t, nu = symbols('x y z t nu')
+     n = symbols('n', integer=True)

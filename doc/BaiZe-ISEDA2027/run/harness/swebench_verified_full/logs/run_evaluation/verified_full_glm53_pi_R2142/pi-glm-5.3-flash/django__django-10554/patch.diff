@@ -1,0 +1,93 @@
+diff --git a/repro_30771.py b/repro_30771.py
+new file mode 100644
+index 0000000000..578221834f
+--- /dev/null
++++ b/repro_30771.py
+@@ -0,0 +1,57 @@
++import sys
++sys.path.insert(0, '/dev/shm/harness_verified_full_glm53/workdirs/pi/django_django/tests')
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth', 'ticketapp'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++# Emulate PostgreSQL compound-query features on SQLite
++from django.db.backends.sqlite3.features import DatabaseFeatures
++DatabaseFeatures.supports_slicing_ordering_in_compound = True
++DatabaseFeatures.supports_parentheses_in_compound = True
++
++from django.test.utils import setup_test_environment, teardown_test_environment
++from django.test.runner import DiscoverRunner
++
++setup_test_environment()
++runner = DiscoverRunner(interactive=False, verbosity=0)
++old_config = runner.setup_databases()
++
++from ticketapp.models import Dimension
++
++Dimension.objects.create(name='d10', code='x', order=4)
++Dimension.objects.create(name='d11', code='x', order=3)
++Dimension.objects.create(name='d16', code='x', order=2)
++Dimension.objects.create(name='d17', code='x', order=1)
++
++qs = (
++    Dimension.objects.filter(pk__in=[1, 2])
++    .union(Dimension.objects.filter(pk__in=[3, 4]))
++    .order_by('order')
++)
++try:
++    print('qs (1st eval):', qs)
++except Exception as e:
++    print('1st eval BROKE:', type(e).__name__, e)
++    raise SystemExit
++
++try:
++    print('derived:', qs.order_by().values_list('pk', flat=True))
++except Exception as e:
++    print('DERIVED BROKE:', type(e).__name__, e)
++    raise SystemExit
++
++try:
++    print('qs (2nd eval):', qs)
++    print('TICKET SCENARIO (with Meta.ordering): OK')
++except Exception as e:
++    print('TICKET SCENARIO (with Meta.ordering) BROKE:', type(e).__name__, e)
++
++teardown_test_environment()
++runner.teardown_databases(old_config)
+diff --git a/tests/ticketapp/__init__.py b/tests/ticketapp/__init__.py
+new file mode 100644
+index 0000000000..e69de29bb2
+diff --git a/tests/ticketapp/apps.py b/tests/ticketapp/apps.py
+new file mode 100644
+index 0000000000..cf624a2a46
+--- /dev/null
++++ b/tests/ticketapp/apps.py
+@@ -0,0 +1,5 @@
++from django.apps import AppConfig
++
++
++class TicketappConfig(AppConfig):
++    name = 'ticketapp'
+diff --git a/tests/ticketapp/models.py b/tests/ticketapp/models.py
+new file mode 100644
+index 0000000000..1896484039
+--- /dev/null
++++ b/tests/ticketapp/models.py
+@@ -0,0 +1,10 @@
++from django.db import models
++
++
++class Dimension(models.Model):
++    name = models.CharField(max_length=20)
++    code = models.CharField(max_length=20)
++    order = models.IntegerField()
++
++    class Meta:
++        ordering = ['order']

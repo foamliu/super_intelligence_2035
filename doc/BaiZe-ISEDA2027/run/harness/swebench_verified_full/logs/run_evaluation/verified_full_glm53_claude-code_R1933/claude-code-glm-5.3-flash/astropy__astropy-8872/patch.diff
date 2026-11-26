@@ -1,0 +1,64 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index 0097160c..b8ba8ec9 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -77,6 +77,10 @@ astropy.uncertainty
+ astropy.units
+ ^^^^^^^^^^^^^
+ 
++- Quantity is now able to properly deal with numpy float16 scalar or
++  arrays, i.e., ``np.float16(1.)*u.m`` keeps float16 dtype instead of
++  being upcast to float64. [#8854]
++
+ astropy.utils
+ ^^^^^^^^^^^^^
+ 
+diff --git a/astropy/units/quantity.py b/astropy/units/quantity.py
+index ded609cb..502cf49f 100644
+--- a/astropy/units/quantity.py
++++ b/astropy/units/quantity.py
+@@ -296,7 +296,8 @@ class Quantity(np.ndarray, metaclass=InheritDocstrings):
+                 if not copy:
+                     return value
+ 
+-                if not (np.can_cast(np.float32, value.dtype) or
++                if not (np.can_cast(np.float32, value.dtype,
++                                    casting='same_kind') or
+                         value.dtype.fields):
+                     dtype = float
+ 
+@@ -377,7 +378,8 @@ class Quantity(np.ndarray, metaclass=InheritDocstrings):
+                             "Numpy numeric type.")
+ 
+         # by default, cast any integer, boolean, etc., to float
+-        if dtype is None and (not (np.can_cast(np.float32, value.dtype)
++        if dtype is None and (not (np.can_cast(np.float32, value.dtype,
++                                               casting='same_kind')
+                                    or value.dtype.fields)
+                               or value.dtype.kind == 'O'):
+             value = value.astype(float)
+diff --git a/astropy/units/tests/test_quantity.py b/astropy/units/tests/test_quantity.py
+index be18e65c..6875bff4 100644
+--- a/astropy/units/tests/test_quantity.py
++++ b/astropy/units/tests/test_quantity.py
+@@ -142,6 +142,13 @@ class TestQuantityCreation:
+         a3 = np.array([1., 2.], dtype=np.float32)
+         q3 = u.Quantity(a3, u.yr)
+         assert q3.dtype == a3.dtype
++        # and also float16 (closes #8854; float16 used to be upcast to
++        # float64, unlike other float types).
++        a3 = np.array([1., 2.], dtype=np.float16)
++        q3 = u.Quantity(a3, u.yr)
++        assert q3.dtype == a3.dtype
++        q3 = np.float16(1.) * u.yr
++        assert q3.dtype == np.float16
+         # items stored as objects by numpy should be converted to float
+         # by default
+         q4 = u.Quantity(decimal.Decimal('10.25'), u.m)
+diff --git a/astropy_helpers b/astropy_helpers
+index ba373422..7f11678c 160000
+--- a/astropy_helpers
++++ b/astropy_helpers
+@@ -1 +1 @@
+-Subproject commit ba3734222a40f4c2864c375c6639f32cd9df06cd
++Subproject commit 7f11678c03286f72acc9bab77868dabaeb368fda

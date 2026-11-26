@@ -1,0 +1,85 @@
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 79d7e4f4..51b6913f 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -1224,6 +1224,10 @@ class PythonDomain(Domain):
+             if mod.docname == docname:
+                 del self.modules[modname]
+ 
++    def process_field_xref(self, pnode: pending_xref) -> None:
++        pnode['py:module'] = self.env.ref_context.get('py:module')
++        pnode['py:class'] = self.env.ref_context.get('py:class')
++
+     def merge_domaindata(self, docnames: List[str], otherdata: Dict) -> None:
+         # XXX check duplicates?
+         for fullname, obj in otherdata['objects'].items():
+diff --git a/tests/roots/test-domain-py-ambig/conf.py b/tests/roots/test-domain-py-ambig/conf.py
+new file mode 100644
+index 00000000..944b461f
+--- /dev/null
++++ b/tests/roots/test-domain-py-ambig/conf.py
+@@ -0,0 +1,2 @@
++project = 'test'
++extensions = []
+diff --git a/tests/roots/test-domain-py-ambig/index.rst b/tests/roots/test-domain-py-ambig/index.rst
+new file mode 100644
+index 00000000..6548f60f
+--- /dev/null
++++ b/tests/roots/test-domain-py-ambig/index.rst
+@@ -0,0 +1,34 @@
++index
++=====
++
++.. py:class:: mod.A
++.. py:class:: mod.submod.A
++
++.. py:function:: f()
++
++   :param mod.A a:
++   :param mod.submod.A b:
++   :rtype: mod.A
++   :rtype: mod.submod.A
++
++.. py:currentmodule:: mod
++
++.. py:function:: f()
++
++   :param A a:
++   :param mod.A b:
++   :param mod.submod.A c:
++   :rtype: A
++   :rtype: mod.A
++   :rtype: mod.submod.A
++
++.. py:currentmodule:: mod.submod
++
++.. py:function:: f()
++
++   :param A a:
++   :param mod.A b:
++   :param mod.submod.A c:
++   :rtype: A
++   :rtype: mod.A
++   :rtype: mod.submod.A
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 2dc97bed..c8ffb5b8 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -865,3 +865,17 @@ def test_warn_missing_reference(app, status, warning):
+     assert 'index.rst:6: WARNING: undefined label: no-label' in warning.getvalue()
+     assert ('index.rst:6: WARNING: Failed to create a cross reference. A title or caption not found: existing-label'
+             in warning.getvalue())
++
++
++@pytest.mark.sphinx('html', testroot='domain-py-ambig')
++def test_field_xref_ambiguous(app, status, warning):
++    """Unqualified type names in :type:/:rtype: should use current module context."""
++    app.builder.build_all()
++    ws = warning.getvalue()
++    assert "more than one target found for cross-reference 'A'" not in ws
++
++    content = (app.outdir / 'index.html').read_text()
++    # Under mod.submod, unqualified A in :param A a: and :rtype: A
++    # should resolve to mod.submod.A
++    assert ('href="#mod.submod.A"' in content)
++    assert ('href="#mod.A"' in content)

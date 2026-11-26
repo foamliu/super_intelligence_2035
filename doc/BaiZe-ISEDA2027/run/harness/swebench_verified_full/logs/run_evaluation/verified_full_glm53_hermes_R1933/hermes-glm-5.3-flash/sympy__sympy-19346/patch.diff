@@ -1,0 +1,42 @@
+diff --git a/sympy/printing/repr.py b/sympy/printing/repr.py
+index c936a692c0..b8942fa53f 100644
+--- a/sympy/printing/repr.py
++++ b/sympy/printing/repr.py
+@@ -250,6 +250,15 @@ def _print_tuple(self, expr):
+         else:
+             return "(%s)" % self.reprify(expr, ", ")
+ 
++    def _print_dict(self, expr):
++        return "{%s}" % ", ".join(
++            "%s: %s" % (self._print(key), self._print(value))
++            for key, value in expr.items())
++
++    def _print_set(self, expr):
++        # {} is an empty dict, so use the set([...]) constructor form
++        return "set([%s])" % self.reprify(expr, ", ")
++
+     def _print_WildFunction(self, expr):
+         return "%s('%s')" % (expr.__class__.__name__, expr.name)
+ 
+diff --git a/sympy/printing/tests/test_repr.py b/sympy/printing/tests/test_repr.py
+index f749683ff7..b43b44bcb4 100644
+--- a/sympy/printing/tests/test_repr.py
++++ b/sympy/printing/tests/test_repr.py
+@@ -193,6 +193,17 @@ def test_tuple():
+     sT((x, y), "(Symbol('x'), Symbol('y'))")
+ 
+ 
++def test_dict():
++    sT({x: y}, "{Symbol('x'): Symbol('y')}")
++    sT({1: x}, "{1: Symbol('x')}")
++
++
++def test_set():
++    sT({x}, "set([Symbol('x')])")
++    # order of a set is not deterministic, so just check the round trip
++    assert eval(srepr({x, y})) == {x, y}
++
++
+ def test_WildFunction():
+     sT(WildFunction('w'), "WildFunction('w')")
+ 

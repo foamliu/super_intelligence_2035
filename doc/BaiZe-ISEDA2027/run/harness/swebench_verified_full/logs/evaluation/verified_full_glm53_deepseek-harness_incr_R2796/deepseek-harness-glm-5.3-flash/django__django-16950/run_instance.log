@@ -1,0 +1,24 @@
+2026-11-19 23:59:26,126 - INFO - Creating container for django__django-16950...
+2026-11-19 23:59:26,161 - INFO - Container for django__django-16950 created: c9a4a5694f5679e1f37b3f3290eb75435578b020b9e2e290a8b3e807496aa6c5
+2026-11-19 23:59:26,959 - INFO - Container for django__django-16950 started: c9a4a5694f5679e1f37b3f3290eb75435578b020b9e2e290a8b3e807496aa6c5
+2026-11-19 23:59:26,961 - INFO - Intermediate patch for django__django-16950 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2796/deepseek-harness-glm-5.3-flash/django__django-16950/patch.diff, now applying to container...
+2026-11-19 23:59:27,098 - INFO - Failed to apply patch to container: git apply --verbose
+2026-11-19 23:59:28,339 - INFO - Failed to apply patch to container: git apply --verbose --3way
+2026-11-19 23:59:28,656 - INFO - Failed to apply patch to container: git apply --verbose --reject
+2026-11-19 23:59:28,971 - INFO - >>>>> Applied Patch:
+patching file python3-django_2%3a3.2.12-2ubuntu1.29_all.deb
+
+2026-11-19 23:59:29,105 - INFO - Git diff before:
+
+2026-11-19 23:59:29,108 - INFO - Eval script for django__django-16950 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2796/deepseek-harness-glm-5.3-flash/django__django-16950/eval.sh; copying to container...
+2026-11-19 23:59:37,459 - INFO - Test runtime: 8.28 seconds
+2026-11-19 23:59:37,461 - INFO - Test output for django__django-16950 written to logs/evaluation/verified_full_glm53_deepseek-harness_incr_R2796/deepseek-harness-glm-5.3-flash/django__django-16950/test_output.txt
+2026-11-19 23:59:37,522 - INFO - Git diff after:
+
+2026-11-19 23:59:37,522 - INFO - Grading answer for django__django-16950...
+2026-11-19 23:59:37,524 - INFO - report: {'django__django-16950': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ["If form data is provided, a parent's auto-generated alternate key is"]}, 'PASS_TO_PASS': {'success': ['#24377 - Inlines with a model field default should ignore that default', "#24377 - If we're adding a new object, a parent's auto-generated pk", '#24958 - Variant of test_inlineformset_factory_nulls_default_pks for'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16950: resolved: False
+2026-11-19 23:59:37,525 - INFO - Attempting to stop container sweb.eval.django__django-16950.verified_full_glm53_deepseek-harness_incr_R2796...
+2026-11-19 23:59:53,651 - INFO - Container sweb.eval.django__django-16950.verified_full_glm53_deepseek-harness_incr_R2796 stopped successfully.
+2026-11-19 23:59:53,651 - INFO - Attempting to remove container sweb.eval.django__django-16950.verified_full_glm53_deepseek-harness_incr_R2796...
+2026-11-19 23:59:53,962 - INFO - Container sweb.eval.django__django-16950.verified_full_glm53_deepseek-harness_incr_R2796 removed successfully.

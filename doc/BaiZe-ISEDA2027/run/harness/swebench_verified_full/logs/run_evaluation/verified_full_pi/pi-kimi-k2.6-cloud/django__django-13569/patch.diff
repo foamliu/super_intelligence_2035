@@ -1,0 +1,42 @@
+diff --git a/django/db/models/functions/math.py b/django/db/models/functions/math.py
+index 304e112225..79f9f8a5b3 100644
+--- a/django/db/models/functions/math.py
++++ b/django/db/models/functions/math.py
+@@ -145,6 +145,9 @@ class Random(NumericOutputFieldMixin, Func):
+     function = 'RANDOM'
+     arity = 0
+ 
++    def get_group_by_cols(self, alias=None):
++        return []
++
+     def as_mysql(self, compiler, connection, **extra_context):
+         return super().as_sql(compiler, connection, function='RAND', **extra_context)
+ 
+@@ -154,7 +157,6 @@ class Random(NumericOutputFieldMixin, Func):
+     def as_sqlite(self, compiler, connection, **extra_context):
+         return super().as_sql(compiler, connection, function='RAND', **extra_context)
+ 
+-
+ class Round(Transform):
+     function = 'ROUND'
+     lookup_name = 'round'
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index f8aeceb2d0..218d60fae7 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -1315,3 +1315,15 @@ class AggregateTestCase(TestCase):
+         # with self.assertNumQueries(1) as ctx:
+         #     self.assertSequenceEqual(books_qs, [book])
+         # self.assertEqual(ctx[0]['sql'].count('SELECT'), 2)
++
++    def test_order_by_random_with_aggregation(self):
++        """Ordering by ? shouldn't add RANDOM() to GROUP BY (refs #33199)."""
++        publishers = Publisher.objects.annotate(
++            num_books=Count('book'),
++        ).order_by('?').values('id', 'num_books')
++        # Should return one row per publisher with correct counts.
++        for publisher in publishers:
++            self.assertEqual(
++                publisher['num_books'],
++                Book.objects.filter(publisher_id=publisher['id']).count(),
++            )

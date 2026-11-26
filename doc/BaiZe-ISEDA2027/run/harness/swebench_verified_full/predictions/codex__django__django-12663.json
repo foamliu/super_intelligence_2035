@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-12663",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/utils/functional.py b/django/utils/functional.py\nindex 6d38f932f..d529f1478 100644\n--- a/django/utils/functional.py\n+++ b/django/utils/functional.py\n@@ -322,6 +322,8 @@ class LazyObject:\n \n     __bytes__ = new_method_proxy(bytes)\n     __str__ = new_method_proxy(str)\n+    __int__ = new_method_proxy(int)\n+    __float__ = new_method_proxy(float)\n     __bool__ = new_method_proxy(bool)\n \n     # Introspection support\ndiff --git a/tests/utils_tests/test_lazyobject.py b/tests/utils_tests/test_lazyobject.py\nindex e5bccc636..cc3748f84 100644\n--- a/tests/utils_tests/test_lazyobject.py\n+++ b/tests/utils_tests/test_lazyobject.py\n@@ -91,6 +91,14 @@ class LazyObjectTestCase(TestCase):\n         for t in [True, 1, (1,), {1: 2}, [1], object(), {1}]:\n             self.assertTrue(t)\n \n+    def test_int(self):\n+        obj = self.lazy_wrap(42)\n+        self.assertEqual(int(obj), 42)\n+\n+    def test_float(self):\n+        obj = self.lazy_wrap(3.14)\n+        self.assertEqual(float(obj), 3.14)\n+\n     def test_dir(self):\n         obj = self.lazy_wrap('foo')\n         self.assertEqual(dir(obj), dir('foo'))\n"
+  }
+]

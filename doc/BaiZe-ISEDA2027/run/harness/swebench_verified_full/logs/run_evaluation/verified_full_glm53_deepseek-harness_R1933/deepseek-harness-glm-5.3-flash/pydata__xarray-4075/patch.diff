@@ -1,0 +1,64 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index 447aaf5..18996f5 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -87,6 +87,8 @@ Bug fixes
+ ~~~~~~~~~
+ - Support dark mode in VS code (:issue:`4024`)
+   By `Keisuke Fujii <https://github.com/fujiisoup>`_.
++- ``ValueError`` is now raised when passing boolean ``weights`` to ``weighted`` operations
++  instead of silently producing wrong results. By `Mathias Hauser <https://github.com/mathause>`_.
+ - ``ValueError`` is raised when ``fill_value`` is not a scalar in :py:meth:`full_like`. (:issue:`3977`)
+   By `Huite Bootsma <https://github.com/huite>`_.
+ - Fix wrong order in converting a ``pd.Series`` with a MultiIndex to ``DataArray``. (:issue:`3951`)
+diff --git a/xarray/core/weighted.py b/xarray/core/weighted.py
+index 996d2e4..d22c051 100644
+--- a/xarray/core/weighted.py
++++ b/xarray/core/weighted.py
+@@ -106,6 +106,12 @@ class Weighted:
+                 "Missing values can be replaced by `weights.fillna(0)`."
+             )
+ 
++        if weights.dtype.kind == "b":
++            raise ValueError(
++                "`weights` cannot contain booleans. "
++                "They can be converted by `weights.astype(int)`."
++            )
++
+         self.obj = obj
+         self.weights = weights
+ 
+@@ -142,6 +148,10 @@ class Weighted:
+         # we need to mask data values that are nan; else the weights are wrong
+         mask = da.notnull()
+ 
++        # `dot` does not like boolean arrays (not sure why)
++        # bools could also silently give the wrong answer
++        mask = mask.astype(int)
++
+         sum_of_weights = self._reduce(mask, self.weights, dim=dim, skipna=False)
+ 
+         # 0-weights are not valid
+diff --git a/xarray/tests/test_weighted.py b/xarray/tests/test_weighted.py
+index 2453121..4fb907c 100644
+--- a/xarray/tests/test_weighted.py
++++ b/xarray/tests/test_weighted.py
+@@ -29,6 +29,18 @@ def test_weighted_weights_nan_raises(as_dataset, weights):
+         data.weighted(DataArray(weights))
+ 
+ 
++@pytest.mark.parametrize("as_dataset", (True, False))
++@pytest.mark.parametrize("weights", ([True, True, False], [True, False, True]))
++def test_weighted_weights_bool_raises(as_dataset, weights):
++
++    data = DataArray([1, 2, 3])
++    if as_dataset:
++        data = data.to_dataset(name="data")
++
++    with pytest.raises(ValueError, match="`weights` cannot contain booleans."):
++        data.weighted(DataArray(weights))
++
++
+ @pytest.mark.parametrize(
+     ("weights", "expected"),
+     (([1, 2], 3), ([2, 0], 2), ([0, 0], np.nan), ([-1, 1], np.nan)),

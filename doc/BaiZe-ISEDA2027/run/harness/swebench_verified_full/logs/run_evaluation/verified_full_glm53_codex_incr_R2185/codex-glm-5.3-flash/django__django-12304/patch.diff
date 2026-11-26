@@ -1,0 +1,53 @@
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143ddaf..ac818cdf28 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -61,6 +61,8 @@ class ChoicesMeta(enum.EnumMeta):
+ class Choices(enum.Enum, metaclass=ChoicesMeta):
+     """Class for creating enumerated choices."""
+ 
++    do_not_call_in_templates = True
++
+     def __str__(self):
+         """
+         Use value when cast to str, so that Choices set as model instance
+diff --git a/docs/ref/models/fields.txt b/docs/ref/models/fields.txt
+index d321506d99..6f1ca12238 100644
+--- a/docs/ref/models/fields.txt
++++ b/docs/ref/models/fields.txt
+@@ -223,6 +223,8 @@ modifications:
+   ``.choices``, ``.labels``, ``.values``, and ``.names`` -- to make it easier
+   to access lists of those separate parts of the enumeration. Use ``.choices``
+   as a suitable value to pass to :attr:`~Field.choices` in a field definition.
++* Enumeration classes are not called by the template engine, so they can be
++  passed to templates and compared with enumeration members.
+ * The use of :func:`enum.unique()` is enforced to ensure that values cannot be
+   defined multiple times. This is unlikely to be expected in choices for a
+   field.
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index b9356479de..147b9e438c 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -5,6 +5,7 @@ import uuid
+ 
+ from django.db import models
+ from django.test import SimpleTestCase
++from django.template import Context, Template
+ from django.utils.functional import Promise
+ from django.utils.translation import gettext_lazy as _
+ 
+@@ -149,6 +150,14 @@ class ChoicesTests(SimpleTestCase):
+                 with self.subTest(member=member):
+                     self.assertEqual(str(test[member.name]), str(member.value))
+ 
++    def test_do_not_call_in_templates(self):
++        template = Template('{% if student.year_in_school == YearInSchool.FRESHMAN %}Freshman{% endif %}')
++        context = Context({
++            'student': {'year_in_school': YearInSchool.FRESHMAN},
++            'YearInSchool': YearInSchool,
++        })
++        self.assertEqual(template.render(context), 'Freshman')
++
+ 
+ class Separator(bytes, models.Choices):
+     FS = b'\x1c', 'File Separator'

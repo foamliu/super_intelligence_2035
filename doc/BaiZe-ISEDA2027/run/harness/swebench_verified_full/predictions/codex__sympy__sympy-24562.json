@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-24562",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py\nindex 52f7ea45..d0233e1d 100644\n--- a/sympy/core/numbers.py\n+++ b/sympy/core/numbers.py\n@@ -1626,9 +1626,15 @@ def __new__(cls, p, q=None, gcd=None):\n             gcd = 1\n \n         if not isinstance(p, SYMPY_INTS):\n-            p = Rational(p)\n-            q *= p.q\n-            p = p.p\n+            if not isinstance(q, SYMPY_INTS):\n+                p_r = Rational(p)\n+                q_r = Rational(q)\n+                p = p_r.p * q_r.q\n+                q = p_r.q * q_r.p\n+            else:\n+                p = Rational(p)\n+                q *= p.q\n+                p = p.p\n         else:\n             p = int(p)\n \n"
+  }
+]

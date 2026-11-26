@@ -1,0 +1,83 @@
+diff --git a/django/core/servers/basehttp.py b/django/core/servers/basehttp.py
+index fef5532e5..397510b77 100644
+--- a/django/core/servers/basehttp.py
++++ b/django/core/servers/basehttp.py
+@@ -147,6 +147,30 @@ class ServerHandler(simple_server.ServerHandler):
+         self.get_stdin().read()
+         super().close()
+ 
++    def finish_response(self):
++        if self.environ.get("REQUEST_METHOD") == "HEAD":
++            try:
++                # Avoid iterating over self.result for HEAD requests
++                # since content-length is computed from write() calls
++                # during result iteration.
++                if not self.result_is_file() or not self.sendfile():
++                    for data in self.result:
++                        pass
++                self.finish_content()
++            except:
++                # Call close() on the iterable returned by the WSGI
++                # application in case of an exception.
++                if hasattr(self.result, "close"):
++                    self.result.close()
++                raise
++            else:
++                # We only call close() when no exception is raised, because
++                # it will set status, result, headers, and environ fields to
++                # None. See bpo-29183 for more details.
++                self.close()
++        else:
++            super().finish_response()
++
+ 
+ class WSGIRequestHandler(simple_server.WSGIRequestHandler):
+     protocol_version = "HTTP/1.1"
+diff --git a/tests/servers/test_basehttp.py b/tests/servers/test_basehttp.py
+index a837505fe..b017ce765 100644
+--- a/tests/servers/test_basehttp.py
++++ b/tests/servers/test_basehttp.py
+@@ -106,6 +106,43 @@ class WSGIRequestHandlerTestCase(SimpleTestCase):
+ 
+         self.assertEqual(body, b"HTTP_SOME_HEADER:good")
+ 
++    def test_head_request_does_not_include_body(self):
++        """
++        Response body isn't returned for HEAD requests.
++        Regression test for #28005.
++        """
++
++        def test_app(environ, start_response):
++            start_response("200 OK", [("Content-Type", "text/html")])
++            return [b"Hello World"]
++
++        rfile = BytesIO()
++        rfile.write(b"HEAD / HTTP/1.1\r\nHost: localhost\r\n\r\n")
++        rfile.seek(0)
++
++        class UnclosableBytesIO(BytesIO):
++            def close(self):
++                pass
++
++        wfile = UnclosableBytesIO()
++
++        def makefile(mode, *a, **kw):
++            if mode == "rb":
++                return rfile
++            elif mode == "wb":
++                return wfile
++
++        request = Stub(makefile=makefile)
++        server = Stub(base_environ={}, get_app=lambda: test_app)
++
++        # Prevent logging from appearing in test output.
++        with self.assertLogs("django.server", "INFO"):
++            WSGIRequestHandler(request, "192.168.0.2", server)
++
++        wfile.seek(0)
++        response = wfile.read()
++        self.assertNotIn(b"Hello World", response)
++
+ 
+ class WSGIServerTestCase(SimpleTestCase):
+     request_factory = RequestFactory()

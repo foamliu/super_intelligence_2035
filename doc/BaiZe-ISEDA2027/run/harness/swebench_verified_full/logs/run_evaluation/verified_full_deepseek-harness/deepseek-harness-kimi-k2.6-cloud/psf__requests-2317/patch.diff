@@ -1,0 +1,112 @@
+diff --git a/requests/sessions.py b/requests/sessions.py
+index d701ff2..dfce7cf 100644
+--- a/requests/sessions.py
++++ b/requests/sessions.py
+@@ -13,7 +13,7 @@ from collections import Mapping
+ from datetime import datetime
+ 
+ from .auth import _basic_auth_str
+-from .compat import cookielib, OrderedDict, urljoin, urlparse, builtin_str
++from .compat import cookielib, OrderedDict, urljoin, urlparse
+ from .cookies import (
+     cookiejar_from_dict, extract_cookies_to_jar, RequestsCookieJar, merge_cookies)
+ from .models import Request, PreparedRequest, DEFAULT_REDIRECT_LIMIT
+@@ -425,7 +425,7 @@ class Session(SessionRedirectMixin):
+             If Tuple, ('cert', 'key') pair.
+         """
+ 
+-        method = builtin_str(method)
++        method = to_native_string(method)
+ 
+         # Create the Request.
+         req = Request(
+diff --git a/test_fix.py b/test_fix.py
+new file mode 100644
+index 0000000..cc65c56
+--- /dev/null
++++ b/test_fix.py
+@@ -0,0 +1,84 @@
++#!/usr/bin/env python3
++"""
++Test to verify the fix for the binary method string bug.
++
++Issue: When `method` is passed as a bytes object (e.g., b'GET'),
++`builtin_str(method)` in Python 3 would convert it to the literal string
++"b'GET'" instead of "GET". This would cause requests to fail with 404.
++
++The fix replaces `builtin_str(method)` with `to_native_string(method)`
++which properly handles bytes by decoding them.
++"""
++
++import sys
++
++# Simulate the relevant code from requests/compat.py and requests/utils.py
++is_py2 = (sys.version_info[0] == 2)
++is_py3 = (sys.version_info[0] == 3)
++builtin_str = str
++
++def to_native_string(string, encoding='ascii'):
++    """
++    Given a string object, regardless of type, returns a representation of that
++    string in the native string type, encoding and decoding where necessary.
++    This assumes ASCII unless told otherwise.
++    """
++    out = None
++
++    if isinstance(string, builtin_str):
++        out = string
++    else:
++        if is_py2:
++            out = string.encode(encoding)
++        else:
++            out = string.decode(encoding)
++
++    return out
++
++# Test 1: bytes -> should produce 'GET' with to_native_string
++method_bytes = b'GET'
++
++old_result = builtin_str(method_bytes)
++new_result = to_native_string(method_bytes)
++
++print(f"Input: {method_bytes!r}")
++print(f"Old behavior (builtin_str): {old_result!r}")
++print(f"New behavior (to_native_string): {new_result!r}")
++
++assert old_result == "b'GET'", f"Expected old behavior to produce \"b'GET'\", got {old_result!r}"
++assert new_result == 'GET', f"Expected new behavior to produce 'GET', got {new_result!r}"
++
++# Test 2: str -> should produce 'GET' with both
++method_str = 'GET'
++old_result_str = builtin_str(method_str)
++new_result_str = to_native_string(method_str)
++
++print(f"\nInput: {method_str!r}")
++print(f"Old behavior (builtin_str): {old_result_str!r}")
++print(f"New behavior (to_native_string): {new_result_str!r}")
++
++assert old_result_str == 'GET'
++assert new_result_str == 'GET'
++
++# Test 3: unicode str -> should work
++method_unicode = u'POST'
++old_result_uni = builtin_str(method_unicode)
++new_result_uni = to_native_string(method_unicode)
++
++print(f"\nInput: {method_unicode!r}")
++print(f"Old behavior (builtin_str): {old_result_uni!r}")
++print(f"New behavior (to_native_string): {new_result_uni!r}")
++
++assert old_result_uni == 'POST'
++assert new_result_uni == 'POST'
++
++# Test 4: bytes POST
++method_bytes_post = b'POST'
++new_result_post = to_native_string(method_bytes_post)
++print(f"\nInput: {method_bytes_post!r}")
++print(f"New behavior (to_native_string): {new_result_post!r}")
++assert new_result_post == 'POST'
++
++print("\n" + "="*50)
++print("All tests passed! The fix works correctly.")
++print("="*50)

@@ -1,0 +1,171 @@
+diff --git a/doc/extdev/appapi.rst b/doc/extdev/appapi.rst
+index 78e88b0..1b93771 100644
+--- a/doc/extdev/appapi.rst
++++ b/doc/extdev/appapi.rst
+@@ -175,6 +175,8 @@ type for that event:
+          6. source-read(app, docname, source)
+          7. run source parsers: text -> docutils.document
+             - parsers can be added with the app.add_source_parser() API
++            - event.include-read(app, relative_path, parent_docname, content)
++              is called for each include directive
+          8. apply transforms based on priority: docutils.document -> docutils.document
+             - event.doctree-read(app, doctree) is called in the middle of transforms,
+               transforms come before/after this event depending on their priority.
+@@ -260,6 +262,15 @@ Here is a more detailed list of these events.
+ 
+    .. versionadded:: 0.5
+ 
++.. event:: include-read (app, relative_path, parent_docname, content)
++
++   Emitted when a file has been read with the :rst:dir:`include` directive.
++   The *content* argument is a list whose single element is the contents of
++   the included file.  You can process the contents and replace this item to
++   implement source-level transformations on included files.
++
++   .. versionadded:: 7.2
++
+ .. event:: object-description-transform (app, domain, objtype, contentnode)
+ 
+    Emitted when an object description directive has run.  The *domain* and
+diff --git a/sphinx/directives/other.py b/sphinx/directives/other.py
+index 19f7c0a..aa3ef1f 100644
+--- a/sphinx/directives/other.py
++++ b/sphinx/directives/other.py
+@@ -1,6 +1,8 @@
+ from __future__ import annotations
+ 
+ import re
++from os.path import relpath
++from pathlib import Path
+ from typing import TYPE_CHECKING, Any, cast
+ 
+ from docutils import nodes
+@@ -8,6 +10,7 @@ from docutils.parsers.rst import directives
+ from docutils.parsers.rst.directives.admonitions import BaseAdmonition
+ from docutils.parsers.rst.directives.misc import Class
+ from docutils.parsers.rst.directives.misc import Include as BaseInclude
++from docutils.statemachine import StateMachine
+ 
+ from sphinx import addnodes
+ from sphinx.domains.changeset import VersionChange  # noqa: F401  # for compatibility
+@@ -369,8 +372,40 @@ class Include(BaseInclude, SphinxDirective):
+     """
+ 
+     def run(self) -> list[Node]:
+-        if self.arguments[0].startswith('<') and \
+-           self.arguments[0].endswith('>'):
++        # To properly emit "include-read" events from included RST text,
++        # we must patch the ``StateMachine.insert_input()`` method.
++        # In the future, docutils will hopefully offer a way for Sphinx
++        # to provide the RST parser to use
++        # when parsing RST text that comes in via Include directive.
++        def _insert_input(include_lines: list[str], source: str) -> None:
++            # First, we need to combine the lines back into text so that
++            # we can send it with the include-read event.
++            # In docutils 0.18 and later, there are two lines at the end
++            # that act as markers.
++            # We must preserve them and leave them out of the include-read event:
++            text = '\n'.join(include_lines[:-2])
++
++            path = Path(relpath(Path(source).resolve(), start=self.env.srcdir))
++            docname = self.env.docname
++
++            # Emit the "include-read" event
++            arg = [text]
++            self.env.events.emit('include-read', path, docname, arg)
++            text = arg[0]
++
++            # Split back into lines and reattach the two marker lines
++            include_lines = text.splitlines() + include_lines[-2:]
++
++            # Call the parent implementation.
++            # Note that this snake does not eat its tail because we patch
++            # the *Instance* method and this call is to the *Class* method.
++            return StateMachine.insert_input(self.state_machine, include_lines, source)
++
++        # Only enable this patch if there are listeners for 'include-read'.
++        if self.env.events.listeners.get('include-read'):
++            self.state_machine.insert_input = _insert_input  # type: ignore[method-assign]
++
++        if self.arguments[0].startswith('<') and self.arguments[0].endswith('>'):
+             # docutils "standard" includes, do not do path processing
+             return super().run()
+         rel_filename, filename = self.env.relfn2path(self.arguments[0])
+diff --git a/sphinx/events.py b/sphinx/events.py
+index c3fdb37..dad33aa 100644
+--- a/sphinx/events.py
++++ b/sphinx/events.py
+@@ -38,6 +38,7 @@ core_events = {
+     'env-before-read-docs': 'env, docnames',
+     'env-check-consistency': 'env',
+     'source-read': 'docname, source text',
++    'include-read': 'relative path, parent docname, source text',
+     'doctree-read': 'the doctree before being pickled',
+     'env-merge-info': 'env, read docnames, other env instance',
+     'missing-reference': 'env, node, contnode',
+diff --git a/tests/roots/test-directive-include/conf.py b/tests/roots/test-directive-include/conf.py
+new file mode 100644
+index 0000000..944b461
+--- /dev/null
++++ b/tests/roots/test-directive-include/conf.py
+@@ -0,0 +1,2 @@
++project = 'test'
++extensions = []
+diff --git a/tests/roots/test-directive-include/included.rst b/tests/roots/test-directive-include/included.rst
+new file mode 100644
+index 0000000..0cc6ba3
+--- /dev/null
++++ b/tests/roots/test-directive-include/included.rst
+@@ -0,0 +1,4 @@
++Included
++========
++
++&REPLACE_ME;
+diff --git a/tests/roots/test-directive-include/index.rst b/tests/roots/test-directive-include/index.rst
+new file mode 100644
+index 0000000..2264ed4
+--- /dev/null
++++ b/tests/roots/test-directive-include/index.rst
+@@ -0,0 +1,6 @@
++Test
++====
++
++.. include:: included.rst
++
++&REPLACE_ME;
+diff --git a/tests/test_directive_other.py b/tests/test_directive_other.py
+index f221db0..6e5f745 100644
+--- a/tests/test_directive_other.py
++++ b/tests/test_directive_other.py
+@@ -148,3 +148,31 @@ def test_toctree_twice(app):
+     assert_node(doctree[0][0],
+                 entries=[(None, 'foo'), (None, 'foo')],
+                 includefiles=['foo', 'foo'])
++
++
++@pytest.mark.sphinx(testroot='directive-include')
++def test_include_read_event(app, status, warning):
++    include_read_calls = []
++    source_read_calls = []
++
++    def on_source_read(app, docname, content):
++        source_read_calls.append(docname)
++        content[0] = content[0].replace('&REPLACE_ME;', 'REPLACED')
++
++    def on_include_read(app, relative_path, parent_docname, content):
++        include_read_calls.append((relative_path, parent_docname))
++        content[0] = content[0].replace('&REPLACE_ME;', 'REPLACED')
++
++    app.connect('source-read', on_source_read)
++    app.connect('include-read', on_include_read)
++    app.builder.read_doc('index')
++
++    assert 'index' in source_read_calls
++    assert len(include_read_calls) == 1
++    assert str(include_read_calls[0][0]) == 'included.rst'
++    assert include_read_calls[0][1] == 'index'
++
++    doctree = app.env.get_doctree('index')
++    paragraphs = [node.astext() for node in doctree.findall(nodes.paragraph)]
++    assert 'REPLACED' in paragraphs
++    assert '&REPLACE_ME;' not in paragraphs

@@ -1,0 +1,39 @@
+diff --git a/requests/sessions.py b/requests/sessions.py
+index d701ff2..0da40a8 100644
+--- a/requests/sessions.py
++++ b/requests/sessions.py
+@@ -13,7 +13,7 @@ from collections import Mapping
+ from datetime import datetime
+ 
+ from .auth import _basic_auth_str
+-from .compat import cookielib, OrderedDict, urljoin, urlparse, builtin_str
++from .compat import cookielib, OrderedDict, urljoin, urlparse, builtin_str, is_py3
+ from .cookies import (
+     cookiejar_from_dict, extract_cookies_to_jar, RequestsCookieJar, merge_cookies)
+ from .models import Request, PreparedRequest, DEFAULT_REDIRECT_LIMIT
+@@ -426,6 +426,8 @@ class Session(SessionRedirectMixin):
+         """
+ 
+         method = builtin_str(method)
++        if is_py3 and isinstance(method, bytes):
++            method = method.decode('ascii')
+ 
+         # Create the Request.
+         req = Request(
+diff --git a/test_requests.py b/test_requests.py
+index 467c5bc..bebb3bf 100755
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -523,6 +523,12 @@ class RequestsTestCase(unittest.TestCase):
+             method=u('POST'), url=httpbin('post'), files=files)
+         assert r.status_code == 200
+ 
++    def test_bytes_method_name(self):
++        files = {'file': open('test_requests.py', 'rb')}
++        r = requests.request(
++            method=b'POST', url=httpbin('post'), files=files)
++        assert r.status_code == 200
++
+     def test_custom_content_type(self):
+         r = requests.post(
+             httpbin('post'),

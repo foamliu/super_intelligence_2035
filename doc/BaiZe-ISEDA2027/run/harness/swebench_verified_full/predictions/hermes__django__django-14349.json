@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-14349",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/core/validators.py b/django/core/validators.py\nindex a385819510..4810c7b96a 100644\n--- a/django/core/validators.py\n+++ b/django/core/validators.py\n@@ -101,6 +101,9 @@ class URLValidator(RegexValidator):\n     def __call__(self, value):\n         if not isinstance(value, str):\n             raise ValidationError(self.message, code=self.code, params={'value': value})\n+        # bpo-43882: urlsplit strips trailing newlines and tabs.\n+        if re.search(r'[\\n\\r\\t]', value):\n+            raise ValidationError(self.message, code=self.code, params={'value': value})\n         # Check if the scheme is valid.\n         scheme = value.split('://')[0].lower()\n         if scheme not in self.schemes:\n"
+  }
+]

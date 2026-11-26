@@ -1,0 +1,49 @@
+diff --git a/sympy/core/assumptions.py b/sympy/core/assumptions.py
+index ce4dd30f2e..4c1ad5873f 100644
+--- a/sympy/core/assumptions.py
++++ b/sympy/core/assumptions.py
+@@ -187,6 +187,8 @@
+ 
+     'zero           ->  even & finite',
+ 
++    'integer        ->  finite',
++
+     'prime          ->  integer & positive',
+     'composite      ->  integer & positive & !prime',
+     '!composite     ->  !positive | !even | prime',
+diff --git a/sympy/core/tests/test_assumptions.py b/sympy/core/tests/test_assumptions.py
+index 4db1c1c24a..253aa71cb9 100644
+--- a/sympy/core/tests/test_assumptions.py
++++ b/sympy/core/tests/test_assumptions.py
+@@ -98,7 +98,7 @@ def test_infinity():
+     oo = S.Infinity
+ 
+     assert oo.is_commutative is True
+-    assert oo.is_integer is None
++    assert oo.is_integer is False
+     assert oo.is_rational is None
+     assert oo.is_algebraic is None
+     assert oo.is_transcendental is None
+@@ -125,7 +125,7 @@ def test_neg_infinity():
+     mm = S.NegativeInfinity
+ 
+     assert mm.is_commutative is True
+-    assert mm.is_integer is None
++    assert mm.is_integer is False
+     assert mm.is_rational is None
+     assert mm.is_algebraic is None
+     assert mm.is_transcendental is None
+@@ -594,11 +594,13 @@ def test_other_symbol():
+     assert x.is_even is True
+     assert x.is_odd is False
+     assert x.is_integer is True
++    assert x.is_finite is True
+ 
+     x = Symbol('x', even=False)
+     assert x.is_even is False
+     assert x.is_odd is None
+     assert x.is_integer is None
++    assert x.is_finite is None
+ 
+     x = Symbol('x', integer=True, nonnegative=True)
+     assert x.is_integer is True

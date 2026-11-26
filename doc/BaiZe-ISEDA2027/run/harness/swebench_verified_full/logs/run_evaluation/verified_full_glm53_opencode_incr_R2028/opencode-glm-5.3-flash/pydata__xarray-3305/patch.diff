@@ -1,0 +1,124 @@
+diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py
+index d6f0da4..bcc6604 100644
+--- a/xarray/core/dataset.py
++++ b/xarray/core/dataset.py
+@@ -4752,6 +4752,9 @@ class Dataset(Mapping, ImplementsDatasetReduce, DataWithCoords):
+ 
+         q = np.asarray(q, dtype=np.float64)
+ 
++        if keep_attrs is None:
++            keep_attrs = _get_keep_attrs(default=False)
++
+         variables = OrderedDict()
+         for name, var in self.variables.items():
+             reduce_dims = [d for d in var.dims if d in dims]
+@@ -4768,7 +4771,10 @@ class Dataset(Mapping, ImplementsDatasetReduce, DataWithCoords):
+                             # the former is often more efficient
+                             reduce_dims = None
+                         variables[name] = var.quantile(
+-                            q, dim=reduce_dims, interpolation=interpolation
++                            q,
++                            dim=reduce_dims,
++                            interpolation=interpolation,
++                            keep_attrs=keep_attrs,
+                         )
+ 
+             else:
+@@ -4777,8 +4783,6 @@ class Dataset(Mapping, ImplementsDatasetReduce, DataWithCoords):
+         # construct the new dataset
+         coord_names = {k for k in self.coords if k in variables}
+         indexes = OrderedDict((k, v) for k, v in self.indexes.items() if k in variables)
+-        if keep_attrs is None:
+-            keep_attrs = _get_keep_attrs(default=False)
+         attrs = self.attrs if keep_attrs else None
+         new = self._replace_with_new_dims(
+             variables, coord_names=coord_names, attrs=attrs, indexes=indexes
+diff --git a/xarray/core/variable.py b/xarray/core/variable.py
+index 2e9906c..95540e6 100644
+--- a/xarray/core/variable.py
++++ b/xarray/core/variable.py
+@@ -1592,7 +1592,7 @@ class Variable(
+         """
+         return self.broadcast_equals(other, equiv=duck_array_ops.array_notnull_equiv)
+ 
+-    def quantile(self, q, dim=None, interpolation="linear"):
++    def quantile(self, q, dim=None, interpolation="linear", keep_attrs=False):
+         """Compute the qth quantile of the data along the specified dimension.
+ 
+         Returns the qth quantiles(s) of the array elements.
+@@ -1607,7 +1607,6 @@ class Variable(
+         interpolation : {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
+             This optional parameter specifies the interpolation method to
+             use when the desired quantile lies between two data points
+-            ``i < j``:
+                 * linear: ``i + (j - i) * fraction``, where ``fraction`` is
+                   the fractional part of the index surrounded by ``i`` and
+                   ``j``.
+@@ -1615,6 +1614,10 @@ class Variable(
+                 * higher: ``j``.
+                 * nearest: ``i`` or ``j``, whichever is nearest.
+                 * midpoint: ``(i + j) / 2``.
++        keep_attrs : bool, optional
++            If True, the variable's attributes (`attrs`) will be copied from
++            the original object to the new one.  If False (default), the new
++            object will be returned without attributes.
+ 
+         Returns
+         -------
+@@ -1658,7 +1661,11 @@ class Variable(
+         qs = np.nanpercentile(
+             self.data, q * 100.0, axis=axis, interpolation=interpolation
+         )
+-        return Variable(new_dims, qs)
++        if keep_attrs:
++            attrs = self.attrs
++        else:
++            attrs = None
++        return Variable(new_dims, qs, attrs)
+ 
+     def rank(self, dim, pct=False):
+         """Ranks the data.
+diff --git a/xarray/tests/test_dataarray.py b/xarray/tests/test_dataarray.py
+index 8c01ef9..8226b48 100644
+--- a/xarray/tests/test_dataarray.py
++++ b/xarray/tests/test_dataarray.py
+@@ -2310,6 +2310,16 @@ class TestDataArray:
+                 )
+                 np.testing.assert_allclose(actual.values, expected)
+ 
++    def test_quantile_keep_attrs(self):
++        attrs = {"units": "K"}
++        da = DataArray([0, 0], dims="x", attrs=attrs)
++
++        actual = da.quantile(0.9, dim="x", keep_attrs=True)
++        assert actual.attrs == attrs
++
++        actual = da.quantile(0.9, dim="x", keep_attrs=False)
++        assert actual.attrs == {}
++
+     def test_reduce_keep_attrs(self):
+         # Test dropped attrs
+         vm = self.va.mean()
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 814fc31..320f9c4 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -4456,6 +4456,18 @@ class TestDataset:
+             assert "dim3" in ds_quantile.dims
+             assert all(d not in ds_quantile.dims for d in dim)
+ 
++    def test_quantile_keep_attrs(self):
++        attrs = {"units": "K"}
++        ds = xr.Dataset({"a": ("x", [0, 0], attrs)}, attrs=attrs)
++
++        actual = ds.quantile(0.9, dim="x", keep_attrs=True)
++        assert actual.attrs == attrs
++        assert actual["a"].attrs == attrs
++
++        actual = ds.quantile(0.9, dim="x", keep_attrs=False)
++        assert actual.attrs == {}
++        assert actual["a"].attrs == {}
++
+     @requires_bottleneck
+     def test_rank(self):
+         ds = create_test_data(seed=1234)

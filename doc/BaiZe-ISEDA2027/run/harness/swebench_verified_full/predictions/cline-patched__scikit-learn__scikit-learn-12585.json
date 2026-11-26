@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "scikit-learn__scikit-learn-12585",
+    "model_name_or_path": "cline-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sklearn/base.py b/sklearn/base.py\nindex 56ffb18..3499827 100644\n--- a/sklearn/base.py\n+++ b/sklearn/base.py\n@@ -48,7 +48,7 @@ def clone(estimator, safe=True):\n     # XXX: not handling dictionaries\n     if estimator_type in (list, tuple, set, frozenset):\n         return estimator_type([clone(e, safe=safe) for e in estimator])\n-    elif not hasattr(estimator, 'get_params'):\n+    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):\n         if not safe:\n             return copy.deepcopy(estimator)\n         else:\ndiff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py\nindex ebcb389..41bd628 100644\n--- a/sklearn/tests/test_base.py\n+++ b/sklearn/tests/test_base.py\n@@ -135,6 +135,15 @@ def test_clone_buggy():\n     assert_raises(RuntimeError, clone, est)\n \n \n+def test_clone_estimator_type():\n+    # Check that clone works when a parameter is an estimator type (a class).\n+    from sklearn.preprocessing import StandardScaler\n+    estimator = StandardScaler(with_mean=StandardScaler)\n+    cloned = clone(estimator)\n+    assert estimator is not cloned\n+    assert estimator.with_mean is cloned.with_mean\n+\n+\n def test_clone_empty_array():\n     # Regression test for cloning estimators with empty arrays\n     clf = MyEstimator(empty=np.array([]))\n"
+  }
+]

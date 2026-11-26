@@ -1,0 +1,38 @@
+diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py
+index 79f6a7d1..7df72de9 100644
+--- a/sympy/core/numbers.py
++++ b/sympy/core/numbers.py
+@@ -1381,15 +1381,14 @@ def __int__(self):
+         return int(mlib.to_int(self._mpf_))  # uses round_fast = round_down
+ 
+     def __eq__(self, other):
+-        from sympy.logic.boolalg import Boolean
+         try:
+             other = _sympify(other)
+         except SympifyError:
+             return NotImplemented
++        if not isinstance(other, Number):
++            return False
+         if not self:
+             return not other
+-        if isinstance(other, Boolean):
+-            return False
+         if other.is_NumberSymbol:
+             if other.is_irrational:
+                 return False
+diff --git a/sympy/core/tests/test_numbers.py b/sympy/core/tests/test_numbers.py
+index 8b3e9912..d0d9a5ce 100644
+--- a/sympy/core/tests/test_numbers.py
++++ b/sympy/core/tests/test_numbers.py
+@@ -1711,6 +1711,11 @@ def test_Float_eq():
+     assert 2 == Float(2)  # as per Python
+     # but in a computation...
+     assert t**2 != t**2.0
++    # issue 20033
++    assert S(0.0) != S.false
++    assert S.false != S(0.0)
++    assert S(0.0) != S.true
++    assert S.true != S(0.0)
+ 
+ 
+ def test_int_NumberSymbols():

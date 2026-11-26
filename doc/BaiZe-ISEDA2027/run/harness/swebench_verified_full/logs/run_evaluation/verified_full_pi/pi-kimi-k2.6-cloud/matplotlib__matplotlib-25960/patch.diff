@@ -1,0 +1,124 @@
+diff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py
+index dab2bc4a5..b771d47b3 100644
+--- a/lib/matplotlib/figure.py
++++ b/lib/matplotlib/figure.py
+@@ -2274,12 +2274,59 @@ class SubFigure(FigureBase):
+             return
+         # need to figure out *where* this subplotspec is.
+         gs = self._subplotspec.get_gridspec()
++        nrows, ncols = gs.get_geometry()
++
+         wr = np.asarray(gs.get_width_ratios())
+         hr = np.asarray(gs.get_height_ratios())
+-        dx = wr[self._subplotspec.colspan].sum() / wr.sum()
+-        dy = hr[self._subplotspec.rowspan].sum() / hr.sum()
+-        x0 = wr[:self._subplotspec.colspan.start].sum() / wr.sum()
+-        y0 = 1 - hr[:self._subplotspec.rowspan.stop].sum() / hr.sum()
++
++        if gs.wspace is not None or gs.hspace is not None:
++            # Get wspace/hspace from the GridSpec, using figure or rcParams for
++            # defaults.  For subfigure positioning, we do not apply margins
++            # (left, right, top, bottom); we only apply the spacing between
++            # subfigures.
++            subplot_params = gs.get_subplot_params(self.figure)
++            left = 0
++            right = 1
++            bottom = 0
++            top = 1
++            wspace = subplot_params.wspace
++            hspace = subplot_params.hspace
++
++            cell_w = (right - left) / (ncols + wspace * (ncols - 1))
++            sep_w = wspace * cell_w
++            norm_w = cell_w * ncols / wr.sum()
++            cell_widths = wr * norm_w
++            sep_widths = [0] + [sep_w] * (ncols - 1)
++            cell_ws = np.cumsum(
++                np.column_stack([sep_widths, cell_widths]).flat)
++
++            cell_h = (top - bottom) / (nrows + hspace * (nrows - 1))
++            sep_h = hspace * cell_h
++            norm_h = cell_h * nrows / hr.sum()
++            cell_heights = hr * norm_h
++            sep_heights = [0] + [sep_h] * (nrows - 1)
++            cell_hs = np.cumsum(
++                np.column_stack([sep_heights, cell_heights]).flat)
++
++            fig_tops, fig_bottoms = (top - cell_hs).reshape((-1, 2)).T
++            fig_lefts, fig_rights = (left + cell_ws).reshape((-1, 2)).T
++
++            rows, cols = np.unravel_index(
++                [self._subplotspec.num1, self._subplotspec.num2], (nrows, ncols))
++            fig_bottom = fig_bottoms[rows].min()
++            fig_top = fig_tops[rows].max()
++            fig_left = fig_lefts[cols].min()
++            fig_right = fig_rights[cols].max()
++
++            x0 = fig_left
++            y0 = fig_bottom
++            dx = fig_right - fig_left
++            dy = fig_top - fig_bottom
++        else:
++            dx = wr[self._subplotspec.colspan].sum() / wr.sum()
++            dy = hr[self._subplotspec.rowspan].sum() / hr.sum()
++            x0 = wr[:self._subplotspec.colspan.start].sum() / wr.sum()
++            y0 = 1 - hr[:self._subplotspec.rowspan.stop].sum() / hr.sum()
+         if self.bbox_relative is None:
+             self.bbox_relative = Bbox.from_bounds(x0, y0, dx, dy)
+         else:
+diff --git a/lib/matplotlib/tests/test_figure.py b/lib/matplotlib/tests/test_figure.py
+index 474331bf9..36762412e 100644
+--- a/lib/matplotlib/tests/test_figure.py
++++ b/lib/matplotlib/tests/test_figure.py
+@@ -1422,6 +1422,51 @@ def test_subfigure_ticks():
+     np.testing.assert_allclose(ticks120, ticks300)
+ 
+ 
++def test_subfigure_wspace_hspace():
++    fig = plt.figure()
++    subfigs = fig.subfigures(2, 2, wspace=0.5, hspace=0.5)
++
++    # Check that spacing is applied between subfigures
++    np.testing.assert_allclose(subfigs[0, 0].bbox_relative.extents,
++                               [0.0, 0.6, 0.4, 1.0], rtol=1e-5)
++    np.testing.assert_allclose(subfigs[0, 1].bbox_relative.extents,
++                               [0.6, 0.6, 1.0, 1.0], rtol=1e-5)
++    np.testing.assert_allclose(subfigs[1, 0].bbox_relative.extents,
++                               [0.0, 0.0, 0.4, 0.4], rtol=1e-5)
++    np.testing.assert_allclose(subfigs[1, 1].bbox_relative.extents,
++                               [0.6, 0.0, 1.0, 0.4], rtol=1e-5)
++
++    # Check that default wspace/hspace has no spacing (backward compat)
++    fig2 = plt.figure()
++    subfigs2 = fig2.subfigures(2, 2)
++    np.testing.assert_allclose(subfigs2[0, 0].bbox_relative.extents,
++                               [0.0, 0.5, 0.5, 1.0], rtol=1e-5)
++    np.testing.assert_allclose(subfigs2[0, 1].bbox_relative.extents,
++                               [0.5, 0.5, 1.0, 1.0], rtol=1e-5)
++
++    # Check that wspace=0, hspace=0 gives no spacing
++    fig3 = plt.figure()
++    subfigs3 = fig3.subfigures(2, 2, wspace=0, hspace=0)
++    np.testing.assert_allclose(subfigs3[0, 0].bbox_relative.extents,
++                               [0.0, 0.5, 0.5, 1.0], rtol=1e-5)
++    np.testing.assert_allclose(subfigs3[0, 1].bbox_relative.extents,
++                               [0.5, 0.5, 1.0, 1.0], rtol=1e-5)
++
++    # Check with width_ratios and height_ratios
++    fig4 = plt.figure()
++    subfigs4 = fig4.subfigures(
++        2, 2, wspace=0.5, hspace=0.5,
++        width_ratios=[1, 2], height_ratios=[2, 1])
++    np.testing.assert_allclose(subfigs4[0, 0].bbox_relative.extents,
++                               [0.0, 0.466667, 0.266667, 1.0], rtol=1e-5)
++    np.testing.assert_allclose(subfigs4[0, 1].bbox_relative.extents,
++                               [0.466667, 0.466667, 1.0, 1.0], rtol=1e-5)
++    np.testing.assert_allclose(subfigs4[1, 0].bbox_relative.extents,
++                               [0.0, 0.0, 0.266667, 0.266667], rtol=1e-5)
++    np.testing.assert_allclose(subfigs4[1, 1].bbox_relative.extents,
++                               [0.466667, 0.0, 1.0, 0.266667], rtol=1e-5)
++
++
+ @image_comparison(['test_subfigure_scatter_size.png'], style='mpl20',
+                    remove_text=True)
+ def test_subfigure_scatter_size():

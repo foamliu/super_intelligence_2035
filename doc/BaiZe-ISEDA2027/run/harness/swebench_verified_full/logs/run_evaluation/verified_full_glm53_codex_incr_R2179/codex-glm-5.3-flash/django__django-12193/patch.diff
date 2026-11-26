@@ -1,0 +1,59 @@
+diff --git a/django/forms/widgets.py b/django/forms/widgets.py
+index 6fe220bea7..0b25787ebc 100644
+--- a/django/forms/widgets.py
++++ b/django/forms/widgets.py
+@@ -522,8 +522,7 @@ class CheckboxInput(Input):
+ 
+     def get_context(self, name, value, attrs):
+         if self.check_test(value):
+-            if attrs is None:
+-                attrs = {}
++            attrs = {} if attrs is None else attrs.copy()
+             attrs['checked'] = True
+         return super().get_context(name, value, attrs)
+ 
+diff --git a/tests/forms_tests/widget_tests/test_checkboxinput.py b/tests/forms_tests/widget_tests/test_checkboxinput.py
+index 6483b7f211..8b1305b4c3 100644
+--- a/tests/forms_tests/widget_tests/test_checkboxinput.py
++++ b/tests/forms_tests/widget_tests/test_checkboxinput.py
+@@ -21,6 +21,14 @@ class CheckboxInputTest(WidgetTest):
+             html='<input checked type="checkbox" name="is_cool">'
+         )
+ 
++    def test_render_true_does_not_mutate_attrs(self):
++        attrs = {'class': 'foo'}
++        self.check_html(
++            self.widget, 'is_cool', True, attrs=attrs,
++            html='<input checked class="foo" type="checkbox" name="is_cool">',
++        )
++        self.assertEqual(attrs, {'class': 'foo'})
++
+     def test_render_value(self):
+         """
+         Using any value that's not in ('', None, False, True) will check the
+diff --git a/tests/postgres_tests/test_array.py b/tests/postgres_tests/test_array.py
+index 481d93f830..251d234221 100644
+--- a/tests/postgres_tests/test_array.py
++++ b/tests/postgres_tests/test_array.py
+@@ -1001,6 +1001,21 @@ class TestSplitFormField(PostgreSQLSimpleTestCase):
+             </tr>
+         ''')
+ 
++    def test_rendering_boolean(self):
++        class SplitForm(forms.Form):
++            array = SplitArrayField(forms.BooleanField(required=False), size=3)
++
++        self.assertHTMLEqual(str(SplitForm(initial={'array': [True, False, True]})), '''
++            <tr>
++                <th><label for="id_array_0">Array:</label></th>
++                <td>
++                    <input checked id="id_array_0" name="array_0" type="checkbox">
++                    <input id="id_array_1" name="array_1" type="checkbox">
++                    <input checked id="id_array_2" name="array_2" type="checkbox">
++                </td>
++            </tr>
++        ''')
++
+     def test_invalid_char_length(self):
+         field = SplitArrayField(forms.CharField(max_length=2), size=3)
+         with self.assertRaises(exceptions.ValidationError) as cm:

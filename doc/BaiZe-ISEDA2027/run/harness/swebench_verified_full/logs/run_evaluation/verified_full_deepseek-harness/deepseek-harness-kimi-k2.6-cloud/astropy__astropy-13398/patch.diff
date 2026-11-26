@@ -1,0 +1,318 @@
+diff --git a/astropy/coordinates/builtin_frames/__init__.py b/astropy/coordinates/builtin_frames/__init__.py
+index 6fd688c..17b5244 100644
+--- a/astropy/coordinates/builtin_frames/__init__.py
++++ b/astropy/coordinates/builtin_frames/__init__.py
+@@ -48,6 +48,7 @@ from . import supergalactic_transforms
+ from . import icrs_cirs_transforms
+ from . import cirs_observed_transforms
+ from . import icrs_observed_transforms
++from . import itrs_observed_transforms
+ from . import intermediate_rotation_transforms
+ from . import ecliptic_transforms
+ 
+diff --git a/astropy/coordinates/builtin_frames/itrs_observed_transforms.py b/astropy/coordinates/builtin_frames/itrs_observed_transforms.py
+new file mode 100644
+index 0000000..a601955
+--- /dev/null
++++ b/astropy/coordinates/builtin_frames/itrs_observed_transforms.py
+@@ -0,0 +1,151 @@
++# Licensed under a 3-clause BSD style license - see LICENSE.rst
++"""
++Contains the transformation functions for getting to/from observed
++systems (AltAz, HADec) directly from ITRS.
++
++These are distinct from the ICRS/CIRS observed transforms because
++they stay entirely within the ITRS and merely convert between
++ITRS, AltAz, and HADec coordinates.  This approach is particularly
++useful for nearby objects (satellites, aircraft, etc.) where the
++standard transforms through CIRS/ICRS introduce aberration
++corrections that are inappropriate for topocentric observations.
++"""
++
++import numpy as np
++
++from astropy import units as u
++from astropy.coordinates.matrix_utilities import rotation_matrix, matrix_transpose
++from astropy.coordinates.baseframe import frame_transform_graph
++from astropy.coordinates.transformations import FunctionTransformWithFiniteDifference
++from astropy.coordinates.representation import (
++    SphericalRepresentation,
++    UnitSphericalRepresentation,
++)
++
++from .altaz import AltAz
++from .hadec import HADec
++from .itrs import ITRS
++from .utils import PIOVER2
++
++
++def _itrs_to_observed_mat(observed_frame):
++    """
++    Build the rotation matrix from ITRS to an observed frame (AltAz or HADec).
++
++    Parameters
++    ----------
++    observed_frame : `~astropy.coordinates.AltAz` or `~astropy.coordinates.HADec`
++        The frame for which to compute the rotation matrix.
++
++    Returns
++    -------
++    mat : `~numpy.ndarray`
++        A 3x3 (or stack of 3x3) rotation matrices.
++    """
++    lon, lat, height = observed_frame.location.to_geodetic('WGS84')
++    elong = lon.to_value(u.radian)
++
++    if isinstance(observed_frame, AltAz):
++        # form ITRS to AltAz matrix
++        elat = lat.to_value(u.radian)
++        # AltAz frame is left handed (az increases eastward)
++        minus_x = np.eye(3)
++        minus_x[0, 0] = -1.0
++        mat = (
++            minus_x
++            @ rotation_matrix(PIOVER2 - elat, 'y', unit=u.radian)
++            @ rotation_matrix(elong, 'z', unit=u.radian)
++        )
++    else:
++        # form ITRS to HADec matrix
++        # HADec frame is left handed (HA increases westward)
++        minus_y = np.eye(3)
++        minus_y[1, 1] = -1.0
++        mat = (
++            minus_y
++            @ rotation_matrix(elong, 'z', unit=u.radian)
++        )
++    return mat
++
++
++@frame_transform_graph.transform(
++    FunctionTransformWithFiniteDifference, ITRS, AltAz
++)
++@frame_transform_graph.transform(
++    FunctionTransformWithFiniteDifference, ITRS, HADec
++)
++def itrs_to_observed(itrs_coo, observed_frame):
++    """
++    Transform from ITRS to an observed frame (AltAz or HADec).
++
++    This transformation stays entirely within the ITRS by computing
++    a topocentric ITRS vector (subtracting the observer's geocentric
++    position) and then rotating into the local horizontal or hour-angle
++    frame.  No aberration or light-deflection corrections are applied.
++
++    The ``obstime`` of the output frame is adopted directly, because
++    ITRS positions of nearby objects should be treated as tied to the
++    rotating Earth rather than referred to the SSB.
++    """
++    # if the data are UnitSphericalRepresentation, we can skip the distance calculations
++    is_unitspherical = (
++        isinstance(itrs_coo.data, UnitSphericalRepresentation)
++        or itrs_coo.cartesian.x.unit == u.one
++    )
++
++    if is_unitspherical:
++        # For unit spherical, we just rotate the direction vector;
++        # topocentric subtraction requires distance information.
++        newcart = itrs_coo.cartesian.transform(_itrs_to_observed_mat(observed_frame))
++        srep = newcart.represent_as(UnitSphericalRepresentation)
++        return observed_frame.realize_frame(srep)
++
++    # form the topocentric ITRS position
++    topocentric_itrs_repr = (
++        itrs_coo.cartesian
++        - observed_frame.location.get_itrs(observed_frame.obstime).cartesian
++    )
++
++    # Rotate from ITRS into the local observed frame
++    rep = topocentric_itrs_repr.transform(_itrs_to_observed_mat(observed_frame))
++    srep = rep.represent_as(SphericalRepresentation)
++    return observed_frame.realize_frame(srep)
++
++
++@frame_transform_graph.transform(
++    FunctionTransformWithFiniteDifference, AltAz, ITRS
++)
++@frame_transform_graph.transform(
++    FunctionTransformWithFiniteDifference, HADec, ITRS
++)
++def observed_to_itrs(observed_coo, itrs_frame):
++    """
++    Transform from an observed frame (AltAz or HADec) to ITRS.
++
++    This is the inverse of ``itrs_to_observed``: rotate from the local
++    observed frame back to ITRS and then add the observer's geocentric
++    position to recover the geocentric ITRS coordinates.
++    """
++    # if the data are UnitSphericalRepresentation, we can skip the distance calculations
++    is_unitspherical = (
++        isinstance(observed_coo.data, UnitSphericalRepresentation)
++        or observed_coo.cartesian.x.unit == u.one
++    )
++
++    # Rotate from the local observed frame back to ITRS
++    topocentric_itrs_repr = observed_coo.cartesian.transform(
++        matrix_transpose(_itrs_to_observed_mat(observed_coo))
++    )
++
++    if is_unitspherical:
++        # For unit spherical, just return the rotated direction vector
++        srep = topocentric_itrs_repr.represent_as(UnitSphericalRepresentation)
++        return itrs_frame.realize_frame(srep)
++
++    # Add the observer's geocentric position to get the full ITRS position
++    rep = (
++        topocentric_itrs_repr
++        + observed_coo.location.get_itrs(observed_coo.obstime).cartesian
++    )
++    srep = rep.represent_as(SphericalRepresentation)
++    return itrs_frame.realize_frame(srep)
+diff --git a/astropy/coordinates/tests/test_itrs_observed_transforms.py b/astropy/coordinates/tests/test_itrs_observed_transforms.py
+new file mode 100644
+index 0000000..0f1f635
+--- /dev/null
++++ b/astropy/coordinates/tests/test_itrs_observed_transforms.py
+@@ -0,0 +1,143 @@
++# Licensed under a 3-clause BSD style license - see LICENSE.rst
++"""Tests for ITRS <- > observed frame (AltAz, HADec) transformations."""
++
++import numpy as np
++
++from astropy import units as u
++from astropy.tests.helper import assert_quantity_allclose as assert_allclose
++from astropy.time import Time
++from astropy.coordinates import (
++    EarthLocation, ITRS, AltAz, HADec, CIRS,
++    CartesianRepresentation, UnitSphericalRepresentation
++)
++
++
++class TestITRSObservedTransforms:
++    def test_straight_overhead_itrs(self):
++        """
++        With the direct ITRS->AltAz transformation, an object directly
++        above the observer in ITRS should give Alt=90 exactly.
++        """
++        t = Time('J2010')
++        obj = EarthLocation(-1*u.deg, 52*u.deg, height=10.*u.km)
++        home = EarthLocation(-1*u.deg, 52*u.deg, height=0.*u.km)
++
++        itrs_obj = obj.get_itrs(t)
++
++        # Check AltAz
++        aa = itrs_obj.transform_to(AltAz(obstime=t, location=home))
++        assert_allclose(aa.alt, 90*u.deg, atol=1*u.uas, rtol=0)
++
++        # Check HADec
++        hd = itrs_obj.transform_to(HADec(obstime=t, location=home))
++        assert_allclose(hd.ha, 0*u.hourangle, atol=1*u.uas, rtol=0)
++        assert_allclose(hd.dec, 52*u.deg, atol=1*u.uas, rtol=0)
++
++    def test_itrs_to_altaz_roundtrip(self):
++        """Test round-trip ITRS->AltAz->ITRS preserves coordinates."""
++        t = Time('J2010')
++        home = EarthLocation(-1*u.deg, 52*u.deg, height=0.*u.km)
++        obj = EarthLocation(-1*u.deg, 52*u.deg, height=10.*u.km)
++
++        itrs_obj = obj.get_itrs(t)
++        aa = itrs_obj.transform_to(AltAz(obstime=t, location=home))
++        itrs_back = aa.transform_to(ITRS(obstime=t))
++
++        assert_allclose(itrs_obj.cartesian.xyz, itrs_back.cartesian.xyz,
++                        atol=1*u.mm)
++
++    def test_itrs_to_hadec_roundtrip(self):
++        """Test round-trip ITRS->HADec->ITRS preserves coordinates."""
++        t = Time('J2010')
++        home = EarthLocation(-1*u.deg, 52*u.deg, height=0.*u.km)
++        obj = EarthLocation(-1*u.deg, 52*u.deg, height=10.*u.km)
++
++        itrs_obj = obj.get_itrs(t)
++        hd = itrs_obj.transform_to(HADec(obstime=t, location=home))
++        itrs_back = hd.transform_to(ITRS(obstime=t))
++
++        assert_allclose(itrs_obj.cartesian.xyz, itrs_back.cartesian.xyz,
++                        atol=1*u.mm)
++
++    def test_itrs_altaz_different_heights(self):
++        """
++        Test that alt-az calculations respect height of observer.
++
++        Unlike the old path through CIRS, the direct ITRS path should
++        correctly handle nearby objects.
++        """
++        time = Time('2010-1-1')
++        height = 500000. * u.km
++        el = EarthLocation.from_geodetic(lon=20*u.deg, lat=45*u.deg,
++                                         height=height)
++
++        # An object directly above the observer in ITRS
++        obj = EarthLocation.from_geodetic(lon=20*u.deg, lat=45*u.deg,
++                                          height=2*height)
++        itrs_obj = obj.get_itrs(time)
++
++        aaf = AltAz(obstime=time, location=el)
++        aa = itrs_obj.transform_to(aaf)
++
++        # Should be very close to straight overhead
++        assert_allclose(aa.alt, 90*u.deg, atol=1*u.arcmin)
++        # Distance should be approximately the height difference
++        assert_allclose(aa.distance, height, atol=1*u.km)
++
++    def test_itrs_altaz_array(self):
++        """Test with array coordinates."""
++        time = Time('2010-1-1')
++        home = EarthLocation.from_geodetic(lon=-1*u.deg, lat=52*u.deg,
++                                           height=0*u.km)
++
++        lons = np.array([0, 10, 20]) * u.deg
++        lats = np.array([50, 51, 52]) * u.deg
++        alts = np.array([100, 200, 300]) * u.km
++        objs = EarthLocation.from_geodetic(lons, lats, height=alts)
++        itrs_arr = objs.get_itrs(time)
++
++        aaf = AltAz(obstime=time, location=home)
++        aa_arr = itrs_arr.transform_to(aaf)
++
++        # they should all be different
++        assert not np.allclose(aa_arr.az.value, aa_arr.az.value[0])
++        assert not np.allclose(aa_arr.alt.value, aa_arr.alt.value[0])
++
++    def test_itrs_altaz_unitspherical(self):
++        """Test with unit spherical coordinates."""
++        t = Time('J2010')
++        home = EarthLocation(-1*u.deg, 52*u.deg, height=0.*u.km)
++
++        usph = ITRS(
++            CartesianRepresentation(0.6, 0.4, 0.5, unit=u.one),
++            representation_type='unitspherical', obstime=t
++        )
++        aa = usph.transform_to(AltAz(obstime=t, location=home))
++        # Should preserve unit spherical (distance should be unitless)
++        assert aa.cartesian.x.unit == u.one
++
++        # Round trip
++        itrs_back = aa.transform_to(ITRS(obstime=t))
++        assert itrs_back.cartesian.x.unit == u.one
++
++    def test_itrs_altaz_time_invariant(self):
++        """
++        ITRS coordinates are treated as time-invariant in the direct transform.
++
++        Transforming an ITRS coordinate at time t1 to AltAz at time t2
++        should simply adopt t2 without moving the position.
++        """
++        t1 = Time('J2010')
++        t2 = Time('J2011')
++        home = EarthLocation(-1*u.deg, 52*u.deg, height=0.*u.km)
++        obj = EarthLocation(-1*u.deg, 52*u.deg, height=10.*u.km)
++
++        itrs_t1 = obj.get_itrs(t1)
++
++        # Transform to AltAz at t2
++        aa_t2 = itrs_t1.transform_to(AltAz(obstime=t2, location=home))
++
++        # The object is still straight overhead because ITRS position is
++        # treated as fixed to the Earth
++        assert_allclose(aa_t2.alt, 90*u.deg, atol=1*u.uas, rtol=0)
++        assert_allclose(aa_t2.distance, 10*u.km, atol=1*u.mm)

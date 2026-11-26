@@ -1,0 +1,47 @@
+diff --git a/astropy/table/table.py b/astropy/table/table.py
+index 5afe2127..d921ab9a 100644
+--- a/astropy/table/table.py
++++ b/astropy/table/table.py
+@@ -1243,6 +1243,11 @@ class Table:
+         # mixin class
+         if (not isinstance(data, Column) and not data_is_mixin
+                 and isinstance(data, np.ndarray) and len(data.dtype) > 1):
++            warnings.warn('In a future version, a structured array will be added as a Column '
++                          'instead of being converted to an NdarrayMixin. To suppress this '
++                          'warning and keep current behavior, explicitly wrap the data in '
++                          '``Column(data)`` or view it as ``NdarrayMixin``.',
++                          FutureWarning)
+             data = data.view(NdarrayMixin)
+             data_is_mixin = True
+ 
+diff --git a/astropy/table/tests/test_mixin.py b/astropy/table/tests/test_mixin.py
+index 2fdcd20d..37a6fbb9 100644
+--- a/astropy/table/tests/test_mixin.py
++++ b/astropy/table/tests/test_mixin.py
+@@ -712,9 +712,12 @@ def test_ndarray_mixin():
+     d = np.arange(8, dtype='i8').reshape(4, 2).view(NdarrayMixin)
+ 
+     # Add one during initialization and the next as a new column.
+-    t = Table([a], names=['a'])
+-    t['b'] = b
+-    t['c'] = c
++    with pytest.warns(FutureWarning, match='In a future version, a structured array'):
++        t = Table([a], names=['a'])
++    with pytest.warns(FutureWarning, match='In a future version, a structured array'):
++        t['b'] = b
++    with pytest.warns(FutureWarning, match='In a future version, a structured array'):
++        t['c'] = c
+     t['d'] = d
+ 
+     assert isinstance(t['a'], NdarrayMixin)
+diff --git a/docs/changes/table/XXXX.api.rst b/docs/changes/table/XXXX.api.rst
+new file mode 100644
+index 00000000..8939208e
+--- /dev/null
++++ b/docs/changes/table/XXXX.api.rst
+@@ -0,0 +1,5 @@
++Adding a structured ``numpy.ndarray`` to a ``Table`` now emits a
++``FutureWarning`` that in a future version the array will be added as a
++``Column`` instead of being automatically converted to an
++``NdarrayMixin``. To keep the current behavior, explicitly wrap the data in
++``Column(data)`` or view it as ``NdarrayMixin``.

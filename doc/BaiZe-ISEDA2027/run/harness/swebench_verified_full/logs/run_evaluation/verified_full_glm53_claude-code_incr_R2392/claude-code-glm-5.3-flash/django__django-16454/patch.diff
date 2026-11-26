@@ -1,0 +1,60 @@
+diff --git a/django/core/management/base.py b/django/core/management/base.py
+index abc6f79a15..e13b657e2a 100644
+--- a/django/core/management/base.py
++++ b/django/core/management/base.py
+@@ -3,6 +3,7 @@ Base classes for writing management commands (named commands which can
+ be executed through ``django-admin`` or ``manage.py``).
+ """
+ import argparse
++import functools
+ import os
+ import sys
+ from argparse import ArgumentParser, HelpFormatter
+@@ -57,6 +58,16 @@ class CommandParser(ArgumentParser):
+         self.called_from_command_line = called_from_command_line
+         super().__init__(**kwargs)
+ 
++    def add_subparsers(self, **kwargs):
++        parser_class = kwargs.get("parser_class", type(self))
++        if issubclass(parser_class, CommandParser):
++            kwargs["parser_class"] = functools.partial(
++                parser_class,
++                missing_args_message=self.missing_args_message,
++                called_from_command_line=self.called_from_command_line,
++            )
++        return super().add_subparsers(**kwargs)
++
+     def parse_args(self, args=None, namespace=None):
+         # Catch missing argument for a better error message
+         if self.missing_args_message and not (
+diff --git a/docs/releases/4.1.7.txt b/docs/releases/4.1.7.txt
+index 35a3c2b2e8..103ec98d51 100644
+--- a/docs/releases/4.1.7.txt
++++ b/docs/releases/4.1.7.txt
+@@ -9,4 +9,5 @@ Django 4.1.7 fixes several bugs in 4.1.6.
+ Bugfixes
+ ========
+ 
+-* ...
++* Fixed a bug in Django 4.1 that caused a crash of management commands with
++  subparsers when invalid or missing arguments were provided (:ticket:`34526`).
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index e40632385c..4f694814ae 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -406,6 +406,15 @@ class CommandTests(SimpleTestCase):
+         with self.assertRaisesMessage(CommandError, msg):
+             management.call_command("subparser_dest", subcommand="foo", bar=12)
+ 
++    def test_subparser_invalid_error_formatting(self):
++        """Subparsers retain the error formatting of the parent parser."""
++        msg = "Error: the following arguments are required: bar"
++        with self.assertRaisesMessage(CommandError, msg):
++            management.call_command("subparser", "foo")
++        msg = "Error: the following arguments are required: --bar"
++        with self.assertRaisesMessage(CommandError, msg):
++            management.call_command("subparser_required", "foo_1", "foo_2")
++
+     def test_create_parser_kwargs(self):
+         """BaseCommand.create_parser() passes kwargs to CommandParser."""
+         epilog = "some epilog text"

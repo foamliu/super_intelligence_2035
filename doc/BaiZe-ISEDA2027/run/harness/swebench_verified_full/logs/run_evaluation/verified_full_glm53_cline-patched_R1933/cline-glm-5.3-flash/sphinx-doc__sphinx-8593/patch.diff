@@ -1,0 +1,92 @@
+diff --git a/CHANGES b/CHANGES
+index 9360f347..f7f08e0e 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -18,6 +18,7 @@ Bugs fixed
+ 
+ * #741: autodoc: inherited-members doesn't work for instance attributes on super
+   class
++* #8697: autodoc: :meta public: does not effect to variables
+ 
+ Testing
+ --------
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 76265f5b..c452dc0d 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1044,17 +1044,30 @@ class ModuleDocumenter(Documenter):
+             self.add_line('   :deprecated:', sourcename)
+ 
+     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
++        if self.analyzer:
++            attr_docs = self.analyzer.find_attr_docs()
++        else:
++            attr_docs = {}
++
++        def get_docstring(name: str) -> str:
++            # get a docstring from the comment (ex. ``#: docstring``) if exists
++            return "\n".join(attr_docs.get(('', name), []))
++
+         if want_all:
+             members = get_module_members(self.object)
+             if not self.__all__:
+                 # for implicit module members, check __module__ to avoid
+                 # documenting imported objects
+-                return True, members
++                ret = []
++                for name, value in members:
++                    ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
++
++                return True, ret
+             else:
+                 ret = []
+                 for name, value in members:
+                     if name in self.__all__:
+-                        ret.append(ObjectMember(name, value))
++                        ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
+                     else:
+                         ret.append(ObjectMember(name, value, skipped=True))
+ 
+@@ -1065,7 +1078,7 @@ class ModuleDocumenter(Documenter):
+             for name in memberlist:
+                 try:
+                     value = safe_getattr(self.object, name)
+-                    ret.append(ObjectMember(name, value))
++                    ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
+                 except AttributeError:
+                     logger.warning(__('missing attribute mentioned in :members: option: '
+                                       'module %s, attribute %s') %
+diff --git a/tests/roots/test-ext-autodoc/target/meta_public.py b/tests/roots/test-ext-autodoc/target/meta_public.py
+new file mode 100644
+index 00000000..1eacd2d2
+--- /dev/null
++++ b/tests/roots/test-ext-autodoc/target/meta_public.py
+@@ -0,0 +1 @@
++_foo = None  #: :meta public:
+diff --git a/tests/test_ext_autodoc_private_members.py b/tests/test_ext_autodoc_private_members.py
+index 6bce5ce7..338f6651 100644
+--- a/tests/test_ext_autodoc_private_members.py
++++ b/tests/test_ext_autodoc_private_members.py
+@@ -81,3 +81,22 @@ def test_private_members(app):
+         '   :meta public:',
+         '',
+     ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_meta_public(app):
++    app.config.autoclass_content = 'class'
++    options = {"members": None}
++    actual = do_autodoc(app, 'module', 'target.meta_public', options)
++    assert list(actual) == [
++        '',
++        '.. py:module:: target.meta_public',
++        '',
++        '',
++        '.. py:data:: _foo',
++        '   :module: target.meta_public',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
++    ]

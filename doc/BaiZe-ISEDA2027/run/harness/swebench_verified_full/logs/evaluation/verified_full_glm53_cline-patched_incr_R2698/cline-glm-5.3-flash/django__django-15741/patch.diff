@@ -1,0 +1,75 @@
+diff --git a/django/utils/formats.py b/django/utils/formats.py
+index 3f38322d84..f55780a239 100644
+--- a/django/utils/formats.py
++++ b/django/utils/formats.py
+@@ -113,6 +113,7 @@ def get_format(format_type, lang=None, use_l10n=None):
+             use_l10n = settings.USE_L10N
+     if use_l10n and lang is None:
+         lang = get_language()
++    format_type = str(format_type)
+     cache_key = (format_type, lang)
+     try:
+         return _format_cache[cache_key]
+diff --git a/repro_32414.py b/repro_32414.py
+new file mode 100644
+index 0000000000..cfe2a77b27
+--- /dev/null
++++ b/repro_32414.py
+@@ -0,0 +1,57 @@
++import datetime
++
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    USE_I18N=True,
++    USE_L10N=True,
++    USE_TZ=True,
++    TIME_ZONE="UTC",
++    TEMPLATES=[
++        {
++            "BACKEND": "django.template.backends.django.DjangoTemplates",
++            "DIRS": [],
++            "APP_DIRS": False,
++            "OPTIONS": {"context_processors": []},
++        }
++    ],
++)
++django.setup()
++
++from django.template import Context, Template  # noqa: E402
++from django.utils import translation  # noqa: E402
++from django.utils.formats import get_format  # noqa: E402
++from django.utils.translation import gettext_lazy  # noqa: E402
++
++some_date = datetime.date(2021, 2, 13)
++lazy_fmt = gettext_lazy("Y-m-d")
++
++# 1. get_format() directly with a lazy parameter
++with translation.override("de"):
++    result = get_format(lazy_fmt)
++    assert result == "Y-m-d", "get_format() returned %r" % (result,)
++    assert isinstance(result, str), "get_format() returned non-str %r" % (result,)
++
++# 2. date template filter with a lazy format string: some_date|date:_('Y-m-d')
++with translation.override("de"):
++    t = Template('{{ some_date|date:lazy_fmt }}')
++    rendered = t.render(Context({"some_date": some_date, "lazy_fmt": lazy_fmt}))
++    assert rendered == "2021-02-13", "template rendered %r" % (rendered,)
++
++# 3. date_format()/time_format() helpers with lazy format strings
++from django.utils.formats import date_format, time_format  # noqa: E402
++
++with translation.override("de"):
++    assert date_format(some_date, gettext_lazy("Y-m-d")) == "2021-02-13"
++    assert (
++        time_format(datetime.time(12, 30), gettext_lazy("H:i")) == "12:30"
++    ), time_format(datetime.time(12, 30), gettext_lazy("H:i"))
++
++# 4. Regular (non-lazy) behavior is unchanged
++with translation.override("de"):
++    assert get_format("DATE_FORMAT") == "j. F Y", get_format("DATE_FORMAT")
++    assert date_format(some_date) == "13. Februar 2021", date_format(some_date)
++
++print("All checks passed.")

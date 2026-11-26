@@ -1,0 +1,479 @@
+#!/usr/bin/env python3
+"""rerun_tb21_cline_quota.py — TB-2.1 cline「网关 Token 额度耗尽」失败重跑
+
+背景（R2386 根因，2026-11-13）：
+  TB-2.1 cline 89 题里 10 passed（11.2%），80 个失败 trial 中 **65 个（81%）** 的失败
+  原因是网关 Token 额度耗尽（stdout 含「本次Token额度已用完」/「Token额度」，
+  iterations=1 / 0 tokens = 零工作），不是模型能力；公平通过率 10/25 = 40%。
+  ⇒ 用户令（2026-11-13 18:2x）：回顾 cline 失败 case，额度耗尽的就重跑。
+
+判定口径（与 gen_report_tb21_7way.py::_cline_attrtribution 完全一致）：
+  job 目录 ：/tmp/tb21_glm53_jobs/cline-patched/<date>/<task>__<id>/result.json
+  reward    ：result["verifier_result"]["rewards"]["reward"] == 1.0 ⇒ passed
+  stdout    ：result["agent_result"]["metadata"]["stdout"]
+  quota     ：「额度已用完」in stdout or 「Token额度」in stdout
+  task 级   ：best_reward < 1.0 且 **全部** trial 都是 quota ⇒ quota_lost（重跑目标）
+              只要有一个 trial 不是 quota ⇒ 不重跑（可能含能力/超时/parse 因素）
+
+用法：
+  python3 rerun_tb21_cline_quota.py                  # dry-run：统计 + 写清单（默认）
+  python3 rerun_tb21_cline_quota.py --launch         # symlink 子数据集 + harbor 重跑
+  python3 rerun_tb21_cline_quota.py --merge <dir>    # 重跑结果并入官方 jobs-dir
+  python3 rerun_tb21_cline_quota.py --task-list f    # 手动指定 task（每行一个）
+
+自适应并发（2026-11-15 用户令：周末放量 + 429 回退）：
+  --n-concurrent auto --chunk-size 12
+      ⇒ 每 12 题一块串行跑；块前按控制器算并发，块后扫日志里的 429：
+        工作时段(周一~五 08:30-17:30) 遇 429 减半；非工作时段连续 20min 无 429 加 1。
+      控制器：run/harness/adaptive_concurrency.py；状态：run/harness/manifests/（已 gitignore）。
+
+产物（🚫 一律**不写** `reports/`——那是人读 HTML 报告目录）：
+  terminalbench/manifests/tb21_cline_quota_rerun_<tag>.json    逐题证据 + 汇总（机器中间产物，已 gitignore）
+  terminalbench/manifests/tb21_cline_quota_rerun_ids_<tag>.txt 待重跑 task 名（每行一个）
+  terminalbench/traces/tb21_cline_quota_rerun_<tag>.log        --launch 的 harbor 原始输出
+
+注意：
+  * 只读 /tmp/tb21_glm53_jobs 现有结果，不改动原 trial 目录（merge 除外，且只搬 rerun 产物）；
+  * 必须先确认网关 200（gw_proxy 9092）；429 状态下重跑只会再造一批空 patch；
+  * 重跑按 unique task 计分，同一题多 trial 不重复计数（与 7way 报告口径一致）；
+  * 人读结论只进 `reports/*.html`（由 gen_report_tb21_7way.py / gen_cline_special.py 生成），
+    且提交前 `git check-ignore -v <file>` 自查，别把 manifests/traces 卷进 commit。
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shlex
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+import urllib.request
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+HARNESS_DIR = HERE.parent                      # run/harness
+REPO_LINE_DIR = HARNESS_DIR.parent             # run/
+DOC_DIR = REPO_LINE_DIR.parent                 # doc/BaiZe-ISEDA2027
+# ⚠️ 2026-11-14 用户令：reports/ 是**人读报告目录**（只放 .html），机器逐轮 JSON 一律不落这里。
+#    历史事故：本脚本曾把 tb21_cline_quota_rerun_<tag>.json 写进 reports/，被 harness loop 的
+#    `git add -- run/harness` 之外的兜底提交卷进仓库，累积 27 个 1.3k 行文件。
+#    ⇒ 改为写 manifests/（证据目录，已 .gitignore），reports/ 只放 HTML 报告。
+MANIFESTS = HERE / "manifests"
+TRACES = HERE / "traces"
+
+JOBS = Path("/tmp/tb21_glm53_jobs")
+HARNESS = "cline-patched"
+AGENT = "terminalbench.agents.cline_patched:ClinePatched"
+# 7way agent 映射 (2026-11-14 用户令, 供 --harness 覆盖)
+HARNESS_AGENTS = {
+    "cline-patched":    "terminalbench.agents.cline_patched:ClinePatched",
+    "codex":            "terminalbench.agents.codex:CodexTB",
+    "hermes":           "terminalbench.agents.hermes:HermesTB",
+    "opencode":         "terminalbench.agents.opencode:OpenCodeTB",
+    "claude-code":      "terminalbench.agents.claude_code:ClaudeCodeTB",
+    "deepseek-harness": "terminalbench.agents.deepseek_harness:DeepseekHarnessTB",
+    "pi":               "terminalbench.agents.pi:PiTB",
+}
+TB_DATASET = Path(os.path.expanduser("~/terminal-bench"))
+OVERLAY = HERE / "overlay-network-host.yml"
+LAUNCH_SCRIPT = HERE / "launch_tb21_glm53_7way.sh"   # 只为复用其中已登记的 key/env
+GW_MODELS = "http://127.0.0.1:9092/v1/models"
+
+# ---- 自适应并发（用户令 2026-11-15）---------------------------------------
+# 「评测要能放量/回退：工作时段(8:30-17:30)遇 429 就退；工作时间之外一段时间无 429 就加」
+# 控制器在 run/harness/adaptive_concurrency.py；状态在 run/harness/manifests/（已 gitignore）。
+HARNESS_ROOT = HERE.parent                     # run/harness
+if str(HARNESS_ROOT) not in sys.path:
+    sys.path.insert(0, str(HARNESS_ROOT))
+try:
+    import adaptive_concurrency as ac          # noqa: E402
+except Exception:                              # pragma: no cover - 控制器缺失时降级为固定并发
+    ac = None
+
+
+def _resolve_n(n_concurrent, adaptive_state=None, quiet=False, persist=True) -> int:
+    """把 --n-concurrent 解析成整数；字符串 auto ⇒ 读自适应策略。
+
+    persist=False（dry-run）只做只读推算，不推进状态。
+    """
+    if isinstance(n_concurrent, str) and n_concurrent.strip().lower() == "auto":
+        if ac is None:
+            print("[adaptive] WARNING: 找不到 adaptive_concurrency.py，回退 n=1", file=sys.stderr)
+            return 1
+        if persist:
+            n = ac.auto_next(adaptive_state, quiet=quiet)
+        else:
+            st = ac.load_state(adaptive_state)
+            n, reason = ac.decide(st, ac.now_cst())
+            if not quiet:
+                print(f"[adaptive] (dry-run) n_concurrent={n} ({reason})")
+            return max(1, int(n))
+        if not quiet:
+            print(f"[adaptive] n_concurrent={n} (auto)")
+        return max(1, int(n))
+    try:
+        return max(1, int(n_concurrent))
+    except (TypeError, ValueError):
+        print(f"[adaptive] WARNING: 非法 --n-concurrent={n_concurrent!r}，回退 1", file=sys.stderr)
+        return 1
+
+# ---------------------------------------------------------------------------
+# 1. 扫描 + 归因
+# ---------------------------------------------------------------------------
+
+def _iter_result_files(root: Path):
+    """只取 dated job 子目录里的 result.json（与报告口径 '/20' 过滤一致）。"""
+    if not root.exists():
+        return
+    for f in root.rglob("result.json"):
+        if "/20" in str(f).replace("\\", "/"):
+            yield f
+
+
+def scan_trials(root: Path = None):
+    """返回 task -> [trial dict]；trial 字段与 R2386 归因脚本同口径。"""
+    root = root or (JOBS / HARNESS)
+    task_data = {}
+    for f in _iter_result_files(root):
+        try:
+            r = json.loads(f.read_text())
+        except Exception:
+            continue
+        vr = r.get("verifier_result") or {}
+        reward = (vr.get("rewards") or {}).get("reward", 0)
+        ei = r.get("exception_info") or {}
+        ar = r.get("agent_result") or {}
+        meta = ar.get("metadata") or {}
+        stdout = meta.get("stdout", "") or ""
+        quota = ("额度已用完" in stdout) or ("Token额度" in stdout)
+        m = re.search(r'"iterations":(\d+)', stdout)
+        task = str(f.parent.name).split("__")[0]
+        task_data.setdefault(task, []).append({
+            "dir": str(f.parent),
+            "reward": reward,
+            "quota": quota,
+            "iterations": int(m.group(1)) if m else -1,
+            "exc_type": ei.get("exception_type", ""),
+            "exit_code": meta.get("exit_code"),
+            "has_run_result": '"run_result"' in stdout,
+            "stdout_len": len(stdout),
+        })
+    return task_data
+
+
+def classify(task_data):
+    """返回 (summary, quota_lost_tasks, detail)。"""
+    passed, quota_lost, other_failed = [], [], []
+    detail = {}
+    for task, trials in sorted(task_data.items()):
+        best = max(t["reward"] for t in trials)
+        if best == 1.0:
+            passed.append(task)
+            continue
+        all_quota = all(t["quota"] for t in trials)
+        (quota_lost if all_quota else other_failed).append(task)
+        detail[task] = {
+            "category": "quota_exhausted" if all_quota else "non_quota",
+            "best_reward": best,
+            "trials": trials,
+        }
+    summary = {
+        "unique_tasks": len(task_data),
+        "trials_total": sum(len(v) for v in task_data.values()),
+        "passed": len(passed),
+        "failed": len(task_data) - len(passed),
+        "quota_lost_tasks": len(quota_lost),
+        "non_quota_failed_tasks": len(other_failed),
+        "pass_rate": round(len(passed) / max(len(task_data), 1), 4),
+    }
+    return summary, quota_lost, detail
+
+
+# ---------------------------------------------------------------------------
+# 2. 清单落盘
+# ---------------------------------------------------------------------------
+
+def write_manifest(summary, quota_lost, detail, tag):
+    MANIFESTS.mkdir(parents=True, exist_ok=True)
+    out_json = MANIFESTS / f"tb21_cline_quota_rerun_{tag}.json"
+    out_ids = MANIFESTS / f"tb21_cline_quota_rerun_ids_{tag}.txt"
+    payload = {
+        "round": "rerun-cline-quota",
+        "generated": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "source_jobs": str(JOBS / HARNESS),
+        "rule": "best_reward<1.0 AND all trials stdout contains 额度已用完/Token额度",
+        "summary": summary,
+        "rerun_tasks": quota_lost,
+        "detail": detail,
+    }
+    out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2))
+    out_ids.write_text("\n".join(quota_lost) + ("\n" if quota_lost else ""))
+    return out_json, out_ids
+
+
+# ---------------------------------------------------------------------------
+# 3. 重跑（harbor 子集）
+# ---------------------------------------------------------------------------
+
+def _api_key():
+    """优先 env，其次从既有 launch 脚本里取（不新增明文副本）。"""
+    for k in ("TB_API_KEY", "GLM53_KEY"):
+        if os.environ.get(k):
+            return os.environ[k]
+    if LAUNCH_SCRIPT.exists():
+        m = re.search(r'GLM53_KEY="([^"]+)"', LAUNCH_SCRIPT.read_text(errors="replace"))
+        if m:
+            return m.group(1)
+    return ""
+
+
+def _gateway_ok(timeout=6):
+    try:
+        with urllib.request.urlopen(GW_MODELS, timeout=timeout) as r:
+            return r.status == 200
+    except Exception:
+        return False
+
+
+def _docker_ok():
+    """Check if the current process can access the Docker socket directly.
+
+    The agent's shell session (launched via ``env -u ... cline``) often lacks the
+    ``docker`` supplementary group even though ``usermod -aG docker`` was done —
+    group membership is evaluated at login time.  When that happens, harbor fails
+    with "Docker daemon is not running".  The fix is to wrap harbor in
+    ``sg docker -c '...'`` so the child picks up the group.
+    """
+    try:
+        r = subprocess.run(["docker", "ps"], capture_output=True, timeout=10)
+        return r.returncode == 0
+    except Exception:
+        return False
+
+
+def launch(tasks, tag, n_concurrent=1, timeout_s=3600, dry=False,
+           harness=None, agent=None, agent_timeout_multiplier=1.0,
+           chunk_size=0, adaptive_state=None):
+    harness = harness or HARNESS
+    agent = agent or AGENT
+    if not tasks:
+        print("[launch] 无 quota_lost 题，跳过")
+        return None
+    if not TB_DATASET.exists():
+        print(f"[launch] FATAL: dataset 不存在 {TB_DATASET}", file=sys.stderr)
+        return None
+    key = _api_key()
+    if not key:
+        print("[launch] FATAL: 取不到 TB_API_KEY（env 或 launch 脚本）", file=sys.stderr)
+        return None
+    if not _gateway_ok():
+        print(f"[launch] FATAL: 网关未就绪 {GW_MODELS}（429/断网时重跑无意义）", file=sys.stderr)
+        return None
+
+    # 分块：chunk_size>0 时串行跑多块，块间按 429 反馈重算并发（auto 模式的核心）
+    chunks = [tasks]
+    if chunk_size and chunk_size > 0 and len(tasks) > chunk_size:
+        chunks = [tasks[i:i + chunk_size] for i in range(0, len(tasks), chunk_size)]
+
+    jobs_dir = JOBS / f"{harness}_rerun_{tag}"
+    jobs_dir.mkdir(parents=True, exist_ok=True)
+    TRACES.mkdir(parents=True, exist_ok=True)
+
+    env = dict(os.environ)
+    home = os.path.expanduser("~")
+    env.update({
+        "TB_MODEL": "glm-5.3-flash",
+        "TB_API_KEY": key,
+        "TB_BASE_URL": "http://agi-gateway.cxmt.com/v1",
+        "TB_GW_PROXY_URL": "http://127.0.0.1:9092/v1",
+        "TB_GW_PROXY_BASE": "http://127.0.0.1:9092",
+        "TB_AGENT_TIMEOUT": str(timeout_s),
+        "PYTHONPATH": f"{HARNESS_DIR}:{env.get('PYTHONPATH', '')}",
+        "PATH": f"{home}/.bun/bin:{home}/.local/bin:{env.get('PATH', '')}",
+        "no_proxy": "127.0.0.1,localhost,agi-gateway.cxmt.com",
+        "NO_PROXY": "127.0.0.1,localhost,agi-gateway.cxmt.com",
+        "PYTHONUNBUFFERED": "1",
+    })
+    for k in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY"):
+        env.pop(k, None)
+
+    print(f"[launch] tasks={len(tasks)} chunks={len(chunks)} chunk_size={chunk_size} "
+          f"n_concurrent={n_concurrent} jobs_dir={jobs_dir}")
+    for idx, chunk in enumerate(chunks, 1):
+        n = _resolve_n(n_concurrent, adaptive_state, persist=not dry)
+
+        subset = Path(tempfile.mkdtemp(prefix=f"tb21_{harness}_part{idx}_"))
+        missing = []
+        for t in chunk:
+            src = TB_DATASET / t
+            if src.exists():
+                (subset / t).symlink_to(src)
+            else:
+                missing.append(t)
+        if missing:
+            print(f"[launch] WARNING: 数据集缺 {len(missing)} 题: {missing[:5]}...",
+                  file=sys.stderr)
+
+        harbor_cmd = [
+            "nice", "-n", "19", "harbor", "run", "-p", str(subset),
+            "--agent", agent, "-k", "1", "--n-concurrent", str(n),
+            "--extra-docker-compose", str(OVERLAY), "--jobs-dir", str(jobs_dir),
+        ]
+        if agent_timeout_multiplier and agent_timeout_multiplier != 1.0:
+            harbor_cmd += ["--agent-timeout-multiplier", str(agent_timeout_multiplier)]
+        # The agent's shell session often lacks the docker supplementary group
+        # (group membership is evaluated at login time, but the loop starts cline
+        # via `env -u ... cline` which inherits a stripped environment).  Wrap
+        # harbor in `sg docker -c '...'` so the child picks up the group and can
+        # reach /var/run/docker.sock.
+        if _docker_ok():
+            cmd = harbor_cmd
+            docker_wrap = False
+        else:
+            cmd = ["sg", "docker", "-c", " ".join(shlex.quote(c) for c in harbor_cmd)]
+            docker_wrap = True
+
+        suffix = f"_p{idx}" if len(chunks) > 1 else ""
+        log = TRACES / f"tb21_{harness}_rerun_{tag}{suffix}.log"
+        print(f"[launch] part {idx}/{len(chunks)} tasks={len(chunk)} "
+              f"n_concurrent={n} docker_wrap={docker_wrap} log={log}")
+        print("[launch] " + " ".join(cmd))
+        if dry:
+            continue
+
+        with log.open("w") as fh:
+            fh.write(f"# {time.strftime('%F %T')} part={idx}/{len(chunks)} "
+                     f"n_concurrent={n} {' '.join(cmd)}\n")
+            fh.flush()
+            p = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, text=True, bufsize=1)
+            for line in p.stdout:
+                fh.write(line)
+                fh.flush()
+                sys.stdout.write(line)
+            p.wait()
+
+        # 块结束：扫 429/quota ⇒ 记一次事件（下一步并发由控制器决定）
+        hits = 0
+        if ac is not None:
+            hits = ac.scan_log(log)["hits"]
+            if hits:
+                st = ac.record("429", count=hits, state_path=adaptive_state,
+                               note=f"{harness} part{idx}/{len(chunks)}")
+                print(f"[adaptive] part {idx}: 429 x{hits} -> n_concurrent={st['current']}")
+            else:
+                ac.record("ok", state_path=adaptive_state,
+                          note=f"{harness} part{idx}/{len(chunks)}")
+        print(f"[launch] part {idx} harbor rc={p.returncode} 429_hits={hits} log={log}")
+
+    return jobs_dir
+
+
+# ---------------------------------------------------------------------------
+# 4. 并入官方 jobs-dir（让既有报告自动吃到重跑结果）
+# ---------------------------------------------------------------------------
+
+def merge(rerun_jobs, tag, harness=None):
+    harness = harness or HARNESS
+    dst_root = JOBS / harness
+    dst_root.mkdir(parents=True, exist_ok=True)
+    moved = 0
+    for dated in sorted(p for p in rerun_jobs.iterdir() if p.is_dir()):
+        dst_dir = dst_root / f"{dated.name}_rerun_{tag}"
+        dst_dir.mkdir(parents=True, exist_ok=True)
+        for trial in sorted(p for p in dated.iterdir() if p.is_dir()):
+            task = trial.name.split("__")[0]
+            dst = dst_dir / f"{task}__rerun_{tag}"
+            if dst.exists():          # 幂等：已搬过就跳过
+                continue
+            shutil.move(str(trial), str(dst))
+            moved += 1
+    print(f"[merge] moved {moved} trials -> {dst_root}")
+    return moved
+
+
+# ---------------------------------------------------------------------------
+
+def main():
+    global JOBS
+    ap = argparse.ArgumentParser(description="TB-2.1 cline 额度耗尽失败重跑")
+    ap.add_argument("--launch", action="store_true", help="真跑（默认 dry-run）")
+    ap.add_argument("--merge", metavar="RERUN_JOBS_DIR", default=None,
+                    help="把重跑 jobs-dir 并入 /tmp/tb21_glm53_jobs/cline-patched")
+    ap.add_argument("--task-list", default=None, help="手动指定 task 列表文件")
+    ap.add_argument("--n-concurrent", default="1",
+                    help="并发数；auto = 按 run/harness/adaptive_concurrency.py 策略自动升降")
+    ap.add_argument("--chunk-size", type=int, default=0,
+                    help=">0 时把任务分块串行跑，块间按 429 反馈重算并发（auto 模式推荐 10-15）")
+    ap.add_argument("--adaptive-state", default=None,
+                    help="自适应状态文件（默认 run/harness/manifests/adaptive_concurrency_state.json）")
+    ap.add_argument("--timeout", type=int, default=3600, help="单题 agent 超时秒")
+    ap.add_argument("--jobs-root", default=str(JOBS), help="job 根目录（默认 /tmp/tb21_glm53_jobs）")
+    ap.add_argument("--dry-run", action="store_true", help="只打印 harbor 命令，不执行")
+    ap.add_argument("--agent-timeout-multiplier", type=float, default=1.0,
+                    help="harbor --agent-timeout-multiplier (default 1.0; use 4.0 for 900s→3600s)")
+    ap.add_argument("--harness", default=None,
+                    help="指定 harness (7way: cline-patched/codex/hermes/opencode/claude-code/deepseek-harness/pi)")
+    ap.add_argument("--agent", default=None,
+                    help="指定 agent 类 (默认按 --harness 自动映射)")
+    args = ap.parse_args()
+
+    # --harness 覆盖全局 HARNESS/AGENT
+    global HARNESS, AGENT
+    if args.harness:
+        HARNESS = args.harness
+        if not args.agent:
+            AGENT = HARNESS_AGENTS.get(args.harness, AGENT)
+    if args.agent:
+        AGENT = args.agent
+    print(f"[config] HARNESS={HARNESS} AGENT={AGENT}")
+
+    JOBS = Path(args.jobs_root)
+    tag = os.environ.get("RERUN_TAG") or time.strftime("%Y%m%d_%H%M")
+
+    if args.merge:
+        merge(Path(args.merge), tag, harness=args.harness)
+        return 0
+
+    if args.task_list:
+        tasks = [ln.strip() for ln in Path(args.task_list).read_text().splitlines() if ln.strip()]
+        print(f"[scan] 手动 task-list: {len(tasks)}")
+        summary = {"unique_tasks": len(tasks), "trials_total": 0, "passed": 0,
+                   "failed": len(tasks), "quota_lost_tasks": len(tasks),
+                   "non_quota_failed_tasks": 0, "pass_rate": 0.0}
+        detail = {t: {"category": "manual", "best_reward": None, "trials": []} for t in tasks}
+    else:
+        task_data = scan_trials(JOBS / HARNESS)
+        if not task_data:
+            print(f"[scan] FATAL: 读不到结果 {JOBS / HARNESS}", file=sys.stderr)
+            return 2
+        summary, tasks, detail = classify(task_data)
+        print("[scan] " + json.dumps(summary, ensure_ascii=False))
+
+    out_json, out_ids = write_manifest(summary, tasks, detail, tag)
+    print(f"[scan] quota_lost={len(tasks)} -> {out_json}")
+    print(f"[scan] ids -> {out_ids}")
+    for t in tasks[:10]:
+        print(f"  - {t}")
+    if len(tasks) > 10:
+        print(f"  ... (+{len(tasks) - 10})")
+
+    if args.launch:
+        jobs_dir = launch(tasks, tag, args.n_concurrent, args.timeout,
+                          dry=args.dry_run, harness=args.harness, agent=args.agent,
+                          agent_timeout_multiplier=args.agent_timeout_multiplier,
+                          chunk_size=args.chunk_size,
+                          adaptive_state=args.adaptive_state)
+        if jobs_dir:
+            print(f"\n[next] 跑完执行：python3 {Path(__file__).name} --merge {jobs_dir}")
+            print("[next] 然后重新生成双报告：python3 gen_report_tb21_7way.py && "
+                  "python3 ../gen_cline_special.py")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

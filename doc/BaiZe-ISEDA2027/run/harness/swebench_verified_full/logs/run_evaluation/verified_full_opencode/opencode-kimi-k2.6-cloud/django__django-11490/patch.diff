@@ -1,0 +1,42 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a44adfc76..2c0d15a75 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -426,11 +426,13 @@ class SQLCompiler:
+                 # must have the same columns list. Set the selects defined on
+                 # the query on all combined queries, if not already set.
+                 if not compiler.query.values_select and self.query.values_select:
+-                    compiler.query.set_values((
++                    query = compiler.query.clone()
++                    query.set_values((
+                         *self.query.extra_select,
+                         *self.query.values_select,
+                         *self.query.annotation_select,
+                     ))
++                    compiler = query.get_compiler(self.using, self.connection)
+                 part_sql, part_args = compiler.as_sql()
+                 if compiler.query.combinator:
+                     # Wrap in a subquery if wrapping in parentheses isn't
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+index 3902db59e..3fe971015 100644
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -124,6 +124,18 @@ class QuerySetSetOperationTests(TestCase):
+         reserved_name = qs1.union(qs1).values_list('name', 'order', 'id').get()
+         self.assertEqual(reserved_name[:2], ('a', 2))
+ 
++    def test_union_with_values_list_multiple_evaluation(self):
++        ReservedName.objects.create(name='a', order=2)
++        qs1 = ReservedName.objects.all()
++        self.assertEqual(
++            qs1.union(qs1).values_list('name', 'order').get(),
++            ('a', 2),
++        )
++        self.assertEqual(
++            qs1.union(qs1).values_list('order').get(),
++            (2,),
++        )
++
+     def test_union_with_two_annotated_values_list(self):
+         qs1 = Number.objects.filter(num=1).annotate(
+             count=Value(0, IntegerField()),

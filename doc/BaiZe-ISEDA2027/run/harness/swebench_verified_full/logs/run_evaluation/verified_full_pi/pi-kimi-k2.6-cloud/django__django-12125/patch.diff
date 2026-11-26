@@ -1,0 +1,114 @@
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index 7d226955d5..269f41b9f2 100644
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -4,11 +4,11 @@ import datetime
+ import decimal
+ import enum
+ import functools
++import importlib.util
+ import math
+ import re
+ import types
+ import uuid
+-
+ from django.conf import SettingsReference
+ from django.db import models
+ from django.db.migrations.operations.base import Operation
+@@ -95,7 +95,19 @@ class DeconstructableSerializer(BaseSerializer):
+             imports = {"from django.db import models"}
+             name = "models.%s" % name
+         else:
+-            imports = {"import %s" % module}
++            module_path = None
++            parts = path.split(".")
++            for i in range(len(parts) - 1, 0, -1):
++                candidate = ".".join(parts[:i])
++                try:
++                    if importlib.util.find_spec(candidate) is not None:
++                        module_path = candidate
++                        break
++                except Exception:
++                    pass
++            if module_path is None:
++                module_path, _ = path.rsplit(".", 1)
++            imports = {"import %s" % module_path}
+             name = path
+         return name, imports
+ 
+@@ -143,7 +155,8 @@ class FunctionTypeSerializer(BaseSerializer):
+         if getattr(self.value, "__self__", None) and isinstance(self.value.__self__, type):
+             klass = self.value.__self__
+             module = klass.__module__
+-            return "%s.%s.%s" % (module, klass.__name__, self.value.__name__), {"import %s" % module}
++            klass_name = klass.__qualname__ if '<' not in klass.__qualname__ else klass.__name__
++            return "%s.%s.%s" % (module, klass_name, self.value.__name__), {"import %s" % module}
+         # Further error checking
+         if self.value.__name__ == '<lambda>':
+             raise ValueError("Cannot serialize function: lambda")
+@@ -269,7 +282,9 @@ class TypeSerializer(BaseSerializer):
+             if module == builtins.__name__:
+                 return self.value.__name__, set()
+             else:
+-                return "%s.%s" % (module, self.value.__name__), {"import %s" % module}
++                if '<' in self.value.__qualname__:
++                    return "%s.%s" % (module, self.value.__name__), {"import %s" % module}
++                return "%s.%s" % (module, self.value.__qualname__), {"import %s" % module}
+ 
+ 
+ class UUIDSerializer(BaseSerializer):
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index ca924f35ec..415d222cfe 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -188,6 +188,14 @@ class WriterTests(SimpleTestCase):
+         A = 1
+         B = 2
+ 
++    class Outer:
++        class InnerField(models.CharField):
++            pass
++
++        class InnerType:
++            @classmethod
++            def method(cls):
++                pass
+     def safe_exec(self, string, value=None):
+         d = {}
+         try:
+@@ -744,6 +752,35 @@ class WriterTests(SimpleTestCase):
+         with self.assertRaisesMessage(ValueError, 'Cannot serialize: (1+2j)'):
+             self.assertSerializedEqual(complex(1, 2))
+ 
++    def test_serialize_nested_field(self):
++        self.assertSerializedFieldEqual(self.Outer.InnerField(max_length=20))
++        self.assertSerializedResultEqual(
++            self.Outer.InnerField(max_length=20),
++            (
++                'migrations.test_writer.WriterTests.Outer.InnerField(max_length=20)',
++                {'import migrations.test_writer'},
++            ),
++        )
++
++    def test_serialize_nested_type(self):
++        self.assertSerializedResultEqual(
++            self.Outer.InnerType,
++            (
++                'migrations.test_writer.WriterTests.Outer.InnerType',
++                {'import migrations.test_writer'},
++            ),
++        )
++        self.assertSerializedEqual(self.Outer.InnerType)
++
++    def test_serialize_nested_class_method(self):
++        self.assertSerializedResultEqual(
++            self.Outer.InnerType.method,
++            (
++                'migrations.test_writer.WriterTests.Outer.InnerType.method',
++                {'import migrations.test_writer'},
++            ),
++        )
++
+     def test_register_non_serializer(self):
+         with self.assertRaisesMessage(ValueError, "'TestModel1' must inherit from 'BaseSerializer'."):
+             MigrationWriter.register_serializer(complex, TestModel1)

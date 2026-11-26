@@ -1,0 +1,133 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5e7b23f9a..cbbb96a73 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -580,9 +580,15 @@ class ModelAdmin(BaseModelAdmin):
+     def __str__(self):
+         return "%s.%s" % (self.model._meta.app_label, self.__class__.__name__)
+ 
++    def get_inlines(self, request, obj=None):
++        """
++        Hook for specifying custom inlines.
++        """
++        return self.inlines
++
+     def get_inline_instances(self, request, obj=None):
+         inline_instances = []
+-        for inline_class in self.inlines:
++        for inline_class in self.get_inlines(request, obj):
+             inline = inline_class(self.model, self.admin_site)
+             if request:
+                 if not (inline.has_view_or_change_permission(request, obj) or
+diff --git a/docs/ref/contrib/admin/index.txt b/docs/ref/contrib/admin/index.txt
+index 93679c46f..5080a892f 100644
+--- a/docs/ref/contrib/admin/index.txt
++++ b/docs/ref/contrib/admin/index.txt
+@@ -532,7 +532,8 @@ subclass::
+ .. attribute:: ModelAdmin.inlines
+ 
+     See :class:`InlineModelAdmin` objects below as well as
+-    :meth:`ModelAdmin.get_formsets_with_inlines`.
++    :meth:`ModelAdmin.get_formsets_with_inlines` and
++    :meth:`ModelAdmin.get_inlines`.
+ 
+ .. attribute:: ModelAdmin.list_display
+ 
+@@ -1608,6 +1609,23 @@ templates used by the :class:`ModelAdmin` views:
+             def get_sortable_by(self, request):
+                 return {*self.get_list_display(request)} - {'rank'}
+ 
++.. method:: ModelAdmin.get_inlines(request, obj=None)
++
++    The ``get_inlines`` method is given the ``HttpRequest`` and the
++    ``obj`` being edited (or ``None`` on an add form) and is expected to return
++    a ``list`` or ``tuple`` of :class:`~django.contrib.admin.InlineModelAdmin`
++    classes, as described below in the :class:`~django.contrib.admin.InlineModelAdmin`
++    section. For example, the following would return a different set of inlines
++    for the add and change views::
++
++        class MyModelAdmin(admin.ModelAdmin):
++            inlines = (MyInline,)
++
++            def get_inlines(self, request, obj=None):
++                if obj:
++                    return self.inlines + (ExtraInline,)
++                return self.inlines
++
+ .. method:: ModelAdmin.get_inline_instances(request, obj=None)
+ 
+     The ``get_inline_instances`` method is given the ``HttpRequest`` and the
+@@ -1621,7 +1639,7 @@ templates used by the :class:`ModelAdmin` views:
+             inlines = (MyInline,)
+ 
+             def get_inline_instances(self, request, obj=None):
+-                return [inline(self.model, self.admin_site) for inline in self.inlines]
++                return [inline(self.model, self.admin_site) for inline in self.get_inlines(request, obj)]
+ 
+     If you override this method, make sure that the returned inlines are
+     instances of the classes defined in :attr:`inlines` or you might encounter
+diff --git a/docs/releases/3.0.txt b/docs/releases/3.0.txt
+index d7ad7a8cf..5c363107a 100644
+--- a/docs/releases/3.0.txt
++++ b/docs/releases/3.0.txt
+@@ -47,6 +47,9 @@ Minor features
+ * Added support for the ``admin_order_field`` attribute on properties in
+   :attr:`.ModelAdmin.list_display`.
+ 
++* Added :meth:`.ModelAdmin.get_inlines` hook to allow specifying custom inlines
++  based on the request or model instance.
++
+ :mod:`django.contrib.admindocs`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index 6934bf2b3..73acfac85 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -793,6 +793,46 @@ class ModelAdminPermissionTests(SimpleTestCase):
+         self.assertEqual(len(inline_instances), 1)
+         self.assertIsInstance(inline_instances[0], ConcertInline)
+ 
++    def test_get_inlines(self):
++        class ConcertInline(TabularInline):
++            model = Concert
++
++        class SongInline(TabularInline):
++            model = Song
++
++        class BandAdmin(ModelAdmin):
++            inlines = [ConcertInline, SongInline]
++
++        ma = BandAdmin(Band, AdminSite())
++        self.assertEqual(ma.get_inlines(request), [ConcertInline, SongInline])
++
++    def test_get_inlines_dynamic(self):
++        class ConcertInline(TabularInline):
++            model = Concert
++
++        class SongInline(TabularInline):
++            model = Song
++
++        class BandAdmin(ModelAdmin):
++            inlines = [ConcertInline, SongInline]
++
++            def get_inlines(self, request, obj=None):
++                if obj and obj.name == 'The Doors':
++                    return [ConcertInline]
++                return [SongInline]
++
++        ma = BandAdmin(Band, AdminSite())
++        request = MockRequest()
++        request.user = MockSuperUser()
++        inline_instances = ma.get_inline_instances(request)
++        self.assertEqual(len(inline_instances), 1)
++        self.assertIsInstance(inline_instances[0], SongInline)
++
++        band = Band(name='The Doors', bio='', sign_date=date(1965, 1, 1))
++        inline_instances = ma.get_inline_instances(request, band)
++        self.assertEqual(len(inline_instances), 1)
++        self.assertIsInstance(inline_instances[0], ConcertInline)
++
+     def test_has_change_permission(self):
+         """
+         has_change_permission returns True for users who can edit objects and

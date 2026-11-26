@@ -1,0 +1,49 @@
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..2aca8bab27 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,7 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
++            result.append(symbols(name, cls=cls, **args))
+ 
+         return type(names)(result)
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c2083..707e241371 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -1,3 +1,4 @@
++from sympy.core.function import Function
+ from sympy.core.numbers import (I, Rational, pi)
+ from sympy.core.relational import (GreaterThan, LessThan, StrictGreaterThan, StrictLessThan)
+ from sympy.core.symbol import (Dummy, Symbol, Wild, symbols)
+@@ -327,6 +328,26 @@ def sym(s):
+     raises(ValueError, lambda: symbols('::a'))
+ 
+ 
++def test_symbols_cls_over_iterable():
++    # cls must be forwarded when names is an iterable of names
++    from sympy.core.function import UndefinedFunction
++    q, u = symbols(('q:2', 'u:2'), cls=Function)
++    assert type(q[0]) is UndefinedFunction
++    assert type(u[0]) is UndefinedFunction
++    f, g = symbols(['f', 'g'], cls=Function)
++    assert type(f) is UndefinedFunction
++    assert type(g) is UndefinedFunction
++    (x1, x2), (y1,) = symbols(('x:2', 'y:1'), cls=Function)
++    assert type(x1) is UndefinedFunction
++    assert type(y1) is UndefinedFunction
++    w, = symbols(('w:1',), cls=Wild)
++    assert type(w[0]) is Wild
++    # default cls is unchanged
++    p, r = symbols(('p:2', 'r:2'))
++    assert type(p[0]) is Symbol
++    assert type(r[0]) is Symbol
++
++
+ def test_symbols_become_functions_issue_3539():
+     from sympy.abc import alpha, phi, beta, t
+     raises(TypeError, lambda: beta(2))

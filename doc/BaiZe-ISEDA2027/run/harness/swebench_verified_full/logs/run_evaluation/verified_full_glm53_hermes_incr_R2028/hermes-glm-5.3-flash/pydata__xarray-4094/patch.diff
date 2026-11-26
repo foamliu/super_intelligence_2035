@@ -1,0 +1,48 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index c1440ec..eb4aeb8 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -116,6 +116,8 @@ New Features
+ 
+ Bug fixes
+ ~~~~~~~~~
++- Fix :py:meth:`DataArray.to_unstacked_dataset` for single-dimension variables. (:issue:`4049`)
++  By `Deepak Cherian <https://github.com/dcherian>`_
+ - Fix errors combining attrs in :py:func:`open_mfdataset` (:issue:`4009`, :pull:`4173`)
+   By `John Omotani <https://github.com/johnomotani>`_
+ - If groupby receives a ``DataArray`` with name=None, assign a default name (:issue:`158`)
+diff --git a/xarray/core/dataarray.py b/xarray/core/dataarray.py
+index b0df874..3be9bb7 100644
+--- a/xarray/core/dataarray.py
++++ b/xarray/core/dataarray.py
+@@ -1961,7 +1961,7 @@ class DataArray(AbstractArray, DataWithCoords):
+         # pull variables out of datarray
+         data_dict = {}
+         for k in variables:
+-            data_dict[k] = self.sel({variable_dim: k}).squeeze(drop=True)
++            data_dict[k] = self.sel({variable_dim: k}, drop=True).squeeze(drop=True)
+ 
+         # unstacked dataset
+         return Dataset(data_dict)
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 9c8d407..8dc610c 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3055,6 +3055,17 @@ class TestDataset:
+         x = y.to_unstacked_dataset("features")
+         assert_identical(D, x)
+ 
++    def test_to_stacked_array_to_unstacked_dataset_single_dimension(self):
++        # regression test for GH4021: unstacking a stacked array whose
++        # MultiIndex has only the "variable" level used to fail with a
++        # MergeError due to a leftover scalar coordinate
++        arr = xr.DataArray(np.arange(3), coords=[("x", [0, 1, 2])])
++        D = xr.Dataset({"a": arr, "b": arr})
++        sample_dims = ["x"]
++        y = D.to_stacked_array("features", sample_dims)
++        x = y.to_unstacked_dataset("features")
++        assert_identical(D, x)
++
+     def test_update(self):
+         data = create_test_data(seed=0)
+         expected = data.copy()

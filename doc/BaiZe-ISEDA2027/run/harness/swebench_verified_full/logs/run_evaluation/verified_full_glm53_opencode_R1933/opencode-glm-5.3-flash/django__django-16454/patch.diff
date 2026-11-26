@@ -1,0 +1,48 @@
+diff --git a/django/core/management/base.py b/django/core/management/base.py
+index abc6f79a15..316eba6512 100644
+--- a/django/core/management/base.py
++++ b/django/core/management/base.py
+@@ -6,6 +6,7 @@ import argparse
+ import os
+ import sys
+ from argparse import ArgumentParser, HelpFormatter
++from functools import partial
+ from io import TextIOBase
+ 
+ import django
+@@ -65,6 +66,15 @@ class CommandParser(ArgumentParser):
+             self.error(self.missing_args_message)
+         return super().parse_args(args, namespace)
+ 
++    def add_subparsers(self, **kwargs):
++        parser_class = kwargs.pop("parser_class", type(self))
++        kwargs["parser_class"] = partial(
++            parser_class,
++            missing_args_message=self.missing_args_message,
++            called_from_command_line=self.called_from_command_line,
++        )
++        return super().add_subparsers(**kwargs)
++
+     def error(self, message):
+         if self.called_from_command_line:
+             super().error(message)
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index e40632385c..9390745368 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -406,6 +406,15 @@ class CommandTests(SimpleTestCase):
+         with self.assertRaisesMessage(CommandError, msg):
+             management.call_command("subparser_dest", subcommand="foo", bar=12)
+ 
++    def test_subparser_error_formatting(self):
++        """Error formatting arguments are propagated to subparsers."""
++        msg = "Error: the following arguments are required: bar"
++        with self.assertRaisesMessage(CommandError, msg):
++            management.call_command("subparser", "foo")
++        msg = "Error: the following arguments are required: --bar"
++        with self.assertRaisesMessage(CommandError, msg):
++            management.call_command("subparser_required", "foo_1", "foo_2")
++
+     def test_create_parser_kwargs(self):
+         """BaseCommand.create_parser() passes kwargs to CommandParser."""
+         epilog = "some epilog text"

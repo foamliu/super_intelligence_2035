@@ -1,0 +1,45 @@
+diff --git a/sklearn/ensemble/tests/test_voting.py b/sklearn/ensemble/tests/test_voting.py
+index 2a19bc9a..baed306e 100644
+--- a/sklearn/ensemble/tests/test_voting.py
++++ b/sklearn/ensemble/tests/test_voting.py
+@@ -362,6 +362,26 @@ def test_sample_weight_kwargs():
+     eclf.fit(X, y, sample_weight=np.ones((len(y),)))
+ 
+ 
++@pytest.mark.filterwarnings('ignore: Default solver will be changed')  # 0.22
++@pytest.mark.filterwarnings('ignore: Default multi_class will')  # 0.22
++@pytest.mark.filterwarnings('ignore:The default value of n_estimators')
++def test_sample_weight_with_none_estimator():
++    # Non-regression test for:
++    # https://github.com/scikit-learn/scikit-learn/issues/13890
++    # Voting estimator should not fail at fit when sample weights are
++    # passed and one of the estimators has been set to None.
++    voter = VotingClassifier(estimators=[
++        ('lr', LogisticRegression(random_state=123)),
++        ('rf', RandomForestClassifier(random_state=123))])
++    voter.set_params(lr=None)
++    voter.fit(X, y, sample_weight=np.ones((len(y),)))
++
++    ereg = VotingRegressor(estimators=[
++        ('dr', DummyRegressor()), ('dr2', DummyRegressor())])
++    ereg.set_params(dr=None)
++    ereg.fit(X_r, y_r, sample_weight=np.ones((len(y_r),)))
++
++
+ @pytest.mark.filterwarnings('ignore: Default solver will be changed')  # 0.22
+ @pytest.mark.filterwarnings('ignore: Default multi_class will')  # 0.22
+ @pytest.mark.filterwarnings('ignore:The default value of n_estimators')
+diff --git a/sklearn/ensemble/voting.py b/sklearn/ensemble/voting.py
+index 7afa7180..867b66cd 100644
+--- a/sklearn/ensemble/voting.py
++++ b/sklearn/ensemble/voting.py
+@@ -78,7 +78,8 @@ class _BaseVoting(_BaseComposition, TransformerMixin):
+ 
+         if sample_weight is not None:
+             for name, step in self.estimators:
+-                if not has_fit_parameter(step, 'sample_weight'):
++                if step is not None and \
++                        not has_fit_parameter(step, 'sample_weight'):
+                     raise ValueError('Underlying estimator \'%s\' does not'
+                                      ' support sample weights.' % name)
+ 

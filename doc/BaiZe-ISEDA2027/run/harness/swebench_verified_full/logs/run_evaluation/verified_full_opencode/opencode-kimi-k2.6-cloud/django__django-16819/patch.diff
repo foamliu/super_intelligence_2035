@@ -1,0 +1,223 @@
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc..aa96096e2 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -807,6 +807,9 @@ class IndexOperation(Operation):
+     def model_name_lower(self):
+         return self.model_name.lower()
+ 
++    def references_model(self, name, app_label):
++        return name.lower() == self.model_name_lower
++
+ 
+ class AddIndex(IndexOperation):
+     """Add an index on a model."""
+@@ -861,6 +864,35 @@ class AddIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "%s_%s" % (self.model_name_lower, self.index.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, RemoveIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name.lower() == operation.name.lower()
++        ):
++            return []
++        elif (
++            isinstance(operation, RenameIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and operation.old_name
++            and self.index.name.lower() == operation.old_name_lower
++        ):
++            new_index = self.index.clone()
++            new_index.name = operation.new_name
++            return [AddIndex(self.model_name, new_index)]
++        elif (
++            isinstance(operation, AddIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name.lower() == operation.index.name.lower()
++        ):
++            return [operation]
++        elif (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RemoveIndex(IndexOperation):
+     """Remove an index from a model."""
+@@ -904,6 +936,20 @@ class RemoveIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "remove_%s_%s" % (self.model_name_lower, self.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, AddIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.name.lower() == operation.index.name.lower()
++        ):
++            return [operation]
++        elif (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RenameIndex(IndexOperation):
+     """Rename an index."""
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 8cd4c67fb..98762f086 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -1158,3 +1158,147 @@ class OptimizerTests(SimpleTestCase):
+                 ),
+             ]
+         )
++
++    def test_add_index_remove_index(self):
++        """AddIndex and RemoveIndex should cancel out."""
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++                migrations.RemoveIndex("Foo", "foo_idx"),
++            ],
++            [],
++        )
++
++    def test_add_index_remove_index_different_names(self):
++        """AddIndex and RemoveIndex with different names should not optimize."""
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++                migrations.RemoveIndex("Foo", "bar_idx"),
++            ]
++        )
++
++    def test_remove_index_add_index(self):
++        """RemoveIndex should be absorbed by AddIndex with the same name."""
++        self.assertOptimizesTo(
++            [
++                migrations.RemoveIndex("Foo", "foo_idx"),
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++            ],
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++            ],
++        )
++
++    def test_remove_index_add_index_different_names(self):
++        """RemoveIndex and AddIndex with different names should not optimize."""
++        self.assertDoesNotOptimize(
++            [
++                migrations.RemoveIndex("Foo", "foo_idx"),
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="bar_idx")
++                ),
++            ]
++        )
++
++    def test_add_index_rename_index(self):
++        """AddIndex should absorb RenameIndex."""
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="old_idx")
++                ),
++                migrations.RenameIndex(
++                    "Foo", new_name="new_idx", old_name="old_idx"
++                ),
++            ],
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="new_idx")
++                ),
++            ],
++        )
++
++    def test_add_index_rename_index_old_fields(self):
++        """AddIndex should not absorb RenameIndex with old_fields."""
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="old_idx")
++                ),
++                migrations.RenameIndex(
++                    "Foo", new_name="new_idx", old_fields=("a",)
++                ),
++            ]
++        )
++
++    def test_add_index_add_index(self):
++        """Later AddIndex should replace earlier AddIndex with the same name."""
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["b"], name="foo_idx")
++                ),
++            ],
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["b"], name="foo_idx")
++                ),
++            ],
++        )
++
++    def test_add_index_delete_model(self):
++        """AddIndex should be absorbed by DeleteModel."""
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++                migrations.DeleteModel("Foo"),
++            ],
++            [
++                migrations.DeleteModel("Foo"),
++            ],
++        )
++
++    def test_remove_index_delete_model(self):
++        """RemoveIndex should be absorbed by DeleteModel."""
++        self.assertOptimizesTo(
++            [
++                migrations.RemoveIndex("Foo", "foo_idx"),
++                migrations.DeleteModel("Foo"),
++            ],
++            [
++                migrations.DeleteModel("Foo"),
++            ],
++        )
++
++    def test_add_index_different_models(self):
++        """AddIndex on different models should not block optimization."""
++        self.assertOptimizesTo(
++            [
++                migrations.CreateModel(
++                    "Foo", [("name", models.CharField(max_length=255))]
++                ),
++                migrations.AddIndex(
++                    "Bar", models.Index(fields=["a"], name="bar_idx")
++                ),
++                migrations.DeleteModel("Foo"),
++            ],
++            [
++                migrations.AddIndex(
++                    "Bar", models.Index(fields=["a"], name="bar_idx")
++                ),
++            ],
++        )

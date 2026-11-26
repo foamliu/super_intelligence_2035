@@ -1,0 +1,118 @@
+diff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py
+index dab2bc4a5..f354a1fab 100644
+--- a/lib/matplotlib/figure.py
++++ b/lib/matplotlib/figure.py
+@@ -2272,19 +2272,55 @@ class SubFigure(FigureBase):
+             self.bbox_relative.p0 = bbox.p0
+             self.bbox_relative.p1 = bbox.p1
+             return
+-        # need to figure out *where* this subplotspec is.
+         gs = self._subplotspec.get_gridspec()
+-        wr = np.asarray(gs.get_width_ratios())
+-        hr = np.asarray(gs.get_height_ratios())
+-        dx = wr[self._subplotspec.colspan].sum() / wr.sum()
+-        dy = hr[self._subplotspec.rowspan].sum() / hr.sum()
+-        x0 = wr[:self._subplotspec.colspan.start].sum() / wr.sum()
+-        y0 = 1 - hr[:self._subplotspec.rowspan.stop].sum() / hr.sum()
++        nrows, ncols = gs.get_geometry()
++
++        # Get spacing, handling both GridSpec and GridSpecFromSubplotSpec
++        if hasattr(gs, 'wspace'):
++            wspace = gs.wspace
++        else:
++            wspace = getattr(gs, '_wspace', None)
++        if hasattr(gs, 'hspace'):
++            hspace = gs.hspace
++        else:
++            hspace = getattr(gs, '_hspace', None)
++
++        # Fall back to 0 if not explicitly set to preserve backward compat
++        if wspace is None:
++            wspace = 0.0
++        if hspace is None:
++            hspace = 0.0
++
++        # Compute grid positions in parent-local [0, 1] coordinates
++        cell_h = 1 / (nrows + hspace * (nrows - 1))
++        sep_h = hspace * cell_h
++        norm = cell_h * nrows / sum(gs.get_height_ratios())
++        cell_heights = [r * norm for r in gs.get_height_ratios()]
++        sep_heights = [0] + ([sep_h] * (nrows - 1))
++        cell_hs = np.cumsum(np.column_stack([sep_heights, cell_heights]).flat)
++
++        cell_w = 1 / (ncols + wspace * (ncols - 1))
++        sep_w = wspace * cell_w
++        norm = cell_w * ncols / sum(gs.get_width_ratios())
++        cell_widths = [r * norm for r in gs.get_width_ratios()]
++        sep_widths = [0] + ([sep_w] * (ncols - 1))
++        cell_ws = np.cumsum(np.column_stack([sep_widths, cell_widths]).flat)
++
++        fig_tops, fig_bottoms = (1 - cell_hs).reshape((-1, 2)).T
++        fig_lefts, fig_rights = cell_ws.reshape((-1, 2)).T
++
++        rows = self._subplotspec.rowspan
++        cols = self._subplotspec.colspan
++        fig_bottom = fig_bottoms[rows].min()
++        fig_top = fig_tops[rows].max()
++        fig_left = fig_lefts[cols].min()
++        fig_right = fig_rights[cols].max()
++        bbox = Bbox.from_extents(fig_left, fig_bottom, fig_right, fig_top)
+         if self.bbox_relative is None:
+-            self.bbox_relative = Bbox.from_bounds(x0, y0, dx, dy)
++            self.bbox_relative = bbox
+         else:
+-            self.bbox_relative.p0 = (x0, y0)
+-            self.bbox_relative.p1 = (x0 + dx, y0 + dy)
++            self.bbox_relative.p0 = bbox.p0
++            self.bbox_relative.p1 = bbox.p1
+ 
+     def get_constrained_layout(self):
+         """
+diff --git a/lib/matplotlib/tests/test_figure.py b/lib/matplotlib/tests/test_figure.py
+index 474331bf9..f563013a8 100644
+--- a/lib/matplotlib/tests/test_figure.py
++++ b/lib/matplotlib/tests/test_figure.py
+@@ -1394,6 +1394,43 @@ def test_subfigure_spanning():
+     fig.draw_without_rendering()
+ 
+ 
++def test_subfigures_wspace_hspace():
++    # test that subfigures respect wspace and hspace
++    fig = plt.figure(figsize=(6, 4))
++    subfigs = fig.subfigures(2, 2, wspace=0.3, hspace=0.3)
++
++    # With wspace=0.3 and hspace=0.3, each subfigure should be smaller
++    # than 0.5 x 0.5 and there should be gaps between them
++    sf00 = subfigs[0, 0]
++    sf01 = subfigs[0, 1]
++    sf10 = subfigs[1, 0]
++    sf11 = subfigs[1, 1]
++
++    # Check widths are less than 0.5
++    assert sf00.bbox_relative.width < 0.5
++    assert sf01.bbox_relative.width < 0.5
++    # Check heights are less than 0.5
++    assert sf00.bbox_relative.height < 0.5
++    assert sf10.bbox_relative.height < 0.5
++
++    # Check there is a horizontal gap between columns
++    assert sf00.bbox_relative.x1 < sf01.bbox_relative.x0
++    # Check there is a vertical gap between rows
++    assert sf10.bbox_relative.y1 < sf00.bbox_relative.y0
++
++    # Check wspace=0, hspace=0 gives no gap and size 0.5 x 0.5
++    fig2 = plt.figure(figsize=(6, 4))
++    subfigs2 = fig2.subfigures(2, 2, wspace=0, hspace=0)
++    np.testing.assert_allclose(
++        subfigs2[0, 0].bbox_relative.extents, [0, 0.5, 0.5, 1])
++    np.testing.assert_allclose(
++        subfigs2[0, 1].bbox_relative.extents, [0.5, 0.5, 1, 1])
++    np.testing.assert_allclose(
++        subfigs2[1, 0].bbox_relative.extents, [0, 0, 0.5, 0.5])
++    np.testing.assert_allclose(
++        subfigs2[1, 1].bbox_relative.extents, [0.5, 0, 1, 0.5])
++
++
+ @mpl.style.context('mpl20')
+ def test_subfigure_ticks():
+     # This tests a tick-spacing error that only seems applicable

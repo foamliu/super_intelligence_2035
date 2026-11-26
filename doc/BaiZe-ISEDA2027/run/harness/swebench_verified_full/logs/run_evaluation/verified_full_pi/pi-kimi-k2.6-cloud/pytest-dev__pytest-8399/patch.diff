@@ -1,0 +1,47 @@
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 719eb4e..3f88d7a 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -144,7 +144,7 @@ def _make_xunit_fixture(
+         scope=scope,
+         autouse=True,
+         # Use a unique name to speed up lookup.
+-        name=f"unittest_{setup_name}_fixture_{obj.__qualname__}",
++        name=f"_unittest_{setup_name}_fixture_{obj.__qualname__}",
+     )
+     def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:
+         if _is_skipped(self):
+diff --git a/testing/python/fixtures.py b/testing/python/fixtures.py
+index 3d5099c..bf3b2db 100644
+--- a/testing/python/fixtures.py
++++ b/testing/python/fixtures.py
+@@ -3399,6 +3399,29 @@ class TestShowFixtures:
+             *hello world*
+         """
+         )
++    def test_show_fixtures_unittest_hidden(self, pytester: Pytester) -> None:
++        p = pytester.makepyfile(
++            '''
++            import unittest
++
++            class Tests(unittest.TestCase):
++                @classmethod
++                def setUpClass(cls):
++                    pass
++
++                def test_1(self):
++                    pass
++            '''
++        )
++        result = pytester.runpytest("--fixtures", p)
++        result.stdout.no_fnmatch_line("*unittest_setUpClass_fixture*")
++        result.stdout.no_fnmatch_line("*_unittest_setUpClass_fixture*")
++        result = pytester.runpytest("--fixtures", "-v", p)
++        result.stdout.fnmatch_lines(
++            [
++                "*_unittest_setUpClass_fixture*",
++            ]
++        )
+ 
+     def test_show_fixtures_trimmed_doc(self, pytester: Pytester) -> None:
+         p = pytester.makepyfile(

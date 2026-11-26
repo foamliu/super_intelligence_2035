@@ -1,0 +1,82 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index 488d8ba..75b6872 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -45,6 +45,8 @@ Breaking changes
+ 
+ New Features
+ ~~~~~~~~~~~~
++- :py:meth:`DataArray.integrate` now uses the ``coord`` argument, matching
++  :py:meth:`Dataset.integrate`. The previous ``dim`` argument is deprecated.
+ - Significantly higher ``unstack`` performance on numpy-backed arrays which
+   contain missing values; 8x faster in our benchmark, and 2x faster than pandas.
+   (:pull:`4746`);
+diff --git a/xarray/core/dataarray.py b/xarray/core/dataarray.py
+index 2fef3ed..caf0719 100644
+--- a/xarray/core/dataarray.py
++++ b/xarray/core/dataarray.py
+@@ -3481,17 +3481,21 @@ class DataArray(AbstractArray, DataWithCoords):
+         return self._from_temp_dataset(ds)
+ 
+     def integrate(
+-        self, dim: Union[Hashable, Sequence[Hashable]], datetime_unit: str = None
++        self,
++        coord: Union[Hashable, Sequence[Hashable]] = None,
++        datetime_unit: str = None,
++        *,
++        dim: Union[Hashable, Sequence[Hashable]] = None,
+     ) -> "DataArray":
+         """ integrate the array with the trapezoidal rule.
+ 
+         .. note::
+-            This feature is limited to simple cartesian geometry, i.e. dim
++            This feature is limited to simple cartesian geometry, i.e. coord
+             must be one dimensional.
+ 
+         Parameters
+         ----------
+-        dim : hashable, or sequence of hashable
++        coord : hashable, or sequence of hashable
+             Coordinate(s) used for the integration.
+         datetime_unit : {"Y", "M", "W", "D", "h", "m", "s", "ms", "us", "ns", \
+                          "ps", "fs", "as"}, optional
+@@ -3528,7 +3532,17 @@ class DataArray(AbstractArray, DataWithCoords):
+         array([5.4, 6.6, 7.8])
+         Dimensions without coordinates: y
+         """
+-        ds = self._to_temp_dataset().integrate(dim, datetime_unit)
++        if dim is not None:
++            warnings.warn(
++                "The `dim` argument has been deprecated. Use `coord` instead.",
++                FutureWarning,
++                stacklevel=2,
++            )
++            coord = dim
++        elif coord is None:
++            raise TypeError("integrate() missing 1 required argument: 'coord'")
++
++        ds = self._to_temp_dataset().integrate(coord, datetime_unit)
+         return self._from_temp_dataset(ds)
+ 
+     def unify_chunks(self) -> "DataArray":
+diff --git a/xarray/tests/test_dataarray.py b/xarray/tests/test_dataarray.py
+index fc84687..bddfb08 100644
+--- a/xarray/tests/test_dataarray.py
++++ b/xarray/tests/test_dataarray.py
+@@ -7038,6 +7038,16 @@ def test_rolling_exp_keep_attrs(da):
+     assert result.attrs == {}
+ 
+ 
++def test_integrate_dim_deprecated():
++    da = xr.DataArray([1, 2, 3], dims=["x"], coords={"x": [0, 1, 2]})
++
++    with pytest.warns(FutureWarning, match="Use `coord` instead"):
++        actual = da.integrate(dim="x")
++
++    expected = da.integrate("x")
++    assert_equal(actual, expected)
++
++
+ def test_no_dict():
+     d = DataArray()
+     with pytest.raises(AttributeError):

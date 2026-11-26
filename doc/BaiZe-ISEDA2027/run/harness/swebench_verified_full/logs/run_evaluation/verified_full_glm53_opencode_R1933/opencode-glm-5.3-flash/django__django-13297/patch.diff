@@ -1,0 +1,85 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index 28374272f4..5d1b6155cd 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -21,7 +21,7 @@ from django.utils.dateparse import (
+     parse_date, parse_datetime, parse_duration, parse_time,
+ )
+ from django.utils.duration import duration_microseconds, duration_string
+-from django.utils.functional import Promise, cached_property
++from django.utils.functional import LazyObject, Promise, cached_property
+ from django.utils.ipv6 import clean_ipv6_address
+ from django.utils.itercompat import is_iterable
+ from django.utils.text import capfirst
+@@ -806,6 +806,8 @@ class Field(RegisterLookupMixin):
+         """Perform preliminary non-db specific value checks and conversions."""
+         if isinstance(value, Promise):
+             value = value._proxy____cast()
++        elif isinstance(value, LazyObject):
++            value = value.__reduce__()[1][0]
+         return value
+ 
+     def get_db_prep_value(self, value, connection, prepared=False):
+diff --git a/repro_31880.py b/repro_31880.py
+new file mode 100644
+index 0000000000..63cb2d3acd
+--- /dev/null
++++ b/repro_31880.py
+@@ -0,0 +1,28 @@
++import django
++from django.conf import settings
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++from django.db import models, connection
++
++class Account(models.Model):
++    slug = models.CharField(max_length=100)
++    class Meta:
++        app_label = 'auth'
++
++with connection.schema_editor() as se:
++    se.create_model(Account)
++
++from django.utils.functional import SimpleLazyObject
++Account.objects.create(slug='offer-1')
++lazy_slug = SimpleLazyObject(lambda: 'offer-1')
++print('isinstance str:', isinstance(lazy_slug, str))
++try:
++    offer = Account.objects.filter(slug=lazy_slug).get()
++    print('OK:', offer.slug)
++except Exception as e:
++    print('CRASH:', type(e).__name__, e)
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index f9a57b088a..198ae6e149 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -14,6 +14,7 @@ from django.db.models.sql.where import NothingNode, WhereNode
+ from django.test import SimpleTestCase, TestCase, skipUnlessDBFeature
+ from django.test.utils import CaptureQueriesContext, ignore_warnings
+ from django.utils.deprecation import RemovedInDjango40Warning
++from django.utils.functional import SimpleLazyObject
+ 
+ from .models import (
+     FK1, Annotation, Article, Author, BaseA, Book, CategoryItem,
+@@ -1223,6 +1224,16 @@ class Queries1Tests(TestCase):
+         )
+         self.assertSequenceEqual(Note.objects.exclude(negate=True), [self.n3])
+ 
++    def test_filtering_on_simplelazy_object(self):
++        # SimpleLazyObject is resolved to its wrapped value when used as a
++        # lookup value (#31880).
++        lazy_name = SimpleLazyObject(lambda: 't1')
++        self.assertCountEqual(Tag.objects.filter(name=lazy_name), [self.t1])
++        self.assertCountEqual(
++            Tag.objects.filter(name__in=[lazy_name, SimpleLazyObject(lambda: 't2')]),
++            [self.t1, self.t2],
++        )
++
+ 
+ class Queries2Tests(TestCase):
+     @classmethod

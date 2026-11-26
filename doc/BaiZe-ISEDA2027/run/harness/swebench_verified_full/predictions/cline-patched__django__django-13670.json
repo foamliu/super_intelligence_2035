@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13670",
+    "model_name_or_path": "cline-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/utils/dateformat.py b/django/utils/dateformat.py\nindex afd36d79..52641436 100644\n--- a/django/utils/dateformat.py\n+++ b/django/utils/dateformat.py\n@@ -326,7 +326,7 @@ class DateFormat(TimeFormat):\n \n     def y(self):\n         \"Year, 2 digits; e.g. '99'\"\n-        return str(self.data.year)[2:]\n+        return '%02d' % (self.data.year % 100)\n \n     def Y(self):\n         \"Year, 4 digits; e.g. '1999'\"\ndiff --git a/tests/utils_tests/test_dateformat.py b/tests/utils_tests/test_dateformat.py\nindex d050ac43..373acbaa 100644\n--- a/tests/utils_tests/test_dateformat.py\n+++ b/tests/utils_tests/test_dateformat.py\n@@ -105,6 +105,12 @@ class DateFormatTests(SimpleTestCase):\n         self.assertEqual(dateformat.format(my_birthday, 'Y'), '1979')\n         self.assertEqual(dateformat.format(my_birthday, 'z'), '189')\n \n+    def test_year_two_digit(self):\n+        # Ticket #32007 -- Years < 1000\n+        self.assertEqual(dateformat.format(datetime(123, 4, 5, 6, 7), 'y'), '23')\n+        self.assertEqual(dateformat.format(datetime(99, 4, 5, 6, 7), 'y'), '99')\n+        self.assertEqual(dateformat.format(datetime(9, 4, 5, 6, 7), 'y'), '09')\n+\n     def test_dateformat(self):\n         my_birthday = datetime(1979, 7, 8, 22, 00)\n \n"
+  }
+]

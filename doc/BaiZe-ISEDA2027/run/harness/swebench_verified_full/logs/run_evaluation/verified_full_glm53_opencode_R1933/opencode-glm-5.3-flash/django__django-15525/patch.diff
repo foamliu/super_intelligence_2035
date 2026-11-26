@@ -1,0 +1,150 @@
+diff --git a/django/core/serializers/base.py b/django/core/serializers/base.py
+index da85cb4b9..5f97b4408 100644
+--- a/django/core/serializers/base.py
++++ b/django/core/serializers/base.py
+@@ -336,13 +336,23 @@ def build_instance(Model, data, db):
+         and hasattr(default_manager, "get_by_natural_key")
+         and hasattr(Model, "natural_key")
+     ):
+-        natural_key = Model(**data).natural_key()
++        obj = Model(**data)
++        obj._state.db = db
+         try:
+-            data[Model._meta.pk.attname] = Model._meta.pk.to_python(
+-                default_manager.db_manager(db).get_by_natural_key(*natural_key).pk
+-            )
+-        except Model.DoesNotExist:
++            natural_key = obj.natural_key()
++        except ObjectDoesNotExist:
++            # A related object required to compute the natural key is
++            # missing (e.g. a natural foreign key to an object that isn't
++            # stored in the database yet), so the object can't be looked
++            # up by natural key.
+             pass
++        else:
++            try:
++                data[Model._meta.pk.attname] = Model._meta.pk.to_python(
++                    default_manager.db_manager(db).get_by_natural_key(*natural_key).pk
++                )
++            except Model.DoesNotExist:
++                pass
+     return Model(**data)
+ 
+ 
+diff --git a/tests/serializers/models/natural.py b/tests/serializers/models/natural.py
+index 1e439b34e..f02ef5c33 100644
+--- a/tests/serializers/models/natural.py
++++ b/tests/serializers/models/natural.py
+@@ -73,3 +73,35 @@ class FKAsPKNoNaturalKey(models.Model):
+ 
+     def natural_key(self):
+         raise NotImplementedError("This method was not expected to be called.")
++
++
++class NaturalKeyFKParentManager(models.Manager):
++    def get_by_natural_key(self, name):
++        return self.get(name=name)
++
++
++class NaturalKeyFKParent(models.Model):
++    name = models.CharField(max_length=100, unique=True)
++
++    objects = NaturalKeyFKParentManager()
++
++    def natural_key(self):
++        return (self.name,)
++
++
++class NaturalKeyFKChildManager(models.Manager):
++    def get_by_natural_key(self, title, name):
++        return self.get(title=title, parent__name=name)
++
++
++class NaturalKeyFKChild(models.Model):
++    title = models.CharField(max_length=100)
++    parent = models.ForeignKey(NaturalKeyFKParent, models.CASCADE)
++
++    objects = NaturalKeyFKChildManager()
++
++    def natural_key(self):
++        return (self.title,) + self.parent.natural_key()
++
++    class Meta:
++        unique_together = [["title", "parent"]]
+diff --git a/tests/serializers/test_natural.py b/tests/serializers/test_natural.py
+index 6b6cfae6f..4869ea6a5 100644
+--- a/tests/serializers/test_natural.py
++++ b/tests/serializers/test_natural.py
+@@ -1,4 +1,7 @@
++import tempfile
++
+ from django.core import serializers
++from django.core.management import call_command
+ from django.db import connection
+ from django.test import TestCase
+ 
+@@ -7,6 +10,8 @@ from .models import (
+     FKAsPKNoNaturalKey,
+     FKDataNaturalKey,
+     NaturalKeyAnchor,
++    NaturalKeyFKChild,
++    NaturalKeyFKParent,
+     NaturalKeyThing,
+     NaturalPKWithDefault,
+ )
+@@ -282,3 +287,55 @@ register_tests(
+     "test_%s_fk_as_pk_natural_key_not_called",
+     fk_as_pk_natural_key_not_called,
+ )
++
++
++class NaturalKeyLoadDataTests(TestCase):
++    databases = {"default", "other"}
++
++    def setUp(self):
++        parent = NaturalKeyFKParent.objects.create(name="parent")
++        NaturalKeyFKChild.objects.create(title="child", parent=parent)
++        self.fixture = serializers.serialize(
++            "json",
++            [parent, NaturalKeyFKChild.objects.get()],
++            use_natural_foreign_keys=True,
++            use_natural_primary_keys=True,
++        )
++        NaturalKeyFKChild.objects.all().delete()
++        NaturalKeyFKParent.objects.all().delete()
++
++    def load_fixture(self, database):
++        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as tmp:
++            tmp.write(self.fixture)
++            tmp.seek(0)
++            call_command("loaddata", tmp.name, database=database, verbosity=0)
++
++    def test_loaddata_non_default_database(self):
++        """
++        A fixture that uses natural foreign keys can be loaded into a
++        non-default database even if the related objects don't exist in the
++        default database.
++        """
++        self.load_fixture("other")
++        self.assertCountEqual(
++            NaturalKeyFKParent.objects.using("other").values_list("name"),
++            [("parent",)],
++        )
++        self.assertCountEqual(
++            NaturalKeyFKChild.objects.using("other").values_list("title"),
++            [("child",)],
++        )
++        self.assertEqual(
++            NaturalKeyFKChild.objects.using("other").get().parent.name, "parent"
++        )
++
++    def test_loaddata_non_default_database_twice(self):
++        """
++        Reloading a fixture that uses natural foreign keys into a non-default
++        database updates the existing objects instead of raising an
++        IntegrityError or creating duplicates.
++        """
++        self.load_fixture("other")
++        self.load_fixture("other")
++        self.assertEqual(NaturalKeyFKParent.objects.using("other").count(), 1)
++        self.assertEqual(NaturalKeyFKChild.objects.using("other").count(), 1)

@@ -1,0 +1,68 @@
+diff --git a/django/db/backends/base/schema.py b/django/db/backends/base/schema.py
+index f2ca8c8df9..594b155c93 100644
+--- a/django/db/backends/base/schema.py
++++ b/django/db/backends/base/schema.py
+@@ -528,7 +528,10 @@ class BaseDatabaseSchemaEditor:
+         # Deleted uniques
+         for fields in olds.difference(news):
+             self._delete_composed_index(
+-                model, fields, {"unique": True}, self.sql_delete_unique
++                model,
++                fields,
++                {"unique": True, "primary_key": False},
++                self.sql_delete_unique,
+             )
+         # Created uniques
+         for field_names in news.difference(olds):
+diff --git a/tests/schema/tests.py b/tests/schema/tests.py
+index fe717f8841..26f18a02ff 100644
+--- a/tests/schema/tests.py
++++ b/tests/schema/tests.py
+@@ -2636,6 +2636,47 @@ class SchemaTests(TransactionTestCase):
+             AuthorWithUniqueNameAndBirthday._meta.constraints = []
+             editor.remove_constraint(AuthorWithUniqueNameAndBirthday, constraint)
+ 
++    def test_unique_together_with_single_unique_field(self):
++        """
++        A unique_together constraint on a single field with its own unique
++        constraint (e.g. the primary key) can be removed without raising an
++        error about finding too many constraints (#28305).
++        """
++        with connection.schema_editor() as editor:
++            editor.create_model(Author)
++        # Add the unique_together constraint on the primary key field.
++        with connection.schema_editor() as editor:
++            editor.alter_unique_together(Author, [], (("id",),))
++        constraints = self.get_constraints(Author._meta.db_table)
++        self.assertEqual(
++            len(
++                [
++                    name
++                    for name, details in constraints.items()
++                    if details["columns"] == ["id"]
++                    and details["unique"]
++                    and not details["primary_key"]
++                ]
++            ),
++            1,
++        )
++        # Remove the unique_together constraint.
++        with connection.schema_editor() as editor:
++            editor.alter_unique_together(Author, (("id",),), [])
++        constraints = self.get_constraints(Author._meta.db_table)
++        self.assertEqual(
++            len(
++                [
++                    name
++                    for name, details in constraints.items()
++                    if details["columns"] == ["id"]
++                    and details["unique"]
++                    and not details["primary_key"]
++                ]
++            ),
++            0,
++        )
++
+     def test_unique_constraint(self):
+         with connection.schema_editor() as editor:
+             editor.create_model(Author)

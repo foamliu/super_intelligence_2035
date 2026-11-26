@@ -1,0 +1,33 @@
+diff --git a/sklearn/base.py b/sklearn/base.py
+index 56ffb18..3499827 100644
+--- a/sklearn/base.py
++++ b/sklearn/base.py
+@@ -48,7 +48,7 @@ def clone(estimator, safe=True):
+     # XXX: not handling dictionaries
+     if estimator_type in (list, tuple, set, frozenset):
+         return estimator_type([clone(e, safe=safe) for e in estimator])
+-    elif not hasattr(estimator, 'get_params'):
++    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):
+         if not safe:
+             return copy.deepcopy(estimator)
+         else:
+diff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py
+index ebcb389..932e768 100644
+--- a/sklearn/tests/test_base.py
++++ b/sklearn/tests/test_base.py
+@@ -154,6 +154,15 @@ def test_clone_nan():
+     assert clf.empty is clf2.empty
+ 
+ 
++
++
++def test_clone_estimator_type():
++    # Regression test for cloning when parameter is an estimator type
++    # (not an instance).
++    clf = MyEstimator(empty=MyEstimator)
++    clf2 = clone(clf)
++    assert clf.empty is clf2.empty
++
+ def test_clone_sparse_matrices():
+     sparse_matrix_classes = [
+         getattr(sp, name)

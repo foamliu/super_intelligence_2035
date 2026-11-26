@@ -1,0 +1,59 @@
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc..ec809abd6 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -823,6 +823,15 @@ class AddIndex(IndexOperation):
+     def state_forwards(self, app_label, state):
+         state.add_index(app_label, self.model_name_lower, self.index)
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, RemoveIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name == operation.name
++        ):
++            return []
++        return super().reduce(operation, app_label)
++
+     def database_forwards(self, app_label, schema_editor, from_state, to_state):
+         model = to_state.apps.get_model(app_label, self.model_name)
+         if self.allow_migrate_model(schema_editor.connection.alias, model):
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 8cd4c67fb..04b290105 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -1158,3 +1158,34 @@ class OptimizerTests(SimpleTestCase):
+                 ),
+             ]
+         )
++
++    def test_add_remove_index(self):
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Pony", models.Index(fields=["pink"], name="pony_pink_idx")
++                ),
++                migrations.RemoveIndex("Pony", "pony_pink_idx"),
++            ],
++            [],
++        )
++
++    def test_add_remove_index_different_names(self):
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Pony", models.Index(fields=["pink"], name="pony_pink_idx")
++                ),
++                migrations.RemoveIndex("Pony", "pony_pink_idx2"),
++            ]
++        )
++
++    def test_add_remove_index_different_models(self):
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Pony", models.Index(fields=["pink"], name="pony_pink_idx")
++                ),
++                migrations.RemoveIndex("Zebra", "pony_pink_idx"),
++            ]
++        )

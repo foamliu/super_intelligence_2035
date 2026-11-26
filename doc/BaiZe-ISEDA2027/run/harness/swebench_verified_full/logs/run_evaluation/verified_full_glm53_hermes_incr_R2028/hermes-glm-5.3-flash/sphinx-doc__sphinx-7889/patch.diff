@@ -1,0 +1,46 @@
+diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py
+index 98a3a3a96..40258a135 100644
+--- a/sphinx/ext/autodoc/mock.py
++++ b/sphinx/ext/autodoc/mock.py
+@@ -52,8 +52,8 @@ class _MockObject:
+     def __mro_entries__(self, bases: Tuple) -> Tuple:
+         return (self.__class__,)
+ 
+-    def __getitem__(self, key: str) -> "_MockObject":
+-        return _make_subclass(key, self.__display_name__, self.__class__)()
++    def __getitem__(self, key: Any) -> "_MockObject":
++        return _make_subclass(str(key), self.__display_name__, self.__class__)()
+ 
+     def __getattr__(self, key: str) -> "_MockObject":
+         return _make_subclass(key, self.__display_name__, self.__class__)()
+diff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py
+index 4760493cf..9598c94d8 100644
+--- a/tests/test_ext_autodoc_mock.py
++++ b/tests/test_ext_autodoc_mock.py
+@@ -52,6 +52,26 @@ def test_MockObject():
+     assert isinstance(obj.other_method(), SubClass)
+ 
+ 
++def test_MockObject_subscript():
++    mock = _MockObject()
++    assert isinstance(mock["attr1"], _MockObject)
++    assert repr(mock["attr1"]) == "_MockObject.attr1"
++
++
++@pytest.mark.skipif(sys.version_info < (3, 7), reason='Only for py37 or above')
++def test_MockObject_subscript_with_typing():
++    from typing import TypeVar
++
++    T = TypeVar('T')
++    mock = _MockObject()
++
++    class SubClass(mock.SomeClass[T]):
++        """docstring of SubClass"""
++
++    assert SubClass.__doc__ == "docstring of SubClass"
++    assert isinstance(SubClass(), SubClass)
++
++
+ def test_mock():
+     modname = 'sphinx.unknown'
+     submodule = modname + '.submodule'

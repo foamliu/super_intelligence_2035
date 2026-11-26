@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-7454",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py\nindex 893bb0a2..fa1a7410 100644\n--- a/sphinx/domains/python.py\n+++ b/sphinx/domains/python.py\n@@ -71,8 +71,12 @@ pairindextypes = {\n def _parse_annotation(annotation: str) -> List[Node]:\n     \"\"\"Parse type annotation.\"\"\"\n     def make_xref(text: str) -> addnodes.pending_xref:\n+        if text == 'None':\n+            reftype = 'obj'\n+        else:\n+            reftype = 'class'\n         return pending_xref('', nodes.Text(text),\n-                            refdomain='py', reftype='class', reftarget=text)\n+                            refdomain='py', reftype=reftype, reftarget=text)\n \n     def unparse(node: ast.AST) -> List[Node]:\n         if isinstance(node, ast.Attribute):\ndiff --git a/tests/test_domain_py.py b/tests/test_domain_py.py\nindex dc3d51d0..6df2fe7a 100644\n--- a/tests/test_domain_py.py\n+++ b/tests/test_domain_py.py\n@@ -266,6 +266,11 @@ def test_parse_annotation():\n                           [pending_xref, \"int\"],\n                           [desc_sig_punctuation, \"]\"]))\n \n+    # None is not a type, so should use obj role instead\n+    doctree = _parse_annotation(\"None\")\n+    assert_node(doctree, ([pending_xref, \"None\"],))\n+    assert doctree[0].get('reftype') == 'obj'\n+\n \n def test_pyfunction_signature(app):\n     text = \".. py:function:: hello(name: str) -> str\"\n"
+  }
+]

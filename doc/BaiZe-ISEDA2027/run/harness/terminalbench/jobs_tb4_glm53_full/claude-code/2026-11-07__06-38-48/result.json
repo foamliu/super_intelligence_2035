@@ -1,0 +1,84 @@
+{
+    "id": "2a640e8b-0a67-468b-a610-526e5fd163e4",
+    "started_at": "2026-11-07T06:38:48.455985",
+    "updated_at": "2026-11-07T08:15:42.922640Z",
+    "finished_at": null,
+    "n_total_trials": 66,
+    "stats": {
+        "n_completed_trials": 37,
+        "n_errored_trials": 32,
+        "n_running_trials": 1,
+        "n_pending_trials": 28,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "claude-code__terminal-bench-4.0": {
+                "n_trials": 5,
+                "n_errors": 32,
+                "metrics": [
+                    {
+                        "mean": 0.05405405405405406
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "embedding-drift-monitor__adm7qHk",
+                            "fin-saccr-rwa__mYG7Vzw"
+                        ],
+                        "0.0": [
+                            "foodstuff-beta-activity__8niRzVq",
+                            "freecad-impeller__YgVAwP7",
+                            "glycan-ms2-elucidation__WsFSFHL"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "RuntimeError": [
+                        "atrx-vep-crispr__YJoZb2A",
+                        "batched-eval-parity__rmcd7Ed",
+                        "biped-contact-dynamics__Fq6FTLK",
+                        "bun-sourcemap-leak__JvEC3Zc",
+                        "cad-model__zTBx9Lt",
+                        "cargo-flight-dispatch__b4aqyt3",
+                        "coq-block-bound__9dZQe5N",
+                        "ctr-optimization__EfLjpBz",
+                        "data-anonymization__ZcMte9y",
+                        "distributed-dedup__3r3wEyF",
+                        "formal-crypto__Fuoqgj9",
+                        "freecad-platform-drawing__8LCHKWc",
+                        "freecad-spring-clip__XmShnS4",
+                        "freight-dispatch-shift__tCUnThe",
+                        "gsea-proteomics__pMKpR5H",
+                        "heat-pump-warranty__mutUdyA",
+                        "hof-topology-interpenetration__CeXqVZz",
+                        "html-js-filter__CUrbGm9",
+                        "interleaved-vigenere__5YRudxo",
+                        "intrastat-meldung__L4zivkQ",
+                        "jax-speedrun-gpu__dLkmwm9",
+                        "ks-solver-cpp__NPqhRpv",
+                        "kv-live-surgery__dbqg8wN",
+                        "lake-temp-glm__yAZNyEJ",
+                        "layout-config-recreation__tWCRsMJ",
+                        "layout-config-recreation2__2Lwn8bc",
+                        "legacy-utility-triage__BXZSXSy",
+                        "live-database-cutover__9MaxZ8Q",
+                        "math-eval-grader__ik6wCfi"
+                    ],
+                    "ValueError": [
+                        "cumulative-layout-shift__JoRBkt5",
+                        "medical-claims-processing__pk2vWeb"
+                    ],
+                    "NonZeroAgentExitCodeError": [
+                        "fp8-rmsnorm-gemm__ev7AcLN"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

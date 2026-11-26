@@ -1,0 +1,53 @@
+diff --git a/sklearn/svm/base.py b/sklearn/svm/base.py
+index 64cebe83..5c7a41a4 100644
+--- a/sklearn/svm/base.py
++++ b/sklearn/svm/base.py
+@@ -287,8 +287,12 @@ class BaseLibSVM(BaseEstimator, metaclass=ABCMeta):
+         n_SV = self.support_vectors_.shape[0]
+ 
+         dual_coef_indices = np.tile(np.arange(n_SV), n_class)
+-        dual_coef_indptr = np.arange(0, dual_coef_indices.size + 1,
+-                                     dual_coef_indices.size / n_class)
++        if not n_SV:
++            # don't know what n_SV is if support_vectors_ is empty
++            dual_coef_indptr = np.zeros(n_class + 1, dtype=np.intp)
++        else:
++            dual_coef_indptr = np.arange(0, dual_coef_indices.size + 1,
++                                         dual_coef_indices.size / n_class)
+         self.dual_coef_ = sp.csr_matrix(
+             (dual_coef_data, dual_coef_indices, dual_coef_indptr),
+             (n_class, n_SV))
+diff --git a/sklearn/svm/tests/test_sparse.py b/sklearn/svm/tests/test_sparse.py
+index 7cf6e8af..54be5db8 100644
+--- a/sklearn/svm/tests/test_sparse.py
++++ b/sklearn/svm/tests/test_sparse.py
+@@ -360,3 +360,29 @@ def test_consistent_proba():
+     with ignore_warnings(category=ConvergenceWarning):
+         proba_2 = a.fit(X, Y).predict_proba(X)
+     assert_array_almost_equal(proba_1, proba_2)
++
++
++def test_svr_empty_support_vectors_sparse():
++    # Regression test for #14802: _sparse_fit used to raise a
++    # ZeroDivisionError when there was no support vector.
++    X = np.array([[0, 1, 0, 0],
++                  [0, 0, 0, 1],
++                  [0, 0, 1, 0],
++                  [0, 0, 0, 1]])
++    y = np.array([0.04, 0.04, 0.10, 0.16])
++
++    X_sparse = sparse.csr_matrix(X)
++
++    params = dict(C=316.227766017, cache_size=200, coef0=0.0, degree=3,
++                  epsilon=0.1, gamma=1.0, kernel='linear', max_iter=15000,
++                  shrinking=True, tol=0.001, verbose=False)
++
++    dense_svr = svm.SVR(**params).fit(X, y)
++    sparse_svr = svm.SVR(**params).fit(X_sparse, y)
++
++    assert sparse_svr.support_vectors_.shape[0] == 0
++    assert sparse_svr.dual_coef_.shape == dense_svr.dual_coef_.shape
++    assert_array_almost_equal(dense_svr.dual_coef_,
++                              sparse_svr.dual_coef_.toarray())
++    assert_array_almost_equal(dense_svr.predict(X),
++                              sparse_svr.predict(X_sparse))

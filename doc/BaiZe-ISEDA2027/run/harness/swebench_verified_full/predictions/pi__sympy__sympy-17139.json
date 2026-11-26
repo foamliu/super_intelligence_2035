@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-17139",
+    "model_name_or_path": "pi-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/simplify/fu.py b/sympy/simplify/fu.py\nindex ad1130ef..65dc775a 100644\n--- a/sympy/simplify/fu.py\n+++ b/sympy/simplify/fu.py\n@@ -500,6 +500,8 @@ def _f(rv):\n         # change is not going to allow a simplification as far as I can tell.\n         if not (rv.is_Pow and rv.base.func == f):\n             return rv\n+        if rv.exp.is_real is False:\n+            return rv\n \n         if (rv.exp < 0) == True:\n             return rv\ndiff --git a/sympy/simplify/tests/test_fu.py b/sympy/simplify/tests/test_fu.py\nindex 54be6e1d..9db91391 100644\n--- a/sympy/simplify/tests/test_fu.py\n+++ b/sympy/simplify/tests/test_fu.py\n@@ -438,3 +438,12 @@ def test_as_f_sign_1():\n     assert as_f_sign_1(2*x + 2) == (2, x, 1)\n     assert as_f_sign_1(x*y - y) == (y, x, -1)\n     assert as_f_sign_1(-x*y + y) == (-y, x, -1)\n+\n+\n+def test_issue_complex_exp():\n+    # issue: simplify(cos(x)**I) raised TypeError\n+    from sympy import simplify\n+    x = symbols('x')\n+    assert simplify(cos(x)**I) == cos(x)**I\n+    assert simplify(sin(x)**I) == sin(x)**I\n+    assert simplify(cos(x)**(1 + I)) == cos(x)**(1 + I)\n"
+  }
+]

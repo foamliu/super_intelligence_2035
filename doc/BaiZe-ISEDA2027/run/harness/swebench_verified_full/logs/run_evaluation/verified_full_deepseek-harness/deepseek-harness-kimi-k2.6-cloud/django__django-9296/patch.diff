@@ -1,0 +1,42 @@
+diff --git a/django/core/paginator.py b/django/core/paginator.py
+index 1f92da5d4..896535d89 100644
+--- a/django/core/paginator.py
++++ b/django/core/paginator.py
+@@ -106,6 +106,10 @@ class Paginator:
+         """
+         return range(1, self.num_pages + 1)
+ 
++    def __iter__(self):
++        for page_num in self.page_range:
++            yield self.page(page_num)
++
+     def _check_object_list_is_ordered(self):
+         """
+         Warn if self.object_list is unordered (typically a QuerySet).
+diff --git a/tests/pagination/tests.py b/tests/pagination/tests.py
+index ef6e355e8..5e85ae0bd 100644
+--- a/tests/pagination/tests.py
++++ b/tests/pagination/tests.py
+@@ -259,6 +259,22 @@ class PaginationTests(SimpleTestCase):
+         self.assertEqual(page2.previous_page_number(), 1)
+         self.assertIsNone(page2.next_page_number())
+ 
++    def test_paginator_iter(self):
++        """
++        Paginator objects can be iterated directly to yield Page objects.
++        """
++        paginator = Paginator([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3)
++        pages = list(paginator)
++        self.assertEqual(len(pages), 4)
++        self.assertEqual(pages[0].number, 1)
++        self.assertEqual(list(pages[0]), [1, 2, 3])
++        self.assertEqual(pages[1].number, 2)
++        self.assertEqual(list(pages[1]), [4, 5, 6])
++        self.assertEqual(pages[2].number, 3)
++        self.assertEqual(list(pages[2]), [7, 8, 9])
++        self.assertEqual(pages[3].number, 4)
++        self.assertEqual(list(pages[3]), [10])
++
+     def test_page_range_iterator(self):
+         """
+         Paginator.page_range should be an iterator.

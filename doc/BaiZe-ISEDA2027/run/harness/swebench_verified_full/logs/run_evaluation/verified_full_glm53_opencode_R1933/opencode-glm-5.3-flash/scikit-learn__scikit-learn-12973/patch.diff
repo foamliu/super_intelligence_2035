@@ -1,0 +1,68 @@
+diff --git a/sklearn/linear_model/least_angle.py b/sklearn/linear_model/least_angle.py
+index 03b34a0..da48367 100644
+--- a/sklearn/linear_model/least_angle.py
++++ b/sklearn/linear_model/least_angle.py
+@@ -1479,7 +1479,7 @@ class LassoLarsIC(LassoLars):
+         self.eps = eps
+         self.fit_path = True
+ 
+-    def fit(self, X, y, copy_X=True):
++    def fit(self, X, y, copy_X=None):
+         """Fit the model using X, y as training data.
+ 
+         Parameters
+@@ -1490,8 +1490,10 @@ class LassoLarsIC(LassoLars):
+         y : array-like, shape (n_samples,)
+             target values. Will be cast to X's dtype if necessary
+ 
+-        copy_X : boolean, optional, default True
++        copy_X : boolean, optional, default None
+             If ``True``, X will be copied; else, it may be overwritten.
++            If ``None``, the value of ``copy_X`` given at initialization
++            is used.
+ 
+         Returns
+         -------
+@@ -1500,8 +1502,11 @@ class LassoLarsIC(LassoLars):
+         """
+         X, y = check_X_y(X, y, y_numeric=True)
+ 
++        if copy_X is None:
++            copy_X = self.copy_X
++
+         X, y, Xmean, ymean, Xstd = LinearModel._preprocess_data(
+-            X, y, self.fit_intercept, self.normalize, self.copy_X)
++            X, y, self.fit_intercept, self.normalize, copy_X)
+         max_iter = self.max_iter
+ 
+         Gram = self.precompute
+diff --git a/sklearn/linear_model/tests/test_least_angle.py b/sklearn/linear_model/tests/test_least_angle.py
+index 21496ef..f95b06a 100644
+--- a/sklearn/linear_model/tests/test_least_angle.py
++++ b/sklearn/linear_model/tests/test_least_angle.py
+@@ -469,6 +469,25 @@ def test_lasso_lars_ic():
+     assert_raises(ValueError, lars_broken.fit, X, y)
+ 
+ 
++def test_lasso_lars_ic_copy_X():
++    # Test that LassoLarsIC respects the copy_X parameter set at
++    # initialization, even when copy_X is not explicitly passed to fit.
++    # Non-regression test for:
++    # https://github.com/scikit-learn/scikit-learn/issues/12526
++    X = np.array([[1, 2], [3, 4], [5, 6]], dtype=np.float64)
++    y = np.array([1, 2, 3], dtype=np.float64)
++    X_orig = X.copy()
++
++    lars = linear_model.LassoLarsIC(copy_X=False)
++    lars.fit(X, y)
++    assert_array_almost_equal(X, X_orig)
++
++    # explicit copy_X=True in fit should still be honoured
++    lars = linear_model.LassoLarsIC(copy_X=False)
++    lars.fit(X, y, copy_X=True)
++    assert_array_almost_equal(X, X_orig)
++
++
+ def test_lars_path_readonly_data():
+     # When using automated memory mapping on large input, the
+     # fold data is in read-only mode

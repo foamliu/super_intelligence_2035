@@ -1,0 +1,33 @@
+diff --git a/src/_pytest/pathlib.py b/src/_pytest/pathlib.py
+index f0bdb14..64c7fec 100644
+--- a/src/_pytest/pathlib.py
++++ b/src/_pytest/pathlib.py
+@@ -558,7 +558,7 @@ def visit(
+     entries = sorted(os.scandir(path), key=lambda entry: entry.name)
+     yield from entries
+     for entry in entries:
+-        if entry.is_dir(follow_symlinks=False) and recurse(entry):
++        if entry.is_dir(follow_symlinks=True) and recurse(entry):
+             yield from visit(entry.path, recurse)
+ 
+ 
+diff --git a/testing/test_collection.py b/testing/test_collection.py
+index 841aa35..d0d5dfb 100644
+--- a/testing/test_collection.py
++++ b/testing/test_collection.py
+@@ -1177,6 +1177,15 @@ def test_collect_symlink_out_of_tree(testdir):
+     )
+     assert result.ret == 0
+ 
++def test_collect_symlink_dir(testdir):
++    """Symlinked directories inside a test directory should be collected (#7951)."""
++    real = testdir.mkpydir("real")
++    real.ensure("test_real.py").write("def test_real(): pass")
++    symlink = testdir.tmpdir.join("symlink")
++    symlink_or_skip(real, symlink, target_is_directory=True)
++    result = testdir.runpytest("-v", "symlink")
++    result.stdout.fnmatch_lines(["symlink/test_real.py::test_real PASSED*", "*1 passed in*"])
++    assert result.ret == 0
+ 
+ def test_collectignore_via_conftest(testdir):
+     """collect_ignore in parent conftest skips importing child (issue #4592)."""

@@ -1,0 +1,65 @@
+diff --git a/CHANGES b/CHANGES
+index 64410011..61946470 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -59,6 +59,7 @@ Bugs fixed
+   :confval:`man_make_section_directory` is not correct
+ * #9224: ``:param:`` and ``:type:`` fields does not support a type containing
+   whitespace (ex. ``Dict[str, str]``)
++* #9239: autodoc: Enum default values are rendered ugly
+ 
+ Testing
+ --------
+diff --git a/sphinx/util/inspect.py b/sphinx/util/inspect.py
+index a415a707..5e25fc64 100644
+--- a/sphinx/util/inspect.py
++++ b/sphinx/util/inspect.py
+@@ -457,6 +457,8 @@ def object_description(object: Any) -> str:
+         else:
+             return "frozenset({%s})" % ", ".join(object_description(x)
+                                                  for x in sorted_values)
++    if isinstance(object, enum.Enum):
++        return f"{object.__class__.__name__}.{object.name}"
+     try:
+         s = repr(object)
+     except Exception as exc:
+diff --git a/tests/roots/test-ext-autodoc/target/enums.py b/tests/roots/test-ext-autodoc/target/enums.py
+index c69455fb..bd127f1a 100644
+--- a/tests/roots/test-ext-autodoc/target/enums.py
++++ b/tests/roots/test-ext-autodoc/target/enums.py
+@@ -21,3 +21,7 @@ class EnumCls(enum.Enum):
+     def say_goodbye(cls):
+         """a classmethod says good-bye to you."""
+         pass
++
++
++def ugly_enum_func(e: EnumCls = EnumCls.val1) -> None:
++    """a function takes an enum parameter."""
+diff --git a/tests/test_util_inspect.py b/tests/test_util_inspect.py
+index de4ad923..99ea6c94 100644
+--- a/tests/test_util_inspect.py
++++ b/tests/test_util_inspect.py
+@@ -10,6 +10,7 @@
+ 
+ import ast
+ import datetime
++import enum
+ import functools
+ import sys
+ import types
+@@ -516,6 +517,15 @@ def test_dict_customtype():
+     assert "<CustomType(2)>: 2" in description
+ 
+ 
++def test_object_description_enum():
++    class MyEnum(enum.Enum):
++        ValueA = 10
++        ValueB = 20
++
++    assert inspect.object_description(MyEnum.ValueA) == "MyEnum.ValueA"
++    assert inspect.object_description(MyEnum.ValueB) == "MyEnum.ValueB"
++
++
+ def test_getslots():
+     class Foo:
+         pass

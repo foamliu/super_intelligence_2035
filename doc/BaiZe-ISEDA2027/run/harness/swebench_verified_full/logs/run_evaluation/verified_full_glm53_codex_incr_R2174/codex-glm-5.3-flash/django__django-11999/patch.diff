@@ -1,0 +1,42 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index ee45bb941e..96ccce72dd 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -762,7 +762,7 @@ class Field(RegisterLookupMixin):
+             # such fields can't be deferred (we don't have a check for this).
+             if not getattr(cls, self.attname, None):
+                 setattr(cls, self.attname, self.descriptor_class(self))
+-        if self.choices is not None:
++        if self.choices is not None and not hasattr(cls, 'get_%s_display' % self.name):
+             setattr(cls, 'get_%s_display' % self.name,
+                     partialmethod(cls._get_FIELD_display, field=self))
+ 
+diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
+index 98b32d0c1e..e5aff2c87f 100644
+--- a/tests/model_fields/models.py
++++ b/tests/model_fields/models.py
+@@ -75,6 +75,9 @@ class Choiceful(models.Model):
+     empty_choices_bool = models.BooleanField(choices=())
+     empty_choices_text = models.TextField(choices=())
+ 
++    def get_empty_choices_text_display(self):
++        return 'empty choices text display'
++
+ 
+ class BigD(models.Model):
+     d = models.DecimalField(max_digits=32, decimal_places=30)
+diff --git a/tests/model_fields/tests.py b/tests/model_fields/tests.py
+index 0d6e930b06..8087761a60 100644
+--- a/tests/model_fields/tests.py
++++ b/tests/model_fields/tests.py
+@@ -168,6 +168,10 @@ class GetFieldDisplayTests(SimpleTestCase):
+         self.assertIsInstance(val, str)
+         self.assertEqual(val, 'translated')
+ 
++    def test_overridden_FIELD_display(self):
++        """get_FIELD_display() can be overridden."""
++        self.assertEqual(Choiceful().get_empty_choices_text_display(), 'empty choices text display')
++
+     def test_iterator_choices(self):
+         """
+         get_choices() works with Iterators.

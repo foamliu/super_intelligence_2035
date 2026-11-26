@@ -1,0 +1,34 @@
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index 4b73d52..bc5461a 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -6686,7 +6686,7 @@ optional.
+ 
+         density = bool(density) or bool(normed)
+         if density and not stacked:
+-            hist_kwargs = dict(density=density)
++            hist_kwargs['density'] = density
+ 
+         # List to store all the top coordinates of the histograms
+         tops = []
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index cff4325..fab753e 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -1699,6 +1699,16 @@ def test_hist_unequal_bins_density():
+     assert_allclose(mpl_heights, np_heights)
+ 
+ 
++def test_hist_range_density():
++    # Test that the range keyword works with density=True
++    # https://github.com/matplotlib/matplotlib/issues/14342
++    np.random.seed(19680801)
++    data = np.random.standard_normal(2000)
++    _, bins, _ = plt.hist(data, 'auto', range=(-5, 5), density=True)
++    assert bins[0] == -5
++    assert bins[-1] == 5
++
++
+ def test_hist_datetime_datasets():
+     data = [[datetime.datetime(2017, 1, 1), datetime.datetime(2017, 1, 1)],
+             [datetime.datetime(2017, 1, 1), datetime.datetime(2017, 1, 2)]]

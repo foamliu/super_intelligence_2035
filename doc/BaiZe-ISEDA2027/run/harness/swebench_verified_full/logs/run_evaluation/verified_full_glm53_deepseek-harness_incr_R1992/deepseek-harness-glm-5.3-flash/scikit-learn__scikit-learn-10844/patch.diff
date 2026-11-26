@@ -1,0 +1,40 @@
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778..9bcca75 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+diff --git a/sklearn/metrics/cluster/tests/test_supervised.py b/sklearn/metrics/cluster/tests/test_supervised.py
+index 8da03d1..b9b6ced 100644
+--- a/sklearn/metrics/cluster/tests/test_supervised.py
++++ b/sklearn/metrics/cluster/tests/test_supervised.py
+@@ -1,3 +1,5 @@
++import warnings
++
+ import numpy as np
+ 
+ from sklearn.metrics.cluster import adjusted_mutual_info_score
+@@ -274,3 +276,16 @@ def test_fowlkes_mallows_score_properties():
+     # symmetric and permutation(both together)
+     score_both = fowlkes_mallows_score(labels_b, (labels_a + 2) % 3)
+     assert_almost_equal(score_both, expected)
++
++
++def test_fowlkes_mallows_score_overflow():
++    # Non-regression test: previously `tk / np.sqrt(pk * qk)` was used, which
++    # overflows (returning nan and raising a RuntimeWarning) when pk * qk is
++    # larger than the largest representable integer. With 100000 samples
++    # grouped in one cluster, pk and qk are ~1e10, so pk * qk ~ 1e20.
++    labels_a = np.zeros(100000, dtype=int)
++    labels_b = np.zeros(100000, dtype=int)
++    with warnings.catch_warnings():
++        warnings.simplefilter("error")
++        score = fowlkes_mallows_score(labels_a, labels_b)
++    assert_almost_equal(score, 1.)

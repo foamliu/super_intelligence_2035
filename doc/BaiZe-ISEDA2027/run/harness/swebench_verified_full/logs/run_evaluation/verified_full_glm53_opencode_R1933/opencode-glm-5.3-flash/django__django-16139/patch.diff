@@ -1,0 +1,49 @@
+diff --git a/django/contrib/auth/forms.py b/django/contrib/auth/forms.py
+index b3cfc6723c..523830e8ee 100644
+--- a/django/contrib/auth/forms.py
++++ b/django/contrib/auth/forms.py
+@@ -163,7 +163,9 @@ class UserChangeForm(forms.ModelForm):
+         super().__init__(*args, **kwargs)
+         password = self.fields.get("password")
+         if password:
+-            password.help_text = password.help_text.format("../password/")
++            password.help_text = password.help_text.format(
++                f"../../{self.instance.pk}/password/"
++            )
+         user_permissions = self.fields.get("user_permissions")
+         if user_permissions:
+             user_permissions.queryset = user_permissions.queryset.select_related(
+diff --git a/tests/auth_tests/test_views.py b/tests/auth_tests/test_views.py
+index 5ea536151e..263e424082 100644
+--- a/tests/auth_tests/test_views.py
++++ b/tests/auth_tests/test_views.py
+@@ -1471,6 +1471,29 @@ class ChangelistTests(AuthViewsTestCase):
+         self.logout()
+         self.login(password="password1")
+ 
++    def test_user_change_password_with_to_field(self):
++        # Accessing the change view via a reference to a field other than the
++        # primary key (e.g. ?_to_field=username) must not break the link to
++        # the password change form (#34871).
++        user_change_url = reverse(
++            "auth_test_admin:auth_user_change", args=(self.admin.username,)
++        )
++        user_change_url += f"?_to_field={User.USERNAME_FIELD}"
++        password_change_url = reverse(
++            "auth_test_admin:auth_user_password_change", args=(self.admin.pk,)
++        )
++
++        with mock.patch(
++            "django.contrib.auth.admin.UserAdmin.to_field_allowed", return_value=True
++        ):
++            response = self.client.get(user_change_url)
++        # Test the link inside password field help_text.
++        rel_link = re.search(
++            r'you can change the password using <a href="([^"]*)">this form</a>',
++            response.content.decode(),
++        )[1]
++        self.assertEqual(urljoin(user_change_url, rel_link), password_change_url)
++
+     def test_user_change_different_user_password(self):
+         u = User.objects.get(email="staffmember@example.com")
+         response = self.client.post(

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-15375",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py\nindex 8c4eae790..bc31b48d8 100644\n--- a/django/db/models/aggregates.py\n+++ b/django/db/models/aggregates.py\n@@ -65,7 +65,9 @@ class Aggregate(Func):\n         if hasattr(default, 'resolve_expression'):\n             default = default.resolve_expression(query, allow_joins, reuse, summarize)\n         c.default = None  # Reset the default argument before wrapping.\n-        return Coalesce(c, default, output_field=c._output_field_or_none)\n+        coalesce = Coalesce(c, default, output_field=c._output_field_or_none)\n+        coalesce.is_summary = c.is_summary\n+        return coalesce\n \n     @property\n     def default_alias(self):\ndiff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py\nindex 87ae945a7..15bceb7b3 100644\n--- a/tests/aggregation/tests.py\n+++ b/tests/aggregation/tests.py\n@@ -1630,6 +1630,10 @@ class AggregateTestCase(TestCase):\n         )\n         self.assertAlmostEqual(result['value'], Decimal('61.72'), places=2)\n \n+    def test_aggregation_default_after_annotation(self):\n+        result = Book.objects.annotate(idx=F('id')).aggregate(Sum('id', default=0))\n+        self.assertEqual(result, {'id__sum': 21})\n+\n     def test_exists_none_with_aggregate(self):\n         qs = Book.objects.all().annotate(\n             count=Count('id'),\n"
+  }
+]

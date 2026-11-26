@@ -1,0 +1,77 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index c0049469..411065fc 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -553,6 +553,11 @@ astropy.nddata
+ 
+ - Add a PSF image representation to ``astropy.nddata.NDData`` and ``astropy.nddata.CCDData``. [#13743]
+ 
++- Fixed a bug where ``astropy.nddata.NDDataRef`` mask propagation in arithmetic
++  operations with ``handle_mask=np.bitwise_or`` (or any other strict callable)
++  failed with a ``TypeError`` when one of the operands had no mask. The mask of
++  the operand that has one is now copied to the result. [#14900]
++
+ astropy.table
+ ^^^^^^^^^^^^^
+ 
+diff --git a/astropy/nddata/mixins/ndarithmetic.py b/astropy/nddata/mixins/ndarithmetic.py
+index 4153dfcc..28c34ca3 100644
+--- a/astropy/nddata/mixins/ndarithmetic.py
++++ b/astropy/nddata/mixins/ndarithmetic.py
+@@ -522,6 +522,9 @@ class NDArithmeticMixin:
+             return deepcopy(operand.mask)
+         elif operand is None:
+             return deepcopy(self.mask)
++        elif operand.mask is None:
++            # Make a copy so there is no reference in the result.
++            return deepcopy(self.mask)
+         else:
+             # Now lets calculate the resulting mask (operation enforces copy)
+             return handle_mask(self.mask, operand.mask, **kwds)
+diff --git a/astropy/nddata/mixins/tests/test_ndarithmetic.py b/astropy/nddata/mixins/tests/test_ndarithmetic.py
+index 8c461155..6e99cc92 100644
+--- a/astropy/nddata/mixins/tests/test_ndarithmetic.py
++++ b/astropy/nddata/mixins/tests/test_ndarithmetic.py
+@@ -314,6 +314,42 @@ def test_arithmetics_data_masks_invalid():
+         nd1.divide(nd2)
+ 
+ 
++# Regression test for #14900: arithmetic with a maskless operand should not
++# pass ``None`` to ``handle_mask``; the existing mask is copied to the result.
++@pytest.mark.filterwarnings("ignore:invalid value encountered")
++@pytest.mark.parametrize(
++    ("mask1", "mask2"),
++    [
++        (np.array([[0, 1, 64], [8, 0, 1], [2, 1, 0]]), None),
++        (None, np.array([[0, 1, 64], [8, 0, 1], [2, 1, 0]])),
++    ],
++)
++def test_arithmetics_data_masks_one_operand_masked(mask1, mask2):
++    data = np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]])
++    ref_mask = mask1 if mask1 is not None else mask2
++
++    nd1 = NDDataArithmetic(data, mask=mask1)
++    nd2 = NDDataArithmetic(data, mask=mask2)
++
++    # Addition
++    nd3 = nd1.add(nd2, handle_mask=np.bitwise_or)
++    assert_array_equal(ref_mask, nd3.mask)
++    # Subtraction
++    nd4 = nd1.subtract(nd2, handle_mask=np.bitwise_or)
++    assert_array_equal(ref_mask, nd4.mask)
++    # Multiplication
++    nd5 = nd1.multiply(nd2, handle_mask=np.bitwise_or)
++    assert_array_equal(ref_mask, nd5.mask)
++    # Division
++    nd6 = nd1.divide(nd2, handle_mask=np.bitwise_or)
++    assert_array_equal(ref_mask, nd6.mask)
++
++    # Arithmetic with a scalar (non-NDData) operand only involves nd1, so the
++    # result has nd1's mask (or no mask if nd1 is maskless).
++    nd7 = nd1.multiply(1.0, handle_mask=np.bitwise_or)
++    assert_array_equal(mask1, nd7.mask)
++
++
+ # Covering:
+ # both have uncertainties (data and uncertainty without unit)
+ # tested against manually determined resulting uncertainties to verify the

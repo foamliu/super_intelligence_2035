@@ -1,0 +1,65 @@
+diff --git a/django/contrib/admin/utils.py b/django/contrib/admin/utils.py
+index dd6b108ff..262813c04 100644
+--- a/django/contrib/admin/utils.py
++++ b/django/contrib/admin/utils.py
+@@ -184,6 +184,8 @@ class NestedObjects(Collector):
+ 
+     def related_objects(self, related, objs):
+         qs = super().related_objects(related, objs)
++        if qs.query.deferred_loading[0]:
++            return qs
+         return qs.select_related(related.field.name)
+ 
+     def _nested(self, obj, seen, format_callback):
+diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py
+index 3a462f1c4..6bf0cf906 100644
+--- a/django/db/models/deletion.py
++++ b/django/db/models/deletion.py
+@@ -232,9 +232,12 @@ class Collector:
+         """
+         Get a QuerySet of objects related to `objs` via the relation `related`.
+         """
+-        return related.related_model._base_manager.using(self.using).filter(
++        qs = related.related_model._base_manager.using(self.using).filter(
+             **{"%s__in" % related.field.name: objs}
+         )
++        if signals.post_delete.has_listeners(related.related_model):
++            return qs
++        return qs.only('pk')
+ 
+     def instances_with_model(self):
+         for model, instances in self.data.items():
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index ed47d0667..3a5642974 100644
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -531,3 +531,29 @@ class FastDeleteTests(TestCase):
+                 User.objects.filter(avatar__desc='missing').delete(),
+                 (0, {'delete.User': 0})
+             )
++
++
++class RelatedObjectsOptimizationTests(TestCase):
++    def test_related_objects_uses_only_pk_without_post_delete(self):
++        collector = Collector(using='default')
++        r = R.objects.create()
++        S.objects.create(r=r)
++        related = R._meta.get_field('s')
++        qs = collector.related_objects(related, [r])
++        self.assertEqual(qs.query.deferred_loading, (frozenset({'id'}), False))
++
++    def test_related_objects_loads_all_fields_with_post_delete(self):
++        def listener(sender, **kwargs):
++            pass
++
++        models.signals.post_delete.connect(listener, sender=S)
++        try:
++            collector = Collector(using='default')
++            r = R.objects.create()
++            S.objects.create(r=r)
++            related = R._meta.get_field('s')
++            qs = collector.related_objects(related, [r])
++            self.assertEqual(qs.query.deferred_loading, (frozenset(), True))
++        finally:
++            models.signals.post_delete.disconnect(listener, sender=S)
++

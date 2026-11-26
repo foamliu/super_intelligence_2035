@@ -1,0 +1,55 @@
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index 11031f2..835771a 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -345,6 +345,7 @@ class LogCaptureFixture:
+         """Creates a new funcarg."""
+         self._item = item
+         # dict of log name -> log level
++        self._initial_handler_level = None  # type: Optional[int]
+         self._initial_logger_levels = {}  # type: Dict[Optional[str], int]
+ 
+     def _finalize(self) -> None:
+@@ -356,6 +357,10 @@ class LogCaptureFixture:
+         for logger_name, level in self._initial_logger_levels.items():
+             logger = logging.getLogger(logger_name)
+             logger.setLevel(level)
++        # restore handler level
++        if self._initial_handler_level is not None:
++            self.handler.setLevel(self._initial_handler_level)
++            self._initial_handler_level = None
+ 
+     @property
+     def handler(self) -> LogCaptureHandler:
+@@ -432,6 +437,8 @@ class LogCaptureFixture:
+         """
+         logger_obj = logging.getLogger(logger)
+         # save the original log-level to restore it during teardown
++        if self._initial_handler_level is None:
++            self._initial_handler_level = self.handler.level
+         self._initial_logger_levels.setdefault(logger, logger_obj.level)
+         logger_obj.setLevel(level)
+         self.handler.setLevel(level)
+diff --git a/testing/logging/test_handler_level_restore.py b/testing/logging/test_handler_level_restore.py
+new file mode 100644
+index 0000000..dba58e0
+--- /dev/null
++++ b/testing/logging/test_handler_level_restore.py
+@@ -0,0 +1,17 @@
++"""Test to verify caplog restores handler level after test."""
++import logging
++
++def test_set_level_restores_handler_level(testdir):
++    """Ensure that set_level handler level is restored after the test."""
++    testdir.makepyfile(
++        """
++        def test_foo(caplog):
++            caplog.set_level(42)
++            assert caplog.handler.level == 42
++
++        def test_bar(caplog):
++            assert caplog.handler.level == 0, f"Expected 0, got {caplog.handler.level}"
++        """
++    )
++    result = testdir.runpytest("--assert=plain")
++    result.assert_outcomes(passed=2)

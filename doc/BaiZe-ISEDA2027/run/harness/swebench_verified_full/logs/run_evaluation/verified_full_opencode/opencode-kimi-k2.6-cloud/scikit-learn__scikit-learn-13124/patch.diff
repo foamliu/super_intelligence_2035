@@ -1,0 +1,95 @@
+diff --git a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+index bf92569..1078220 100644
+--- a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
++++ b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+@@ -127,7 +127,13 @@ def _make_cell_set_template_code():
+     # NOTE: we are marking the cell variable as a free variable intentionally
+     # so that we simulate an inner function instead of the outer function. This
+     # is what gives us the ``nonlocal`` behavior in a Python 2 compatible way.
+-    if not PY3:
++    if hasattr(co, 'replace'):
++        # Python 3.8+
++        return co.replace(
++            co_cellvars=co.co_cellvars,  # this is the trickery
++            co_freevars=(),
++        )
++    elif not PY3:
+         return types.CodeType(
+             co.co_argcount,
+             co.co_nlocals,
+diff --git a/sklearn/model_selection/_split.py b/sklearn/model_selection/_split.py
+index 24394f8..8b4859c 100644
+--- a/sklearn/model_selection/_split.py
++++ b/sklearn/model_selection/_split.py
+@@ -100,7 +100,7 @@ class BaseCrossValidator(metaclass=ABCMeta):
+         By default, delegates to _iter_test_indices(X, y, groups)
+         """
+         for test_index in self._iter_test_indices(X, y, groups):
+-            test_mask = np.zeros(_num_samples(X), dtype=np.bool)
++            test_mask = np.zeros(_num_samples(X), dtype=bool)
+             test_mask[test_index] = True
+             yield test_mask
+ 
+@@ -427,7 +427,7 @@ class KFold(_BaseKFold):
+             check_random_state(self.random_state).shuffle(indices)
+ 
+         n_splits = self.n_splits
+-        fold_sizes = np.full(n_splits, n_samples // n_splits, dtype=np.int)
++        fold_sizes = np.full(n_splits, n_samples // n_splits, dtype=int)
+         fold_sizes[:n_samples % n_splits] += 1
+         current = 0
+         for fold_size in fold_sizes:
+@@ -620,7 +620,7 @@ class StratifiedKFold(_BaseKFold):
+         super().__init__(n_splits, shuffle, random_state)
+ 
+     def _make_test_folds(self, X, y=None):
+-        rng = self.random_state
++        rng = check_random_state(self.random_state)
+         y = np.asarray(y)
+         type_of_target_y = type_of_target(y)
+         allowed_target_types = ('binary', 'multiclass')
+@@ -656,7 +656,7 @@ class StratifiedKFold(_BaseKFold):
+                   random_state=rng).split(np.zeros(max(count, self.n_splits)))
+             for count in y_counts]
+ 
+-        test_folds = np.zeros(n_samples, dtype=np.int)
++        test_folds = np.zeros(n_samples, dtype=int)
+         for test_fold_indices, per_cls_splits in enumerate(zip(*per_cls_cvs)):
+             for cls, (_, test_split) in zip(unique_y, per_cls_splits):
+                 cls_test_folds = test_folds[y == cls]
+@@ -1001,7 +1001,7 @@ class LeavePGroupsOut(BaseCrossValidator):
+                 "present" % (self.n_groups, unique_groups, self.n_groups + 1))
+         combi = combinations(range(len(unique_groups)), self.n_groups)
+         for indices in combi:
+-            test_index = np.zeros(_num_samples(X), dtype=np.bool)
++            test_index = np.zeros(_num_samples(X), dtype=bool)
+             for l in unique_groups[np.array(indices)]:
+                 test_index[groups == l] = True
+             yield test_index
+@@ -1604,7 +1604,7 @@ def _approximate_mode(class_counts, n_draws, rng):
+             need_to_add -= add_now
+             if need_to_add == 0:
+                 break
+-    return floored.astype(np.int)
++    return floored.astype(int)
+ 
+ 
+ class StratifiedShuffleSplit(BaseShuffleSplit):
+@@ -1905,7 +1905,7 @@ class PredefinedSplit(BaseCrossValidator):
+     """
+ 
+     def __init__(self, test_fold):
+-        self.test_fold = np.array(test_fold, dtype=np.int)
++        self.test_fold = np.array(test_fold, dtype=int)
+         self.test_fold = column_or_1d(self.test_fold)
+         self.unique_folds = np.unique(self.test_fold)
+         self.unique_folds = self.unique_folds[self.unique_folds != -1]
+@@ -1942,7 +1942,7 @@ class PredefinedSplit(BaseCrossValidator):
+         """Generates boolean masks corresponding to test sets."""
+         for f in self.unique_folds:
+             test_index = np.where(self.test_fold == f)[0]
+-            test_mask = np.zeros(len(self.test_fold), dtype=np.bool)
++            test_mask = np.zeros(len(self.test_fold), dtype=bool)
+             test_mask[test_index] = True
+             yield test_mask
+ 

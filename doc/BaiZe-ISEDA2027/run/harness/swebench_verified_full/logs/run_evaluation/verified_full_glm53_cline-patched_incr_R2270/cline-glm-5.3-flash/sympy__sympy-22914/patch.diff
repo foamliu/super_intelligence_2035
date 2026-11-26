@@ -1,0 +1,39 @@
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index 3a72ab60..d40f18e5 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -314,6 +314,12 @@ def _print_MatrixBase(self, expr):
+         _print_ImmutableDenseMatrix = \
+         lambda self, expr: self._print_MatrixBase(expr)
+ 
++    def _print_Min(self, expr):
++        return "min({})".format(", ".join(self._print(arg) for arg in expr.args))
++
++    def _print_Max(self, expr):
++        return "max({})".format(", ".join(self._print(arg) for arg in expr.args))
++
+     def _indent_codestring(self, codestring):
+         return '\n'.join([self.tab + line for line in codestring.split('\n')])
+ 
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index 9c1285d7..c2f9355d 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -7,6 +7,7 @@
+ from sympy.core.numbers import pi
+ from sympy.core.singleton import S
+ from sympy.functions import acos, KroneckerDelta, Piecewise, sign, sqrt
++from sympy.functions.elementary.miscellaneous import Max, Min
+ from sympy.logic import And, Or
+ from sympy.matrices import SparseMatrix, MatrixSymbol, Identity
+ from sympy.printing.pycode import (
+@@ -58,6 +59,9 @@ def test_PythonCodePrinter():
+     assert prntr.doprint((2,3)) == "(2, 3)"
+     assert prntr.doprint([2,3]) == "[2, 3]"
+ 
++    assert prntr.doprint(Min(x, y)) == 'min(x, y)'
++    assert prntr.doprint(Max(x, y)) == 'max(x, y)'
++
+ 
+ def test_PythonCodePrinter_standard():
+     prntr = PythonCodePrinter()

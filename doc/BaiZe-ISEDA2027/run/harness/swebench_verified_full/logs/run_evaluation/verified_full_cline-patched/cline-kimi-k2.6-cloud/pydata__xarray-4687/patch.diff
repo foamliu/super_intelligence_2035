@@ -1,0 +1,93 @@
+diff --git a/xarray/core/computation.py b/xarray/core/computation.py
+index 9fe93c8..001c17e 100644
+--- a/xarray/core/computation.py
++++ b/xarray/core/computation.py
+@@ -1808,6 +1808,29 @@ def where(cond, x, y):
+     Dataset.where, DataArray.where :
+         equivalent methods
+     """
++    from .dataarray import DataArray
++    from .dataset import Dataset
++
++    cond_is_xarray = isinstance(cond, (DataArray, Dataset, Variable))
++
++    def _keep_attrs(variable_attrs, context=None):
++        if not variable_attrs:
++            return {}
++        if cond_is_xarray:
++            # variable_attrs[0] is cond, prefer x (1) then y (2)
++            if len(variable_attrs) > 1 and variable_attrs[1]:
++                return dict(variable_attrs[1])
++            if len(variable_attrs) > 2 and variable_attrs[2]:
++                return dict(variable_attrs[2])
++            return dict(variable_attrs[0]) if variable_attrs[0] else {}
++        else:
++            # variable_attrs[0] is x, prefer x then y (1)
++            if variable_attrs[0]:
++                return dict(variable_attrs[0])
++            if len(variable_attrs) > 1 and variable_attrs[1]:
++                return dict(variable_attrs[1])
++            return {}
++
+     # alignment for three arguments is complicated, so don't support it yet
+     return apply_ufunc(
+         duck_array_ops.where,
+@@ -1817,6 +1840,7 @@ def where(cond, x, y):
+         join="exact",
+         dataset_join="exact",
+         dask="allowed",
++        keep_attrs=_keep_attrs,
+     )
+ 
+ 
+diff --git a/xarray/tests/test_computation.py b/xarray/tests/test_computation.py
+index c9a10b7..1703fdf 100644
+--- a/xarray/tests/test_computation.py
++++ b/xarray/tests/test_computation.py
+@@ -1922,6 +1922,46 @@ def test_where() -> None:
+     assert_identical(expected, actual)
+ 
+ 
++def test_where_keep_attrs() -> None:
++    # GH: xr.where drops attributes
++    da = xr.DataArray(1)
++    da.attrs["foo"] = "bar"
++    actual = xr.where(da == 0, -1, da)
++    assert actual.attrs == {"foo": "bar"}
++
++    # x is DataArray with attrs
++    x = xr.DataArray([1, 2], dims="x", attrs={"foo": "bar"})
++    cond = xr.DataArray([True, False], dims="x")
++    actual = xr.where(cond, x, 0)
++    assert actual.attrs == {"foo": "bar"}
++
++    # cond has attrs, but x should take precedence
++    cond = xr.DataArray([True, False], dims="x", attrs={"cond_attr": "cond"})
++    x = xr.DataArray([1, 2], dims="x", attrs={"foo": "bar"})
++    actual = xr.where(cond, x, 0)
++    assert actual.attrs == {"foo": "bar"}
++
++    # Dataset variable and global attrs
++    x = xr.Dataset(
++        {"a": xr.DataArray([1, 2], dims="x", attrs={"foo": "bar"})},
++        attrs={"ds_foo": "ds_bar"},
++    )
++    y = xr.Dataset(
++        {"a": xr.DataArray([0, 0], dims="x", attrs={"baz": "qux"})},
++        attrs={"ds_baz": "ds_qux"},
++    )
++    cond = xr.Dataset({"a": xr.DataArray([True, False], dims="x")})
++    actual = xr.where(cond, x, y)
++    assert actual.a.attrs == {"foo": "bar"}
++    assert actual.attrs == {"ds_foo": "ds_bar"}
++
++    # Scalar cond
++    x = xr.DataArray([1, 2], dims="x", attrs={"foo": "bar"})
++    y = xr.DataArray([0, 0], dims="x", attrs={"baz": "qux"})
++    actual = xr.where(True, x, y)
++    assert actual.attrs == {"foo": "bar"}
++
++
+ @pytest.mark.parametrize("use_dask", [True, False])
+ @pytest.mark.parametrize("use_datetime", [True, False])
+ def test_polyval(use_dask, use_datetime) -> None:

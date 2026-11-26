@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-5262",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 25eab7f..4587155 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -447,6 +447,10 @@ class EncodedFile(object):\n         \"\"\"Ensure that file.name is a string.\"\"\"\n         return repr(self.buffer)\n \n+    @property\n+    def mode(self):\n+        return getattr(self.buffer, \"mode\", \"\").replace(\"b\", \"\")\n+\n     def __getattr__(self, name):\n         return getattr(object.__getattribute__(self, \"buffer\"), name)\n \ndiff --git a/test_encodedfile_mode.py b/test_encodedfile_mode.py\nnew file mode 100644\nindex 0000000..d0d32a3\n--- /dev/null\n+++ b/test_encodedfile_mode.py\n@@ -0,0 +1,18 @@\n+from _pytest.capture import EncodedFile\n+import tempfile\n+\n+f = tempfile.TemporaryFile(mode='w+b')\n+try:\n+    ef = EncodedFile(f, 'utf-8')\n+    assert 'b' not in ef.mode, \"mode should not contain 'b', got %r\" % ef.mode\n+    # Ensure write with str works\n+    ef.write('hello')\n+    # Ensure write with bytes fails on py3\n+    try:\n+        ef.write(b'world')\n+        print('ERROR: bytes write should fail')\n+    except TypeError:\n+        pass\n+    print('OK')\n+finally:\n+    f.close()\n"
+  }
+]

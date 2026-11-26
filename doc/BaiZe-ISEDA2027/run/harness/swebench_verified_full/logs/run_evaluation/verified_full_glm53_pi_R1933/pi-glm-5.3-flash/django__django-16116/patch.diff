@@ -1,0 +1,49 @@
+diff --git a/django/core/management/commands/makemigrations.py b/django/core/management/commands/makemigrations.py
+index 2e97d9064b..7a45ae6152 100644
+--- a/django/core/management/commands/makemigrations.py
++++ b/django/core/management/commands/makemigrations.py
+@@ -116,6 +116,9 @@ class Command(BaseCommand):
+         # If logs and prompts are diverted to stderr, remove the ERROR style.
+         if self.scriptable:
+             self.stderr.style_func = None
++        # If --check is used, --dry-run is implied.
++        if check_changes:
++            self.dry_run = True
+ 
+         # Make sure the app they asked for exists
+         app_labels = set(app_labels)
+diff --git a/docs/ref/django-admin.txt b/docs/ref/django-admin.txt
+index af27e0afb5..b4fb780a1f 100644
+--- a/docs/ref/django-admin.txt
++++ b/docs/ref/django-admin.txt
+@@ -823,7 +823,8 @@ Generate migration files without Django version and timestamp header.
+ .. django-admin-option:: --check
+ 
+ Makes ``makemigrations`` exit with a non-zero status when model changes without
+-migrations are detected.
++migrations are detected. Implies ``--dry-run``, so migration files will not be
++written.
+ 
+ .. django-admin-option:: --scriptable
+ 
+diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
+index 9900c7a35d..3284d38d82 100644
+--- a/tests/migrations/test_commands.py
++++ b/tests/migrations/test_commands.py
+@@ -2389,11 +2389,14 @@ class MakeMigrationsTests(MigrationTestBase):
+     def test_makemigrations_check(self):
+         """
+         makemigrations --check should exit with a non-zero status when
+-        there are changes to an app requiring migrations.
++        there are changes to an app requiring migrations, and it should
++        not write migration files (--check implies --dry-run).
+         """
+-        with self.temporary_migration_module():
++        with self.temporary_migration_module() as migration_dir:
+             with self.assertRaises(SystemExit):
+                 call_command("makemigrations", "--check", "migrations", verbosity=0)
++            # No migrations directory is created, since no files are written.
++            self.assertFalse(os.path.exists(migration_dir))
+ 
+         with self.temporary_migration_module(
+             module="migrations.test_migrations_no_changes"

@@ -1,0 +1,137 @@
+diff --git a/django/forms/fields.py b/django/forms/fields.py
+index 65d6a9ec82..3f9cee764b 100644
+--- a/django/forms/fields.py
++++ b/django/forms/fields.py
+@@ -1026,6 +1026,18 @@ class MultiValueField(Field):
+                 if self.required:
+                     raise ValidationError(self.error_messages['required'], code='required')
+                 else:
++                    if self.require_all_fields:
++                        return self.compress([])
++                    for i, field in enumerate(self.fields):
++                        try:
++                            field_value = value[i]
++                        except IndexError:
++                            field_value = None
++                        if field_value in self.empty_values and field.required:
++                            raise ValidationError(
++                                field.error_messages['incomplete'],
++                                code='incomplete',
++                            )
+                     return self.compress([])
+         else:
+             raise ValidationError(self.error_messages['invalid'], code='invalid')
+diff --git a/tests/forms_tests/field_tests/test_multivaluefield.py b/tests/forms_tests/field_tests/test_multivaluefield.py
+index 29287d0b01..d8a50fb70d 100644
+--- a/tests/forms_tests/field_tests/test_multivaluefield.py
++++ b/tests/forms_tests/field_tests/test_multivaluefield.py
+@@ -172,3 +172,109 @@ class MultiValueFieldTest(SimpleTestCase):
+         })
+         form.is_valid()
+         self.assertEqual(form.cleaned_data['field1'], 'some text,JP,2007-04-25 06:24:00')
++
++
++class MultiValueFieldRequireAllFieldsFalseTest(SimpleTestCase):
++    """
++    MultiValueField with require_all_fields=False must still validate
++    required sub-fields, including when all values are empty.
++    """
++
++    def test_all_empty_with_required_subfield(self):
++        class MF(MultiValueField):
++            widget = MultiWidget
++            def __init__(self):
++                fields = [
++                    CharField(required=False),
++                    CharField(required=True),
++                ]
++                widget = self.widget(widgets=[f.widget for f in fields], attrs={})
++                super().__init__(
++                    fields=fields,
++                    widget=widget,
++                    require_all_fields=False,
++                    required=False,
++                )
++            def compress(self, value):
++                return value
++
++        class F(Form):
++            mf = MF()
++
++        form = F({'mf_0': '', 'mf_1': ''})
++        self.assertIs(form.is_valid(), False)
++        self.assertIn('mf', form.errors)
++
++    def test_no_data_with_required_subfield(self):
++        class MF(MultiValueField):
++            widget = MultiWidget
++            def __init__(self):
++                fields = [
++                    CharField(required=False),
++                    CharField(required=True),
++                ]
++                widget = self.widget(widgets=[f.widget for f in fields], attrs={})
++                super().__init__(
++                    fields=fields,
++                    widget=widget,
++                    require_all_fields=False,
++                    required=False,
++                )
++            def compress(self, value):
++                return value
++
++        class F(Form):
++            mf = MF()
++
++        form = F({})
++        self.assertIs(form.is_valid(), False)
++        self.assertIn('mf', form.errors)
++
++    def test_all_empty_all_optional_subfields(self):
++        class MF(MultiValueField):
++            widget = MultiWidget
++            def __init__(self):
++                fields = [
++                    CharField(required=False),
++                    CharField(required=False),
++                ]
++                widget = self.widget(widgets=[f.widget for f in fields], attrs={})
++                super().__init__(
++                    fields=fields,
++                    widget=widget,
++                    require_all_fields=False,
++                    required=False,
++                )
++            def compress(self, value):
++                return value
++
++        class F(Form):
++            mf = MF()
++
++        form = F({'mf_0': '', 'mf_1': ''})
++        self.assertIs(form.is_valid(), True)
++
++    def test_one_empty_required_subfield(self):
++        class MF(MultiValueField):
++            widget = MultiWidget
++            def __init__(self):
++                fields = [
++                    CharField(required=False),
++                    CharField(required=True),
++                ]
++                widget = self.widget(widgets=[f.widget for f in fields], attrs={})
++                super().__init__(
++                    fields=fields,
++                    widget=widget,
++                    require_all_fields=False,
++                    required=False,
++                )
++            def compress(self, value):
++                return value
++
++        class F(Form):
++            mf = MF()
++
++        form = F({'mf_0': 'xxx', 'mf_1': ''})
++        self.assertIs(form.is_valid(), False)
++        self.assertIn('mf', form.errors)

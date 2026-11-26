@@ -1,0 +1,120 @@
+diff --git a/lib/matplotlib/offsetbox.py b/lib/matplotlib/offsetbox.py
+index 1dee8a23d..f9a6e6945 100644
+--- a/lib/matplotlib/offsetbox.py
++++ b/lib/matplotlib/offsetbox.py
+@@ -1505,15 +1505,35 @@ class DraggableBase:
+         if not ref_artist.pickable():
+             ref_artist.set_picker(True)
+         self.got_artist = False
+-        self.canvas = self.ref_artist.figure.canvas
+-        self._use_blit = use_blit and self.canvas.supports_blit
++        self._use_blit = use_blit
++        self._connect()
++
++    def _connect(self):
++        fig = self.ref_artist.figure
++        if fig is None:
++            return
++        canvas = fig.canvas
++        if canvas is None:
++            return
++        self._use_blit = self._use_blit and canvas.supports_blit
+         self.cids = [
+-            self.canvas.callbacks._connect_picklable(
++            canvas.callbacks._connect_picklable(
+                 'pick_event', self.on_pick),
+-            self.canvas.callbacks._connect_picklable(
++            canvas.callbacks._connect_picklable(
+                 'button_release_event', self.on_release),
+         ]
+ 
++    @property
++    def canvas(self):
++        fig = self.ref_artist.figure
++        if fig is None:
++            return None
++        canvas = fig.canvas
++        # Reconnect callbacks after unpickling (cids is empty []).
++        if canvas and not getattr(self, 'cids', []):
++            self._connect()
++        return canvas
++
+     def on_motion(self, evt):
+         if self._check_still_parented() and self.got_artist:
+             dx = evt.x - self.mouse_x
+@@ -1548,7 +1568,12 @@ class DraggableBase:
+         if self._check_still_parented() and self.got_artist:
+             self.finalize_offset()
+             self.got_artist = False
+-            self.canvas.mpl_disconnect(self._c1)
++            try:
++                c1 = self._c1
++            except AttributeError:
++                pass
++            else:
++                self.canvas.mpl_disconnect(c1)
+ 
+             if self._use_blit:
+                 self.ref_artist.set_animated(False)
+@@ -1563,13 +1588,15 @@ class DraggableBase:
+     def disconnect(self):
+         """Disconnect the callbacks."""
+         for cid in self.cids:
+-            self.canvas.mpl_disconnect(cid)
++            if self.canvas:
++                self.canvas.mpl_disconnect(cid)
+         try:
+             c1 = self._c1
+         except AttributeError:
+             pass
+         else:
+-            self.canvas.mpl_disconnect(c1)
++            if self.canvas:
++                self.canvas.mpl_disconnect(c1)
+ 
+     def save_offset(self):
+         pass
+@@ -1580,6 +1607,14 @@ class DraggableBase:
+     def finalize_offset(self):
+         pass
+ 
++    def __getstate__(self):
++        return {k: v for k, v in vars(self).items()
++                if k not in {'cids', '_c1'}}
++
++    def __setstate__(self, state):
++        vars(self).update(state)
++        self.cids = []
++
+ 
+ class DraggableOffsetBox(DraggableBase):
+     def __init__(self, ref_artist, offsetbox, use_blit=False):
+diff --git a/lib/matplotlib/tests/test_pickle.py b/lib/matplotlib/tests/test_pickle.py
+index ec6bdcc2f..47acea905 100644
+--- a/lib/matplotlib/tests/test_pickle.py
++++ b/lib/matplotlib/tests/test_pickle.py
+@@ -282,3 +282,24 @@ def test_dynamic_norm():
+ def test_vertexselector():
+     line, = plt.plot([0, 1], picker=True)
+     pickle.loads(pickle.dumps(VertexSelector(line)))
++
++
++def test_draggable_legend():
++    fig, ax = plt.subplots()
++    ax.plot([0, 1], label='foo')
++    leg = ax.legend()
++    leg.set_draggable(True)
++    fig2 = pickle.loads(pickle.dumps(fig))
++    # Check that the legend in the unpickled figure is draggable.
++    leg2 = fig2.axes[0].get_legend()
++    assert leg2.get_draggable()
++
++
++def test_draggable_annotation():
++    fig, ax = plt.subplots()
++    ann = ax.annotate("foo", xy=(0, 0))
++    ann.draggable(True)
++    fig2 = pickle.loads(pickle.dumps(fig))
++    # Check that the annotation in the unpickled figure is draggable.
++    ann2 = fig2.axes[0].texts[0]
++    assert ann2._draggable is not None

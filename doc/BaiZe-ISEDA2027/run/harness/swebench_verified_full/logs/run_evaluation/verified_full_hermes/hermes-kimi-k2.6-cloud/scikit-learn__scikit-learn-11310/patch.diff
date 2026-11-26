@@ -1,0 +1,167 @@
+diff --git a/shim_collections.py b/shim_collections.py
+new file mode 100644
+index 0000000..adc9647
+--- /dev/null
++++ b/shim_collections.py
+@@ -0,0 +1,6 @@
++# Python 3.10 compatibility shim for collections imports
++import collections.abc
++import collections
++for name in ('Sequence', 'Mapping', 'Iterable', 'Sized'):
++    if not hasattr(collections, name):
++        setattr(collections, name, getattr(collections.abc, name))
+diff --git a/shim_compat.py b/shim_compat.py
+new file mode 100644
+index 0000000..c4ce15c
+--- /dev/null
++++ b/shim_compat.py
+@@ -0,0 +1,19 @@
++# Compatibility shim for old sklearn on Python 3.10 + numpy 1.26 + scipy 1.15
++import collections.abc
++import collections
++for name in ('Sequence', 'Mapping', 'Iterable', 'Sized'):
++    if not hasattr(collections, name):
++        setattr(collections, name, getattr(collections.abc, name))
++
++import numpy as np
++for name in ('int', 'float', 'bool', 'object', 'complex'):
++    if not hasattr(np, name):
++        setattr(np, name, eval(name))
++
++# scipy.linesearch module compatibility
++import scipy.optimize.linesearch as _ls
++if not hasattr(_ls, 'line_search_wolfe2'):
++    import scipy.optimize._linesearch as _lsprivate
++    for attr in dir(_lsprivate):
++        if not attr.startswith('_'):
++            setattr(_ls, attr, getattr(_lsprivate, attr))
+diff --git a/sitecustomize.py b/sitecustomize.py
+new file mode 100644
+index 0000000..c4ce15c
+--- /dev/null
++++ b/sitecustomize.py
+@@ -0,0 +1,19 @@
++# Compatibility shim for old sklearn on Python 3.10 + numpy 1.26 + scipy 1.15
++import collections.abc
++import collections
++for name in ('Sequence', 'Mapping', 'Iterable', 'Sized'):
++    if not hasattr(collections, name):
++        setattr(collections, name, getattr(collections.abc, name))
++
++import numpy as np
++for name in ('int', 'float', 'bool', 'object', 'complex'):
++    if not hasattr(np, name):
++        setattr(np, name, eval(name))
++
++# scipy.linesearch module compatibility
++import scipy.optimize.linesearch as _ls
++if not hasattr(_ls, 'line_search_wolfe2'):
++    import scipy.optimize._linesearch as _lsprivate
++    for attr in dir(_lsprivate):
++        if not attr.startswith('_'):
++            setattr(_ls, attr, getattr(_lsprivate, attr))
+diff --git a/sklearn/grid_search.py b/sklearn/grid_search.py
+index 6ba673d..f7acd4e 100644
+--- a/sklearn/grid_search.py
++++ b/sklearn/grid_search.py
+@@ -15,6 +15,7 @@ from collections import Mapping, namedtuple, Sized
+ from functools import partial, reduce
+ from itertools import product
+ import operator
++import time
+ import warnings
+ 
+ import numpy as np
+@@ -616,10 +617,12 @@ class BaseSearchCV(six.with_metaclass(ABCMeta, BaseEstimator,
+             # clone first to work around broken estimators
+             best_estimator = clone(base_estimator).set_params(
+                 **best.parameters)
++            start_time = time.time()
+             if y is not None:
+                 best_estimator.fit(X, y, **self.fit_params)
+             else:
+                 best_estimator.fit(X, **self.fit_params)
++            self.refit_time_ = time.time() - start_time
+             self.best_estimator_ = best_estimator
+         return self
+ 
+diff --git a/sklearn/model_selection/_search.py b/sklearn/model_selection/_search.py
+index 99d6096..9704f6e 100644
+--- a/sklearn/model_selection/_search.py
++++ b/sklearn/model_selection/_search.py
+@@ -17,6 +17,7 @@ from collections import Mapping, namedtuple, defaultdict, Sequence, Iterable
+ from functools import partial, reduce
+ from itertools import product
+ import operator
++import time
+ import warnings
+ 
+ import numpy as np
+@@ -766,10 +767,12 @@ class BaseSearchCV(six.with_metaclass(ABCMeta, BaseEstimator,
+         if self.refit:
+             self.best_estimator_ = clone(base_estimator).set_params(
+                 **self.best_params_)
++            start_time = time.time()
+             if y is not None:
+                 self.best_estimator_.fit(X, y, **fit_params)
+             else:
+                 self.best_estimator_.fit(X, **fit_params)
++            self.refit_time_ = time.time() - start_time
+ 
+         # Store the only scorer not as a dict for single metric evaluation
+         self.scorer_ = scorers if self.multimetric_ else scorers['score']
+@@ -1076,6 +1079,11 @@ class GridSearchCV(BaseSearchCV):
+     n_splits_ : int
+         The number of cross-validation splits (folds/iterations).
+ 
++    refit_time_ : float
++        Seconds used for refitting the best model on the whole dataset.
++
++        This is present only if ``refit`` is not False.
++
+     Notes
+     ------
+     The parameters selected are those that maximize the score of the left out
+@@ -1387,6 +1395,11 @@ class RandomizedSearchCV(BaseSearchCV):
+     n_splits_ : int
+         The number of cross-validation splits (folds/iterations).
+ 
++    refit_time_ : float
++        Seconds used for refitting the best model on the whole dataset.
++
++        This is present only if ``refit`` is not False.
++
+     Notes
+     -----
+     The parameters selected are those that maximize the score of the held-out
+diff --git a/sklearn/model_selection/tests/test_search.py b/sklearn/model_selection/tests/test_search.py
+index f436c7b..2e06135 100644
+--- a/sklearn/model_selection/tests/test_search.py
++++ b/sklearn/model_selection/tests/test_search.py
+@@ -1173,6 +1173,26 @@ def test_search_cv_timing():
+             assert_true(np.all(search.cv_results_[key] < 1))
+ 
+ 
++def test_search_refit_time():
++    # Test that refit_time_ is present and non-negative when refit=True
++    svc = LinearSVC(random_state=0)
++    X = [[1, ], [2, ], [3, ], [4, ]]
++    y = [0, 1, 1, 0]
++
++    gs = GridSearchCV(svc, {'C': [0, 1]}, cv=2, error_score=0)
++    rs = RandomizedSearchCV(svc, {'C': [0, 1]}, cv=2, error_score=0, n_iter=2)
++
++    for search in (gs, rs):
++        search.fit(X, y)
++        assert_true(hasattr(search, 'refit_time_'))
++        assert_true(search.refit_time_ >= 0)
++
++    # Test that refit_time_ is absent when refit=False
++    gs = GridSearchCV(svc, {'C': [0, 1]}, cv=2, error_score=0, refit=False)
++    gs.fit(X, y)
++    assert_false(hasattr(gs, 'refit_time_'))
++
++
+ def test_grid_search_correct_score_results():
+     # test that correct scores are used
+     n_splits = 3

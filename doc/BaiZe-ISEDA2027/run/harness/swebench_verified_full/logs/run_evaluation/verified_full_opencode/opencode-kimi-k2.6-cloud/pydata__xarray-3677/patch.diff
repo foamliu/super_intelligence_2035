@@ -1,0 +1,34 @@
+diff --git a/xarray/core/merge.py b/xarray/core/merge.py
+index 10c7804..e006909 100644
+--- a/xarray/core/merge.py
++++ b/xarray/core/merge.py
+@@ -805,6 +805,11 @@ def dataset_merge_method(
+ ) -> _MergeResult:
+     """Guts of the Dataset.merge method.
+     """
++    from .dataarray import DataArray
++
++    if isinstance(other, DataArray):
++        other = other.to_dataset()
++
+     # we are locked into supporting overwrite_vars for the Dataset.merge
+     # method due for backwards compatibility
+     # TODO: consider deprecating it?
+diff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py
+index c1e6c7a..a14d3dc 100644
+--- a/xarray/tests/test_merge.py
++++ b/xarray/tests/test_merge.py
+@@ -253,3 +253,13 @@ class TestMergeMethod:
+         with pytest.raises(xr.MergeError):
+             ds3 = xr.Dataset({"a": ("y", [2, 3]), "y": [1, 2]})
+             ds1.merge(ds3, compat="no_conflicts")
++
++    def test_merge_dataarray(self):
++        ds = xr.Dataset({"a": 0})
++        da = xr.DataArray(1, name="b")
++        actual = ds.merge(da)
++        expected = xr.Dataset({"a": 0, "b": 1})
++        assert expected.identical(actual)
++
++        with raises_regex(ValueError, "without providing an explicit name"):
++            ds.merge(xr.DataArray(1))

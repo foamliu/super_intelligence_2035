@@ -1,0 +1,36 @@
+diff --git a/repro_bug.py b/repro_bug.py
+new file mode 100644
+index 0000000000..112ff14edf
+--- /dev/null
++++ b/repro_bug.py
+@@ -0,0 +1,30 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth', 'ordering'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from ordering.models import Author, Article
++call_command('migrate', run_syncdb=True, verbosity=0)
++
++from tests.ordering.models import Author, Article
++
++# Ordering by a reverse relation to a model whose Meta.ordering
++# contains expressions -> find_ordering_name() recursion -> get_order_dir()
++# receives an expression object instead of a string.
++try:
++    list(Author.objects.order_by('article'))
++    print('OK: Author.objects.order_by("article")')
++except Exception as e:
++    print('CRASH 1: %r' % (e,))
++
++try:
++    list(Author.objects.order_by('-article'))
++    print('OK: Author.objects.order_by("-article")')
++except Exception as e:
++    print('CRASH 2: %r' % (e,))

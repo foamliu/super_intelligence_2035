@@ -1,0 +1,135 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index eaccc96d7d..68d6b74b23 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -5,7 +5,7 @@ from itertools import chain
+ 
+ from django.core.exceptions import EmptyResultSet, FieldError
+ from django.db.models.constants import LOOKUP_SEP
+-from django.db.models.expressions import OrderBy, Random, RawSQL, Ref, Value
++from django.db.models.expressions import BaseExpression, F, OrderBy, Random, RawSQL, Ref, Value
+ from django.db.models.functions import Cast
+ from django.db.models.query_utils import QueryWrapper, select_related_descend
+ from django.db.models.sql.constants import (
+@@ -722,12 +722,55 @@ class SQLCompiler:
+ 
+             results = []
+             for item in opts.ordering:
+-                results.extend(self.find_ordering_name(item, opts, alias,
+-                                                       order, already_seen))
++                if not hasattr(item, 'resolve_expression'):
++                    results.extend(self.find_ordering_name(item, opts, alias,
++                                                           order, already_seen))
++                else:
++                    # The item is an expression, e.g. an OrderBy or F() object,
++                    # inherited from a related model's Meta.ordering, so it
++                    # cannot be resolved as a field name. Its references must
++                    # be resolved against the related model and the alias of
++                    # its joined table.
++                    results.append((
++                        self.resolve_ordering_expression(item, opts, alias, order),
++                        False,
++                    ))
+             return results
+         targets, alias, _ = self.query.trim_joins(targets, joins, path)
+         return [(OrderBy(transform_function(t, alias), descending=descending), False) for t in targets]
+ 
++    def resolve_ordering_expression(self, expression, opts, alias, order):
++        """
++        Resolve an ordering expression inherited from a related model's
++        Meta.ordering against that model (opts) and the alias of its joined
++        table, and apply the ordering direction to the result.
++        """
++
++        def resolve(expr):
++            if isinstance(expr, F):
++                _, targets, expr_alias, joins, path, _, transform_function = self._setup_joins(
++                    expr.name.split(LOOKUP_SEP), opts, alias)
++                targets, expr_alias, _ = self.query.trim_joins(targets, joins, path)
++                if len(targets) > 1:
++                    raise FieldError("Referencing multicolumn fields with F() objects "
++                                     "isn't supported")
++                return transform_function(targets[0], expr_alias)
++            clone = expr.copy()
++            source_expressions = expr.get_source_expressions()
++            if source_expressions:
++                clone.set_source_expressions([
++                    resolve(source) if isinstance(source, (BaseExpression, F)) else source
++                    for source in source_expressions
++                ])
++            if isinstance(expr, OrderBy) and order == 'DESC':
++                clone.reverse_ordering()
++            return clone
++
++        resolved = resolve(expression)
++        if not isinstance(resolved, OrderBy):
++            resolved = resolved.desc() if order == 'DESC' else resolved.asc()
++        return resolved
++
+     def _setup_joins(self, pieces, opts, alias):
+         """
+         Helper method for get_order_by() and get_distinct().
+diff --git a/tests/ordering/models.py b/tests/ordering/models.py
+index 8b71983c44..b49cd6a093 100644
+--- a/tests/ordering/models.py
++++ b/tests/ordering/models.py
+@@ -54,6 +54,14 @@ class OrderedByFArticle(Article):
+         ordering = (models.F('author').asc(nulls_first=True), 'id')
+ 
+ 
++class ChildArticle(Article):
++    """
++    A multi-table inheritance child of Article whose primary key is the parent
++    link (article_ptr).
++    """
++    pass
++
++
+ class Reference(models.Model):
+     article = models.ForeignKey(OrderedByAuthorArticle, models.CASCADE)
+ 
+diff --git a/tests/ordering/tests.py b/tests/ordering/tests.py
+index 18c32d6d5f..6dba879fe6 100644
+--- a/tests/ordering/tests.py
++++ b/tests/ordering/tests.py
+@@ -9,7 +9,7 @@ from django.db.models.functions import Upper
+ from django.test import TestCase
+ from django.utils.deprecation import RemovedInDjango31Warning
+ 
+-from .models import Article, Author, OrderedByFArticle, Reference
++from .models import Article, Author, ChildArticle, OrderedByFArticle, Reference
+ 
+ 
+ class OrderingTests(TestCase):
+@@ -462,6 +462,31 @@ class OrderingTests(TestCase):
+             attrgetter('headline')
+         )
+ 
++    def test_order_by_parent_link_with_meta_ordering_expressions(self):
++        """
++        Ordering by a parent link doesn't crash when the parent model's
++        Meta.ordering contains expressions (#31476).
++        """
++        ca1 = ChildArticle.objects.create(
++            headline='Child Article', pub_date=datetime(2005, 7, 26),
++            author=self.author_2,
++        )
++        ca2 = ChildArticle.objects.create(
++            headline='Child Article', pub_date=datetime(2005, 7, 26),
++            author=self.author_1,
++        )
++        # The parent's Meta.ordering is pub_date (desc), headline, author
++        # name (asc), second_author name; pub_date and headline are equal,
++        # so the author name expression determines the order.
++        self.assertSequenceEqual(
++            ChildArticle.objects.order_by('article_ptr'),
++            [ca2, ca1],
++        )
++        self.assertSequenceEqual(
++            ChildArticle.objects.order_by('-article_ptr'),
++            [ca1, ca2],
++        )
++
+     def test_deprecated_values_annotate(self):
+         msg = (
+             "Article QuerySet won't use Meta.ordering in Django 3.1. Add "

@@ -1,0 +1,3782 @@
+{
+  "GoogleChrome__lighthouse-10176": {
+    "instance_id": "GoogleChrome__lighthouse-10176",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 898.4,
+    "rc": 0,
+    "model_patch_len": 5417,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "k deduplication |\\n\\nAll modified files pass Node.js syntax validation, and the core logic was verified with standalone Node scripts.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-10295": {
+    "instance_id": "GoogleChrome__lighthouse-10295",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 236.7,
+    "rc": 0,
+    "model_patch_len": 1614,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " a manual logic test simulating `normalizeVersion` with inputs like `undefined`, `1.5`, `52`, and `{}` — all passed without throwing.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-10505": {
+    "instance_id": "GoogleChrome__lighthouse-10505",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-11068": {
+    "instance_id": "GoogleChrome__lighthouse-11068",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 287.0,
+    "rc": 0,
+    "model_patch_len": 1875,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "asses correctly\\n- A font from an OOPIF (with `sessionId: '123'`) is ignored entirely\\n- No warnings are generated for the OOPIF font\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-11489": {
+    "instance_id": "GoogleChrome__lighthouse-11489",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 564.1,
+    "rc": 0,
+    "model_patch_len": 2252,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "0 KiB`) and doesn't affect ICU-message-based display values like \\\"Potential savings of 2 KiB\\\" which use a separate formatting path.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-11579": {
+    "instance_id": "GoogleChrome__lighthouse-11579",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 265.8,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "Id, {active: true})` in the extension background page, or by sending `Page.bringToFront` via the DevTools Protocol before navigation.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-11738": {
+    "instance_id": "GoogleChrome__lighthouse-11738",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 435.5,
+    "rc": 0,
+    "model_patch_len": 4309,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "iet before ending the trace. This gives late layout shifts enough time to occur and be recorded, ensuring CLS is measured accurately.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-12067": {
+    "instance_id": "GoogleChrome__lighthouse-12067",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 159.2,
+    "rc": 0,
+    "model_patch_len": 1666,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "operator still correctly distinguished: **PASS**\\n- regular regex handling: **PASS**\\n- `case` with whitespace before regex: **PASS**\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-12970": {
+    "instance_id": "GoogleChrome__lighthouse-12970",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 747.7,
+    "rc": 0,
+    "model_patch_len": 4160,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "xact mocking and assertion patterns used elsewhere in the file and correctly exercises the `startsWith('file:')` guard added earlier.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-13185": {
+    "instance_id": "GoogleChrome__lighthouse-13185",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.8,
+    "rc": -1,
+    "model_patch_len": 123615,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-1446": {
+    "instance_id": "GoogleChrome__lighthouse-1446",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.7,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-14479": {
+    "instance_id": "GoogleChrome__lighthouse-14479",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 209.2,
+    "rc": 0,
+    "model_patch_len": 1718,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "alues in the DOM size audit will now display as clean integers like `2,008`, `23`, and `81` instead of `2,008.0`, `23.0`, and `81.0`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-14515": {
+    "instance_id": "GoogleChrome__lighthouse-14515",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.7,
+    "rc": -1,
+    "model_patch_len": 33698,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-14587": {
+    "instance_id": "GoogleChrome__lighthouse-14587",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 309.5,
+    "rc": 0,
+    "model_patch_len": 3345,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " original behavior is preserved:\\n- `formFactor=mobile` → **\\\"Emulated Moto G4\\\"**\\n- `formFactor=desktop` → **\\\"Emulated Desktop\\\"**\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-14672": {
+    "instance_id": "GoogleChrome__lighthouse-14672",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 291.5,
+    "rc": 0,
+    "model_patch_len": 3039,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ept in the codebase for potential future use (e.g., when a user explicitly disables all emulation via CLI flags without a formFactor)\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-14800": {
+    "instance_id": "GoogleChrome__lighthouse-14800",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 456.2,
+    "rc": 0,
+    "model_patch_len": 2155,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`processPseudoId` instead of `processId`, verifying that `processTrace()` no longer throws and correctly falls back to `startingPid`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-15054": {
+    "instance_id": "GoogleChrome__lighthouse-15054",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 8285,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-15092": {
+    "instance_id": "GoogleChrome__lighthouse-15092",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.7,
+    "rc": -1,
+    "model_patch_len": 2718,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-1549": {
+    "instance_id": "GoogleChrome__lighthouse-1549",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 336.6,
+    "rc": 0,
+    "model_patch_len": 2016,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "-core/test/fixtures/traces/trace-user-timings-with-marks-before-navstart.json` — new test fixture with a mark before navigation start\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-1563": {
+    "instance_id": "GoogleChrome__lighthouse-1563",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 249.0,
+    "rc": 0,
+    "model_patch_len": 2704,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "filtered out\\n- Existing filters for `navigationStart`, `paintNonDefaultBackgroundColor`, and frame data continue to work as expected\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-1617": {
+    "instance_id": "GoogleChrome__lighthouse-1617",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 597.6,
+    "rc": 0,
+    "model_patch_len": 4373,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "firming all scenarios behave correctly (no manifest, empty manifest, missing values, long names, short names, and fallback behavior).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-1755": {
+    "instance_id": "GoogleChrome__lighthouse-1755",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 718.6,
+    "rc": 0,
+    "model_patch_len": 2826,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " → `overall = 1` ✅\\n- Mixed boolean + numeric groups → still averages correctly ✅\\n- Numeric-only groups → still averages correctly ✅\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-1786": {
+    "instance_id": "GoogleChrome__lighthouse-1786",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 496.7,
+    "rc": 0,
+    "model_patch_len": 2645,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "de descriptions) will still pass because those strings don't start with a backtick and continue to be processed normally by `marked`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-1895": {
+    "instance_id": "GoogleChrome__lighthouse-1895",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 928.0,
+    "rc": 0,
+    "model_patch_len": 4498,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "uce the exact same results. I also confirmed that the new `no-first-paint` fixture no longer crashes and returns the expected events.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-1916": {
+    "instance_id": "GoogleChrome__lighthouse-1916",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 181.9,
+    "rc": 0,
+    "model_patch_len": 1746,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s more general—it correctly skips any image with 0 area regardless of mime type.\\n\\nBoth files pass `node --check` syntax validation.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-1941": {
+    "instance_id": "GoogleChrome__lighthouse-1941",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 386.4,
+    "rc": 0,
+    "model_patch_len": 2266,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "} after   ← corrupted!\\n\\nWith escaping $:\\n  Result: before {\\\"foo\\\":\\\"bar$'baz\\\"} after       ← correct\\n```\\n\\nAll new tests pass.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-2016": {
+    "instance_id": "GoogleChrome__lighthouse-2016",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 109.5,
+    "rc": 0,
+    "model_patch_len": 1620,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ";\\n   ```\\n\\nThis ensures that categories with zero passing audits no longer display the misleading \\\"View 0 passed items\\\" dropdown.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-2553": {
+    "instance_id": "GoogleChrome__lighthouse-2553",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1130.1,
+    "rc": 0,
+    "model_patch_len": 4644,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "le_v2.json`)**: All numeric values in these fixtures are `< 1000`, so `toLocaleString()` produces identical output—no updates needed.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-2610": {
+    "instance_id": "GoogleChrome__lighthouse-2610",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 610.3,
+    "rc": 0,
+    "model_patch_len": 8022,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e that verifies `_getLongestChain` correctly computes cumulative `transferSize` for multi-level chains (e.g., 100 + 200 + 300 = 600).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-3442": {
+    "instance_id": "GoogleChrome__lighthouse-3442",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 385.7,
+    "rc": 0,
+    "model_patch_len": 1683,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ped in the generated HTML\\n2. HTML tags are still properly escaped\\n3. The resulting JSON remains parseable and round-trips correctly\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-3583": {
+    "instance_id": "GoogleChrome__lighthouse-3583",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.7,
+    "rc": -1,
+    "model_patch_len": 3000,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-3606": {
+    "instance_id": "GoogleChrome__lighthouse-3606",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-3692": {
+    "instance_id": "GoogleChrome__lighthouse-3692",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 726.7,
+    "rc": 0,
+    "model_patch_len": 9635,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ld not be executed. However, all code follows existing patterns in the codebase and the new tests align with the existing test style.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-4036": {
+    "instance_id": "GoogleChrome__lighthouse-4036",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 200.7,
+    "rc": 0,
+    "model_patch_len": 2541,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "\\n- External HTTP(S) links without `rel=\\\"noopener\\\"` still fail the audit\\n- Empty/invalid href links still fail the audit as before\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-4301": {
+    "instance_id": "GoogleChrome__lighthouse-4301",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-5011": {
+    "instance_id": "GoogleChrome__lighthouse-5011",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 308.6,
+    "rc": 0,
+    "model_patch_len": 2014,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "r high-priority resources are still considered critical\\n- Legacy requests without the `_isLinkPreload` property still work correctly\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-5084": {
+    "instance_id": "GoogleChrome__lighthouse-5084",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 445.0,
+    "rc": 0,
+    "model_patch_len": 2568,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ime improvement via `savingsOnLoad`, fixing the reported issue where animated GIF audits incorrectly showed 100/100 with 0ms savings.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-5688": {
+    "instance_id": "GoogleChrome__lighthouse-5688",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 455.2,
+    "rc": 0,
+    "model_patch_len": 3958,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "mages` audit will automatically flag them with potential WebP savings, which is exactly the expected behavior described in the issue.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-5791": {
+    "instance_id": "GoogleChrome__lighthouse-5791",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 533.3,
+    "rc": 0,
+    "model_patch_len": 1289,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "w comfortably fits the short text, preventing the awkward wrapping\\n\\nBoth modified files have been validated for syntax correctness.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-5871": {
+    "instance_id": "GoogleChrome__lighthouse-5871",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1083.8,
+    "rc": 0,
+    "model_patch_len": 7464,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "austive key lists |\\n\\n### Validation\\nAll modified JS and JSON files passed `node -c` / `JSON.parse` syntax validation successfully.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-5925": {
+    "instance_id": "GoogleChrome__lighthouse-5925",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 549.3,
+    "rc": 0,
+    "model_patch_len": 2027,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "audit produces **zero items** and logs a **warning** instead of incorrectly reporting savings.\\n\\nBoth files pass Node syntax checks.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-6694": {
+    "instance_id": "GoogleChrome__lighthouse-6694",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 726.5,
+    "rc": 0,
+    "model_patch_len": 7341,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "this environment because `node_modules` is not installed, but the code follows the existing conventions and patterns in the codebase.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-6922": {
+    "instance_id": "GoogleChrome__lighthouse-6922",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 122.9,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "s (as shown in your screenshot) to monitor OOPIFs. This is a real limitation for pages with cross-origin iframes (ads, embeds, etc.).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-6989": {
+    "instance_id": "GoogleChrome__lighthouse-6989",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 680.9,
+    "rc": 0,
+    "model_patch_len": 6392,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "m passing audits without having to expand the \\\"Passed audits\\\" section.\\n\\nAll modified files were validated for syntax correctness.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-7210": {
+    "instance_id": "GoogleChrome__lighthouse-7210",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 756.6,
+    "rc": 0,
+    "model_patch_len": 2668,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "is unaffected because its inline stylesheets were already small enough to be filtered out regardless of the compression ratio change.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-7356": {
+    "instance_id": "GoogleChrome__lighthouse-7356",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 972.2,
+    "rc": 0,
+    "model_patch_len": 3860,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " pages with FCP between 30-35s may now record `NO_FCP` instead of succeeding, but they would have been at high risk of timeout anyway\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-8940": {
+    "instance_id": "GoogleChrome__lighthouse-8940",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 271.9,
+    "rc": 0,
+    "model_patch_len": 2027,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ". The audit now correctly focuses only on `<img>` elements, where resizing to match display dimensions is actually actionable advice.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-9151": {
+    "instance_id": "GoogleChrome__lighthouse-9151",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1928.5,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-9291": {
+    "instance_id": "GoogleChrome__lighthouse-9291",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 973.4,
+    "rc": 0,
+    "model_patch_len": 3608,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "thouse-cli/run.js`\\n- `/dev/shm/harness_mm_2x3/workdirs/cline__kimi-k2.6/GoogleChrome_lighthouse/lighthouse-cli/test/cli/run-test.js`\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-9334": {
+    "instance_id": "GoogleChrome__lighthouse-9334",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1156.8,
+    "rc": 0,
+    "model_patch_len": 3918,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ranslates it to: `\\\"The URL you have provided appears to be invalid.\\\"`\\n\\nBoth modified files also pass `node -c` syntax validation.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "GoogleChrome__lighthouse-9451": {
+    "instance_id": "GoogleChrome__lighthouse-9451",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-9727": {
+    "instance_id": "GoogleChrome__lighthouse-9727",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.7,
+    "rc": -1,
+    "model_patch_len": 9351,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
+  },
+  "GoogleChrome__lighthouse-9903": {
+    "instance_id": "GoogleChrome__lighthouse-9903",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 156.8,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "pendencies. The audit won't \\\"pass\\\" until **all** high-impact origins are either preconnected or fall below the 50ms/15s thresholds.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "t-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n      at processTicksAndRejections (unknown:7:39)\n\n"
+  },
+  "GoogleChrome__lighthouse-9932": {
+    "instance_id": "GoogleChrome__lighthouse-9932",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 599.2,
+    "rc": 0,
+    "model_patch_len": 5302,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " normal request and finishes instantly ✅\\n- Normal request depending on a data URI starts immediately (data URI finishes at time 0) ✅\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "PrismJS__prism-1500": {
+    "instance_id": "PrismJS__prism-1500",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 278.0,
+    "rc": 0,
+    "model_patch_len": 7447,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ect ''hello world'' from a'` is recognized as a single string token, and `-- this is a comment` is correctly identified as a comment.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "PrismJS__prism-1572": {
+    "instance_id": "PrismJS__prism-1572",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 396.1,
+    "rc": 0,
+    "model_patch_len": 23979,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tion follows Prism.js conventions (quoted object keys, no `g` regex flag) while staying true to the original proposal from the issue.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "PrismJS__prism-1573": {
+    "instance_id": "PrismJS__prism-1573",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-1585": {
+    "instance_id": "PrismJS__prism-1585",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-1602": {
+    "instance_id": "PrismJS__prism-1602",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-1747": {
+    "instance_id": "PrismJS__prism-1747",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-1853": {
+    "instance_id": "PrismJS__prism-1853",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-1887": {
+    "instance_id": "PrismJS__prism-1887",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-1895": {
+    "instance_id": "PrismJS__prism-1895",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-1897": {
+    "instance_id": "PrismJS__prism-1897",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2029": {
+    "instance_id": "PrismJS__prism-2029",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2182": {
+    "instance_id": "PrismJS__prism-2182",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2195": {
+    "instance_id": "PrismJS__prism-2195",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2295": {
+    "instance_id": "PrismJS__prism-2295",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2348": {
+    "instance_id": "PrismJS__prism-2348",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2622": {
+    "instance_id": "PrismJS__prism-2622",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2649": {
+    "instance_id": "PrismJS__prism-2649",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2678": {
+    "instance_id": "PrismJS__prism-2678",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2680": {
+    "instance_id": "PrismJS__prism-2680",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2686": {
+    "instance_id": "PrismJS__prism-2686",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2703": {
+    "instance_id": "PrismJS__prism-2703",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2705": {
+    "instance_id": "PrismJS__prism-2705",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2713": {
+    "instance_id": "PrismJS__prism-2713",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2754": {
+    "instance_id": "PrismJS__prism-2754",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2782": {
+    "instance_id": "PrismJS__prism-2782",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2792": {
+    "instance_id": "PrismJS__prism-2792",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2841": {
+    "instance_id": "PrismJS__prism-2841",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2861": {
+    "instance_id": "PrismJS__prism-2861",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-2946": {
+    "instance_id": "PrismJS__prism-2946",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3001": {
+    "instance_id": "PrismJS__prism-3001",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3050": {
+    "instance_id": "PrismJS__prism-3050",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3141": {
+    "instance_id": "PrismJS__prism-3141",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3174": {
+    "instance_id": "PrismJS__prism-3174",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3351": {
+    "instance_id": "PrismJS__prism-3351",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3355": {
+    "instance_id": "PrismJS__prism-3355",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3372": {
+    "instance_id": "PrismJS__prism-3372",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3438": {
+    "instance_id": "PrismJS__prism-3438",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "PrismJS__prism-3442": {
+    "instance_id": "PrismJS__prism-3442",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-101": {
+    "instance_id": "alibaba-fusion__next-101",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1063": {
+    "instance_id": "alibaba-fusion__next-1063",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1064": {
+    "instance_id": "alibaba-fusion__next-1064",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1067": {
+    "instance_id": "alibaba-fusion__next-1067",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-114": {
+    "instance_id": "alibaba-fusion__next-114",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1500": {
+    "instance_id": "alibaba-fusion__next-1500",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1509": {
+    "instance_id": "alibaba-fusion__next-1509",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1586": {
+    "instance_id": "alibaba-fusion__next-1586",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1708": {
+    "instance_id": "alibaba-fusion__next-1708",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1720": {
+    "instance_id": "alibaba-fusion__next-1720",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1742": {
+    "instance_id": "alibaba-fusion__next-1742",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1788": {
+    "instance_id": "alibaba-fusion__next-1788",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-1807": {
+    "instance_id": "alibaba-fusion__next-1807",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-2131": {
+    "instance_id": "alibaba-fusion__next-2131",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-2164": {
+    "instance_id": "alibaba-fusion__next-2164",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-2355": {
+    "instance_id": "alibaba-fusion__next-2355",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-2860": {
+    "instance_id": "alibaba-fusion__next-2860",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-2919": {
+    "instance_id": "alibaba-fusion__next-2919",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-2923": {
+    "instance_id": "alibaba-fusion__next-2923",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-2984": {
+    "instance_id": "alibaba-fusion__next-2984",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-3034": {
+    "instance_id": "alibaba-fusion__next-3034",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-3198": {
+    "instance_id": "alibaba-fusion__next-3198",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-3218": {
+    "instance_id": "alibaba-fusion__next-3218",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-3345": {
+    "instance_id": "alibaba-fusion__next-3345",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-3445": {
+    "instance_id": "alibaba-fusion__next-3445",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-3454": {
+    "instance_id": "alibaba-fusion__next-3454",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-3724": {
+    "instance_id": "alibaba-fusion__next-3724",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-3947": {
+    "instance_id": "alibaba-fusion__next-3947",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-4021": {
+    "instance_id": "alibaba-fusion__next-4021",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-4182": {
+    "instance_id": "alibaba-fusion__next-4182",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-665": {
+    "instance_id": "alibaba-fusion__next-665",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-717": {
+    "instance_id": "alibaba-fusion__next-717",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-877": {
+    "instance_id": "alibaba-fusion__next-877",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-895": {
+    "instance_id": "alibaba-fusion__next-895",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-94": {
+    "instance_id": "alibaba-fusion__next-94",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "alibaba-fusion__next-966": {
+    "instance_id": "alibaba-fusion__next-966",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1011": {
+    "instance_id": "bpmn-io__bpmn-js-1011",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1080": {
+    "instance_id": "bpmn-io__bpmn-js-1080",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1083": {
+    "instance_id": "bpmn-io__bpmn-js-1083",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1085": {
+    "instance_id": "bpmn-io__bpmn-js-1085",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1092": {
+    "instance_id": "bpmn-io__bpmn-js-1092",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1119": {
+    "instance_id": "bpmn-io__bpmn-js-1119",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1143": {
+    "instance_id": "bpmn-io__bpmn-js-1143",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1151": {
+    "instance_id": "bpmn-io__bpmn-js-1151",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1168": {
+    "instance_id": "bpmn-io__bpmn-js-1168",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1172": {
+    "instance_id": "bpmn-io__bpmn-js-1172",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1174": {
+    "instance_id": "bpmn-io__bpmn-js-1174",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1179": {
+    "instance_id": "bpmn-io__bpmn-js-1179",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1192": {
+    "instance_id": "bpmn-io__bpmn-js-1192",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1196": {
+    "instance_id": "bpmn-io__bpmn-js-1196",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1198": {
+    "instance_id": "bpmn-io__bpmn-js-1198",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1200": {
+    "instance_id": "bpmn-io__bpmn-js-1200",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1206": {
+    "instance_id": "bpmn-io__bpmn-js-1206",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1221": {
+    "instance_id": "bpmn-io__bpmn-js-1221",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1236": {
+    "instance_id": "bpmn-io__bpmn-js-1236",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1238": {
+    "instance_id": "bpmn-io__bpmn-js-1238",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1256": {
+    "instance_id": "bpmn-io__bpmn-js-1256",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1299": {
+    "instance_id": "bpmn-io__bpmn-js-1299",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1330": {
+    "instance_id": "bpmn-io__bpmn-js-1330",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1337": {
+    "instance_id": "bpmn-io__bpmn-js-1337",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1348": {
+    "instance_id": "bpmn-io__bpmn-js-1348",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1365": {
+    "instance_id": "bpmn-io__bpmn-js-1365",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1382": {
+    "instance_id": "bpmn-io__bpmn-js-1382",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1434": {
+    "instance_id": "bpmn-io__bpmn-js-1434",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1438": {
+    "instance_id": "bpmn-io__bpmn-js-1438",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1442": {
+    "instance_id": "bpmn-io__bpmn-js-1442",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1542": {
+    "instance_id": "bpmn-io__bpmn-js-1542",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1557": {
+    "instance_id": "bpmn-io__bpmn-js-1557",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1567": {
+    "instance_id": "bpmn-io__bpmn-js-1567",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1570": {
+    "instance_id": "bpmn-io__bpmn-js-1570",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1578": {
+    "instance_id": "bpmn-io__bpmn-js-1578",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1584": {
+    "instance_id": "bpmn-io__bpmn-js-1584",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1607": {
+    "instance_id": "bpmn-io__bpmn-js-1607",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1610": {
+    "instance_id": "bpmn-io__bpmn-js-1610",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1623": {
+    "instance_id": "bpmn-io__bpmn-js-1623",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1636": {
+    "instance_id": "bpmn-io__bpmn-js-1636",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1638": {
+    "instance_id": "bpmn-io__bpmn-js-1638",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1640": {
+    "instance_id": "bpmn-io__bpmn-js-1640",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1644": {
+    "instance_id": "bpmn-io__bpmn-js-1644",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1655": {
+    "instance_id": "bpmn-io__bpmn-js-1655",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1659": {
+    "instance_id": "bpmn-io__bpmn-js-1659",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1677": {
+    "instance_id": "bpmn-io__bpmn-js-1677",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1679": {
+    "instance_id": "bpmn-io__bpmn-js-1679",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1719": {
+    "instance_id": "bpmn-io__bpmn-js-1719",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1720": {
+    "instance_id": "bpmn-io__bpmn-js-1720",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1802": {
+    "instance_id": "bpmn-io__bpmn-js-1802",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1847": {
+    "instance_id": "bpmn-io__bpmn-js-1847",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-1928": {
+    "instance_id": "bpmn-io__bpmn-js-1928",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "bpmn-io__bpmn-js-2024": {
+    "instance_id": "bpmn-io__bpmn-js-2024",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-10188": {
+    "instance_id": "carbon-design-system__carbon-10188",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-10214": {
+    "instance_id": "carbon-design-system__carbon-10214",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-10225": {
+    "instance_id": "carbon-design-system__carbon-10225",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-10262": {
+    "instance_id": "carbon-design-system__carbon-10262",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-10283": {
+    "instance_id": "carbon-design-system__carbon-10283",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-10301": {
+    "instance_id": "carbon-design-system__carbon-10301",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-10599": {
+    "instance_id": "carbon-design-system__carbon-10599",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-11352": {
+    "instance_id": "carbon-design-system__carbon-11352",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-11416": {
+    "instance_id": "carbon-design-system__carbon-11416",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-11613": {
+    "instance_id": "carbon-design-system__carbon-11613",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-11621": {
+    "instance_id": "carbon-design-system__carbon-11621",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-11664": {
+    "instance_id": "carbon-design-system__carbon-11664",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-11743": {
+    "instance_id": "carbon-design-system__carbon-11743",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-11761": {
+    "instance_id": "carbon-design-system__carbon-11761",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12027": {
+    "instance_id": "carbon-design-system__carbon-12027",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12151": {
+    "instance_id": "carbon-design-system__carbon-12151",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12262": {
+    "instance_id": "carbon-design-system__carbon-12262",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12302": {
+    "instance_id": "carbon-design-system__carbon-12302",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12329": {
+    "instance_id": "carbon-design-system__carbon-12329",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12332": {
+    "instance_id": "carbon-design-system__carbon-12332",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12384": {
+    "instance_id": "carbon-design-system__carbon-12384",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12398": {
+    "instance_id": "carbon-design-system__carbon-12398",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12402": {
+    "instance_id": "carbon-design-system__carbon-12402",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12410": {
+    "instance_id": "carbon-design-system__carbon-12410",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12412": {
+    "instance_id": "carbon-design-system__carbon-12412",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12420": {
+    "instance_id": "carbon-design-system__carbon-12420",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12430": {
+    "instance_id": "carbon-design-system__carbon-12430",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12435": {
+    "instance_id": "carbon-design-system__carbon-12435",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12442": {
+    "instance_id": "carbon-design-system__carbon-12442",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-12445": {
+    "instance_id": "carbon-design-system__carbon-12445",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-13196": {
+    "instance_id": "carbon-design-system__carbon-13196",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-13218": {
+    "instance_id": "carbon-design-system__carbon-13218",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-13224": {
+    "instance_id": "carbon-design-system__carbon-13224",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-13317": {
+    "instance_id": "carbon-design-system__carbon-13317",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-13364": {
+    "instance_id": "carbon-design-system__carbon-13364",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-13421": {
+    "instance_id": "carbon-design-system__carbon-13421",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-13527": {
+    "instance_id": "carbon-design-system__carbon-13527",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-13851": {
+    "instance_id": "carbon-design-system__carbon-13851",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-14239": {
+    "instance_id": "carbon-design-system__carbon-14239",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-14476": {
+    "instance_id": "carbon-design-system__carbon-14476",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-15197": {
+    "instance_id": "carbon-design-system__carbon-15197",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-16237": {
+    "instance_id": "carbon-design-system__carbon-16237",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-16332": {
+    "instance_id": "carbon-design-system__carbon-16332",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-2885": {
+    "instance_id": "carbon-design-system__carbon-2885",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3118": {
+    "instance_id": "carbon-design-system__carbon-3118",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3139": {
+    "instance_id": "carbon-design-system__carbon-3139",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3237": {
+    "instance_id": "carbon-design-system__carbon-3237",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3253": {
+    "instance_id": "carbon-design-system__carbon-3253",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3283": {
+    "instance_id": "carbon-design-system__carbon-3283",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3347": {
+    "instance_id": "carbon-design-system__carbon-3347",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3362": {
+    "instance_id": "carbon-design-system__carbon-3362",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3610": {
+    "instance_id": "carbon-design-system__carbon-3610",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3626": {
+    "instance_id": "carbon-design-system__carbon-3626",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3824": {
+    "instance_id": "carbon-design-system__carbon-3824",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3859": {
+    "instance_id": "carbon-design-system__carbon-3859",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3918": {
+    "instance_id": "carbon-design-system__carbon-3918",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-3928": {
+    "instance_id": "carbon-design-system__carbon-3928",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4028": {
+    "instance_id": "carbon-design-system__carbon-4028",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4055": {
+    "instance_id": "carbon-design-system__carbon-4055",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4167": {
+    "instance_id": "carbon-design-system__carbon-4167",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4226": {
+    "instance_id": "carbon-design-system__carbon-4226",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4260": {
+    "instance_id": "carbon-design-system__carbon-4260",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4273": {
+    "instance_id": "carbon-design-system__carbon-4273",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4286": {
+    "instance_id": "carbon-design-system__carbon-4286",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4307": {
+    "instance_id": "carbon-design-system__carbon-4307",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4347": {
+    "instance_id": "carbon-design-system__carbon-4347",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4354": {
+    "instance_id": "carbon-design-system__carbon-4354",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4430": {
+    "instance_id": "carbon-design-system__carbon-4430",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4431": {
+    "instance_id": "carbon-design-system__carbon-4431",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4678": {
+    "instance_id": "carbon-design-system__carbon-4678",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4680": {
+    "instance_id": "carbon-design-system__carbon-4680",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4741": {
+    "instance_id": "carbon-design-system__carbon-4741",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4754": {
+    "instance_id": "carbon-design-system__carbon-4754",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4801": {
+    "instance_id": "carbon-design-system__carbon-4801",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4816": {
+    "instance_id": "carbon-design-system__carbon-4816",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4820": {
+    "instance_id": "carbon-design-system__carbon-4820",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4834": {
+    "instance_id": "carbon-design-system__carbon-4834",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4862": {
+    "instance_id": "carbon-design-system__carbon-4862",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4891": {
+    "instance_id": "carbon-design-system__carbon-4891",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4952": {
+    "instance_id": "carbon-design-system__carbon-4952",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4991": {
+    "instance_id": "carbon-design-system__carbon-4991",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-4999": {
+    "instance_id": "carbon-design-system__carbon-4999",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-5035": {
+    "instance_id": "carbon-design-system__carbon-5035",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-5156": {
+    "instance_id": "carbon-design-system__carbon-5156",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-5173": {
+    "instance_id": "carbon-design-system__carbon-5173",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-5330": {
+    "instance_id": "carbon-design-system__carbon-5330",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-5485": {
+    "instance_id": "carbon-design-system__carbon-5485",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6197": {
+    "instance_id": "carbon-design-system__carbon-6197",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6410": {
+    "instance_id": "carbon-design-system__carbon-6410",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6442": {
+    "instance_id": "carbon-design-system__carbon-6442",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6520": {
+    "instance_id": "carbon-design-system__carbon-6520",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6566": {
+    "instance_id": "carbon-design-system__carbon-6566",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6675": {
+    "instance_id": "carbon-design-system__carbon-6675",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6691": {
+    "instance_id": "carbon-design-system__carbon-6691",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6726": {
+    "instance_id": "carbon-design-system__carbon-6726",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6906": {
+    "instance_id": "carbon-design-system__carbon-6906",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6949": {
+    "instance_id": "carbon-design-system__carbon-6949",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6960": {
+    "instance_id": "carbon-design-system__carbon-6960",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6964": {
+    "instance_id": "carbon-design-system__carbon-6964",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-6976": {
+    "instance_id": "carbon-design-system__carbon-6976",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7012": {
+    "instance_id": "carbon-design-system__carbon-7012",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7046": {
+    "instance_id": "carbon-design-system__carbon-7046",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7063": {
+    "instance_id": "carbon-design-system__carbon-7063",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7212": {
+    "instance_id": "carbon-design-system__carbon-7212",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7270": {
+    "instance_id": "carbon-design-system__carbon-7270",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7288": {
+    "instance_id": "carbon-design-system__carbon-7288",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7350": {
+    "instance_id": "carbon-design-system__carbon-7350",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7353": {
+    "instance_id": "carbon-design-system__carbon-7353",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7478": {
+    "instance_id": "carbon-design-system__carbon-7478",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7619": {
+    "instance_id": "carbon-design-system__carbon-7619",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7687": {
+    "instance_id": "carbon-design-system__carbon-7687",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7722": {
+    "instance_id": "carbon-design-system__carbon-7722",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7768": {
+    "instance_id": "carbon-design-system__carbon-7768",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-7908": {
+    "instance_id": "carbon-design-system__carbon-7908",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8022": {
+    "instance_id": "carbon-design-system__carbon-8022",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8092": {
+    "instance_id": "carbon-design-system__carbon-8092",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8130": {
+    "instance_id": "carbon-design-system__carbon-8130",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8222": {
+    "instance_id": "carbon-design-system__carbon-8222",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8279": {
+    "instance_id": "carbon-design-system__carbon-8279",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8296": {
+    "instance_id": "carbon-design-system__carbon-8296",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8452": {
+    "instance_id": "carbon-design-system__carbon-8452",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8469": {
+    "instance_id": "carbon-design-system__carbon-8469",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8477": {
+    "instance_id": "carbon-design-system__carbon-8477",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8720": {
+    "instance_id": "carbon-design-system__carbon-8720",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8912": {
+    "instance_id": "carbon-design-system__carbon-8912",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-8945": {
+    "instance_id": "carbon-design-system__carbon-8945",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-9074": {
+    "instance_id": "carbon-design-system__carbon-9074",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-9136": {
+    "instance_id": "carbon-design-system__carbon-9136",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-9189": {
+    "instance_id": "carbon-design-system__carbon-9189",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-9402": {
+    "instance_id": "carbon-design-system__carbon-9402",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-9700": {
+    "instance_id": "carbon-design-system__carbon-9700",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-9812": {
+    "instance_id": "carbon-design-system__carbon-9812",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "carbon-design-system__carbon-9994": {
+    "instance_id": "carbon-design-system__carbon-9994",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-11407": {
+    "instance_id": "eslint__eslint-11407",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-12472": {
+    "instance_id": "eslint__eslint-12472",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-12652": {
+    "instance_id": "eslint__eslint-12652",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 66.1,
+    "rc": -6,
+    "model_patch_len": 0,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "e\":\"reasoning\",\"reasoning\":\" an\",\"redacted\":false}}\n{\"ts\":\"2026-11-19T18:19:47.029Z\",\"type\":\"agent_event\",\"event\":{\"type\":\"content_start\",\"contentType\":\"reasoning\",\"reasoning\":\" `\",\"redacted\":false}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "eslint__eslint-14033": {
+    "instance_id": "eslint__eslint-14033",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-14242": {
+    "instance_id": "eslint__eslint-14242",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-15243": {
+    "instance_id": "eslint__eslint-15243",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-17618": {
+    "instance_id": "eslint__eslint-17618",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-8120": {
+    "instance_id": "eslint__eslint-8120",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-8850": {
+    "instance_id": "eslint__eslint-8850",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "eslint__eslint-9348": {
+    "instance_id": "eslint__eslint-9348",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 34.9,
+    "rc": -6,
+    "model_patch_len": 0,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "failed"
+  },
+  "eslint__eslint-9436": {
+    "instance_id": "eslint__eslint-9436",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-2061": {
+    "instance_id": "grommet__grommet-2061",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-2124": {
+    "instance_id": "grommet__grommet-2124",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 42.6,
+    "rc": -6,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "entId\":\"agent_1795112768028_u5k75g\",\"taskId\":\"conv_1795112768042_2vlti1g\",\"parentAgentId\":null}\n{\"ts\":\"2026-11-19T18:26:08.055Z\",\"type\":\"agent_event\",\"event\":{\"type\":\"iteration_start\",\"iteration\":1}}\n",
+    "stderr_tail": "9b296mQugogCwmn3hDw11vxCsr20wD2yk1yD4kpzyD_23jssC23jssC23jssC23jssC23jssCmsrksCiogkrF87yjrFkjh+vF49hq6D__msrksCwrg1iFA0eNpzS8zMSU1RKMlXKC5JLCpR8AgJCVBwzslMzStRKMkoSk1MsVIIriwuSc0NSi3OLy1KTi0GANSwEqg\n\n"
+  },
+  "grommet__grommet-2131": {
+    "instance_id": "grommet__grommet-2131",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-2695": {
+    "instance_id": "grommet__grommet-2695",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-5243": {
+    "instance_id": "grommet__grommet-5243",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6227": {
+    "instance_id": "grommet__grommet-6227",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6239": {
+    "instance_id": "grommet__grommet-6239",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6246": {
+    "instance_id": "grommet__grommet-6246",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6282": {
+    "instance_id": "grommet__grommet-6282",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6293": {
+    "instance_id": "grommet__grommet-6293",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6296": {
+    "instance_id": "grommet__grommet-6296",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6307": {
+    "instance_id": "grommet__grommet-6307",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6350": {
+    "instance_id": "grommet__grommet-6350",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6438": {
+    "instance_id": "grommet__grommet-6438",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6490": {
+    "instance_id": "grommet__grommet-6490",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6494": {
+    "instance_id": "grommet__grommet-6494",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6600": {
+    "instance_id": "grommet__grommet-6600",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6722": {
+    "instance_id": "grommet__grommet-6722",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-6749": {
+    "instance_id": "grommet__grommet-6749",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "grommet__grommet-7025": {
+    "instance_id": "grommet__grommet-7025",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2684": {
+    "instance_id": "highlightjs__highlight.js-2684",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2703": {
+    "instance_id": "highlightjs__highlight.js-2703",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2704": {
+    "instance_id": "highlightjs__highlight.js-2704",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2726": {
+    "instance_id": "highlightjs__highlight.js-2726",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2727": {
+    "instance_id": "highlightjs__highlight.js-2727",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2740": {
+    "instance_id": "highlightjs__highlight.js-2740",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2750": {
+    "instance_id": "highlightjs__highlight.js-2750",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2765": {
+    "instance_id": "highlightjs__highlight.js-2765",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2785": {
+    "instance_id": "highlightjs__highlight.js-2785",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2811": {
+    "instance_id": "highlightjs__highlight.js-2811",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2897": {
+    "instance_id": "highlightjs__highlight.js-2897",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2899": {
+    "instance_id": "highlightjs__highlight.js-2899",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2927": {
+    "instance_id": "highlightjs__highlight.js-2927",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2932": {
+    "instance_id": "highlightjs__highlight.js-2932",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2958": {
+    "instance_id": "highlightjs__highlight.js-2958",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2960": {
+    "instance_id": "highlightjs__highlight.js-2960",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2969": {
+    "instance_id": "highlightjs__highlight.js-2969",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-2972": {
+    "instance_id": "highlightjs__highlight.js-2972",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3000": {
+    "instance_id": "highlightjs__highlight.js-3000",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3018": {
+    "instance_id": "highlightjs__highlight.js-3018",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3070": {
+    "instance_id": "highlightjs__highlight.js-3070",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3154": {
+    "instance_id": "highlightjs__highlight.js-3154",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3203": {
+    "instance_id": "highlightjs__highlight.js-3203",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3207": {
+    "instance_id": "highlightjs__highlight.js-3207",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3212": {
+    "instance_id": "highlightjs__highlight.js-3212",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3249": {
+    "instance_id": "highlightjs__highlight.js-3249",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3278": {
+    "instance_id": "highlightjs__highlight.js-3278",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3287": {
+    "instance_id": "highlightjs__highlight.js-3287",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3301": {
+    "instance_id": "highlightjs__highlight.js-3301",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3312": {
+    "instance_id": "highlightjs__highlight.js-3312",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3316": {
+    "instance_id": "highlightjs__highlight.js-3316",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3367": {
+    "instance_id": "highlightjs__highlight.js-3367",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3381": {
+    "instance_id": "highlightjs__highlight.js-3381",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 19.5,
+    "rc": -4,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "entId\":\"agent_1795113383981_toup11\",\"taskId\":\"conv_1795113384244_tf2ycu1\",\"parentAgentId\":null}\n{\"ts\":\"2026-11-19T18:36:24.253Z\",\"type\":\"agent_event\",\"event\":{\"type\":\"iteration_start\",\"iteration\":1}}\n",
+    "stderr_tail": "d9b296GugogCwmn3hDw11vxCsr20wD2yk1yD4kpzyD_23jssC23jssC23jssC23jssC23jssCmsrksCiogkrF87yjrFkjh+vF49hq6D__msrksCwrg1iFA0eNpzS8zMSU1RKMlXKC5JLCpR8AgJCVBwzslMzStRKMkoSk1MsVIIriwuSc0NSi3OLy1KTi0GANSwEqg\n\n"
+  },
+  "highlightjs__highlight.js-3411": {
+    "instance_id": "highlightjs__highlight.js-3411",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3438": {
+    "instance_id": "highlightjs__highlight.js-3438",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3457": {
+    "instance_id": "highlightjs__highlight.js-3457",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3516": {
+    "instance_id": "highlightjs__highlight.js-3516",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3559": {
+    "instance_id": "highlightjs__highlight.js-3559",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "highlightjs__highlight.js-3644": {
+    "instance_id": "highlightjs__highlight.js-3644",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-10340": {
+    "instance_id": "openlayers__openlayers-10340",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-10478": {
+    "instance_id": "openlayers__openlayers-10478",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-10545": {
+    "instance_id": "openlayers__openlayers-10545",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-10694": {
+    "instance_id": "openlayers__openlayers-10694",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 237.3,
+    "rc": -6,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "_event\",\"event\":{\"type\":\"iteration_end\",\"iteration\":19,\"hadToolCalls\":true,\"toolCallCount\":1}}\n{\"ts\":\"2026-11-19T18:41:39.012Z\",\"type\":\"agent_event\",\"event\":{\"type\":\"iteration_start\",\"iteration\":20}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "openlayers__openlayers-10723": {
+    "instance_id": "openlayers__openlayers-10723",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-10982": {
+    "instance_id": "openlayers__openlayers-10982",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-11047": {
+    "instance_id": "openlayers__openlayers-11047",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-11088": {
+    "instance_id": "openlayers__openlayers-11088",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-11226": {
+    "instance_id": "openlayers__openlayers-11226",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-11377": {
+    "instance_id": "openlayers__openlayers-11377",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-11401": {
+    "instance_id": "openlayers__openlayers-11401",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-11545": {
+    "instance_id": "openlayers__openlayers-11545",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-11649": {
+    "instance_id": "openlayers__openlayers-11649",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12141": {
+    "instance_id": "openlayers__openlayers-12141",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12172": {
+    "instance_id": "openlayers__openlayers-12172",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12194": {
+    "instance_id": "openlayers__openlayers-12194",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12373": {
+    "instance_id": "openlayers__openlayers-12373",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12393": {
+    "instance_id": "openlayers__openlayers-12393",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12467": {
+    "instance_id": "openlayers__openlayers-12467",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12683": {
+    "instance_id": "openlayers__openlayers-12683",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12695": {
+    "instance_id": "openlayers__openlayers-12695",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12962": {
+    "instance_id": "openlayers__openlayers-12962",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-12965": {
+    "instance_id": "openlayers__openlayers-12965",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13013": {
+    "instance_id": "openlayers__openlayers-13013",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13020": {
+    "instance_id": "openlayers__openlayers-13020",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13069": {
+    "instance_id": "openlayers__openlayers-13069",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13119": {
+    "instance_id": "openlayers__openlayers-13119",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13150": {
+    "instance_id": "openlayers__openlayers-13150",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13155": {
+    "instance_id": "openlayers__openlayers-13155",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13198": {
+    "instance_id": "openlayers__openlayers-13198",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13212": {
+    "instance_id": "openlayers__openlayers-13212",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13226": {
+    "instance_id": "openlayers__openlayers-13226",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13269": {
+    "instance_id": "openlayers__openlayers-13269",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13333": {
+    "instance_id": "openlayers__openlayers-13333",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13509": {
+    "instance_id": "openlayers__openlayers-13509",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13547": {
+    "instance_id": "openlayers__openlayers-13547",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13648": {
+    "instance_id": "openlayers__openlayers-13648",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13654": {
+    "instance_id": "openlayers__openlayers-13654",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13669": {
+    "instance_id": "openlayers__openlayers-13669",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13823": {
+    "instance_id": "openlayers__openlayers-13823",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13860": {
+    "instance_id": "openlayers__openlayers-13860",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13893": {
+    "instance_id": "openlayers__openlayers-13893",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13974": {
+    "instance_id": "openlayers__openlayers-13974",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13975": {
+    "instance_id": "openlayers__openlayers-13975",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-13981": {
+    "instance_id": "openlayers__openlayers-13981",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14015": {
+    "instance_id": "openlayers__openlayers-14015",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14051": {
+    "instance_id": "openlayers__openlayers-14051",
+    "route": "cline__kimi-k2.6",
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 153.2,
+    "rc": -6,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": ",\"event\":{\"type\":\"content_start\",\"contentType\":\"tool\",\"toolName\":\"search_codebase\",\"toolCallId\":\"search_codebase_4_30ae26c8\",\"input\":{\"queries\":[\"webgl/TileLayer\\\\.test\",\"TileLayer\\\\.test.*webgl\"]}}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
+  },
+  "openlayers__openlayers-14066": {
+    "instance_id": "openlayers__openlayers-14066",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14100": {
+    "instance_id": "openlayers__openlayers-14100",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14332": {
+    "instance_id": "openlayers__openlayers-14332",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14414": {
+    "instance_id": "openlayers__openlayers-14414",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14483": {
+    "instance_id": "openlayers__openlayers-14483",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14599": {
+    "instance_id": "openlayers__openlayers-14599",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14619": {
+    "instance_id": "openlayers__openlayers-14619",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14627": {
+    "instance_id": "openlayers__openlayers-14627",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14659": {
+    "instance_id": "openlayers__openlayers-14659",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14719": {
+    "instance_id": "openlayers__openlayers-14719",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14932": {
+    "instance_id": "openlayers__openlayers-14932",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-14945": {
+    "instance_id": "openlayers__openlayers-14945",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15114": {
+    "instance_id": "openlayers__openlayers-15114",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15168": {
+    "instance_id": "openlayers__openlayers-15168",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15229": {
+    "instance_id": "openlayers__openlayers-15229",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15234": {
+    "instance_id": "openlayers__openlayers-15234",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15271": {
+    "instance_id": "openlayers__openlayers-15271",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15365": {
+    "instance_id": "openlayers__openlayers-15365",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15466": {
+    "instance_id": "openlayers__openlayers-15466",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15484": {
+    "instance_id": "openlayers__openlayers-15484",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15614": {
+    "instance_id": "openlayers__openlayers-15614",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15683": {
+    "instance_id": "openlayers__openlayers-15683",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15685": {
+    "instance_id": "openlayers__openlayers-15685",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15787": {
+    "instance_id": "openlayers__openlayers-15787",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15796": {
+    "instance_id": "openlayers__openlayers-15796",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-15825": {
+    "instance_id": "openlayers__openlayers-15825",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-7554": {
+    "instance_id": "openlayers__openlayers-7554",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-8515": {
+    "instance_id": "openlayers__openlayers-8515",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-9083": {
+    "instance_id": "openlayers__openlayers-9083",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "openlayers__openlayers-9307": {
+    "instance_id": "openlayers__openlayers-9307",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-11884": {
+    "instance_id": "prettier__prettier-11884",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-12177": {
+    "instance_id": "prettier__prettier-12177",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-14262": {
+    "instance_id": "prettier__prettier-14262",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-14688": {
+    "instance_id": "prettier__prettier-14688",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-14961": {
+    "instance_id": "prettier__prettier-14961",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-16347": {
+    "instance_id": "prettier__prettier-16347",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-4115": {
+    "instance_id": "prettier__prettier-4115",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-4153": {
+    "instance_id": "prettier__prettier-4153",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-4202": {
+    "instance_id": "prettier__prettier-4202",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-6319": {
+    "instance_id": "prettier__prettier-6319",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-8536": {
+    "instance_id": "prettier__prettier-8536",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-9514": {
+    "instance_id": "prettier__prettier-9514",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "prettier__prettier-9866": {
+    "instance_id": "prettier__prettier-9866",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "scratchfoundation__scratch-gui-2778": {
+    "instance_id": "scratchfoundation__scratch-gui-2778",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "scratchfoundation__scratch-gui-3342": {
+    "instance_id": "scratchfoundation__scratch-gui-3342",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "scratchfoundation__scratch-gui-4568": {
+    "instance_id": "scratchfoundation__scratch-gui-4568",
+    "route": "cline__kimi-k2.6",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
+    "model_patch_len": 0
+  },
+  "scratchfoundation__scratch-gui-5039": {
+    "instance_id": "scratchfoundation__scratch-gui-5039",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "scratchfoundation__scratch-gui-8492": {
+    "instance_id": "scratchfoundation__scratch-gui-8492",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  },
+  "scratchfoundation__scratch-gui-8891": {
+    "instance_id": "scratchfoundation__scratch-gui-8891",
+    "route": "cline__kimi-k2.6",
+    "classification": "error",
+    "error": "[Errno 11] Resource temporarily unavailable",
+    "model_patch_len": 0
+  }
+}

@@ -1,0 +1,57 @@
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index 97977d72e..bf9c2acd2 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -96,7 +96,7 @@ class MigrationAutodetector:
+         for name, field in sorted(fields.items()):
+             deconstruction = self.deep_deconstruct(field)
+             if field.remote_field and field.remote_field.model:
+-                del deconstruction[2]['to']
++                deconstruction[2].pop('to', None)
+             fields_def.append(deconstruction)
+         return fields_def
+ 
+diff --git a/tests/migrations/test_autodetector.py b/tests/migrations/test_autodetector.py
+index 3b4660114..c11813d2c 100644
+--- a/tests/migrations/test_autodetector.py
++++ b/tests/migrations/test_autodetector.py
+@@ -34,6 +34,16 @@ class DeconstructibleObject:
+             self.kwargs
+         )
+ 
++class HardcodedToFK(models.ForeignKey):
++    def __init__(self, *args, **kwargs):
++        kwargs['to'] = 'testapp.HardcodedModel'
++        super().__init__(*args, **kwargs)
++
++    def deconstruct(self):
++        name, path, args, kwargs = super().deconstruct()
++        del kwargs['to']
++        return name, path, args, kwargs
++
+ 
+ class AutodetectorTests(TestCase):
+     """
+@@ -2833,7 +2843,21 @@ class AutodetectorTests(TestCase):
+                     MigrationAutodetector.parse_number(migration_name),
+                     expected_number,
+                 )
+-
++    def test_custom_fk_without_to_in_deconstruct(self):
++        before = ProjectState()
++        before.add_model(ModelState('testapp', 'HardcodedModel', [
++            ('id', models.AutoField(primary_key=True)),
++        ]))
++        after = ProjectState()
++        after.add_model(ModelState('testapp', 'HardcodedModel', [
++            ('id', models.AutoField(primary_key=True)),
++        ]))
++        after.add_model(ModelState('testapp', 'TestModel', [
++            ('id', models.AutoField(primary_key=True)),
++            ('custom', HardcodedToFK(on_delete=models.CASCADE)),
++        ]))
++        changes = self.get_changes(before, after)
++        self.assertEqual(len(changes['testapp']), 1)
+ 
+ class MigrationSuggestNameTests(SimpleTestCase):
+     def test_no_operations(self):

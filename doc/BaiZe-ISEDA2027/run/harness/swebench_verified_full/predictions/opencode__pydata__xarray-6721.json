@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-6721",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/xarray/core/common.py b/xarray/core/common.py\nindex 3c328f4..facc7a8 100644\n--- a/xarray/core/common.py\n+++ b/xarray/core/common.py\n@@ -2023,14 +2023,13 @@ def get_chunksizes(\n \n     chunks: dict[Any, tuple[int, ...]] = {}\n     for v in variables:\n-        if hasattr(v.data, \"chunks\"):\n-            for dim, c in v.chunksizes.items():\n-                if dim in chunks and c != chunks[dim]:\n-                    raise ValueError(\n-                        f\"Object has inconsistent chunks along dimension {dim}. \"\n-                        \"This can be fixed by calling unify_chunks().\"\n-                    )\n-                chunks[dim] = c\n+        for dim, c in v.chunksizes.items():\n+            if dim in chunks and c != chunks[dim]:\n+                raise ValueError(\n+                    f\"Object has inconsistent chunks along dimension {dim}. \"\n+                    \"This can be fixed by calling unify_chunks().\"\n+                )\n+            chunks[dim] = c\n     return Frozen(chunks)\n \n \n"
+  }
+]

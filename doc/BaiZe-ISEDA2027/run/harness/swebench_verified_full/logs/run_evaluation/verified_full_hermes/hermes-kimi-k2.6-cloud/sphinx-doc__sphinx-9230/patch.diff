@@ -1,0 +1,140 @@
+diff --git a/sphinx/util/docfields.py b/sphinx/util/docfields.py
+index 3a3367eb..f831d4b7 100644
+--- a/sphinx/util/docfields.py
++++ b/sphinx/util/docfields.py
+@@ -298,7 +298,20 @@ class DocFieldTransformer:
+             # also support syntax like ``:param type name:``
+             if typedesc.is_typed:
+                 try:
+-                    argtype, argname = fieldarg.split(None, 1)
++                    # Split on whitespace, but respect balanced brackets
++                    # so that ``dict(str, str) name`` works correctly.
++                    depth = 0
++                    for i, ch in enumerate(fieldarg):
++                        if ch in '([{':
++                            depth += 1
++                        elif ch in ')]}':
++                            depth -= 1
++                        elif ch.isspace() and depth == 0:
++                            argtype = fieldarg[:i]
++                            argname = fieldarg[i + 1:].strip()
++                            break
++                    else:
++                        raise ValueError
+                 except ValueError:
+                     pass
+                 else:
+diff --git a/tests/test_util_docfields.py b/tests/test_util_docfields.py
+new file mode 100644
+index 00000000..3d767b03
+--- /dev/null
++++ b/tests/test_util_docfields.py
+@@ -0,0 +1,108 @@
++"""Test sphinx.util.docfields."""
++
++from docutils import nodes
++
++from sphinx.util.docfields import DocFieldTransformer, Field, GroupedField, TypedField
++
++
++class FakeDirective:
++    domain = 'py'
++
++    class state:
++        class document:
++            class settings:
++                env = None
++
++    def get_field_type_map(self):
++        return {
++            ':param': (TypedField('parameter', label='Parameters', names=(':param',),
++                                  typenames=(':type',), rolename='obj',
++                                  typerolename='class'), False),
++            ':type': (TypedField('parameter', label='Parameters', names=(':param',),
++                                 typenames=(':type',), rolename='obj',
++                                 typerolename='class'), True),
++            ':returns': (Field('returns', names=(':returns',), label='Returns',
++                               has_arg=False, bodyrolename='class'), False),
++            ':rtype': (Field('returns', names=(':returns',), label='Returns',
++                             has_arg=False, bodyrolename='class'), True),
++            ':raises': (GroupedField('raises', names=(':raises',), label='Raises',
++                                     rolename='exc'), False),
++        }
++
++
++def _make_field(fieldtype_name, fieldarg, body_text):
++    field_name = nodes.field_name('', f'{fieldtype_name} {fieldarg}')
++    para = nodes.paragraph('', body_text)
++    field_body = nodes.field_body('', para)
++    return nodes.field('', field_name, field_body)
++
++
++def _transform(fields):
++    field_list = nodes.field_list('', *fields)
++    # DocFieldTransformer calls node.replace_self, so the node must have a parent.
++    dummy = nodes.section('', field_list)
++    transformer = DocFieldTransformer(FakeDirective())
++    transformer.transform(field_list)
++    return dummy[0]
++
++
++def test_typedfield_with_parens_in_type():
++    """Regression test for ``:param dict(str, str) name:`` rendering.
++
++    The comma and space inside the parenthesised type used to be mis-parsed
++    as the split point between *type* and *name*.
++    """
++    fields = [
++        _make_field(':param', 'dict(str, str) opc_meta', '(optional)'),
++    ]
++    result = _transform(fields)
++
++    # There should be a single Parameters field
++    assert len(result) == 1
++    field = result[0]
++    field_name = field[0].astext()
++    assert field_name == 'Parameters'
++
++    # The body paragraph should contain the name, the full type, and the description
++    body = field[1][0].astext()
++    assert 'opc_meta' in body
++    assert 'dict(str, str)' in body
++    assert '(optional)' in body
++
++    # Make sure the old buggy split doesn't appear
++    assert 'str)' not in body.split('dict(str, str)')[0]
++
++
++def test_typedfield_with_brackets_in_type():
++    """Bracket-heavy types like ``List[Dict[str, str]]`` must also be handled."""
++    fields = [
++        _make_field(':param', 'List[Dict[str, str]] items', 'a list'),
++    ]
++    result = _transform(fields)
++    body = result[0][1][0].astext()
++    assert 'items' in body
++    assert 'List[Dict[str, str]]' in body
++    assert 'a list' in body
++
++
++def test_typedfield_simple_type():
++    """Simple ``:param str name:`` still works."""
++    fields = [
++        _make_field(':param', 'str foo', 'a string'),
++    ]
++    result = _transform(fields)
++    body = result[0][1][0].astext()
++    assert 'foo' in body
++    assert 'str' in body
++    assert 'a string' in body
++
++
++def test_typedfield_no_type():
++    """``:param name:`` without inline type still works."""
++    fields = [
++        _make_field(':param', 'foo', 'a parameter'),
++    ]
++    result = _transform(fields)
++    body = result[0][1][0].astext()
++    assert 'foo' in body
++    assert 'a parameter' in body

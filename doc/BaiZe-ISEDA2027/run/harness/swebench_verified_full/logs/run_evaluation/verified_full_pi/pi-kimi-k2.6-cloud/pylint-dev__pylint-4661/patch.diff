@@ -1,0 +1,90 @@
+diff --git a/ChangeLog b/ChangeLog
+index 047ee37..742f8ec 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -21,7 +21,9 @@ Release date: TBA
+ 
+   Close #4120
+ 
+-
++* Made pylint XDG Base Directory Specification compliant. The default persistent
++  data directory is now ``$XDG_DATA_HOME/pylint`` (usually ``~/.local/share/pylint``)
++  instead of ``~/.pylint.d``.
+ What's New in Pylint 2.9.6?
+ ===========================
+ Release date: 2021-07-28
+diff --git a/doc/faq.rst b/doc/faq.rst
+index c817855..bc393b6 100644
+--- a/doc/faq.rst
++++ b/doc/faq.rst
+@@ -93,8 +93,8 @@ localized using the following rules:
+ 
+ * value of the PYLINTHOME environment variable if set
+ 
+-* ".pylint.d" subdirectory of the user's home directory if it is found
+-	(not always findable on Windows platforms)
++* "$XDG_DATA_HOME/pylint" if the XDG_DATA_HOME environment variable is set,
++  otherwise "~/.local/share/pylint" (not always findable on Windows platforms)
+ 
+ * ".pylint.d" directory in the current directory
+ 
+diff --git a/doc/whatsnew/2.10.rst b/doc/whatsnew/2.10.rst
+index e94530b..175ff72 100644
+--- a/doc/whatsnew/2.10.rst
++++ b/doc/whatsnew/2.10.rst
+@@ -24,3 +24,7 @@ Other Changes
+ * Performance of the Similarity checker has been improved.
+ 
+ * Added ``time.clock`` to deprecated functions/methods for python 3.3
++
++* Made pylint XDG Base Directory Specification compliant. The default persistent
++  data directory is now ``$XDG_DATA_HOME/pylint`` (usually ``~/.local/share/pylint``)
++  instead of ``~/.pylint.d``.
+diff --git a/pylint/config/__init__.py b/pylint/config/__init__.py
+index 84774d0..f3d644e 100644
+--- a/pylint/config/__init__.py
++++ b/pylint/config/__init__.py
+@@ -63,8 +63,8 @@ if "PYLINTHOME" in os.environ:
+ elif USER_HOME == "~":
+     PYLINT_HOME = ".pylint.d"
+ else:
+-    PYLINT_HOME = os.path.join(USER_HOME, ".pylint.d")
+-
++    xdg_data_home = os.environ.get("XDG_DATA_HOME", os.path.join(USER_HOME, ".local", "share"))
++    PYLINT_HOME = os.path.join(xdg_data_home, "pylint")
+ 
+ def _get_pdata_path(base_name, recurs):
+     base_name = base_name.replace(os.sep, "_")
+@@ -83,7 +83,7 @@ def load_results(base):
+ def save_results(results, base):
+     if not os.path.exists(PYLINT_HOME):
+         try:
+-            os.mkdir(PYLINT_HOME)
++            os.makedirs(PYLINT_HOME, exist_ok=True)
+         except OSError:
+             print("Unable to create directory %s" % PYLINT_HOME, file=sys.stderr)
+     data_file = _get_pdata_path(base, 1)
+@@ -110,8 +110,8 @@ ENV_HELP = (
+ The following environment variables are used:
+     * PYLINTHOME
+     Path to the directory where persistent data for the run will be stored. If
+-not found, it defaults to ~/.pylint.d/ or .pylint.d (in the current working
+-directory).
++not found, it defaults to $XDG_DATA_HOME/pylint (or ~/.local/share/pylint if
++XDG_DATA_HOME is not set) or .pylint.d (in the current working directory).
+     * PYLINTRC
+     Path to the configuration file. See the documentation for the method used
+ to search for configuration file.
+diff --git a/tests/lint/unittest_lint.py b/tests/lint/unittest_lint.py
+index 004c292..c730bda 100644
+--- a/tests/lint/unittest_lint.py
++++ b/tests/lint/unittest_lint.py
+@@ -631,7 +631,7 @@ def test_pylint_home():
+     if uhome == "~":
+         expected = ".pylint.d"
+     else:
+-        expected = os.path.join(uhome, ".pylint.d")
++        expected = os.path.join(uhome, ".local", "share", "pylint")
+     assert config.PYLINT_HOME == expected
+ 
+     try:

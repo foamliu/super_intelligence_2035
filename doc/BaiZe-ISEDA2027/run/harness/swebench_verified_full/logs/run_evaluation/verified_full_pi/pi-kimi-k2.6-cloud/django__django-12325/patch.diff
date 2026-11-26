@@ -1,0 +1,44 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 8ea6c05ef..395509f4d 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -204,7 +204,12 @@ class ModelBase(type):
+             for field in base._meta.local_fields:
+                 if isinstance(field, OneToOneField):
+                     related = resolve_relation(new_class, field.remote_field.model)
+-                    parent_links[make_model_tuple(related)] = field
++                    related_key = make_model_tuple(related)
++                    if related_key in parent_links:
++                        if field.remote_field.parent_link and not parent_links[related_key].remote_field.parent_link:
++                            parent_links[related_key] = field
++                    else:
++                        parent_links[related_key] = field
+ 
+         # Track fields inherited from base models.
+         inherited_attributes = set()
+diff --git a/tests/model_inheritance/tests.py b/tests/model_inheritance/tests.py
+index 5eef0f5bf..84aecb665 100644
+--- a/tests/model_inheritance/tests.py
++++ b/tests/model_inheritance/tests.py
+@@ -522,3 +522,21 @@ class InheritanceUniqueTests(TestCase):
+         msg = 'Grand parent with this First name and Last name already exists.'
+         with self.assertRaisesMessage(ValidationError, msg):
+             grand_child.validate_unique()
++
++    @isolate_apps('model_inheritance')
++    def test_explicit_parent_link_with_multiple_one_to_one(self):
++        class Document(models.Model):
++            pass
++
++        class Picking(Document):
++            document_ptr = models.OneToOneField(Document, on_delete=models.CASCADE, parent_link=True, related_name='+')
++            origin = models.OneToOneField(Document, related_name='picking', on_delete=models.PROTECT)
++
++        self.assertIs(Picking._meta.parents[Document], Picking._meta.get_field('document_ptr'))
++
++        # Reverse field order.
++        class Picking2(Document):
++            origin = models.OneToOneField(Document, related_name='picking2', on_delete=models.PROTECT)
++            document_ptr = models.OneToOneField(Document, on_delete=models.CASCADE, parent_link=True, related_name='+')
++
++        self.assertIs(Picking2._meta.parents[Document], Picking2._meta.get_field('document_ptr'))

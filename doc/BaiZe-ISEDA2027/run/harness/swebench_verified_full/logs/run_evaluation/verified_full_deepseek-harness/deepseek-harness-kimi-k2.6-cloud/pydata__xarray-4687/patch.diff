@@ -1,0 +1,53 @@
+diff --git a/xarray/core/computation.py b/xarray/core/computation.py
+index 9fe93c8..739193f 100644
+--- a/xarray/core/computation.py
++++ b/xarray/core/computation.py
+@@ -1817,6 +1817,7 @@ def where(cond, x, y):
+         join="exact",
+         dataset_join="exact",
+         dask="allowed",
++        keep_attrs="drop_conflicts",
+     )
+ 
+ 
+diff --git a/xarray/tests/test_computation.py b/xarray/tests/test_computation.py
+index c9a10b7..5eaa956 100644
+--- a/xarray/tests/test_computation.py
++++ b/xarray/tests/test_computation.py
+@@ -2060,3 +2060,36 @@ def test_cross(a, b, ae, be, dim: str, axis: int, use_dask: bool) -> None:
+ 
+     actual = xr.cross(a, b, dim=dim)
+     xr.testing.assert_duckarray_allclose(expected, actual)
++
++
++def test_where_keep_attrs() -> None:
++    # Test that xr.where preserves attrs from x and y
++    cond = xr.DataArray([True, False], dims="x")
++    
++    # Test attrs from x
++    x = xr.DataArray([1, 2], dims="x")
++    x.attrs["x_attr"] = "x_value"
++    actual = xr.where(cond, x, 0)
++    assert actual.attrs == {"x_attr": "x_value"}
++    
++    # Test attrs from y
++    y = xr.DataArray([3, 4], dims="x")
++    y.attrs["y_attr"] = "y_value"
++    actual = xr.where(cond, 0, y)
++    assert actual.attrs == {"y_attr": "y_value"}
++    
++    # Test attrs from both x and y
++    x2 = xr.DataArray([1, 2], dims="x")
++    x2.attrs["x_attr"] = "x_value"
++    y2 = xr.DataArray([3, 4], dims="x")
++    y2.attrs["y_attr"] = "y_value"
++    actual = xr.where(cond, x2, y2)
++    assert actual.attrs == {"x_attr": "x_value", "y_attr": "y_value"}
++    
++    # Test conflicting attrs are dropped
++    x3 = xr.DataArray([1, 2], dims="x")
++    x3.attrs["shared"] = "x_value"
++    y3 = xr.DataArray([3, 4], dims="x")
++    y3.attrs["shared"] = "y_value"
++    actual = xr.where(cond, x3, y3)
++    assert actual.attrs == {}

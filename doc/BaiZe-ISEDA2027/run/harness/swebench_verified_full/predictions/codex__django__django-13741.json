@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13741",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/contrib/auth/forms.py b/django/contrib/auth/forms.py\nindex b9eb33329..5d87f6b5b 100644\n--- a/django/contrib/auth/forms.py\n+++ b/django/contrib/auth/forms.py\n@@ -55,17 +55,10 @@ class ReadOnlyPasswordHashField(forms.Field):\n     widget = ReadOnlyPasswordHashWidget\n \n     def __init__(self, *args, **kwargs):\n+        kwargs.setdefault(\"disabled\", True)\n         kwargs.setdefault(\"required\", False)\n         super().__init__(*args, **kwargs)\n \n-    def bound_data(self, data, initial):\n-        # Always return initial because the widget doesn't\n-        # render an input field.\n-        return initial\n-\n-    def has_changed(self, initial, data):\n-        return False\n-\n \n class UsernameField(forms.CharField):\n     def to_python(self, value):\n"
+  }
+]

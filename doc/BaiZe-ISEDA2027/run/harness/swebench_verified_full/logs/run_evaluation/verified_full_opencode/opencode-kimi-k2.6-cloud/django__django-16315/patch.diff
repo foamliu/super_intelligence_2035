@@ -1,0 +1,128 @@
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index be8580f2..82a8fc3a 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -698,7 +698,7 @@ class QuerySet(AltersData):
+                 raise NotSupportedError(
+                     "This database backend does not support ignoring conflicts."
+                 )
+-            return OnConflict.IGNORE
++            return OnConflict.IGNORE, update_fields, unique_fields
+         elif update_conflicts:
+             if not db_features.supports_update_conflicts:
+                 raise NotSupportedError(
+@@ -740,8 +740,11 @@ class QuerySet(AltersData):
+                         "bulk_create() can only be used with concrete fields "
+                         "in unique_fields."
+                     )
+-            return OnConflict.UPDATE
+-        return None
++            update_fields = [f.column for f in update_fields]
++            if unique_fields:
++                unique_fields = [f.column for f in unique_fields]
++            return OnConflict.UPDATE, update_fields, unique_fields
++        return None, update_fields, unique_fields
+ 
+     def bulk_create(
+         self,
+@@ -788,7 +791,7 @@ class QuerySet(AltersData):
+             unique_fields = [
+                 opts.pk.name if name == "pk" else name for name in unique_fields
+             ]
+-        on_conflict = self._check_bulk_create_options(
++        on_conflict, update_fields, unique_fields = self._check_bulk_create_options(
+             ignore_conflicts,
+             update_conflicts,
+             update_fields,
+diff --git a/tests/bulk_create/models.py b/tests/bulk_create/models.py
+index 27abc416..d50e0b8c 100644
+--- a/tests/bulk_create/models.py
++++ b/tests/bulk_create/models.py
+@@ -136,3 +136,9 @@ class RelatedModel(models.Model):
+     name = models.CharField(max_length=15, null=True)
+     country = models.OneToOneField(Country, models.CASCADE, primary_key=True)
+     big_auto_fields = models.ManyToManyField(BigAutoFieldModel)
++
++
++class MixedCaseID(models.Model):
++    id = models.IntegerField(primary_key=True, db_column="MixedCaseID")
++    name = models.CharField(max_length=15, db_column="MixedCaseName")
++    rank = models.IntegerField(db_column="MixedCaseRank")
+diff --git a/tests/bulk_create/tests.py b/tests/bulk_create/tests.py
+index 6c490d12..8d1509d5 100644
+--- a/tests/bulk_create/tests.py
++++ b/tests/bulk_create/tests.py
+@@ -21,6 +21,7 @@ from django.test import (
+ from .models import (
+     BigAutoFieldModel,
+     Country,
++    MixedCaseID,
+     NoFields,
+     NullableFields,
+     Pizzeria,
+@@ -772,3 +773,65 @@ class BulkCreateTests(TestCase):
+     @skipIfDBFeature("supports_update_conflicts_with_target")
+     def test_update_conflicts_no_unique_fields(self):
+         self._test_update_conflicts([])
++
++    @skipUnlessDBFeature(
++        "supports_update_conflicts", "supports_update_conflicts_with_target"
++    )
++    def test_update_conflicts_db_column(self):
++        MixedCaseID.objects.bulk_create(
++            [
++                MixedCaseID(id=1, name="a", rank=1),
++                MixedCaseID(id=2, name="b", rank=2),
++            ]
++        )
++        self.assertEqual(MixedCaseID.objects.count(), 2)
++
++        conflicting_objects = [
++            MixedCaseID(id=1, name="c", rank=3),
++            MixedCaseID(id=2, name="d", rank=4),
++        ]
++        MixedCaseID.objects.bulk_create(
++            conflicting_objects,
++            update_conflicts=True,
++            unique_fields=["id"],
++            update_fields=["name", "rank"],
++        )
++        self.assertEqual(MixedCaseID.objects.count(), 2)
++        self.assertCountEqual(
++            MixedCaseID.objects.values("id", "name", "rank"),
++            [
++                {"id": 1, "name": "c", "rank": 3},
++                {"id": 2, "name": "d", "rank": 4},
++            ],
++        )
++
++    @skipUnlessDBFeature(
++        "supports_update_conflicts", "supports_update_conflicts_with_target"
++    )
++    def test_update_conflicts_db_column_pk(self):
++        MixedCaseID.objects.bulk_create(
++            [
++                MixedCaseID(id=1, name="a", rank=1),
++                MixedCaseID(id=2, name="b", rank=2),
++            ]
++        )
++        self.assertEqual(MixedCaseID.objects.count(), 2)
++
++        conflicting_objects = [
++            MixedCaseID(id=1, name="c", rank=3),
++            MixedCaseID(id=2, name="d", rank=4),
++        ]
++        MixedCaseID.objects.bulk_create(
++            conflicting_objects,
++            update_conflicts=True,
++            unique_fields=["pk"],
++            update_fields=["name", "rank"],
++        )
++        self.assertEqual(MixedCaseID.objects.count(), 2)
++        self.assertCountEqual(
++            MixedCaseID.objects.values("id", "name", "rank"),
++            [
++                {"id": 1, "name": "c", "rank": 3},
++                {"id": 2, "name": "d", "rank": 4},
++            ],
++        )

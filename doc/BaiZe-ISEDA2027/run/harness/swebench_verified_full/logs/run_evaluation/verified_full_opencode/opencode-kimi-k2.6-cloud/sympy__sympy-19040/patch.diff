@@ -1,0 +1,73 @@
+diff --git a/sympy/polys/factortools.py b/sympy/polys/factortools.py
+index c6a5f9f06..52de5d657 100644
+--- a/sympy/polys/factortools.py
++++ b/sympy/polys/factortools.py
+@@ -1146,23 +1146,35 @@ def dmp_ext_factor(f, u, K):
+     if all(d <= 0 for d in dmp_degree_list(f, u)):
+         return lc, []
+ 
+-    f, F = dmp_sqf_part(f, u, K), f
+-    s, g, r = dmp_sqf_norm(f, u, K)
++    G, g = dmp_primitive(f, u, K)
+ 
+-    factors = dmp_factor_list_include(r, u, K.dom)
++    factors = []
+ 
+-    if len(factors) == 1:
+-        factors = [f]
++    if dmp_degree(g, u) > 0:
++        g = dmp_sqf_part(g, u, K)
++        s, h, r = dmp_sqf_norm(g, u, K)
++
++        factors = dmp_factor_list_include(r, u, K.dom)
++
++        if len(factors) == 1:
++            factors = [g]
++        else:
++            H = dmp_raise([K.one, s*K.unit], u, 0, K)
++
++            for i, (factor, _) in enumerate(factors):
++                h_factor = dmp_convert(factor, u, K.dom, K)
++                h_factor, _, h = dmp_inner_gcd(h_factor, h, u, K)
++                h_factor = dmp_compose(h_factor, H, u, K)
++                factors[i] = h_factor
++
++        factors = dmp_trial_division(f, factors, u, K)
+     else:
+-        H = dmp_raise([K.one, s*K.unit], u, 0, K)
++        factors = []
+ 
+-        for i, (factor, _) in enumerate(factors):
+-            h = dmp_convert(factor, u, K.dom, K)
+-            h, _, g = dmp_inner_gcd(h, g, u, K)
+-            h = dmp_compose(h, H, u, K)
+-            factors[i] = h
++    for g_factor, k in dmp_ext_factor(G, u - 1, K)[1]:
++        factors.insert(0, ([g_factor], k))
+ 
+-    return lc, dmp_trial_division(F, factors, u, K)
++    return lc, _sort_factors(factors)
+ 
+ 
+ def dup_gf_factor(f, K):
+diff --git a/sympy/polys/tests/test_factortools.py b/sympy/polys/tests/test_factortools.py
+index 7bcd93575..075910950 100644
+--- a/sympy/polys/tests/test_factortools.py
++++ b/sympy/polys/tests/test_factortools.py
+@@ -496,6 +496,16 @@ def anp(x):
+         (anp([QQ(2)]), [(anp([QQ(1)])*x + anp([QQ(-1), QQ(0)])*y, 1),
+                         (anp([QQ(1)])*x + anp([QQ( 1), QQ(0)])*y, 1)])
+ 
++    # issue 18895
++    R, x, y = ring("x,y", QQ.algebraic_field(I))
++    def anp_i(x):
++        return ANP(x, [QQ(1), QQ(0), QQ(1)], QQ)
++
++    f = x*y - x - y + 1
++    assert R.dmp_ext_factor(f) == \
++        (anp_i([QQ(1)]), [(y - anp_i([QQ(1)]), 1),
++                          (x - anp_i([QQ(1)]), 1)])
++
+ 
+ def test_dup_factor_list():
+     R, x = ring("x", ZZ)

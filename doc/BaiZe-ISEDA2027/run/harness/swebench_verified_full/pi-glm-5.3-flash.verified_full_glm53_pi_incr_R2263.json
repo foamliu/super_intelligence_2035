@@ -1,0 +1,12 @@
+{
+  "harness": "pi",
+  "run_id": "verified_full_glm53_pi_incr_R2263",
+  "round": "R2263",
+  "n": 2,
+  "resolved": [
+    "django__django-16899",
+    "django__django-16901"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

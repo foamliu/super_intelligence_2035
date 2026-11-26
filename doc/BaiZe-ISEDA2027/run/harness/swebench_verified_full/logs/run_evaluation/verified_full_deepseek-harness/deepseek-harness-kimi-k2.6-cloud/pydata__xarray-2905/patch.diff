@@ -1,0 +1,66 @@
+diff --git a/xarray/core/variable.py b/xarray/core/variable.py
+index 45553eb..d9b80d0 100644
+--- a/xarray/core/variable.py
++++ b/xarray/core/variable.py
+@@ -218,7 +218,8 @@ def as_compatible_data(data, fastpath=False):
+         data = np.timedelta64(getattr(data, "value", data), "ns")
+ 
+     # we don't want nested self-described arrays
+-    data = getattr(data, "values", data)
++    if hasattr(data, "ndim") and hasattr(data, "values"):
++        data = getattr(data, "values", data)
+ 
+     if isinstance(data, np.ma.MaskedArray):
+         mask = np.ma.getmaskarray(data)
+diff --git a/xarray/tests/test_dataarray.py b/xarray/tests/test_dataarray.py
+index 8d599c7..9ffd42a 100644
+--- a/xarray/tests/test_dataarray.py
++++ b/xarray/tests/test_dataarray.py
+@@ -745,6 +745,23 @@ class TestDataArray:
+         )
+         da[dict(x=ind)] = value  # should not raise
+ 
++    def test_setitem_objects_with_values_property(self):
++        # Regression test for GH issue:
++        # Objects with a .values property but no .ndim should not be coerced
++        # to their .values attribute when stored in an object dtype array
++        class HasValues:
++            values = 5
++
++        da = xr.DataArray([None])
++        da.loc[{"dim_0": 0}] = HasValues()
++        assert isinstance(da.values[0], HasValues)
++
++        # Same for a set() which does not have .values
++        da2 = xr.DataArray([None])
++        da2.loc[{"dim_0": 0}] = set()
++        assert isinstance(da2.values[0], set)
++
++
+     def test_contains(self):
+         data_array = DataArray([1, 2])
+         assert 1 in data_array
+diff --git a/xarray/tests/test_variable.py b/xarray/tests/test_variable.py
+index e1ae3e1..a2f8ba9 100644
+--- a/xarray/tests/test_variable.py
++++ b/xarray/tests/test_variable.py
+@@ -2226,6 +2226,19 @@ class TestAsCompatibleData:
+         assert np.ndarray == type(actual)
+         assert np.dtype("datetime64[ns]") == actual.dtype
+ 
++
++    def test_values_on_objects_without_ndim(self):
++        # Regression test for GH issue:
++        # Objects with a .values property but no .ndim should not be coerced
++        # to their .values attribute when stored in an object dtype array
++        class HasValues:
++            values = 5
++
++        obj = HasValues()
++        actual = as_compatible_data(obj)
++        assert actual.dtype == object
++        assert actual.item() is obj
++
+     def test_full_like(self):
+         # For more thorough tests, see test_variable.py
+         orig = Variable(

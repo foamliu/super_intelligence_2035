@@ -1,0 +1,29 @@
+diff --git a/django/apps/registry.py b/django/apps/registry.py
+index 0683f3ad3c..481dd1fc86 100644
+--- a/django/apps/registry.py
++++ b/django/apps/registry.py
+@@ -376,6 +376,7 @@ class Apps:
+         # Call expire cache on each model. This will purge
+         # the relation tree and the fields cache.
+         self.get_models.cache_clear()
++        self.get_swappable_settings_name.cache_clear()
+         if self.ready:
+             # Circumvent self.get_models() to prevent that the cache is refilled.
+             # This particularly prevents that an empty value is cached while cloning.
+diff --git a/tests/model_meta/tests.py b/tests/model_meta/tests.py
+index fe2f6e63da..ace5812a04 100644
+--- a/tests/model_meta/tests.py
++++ b/tests/model_meta/tests.py
+@@ -228,6 +228,12 @@ class RelationTreeTests(SimpleTestCase):
+     def setUp(self):
+         apps.clear_cache()
+ 
++    def test_clear_cache_clears_swappable_settings_name_cache(self):
++        apps.get_swappable_settings_name("auth.User")
++        self.assertTrue(apps.get_swappable_settings_name.cache_info().currsize)
++        apps.clear_cache()
++        self.assertEqual(apps.get_swappable_settings_name.cache_info().currsize, 0)
++
+     def test_clear_cache_clears_relation_tree(self):
+         # The apps.clear_cache is setUp() should have deleted all trees.
+         # Exclude abstract models that are not included in the Apps registry

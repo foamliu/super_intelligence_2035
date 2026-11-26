@@ -1,0 +1,40 @@
+diff --git a/changelog/5247.bugfix.rst b/changelog/5247.bugfix.rst
+new file mode 100644
+index 0000000..754cbd2
+--- /dev/null
++++ b/changelog/5247.bugfix.rst
+@@ -0,0 +1,2 @@
++``EncodedFile`` now advertises a text mode, without ``b``, so third-party code
++which inspects ``mode`` does not attempt to write bytes to it.
+diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py
+index 25eab7f..1178d52 100644
+--- a/src/_pytest/capture.py
++++ b/src/_pytest/capture.py
+@@ -429,6 +429,11 @@ class EncodedFile(object):
+         self.buffer = buffer
+         self.encoding = encoding
+ 
++    @property
++    def mode(self):
++        """Ensure that file.mode does not contain 'b' (binary)."""
++        return getattr(self.buffer, "mode", "").replace("b", "")
++
+     def write(self, obj):
+         if isinstance(obj, six.text_type):
+             obj = obj.encode(self.encoding, "replace")
+diff --git a/testing/test_capture.py b/testing/test_capture.py
+index 5d80eb6..cc5bba6 100644
+--- a/testing/test_capture.py
++++ b/testing/test_capture.py
+@@ -952,6 +952,11 @@ def test_dupfile_on_textio():
+     assert not hasattr(f, "name")
+ 
+ 
++def test_encoded_file_mode_is_text():
++    f = capture.EncodedFile(io.BytesIO(), "UTF8")
++    assert f.mode == "+"
++
++
+ @contextlib.contextmanager
+ def lsof_check():
+     pid = os.getpid()
