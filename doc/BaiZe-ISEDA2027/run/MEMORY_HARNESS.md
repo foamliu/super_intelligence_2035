@@ -1,27 +1,21 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
-> ✅ **用户令 · 2026-11-26 (F) — 7-harness 升级 COMPLETE · 等待启动 doubao-pro 7-way 评测**
+WAITING: 0
+> 🔄 **用户令 · 2026-11-26 (F) — doubao-pro 7-way 评测 RUNNING（升级后重测）**
 >
-> **升级结果**（7/7 verified available）：
+> **升级结果**（7/7 verified available）：cline 3.0.76·codex 0.172.0·opencode v2.4.1-dev·cc 2.1.332·dsh 0.2.2rc2·pi 1.6.1·hermes git.e0dcc39
 >
-> | Harness | 旧版本 | 新版本 | 升级方式 | 状态 |
-> |:--|:--|:--|:--|:--|
-> | cline | 3.0.76 | 3.0.76 | 已是最新，无需升级 | ✅ |
-> | codex | 0.94.0 | 0.172.0 | `npm install -g @openai/codex@0.172.0`，旧 symlink 移除 | ✅ |
-> | opencode | 1.18.27 | 2.4.1 | bun upgrade→1.4.5 + `bun run script/build.ts`，symlink 更新 | ✅ |
-> | claude-code | 2.1.197 | 2.1.332 | `npm install -g @anthropic-ai/claude-code@2.1.332`，source build→npm binary | ✅ |
-> | deepseek-harness | 0.1.5rc1 | 0.2.2rc2 | `pip install --target` to dsh_sdk | ✅ |
-> | pi | 0.2.15 | 1.6.1 | `npm install -g @earendil-works/pi-coding-agent@1.6.1`（包名从 @fleetagent 改为 @earendil-works） | ✅ |
-> | hermes | git.0e21933 | git.e0dcc39 | rsync 源码 + `uv pip install -e .` 重建 venv | ✅ |
+> **评测状态**（2026-11-26 12:17 CST）：
+> - **5/7 路正常产出非空 patch**：cline✅ pi✅ cc✅ hermes✅ dsh✅
+> - **codex**：config.toml 修复 `wire_api="chat"→"responses"`（codex 0.172.0 不再支持 chat）·gw_proxy 已有 Responses API 翻译层·smoke test OK·predict 已重启（PID 644714）·首题运行中(~6min·修复前 0.4s 秒退空 patch)
+> - **opencode**：v2.4.1-dev build 有 bug — `tools.edit()` 返回成功但**不写磁盘**（手动测试确认：test.txt 未变·git diff 空·但 304 API calls/3.4M tokens）·3/500 done·0 patches·需降级回 v1.18.27 或等修复
+> - **gw_proxy**：3 进程 LIVE（PID 3990243/3990275/3990288·端口 9090/9091/9092·doubao-pro key）
 >
-> **Driver code 更新**（run_harness.py commit 6894eb20ad，已 push + agent-arena sync bd1421c）：
-> - ClaudeCodeDriver: bun source build → npm binary，移除 MACRO/preload
-> - OpencodeDriver: 移除 `--dir` flag（v2.x 用 process cwd）
-> - PiDriver: 包路径 @fleetagent → @earendil-works
-> - CodexDriver/DeepseekHarnessDriver/HermesDriver: docstring 更新
->
-> **下一步**：启动 SWE-bench Verified 500×7 doubao-pro 评测（等用户确认或 WAITING 0 时自动启动）
+> **修复记录**：
+> 1. `~/.codex/config.toml`：`wire_api="chat"→"responses"`，`base_url`→9090，`model`→doubao-seed-2.0-pro-cloud
+> 2. `swebench_verified_full/run_verified_full.py`：从 agent-arena **copy**（非 symlink，避免 resolve() 指向 agent-arena 目录）
+> 3. codex 旧 103 个空 predictions 已删除·progress 文件已删除·predict 已重启
+> 4. opencode v2.4.1-dev `tools.edit` 不写磁盘 bug 已确认·降级方案待定
 
 > ✅ **用户令 · 2026-11-26 (E) — 停止 cline 重跑，停下待命** · ✅ 已闭环
 >
@@ -130,12 +124,12 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-26令(E)执行完毕·cline predict已kill·停下待命·等后续指令
-已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53+doubao-pro 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·doubao-pro 7way predict 7/7 COMPLETE✅·eval 7/7 COMPLETE✅·报告✅·dsh SDK修复✅·MM已KILL✅·agent-arena repo✅·**令E✅**(cline predict killed·停下待命)
-当前动作:     idle·停下待命·0 eval/predict进程·guard PID931671 LIVE(501583s≈5.8d)·gw_proxy 3进程LIVE(9090/9091/9092·PID 623606/623610/623695·~90201s≈25.1h)·资源OK(load26.42/224=11.8%·mem686G/2TB avail1095G)
-下一步:     待运维新指令（所有 11-25 令 A/B/C/D + 11-26 令 E 已全部闭环）
-阻塞:         无（git merge origin/main 被 1804 个 ZhuLong untracked 文件阻挡·origin/main 无 harness 变更·不影响本线）
-ERROR_COUNT:  0
+PHASE:        11-26令(F) doubao-pro 7-way 评测 RUNNING（升级后重测）
+已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way predict+eval·doubao-pro 7way predict+eval(上一轮)·令E✅·令F升级7/7✅·codex config修复✅·7way predict已启动
+当前动作:     doubao-pro 7-way predict RUNNING·5/7路正常(cline/pi/cc/hermes/dsh)·codex修复后重启首题运行中·opencode v2.4.1-dev bug(tools.edit不写磁盘)·gw_proxy 3进程LIVE(9090/9091/9092·PID 3990243/3990275/3990288)
+下一步:       等 codex 首题完成确认非空 patch·opencode 降级或修复·7way predict 完成后 eval+报告
+阻塞:         opencode v2.4.1-dev `tools.edit()` 不写磁盘（手动测试确认）→ 0 patches·需降级回 v1.18.27
+ERROR_COUNT:  1
  体积: TASK~26.4KB / MEMORY≈25.0KB（归档H-009~H-017后·均<32KB✅）
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
@@ -173,6 +167,8 @@ ERROR_COUNT:  0
 > #H-028（2026-11-26 10:12, 例行巡检·**idle·健康**·git fetch origin OK·merge origin/main 被 1804 个 ZhuLong trace_deepreads untracked 文件阻挡(origin/main 6 commits 无 harness 变更·不影响本线·ZhuLong agents 会处理自己的 merge)·自检(内存10-30令):0 harness eval/predict进程·gw_proxy 3进程RSS=23-44MB(远<50GB阈值✅)·guard 3.5MB✅·自检(CPU 11-02令):load24.56/224=11%(远<80%阈值✅)·0 harness进程>8000%CPU✅·guard PID931671 LIVE(500100s≈5.8d)·gw_proxy 3进程LIVE(9090/9091/9092·PID 623606/623610/623695·~88707s≈24.6h)·0 Docker·mem682G/2TB avail1098G·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7152B✅·token sidecar 53306 lines·dsh_sdk持久化✅(/nas_train/app.e0031982/harness_work/dsh_sdk)·agent-arena repo✅·TASK 26.4KB/MEMORY 27.6KB(均<32KB✅)·dedup修复(重复归档指针删除)·research日报2026-11-26已查(无新可执行建议)·所有11-25令A/B/C/D+11-26令E已闭环·WAITING:1·下一步:待运维新指令）
 
 > #H-029（2026-11-26 10:36, 例行巡检·**idle·健康**·git fetch origin OK·origin/main 5 commits ahead(全designflow·无harness变更)·merge被ZhuLong untracked文件阻挡(不影响本线)·自检(内存10-30令):0 harness eval/predict进程·gw_proxy 3进程RSS=23-44MB(远<50GB阈值✅)·guard 3.5MB✅·自检(CPU 11-02令):load26.42/224=11.8%(远<80%阈值✅)·0 harness进程>8000%CPU✅·guard PID931671 LIVE(501583s≈5.8d)·gw_proxy 3进程LIVE(9090/9091/9092·PID 623606/623610/623695·~90201s≈25.1h)·0 Docker·mem686G/2TB avail1095G·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7152B✅·token sidecar 53306 lines·dsh_sdk持久化✅(/nas_train/app.e0031982/harness_work/dsh_sdk)·agent-arena repo✅·体积维护:H-009~H-017归档·TASK 26.4KB/MEMORY~25.0KB(均<32KB✅)·research日报2026-11-26已查(无新可执行建议·ShellBench token成本建议已落地✅)·所有11-25令A/B/C/D+11-26令E已闭环·WAITING:1·下一步:待运维新指令）
+
+> #H-030（2026-11-26 12:17, **令F doubao-pro 7-way 评测启动+修复**·launch_doubao_7way.sh 启动 7 路 predict·**codex config 修复**：codex 0.172.0 不再支持 `wire_api="chat"`→改为 `"responses"`·gw_proxy 已有 Responses API 翻译层·smoke test OK("Hello"✅)·旧 103 空 predictions 删除·predict 重启 PID 644714·首题运行 ~8min(修复前 0.4s 秒退)·**opencode v2.4.1-dev bug 确认**：`tools.edit()` 返回成功但不写磁盘(手动测试：test.txt 未变·git diff 空·但 304 API calls/3.4M tokens)·5/7 路正常(cline 10/pi 11/cc 10/hermes 8/dsh 8 均有非空 patch)·gw_proxy 3 进程 LIVE(新 PID 3990243/3990275/3990288)·run_verified_full.py 改为 copy(非 symlink)避免 Path.resolve() 指向 agent-arena·资源 OK(load 32/224=14%·mem 685G/2TB avail 1095G)·WAITING:0·下一步:等 codex 首题完成确认·opencode 降级方案·7way 完成后 eval+报告）
 
 ## 启动说明（首次唤醒）
 
