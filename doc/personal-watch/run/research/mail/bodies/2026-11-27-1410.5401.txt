@@ -1,0 +1,15 @@
+Dear Professor Graves,
+
+I am Yang Liu, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/.
+
+We build agent harnesses that must carry execution traces across many tool calls, and Neural Turing Machines is the reference design we keep returning to: a controller separated from an addressable memory bank. We are trying to decide which parts of that design still earn their place in a modern tool-use agent.
+
+Three questions:
+1. In the copy and repeat tasks, was the load carried by the memory matrix itself, or mostly by the LSTM controller? If you ablate the feed-forward controller against the LSTM one, how much of the gain survives?
+2. Content-based addressing is governed by the sharpness beta and the interpolation gate g. Did the controller learn mostly location-based shifts, or did content lookup actually get used? Which term was most sensitive to training instability?
+3. For an agent whose memory is discrete and symbolic (files, logs, a database), would you still recommend a differentiable memory, or is the useful part mainly the read/write interface discipline?
+
+Thank you for a paper that still shapes how we think about agent memory.
+
+Best regards,
+Yang Liu

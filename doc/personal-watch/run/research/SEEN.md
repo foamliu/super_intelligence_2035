@@ -5734,3 +5734,8 @@
 | 2026-11-26 | 2611.33148 | CoT-Proxy: Cross-Format Transfer for Distilling Long-Horizon Policies | cs.CL | 收录 |
 | 2026-11-26 | 2611.33048 | Latent Merger: Latent-Space Composition of Hypernetwork-Generated LoRAs | cs.LG | 收录 |
 | 2026-11-26 | 2611.33135 | BriConstrain: Geometrically Constrained Decoding for Autoregressive Brick Assembly Generation | cs.CV | 收录 |
+| 2026-11-27 | 2611.33973 | Kolpona: An Agentic Framework with Gradient-Free Neuron Programming for RTL Generation | cs.LG | 收录 |
+| 2026-11-27 | 2611.31876 | AgentDRC: Multi-Agent Algorithms for Spatially-Aware Automated DRC Correction | cs.AR | 收录 |
+| 2026-11-27 | 2611.34635 | ZeroHero: Training Small Language Agents from Scratch | cs.AI | 收录 |
+| 2026-11-27 | 2611.34675 | RoboEvo$^2$: Recursive Robot Self-Improvement via Harness-Policy Co-Evolution | cs.RO | 收录 |
+| 2026-11-27 | 2611.34875 | How Much Do Coding Agents Over-Edit, and Why? An Empirical Study of Unneeded Edits in Repository-Level Agent Patches | cs.SE | 收录 |

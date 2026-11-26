@@ -9,6 +9,7 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **443** 条（**第一百二十五轮 2026-11-27 00:0x +3 → 443**（B 轨转「补充/更正」补真空白）：MAGE `2412.07822`（**153**，2024 预印本；OpenAlex 记 `conference-paper` / source = DAC / `publication_year=2025`；**&lt;500 按「本领域权威 / EDA agent 标志性工作」收**：多智能体引擎 + 高温度候选采样 + Verilog-state checkpoint，作者自报 VerilogEval-Human v2 **95.7%**、比 Claude-3.5-sonnet 高 **23.3%**） / Neural Turing Machines `1410.5401`（**3,139**，2014 预印本；控制器 + 可寻址外部记忆矩阵，内容寻址与位置寻址的**可微读写**，学会 copy / repeat / 联想回忆与简单算法） / Hindsight Experience Replay `1707.01495`（**2,803**，NeurIPS 2017；把失败轨迹按**实际达成目标**重标注，使任意 off-policy RL 能从稀疏二值奖励学习）；核验：abs 3/3 `200`（42,024 / 39,527 / 44,446 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（153 / 3,139 / 2,803，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = EDA 多智能体 + 状态检查点 / 外部可微记忆 / 稀疏奖励目标重标注；本轮归属：designflow +2 · zhulong +2 · harness +3 · posttrain +2 · pretrain +1 · data +0 · vision +0）
 **本轮快照**：累计 **440** 条（**第一百二十四轮 2026-11-26 21:0x +3 → 440**：VGG `1409.1556`（**111,603**，2014 预印本 / ICLR 2015；3×3 小核堆叠到 16–19 层，ILSVRC-2014 定位第一·分类第二）/ Focal Loss + RetinaNet `1708.02002`（**10,051**，ICCV 2017 / TPAMI；对易分样本降权的 `α/γ` 焦点损失，单阶段检测器超当时两阶段 SOTA 精度）/ A3C `1602.01783`（**11,372**，ICML 2016；异步 actor-learner 并行 + 共享参数 Hogwild 式更新，Atari 单 CPU 半时间超 SOTA）；核验：abs 3/3 `200`（41,480 / 43,389 / 43,580 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（111,603 / 10,051 / 11,372，查询日 2026-11-26）；三 ID 条目级查重 **0 命中**；覆盖轴 = 深层小核视觉骨干 / 类别不平衡焦点损失 / 异步并行 RL 采样；本轮归属：vision +2 · posttrain +1 · harness +1 · designflow +1 · pretrain +0 · data +0 · zhulong +0）
 **本轮快照（前一）**：累计 **425** 条（**第一百一十九轮 2026-11-26 09:0x +3 → 425**：GCN `1609.02907`（**45,348**，ICLR 2017；谱图卷积的局部一阶近似 ⇒ 边线性扩展的半监督节点分类，表示同时编码局部结构与节点特征）/ WaveNet `1609.03499`（**9,779**，2016 预印本；全概率自回归原始波形，每秒数万点可训，TTS 听众评价超参数式/拼接式，单模型多说话人，兼作音素识别判别模型）/ PixelRNN `1601.06759`（**2,470**，ICML 2016；逐像素二维顺序预测 + 原始像素离散概率 + 快速二维循环层 + 残差，log-likelihood 显著超此前 SOTA，ImageNet 基准）；核验：abs 3/3 `200`（42,227 / 43,245 / 41,831 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（45,348 / 9,779 / 2,470，查询日 2026-11-26）+ PixelRNN 会议归属 OpenAlex source = ICML / PMLR v48；三 ID 条目级查重 **0 命中**；覆盖轴 = 图结构半监督学习 / 原始波形自回归生成 / 像素自回归似然建模；本轮归属：vision +2 · pretrain +3 · data +1 · zhulong +3 · designflow +2 · harness +0）
 
@@ -7667,3 +7668,48 @@
 | 与我们工作的关系 | **posttrain（主 · RL 并行化）**：多个 actor 在各自环境副本并行、异步更新共享参数，是今天 RLVR / self-play 大规模 rollout 的早期范式，直接对应我们「环境内 RL + 可验证奖励」的采样调度。<br>**harness（次 · 并行采样记账）**：多环境并行采样 + 共享参数更新的稳定性与吞吐口径可参考。<br>**pretrain / vision / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百二十四轮 · 21:00 时窗） |
 | 核验状态 | abs 页 **`200` / 43,580 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（11,372 / 2016 / `conference-paper`，查询日 2026-11-26）。异步 actor-critic / 四算法变体 / Atari / 单 CPU 半时间结论均取自 arXiv 官方摘要逐字核（摘要未给具体分数 ⇒ 本条不写未核数字）。条目级查重：`1602.01783` 在 `PAPERS.md` **0 命中**（作者 Mnih / Kavukcuoglu 已在作者网，故本轮作者网改建 Zisserman / Simonyan / Tsung-Yi Lin）。 |
+
+## 441. MAGE: A Multi-Agent Engine for Automated RTL Code Generation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MAGE: A Multi-Agent Engine for Automated RTL Code Generation |
+| 作者（前 3） | Yujie Zhao · Hejia Zhang · Hanxian Huang（arXiv `citation_author` 逐字核；后续 Zhongming Yu · Jishen Zhao，共 5 位） |
+| 年份 | **2024**（v1 `2024/12/10`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **arXiv 预印本 2024-12**；abs 页 `comments` = `7 pages, 4 figures`；OpenAlex `type=conference-paper`、source = `ACM/IEEE Design Automation Conference (DAC)`、`publication_year=2025` ⇒ 以预印本 2024 / DAC 会议版 2025 双口径如实记 |
+| 被引数 | **153**（OpenAlex `10.48550/arXiv.2412.07822`，查询日 **2026-11-27**；**&lt;500，按「本领域权威 / 奠基」收**：首个开源多智能体 RTL 生成系统之一，直接对应我们的 EDA agent 线） |
+| arXiv / DOI | <https://arxiv.org/abs/2412.07822> ｜ `10.48550/arXiv.2412.07822` |
+| 一句话贡献 | 提出**首个开源多智能体 RTL 代码生成系统**：以**高温度 RTL 候选采样 + 调试**扩大候选空间，用 **Verilog-state checkpoint** 在早期发现功能错误并给出定向修复反馈；作者自报在 **VerilogEval-Human v2** 上语法 + 功能正确率 **95.7%**，比 Claude-3.5-sonnet **高 23.3%**。 |
+| 与我们工作的关系 | **designflow（主 · 造题与判分可验证性）**：其「状态检查点」提示我们在 RTL 用例里可记录**断言 / 周期级状态**作为中间可验证信号，但**不得**因此放宽最终判分（最终仍以 testbench/隐藏用例为准）。<br>**zhulong（主 · 评测口径与成本）**：95.7% 是**作者自报**；回填时必须同报 **pass@1 + 候选数 + 仿真/token 预算**，跨系统比较须同 harness。<br>**harness（次 · 多智能体反馈）**：多 agent 分工 + 中间反馈的编排可直接对照我们 harness 的失败反馈粒度。<br>**pretrain / posttrain / data / vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十五轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,024 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（153 / 2025 / `conference-paper` / source = DAC，查询日 2026-11-27）；PDF 首页 `pdftotext` 复核作者 = **UC San Diego**（`yuz285 / hez024 / hah008 / zhy025 / jzhao @ucsd.edu`）。95.7% / +23.3% / VerilogEval-Human v2 均取自 arXiv 官方摘要逐字核。条目级查重：`2412.07822` 在 `PAPERS.md` **0 命中**（一作 Yujie Zhao、资深作者 Jishen Zhao 本轮建入作者网 #410 / #409）。 |
+
+## 442. Neural Turing Machines
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Neural Turing Machines |
+| 作者（前 3） | Alex Graves · Greg Wayne · Ivo Danihelka（arXiv `citation_author` 逐字核；**仅 3 位**） |
+| 年份 | **2014**（v1 `2014/10/20`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **arXiv 预印本 2014**；abs 页**无 `comments`**；OpenAlex `type=preprint`、`publication_year=2014` |
+| 被引数 | **3,139**（OpenAlex `10.48550/arXiv.1410.5401`，查询日 **2026-11-27**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1410.5401> ｜ `10.48550/arXiv.1410.5401` |
+| 一句话贡献 | 把**神经网络控制器**与**可寻址外部记忆矩阵**耦合：记忆通过**内容寻址 + 位置寻址**的软读写（differentiable attention）访问，整个系统可端到端梯度训练；在 copy / repeat / 联想回忆与简单算法任务上，学会传统 RNN 难以维持的**长程精确记忆**。 |
+| 与我们工作的关系 | **harness（主 · agent 记忆接口）**：今天 agent 的「上下文 + 外部文件/向量库」本质是 NTM 的工程化变体；其**读写接口纪律**（何时写、写什么、按什么键读）直接对应我们 harness 的 memory 设计。<br>**posttrain（次 · 记忆增强策略）**：可微记忆让策略在训练中学会「存取」而非死记，可作为长程 EDA 任务的历史特征缓存思路。<br>**pretrain（次 · 架构）**：外部记忆与控制器分离是长上下文的早期架构路线之一。<br>**vision / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十五轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 39,527 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（3,139 / 2014 / `preprint`，查询日 2026-11-27）。内容寻址 / 位置寻址 / copy·repeat·联想回忆均取自 arXiv 官方摘要逐字核（摘要未给具体分数 ⇒ 本条不写未核数字）。条目级查重：`1410.5401` 在 `PAPERS.md` **0 命中**（一作 Alex Graves 本轮建入作者网 #408）。 |
+
+## 443. Hindsight Experience Replay
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Hindsight Experience Replay |
+| 作者（前 3） | Marcin Andrychowicz · Filip Wolski · Alex Ray（arXiv `citation_author` 逐字核；后续 Jonas Schneider 等，共 19 位） |
+| 年份 | **2017**（v1 `2017/07/05`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **NeurIPS 2017**；abs 页**无 `comments`**；OpenAlex `type=conference-paper`、source = `neural information processing systems`、`publication_year=2017` |
+| 被引数 | **2,803**（OpenAlex `10.48550/arXiv.1707.01495`，查询日 **2026-11-27**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1707.01495> ｜ `10.48550/arXiv.1707.01495` |
+| 一句话贡献 | 提出 **Hindsight Experience Replay（HER）**：把**未达成目标的失败轨迹**按「实际达成的状态」重新标注为成功经验，使任意 **off-policy RL** 算法能从**稀疏二值奖励**中有效学习；在机器人操控任务上，即使奖励全为负也能学到目标条件策略。 |
+| 与我们工作的关系 | **posttrain（主 · 稀疏奖励 / self-play RL）**：EDA 任务的奖励常是「通过/不通过」的稀疏二值信号，HER 的**失败轨迹重标注**是把每次 rollout 都变成训练信号的直接工具；可与我们「环境内 RL + 可验证奖励」结合，为失败样本构造可达成的中间目标（如已修复的 DRC/已通过的子测试）。<br>**harness（次 · 失败复用）**：失败轨迹不应丢弃，应按达成状态重标注入训练/经验池。<br>**zhulong（次 · RL 口径）**：报告稀疏奖励下的样本效率时须写清是否使用 HER 类重标注。<br>**pretrain / vision / data / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十五轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 44,446 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（2,803 / 2017 / `conference-paper`，查询日 2026-11-27）。失败轨迹重标注 / 稀疏二值奖励 / off-policy 均取自 arXiv 官方摘要逐字核（摘要未给具体成功率 ⇒ 本条不写未核数字）。条目级查重：`1707.01495` 在 `PAPERS.md` **0 命中**。 |

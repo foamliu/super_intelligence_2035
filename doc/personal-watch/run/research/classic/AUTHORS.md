@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-27 00:0x · r272）**：作者 **410** 人（编号最大 **410**）· X 已核验 **160**（本轮 **+0**：Alex Graves、Jishen Zhao、Yujie Zhao 三人主页均无本人 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **186**（台账 #1–#186；本窗 **+2**：#185 Alex Graves / #186 Jishen Zhao；今日 **2/12**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **69** 封，较 21:00 的 71 少 2，非本线操作〔只读、未删信〕，如实记；无新实质回信、无新退信）· 退信 **9**（本窗 **+0**）。本轮 **+3**：Alex Graves（NTM 一作，英文，多伦多大学主页当前明文 `graves@cs.toronto.edu` ⇒ A 级 ⇒ 已发信 #185）· Jishen Zhao（MAGE 资深作者，中文，本人主页 `jishenzhao.github.io` 明文 `jzhao@ucsd.edu` ⇒ A 级 ⇒ 已发信 #186）· Yujie Zhao（MAGE 一作，中文，UCSD 博士，仅论文 PDF 明文 `yuz285@ucsd.edu` ⇒ B 级、当前主页未定位 ⇒ 仅建档不发）。
 > **当前计数（2026-11-26 21:0x · r271）**：作者 **407** 人（编号最大 **407**）· X 已核验 **160**（本轮 **+1**：`@TsungYiLinCV` 由本人主页 <https://tsungyilin.info/> 外链 `twitter.com/TsungYiLinCV` + 代理抓 `x.com/TsungYiLinCV` `200` / 181,529 B，`og:title` = `Tsung-Yi Lin (@TsungYiLinCV) on X` ⇒ 双源；Andrew Zisserman 本人主页与 VGG 人员页均无本人 handle、Karen Simonyan 未定位可核主页 ⇒ 记「未找到 X」，不猜）· 已发信 **184**（台账 #1–#184；今日 **12/12** 已达每日硬上限，本窗**只建档不发**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **71** 封，与 18:00 持平、**无新实质回信**）· 退信 **9**（本窗 **+0**）。本轮 **+3**：Andrew Zisserman（VGG 二作，英文，Oxford VGG 人员页 `mailto:removethisifyouarehuman-az@robots.ox.ac.uk` 去反爬前缀 ⇒ A 级，仅建档）· Karen Simonyan（VGG 一作，英文，未定位可核主页/邮箱 ⇒ 仅建档）· Tsung-Yi Lin（Focal Loss 一作，中文，主页 `mailto:` + X 双源 ⇒ 仅建档，同论文只建一作）。**去重记录**：Mnih / Kavukcuoglu（A3C 作者）已在作者网，本轮不重复新增。
 > **当前计数（2026-11-26 18:0x · r270）**：作者 **404** 人（编号最大 **404**）· X 已核验 **159**（本轮 **+0**：Phillip Isola 主页 `Social media` 仅 Bluesky（`phillipisola.bsky.social`）、Scott Fujimoto 的 `x.com/sfujim` 经代理实测 `og:title` = `もん (@sfujim) on X` 属**他人**、Alexei Efros 主页仅一个 twitter **搜索**链接、无本人 handle ⇒ 一律记「未找到 X」，不猜）· 已发信 **184**（台账 #1–#184；今日 **12/12** 已达每日硬上限，本窗**不发只建档**）· 实质回信 **7 位作者 / 8 封信** · 退信 **9**（本窗 **+1**：#183 UT Austin 反垃圾拦截）。本轮 **+3**：Phillip Isola（pix2pix 一作，英文，MIT 主页空格混淆 `p h i l i p i @ m i t . e d u` 还原 ⇒ A 级，仅建档）· Scott Fujimoto（TD3 一作，语言待核〔日本姓氏 Fujimoto vs 加拿大机构 McGill〕，A 级邮箱未找到、主页 `sfujim.github.io` 404 / `cs.mcgill.ca/~sfujim/` 302 空跳转 / `fujimoto.me` 526、`@sfujim` 属他人 ⇒ 仅建档）· Alexei A. Efros（pix2pix 四作，英文，Berkeley 主页明文 `efros -at- eecs.berkeley.edu` 还原 ⇒ A 级，仅建档，同论文已建 Isola）。
 > **当前计数（2026-11-26 15:0x · r269）**：作者 **401** 人（编号最大 **401**）· X 已核验 **159**（本轮 **+1**：`@erik_nijkamp` 由本人主页 <https://eriknijkamp.com/>（`200` / 35,936 B）外链 `twitter.com/erik_nijkamp` + 代理抓 `x.com/erik_nijkamp` `200` / 180,555 B，`og:title` = `Erik Nijkamp (@erik_nijkamp) on X` ⇒ 双源）· 已发信 **184**（台账 #1–#184；今日 **12/12**，已达每日硬上限）· 实质回信 **7 位作者 / 8 封信**（**口径更正**：11-14 起「0 回信」是测量失败；2026-11-26 15:0x 首次 IMAP 只读核出 9 封来信，详见 `mail/replies/README.md`）· 退信 **8**。本轮 **+3**：Qiang Liu（Rectified Flow 资深作者，中文，主页反爬空格明文 `lqiang@cs.utexas.edu` ⇒ 已发信 #183）· Erik Nijkamp（ProGen2 一作，荷兰语称谓+英文，主页 `mailto:` 百分号编码解出 `enijkamp@ucla.edu` + X 双源 ⇒ 已发信 #184）· Chengyue Gong（Rectified Flow 二作，中文，主页明文 `chengyueg@wustl.edu` ⇒ 仅建档，同论文已发资深作者）。
@@ -5747,3 +5748,42 @@
 | X 账号 | **`@TsungYiLinCV`**（主页 `href="https://twitter.com/TsungYiLinCV"` 外链；代理抓 `x.com/TsungYiLinCV` `200` / 181,529 B，`og:title` = `Tsung-Yi Lin (@TsungYiLinCV) on X` ⇒ **双源**；本轮 X +1 → 160） |
 | 状态 | **待跟踪**（今日发信额度 12/12 已满；若后续发信守「同一论文 ≤1」，本篇只发一作） |
 | 备注 | 语言=中文(判据=华人姓名族属；人在 NVIDIA 美国、主页/论文英文 ⇒ 按姓名族属优先仍写中文)。研究方向：计算机视觉 / 目标检测 / 数据（COCO 等）。focal loss 适合追问「极端类别不平衡下 `γ/α` 选取，及向波形 / 版图缺陷检测的迁移」。 |
+
+### 408. Alex Graves
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alex Graves（英国姓名 ⇒ `语言=英文`） |
+| 机构 | **University of Toronto**（现职，Computer Science 教授）· **DeepMind**（NTM 论文发表时） |
+| 代表论文 | **Neural Turing Machines**（`1410.5401`，B 轨 #442，一作）· Connectionist Temporal Classification（CTC） |
+| 邮箱 | **`graves@cs.toronto.edu`**（本人当前主页 <https://www.cs.utoronto.ca/~graves/> `HTTP 200` / **10,166 B**，页内 `mailto:graves@cs.toronto.edu`；**A 级**） |
+| 主页 | <https://www.cs.utoronto.ca/~graves/>（`200` / 10,166 B） |
+| X 账号 | **未找到 X**（本人主页只挂 `mailto:`，无 X/Twitter 外链；不猜） |
+| 状态 | **已发信**（#185，英文 197 词，2026-11-27 00:0x `SENT OK`；落款两行） |
+| 备注 | 语言=英文(判据=英国姓名 + 加拿大学校英文主页)。研究方向：序列模型 / 记忆增强网络 / RL。NTM 信问「copy·repeat 里记忆矩阵 vs LSTM 控制器谁承重、内容寻址 β/g 的使用与稳定性、离散符号记忆是否仍需可微记忆」。 |
+
+### 409. Jishen Zhao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jishen Zhao（华人姓名 ⇒ `语言=中文`；汉字名未经本人页面核实，不代拟） |
+| 机构 | **University of California, San Diego**（CSE 教授；STABLE Lab） |
+| 代表论文 | **MAGE: A Multi-Agent Engine for Automated RTL Code Generation**（`2412.07822`，B 轨 #441，资深作者）· 存储 / 计算架构方向工作 |
+| 邮箱 | **`jzhao@ucsd.edu`**（本人主页 <https://jishenzhao.github.io/> `HTTP 200` / **18,684 B**，页内明文；**A 级**） |
+| 主页 | <https://jishenzhao.github.io/>（`cseweb.ucsd.edu/~jzhao/` `301` → 此页；`200` / 18,684 B） |
+| X 账号 | **未找到 X**（主页无 X/Twitter 外链；不猜） |
+| 状态 | **已发信**（#186，中文 218 汉字，2026-11-27 00:0x `SENT OK`；落款两行） |
+| 备注 | 语言=中文(判据=华人姓名族属；人在 UCSD、主页/论文英文 ⇒ 按姓名族属优先写中文)。研究方向：EDA agent / 存储与计算架构。MAGE 信问「Verilog-state checkpoint 检查哪些状态与误报率、高温度采样 + 多 agent 的预算、单文件到多文件长 RTL 工程的扩展」。 |
+
+### 410. Yujie Zhao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yujie Zhao（华人姓名 ⇒ `语言=中文`；汉字名未经本人页面核实，不代拟） |
+| 机构 | **University of California, San Diego**（PhD；MAGE 论文署名 `University of California San Diego`） |
+| 代表论文 | **MAGE: A Multi-Agent Engine for Automated RTL Code Generation**（`2412.07822`，B 轨 #441，一作） |
+| 邮箱 | **`yuz285@ucsd.edu`**（**B 级**：取自论文 PDF 首页作者邮箱列表，未在本人当前主页核实） |
+| 主页 | **未定位**（`yujiezhao.github.io` `404`；未找到可核当前个人主页） |
+| X 账号 | **未找到 X**（不猜 handle） |
+| 状态 | **仅建档**（B 级地址 + 同论文已发资深作者 #186 ⇒ 守「同一论文 ≤1」，本窗不发） |
+| 备注 | 语言=中文(判据=华人姓名族属 + UCSD 中文姓名)。研究方向：EDA / RTL 代码生成 / 多智能体。若其主页出现可升级为 A 级地址，再评估（同论文已发 #186，不重复打扰）。 |

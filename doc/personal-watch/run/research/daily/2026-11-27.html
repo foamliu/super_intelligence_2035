@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-27 · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; --ok:#1a7f37; --warn:#9a6700; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.72; font-size:15px; }
+  .wrap { max-width:980px; margin:0 auto; padding:30px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:26px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 7px; font-size:24px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:10px; font-size:13px; opacity:.92; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  h3.sec { color:var(--primary); border-bottom:2px solid #d8e3ef; padding-bottom:6px; margin:30px 0 16px; font-size:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:14px 0;
+          box-shadow:0 1px 3px rgba(0,0,0,.04); }
+  .card h2 { font-size:16.5px; margin:0 0 10px; color:var(--primary); line-height:1.5; }
+  table.kv { border-collapse:collapse; width:100%; font-size:14px; }
+  table.kv th, table.kv td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  table.kv th { width:112px; background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12.5px; background:#e8f0fe; color:#1a4d8f; }
+  .tag.sci { background:#eef7ee; color:#1a7f37; }
+  details { margin:10px 0 2px; border:1px solid #d8e3ef; border-radius:8px; padding:8px 12px; background:#fbfdff; }
+  details summary { cursor:pointer; font-weight:600; color:#1a4d8f; }
+  details.voice-ready { background:#faf7ff; border-color:#e2d6f7; }
+  details.voice-ready summary { color:#5b3a99; }
+  ul { margin:8px 0 4px 20px; padding:0; }
+  li { margin:4px 0; }
+  .small { font-size:13.5px; color:var(--muted); }
+  .ok { color:var(--ok); font-weight:600; }
+  .warn { color:var(--warn); font-weight:600; }
+  code { background:#f0f3f6; padding:1px 5px; border-radius:4px; font-size:13px; }
+  .grid { display:grid; grid-template-columns:1fr; gap:0; }
+  footer { margin-top:36px; padding-top:14px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-27</h1>
+  <div class="sub">🌅 00:00 首窗（新一天 A 轨额度重置）· 今日进度 <b>5 / 5</b> · 数据源 arXiv</div>
+  <div class="meta">生成时间：2026-11-27 00:1x CST ｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 443）｜ 作者网 410（X 已核验 160）｜ 作者信 186（实质回信 8 信 / 7 人 ≈4.3%）</div>
+</header>
+
+<div class="note">
+  <b>免责</b>：推荐 = <b>待读线索，非结论</b>；所有数字均为<b>论文作者自报、本线未复现</b>。标题照抄英文原题（不改写/不翻译），摘要为自写中文一句话。
+  本期 5 篇全部经 arXiv API <code>200</code> + <code>application/atom+xml</code> + 真实 <code>published</code> 校验（abs 页 4/5 <code>200</code>；RoboEvo² 的 abs 页 3 次 SSL 抖动 <code>000</code>，以 API 元数据为准，见文末核验）。
+</div>
+
+<h3 class="sec">A 轨 · 今日推荐（5 / 5）</h3>
+
+<div class="card">
+  <h2>1 · Kolpona: An Agentic Framework with Gradient-Free Neuron Programming for RTL Generation</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.33973">Kolpona: An Agentic Framework with Gradient-Free Neuron Programming for RTL Generation</a></td></tr>
+    <tr><th>中文一句话</th><td>不做梯度微调，而是用「神经元编程」在权重里<b>闭式写入单个神经元</b>、且只在全新任务 testbench 有利时保留编辑；推理时工具型 agent 出候选、无标签选择器按规格与仿真选一个设计。<b>Qwen3.5-4B</b> 改 16 个神经元把 VerilogEval v2 pass@1 从 <b>31.7%→55.4%</b>、全框架 <b>77.6%</b>；<b>Qwen3.8-27B</b> 从 <b>73.1%→94.9%</b>（RTLLM v2.1 66.0%→92.0%，单张 32GB GPU）。</td></tr>
+    <tr><th>作者 / 机构</th><td>Musa Tur Farazi · Md Nasir Uddin · Soumik Bhattacharjee（等 5 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T08:34:49Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.LG</code> ｜ 🏷 <b>借鉴</b>（designflow 造题与判分 / zhulong 评测口径 / harness 工具编排）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.33973">arXiv:2611.33973</a></td></tr>
+    <tr><th>推荐理由</th><td>与我们「LLM 写 RTL」最贴近的一条非训练路线：它把改进做得<b>可审计</b>——每次权重编辑都以「fresh tasks 上的 testbench 结果」为唯一保留判据，而不是靠一批固定题刷分。可落地两条：① <b>造题</b>——designflow 的 RTL 用例应准备<b>未参与调参的新 testbench</b>，否则「编辑有效」无法与过拟合区分；② <b>评测</b>——zhulong 若引用 94.9% / 92.0%，必须同报模型规模、单卡条件、pass@1 与仿真预算，并标注「作者自报、above every published system in our comparison 仅限其比较集」。⚠️ 摘要多处为作者自报；「改 16 个神经元」不等于其他规模同样有效。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>2 · AgentDRC: Multi-Agent Algorithms for Spatially-Aware Automated DRC Correction</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.31876">AgentDRC: Multi-Agent Algorithms for Spatially-Aware Automated DRC Correction</a></td></tr>
+    <tr><th>中文一句话</th><td>把迭代式 DRC 纠错写成<b>多智能体算法</b>：重建关键形状之间的结构化空间关系，用几何 + 语义约束检查验证修复；四个专职 agent 分别感知多层级多模态几何特征、过滤无关形状、迭代纠错。困难违例上作者自报 <b>pass@1 最高 30.4%、pass@5 55.7%</b>，比最好基线 pass@5 高 <b>13.8 个百分点</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Pengju Liu · Nuo Xu · Winson Chen（等 8 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-24 提交 / 2026-11-25 更新（v2；<code>published=2026-11-24T03:30:08Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.AR</code> ｜ 🏷 <b>借鉴</b>（designflow 判分 / zhulong 难度与 pass@k 口径）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.31876">arXiv:2611.31876</a></td></tr>
+    <tr><th>推荐理由</th><td>它把 DRC 纠错的难点说得比「让 LLM 看图」更具体：<b>冗余上下文形状、原始坐标上的空间推理、扁平版图表示</b>。对我们两条线可直接落地：① <b>designflow</b>——DRC 类用例的 <code>L2.live</code> 判分可增加「关键形状空间关系重建 + 几何/语义约束校验」，只增断言、不放宽阈值；② <b>zhulong</b>——报告 RTL/版图类任务时同时给 pass@1 与 pass@5，二者差距本身是难度信号。⚠️ 30.4% 是「up to」，非平均；作者称代码与 benchmark 将在接收后开源（当前不可复跑）。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>3 · ZeroHero: Training Small Language Agents from Scratch</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34635">ZeroHero: Training Small Language Agents from Scratch</a></td></tr>
+    <tr><th>中文一句话</th><td>用大 LLM 当专家收集成功轨迹，<b>从零预训练 &lt;50M 参数</b>的小语言 agent 去预测专家在交互历史下的响应，再用 <b>PPO</b> 在自身交互上后训练，并以「推理对齐」把专家对语言部分的监督补进环境奖励；在 Crafter / WebShop / Alfworld-Dialogue 三个多步环境上接近或超过各自示范专家。</td></tr>
+    <tr><th>作者 / 机构</th><td>Nikita Sorokin · Zoya Volovikova · Alexey Skrynnik（等 4 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T16:20:13Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.AI</code> ｜ 🏷 <b>借鉴</b>（posttrain 方法与 SLM 规模问题）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34635">arXiv:2611.34635</a></td></tr>
+    <tr><th>推荐理由</th><td>直接顶到我们 posttrain 的关键问题：<b>专门任务的 agent 到底需要多大模型</b>。它的配方（专家轨迹预训练 → PPO → 语言/推理对齐）是可预注册的对照臂，且规模远小于我们 2B 主线，适合先在小环境验证「方法是否成立」再放大。⚠️ 摘要只给相对结论（接近/超过各自专家），未给绝对 pass 率；三个环境的专家是不同大模型 ⇒ 跨环境不可直接比；迁移到 EDA 需重定义「语言动作」与可验证奖励。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>4 · RoboEvo$^2$: Recursive Robot Self-Improvement via Harness-Policy Co-Evolution</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34675">RoboEvo$^2$: Recursive Robot Self-Improvement via Harness-Policy Co-Evolution</a></td></tr>
+    <tr><th>中文一句话</th><td>提出 <b>harness 与 policy 递归协同演化</b>：P2H 阶段由策略失败驱动 coding agent 搜索 Code / Code+ICL / Code+Policy 三条路线，并把已验证解法沉淀为可复用技能、路由策略与经验记忆；H2P 阶段用已验证轨迹做监督训练，再用<b>反事实偏好蒸馏</b>让策略偏好「同一状态下成功的修复」。无需额外人类示范，LIBERO-PRO 单机成功率 <b>11.0%→84.1%</b>、混合 <b>30.4%→90.5%</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Chenzhi Liu · Jiehong Lin · Wei Huang（等 12 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T16:39:10Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.RO</code> ｜ 🏷 <b>借鉴</b>（harness 设计 / posttrain self-improvement）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34675">arXiv:2611.34675</a></td></tr>
+    <tr><th>推荐理由</th><td>把「harness 不是静态评测壳」讲成了闭环：<b>策略失败 → 改 harness → 新轨迹 → 训策略</b>，且用反事实偏好蒸馏区分「同一状态下的成功修复 vs 失败」。对我们的启发很直接：harness 线可先把失败<b>按类型</b>记全（环境/工具/规划），再谈回灌；posttrain 可预注册一个「失败驱动的 harness 演化」小臂。⚠️ 机器人 VLA 任务与 EDA 脚本任务形态不同，skill/route 的抽象不能直接搬；作者称模型与代码将公开（当前不可复跑）。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>5 · How Much Do Coding Agents Over-Edit, and Why? An Empirical Study of Unneeded Edits in Repository-Level Agent Patches</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34875">How Much Do Coding Agents Over-Edit, and Why? An Empirical Study of Unneeded Edits in Repository-Level Agent Patches</a></td></tr>
+    <tr><th>中文一句话</th><td>提出 <b>Delta Residue Attribution（DRA）</b>：回放 agent 轨迹，把最终补丁的每个单元追溯到写入它的步骤，逐个回退并重跑测试以判定是否「不必要」。分析 18 个前沿模型在 SWE-bench Verified / DeepSWE 的 <b>7,660 条</b>已解决轨迹：agent 补丁确实更长，但多出的编辑在 SWE-bench 上 <b>61% 是测试、13% 是文档</b>，DeepSWE 上 <b>58% 是代码</b>；平均 <b>11%</b> 的代码单元仍不必要，且其中 <b>89% 改变了行为</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Aakash Goel · Benjamin Steenhoek · Yu Hu（3 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T18:37:06Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.SE</code> ｜ 🏷 <b>科普</b>（大众能懂：AI 写代码「顺手多改」）+ 借鉴（harness 判分）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34875">arXiv:2611.34875</a></td></tr>
+    <tr><th>推荐理由</th><td>把「AI 改太多」这一常见抱怨量化到<b>单元级</b>，且结论反直觉：agent 的代码平均<b>至少和开发者一样必要</b>（SWE-bench Verified <code>NP_code</code> 0.887 vs 0.864；DeepSWE 0.797 vs 0.785）。可落地一条：harness 在 <code>resolve rate</code> 旁<b>增报「不必要编辑率」</b>，并用「单元回退 + 重跑测试」的审计做抽样复核。⚠️ 目标是 SWE-bench/DeepSWE 的代码仓库任务，不等于 EDA 脚本任务；DRA 剪枝仍会误删必要代码（recall 67% / precision 46%），不可当自动清理工具。</td></tr>
+  </table>
+</div>
+
+<details class="news-ready">
+<summary>📰 news_ready · 可发头条（1 条）</summary>
+<ul>
+  <li><b>大众标题</b>：AI 写代码为什么总「顺手多改」？研究发现多出来的多是测试和文档</li>
+  <li><b>一句话事实</b>：研究者分析 18 个前沿模型在 SWE-bench Verified / DeepSWE 的 7,660 条已解决轨迹，agent 补丁比开发者大，但多出的编辑并不等于无用。</li>
+  <li><b>可用数字</b>：
+    <ul>
+      <li>7,660 条已解决轨迹（SWE-bench Verified 6,728 + DeepSWE 932）→ arXiv:2611.34875，PDF <b>p.1 摘要</b> / p.2 §1</li>
+      <li>平均 <b>11%</b> 的 agent 代码单元仍不必要，其中 <b>89%</b> 改变行为 → PDF <b>p.1 摘要</b> / p.9</li>
+      <li>SWE-bench 上多余编辑 <b>61% 测试 + 13% 文档</b>；DeepSWE 上 <b>58% 代码</b> → PDF <b>p.7 Figure 3 / Table 1</b></li>
+      <li><code>NP_code</code> 0.887 vs 0.864（SWE-bench）、0.797 vs 0.785（DeepSWE）→ PDF <b>p.1 摘要 / p.6 Figure 2</b></li>
+    </ul>
+  </li>
+  <li><b>配图</b>：Figure 3「多余编辑的构成」（PDF p.7）；图注：<i>图：Goel et al., How Much Do Coding Agents Over-Edit, and Why?, arXiv:2611.34875</i></li>
+  <li><b>一手信源</b>：机构摘要区未列 · Aakash Goel / Benjamin Steenhoek / Yu Hu · <a href="https://arxiv.org/abs/2611.34875">arXiv:2611.34875</a></li>
+  <li><b>话题点</b>：AI 编程助手已进入日常，大家最关心的「它会不会乱改代码」第一次有了可量化的答案。</li>
+  <li><b>不适合发的理由</b>：研究对象是 SWE-bench / DeepSWE 的 coding agent，不是通用聊天助手；全部数字为作者自报、本线未复现。</li>
+</ul>
+</details>
+
+<details class="voice-ready">
+<summary>🗣 voice_ready · 研究者言论（本期 0 条）</summary>
+<ul><li><b>本期无</b>：X 经代理可达（<code>x.com</code> <code>200</code>），但本轮未发现同时满足「原文 + 链接 + ≤30 天 + 与本线相关」的顶级研究者言论；不硬凑、不用二手转述冒充原文。</li></ul>
+</details>
+
+<h3 class="sec">🅱 B 轨 · 经典论文（第一百二十五轮 +3 → 443）</h3>
+<div class="card">
+  <ul>
+    <li><b>MAGE: A Multi-Agent Engine for Automated RTL Code Generation</b>（<a href="https://arxiv.org/abs/2412.07822">2412.07822</a>，2024-12-10，被引 <b>153</b>）— 首个开源多智能体 RTL 生成系统之一；高温度候选采样 + <b>Verilog-state checkpoint</b>，作者自报 VerilogEval-Human v2 <b>95.7%</b>（比 Claude-3.5-sonnet 高 23.3%）。归属：designflow · zhulong · harness。</li>
+    <li><b>Neural Turing Machines</b>（<a href="https://arxiv.org/abs/1410.5401">1410.5401</a>，2014-10-20，被引 <b>3,139</b>）— 控制器 + 可寻址外部记忆矩阵的<b>可微读写</b>，是今天 agent 记忆的架构源头之一。归属：harness · posttrain · pretrain。</li>
+    <li><b>Hindsight Experience Replay</b>（<a href="https://arxiv.org/abs/1707.01495">1707.01495</a>，2017-07-05，被引 <b>2,803</b>，NeurIPS 2017）— 把失败轨迹按<b>实际达成目标</b>重标注，使 off-policy RL 能从稀疏二值奖励学习；直接对应 EDA 的 pass/fail 奖励。归属：posttrain · harness · zhulong。</li>
+  </ul>
+  <p class="small">核验：abs 3/3 <code>200</code>（42,024 / 39,527 / 44,446 B，<code>citation_title</code> + <code>citation_date</code> 逐字）+ OpenAlex 3/3 <code>200</code>（查询日 2026-11-27）；三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>。</p>
+</div>
+
+<h3 class="sec">👥 作者关系网 +3 → 410（X 仍 160）</h3>
+<div class="card">
+  <ul>
+    <li><b>#408 Alex Graves</b>（University of Toronto / DeepMind；NTM 一作；A 级 <code>graves@cs.toronto.edu</code>，主页 <code>200</code> / 10,166 B；X 未找到）— 已发信 #185。</li>
+    <li><b>#409 Jishen Zhao</b>（UC San Diego；MAGE 资深作者；A 级 <code>jzhao@ucsd.edu</code>，主页 <code>200</code> / 18,684 B；X 未找到）— 已发信 #186。</li>
+    <li><b>#410 Yujie Zhao</b>（UC San Diego；MAGE 一作；仅论文 PDF 明文 <code>yuz285@ucsd.edu</code> ⇒ B 级；当前主页未定位；X 未找到）— 仅建档，守「同一论文 ≤1」。</li>
+  </ul>
+</div>
+
+<h3 class="sec">✉ 作者请教信 +2 → 186（今日 2/12）</h3>
+<div class="card">
+  <ul>
+    <li><b>#185 Alex Graves</b> — 英文 <b>197 词</b>；主题 <code>Neural Turing Machines: which memory mechanisms carried the load?</code>；<code>SENT OK</code>；落款两行（<code>Best regards,</code> / <code>Yang Liu</code>，其后无行）。</li>
+    <li><b>#186 Jishen Zhao</b> — 中文 <b>218 汉字</b>；主题 <code>MAGE 的 Verilog 状态检查点：误报与预算的两个问题</code>；<code>SENT OK</code>；落款两行（<code>祝好，</code> / <code>Yang Liu</code>，其后无行）。</li>
+    <li class="small">抗模板：两封开头句、问句句式、论文专属细节（NTM 的 <code>β/g</code> 与记忆矩阵 vs 控制器 / MAGE 的 state checkpoint 误报与多 agent 预算）零共用；正文均不含项目名。</li>
+  </ul>
+</div>
+
+<h3 class="sec">📨 回信核验（IMAP 只读）</h3>
+<div class="card">
+  <ul>
+    <li>方法：<code>IMAP4_SSL('imap.yeah.net',993)</code> + <code>~/.hr_smtp</code>（不打印、不入 git）；<code>select INBOX readonly</code> + <code>BODY.PEEK</code>；<b>未改 <code>\Seen</code></b>。</li>
+    <li>INBOX <b>69 封</b>（21:00 为 71，<b>少 2</b>；本线只读、未删信，推测邮箱端清理，如实记）；<code>SINCE 26-Nov</code> 5 封：腾讯云 / Ollama / <b>系统退信（已知 #183）</b> / Facebook / 招聘群发。</li>
+    <li><b>无新实质回信、无新退信</b>；累计实质 <b>8 信 / 7 人 ≈ 4.3%</b> · 自动 1 · 退信 9。</li>
+    <li>台账：11-13 发出的 #22–#32（11 封）今日满 14 天 ⇒ 转 <code>无应答(&gt;14d)</code>（21 → <b>32</b>）；未到期 145 → <b>134</b>。</li>
+  </ul>
+</div>
+
+<h3 class="sec">🎯 对各线的可执行建议（6 线齐全，无建议显式写「无」）</h3>
+<div class="card">
+  <ul>
+    <li><b>pretrain</b>：<b>无</b>（本期 5 篇均非预训练配方 / 稳定性 / 长上下文直接证据；ZeroHero 的「专家轨迹预训练」属 SFT 前数据构造，不改 2B 主线）。</li>
+    <li><b>vision</b>：<b>无</b>（RoboEvo² 虽含 VLA，但本线是波形 / 版图视觉，任务形态不同，不硬套）。</li>
+    <li><b>harness</b>（2 条）：
+      <ol>
+        <li>在 code-agent 评测里增报「<b>diff 必要性</b>」：按 DRA 思路做抽样单元回退 + 重跑测试；<b>resolve rate 仍为主</b>，necessity 为辅，不改判分阈值。</li>
+        <li>把失败按<b>类型</b>记全（环境 / 工具 / 规划）并作为 harness 演化输入（RoboEvo² P2H），先在 sandbox 试，不进入正式 3-run。</li>
+      </ol>
+    </li>
+    <li><b>data</b>：<b>无</b>（本期无数据配比 / 去污染 / 代码语料质量筛的新一手证据）。</li>
+    <li><b>zhulong</b>（2 条）：
+      <ol>
+        <li>体温计每轮在 Pass@1 旁<b>增报 token / 仿真预算</b>（MAGE 的 95.7% 无预算不可比）。</li>
+        <li>引用 MAGE / AgentDRC 数字时必须写「作者自报 + 模型 / 测试集 / pass@k / 预算」，<b>不得跨 harness 比较</b>。</li>
+      </ol>
+    </li>
+    <li><b>designflow</b>（2 条）：
+      <ol>
+        <li>DRC 类用例的 <code>L2.live</code> 判分可增「关键形状空间关系重建 + 几何约束校验」（<b>只增断言、不放宽阈值、不降级题目</b>）。</li>
+        <li>RTL 类用例记录「断言 / 周期级状态」作为<b>失败诊断</b>信号，但最终判分仍以隐藏 testbench 为准。</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+<h3 class="sec">附录 · 检索与去重（可核验）</h3>
+<div class="card">
+  <ul>
+    <li><b>取源</b>：<code>python3 research/arxiv_fetch.py --fetch --json --seen research/SEEN.md</code>；15 条查询（sweep-cs-5cats / LLM×3 / SLM×2 / 多模态×3 / agent×4 / 邻域×2）全部 <code>200</code> + <code>application/atom+xml</code>。</li>
+    <li><b>窗口</b>：72h（<code>window_mode=auto</code>，工作日口径）；去重后候选 <b>242</b> 条，按与 6 条在研线的相关性 + 多样性取 <b>5</b> 篇。</li>
+    <li><b>元数据</b>：<code>export.arxiv.org/api/query?id_list=…</code> ⇒ <code>200</code> / 5 entries；<code>published</code> 逐条 2026-11-25T08:34:49Z / 2026-11-24T03:30:08Z / 2026-11-25T16:20:13Z / 2026-11-25T16:39:10Z / 2026-11-25T18:37:06Z。</li>
+    <li><b>abs 页</b>：4/5 <code>200</code>（42,243 / 41,105 / 41,434 / 43,129 B）；RoboEvo² <code>2611.34675</code> 的 abs 页 3 次重试均 <code>000</code>（SSL 抖动）⇒ 以 API 元数据为准，不写成「无内容」。</li>
+    <li><b>PDF</b>：Over-edit 额外取 PDF <code>200</code> / 546,699 B / 30 页并 <code>pdftotext</code> 复核（p.1 摘要、p.7 Figure 3 / Table 1）。</li>
+    <li><b>去重</b>：五个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> 均 <b>0 命中</b>。</li>
+  </ul>
+</div>
+
+<footer>
+  research 线 · <code>research/daily/2026-11-27.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-27 00:1x CST<br>
+  本期：A 轨 <b>5/5</b> · B 轨 <b>+3 → 443</b> · 作者网 <b>+3 → 410</b>（X 160）· 作者信 <b>+2 → 186</b> · 实质回信 <b>8 信 / 7 人 ≈4.3%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
+</footer>
+
+</div>
+</body>
+</html>

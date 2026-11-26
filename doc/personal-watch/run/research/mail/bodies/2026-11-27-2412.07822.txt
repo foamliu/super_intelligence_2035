@@ -1,0 +1,13 @@
+赵教授您好，
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。
+
+我读了 MAGE，尤其是高温度候选采样和 Verilog-state checkpoint 两部分。我们正在做 EDA 代码 agent 的评测与后训练，最想搞清楚中间状态反馈到底比只给编译/仿真输出多带来什么。摘要里 VerilogEval-Human v2 的 95.7%（比 Claude-3.5-sonnet 高 23.3%）很醒目，但不知道代价结构。
+
+三个问题：
+1. Verilog-state checkpoint 具体检查哪些状态（周期级信号、寄存器值、还是断言）？误报率大概多少，误报时会不会把 agent 引向错误的修复方向？
+2. 高温度采样加多 agent 的预算（token、仿真次数、wall time）是多少？95.7% 是在什么预算下达成的？我们更关心 pass@1 与预算的曲线，而不只是峰值。
+3. 如果题目从单文件变成多文件的长 RTL 工程，checkpoint 还成立吗？你们会怎么扩展上下文与记忆？
+
+祝好，
+Yang Liu
