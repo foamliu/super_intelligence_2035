@@ -402,3 +402,43 @@ deliverable = 文本/脚本/日志分析/网表变换/诊断报告/问答。chec
 - OPT 9 条：mock-pyAether 编排族 5（Q2 低风险，真 pyAether 可加 geometry 硬断言）+ 优化 sweep 族 3（DominoPVTsweep Vm 来源已确认=独立复算；DlySigmaSweep/LDOGen 静态独立复算/设计方程已足够）+ InvCSOpt-001（BLOCKED: 缺 FMI/agemodel user-model lib，物理值不可真验；可选 OPT=真 FineSim 跑标准 BSIM 验 parse_meas 于真实 .mt0）。
 - NA 109 条不占轮次（R1/R1.5 写完理由即结束）。
 - 📌 **InvCSOpt-001 判分弱点备案**：条件 (p) best_design.json 自报值无独立物理校验（Q2 会判过）这一 gap 在 .75 当前环境下**不可闭合**（专有 mosra aging 模型 FMI 库缺失）。非「题坏了」（deck-gen/parse 逻辑健全、ref PASS、neg 全 FAIL），但物理可行性断言不可加。已记 BLOCKED，**不退题**（规格 §1.4）；若日后 .75 配置 FMI/agemodel 环境或换标准 BSIM 模型可重启 REQ 改造。
+
+### R2-prep 探针·OPT 可行性体检（r1479，冻结窗口只读）
+
+> **目的**：REQ 轨已 3/3 闭合（0 pending），对 9 条 OPT 逐条做 `.75` 实跑/API 可行性探针，把模糊的「真跑能加」落成具体的 **FEASIBLE / FEASIBLE-WITH-EFFORT / BLOCKED** 三态，供解冻后 R2 改造排期。冻结窗口内**只读探针，未落盘改 check.py/cases**。
+
+**A. 仿真类 OPT（2 条）—— model lib 替代可行性**
+
+项目模型路径 `/proj/dscqa/V0/model/current/model.sp` 在 .75 上 **Permission denied**（不可用）。替代库 `/apps/imctf/models/cxmt10G3/v1.0/Model_v1d0_pinus.sp` 经核查定义 `.subckt ntn/ptn/ntn_m/ntn_lv/ptn_lv`，9 corners（tt/ft/st/tf/ts/ff/ss/fs/sf）。
+
+| case | 模型卡 | 探针结果 | check_live 可行性 |
+|:--|:--|:--|:--|
+| **LDOGen-001** | bare `ntn`/`ptn`/`ntn_m` | 裸 ntn/ptn smoke test **PASS**（hspice V-2023.12-SP1-1 `job concluded`, tt corner, w=2u/l=180n） | **FEASIBLE**：供 `.lib pinus tt` + 建 AC testbench 测 PSRR/gain/PM 即可。维持 OPT（静态验设计方程 R1/R2=vout/vref-1 防 Q2）。 |
+| **DlySigmaSweep-001** | `ntn_lv`/`ptn_lv` | incFile_pinus 定义 `.subckt ntn_lv`(L3228)/`.subckt ptn_lv`(L6317)，但 tt corner 加载报 `ptn_lv not found or w/l out of range`（w/l 经 scale=0.728u/65.52n）；v0.8p1/incFile_pinus_lp 有 ntn_lv/ptn_lv **带默认 w=5u/l=0.22u** | **FEASIBLE-WITH-EFFORT**：需选 v0.8p1 或调 corner + 建 MC deck（netlist_B 无 `.var`/`.monte`，需补 montecarlo setup）。维持 OPT（静态 measure_B.py 独立复算防 Q2）。 |
+
+**B. mock-pyAether 编排类 OPT（5 条）—— pyAether API 可用性体检**
+
+经 `get_api_details` 体检 + A r1292 实证：`aeOpenDesign`/`aeGetCurDesign`/`aeCapture`/`emyInitAether` **存在**；`dbCreateLabel`/`dbGetInstByName`/`dbGetPinShapes`/`dbDeleteInst`/`dbDeleteFig`/`dbGetInsts`/`hierDescend`/`dbOpenCellViewByType` **NOT in pyAether KB**（A r1292 实证 .75 pyAether 沙盒无 db* geometry API）。
+
+| case | 想加的硬断言 | 探针结果 | check_live 可行性 |
+|:--|:--|:--|:--|
+| AutoCellRmAvPf-001 | geometry 实际删除 | dbDeleteInst/dbGetInsts 缺 | **BLOCKED**(缺 pyAether db* geometry API) |
+| HierDescend-001 | 实际 descend 返回 | hierDescend/dbOpenCellViewByType 缺 | **BLOCKED**(缺 pyAether hierDescend/db* API) |
+| RsCalcRnodePlace-001 | RN place geometry | db* geometry API 缺 | **BLOCKED**(缺 pyAether db* geometry API) |
+| PyaetherScreenshotVerifyQA-001 | 截图存在性 | aeCapture 存在（可存 PNG） | **PARTIAL**(aeCapture 可行但调用序/校验本质已由 mock 覆盖，真跑增量低) |
+| RsCalcFlow-001 | 电阻降低真验 | rscalc/autovia/powerfill 为 CXMT 内部工具，非标准 EDA 二进制 | **待 probe**(rscalc binary availability on .75，本轮未探) |
+
+> 以上 5 条均 **维持 OPT**（Q2 低风险：mock 记录调用序非假物理输出，静态判分足够）。其中 3 条 BLOCKED（缺 pyAether db* API）、1 条 PARTIAL（增量低）、1 条待 probe。**结论：mock-pyAether 编排族在 .75 当前 pyAether 沙盒下无 geometry 层 check_live 升级路径**。
+
+**C. 已收口 OPT（2 条）—— 无需新探针**
+
+| case | 状态 | 依据 |
+|:--|:--|:--|
+| DominoPVTsweep-001 | OPT（R1.5 收口） | Vm 来源=hidden B mt0 CSV 经 `_recompute()` 独立复算（非自报），Q2 不会判过，不升 REQ |
+| InvCSOpt-001 | OPT(BLOCKED)（r1478 收口） | .75 上 FineSim+HSPICE 均无法加载 level-109 mosra aging user-model（FMI lib not provided），物理验证 BLOCKED |
+
+**D. R2-prep 探针小结（r1479）**
+
+- 9 条 OPT 全部有结论：**FEASIBLE 1**（LDOGen）+ **FEASIBLE-WITH-EFFORT 1**（DlySigmaSweep）+ **BLOCKED 4**（AutoCellRmAvPf/HierDescend/RsCalcRnodePlace/InvCSOpt）+ **PARTIAL 1**（PyaetherScreenshotVerifyQA）+ **待 probe 1**（RsCalcFlow）+ **R1.5 收口 1**（DominoPVTsweep）。
+- **解冻后 R2 排期建议**：仅 **LDOGen-001** 与 **DlySigmaSweep-001** 值得做 OPT→L2.live 升级（仿真类，model lib 替代可行）；mock-pyAether 族因 .75 pyAether 沙盒缺 db* geometry API 无升级路径，维持 OPT 不排期；InvCSOpt 维持 BLOCKED。
+- 三分类**不变**：REQ=3（全闭合）· OPT=9 · NA=109。本轮仅丰富 OPT 的「缺什么」证据，无 verdict 变更、无落盘改判分（冻结窗口）。
