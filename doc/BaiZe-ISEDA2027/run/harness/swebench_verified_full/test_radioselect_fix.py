@@ -1,77 +1,118 @@
-from django.db import models
-from django.forms import ModelForm, RadioSelect
-from django.test import TestCase
+import sys
+import os
+
+# Add the django directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'django'))
+
+from django import forms
+from django.conf import settings
+
+# Configure minimal Django settings
+if not settings.configured:
+    settings.configure(
+        DEBUG=True,
+        SECRET_KEY='test-secret-key',
+        INSTALLED_APPS=[],
+        USE_I18N=False,
+    )
+    import django
+    django.setup()
 
 
-class BatchData(models.Model):
-    name = models.CharField(max_length=100)
+def test_checkbox_select_multiple_custom_id():
+    """Test that BoundWidget.id_for_label uses the id set in attrs, not generated one."""
+    class TestForm(forms.Form):
+        choices = [('1', 'Choice 1'), ('2', 'Choice 2'), ('3', 'Choice 3')]
+        my_field = forms.MultipleChoiceField(
+            widget=forms.CheckboxSelectMultiple(attrs={'id': 'custom-id'}),
+            choices=choices
+        )
+    
+    form = TestForm()
+    # Get the subwidgets
+    widgets = list(form['my_field'])
+    
+    # Check that each widget's id_for_label matches the expected custom id with index
+    expected_ids = ['custom-id_0', 'custom-id_1', 'custom-id_2']
+    all_pass = True
+    for i, widget in enumerate(widgets):
+        if widget.id_for_label != expected_ids[i]:
+            print(f"FAIL test_checkbox_select_multiple_custom_id: Expected {expected_ids[i]}, got {widget.id_for_label}")
+            all_pass = False
+        # Also check that the tag has the correct id
+        if f'id="{expected_ids[i]}"' not in widget.tag():
+            print(f"FAIL test_checkbox_select_multiple_custom_id: Tag missing expected id {expected_ids[i]}")
+            all_pass = False
+    if all_pass:
+        print("PASS test_checkbox_select_multiple_custom_id")
+    return all_pass
 
-    def __str__(self):
-        return self.name
+
+def test_radio_select_custom_auto_id():
+    """Test with custom auto_id format on form."""
+    class TestForm(forms.Form):
+        choices = [('a', 'Option A'), ('b', 'Option B')]
+        radio = forms.ChoiceField(
+            widget=forms.RadioSelect,
+            choices=choices
+        )
+    
+    # Set custom auto_id format
+    form = TestForm(auto_id='my_form_%s')
+    
+    widgets = list(form['radio'])
+    expected_ids = ['my_form_radio_0', 'my_form_radio_1']
+    all_pass = True
+    for i, widget in enumerate(widgets):
+        if widget.id_for_label != expected_ids[i]:
+            print(f"FAIL test_radio_select_custom_auto_id: Expected {expected_ids[i]}, got {widget.id_for_label}")
+            all_pass = False
+        if f'id="{expected_ids[i]}"' not in widget.tag():
+            print(f"FAIL test_radio_select_custom_auto_id: Tag missing expected id {expected_ids[i]}")
+            all_pass = False
+        # Check that label for attribute matches
+        label_tag = f'<label for="{expected_ids[i]}">'
+        if label_tag not in widget.tag(wrap_label=True):
+            print(f"FAIL test_radio_select_custom_auto_id: Label missing expected for attribute {expected_ids[i]}")
+            all_pass = False
+    if all_pass:
+        print("PASS test_radio_select_custom_auto_id")
+    return all_pass
 
 
-class TestRun(models.Model):
-    data_file = models.ForeignKey(BatchData, on_delete=models.SET_NULL, null=True, blank=False)
+def test_no_id_case():
+    """Test that when no id is provided, falls back to original behavior."""
+    class TestForm(forms.Form):
+        choices = [('x', 'X'), ('y', 'Y')]
+        field = forms.ChoiceField(
+            widget=forms.RadioSelect,
+            choices=choices
+        )
+    
+    # Set auto_id to False so no id is generated
+    form = TestForm(auto_id=False)
+    
+    widgets = list(form['field'])
+    all_pass = True
+    for i, widget in enumerate(widgets):
+        expected = f'id_{widget.data["name"]}_{i}'
+        if widget.id_for_label != expected:
+            print(f"FAIL test_no_id_case: Expected {expected}, got {widget.id_for_label}")
+            all_pass = False
+    if all_pass:
+        print("PASS test_no_id_case")
+    return all_pass
 
 
-class TestRunForm(ModelForm):
-    class Meta:
-        model = TestRun
-        fields = ['data_file']
-        widgets = {'data_file': RadioSelect()}
-
-
-class RadioSelectEmptyOptionTest(TestCase):
-    def test_radioselect_no_empty_option_when_blank_false(self):
-        # Create test data
-        BatchData.objects.create(name="First Data File")
-        BatchData.objects.create(name="Second Data File")
-        
-        # Instantiate form
-        form = TestRunForm()
-        
-        # Render the field
-        rendered = str(form['data_file'])
-        
-        # Check that there's no empty option
-        self.assertNotIn('value=""', rendered)
-        self.assertNotIn('---------', rendered)
-        
-        # Check that both options are present
-        self.assertIn('First Data File', rendered)
-        self.assertIn('Second Data File', rendered)
-        
-        # Check that no option is checked by default
-        self.assertNotIn('checked="checked"', rendered)
-        
-    def test_radioselect_empty_option_when_blank_true(self):
-        # Test model with blank=True
-        class TestRunBlank(models.Model):
-            data_file = models.ForeignKey(BatchData, on_delete=models.SET_NULL, null=True, blank=True)
-            
-        class TestRunBlankForm(ModelForm):
-            class Meta:
-                model = TestRunBlank
-                fields = ['data_file']
-                widgets = {'data_file': RadioSelect()}
-                
-        form = TestRunBlankForm()
-        rendered = str(form['data_file'])
-        
-        # Empty option should be present
-        self.assertIn('value=""', rendered)
-        self.assertIn('---------', rendered)
-        
-    def test_select_widget_still_has_empty_option(self):
-        # Test that regular Select widget still has empty option for required fields
-        class TestRunSelectForm(ModelForm):
-            class Meta:
-                model = TestRun
-                fields = ['data_file']
-                
-        form = TestRunSelectForm()
-        rendered = str(form['data_file'])
-        
-        # Empty option should be present for Select widget
-        self.assertIn('value=""', rendered)
-        self.assertIn('---------', rendered)
+if __name__ == "__main__":
+    results = []
+    results.append(test_checkbox_select_multiple_custom_id())
+    results.append(test_radio_select_custom_auto_id())
+    results.append(test_no_id_case())
+    
+    if all(results):
+        print("\nAll tests passed!")
+        sys.exit(0)
+    else:
+        print("\nSome tests failed!")
+        sys.exit(1)
