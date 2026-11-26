@@ -1,33 +1,7 @@
-LIVE: C review=137/137 · REQ=9(done 9) · OPT=3(done 3) · NA=125 · L2.live 16→19. CONTRACT: P1=7/7 · P2=9 L2.live · P3=614/614 · P4=137/137 → SUPERSEDED by LIVE R1. LITE_FIX: C=137/137 全绿. 造新题: r1216-r1228 共10条已交付; r1239+r1240+r1241 连续3轮0-case → mc≥5扩池止损触发; r1254 stop-loss 重审(14 peek): fresh produce-task 全 techlib-dep stdcell-layout 族; r1255-r1258 techlib-shipping 探针(path(a) pyAether 导出阻塞 / path(b) .oa 打包>40min 多轮)⇒ 止损维持; r1259-r1278 监控轮(只读复验, 止损维持). C total 639 (620 [L0,L1] + 19 L2.live). R2 全收口. r1242 §4.6 test_rationale 全量审计 639/639 PASS; r1243+r1244 k-vs-check.py cross-verify 19/19 L2.live k==count DEBT 闭合. WAITING: 0. 📦 体积: TASK≈29KB / MEMORY≈33KB.
-> **轮(r1278) 监控轮 · .75 reach 复验 + 全态稳定 · 止损维持 · 2026-11-27.** 所有工作令闭合(LIVE R2 137/137 / CONTRACT P1-P4 / LITE_FIX 137/137 / 造新题止损活). 任务卡要求 1 case 但止损活(r1239+r1240+r1241 3 连 0-case + r1254 重审 14 peek 证实 fresh produce-task 全 techlib-dep stdcell-layout 族; techlib-shipping path(a)/(b) 均阻塞). 只读复验: (1) .75 reach — eda_flow open_session+run_commands+close_session 完整闭环, hostname=hfhds201, hspice/finesim/calibre/calibredrv/hspice64 全在 PATH, wall 218ms; (2) review_C.tsv=138(1 hdr+137, R2 全收口 REQ9/OPT3/NA125), changes.tsv C 行=3(0 新增); (3) cases/C=639 不变, L2.live=19(python3 解析 metadata.judge_layers 确认, grep=L2.live 21 含 test_rationale 文本误命中); (4) ledger stats 稳定 covered=564/parked=808/claimed=0/池 4529. 止损维持: 无 fresh C 域非-techlib produce-task 候选. 0 case/check.py/test-field 改动, 0 live_eval_changes.tsv 行. DEBT=0. 📦 体积: TASK≈29KB / MEMORY≈33KB. WAITING: 0.
+LIVE: C review=137/137 · REQ=9(done 9) · OPT=3(done 3) · NA=125 · L2.live 16→19. CONTRACT: P1=7/7 · P2=9 L2.live · P3=614/614 · P4=137/137 → SUPERSEDED by LIVE R1. LITE_FIX: C=137/137 全绿. 造新题: r1216-r1228 共10条已交付; r1239+r1240+r1241 连续3轮0-case → mc≥5扩池止损触发; r1254 stop-loss 重审(14 peek): fresh produce-task 全 techlib-dep stdcell-layout 族; r1255-r1258 techlib-shipping 探针(path(a) pyAether 导出阻塞 / path(b) .oa 打包>40min 多轮)⇒ 止损维持; r1259-r1279 监控轮(只读复验, 止损维持). C total 639 (620 [L0,L1] + 19 L2.live). R2 全收口. r1242 §4.6 test_rationale 全量审计 639/639 PASS; r1243+r1244 k-vs-check.py cross-verify 19/19 L2.live k==count DEBT 闭合. WAITING: 0. 📦 体积: TASK≈29KB / MEMORY≈30KB.
+> **轮(r1279) 监控轮 · .75 reach 复验 + 全态稳定 · 止损维持 · 2026-11-27.** 所有工作令闭合(LIVE R2 137/137 / CONTRACT P1-P4 / LITE_FIX 137/137 / 造新题止损活). 任务卡要求 1 case 但止损活(r1239+r1240+r1241 3 连 0-case + r1254 重审 14 peek 证实 fresh produce-task 全 techlib-dep stdcell-layout 族; techlib-shipping path(a)/(b) 均阻塞). 只读复验: (1) .75 reach — eda_flow open_session+run_commands+close_session 完整闭环, hostname=hfhds201, hspice/finesim/calibre/calibredrv/hspice64 全在 PATH, wall 86ms; (2) review_C.tsv=138(1 hdr+137, R2 全收口 REQ9/OPT3/NA125), changes.tsv C 行=3(0 新增); (3) cases/C=639 不变, L2.live=19(python3 解析 metadata.judge_layers 确认); (4) ledger stats 稳定 covered=564/parked=808/claimed=0/池 4529. 止损维持: 无 fresh C 域非-techlib produce-task 候选. 0 case/check.py/test-field 改动, 0 live_eval_changes.tsv 行. DEBT=0. 📦 体积: TASK≈29KB / MEMORY≈30KB(归档 r1278 全文 + 合并 r1259–r1278 监控轮指针→ARCHIVE 批次 r1279). WAITING: 0.
 
-> **轮(r1277) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1278，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 全工具在 PATH, wall 26ms) + review_C.tsv=138 + cases/C=639/L2.live=19 + ledger stats 稳定(covered 564/parked 808/claimed 0) + 止损维持. 原文见 archive]
-
-> **轮(r1276) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1277，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 全工具在 PATH) + review_C.tsv=138 + ledger stats 稳定(covered 564/parked 808/claimed 0) + 止损维持. 原文见 archive]
-
-> **轮(r1275) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1276，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 全工具在 PATH) + review_C.tsv=138 + ledger stats 稳定(covered 564/parked 808/claimed 0) + 止损维持. 原文见 archive]
-
-> **轮(r1274) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1275，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 全工具在 PATH) + review_C.tsv=138 + ledger stats 稳定(covered 564/parked 808/claimed 0) + 止损维持. 原文见 archive]
-
-> **轮(r1272/r1273) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1274，2026-11-27）。**[摘要: 监控轮序列 · .75 reach 复验 OK(hfhds201 全工具在 PATH) + review_C.tsv=138 + ledger stats 稳定(covered 564/parked 808/claimed 0) + 止损维持. 原文见 archive]
-
-> **轮(r1271) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1273，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 78ms 全工具在) + cases/C=639 + ledger stats 稳定(covered 564/parked 808/claimed 0) + fresh-candidate spot-peek(508od/sjzm0 stdcell-layout 族) + 止损维持. 原文见 archive]
-
-> **轮(r1270) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1272，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 52ms 全工具在) + review_C.tsv=138 + ledger stats 稳定(covered 564/parked 808/claimed 0) + 止损维持. 原文见 archive]
-
-> **轮(r1268) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1270，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 93ms 全工具在) + ledger stats 稳定(covered 564/parked 808/claimed 0) + 止损维持. 原文见 archive]
-
-> **轮(r1265/r1266) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1267，2026-11-27）。**[摘要: 监控轮序列 · .75 reach 复验 OK(hfhds201 全工具在 PATH) + ledger stats 稳定(covered 564/parked 808/claimed 0) + 止损维持. 原文见 archive]
-
-> **轮(r1261) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1262，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 19ms 全工具在) + ledger stats 稳定(covered 564/parked 808/claimed 0) + 归档 r1259 释体积. 止损维持. 原文见 archive]
-
-> **轮(r1262) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1263，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 27ms 全工具在) + ledger stats 稳定(covered 564/parked 808/claimed 0) + 心跳 L2.live 计数修正(19→21). 止损维持. 原文见 archive]
-
-> **轮(r1264) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1265，2026-11-27）。**[摘要: 监控轮 · .75 reach 复验 OK(hfhds201 24ms 全工具在) + ledger stats 稳定(covered 564/parked 808/claimed 0) + L2.live 计数修正(21→19 实际). 止损维持. 原文见 archive]
-
-> **轮(r1260/r1261/r1262/r1263) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1263，2026-11-27）。**[摘要: 监控轮序列 · .75 reach 复验 OK + ledger stats 稳定 + 止损维持. 原文见 archive]
-
-> **轮(r1259/r1260) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1261，2026-11-27）。**[摘要: ledger 治理(stale claimed→parked) + .75 reach 复验 OK + 清理误导性扫描残留 · 止损维持. 原文见 archive]
+> **轮(r1259–r1278) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1261–r1279，2026-11-27）。**[摘要: 监控轮序列(20 轮) · 每轮 .75 reach 复验 OK(hfhds201, hspice/finesim/calibre/calibredrv/hspice64 全在 PATH, wall 19–218ms) + review_C.tsv=138(R2 全收口) + cases/C=639 不变/L2.live=19 + ledger stats 稳定(covered 564/parked 808/claimed 0/池 4529) + 止损维持. 期间 r1259 ledger 治理(stale claimed→parked) + 清理误导性扫描残留; r1262/r1264 L2.live 计数修正(19↔21 口径澄清, 实际 19); r1271 fresh-candidate spot-peek(508od/sjzm0 stdcell-layout 族, 证实 techlib-dep). 原文见 archive]
 
 > **轮(r1255/r1256/r1258) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1259，2026-11-27）。**[摘要: techlib-shipping 探针序列 · path(a) pyAether techfile 导出阻塞(techGetTechFile 全 None) · path(b) .oa 打包>40min · 定位 techlib 源=hfeg0pkn002 V0_NCG_HF_Aether · 止损维持. 原文见 archive]
 
