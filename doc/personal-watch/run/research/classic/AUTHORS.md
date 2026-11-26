@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-26 12:0x · r268）**：作者 **398** 人（编号最大 **398**）· X 已核验 **158**（本轮 **+2**：`@RickyTQChen` 由本人主页 <https://rtqichen.github.io/>（`200` / 36,752 B）外链 `twitter.com/RickyTQChen` + 代理抓 `x.com/RickyTQChen` `200` / 188,658 B，`og:title` = `Ricky T. Q. Chen (@RickyTQChen) on X` ⇒ 双源；`@giffmana` 由本人主页 <https://lucasb.eyer.be/>（`200` / 100,956 B）外链 `twitter.com/giffmana` + 代理抓 `x.com/giffmana` `200` / 186,636 B，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X` ⇒ 双源；Max Welling `@wellingmax` 仅 X 页单源（43,074 followers，UvA 页无 X 外链）⇒ 记「待核」、不计入已核验）· 已发信 **182**（台账 #1–#182；今日 **10/12**）· 回信 **0**（0/182；已回复 0 / 无应答>14d 21 / 未到期 161）。本轮 **+3**：Max Welling（VAE 末位作者，荷兰语称谓+英文正文，UvA 页明文 `m.welling@uva.nl` ⇒ 已发信 #181）· Ricky T. Q. Chen（Neural ODE 一作，中文，本人主页明文 gmail + X 双源 ⇒ 已发信 #182）· Lucas Beyer（ViT 二作，德文姓名，无公开邮箱、X 双源 ⇒ 仅建档）。**去重记录**：VAE 一作 Diederik Kingma 已在 #99 / #363 建档，本轮不重复新增。
 > **当前计数（2026-11-26 09:1x 补轮 · r267）**：作者 **395** 人（编号最大 **395**）· X 已核验 **156**（本轮 **+1**：`@junyanz89` 由 GitHub 个人页 <https://github.com/junyanz> 经代理 `200` 外链 `twitter.com/junyanz89` + 代理抓 `x.com/junyanz89` `200` / 211,715 B，`og:title` = `Jun-Yan Zhu (@junyanz89) on X`、`description` = `… Associate Professor (on leave) at … @CarnegieMellon` ⇒ 双源；Lvmin Zhang `x.com/lllyasviel` 实为 `julian gomez` 他人、Mingxing Tan `x.com/MingxingTan` 为 0 followers 空账号 ⇒ 均记「未找到 X」，不猜）· 已发信 **180**（台账 #1–#180；今日 **8/12**）· 回信 **0**（0/180；已回复 0 / 无应答>14d 21 / 未到期 159）。本轮 **+3**：Jun-Yan Zhu（CycleGAN 一作，中文，本人主页明文 `junyanz at cs dot cmu dot edu` + X 双源 ⇒ 已发信 #179）· Lvmin Zhang（ControlNet 一作，中文，本人主页明文 `lvmin AT cs.stanford.edu` ⇒ 已发信 #180）· Mingxing Tan（EfficientNet 一作，中文，`mingxingtan.com` 两路 `000`、GitHub 无邮箱、PDF 无邮箱 ⇒ 仅建档、不发信）。
 > **当前计数（2026-11-26 09:0x · r266）**：作者 **392** 人（编号最大 **392**）· X 已核验 **155**（本轮 **+2**：`@tkipf` 由本人主页 <https://tkipf.github.io/>（`200` / 20,897 B）外链 `twitter.com/tkipf` + 代理抓 `x.com/tkipf` `200` / 185,469 B，`og:title` = `Thomas Kipf (@tkipf) on X`、`description` = `Research at @GoogleDeepMind…` ⇒ 双源；`@sedielem` 由本人主页 <https://sander.ai/>（`200` / 533,520 B）外链 `x.com/sedielem` + 代理抓 `x.com/sedielem` `200` / 194,071 B，`og:title` = `Sander Dieleman (@sedielem) on X`、`description` = `Research Scientist at Google DeepMind (WaveNet…)` ⇒ 双源；Aäron van den Oord `@avdnoord` 仅 X 页单源（`200` / 183,301 B）无本人主页二次核 ⇒ 记「待核」、不计入已核验）· 已发信 **178**（台账 #1–#178；今日 **6/12**）· 回信 **0**（0/178；已回复 0 / 无应答>14d 21 / 未到期 157）。本轮 **+3**：Thomas N. Kipf（GCN 一作，英文，主页无明文邮箱 ⇒ 仅建档，X 双源）/ Aäron van den Oord（WaveNet + PixelRNN 一作，荷兰姓名，无本人主页 / 无公开邮箱 ⇒ 仅建档，X 单源待核）/ Sander Dieleman（WaveNet 二作，荷兰语，本人主页明文 `sanderdieleman@gmail.com` + X 双源 ⇒ 已发信 #178，荷兰语称谓 + 英文正文）。
 > **当前计数（2026-11-26 06:1x 补轮 · r265）**：作者 **389** 人（编号最大 **389**）· X 已核验 **153**（本轮 **+1**：`@DrYangSong` 由本人主页 <https://yang-song.net/>（`200` / 48,966 B）外链 `twitter.com/DrYangSong` + 代理抓 `x.com/DrYangSong` `200` / 181,855 B，`og:title` = `Yang Song (@DrYangSong) on X`、`description` = `Research Principal of MSL` ⇒ 双源；Gao Huang 主页无本人 X 外链、`x.com/gaohuang` 404；John Schulman `x.com/Joschu` 实测 `og:title` = `Joann Schuster (@Joschu) on X` ⇒ 为另一人 ⇒ 均记「未找到 X」，不猜）· 已发信 **177**（台账 #1–#177；今日 **5/12**）· 回信 **0**（0/177；已回复 0 / 无应答>14d 21 / 未到期 156）。本轮 **+3**：Gao Huang（DenseNet 一作，中文，本人主页明文 `gaohuang AT tsinghua.edu.cn` ⇒ 已发信 #176）· Yang Song（Score-SDE 一作，中文，本人主页明文 `thusongyang@gmail.com` + X 双源 ⇒ 已发信 #177）· John Schulman（TRPO 一作，英文，`joschu.net` 页内无明文邮箱 + `https` 多次 `000` ⇒ 仅建档、不发信）。
@@ -5587,3 +5588,42 @@
 | X 账号 | **未找到 X**（`x.com/MingxingTan` `og:title` = `MingxingTan (@MingxingTan) on X`，但 **0 followers / 5 following**、无本人主页外链 ⇒ 判不可靠，不登记） |
 | 状态 | **待跟踪**（无可核公开邮箱 / 无可核 X） |
 | 备注 | 语言=中文(判据=华人拼音姓名族属 Tan Mingxing + Google 机构)。模型缩放 / 视觉骨干方向作者。问题候选（待有邮箱时再发）：① 复合系数在「深度/宽度/分辨率」之外的第四个轴（序列长度）如何外推；② 同精度下的推理成本优势能否在训练成本上也成立；③ 小数据迁移时复合缩放是否仍优于单轴放大。 |
+
+### 396. Max Welling
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Max Welling（荷兰姓名；`语言=荷兰语称谓+英文正文(判据=荷兰姓名族属 Welling + 荷兰机构 UvA)`） |
+| 机构 | **University of Amsterdam**（Professor；UvA 个人页 2026-11-26 在线，研究含 Machine Learning） |
+| 代表论文 | **Auto-Encoding Variational Bayes**（`1312.6114`，B 轨 #429，末位作者） |
+| 邮箱 | **`m.welling@uva.nl`**（UvA 官方个人页 <https://www.uva.nl/en/profile/m.welling/m.welling> `HTTP 200` / **957,141 B**，页内 `mailto:` 明文 + 结构化 JSON 字段双处一致，2026-11-26 复核；**A 级**） |
+| 主页 | <https://www.uva.nl/en/profile/m.welling/m.welling>（`200` / 957,141 B） |
+| X 账号 | **`@wellingmax`（单源待核，不计入已核验）**：代理抓 `x.com/wellingmax` `200` / 166,166 B，`og:title` = `Max Welling (@wellingmax) on X`、`og:description` = `43074 followers · 480 following`；但 UvA 页无 X 外链 ⇒ 无第二来源，如实记待核 |
+| 状态 | **已发信**（#181，2026-11-26 12:04） |
+| 备注 | 语言=荷兰语称谓+英文正文(判据=荷兰姓名族属 Welling + 荷兰机构 UvA)。潜变量模型 / 变分推断方向作者。问题候选见 `mail/drafts/1312.6114.md`：① 离散潜变量该用 Gumbel/REINFORCE 还是保持连续再离散化；② 小数据（~1e3）下摊销推断是否吃亏、ELBO 之外的诊断量；③ KL 权重与 warm-up 调度。 |
+
+### 397. Ricky T. Q. Chen
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ricky Tian Qi Chen（拼音名；汉字未核，不猜）（`语言=中文(判据=拼音名 Tian Qi + 华人姓名族属 Chen；机构在海外不作英文判据)`） |
+| 机构 | **Prometheus AI**（Member of Technical Staff；此前 Meta / FAIR；本人主页 2026-11-26 在线，含 2026 年 CVPR 论文） |
+| 代表论文 | **Neural Ordinary Differential Equations**（`1806.07366`，B 轨 #430，一作） |
+| 邮箱 | **`rtqichen@gmail.com`**（本人主页 <https://rtqichen.github.io/> `HTTP 200` / **36,752 B**，CV 节明文邮箱，2026-11-26 复核；**A 级**） |
+| 主页 | <https://rtqichen.github.io/>（`200` / 36,752 B） |
+| X 账号 | **`@RickyTQChen`**（本人主页外链 `twitter.com/RickyTQChen` + 代理抓 `x.com/RickyTQChen` `200` / **188,658 B**，`og:title` = `Ricky T. Q. Chen (@RickyTQChen) on X` ⇒ 双源；本轮 X +1） |
+| 状态 | **已发信**（#182，2026-11-26 12:04） |
+| 备注 | 语言=中文(判据=拼音名 Tian Qi + 华人姓名族属 Chen；**不因** Meta/Prometheus、论文英文、gmail 判英文)。连续流 / Flow Matching 方向作者。问题候选见 `mail/drafts/1806.07366.md`：① adjoint 的 wall-clock/显存权衡与 NFE 成本口径；② 刚性方程下 rtol/atol 的任务级经验；③ 条件 CNF 瞬时变量变换项的数值稳定性。 |
+
+### 398. Lucas Beyer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lucas Beyer（德文姓名；`语言=德语称谓+英文正文(判据=德文姓名族属 Beyer；当前无邮箱不发)`） |
+| 机构 | **Google DeepMind**（ViT 共同作者；主页 2026-11-26 在线，具体职级未核） |
+| 代表论文 | **An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale**（`2010.11929`，B 轨 #431，二作） |
+| 邮箱 | **未找到**（本人主页 <https://lucasb.eyer.be/> `HTTP 200` / **100,956 B** 页内无可解析邮箱；不猜、不发信） |
+| 主页 | <https://lucasb.eyer.be/>（`200` / 100,956 B） |
+| X 账号 | **`@giffmana`**（本人主页外链 `twitter.com/giffmana` + 代理抓 `x.com/giffmana` `200` / **186,636 B**，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X` ⇒ 双源；本轮 X +1） |
+| 状态 | **待跟踪**（无公开邮箱 / X 已核验） |
+| 备注 | 语言=德语称谓+英文正文(判据=德文姓名族属 Beyer)。视觉骨干 / 大规模视觉预训练方向作者。当前无邮箱不发；待有可核地址再问「ViT 在中小规模图文对上何时开始输给 CNN」等。 |

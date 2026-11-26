@@ -7486,3 +7486,48 @@
 | 与我们工作的关系 | **pretrain（主 · 缩放律与配比）**：2B 主干的「深度 / 宽度 / 分辨率（或序列长度）」如何分配预算，是预注册必须写清的三个轴；EfficientNet 的**复合系数**给出「三维同比例放大」的经典参照，可与 Chinchilla 的「参数-数据」二维配比并列。<br>**vision（次 · 视觉骨干选型）**：视觉塔若用 ConvNet，EfficientNet 系列是「精度-参数-推理时延」三者的常用基线，须在评测表里给出同样的三列。<br>**zhulong（次 · 成本口径）**：论文的「同精度下小 8.4× / 快 6.1×」是**推理成本**口径，不能直接当训练成本；消融表须分开记账。<br>**data / harness / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百二十轮 · 09:1x 补轮） |
 | 核验状态 | abs 页 **`200` / 44,810 B**，`citation_title` + `citation_date` 逐字（**无 `comments` 字段**）；OpenAlex **`200`**（33,029 / 2019 / `conference-paper` / ICML，查询日 2026-11-26）。复合系数 / 84.3% top-1 / 8.4× 更小 / 6.1× 更快 / CIFAR-100 91.7% / Flowers 98.8% 均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`1905.11946` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 429. Auto-Encoding Variational Bayes（VAE）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Auto-Encoding Variational Bayes |
+| 作者（前 3） | Diederik P. Kingma · Max Welling（仅两位作者；arXiv `citation_author` 逐字核） |
+| 年份 | **2013**（v1 `2013/12/20`；abs 页 `citation_date` 逐字核；`citation_online_date` 2022/12/10） |
+| 会议 / 期刊 | **ICLR 2014**（社区通行口径；abs 页**无 `comments` 字段**；OpenAlex 该 DOI 记录 `type=preprint`、source=*UvA-DARE (University of Amsterdam)* ⇒ **未核到会议版记录**，如实标注、不硬指） |
+| 被引数 | **47,417**（OpenAlex `10.48550/arXiv.1312.6114`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1312.6114> ｜ `10.48550/arXiv.1312.6114` |
+| 一句话贡献 | 针对**连续隐变量 + 后验不可解 + 大数据集**的有向概率模型，给出可扩展的随机变分推断与学习算法：① 对**变分下界做重参数化**（reparameterization）得到 **SGVB 估计量**，可直接用标准随机梯度法优化；② 对**逐数据点连续隐变量的 i.i.d. 数据**，用一个**近似推断模型（recognition model）**拟合不可解后验，使后验推断变得高效；在仅要求「温和可微」的条件下，即使原问题不可解也能工作。 |
+| 与我们工作的关系 | **vision（主 · 潜变量生成）**：重参数化 + 摊销推断是「连续隐空间」生成/表征的源头，可作视觉塔做压缩式自编码与潜空间采样的基线。<br>**designflow（次 · 版图/示意的潜空间表示）**：把「区域/层分配」等结构先编码为连续潜变量、再在解码端离散化，是绕开不可解后验的一条工程路线。<br>**pretrain（次 · 目标函数）**：ELBO = 重建项 + KL 项的分解，可直接对照我们自监督/重建式预训练目标的取舍。<br>**zhulong（次 · 消融口径）**：KL 权重与后验坍缩是必须单列的消融轴；成本口径须写明是优化 ELBO 还是仅重建。<br>**data / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十一轮 · 12:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,755 B**，`citation_title` + `citation_date` 逐字（**无 `comments` 字段**）；OpenAlex **`200`**（47,417 / 2013 / `preprint` / UvA-DARE，查询日 2026-11-26）。重参数化 / SGVB / recognition model / i.i.d. 连续隐变量 / 温和可微条件均取自 arXiv 官方摘要（逐字核），未做 PDF 公式复核。条目级查重：`1312.6114` 在 `PAPERS.md` 中 **0 条现有条目**（仅他条正文引用），非重复。 |
+
+## 430. Neural Ordinary Differential Equations（Neural ODE）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Neural Ordinary Differential Equations |
+| 作者（前 3） | Ricky T. Q. Chen · Yulia Rubanova · Jesse Bettencourt · David Duvenaud（四位作者；arXiv `citation_author` 逐字核） |
+| 年份 | **2018**（v1 `2018/06/19`；abs 页 `citation_date` 逐字核；`citation_online_date` 2026/10/09） |
+| 会议 / 期刊 | **NeurIPS 2018**（abs 页 `comments` 字段为空；会议归属取 OpenAlex `primary_location.source` = *neural information processing systems*，`type=conference-paper`） |
+| 被引数 | **8,138**（OpenAlex `10.48550/arXiv.1806.07366`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1806.07366> ｜ `10.48550/arXiv.1806.07366` |
+| 一句话贡献 | 用神经网络**参数化隐状态的导数**、以**黑盒 ODE 求解器**算输出，得到「连续深度」模型：**常数显存**、按输入自适应调整计算、可显式用数值精度换速度；在连续深度残差网络与连续时间潜变量模型上验证，并构造**连续归一化流（CNF）**——可极大似然训练、**无需对数据维度做划分或排序**；训练上用**伴随敏感度法**对任意 ODE 求解器反传，且**不需要访问求解器内部操作**，从而可把 ODE 端到端嵌进更大模型。 |
+| 与我们工作的关系 | **vision（主 · 连续流生成）**：CNF 的「可逆性不再是硬约束」对视觉生成建模是重要松绑，可作为 diffusion/flow 路线的对照。<br>**pretrain（次 · 深度定义）**：把「层数」换成「积分时间 + 求解器容差」，为深度/算力预算提供第三种轴（另两轴见 EfficientNet 的宽度/分辨率）。<br>**zhulong（次 · 成本口径）**：NFE（函数评估次数）是独立于参数量的成本指标，消融表须把 NFE 与 wall-clock 一起记；「常数显存」不等于「常数时间」。<br>**designflow（次 · 条件生成）**：条件 CNF 的瞬时变量变换项在条件突变处的稳定性，是可预注册的失败模式。<br>**data / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十一轮 · 12:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,768 B**，`citation_title` + `citation_date` 逐字（`comments` 为空）；OpenAlex **`200`**（8,138 / 2018 / `conference-paper` / NeurIPS，查询日 2026-11-26）。连续深度 / 常数显存 / 黑盒求解器 / CNF 无需划分或排序数据维度 / 伴随法反传均取自 arXiv 官方摘要（逐字核），未做 PDF 定理复核。条目级查重：`1806.07366` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 431. An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale（ViT）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale |
+| 作者（前 3） | Alexey Dosovitskiy · Lucas Beyer · Alexander Kolesnikov（+ Dirk Weissenborn · Xiaohua Zhai · Thomas Unterthiner · Mostafa Dehghani et al.；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（v1 `2020/10/22`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICLR 2021**（abs 页 `comments` 明文 *ICLR camera-ready version with 2 small modifications…*；OpenAlex 该 DOI 记录 `type=preprint` ⇒ 会议归属以 abs `comments` 为准） |
+| 被引数 | **71,599**（OpenAlex `10.48550/arXiv.2010.11929`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2010.11929> ｜ `10.48550/arXiv.2010.11929` |
+| 一句话贡献 | 证明视觉任务**不必依赖 CNN**：把图像切成若干 patch、对 patch 的线性嵌入序列直接套**纯 Transformer** 即可做图像分类；在**大规模数据**上预训练后迁移到多个中/小规模识别基准（ImageNet、CIFAR-100、VTAB 等），与当时 SOTA 卷积网络相比取得很好结果，而**训练所需算力显著更少**。 |
+| 与我们工作的关系 | **vision（主 · 视觉骨干）**：patch 序列 + 纯 Transformer 是视觉塔选型必须列的基线；「大规模预训练后才超过 CNN」这一前提直接决定我们的图文对规模门槛。<br>**pretrain（次 · 模态统一）**：视觉与文本共用同一 Transformer 骨架，便于把视觉塔并入统一预训练配方与并行切分方案。<br>**data（次 · 预训练数据量）**：摘要明确「在大量数据上预训练」是成立条件，数据配比实验须把视觉 token 量与图像数一起记账。<br>**zhulong（次 · 成本口径）**：论文的「算力显著更少」指**训练**口径，推理侧 patch 数（分辨率）才是主成本项，须分开测。<br>**harness / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十一轮 · 12:00 时窗） |
+| 核验状态 | abs 页 **`200` / 44,035 B**，`citation_title` + `citation_date` 逐字 + `comments` 明文；OpenAlex **`200`**（71,599 / 2020 / `preprint`，查询日 2026-11-26）。patch 序列 / 纯 Transformer / 大规模预训练 / ImageNet·CIFAR-100·VTAB / 训练算力显著更少均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`2010.11929` 在 `PAPERS.md` 中 **0 条现有条目**（仅他条正文引用），非重复。 |
