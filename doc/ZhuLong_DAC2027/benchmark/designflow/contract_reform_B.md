@@ -293,3 +293,42 @@ AOI21ArcChar-001（r1290）已实证：garbage-netlist+正确签名 → 13/13 PA
 - 优先序：hspice-mock 家族（GT 签名维度少 + 网表候选可控 = 最易被骗）→ finesim-mock 家族。
 - ~~CdlBulkSanitize/MinpulseRewriteRun borderline 验证~~ **已完成（r1292）**：CdlBulkSanitize=REQ 确认，MinpulseRewriteRun=OPT 降级。
 - 心跳：`LIVE: B review=126/126 · REQ=40(done 0) · OPT=8(done 0) · NA=76 · L2.live 0→0`。
+
+## R2 前置：.75 L2.live 通路验证 + check_live 设计稿（2026-11-26 r1293 · 仍只读/冻结中）
+
+### 背景
+- 冻结仍未解冻：zhulong r3' @ 330/500=66%（status mtime 20:50 活跃写入），ETA ~00:11 Nov-27。主树 check.py/cases 一律不动。
+- §1.2 隔离工作树通道**本轮 infra-blocked**：`/tmp` 100% 满（49G/61M free，其他会话占用 eda_platform_sdk/cl_cfg 等）；改用 `/nasdata/.cache/live_eval_B` 建 `git worktree add --detach` 因 NFS 慢（23218 文件 checkout）超时，留下无 `.git` marker 的半状态目录；已 `rm -rf` 清理 + `worktree prune`。主树指纹核验稳定（porcelain=29 前后一致，仅 r3 status mtime 移动）。⇒ 本轮退回纯只读 + .75 通路验证，🚫 未碰 check.py/cases。
+
+### .75 L2.live 通路验证（CdlBulkSanitize-001 · 实跑证据）
+经 `eda_flow` MCP `open_session` → `write_file`(deck/cdl/models) → `run_commands`(hspice) → `close_session`，在 `hfhds201`(.75) 跑通：
+
+| deck | hspice RC | wall | .mt0 v_y_hi | .mt0 v_y_lo | 说明 |
+|:--|:--:|:--:|:--:|:--:|:--|
+| REF（sanitize_cdl_ref 产出，w=0.5u/0.25u） | 0 concluded | 266ms | **-2.545e-07** | **0.7200** | == mock 内嵌 GT，Q1 语义保真确认 |
+| CHEAT（拓扑+bulk 正确，W/L 篡改 w=1e-21u） | 0 concluded | 372ms | **0.3600** | **0.3600** | 反相器电死、卡中轨无法翻转 |
+
+- hspice = `/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/hspice`，license `12000@hfds4`（primesim，7627/9999 in use），版本 V-2023.12-SP1-1 linux64。
+- **Q2 实证**：CHEAT deck 静态全过（.SUBCKT 保留、bulk=VPWR/VGND、P+N mos 齐全、d/g/s 顺序对）但实跑产物错（v_y_hi=0.36 ≠ 期望低电平 ~0，v_y_lo=0.36 ≠ 期望高电平 ~0.72）；mock 忽略 W/L 仅按 P+N mos 回放 GT ⇒ 假阳。⇒ **LIVE-REQ 成立**，live-neg 候选 = cheat_b.cdl（w=1e-21u）。
+
+### check_live(sess) 设计稿（CdlBulkSanitize-001 · 待解冻后落盘）
+```python
+def check_live(sess):
+    """L2.live: 在 .75 跑真 hspice，读真实 .mt0，断同样的物理量（v_y_hi/v_y_lo）。
+    不读 reference/、不读隐藏 GT 文件。断言条数只增不减。"""
+    # 1. 从 deliverable zip 取 candidate 的 sanitize_cdl.py，在 sess workdir 跑它处理 hidden-B cdl_b.cdl -> sanitized_b.cdl
+    #    （hidden-B 由 check_live 从 assets/hidden/ 上传到 sess workdir，不进 SUT 沙箱）
+    # 2. 组 tb_inv.sp（与 _check_static_impl 同款 testbench，VPWR=0.72）
+    # 3. sess.run_commands(["hspice tb_inv.sp -o ."])  -> 读回 tb_inv.mt0
+    # 4. 解析 .mt0 -> v_y_hi(input high@9n -> out low), v_y_lo(input low@14n -> out high)
+    # 5. 断言：v_y_hi < 0.15*VPWR（低电平合格）&& v_y_lo > 0.85*VPWR（高电平合格）
+    #    （与 _check_static_impl cond j/k 同阈值，不放宽）
+    # live-neg(cheat_b.cdl w=1e-21u)：v_y_hi=v_y_lo=0.36 -> 两断言均 FAIL（first-fail distinct）
+```
+- 关键不变量：check_live 与 _check_static_impl 断**同一物理量、同阈值**（只增不减）；live-neg = 静态全过/实跑错（cheat_b.cdl）；3-seed 确定性（同 deck md5 一致，hspice 确定性已由 266ms 单跑佐证，R2 落盘时跑 3 次）。
+
+### 待办（解冻后 R2）
+1. 重建隔离工作树（优先清 /tmp 或等 NFS 空闲；或直接在解冻后改主树）。
+2. CdlBulkSanitize-001 作为 R2 首条改造样板（通路+设计稿已就绪）：落 _check_static_impl/check_static/check_live + judge_layers=[L0,L1,L2.live] + live-neg + §5 七项自验。
+3. 其余 39 条 Type A 按家族批量复用样板（hspice-mock → finesim-mock）。
+- 心跳：`LIVE: B review=126/126 · REQ=40(done 0) · OPT=8(done 0) · NA=76 · L2.live 0→0`（done 仍 0，未落盘）。
