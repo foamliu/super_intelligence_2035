@@ -9,7 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
-**本轮快照**：累计 **443** 条（**第一百二十五轮 2026-11-27 00:0x +3 → 443**（B 轨转「补充/更正」补真空白）：MAGE `2412.07822`（**153**，2024 预印本；OpenAlex 记 `conference-paper` / source = DAC / `publication_year=2025`；**&lt;500 按「本领域权威 / EDA agent 标志性工作」收**：多智能体引擎 + 高温度候选采样 + Verilog-state checkpoint，作者自报 VerilogEval-Human v2 **95.7%**、比 Claude-3.5-sonnet 高 **23.3%**） / Neural Turing Machines `1410.5401`（**3,139**，2014 预印本；控制器 + 可寻址外部记忆矩阵，内容寻址与位置寻址的**可微读写**，学会 copy / repeat / 联想回忆与简单算法） / Hindsight Experience Replay `1707.01495`（**2,803**，NeurIPS 2017；把失败轨迹按**实际达成目标**重标注，使任意 off-policy RL 能从稀疏二值奖励学习）；核验：abs 3/3 `200`（42,024 / 39,527 / 44,446 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（153 / 3,139 / 2,803，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = EDA 多智能体 + 状态检查点 / 外部可微记忆 / 稀疏奖励目标重标注；本轮归属：designflow +2 · zhulong +2 · harness +3 · posttrain +2 · pretrain +1 · data +0 · vision +0）
+**本轮快照**：累计 **446** 条（**第一百二十六轮 2026-11-27 00:2x 补轮 +3 → 446**：OpenAI Gym `1606.01540`（**9,534**，2016 预印本；统一 `reset/step/reward/done` 环境接口 + 环境注册/版本化，把环境与 agent 解耦，成为后续 RL 与 agent 评测 harness 的公共接口约定）/ Graph Attention Networks `1710.10903`（**24,761**，ICLR 2018；掩码自注意力 + 多头在邻居上加权聚合，可归纳到未见图）/ MobileNetV2 `1801.04381`（**37,626**，CVPR 2018；倒残差 + 线性瓶颈，低算力视觉骨干）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2017-10-30T12:41:12Z / 2016-06-05T17:54:48Z / 2018-01-13T04:46:26Z）+ OpenAlex 3/3 `200`（查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = RL 环境接口 / 图注意力 / 高效视觉骨干；本轮归属：harness +2 · data +2 · pretrain +3 · vision +2 · posttrain +1 · designflow +1 · zhulong +0）
+**本轮快照（前一）**：累计 **443** 条（**第一百二十五轮 2026-11-27 00:0x +3 → 443**（B 轨转「补充/更正」补真空白）：MAGE `2412.07822`（**153**，2024 预印本；OpenAlex 记 `conference-paper` / source = DAC / `publication_year=2025`；**&lt;500 按「本领域权威 / EDA agent 标志性工作」收**：多智能体引擎 + 高温度候选采样 + Verilog-state checkpoint，作者自报 VerilogEval-Human v2 **95.7%**、比 Claude-3.5-sonnet 高 **23.3%**） / Neural Turing Machines `1410.5401`（**3,139**，2014 预印本；控制器 + 可寻址外部记忆矩阵，内容寻址与位置寻址的**可微读写**，学会 copy / repeat / 联想回忆与简单算法） / Hindsight Experience Replay `1707.01495`（**2,803**，NeurIPS 2017；把失败轨迹按**实际达成目标**重标注，使任意 off-policy RL 能从稀疏二值奖励学习）；核验：abs 3/3 `200`（42,024 / 39,527 / 44,446 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（153 / 3,139 / 2,803，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = EDA 多智能体 + 状态检查点 / 外部可微记忆 / 稀疏奖励目标重标注；本轮归属：designflow +2 · zhulong +2 · harness +3 · posttrain +2 · pretrain +1 · data +0 · vision +0）
 **本轮快照（前一）**：累计 **440** 条（**第一百二十四轮 2026-11-26 21:0x +3 → 440**：VGG `1409.1556`（**111,603**，2014 预印本 / ICLR 2015；3×3 小核堆叠到 16–19 层，ILSVRC-2014 定位第一·分类第二）/ Focal Loss + RetinaNet `1708.02002`（**10,051**，ICCV 2017 / TPAMI；对易分样本降权的 `α/γ` 焦点损失，单阶段检测器超当时两阶段 SOTA 精度）/ A3C `1602.01783`（**11,372**，ICML 2016；异步 actor-learner 并行 + 共享参数 Hogwild 式更新，Atari 单 CPU 半时间超 SOTA）；核验：abs 3/3 `200`（41,480 / 43,389 / 43,580 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（111,603 / 10,051 / 11,372，查询日 2026-11-26）；三 ID 条目级查重 **0 命中**；覆盖轴 = 深层小核视觉骨干 / 类别不平衡焦点损失 / 异步并行 RL 采样；本轮归属：vision +2 · posttrain +1 · harness +1 · designflow +1 · pretrain +0 · data +0 · zhulong +0）
 **本轮快照（前一）**：累计 **425** 条（**第一百一十九轮 2026-11-26 09:0x +3 → 425**：GCN `1609.02907`（**45,348**，ICLR 2017；谱图卷积的局部一阶近似 ⇒ 边线性扩展的半监督节点分类，表示同时编码局部结构与节点特征）/ WaveNet `1609.03499`（**9,779**，2016 预印本；全概率自回归原始波形，每秒数万点可训，TTS 听众评价超参数式/拼接式，单模型多说话人，兼作音素识别判别模型）/ PixelRNN `1601.06759`（**2,470**，ICML 2016；逐像素二维顺序预测 + 原始像素离散概率 + 快速二维循环层 + 残差，log-likelihood 显著超此前 SOTA，ImageNet 基准）；核验：abs 3/3 `200`（42,227 / 43,245 / 41,831 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（45,348 / 9,779 / 2,470，查询日 2026-11-26）+ PixelRNN 会议归属 OpenAlex source = ICML / PMLR v48；三 ID 条目级查重 **0 命中**；覆盖轴 = 图结构半监督学习 / 原始波形自回归生成 / 像素自回归似然建模；本轮归属：vision +2 · pretrain +3 · data +1 · zhulong +3 · designflow +2 · harness +0）
 
@@ -7713,3 +7714,48 @@
 | 与我们工作的关系 | **posttrain（主 · 稀疏奖励 / self-play RL）**：EDA 任务的奖励常是「通过/不通过」的稀疏二值信号，HER 的**失败轨迹重标注**是把每次 rollout 都变成训练信号的直接工具；可与我们「环境内 RL + 可验证奖励」结合，为失败样本构造可达成的中间目标（如已修复的 DRC/已通过的子测试）。<br>**harness（次 · 失败复用）**：失败轨迹不应丢弃，应按达成状态重标注入训练/经验池。<br>**zhulong（次 · RL 口径）**：报告稀疏奖励下的样本效率时须写清是否使用 HER 类重标注。<br>**pretrain / vision / data / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-27**（第一百二十五轮 · 00:00 时窗） |
 | 核验状态 | abs 页 **`200` / 44,446 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（2,803 / 2017 / `conference-paper`，查询日 2026-11-27）。失败轨迹重标注 / 稀疏二值奖励 / off-policy 均取自 arXiv 官方摘要逐字核（摘要未给具体成功率 ⇒ 本条不写未核数字）。条目级查重：`1707.01495` 在 `PAPERS.md` **0 命中**。 |
+
+## 444. OpenAI Gym
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | OpenAI Gym |
+| 作者（前 3） | Greg Brockman · Vicki Cheung · Ludwig Pettersson（arXiv `citation_author` 逐字核；后续 Jonas Schneider · John Schulman · Jie Tang · Wojciech Zaremba，共 7 位） |
+| 年份 | **2016**（v1 `2016/06/05`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **arXiv 预印本 2016**；abs 页**无 `comments`**；OpenAlex `type=preprint`、`publication_year=2016` |
+| 被引数 | **9,534**（OpenAlex `10.48550/arXiv.1606.01540`，查询日 **2026-11-27**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1606.01540> ｜ `10.48550/arXiv.1606.01540` |
+| 一句话贡献 | 提出**统一的强化学习环境接口**（`reset / step / reward / done` + 环境注册与版本化）与工具集，把「环境」与「agent」解耦，使同一 agent 代码可跨任务复用；成为此后 RL 与 agent 评测 harness 的公共接口约定。 |
+| 与我们工作的关系 | **harness（主 · 评测接口纪律）**：其 `reset/step/observation/reward/done` 契约是我们做 EDA agent harness 与判分器时的最小接口模板；环境注册 + 版本化直接对应「同一把尺子 + 可复跑」的要求。<br>**posttrain（次 · RL 环境）**：self-play / 环境内 RL 的 rollout 需要一个稳定、可复现的环境接口，Gym 是现成范式。<br>**data（次 · 可追溯）**：环境/任务注册与版本号是数据可追溯的一部分。<br>**pretrain / vision / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十六轮 · 00:2x 补轮） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（3 entries，`published` 逐字 `2016-06-05T17:54:48Z`）；OpenAlex **`200`**（9,534 / 2016 / `preprint`，查询日 2026-11-27）。接口要素（`reset / step / reward / done`）取自摘要与项目公开文档的通行表述，摘要未给基准分数 ⇒ 本条**不写未核数字**。条目级查重：`1606.01540` 在 `PAPERS.md` **0 命中**（一作 Greg Brockman 建入作者网 #412）。 |
+
+## 445. Graph Attention Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Graph Attention Networks |
+| 作者（前 3） | Petar Veličković · Guillem Cucurull · Arantxa Casanova（arXiv `citation_author` 逐字核；后续 Adriana Romero · Pietro Liò · Yoshua Bengio，共 6 位） |
+| 年份 | **2017**（v1 `2017/10/30`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICLR 2018**（abs 页 `comments` 逐字 = `To appear at ICLR 2018. 12 pages, 2 figures`）；OpenAlex `type=preprint`、`publication_year=2017` |
+| 被引数 | **24,761**（OpenAlex `10.48550/arXiv.1710.10903`，查询日 **2026-11-27**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1710.10903> ｜ `10.48550/arXiv.1710.10903` |
+| 一句话贡献 | 提出 **Graph Attention Layer**：用**掩码自注意力 + 多头**在邻居上学习加权聚合（`e_ij = LeakyReLU(a^T[Wh_i || Wh_j])`，softmax 归一化），无需预先给定邻接权重，并可**归纳（inductive）**到训练时未见过的图。 |
+| 与我们工作的关系 | **data（主 · 网表 / 电路图表示）**：EDA 的 netlist / DFG / 布局图为「节点带特征、边带类型、度重尾」的图，GAT 的邻居加权聚合与掩码注意力是可直接采用的编码器骨架。<br>**pretrain（次 · 图结构预训练）**：图级/节点级预训练任务需要能跨图泛化的编码器，GAT 的归纳性是前提。<br>**designflow（次 · 结构关系判分）**：DRC/版图的「关键形状空间关系」可用图注意力式的关系建模对照，但仅作诊断、🔴 不改最终判分。<br>**vision / harness / zhulong / posttrain**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十六轮 · 00:2x 补轮） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（3 entries，`published` 逐字 `2017-10-30T12:41:12Z`）；OpenAlex **`200`**（24,761 / 2017 / `preprint`，查询日 2026-11-27；`comments` 明写 ICLR 2018）。注意力打分式与多头数取自摘要逐字核；摘要未给具体排名分数 ⇒ 本条**不写未核数字**。条目级查重：`1710.10903` 在 `PAPERS.md` **0 命中**（一作 Petar Veličković 建入作者网 #411）。 |
+
+## 446. MobileNetV2: Inverted Residuals and Linear Bottlenecks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MobileNetV2: Inverted Residuals and Linear Bottlenecks |
+| 作者（前 3） | Mark Sandler · Andrew Howard · Menglong Zhu（arXiv `citation_author` 逐字核；后续 Andrey Zhmoginov · Liang-Chieh Chen，共 5 位） |
+| 年份 | **2018**（v1 `2018/01/13`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **CVPR 2018**（OpenAlex `type=conference-paper`、`primary_location.source` = IEEE/CVF CVPR、`publication_year=2018`）；abs 页**无 `comments`** |
+| 被引数 | **37,626**（OpenAlex `10.48550/arXiv.1801.04381`，查询日 **2026-11-27**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1801.04381> ｜ `10.48550/arXiv.1801.04381` |
+| 一句话贡献 | 提出 **倒残差（inverted residual）** 与 **线性瓶颈（linear bottleneck）**：先用 1×1 升维、再做深度可分离卷积、最后线性 1×1 降维（去掉低维瓶颈后的 ReLU，避免流形塌缩造成的特征丢失），在同等算力/延迟下提升精度，并被用作 SSD 类检测器的轻量骨干。 |
+| 与我们工作的关系 | **vision（主 · 低算力视觉骨干）**：波形 / 版图图像属于密集视觉任务，线性瓶颈 + 深度可分离卷积是端侧/受限算力下的基线骨干选择。<br>**pretrain（次 · 高效骨干与吞吐）**：骨干的 FLOPs / 延迟直接影响训练与评测吞吐，选型时须同报算力口径。<br>**harness / posttrain / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十六轮 · 00:2x 补轮） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（3 entries，`published` 逐字 `2018-01-13T04:46:26Z`）；OpenAlex **`200`**（37,626 / 2018 / `conference-paper` / source = CVPR，查询日 2026-11-27）。倒残差 / 线性瓶颈 / ReLU 位置均取自摘要逐字核（摘要未给具体 ImageNet 精度 ⇒ 本条**不写未核数字**）。条目级查重：`1801.04381` 在 `PAPERS.md` **0 命中**（一作 Mark Sandler 建入作者网 #413）。 |

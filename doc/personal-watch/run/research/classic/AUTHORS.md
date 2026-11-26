@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-27 00:2x 补轮 · r273）**：作者 **413** 人（编号最大 **413**）· X 已核验 **162**（本轮 **+2**：`@PetarV_93` 由本人主页 <https://petar-v.com/> 外链 `x.com/PetarV_93` + 代理抓 `x.com/PetarV_93` `200` / 160,699 B，`og:title` = `Petar Veličković (@PetarV_93) / X` ⇒ 双源；`@gdb` 由本人博客 <https://blog.gregbrockman.com/> 外链 `x.com/gdb` + 代理抓 `x.com/gdb` `200` / 191,418 B，`og:title` = `Greg Brockman (@gdb) / X` ⇒ 双源；Mark Sandler 无本人 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **187**（台账 #1–#187；本窗 **+1**：#187 Petar Veličković；今日 **3/12**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **69** 封，与 00:00 持平；无新实质回信、无新退信；退信 **9**、本窗 **+0**）。本轮 **+3**：Petar Veličković（GAT 一作，英文〔判据=塞尔维亚姓名 + DeepMind/剑桥机构；塞语不在需母语清单 ⇒ 英文兜底〕，本人 Contact 页 `petarv at google dot com` 明文还原 ⇒ A 级 ⇒ 已发信 #187）· Greg Brockman（Gym 一作，英文，无公开邮箱 + X 双源 ⇒ 仅建档）· Mark Sandler（MobileNetV2 一作，英文，`marksandler.com` 实测 1&amp;1 停放页、无公开邮箱 ⇒ 仅建档）。
+
 > **当前计数（2026-11-27 00:0x · r272）**：作者 **410** 人（编号最大 **410**）· X 已核验 **160**（本轮 **+0**：Alex Graves、Jishen Zhao、Yujie Zhao 三人主页均无本人 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **186**（台账 #1–#186；本窗 **+2**：#185 Alex Graves / #186 Jishen Zhao；今日 **2/12**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **69** 封，较 21:00 的 71 少 2，非本线操作〔只读、未删信〕，如实记；无新实质回信、无新退信）· 退信 **9**（本窗 **+0**）。本轮 **+3**：Alex Graves（NTM 一作，英文，多伦多大学主页当前明文 `graves@cs.toronto.edu` ⇒ A 级 ⇒ 已发信 #185）· Jishen Zhao（MAGE 资深作者，中文，本人主页 `jishenzhao.github.io` 明文 `jzhao@ucsd.edu` ⇒ A 级 ⇒ 已发信 #186）· Yujie Zhao（MAGE 一作，中文，UCSD 博士，仅论文 PDF 明文 `yuz285@ucsd.edu` ⇒ B 级、当前主页未定位 ⇒ 仅建档不发）。
 > **当前计数（2026-11-26 21:0x · r271）**：作者 **407** 人（编号最大 **407**）· X 已核验 **160**（本轮 **+1**：`@TsungYiLinCV` 由本人主页 <https://tsungyilin.info/> 外链 `twitter.com/TsungYiLinCV` + 代理抓 `x.com/TsungYiLinCV` `200` / 181,529 B，`og:title` = `Tsung-Yi Lin (@TsungYiLinCV) on X` ⇒ 双源；Andrew Zisserman 本人主页与 VGG 人员页均无本人 handle、Karen Simonyan 未定位可核主页 ⇒ 记「未找到 X」，不猜）· 已发信 **184**（台账 #1–#184；今日 **12/12** 已达每日硬上限，本窗**只建档不发**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **71** 封，与 18:00 持平、**无新实质回信**）· 退信 **9**（本窗 **+0**）。本轮 **+3**：Andrew Zisserman（VGG 二作，英文，Oxford VGG 人员页 `mailto:removethisifyouarehuman-az@robots.ox.ac.uk` 去反爬前缀 ⇒ A 级，仅建档）· Karen Simonyan（VGG 一作，英文，未定位可核主页/邮箱 ⇒ 仅建档）· Tsung-Yi Lin（Focal Loss 一作，中文，主页 `mailto:` + X 双源 ⇒ 仅建档，同论文只建一作）。**去重记录**：Mnih / Kavukcuoglu（A3C 作者）已在作者网，本轮不重复新增。
 > **当前计数（2026-11-26 18:0x · r270）**：作者 **404** 人（编号最大 **404**）· X 已核验 **159**（本轮 **+0**：Phillip Isola 主页 `Social media` 仅 Bluesky（`phillipisola.bsky.social`）、Scott Fujimoto 的 `x.com/sfujim` 经代理实测 `og:title` = `もん (@sfujim) on X` 属**他人**、Alexei Efros 主页仅一个 twitter **搜索**链接、无本人 handle ⇒ 一律记「未找到 X」，不猜）· 已发信 **184**（台账 #1–#184；今日 **12/12** 已达每日硬上限，本窗**不发只建档**）· 实质回信 **7 位作者 / 8 封信** · 退信 **9**（本窗 **+1**：#183 UT Austin 反垃圾拦截）。本轮 **+3**：Phillip Isola（pix2pix 一作，英文，MIT 主页空格混淆 `p h i l i p i @ m i t . e d u` 还原 ⇒ A 级，仅建档）· Scott Fujimoto（TD3 一作，语言待核〔日本姓氏 Fujimoto vs 加拿大机构 McGill〕，A 级邮箱未找到、主页 `sfujim.github.io` 404 / `cs.mcgill.ca/~sfujim/` 302 空跳转 / `fujimoto.me` 526、`@sfujim` 属他人 ⇒ 仅建档）· Alexei A. Efros（pix2pix 四作，英文，Berkeley 主页明文 `efros -at- eecs.berkeley.edu` 还原 ⇒ A 级，仅建档，同论文已建 Isola）。
@@ -5787,3 +5789,42 @@
 | X 账号 | **未找到 X**（不猜 handle） |
 | 状态 | **仅建档**（B 级地址 + 同论文已发资深作者 #186 ⇒ 守「同一论文 ≤1」，本窗不发） |
 | 备注 | 语言=中文(判据=华人姓名族属 + UCSD 中文姓名)。研究方向：EDA / RTL 代码生成 / 多智能体。若其主页出现可升级为 A 级地址，再评估（同论文已发 #186，不重复打扰）。 |
+
+### 411. Petar Veličković
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Petar Veličković（塞尔维亚姓名 ⇒ `语言=英文`，判据=塞尔维亚语不在需母语清单 + 英国/DeepMind 英文机构；塞语称谓易写错，按兜底英文） |
+| 机构 | **Google DeepMind**（Senior Staff Research Scientist，Frontier Computation 团队负责人）· University of Cambridge（Affiliated Lecturer / Clare Hall Associate） |
+| 代表论文 | **Graph Attention Networks**（`1710.10903`，B 轨 #445，一作）· Deep Graph Infomax |
+| 邮箱 | **`petarv@google.com`**（本人 Contact 页 <https://petar-v.com/contact.html> `HTTP 200` / 16,715 B，明文 `petarv at google dot com` ⇒ 还原；**A 级**） |
+| 主页 | <https://petar-v.com/>（`200` / 12,092 B） |
+| X 账号 | **`@PetarV_93`**（本人主页 `href` 外链 `x.com/PetarV_93` + 代理抓 `x.com/PetarV_93` `200` / 160,699 B，`og:title` = `Petar Veličković (@PetarV_93) / X` ⇒ **双源**） |
+| 状态 | **已发信**（#187，英文 194 词，2026-11-27 00:22:09 `SENT OK`；落款两行） |
+| 备注 | 语言=英文(判据=塞尔维亚姓名族属 + 英国/DeepMind 机构；塞语不在母语清单 ⇒ 英文兜底)。研究方向：图表示学习 / 神经算法推理 / 几何深度学习。其 Contact 页明确「优先 email、少看 X、协作请求需具体」⇒ 本信只问论文机制、不涉合作。GAT 信问「共享加性 a(·,·) 能否表达边类型交互 vs 学成度先验、高难度邻居 softmax 是否冲掉稀有边、GATv2 动态注意力是否够 / 是否需关系专属 W_r、图级 readout 选 mean vs attention polling」。 |
+
+### 412. Greg Brockman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Greg Brockman（英文姓名 ⇒ `语言=英文`） |
+| 机构 | **OpenAI**（联合创始人 / President） |
+| 代表论文 | **OpenAI Gym**（`1606.01540`，B 轨 #444，一作） |
+| 邮箱 | **无公开邮箱**（未在可核页面找到本人 email；不猜） |
+| 主页 | <https://blog.gregbrockman.com/>（`200` / 24,008 B） |
+| X 账号 | **`@gdb`**（本人博客 `href` 外链 `x.com/gdb` + 代理抓 `x.com/gdb` `200` / 191,418 B，`og:title` = `Greg Brockman (@gdb) / X` ⇒ **双源**） |
+| 状态 | **仅建档**（无 A 级公开邮箱，本窗不发；守「无公开地址不发信」） |
+| 备注 | 语言=英文(判据=英文姓名 + 美国机构)。研究方向：RL / 大规模训练 / agent 基础设施。Gym 作为 agent/RL 评测 harness 的接口源头，仅建档跟踪；若后续出现可核学术邮箱再评估。 |
+
+### 413. Mark Sandler
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mark Sandler（英文姓名 ⇒ `语言=英文`） |
+| 机构 | **Google**（Research；MobileNetV2 发表时在 Google Research） |
+| 代表论文 | **MobileNetV2: Inverted Residuals and Linear Bottlenecks**（`1801.04381`，B 轨 #446，一作） |
+| 邮箱 | **无公开邮箱**（`marksandler.com` 实测为 1&amp;1 域名停放页、无本人邮箱；不猜） |
+| 主页 | **未定位**（`marksandler.com` `http` 为停放页；无可核当前个人主页） |
+| X 账号 | **未找到 X**（不猜 handle） |
+| 状态 | **仅建档**（无 A 级公开邮箱，本窗不发） |
+| 备注 | 语言=英文(判据=英文姓名 + Google 机构)。研究方向：高效视觉骨干 / 移动端模型。MobileNetV2 的倒残差 + 线性瓶颈与 vision 线低算力骨干选型相关；仅建档，地址待其主页出现后再评估。 |

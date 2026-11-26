@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-27</h1>
-  <div class="sub">🌅 00:00 首窗（新一天 A 轨额度重置）· 今日进度 <b>5 / 5</b> · 数据源 arXiv</div>
-  <div class="meta">生成时间：2026-11-27 00:1x CST ｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 443）｜ 作者网 410（X 已核验 160）｜ 作者信 186（实质回信 8 信 / 7 人 ≈4.3%）</div>
+  <div class="sub">🌅 00:00 首窗（新一天 A 轨额度重置）· 🔁 00:2x 补轮（B 轨 / 作者网 / 作者信）· 今日进度 <b>5 / 5</b> · 数据源 arXiv</div>
+  <div class="meta">生成时间：2026-11-27 00:2x CST ｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 446）｜ 作者网 413（X 已核验 162）｜ 作者信 187（实质回信 8 信 / 7 人 ≈4.3%）</div>
 </header>
 
 <div class="note">
@@ -148,7 +148,7 @@
 <ul><li><b>本期无</b>：X 经代理可达（<code>x.com</code> <code>200</code>），但本轮未发现同时满足「原文 + 链接 + ≤30 天 + 与本线相关」的顶级研究者言论；不硬凑、不用二手转述冒充原文。</li></ul>
 </details>
 
-<h3 class="sec">🅱 B 轨 · 经典论文（第一百二十五轮 +3 → 443）</h3>
+<h3 class="sec">🅱 B 轨 · 经典论文（00:00 轮 · 第一百二十五轮 +3 → 443）</h3>
 <div class="card">
   <ul>
     <li><b>MAGE: A Multi-Agent Engine for Automated RTL Code Generation</b>（<a href="https://arxiv.org/abs/2412.07822">2412.07822</a>，2024-12-10，被引 <b>153</b>）— 首个开源多智能体 RTL 生成系统之一；高温度候选采样 + <b>Verilog-state checkpoint</b>，作者自报 VerilogEval-Human v2 <b>95.7%</b>（比 Claude-3.5-sonnet 高 23.3%）。归属：designflow · zhulong · harness。</li>
@@ -158,7 +158,7 @@
   <p class="small">核验：abs 3/3 <code>200</code>（42,024 / 39,527 / 44,446 B，<code>citation_title</code> + <code>citation_date</code> 逐字）+ OpenAlex 3/3 <code>200</code>（查询日 2026-11-27）；三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>。</p>
 </div>
 
-<h3 class="sec">👥 作者关系网 +3 → 410（X 仍 160）</h3>
+<h3 class="sec">👥 作者关系网（00:00 轮 +3 → 410，X 仍 160）</h3>
 <div class="card">
   <ul>
     <li><b>#408 Alex Graves</b>（University of Toronto / DeepMind；NTM 一作；A 级 <code>graves@cs.toronto.edu</code>，主页 <code>200</code> / 10,166 B；X 未找到）— 已发信 #185。</li>
@@ -167,7 +167,7 @@
   </ul>
 </div>
 
-<h3 class="sec">✉ 作者请教信 +2 → 186（今日 2/12）</h3>
+<h3 class="sec">✉ 作者请教信（00:00 轮 +2 → 186，今日 2/12）</h3>
 <div class="card">
   <ul>
     <li><b>#185 Alex Graves</b> — 英文 <b>197 词</b>；主题 <code>Neural Turing Machines: which memory mechanisms carried the load?</code>；<code>SENT OK</code>；落款两行（<code>Best regards,</code> / <code>Yang Liu</code>，其后无行）。</li>
@@ -225,9 +225,26 @@
   </ul>
 </div>
 
+<h3 class="sec">🔁 00:2x 补轮 · B 轨 +3 → 446 · 作者网 +3 → 413（X 162）· 作者信 +1 → 187</h3>
+<div class="card">
+  <ul>
+    <li><b>OpenAI Gym</b>（<a href="https://arxiv.org/abs/1606.01540">1606.01540</a>，2016-06-05，被引 <b>9,534</b>）— 统一 RL 环境接口（<code>reset / step / reward</code>），是今天 agent 与 RL 评测 harness 的接口源头。归属：harness · posttrain。</li>
+    <li><b>Graph Attention Networks</b>（<a href="https://arxiv.org/abs/1710.10903">1710.10903</a>，2017-10-30，被引 <b>24,761</b>，ICLR 2018）— 掩码自注意力 + 多头，邻居加权聚合、可归纳；对应 EDA 网表 / 电路的图表示。归属：data · pretrain · designflow。</li>
+    <li><b>MobileNetV2: Inverted Residuals and Linear Bottlenecks</b>（<a href="https://arxiv.org/abs/1801.04381">1801.04381</a>，2018-01-13，被引 <b>37,626</b>，CVPR 2018）— 倒残差 + 线性瓶颈，低算力视觉骨干。归属：vision · pretrain。</li>
+  </ul>
+  <p class="small">核验：arXiv API <code>200</code> + <code>application/atom+xml</code>（3 entries，<code>published</code> 逐字 2017-10-30T12:41:12Z / 2016-06-05T17:54:48Z / 2018-01-13T04:46:26Z）+ OpenAlex <code>3/3 200</code>（9,534 / 24,761 / 37,626，查询日 2026-11-27）；三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>。</p>
+  <ul>
+    <li><b>#411 Petar Veličković</b>（Google DeepMind；GAT 一作；A 级 <code>petarv@google.com</code> 由其本人 Contact 页明文 <code>petarv at google dot com</code> 还原；X <code>@PetarV_93</code> 双源）— 已发信 #187。</li>
+    <li><b>#412 Greg Brockman</b>（OpenAI；Gym 一作；无公开邮箱；X <code>@gdb</code> 双源：本人博客 <code>href</code> + X 页 <code>og:title</code>）— 仅建档。</li>
+    <li><b>#413 Mark Sandler</b>（Google；MobileNetV2 一作；<code>marksandler.com</code> 实测为 1&amp;1 停放页、无公开邮箱；X 未找到）— 仅建档。</li>
+  </ul>
+  <p class="small">✉ <b>#187 Petar Veličković</b> — 英文 <b>194 词</b>；主题 <code>GAT on typed netlist graphs: static attention and readout</code>；<code>SENT OK 00:22:09</code>；落款两行（<code>Best regards,</code> / <code>Yang Liu</code>，其后无行）。抗模板：正文含 <code>e_ij = LeakyReLU(a^T [W h_i || W h_j])</code>、<code>K=8</code>、GATv2 静态注意力三点专属细节，与 #185 / #186 开头句与问句零共用。</p>
+  <p class="small">📨 IMAP 只读再核：INBOX <b>69 封</b>（与 00:00 持平），<b>无新实质回信、无新退信</b>；累计实质 <b>8 信 / 7 人 ≈ 4.3%</b> · 自动 1 · 退信 9。</p>
+</div>
+
 <footer>
-  research 线 · <code>research/daily/2026-11-27.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-27 00:1x CST<br>
-  本期：A 轨 <b>5/5</b> · B 轨 <b>+3 → 443</b> · 作者网 <b>+3 → 410</b>（X 160）· 作者信 <b>+2 → 186</b> · 实质回信 <b>8 信 / 7 人 ≈4.3%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
+  research 线 · <code>research/daily/2026-11-27.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-27 00:2x CST<br>
+  本期：A 轨 <b>5/5</b> · B 轨 <b>+6 → 446</b>（00:00 +3 / 00:2x +3）· 作者网 <b>+6 → 413</b>（X 162）· 作者信 <b>+3 → 187</b> · 实质回信 <b>8 信 / 7 人 ≈4.3%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
 </footer>
 
 </div>
