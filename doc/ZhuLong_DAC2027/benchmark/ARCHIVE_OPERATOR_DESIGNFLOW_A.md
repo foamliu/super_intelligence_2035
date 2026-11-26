@@ -468,3 +468,17 @@ r1280-r1283 均为「全部 active 工作(P1/P2/P3/P4+Lite-500)闭合后的 idle
 ## 归档块 · 2026-11-27 r1336 瘦身 · A1（r1335 teeth-guard 监控轮，原文照搬）
 
 → r1335 详块见本行（r1335: teeth-guard 监控轮(只读·0 改动). 状态不变 A 三线全收口(live-eval REQ7/7+OPT3 BLOCKED有结论+NA106 / contract P1-P4 全 done / lite 116/116 green), A-pure 池枯竭(r1304 4-shard union top-150 mc>=5 全 touched, covered=543/target=4529 mc10). 本轮 teeth-guard: ① .75 可达 eda_flow open_session(task_id=A-monitor-r1335) → hostname hfhds201 RC0, hspice V-2023.12-SP1-1/finesim V-2023.12-1/vcs+vlogan R-2020.12 全 @ /apps/synopsys/SRB/. ② 3 最新 L2.live case(VpsRegrErrorEngineer-001/TotemSC-001/AsyncFifoSim-001) negative_selftest 全 NEG_SELFTEST_OK 无回归: VpsRegr 4 fakes全FAIL / TotemSC 6 negs FAIL 4-distinct{c,d,f,h} / AsyncFifoSim 3 static-neg FAIL 3-distinct{c,d,o}+§4.9 trio{c,o,d}+live-neg PASS-static. ③ cases/A 585 全 judge_layers 齐全(574 [L0,L1] + 11 [L0,L1,L2.live], 0 missing) 程序化扫描确认. ④ 台账 stats: covered=543/target=4529 mc10(12.0%, 快照 2026-11-26 17:25 sessions=9245), A-pure 池枯竭不变. ⑤ 两仓 0/0 sync(SI rev-list 0/0, A 自有文件本轮仅 MEMORY_A+daily_A 更新; EFB rev-list 0/0, A 自有 cases/A 全 clean). 工作树仅别线 in-flight 未碰. ⑥ 无新 zhulong thermo_feedback(reports/ 无 thermo_*). ⑦ 无 board.md/无 OPEN @A 议题/discuss 不存在⇒发言配额未欠(0-case 监控轮非造题轮). session close_session cleaned. 🚫 未改 case/check.py/判分/别 shard/jsonl/论文宏/别线 in-flight 文件/stash. A 116/116 green 不变, 585 cases/A judge_layers 齐全. 无新 case 可造(A-pure 枯竭), B 阻塞非 A 可动, 本轮=合规 teeth-guard 监控. 详 daily_A_2026-11-27.md §r1335）
+
+---
+
+## 归档块 · 2026-11-27 r1339 瘦身 · A1（r1336/r1337 teeth-guard 监控轮，原文照搬，两轮状态完全相同合并归档）
+
+→ r1336 详块见 daily_A_2026-11-27.md §r1336（r1336: teeth-guard 监控轮(只读·0 改动). .75 REACH_OK + 3 L2.live neg_selftest 全 OK + 两仓 0/0 sync + 无新 thermo_feedback. A 三线全收口不变. 原文存 daily）
+
+→ r1337 详块见 daily_A_2026-11-27.md §r1337（r1337: teeth-guard 监控轮(只读·0 改动). 状态不变 A 三线全收口. .75 REACH_OK hfhds201 + 3 L2.live neg_selftest 全 OK(VpsRegr 4-distinct{a,d,g,h}/TotemSC 4-distinct{c,d,f,h}/AsyncFifoSim 3-static{c,d,o}+live-neg) + 585 judge_layers 齐全 + 两仓 0/0 sync + 无新 thermo_feedback/board/discuss. 汇总note: changes.tsv 增至 26 行(B +3 L2.live→done 4→7 / D +12 test-field re-syncs), summary §2 stale 待 B 确认基线(r1338 已刷新). 原文存 daily）
+
+---
+
+## 归档块 · 2026-11-27 r1339 瘦身 · A2（r1318 REQ-2 check_live 设计 .75 真 finesim 实跑验证轮，只读·不改判分，原文照搬）
+
+**r1318 REQ-2 check_live 设计 .75 真 finesim 实跑验证(只读·不改判分)**: eda_flow open_session on .75(hfhds201), 复刻 check_live「_build_B+参考解 rewrite+跑真 finesim+分类」3 seed(101/202/303), finesim V-2023.12-1 @ /apps/synopsys/SRB/finesim/V-2023.12-1/bin, Q1 wall ~16s(3 seed): 3 seed 参考解 rewrite 后全 rc=0 + 全 success marker(FineSim Successfully Completed/DC converged/End of Transient Analysis/Generating MOS models) + 无 can't find model == mock 预测 ✓ 0 divergence. **Q1 mock 保真 CONFIRMED(且强于 REQ-1: 真 finesim 实测产完全相同的 4 个 success marker ⇒ mock success 路径非捏造, error+success 双忠实, case 健康)**. Q2 wall ~12s(3 seed): 删整行 .model ./ cheat → mock 见 count==0⇒success(check_static 全过) 但真 finesim 报 can't find model + exit=5 + 无 success ⇒ check_live FAIL, 3 seed 全 TEETH=True. **Q2 live-neg 牙 CONFIRMED(注入点=模型定义完整性, 与静态 .model ./ 计数正交)**. "FineSim V-2023.12-1 for linux64" banner 证真二进制 ✓. REQ-2 解冻后 R2 落盘=低风险机械执行. **两 REQ(VpsRegr/TotemSC)check_live 设计均已 .75 实跑验证就绪**, 解冻后 R2 落盘=纯机械执行(非侵入包装+live-neg+sha 同步+§5 ②④⑥⑦), 无设计风险无 infra 阻塞. session 已 close_session cleaned. 详 designflow/contract_reform_A.md §R2 check_live 设计 .75 实跑验证 · REQ-2 节. (r1319/r1321 已据此落盘实际改造, 本设计验证轮结论已被吸收)
