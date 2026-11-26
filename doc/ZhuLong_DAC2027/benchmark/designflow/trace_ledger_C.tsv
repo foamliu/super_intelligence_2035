@@ -1347,3 +1347,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795316615041_rrpe6.messages.json	xxchen	hfeg0plg19	703	physical_verify	parked		2026-11-26 12:46	rotated off all 4 replica hosts (pkn003/plg06/plg18/plg19); xxchen keeps only 5 newer sessions (1795568047471_54cwt,1795574534209_1x17n,1795583544010_u03z0,1795585155081_qikhb,1795589069443_4bz6d) - fetchable fresh physical_verify leads for next round. r1215
 1795574534209_1x17n.messages.json	xxchen	hfeg0pkn003	1669	physical_verify	case	EDA-Eval-DesignFlow-TopPinLabelExtract-001	2026-11-26 13:17	
 1795568047471_54cwt	xxchen	hfeg0pkn003	383	physical_verify	case	EDA-Eval-DesignFlow-SpfNodeTrace-001	2026-11-26 13:56	
+1787122881271_1hkwu	junxu	hfeg0plg79	1950	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoCliDaemonInlineFix-001	2026-11-26 14:34	
