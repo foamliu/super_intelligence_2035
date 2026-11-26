@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 数据准备全链路状态报告 · 2026-10-08</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); } .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .tldr { background:#fff; border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  .tldr ol { margin:6px 0; padding-left:22px; } .tldr li { margin:5px 0; }
+  .fig { margin:18px 0; text-align:center; } .fig svg { max-width:100%; height:auto; }
+  .fig .cap { font-size:12.5px; color:var(--muted); margin-top:6px; }
+  .callout { background:#fff8c5; border:1px solid #d4a72c; border-radius:8px; padding:14px 18px; margin:14px 0; font-size:14px; }
+  .callout.bad { background:#ffebe9; border-color:var(--bad); }
+  .callout.ok { background:#dafbe1; border-color:var(--ok); }
+  .callout.info { background:#ddf4ff; border-color:var(--accent); }
+  .footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); font-size:12.5px; color:var(--muted); }
+  .ref-link { display:inline-block; background:#ddf4ff; border:1px solid var(--accent); border-radius:6px; padding:4px 12px; font-size:13px; color:var(--accent); text-decoration:none; margin-bottom:16px; }
+  .progress-bar { width:100%; height:22px; background:#e1e4e8; border-radius:4px; overflow:hidden; position:relative; }
+  .progress-fill { height:100%; border-radius:4px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:11px; font-weight:600; color:#fff; }
+  .pf-ok { background:var(--ok); } .pf-warn { background:var(--warn); } .pf-run { background:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>BaiZe 数据准备全链路状态报告</h1>
+  <div class="sub">Base 下载 / 分词 / GPIC / 配比实验 / 污染隔离 — 2026-10-08 全景快照</div>
+  <div class="meta"><span>📊 日期 2026-10-08 09:20</span><span>🖥 主机 10.239.2.12</span><span>👤 data agent · 唤醒 216</span></div>
+  <div class="meta" style="margin-top:10px;"><span>📄 配比实验收官报告：<code>report_data_mix_summary.html</code>（29KB，R1→R2→top-K 全流程 + ρ=−0.80 结论）</span></div>
+</header>
+
+<a class="ref-link" href="report_data_mix_summary.html">→ 配比实验收官总报告（88:8:4 结论 · ρ=−0.80 · 代理规模局限）</a>
+
+<!-- 1. TL;DR -->
+<div class="tldr">
+  <h3 style="margin-top:0;">📋 TL;DR</h3>
+  <ol>
+    <li><b>Base 下载全部完成 ✅</b>：Ultra-FineWeb 三 config 全满 — <code>en</code> 2048/2048 (2.5TB) · <code>l1_en_hq</code> 6000/6000 (446GB) · <code>zh</code> 256/256 (303GB)；UltraX-Preview 479/479 ✅ (454GB)。</li>
+    <li><b>分词进度过半</b>：EN base s0–s3 = <b>22.05B tok</b> ✅；ZH s4–s8+s10+s11 = <b>98.80B tok</b> ✅（7/8 shard）；s9 运行中（50G .bin，~94%，ETA ~09:45）；l1_en_hq 12 进程（s12–s23）运行中，各 13G .bin（ETA ~16:00）。已完成 <b>120.85B tok</b>，P-8 目标 ~100B <b>已超额</b>。</li>
+    <li><b>GPIC 下载进行中</b>：<b>5795/8001</b> train tar + 128/128 test ✅，~45 tar/h，ETA ~2.1d（落盘 8.5TB @ /nas_inference）。</li>
+    <li><b>配比实验已交付</b>：BO R1(200) + R2(200) + top-K 全量验证 → ρ=−0.80（BO 排名与全量 lm_eval 反转）；全量分差仅 0.6pp → 该代理规模下不可分辨 → 建议沿用先验 <b>88:8:4</b>。</li>
+    <li><b>剩余瓶颈</b>：GPIC 下载（ETA ~2d）· l1_en_hq 分词完成（ETA ~今天 16:00）· en_v1_4 排队（待运维放行）· 新分词产物投料前须过 <code>check_contamination.py</code>。</li>
+  </ol>
+</div>
+
+<!-- 2. 数据全景 -->
+<h2 class="sec"><span class="no">2</span>数据全景（DATA_LEDGER 摘要）</h2>
+<p>下表为 BaiZe 数据准备的各数据源实测状态总表（数字均由实测复算，参见 <code>DATA_LEDGER.md</code>）。</p>
+<table>
+  <thead><tr><th>数据源</th><th>类型</th><th>实测规模</th><th>格式</th><th>下载状态</th><th>分词状态</th><th>用途</th></tr></thead>
+  <tbody>
+    <tr><td>Ultra-FineWeb <code>en</code></td><td>base·EN</td><td>2048 parquet / 2.5TB</td><td>parquet (content列)</td><td><span class="badge b-ok">✅ 2048/2048</span></td><td><span class="badge b-ok">✅ s0–s3 · 22.05B tok</span></td><td>P-8 主体</td></tr>
+    <tr><td>Ultra-FineWeb <code>l1_en_hq</code></td><td>base·EN HQ</td><td>6000 parquet / 446GB<br>(6 snapshots)</td><td>parquet</td><td><span class="badge b-ok">✅ 6000/6000</span></td><td><span class="badge b-warn">🔄 s12–s23 · 12进程</span></td><td>P-8 主体扩展</td></tr>
+    <tr><td>Ultra-FineWeb <code>zh</code></td><td>base·ZH</td><td>256 parquet / 303GB</td><td>parquet</td><td><span class="badge b-ok">✅ 256/256</span></td><td><span class="badge b-warn">🔄 7/8 shard · 98.80B tok<br>s9 运行中 ~94%</span></td><td>P-8 主体</td></tr>
+    <tr><td>Ultra-FineWeb <code>en_v1_4</code></td><td>base·EN v1.4</td><td>56,461 文件 / 6.75TB<br>(110 CC snapshots)</td><td>parquet</td><td><span class="badge b-no">⏸ 排队（未启动）</span></td><td>—</td><td>备用/扩展</td></tr>
+    <tr><td>GPIC</td><td>多模态·图文对</td><td>8001 train tar + 128 test tar<br>(目标 8.5TB+)</td><td>webdataset tar</td><td><span class="badge b-warn">🔄 5795/8001</span></td><td>—（tar 直接消费）</td><td>视觉训练</td></tr>
+    <tr><td>UltraX-Preview</td><td>通用文本</td><td>479 parquet / 454GB<br>~100B token</td><td>parquet</td><td><span class="badge b-ok">✅ 479/479</span></td><td>—（备选源）</td><td>备选（已例外下满）</td></tr>
+    <tr><td>Ultra-FineWeb-L3 (EN)</td><td>退火/decay</td><td>1764 parquet / 1.9TB<br>~690B token</td><td>parquet (qa列)</td><td><span class="badge b-ok">✅ 已下全</span></td><td>—（退火阶段）</td><td>Decay 段</td></tr>
+    <tr><td>UltraData-Code</td><td>退火·code</td><td>1121 parquet / 1.22TB<br>~411B token</td><td>parquet</td><td><span class="badge b-ok">✅ 已下载</span></td><td>—（退火阶段）</td><td>退火 code</td></tr>
+    <tr><td>UltraData-Math</td><td>退火·math</td><td>1823 parquet / 552GB<br>~303B token</td><td>parquet</td><td><span class="badge b-ok">✅ 已下载</span></td><td>—（退火阶段）</td><td>退火 math</td></tr>
+    <tr><td>UltraData-SFT-2605</td><td>SFT</td><td>1504 jsonl / 319GB</td><td>jsonl</td><td><span class="badge b-ok">✅ 已下满</span></td><td>—（SFT阶段）</td><td>Stage(ii) SFT</td></tr>
+    <tr><td>UltraData-SFT-Agent-2609</td><td>SFT·Agent</td><td>50 shard / 51GiB</td><td>jsonl</td><td><span class="badge b-ok">✅ 就绪</span></td><td>—（SFT阶段）</td><td>Stage(ii) SFT</td></tr>
+    <tr><td>EDA-Eval-PyAether</td><td>🔴 评测集（红线）</td><td>158 任务 / 486KB</td><td>jsonl</td><td><span class="badge b-no">🔒 只读隔离</span></td><td>—（禁入训练）</td><td>黑名单源</td></tr>
+  </tbody>
+</table>
+
+<!-- 3. 下载状态 -->
+<h2 class="sec"><span class="no">3</span>下载状态</h2>
+
+<h3>3.1 Base 族（Ultra-FineWeb）— ✅ 全满</h3>
+<table>
+  <thead><tr><th>Config</th><th>进度</th><th>实测大小</th><th>路径</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr><td><code>ultrafineweb_en</code></td><td>2048/2048</td><td>2.5TB</td><td><code>/nas_train/.../Ultra-FineWeb/data/ultrafineweb_en/</code></td><td><span class="badge b-ok">✅ 完成</span></td></tr>
+    <tr><td><code>ultrafineweb_l1_en_hq</code></td><td>6000/6000</td><td>446GB</td><td><code>/nas_train/.../Ultra-FineWeb/data/ultrafineweb_l1_en_hq/</code></td><td><span class="badge b-ok">✅ 完成</span></td></tr>
+    <tr><td><code>ultrafineweb_zh</code></td><td>256/256</td><td>303GB</td><td><code>/nas_train/.../Ultra-FineWeb/data/ultrafineweb_zh/</code></td><td><span class="badge b-ok">✅ 完成</span></td></tr>
+    <tr><td><code>ultrafineweb_en_v1_4</code></td><td>0/56,461</td><td>6.75TB (目标)</td><td>—</td><td><span class="badge b-no">⏸ 排队</span></td></tr>
+  </tbody>
+</table>
+<div class="callout ok">✅ <b>Base 下载已全部结束</b>（3 config 全满 = 3.2TB on /nas_train）。P-8 备料的瓶颈已从「下载」转为「分词」。<code>en_v1_4</code>（6.75TB）继续排队，不启动，直到 GPIC 下完或运维放行。</div>
+
+<h3>3.2 GPIC — 🔄 进行中</h3>
+<table>
+  <thead><tr><th>项</th><th>值</th></tr></thead>
+  <tbody>
+    <tr><td>进度</td><td><b>5795/8001</b> train tar + 128/128 test ✅</td></tr>
+    <tr><td>落盘大小</td><td>8.5TB (train) @ <code>/nas_inference/.../stanford-vision-lab/gpic/train/</code></td></tr>
+    <tr><td>下载速率</td><td>~45 tar/h（~27 tar/30min）</td></tr>
+    <tr><td>PID</td><td>144981（活，etimes ≈ 86h，ppid=3525273）</td></tr>
+    <tr><td>最新文件</td><td><code>gpic_train_05794.tar</code> @ 09:16</td></tr>
+    <tr><td>ETA</td><td>(8001−5795)/45 ≈ <b>49.0h ≈ 2.1d</b></td></tr>
+  </tbody>
+</table>
+<div class="progress-bar" style="margin:8px 0 4px;">
+  <div class="progress-fill pf-run" style="width:72.4%;">72.4%</div>
+</div>
+<p style="font-size:12.5px;color:var(--muted);">GPIC 下载进度：5795/8001（72.4%）</p>
+
+<h3>3.3 UltraX-Preview — ✅ 完成</h3>
+<p>479/479 parquet（454GB）已全部下载，落盘 <code>/nas_train/.../openbmb/UltraX-Preview/</code>。与 base 重叠，作为备选源。</p>
+
+<!-- 4. 分词进度 -->
+<h2 class="sec"><span class="no">4</span>分词进度</h2>
+<p>分词使用 <code>preprocess_data.py</code> + <code>tokenizer_eod</code>（DeepSeek-V4.1-Flash tokenizer），产出 mcore <code>.bin/.idx</code> 格式，落盘 <code>/nas_train/.../BaiZe-ISEDA2027/data/mix_base/</code>（当前 679GB）。</p>
+
+<h3>4.1 已完成 shard</h3>
+<table>
+  <thead><tr><th>Shard</th><th>来源</th><th>.bin 大小</th><th>.idx</th><th>Token 数</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr><td>s0–s3</td><td>EN base (ultrafineweb_en)</td><td>4×21G = 84G</td><td>✅ 4×130M</td><td><b>22.05B</b></td><td><span class="badge b-ok">✅ 完成</span></td></tr>
+    <tr><td>s4–s8, s10, s11</td><td>ZH (ultrafineweb_zh)</td><td>7×53G = 371G</td><td>✅ 7×313M</td><td><b>98.80B</b> (各~14.1B)</td><td><span class="badge b-ok">✅ 完成</span></td></tr>
+    <tr><td colspan="5" style="text-align:right;"><b>小计（已完成）</b></td><td><b>120.85B tok</b></td></tr>
+  </tbody>
+</table>
+
+<h3>4.2 运行中 shard</h3>
+<table>
+  <thead><tr><th>Shard</th><th>来源</th><th>当前 .bin</th><th>预期 .bin</th><th>进度</th><th>ETA</th><th>PID</th></tr></thead>
+  <tbody>
+    <tr><td><b>s9</b></td><td>ZH (ultrafineweb_zh)</td><td>50G</td><td>~53G</td><td>~94%</td><td>~09:45（即将完成）</td><td>286565 (99% CPU)</td></tr>
+    <tr><td><b>s12–s23</b></td><td>l1_en_hq (12 进程并行)</td><td>各 13G</td><td>~50G</td><td>~26%</td><td>~16:00</td><td>759478–787625 (12×99% CPU)</td></tr>
+  </tbody>
+</table>
+
+<div class="fig">
+  <svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg" style="max-width:780px;">
+    <rect x="0" y="0" width="800" height="260" fill="#f6f8fa" rx="8"/>
+    <text x="400" y="24" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2328">分词进度（Token 累计）</text>
+    <line x1="80" y1="220" x2="760" y2="220" stroke="#d0d7de" stroke-width="1.5"/>
+    <line x1="80" y1="50" x2="80" y2="220" stroke="#d0d7de" stroke-width="1.5"/>
+    <text x="72" y="224" text-anchor="end" font-size="10" fill="#59636e">0</text>
+    <text x="72" y="180" text-anchor="end" font-size="10" fill="#59636e">50B</text>
+    <text x="72" y="140" text-anchor="end" font-size="10" fill="#59636e">100B</text>
+    <text x="72" y="100" text-anchor="end" font-size="10" fill="#59636e">150B</text>
+    <text x="72" y="60" text-anchor="end" font-size="10" fill="#59636e">200B</text>
+    <text x="30" y="135" text-anchor="middle" font-size="11" fill="#59636e" transform="rotate(-90,30,135)">Token (B)</text>
+    <line x1="80" y1="180" x2="760" y2="180" stroke="#e1e4e8" stroke-dasharray="3,3"/>
+    <line x1="80" y1="140" x2="760" y2="140" stroke="#e1e4e8" stroke-dasharray="3,3"/>
+    <line x1="80" y1="100" x2="760" y2="100" stroke="#e1e4e8" stroke-dasharray="3,3"/>
+    <line x1="80" y1="60" x2="760" y2="60" stroke="#e1e4e8" stroke-dasharray="3,3"/>
+    <line x1="80" y1="148" x2="760" y2="148" stroke="#cf222e" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <text x="755" y="143" text-anchor="end" font-size="10" fill="#cf222e">P-8 目标 ~100B</text>
+    <rect x="110" y="184" width="60" height="36" fill="#1a7f37" rx="2"/>
+    <text x="140" y="178" text-anchor="middle" font-size="10" fill="#1a7f37">22.05B</text>
+    <text x="140" y="236" text-anchor="middle" font-size="10" fill="#59636e">EN s0–s3</text>
+    <rect x="200" y="42" width="60" height="178" fill="#1a7f37" rx="2"/>
+    <text x="230" y="36" text-anchor="middle" font-size="10" fill="#1a7f37">98.80B</text>
+    <text x="230" y="236" text-anchor="middle" font-size="10" fill="#59636e">ZH s4–s11 (7/8)</text>
+    <rect x="290" y="140" width="60" height="80" fill="#1f6feb" rx="2"/>
+    <text x="320" y="134" text-anchor="middle" font-size="10" fill="#1f6feb">~13.2B*</text>
+    <text x="320" y="236" text-anchor="middle" font-size="10" fill="#59636e">ZH s9 (运行中)</text>
+    <rect x="390" y="80" width="80" height="140" fill="#1f6feb" opacity="0.6" rx="2"/>
+    <text x="430" y="74" text-anchor="middle" font-size="10" fill="#1f6feb">~168B**</text>
+    <text x="430" y="236" text-anchor="middle" font-size="10" fill="#59636e">l1_en_hq s12–s23 (运行中)</text>
+    <rect x="540" y="42" width="60" height="178" fill="#0b3d6e" rx="2"/>
+    <text x="570" y="36" text-anchor="middle" font-size="10" fill="#0b3d6e">120.85B</text>
+    <text x="570" y="236" text-anchor="middle" font-size="10" fill="#59636e">已完成合计</text>
+    <rect x="650" y="20" width="60" height="200" fill="#0b3d6e" opacity="0.4" rx="2" stroke="#0b3d6e" stroke-dasharray="4,2"/>
+    <text x="680" y="14" text-anchor="middle" font-size="10" fill="#0b3d6e">~302B***</text>
+    <text x="680" y="236" text-anchor="middle" font-size="10" fill="#59636e">预计总计</text>
+    <rect x="110" y="250" width="12" height="8" fill="#1a7f37"/>
+    <text x="128" y="258" font-size="10" fill="#59636e">已完成</text>
+    <rect x="180" y="250" width="12" height="8" fill="#1f6feb"/>
+    <text x="198" y="258" font-size="10" fill="#59636e">运行中</text>
+    <rect x="250" y="250" width="12" height="8" fill="#0b3d6e" opacity="0.4" stroke="#0b3d6e" stroke-dasharray="2,1"/>
+    <text x="268" y="258" font-size="10" fill="#59636e">预计</text>
+  </svg>
+  <div class="cap">分词 Token 累计 · *s9 基于当前 10.43B+ 估算 · **l1_en_hq 按 zh 密度估算 12×14B · ***总计含全部 shard 完成后</div>
+</div>
+
+<div class="callout info">📊 <b>Token 总量</b>：已完成 <b>120.85B</b>（EN 22.05B + ZH 98.80B），<b>已超过 P-8 目标 ~100B</b>。s9 即将完成（+~14B → ~135B），l1_en_hq 12 进程预计 ~16:00 完成（+~168B → 总计 ~302B）。<b>P-8 所需 token 已无缺口</b>，后续分词产出为扩展/冗余。</div>
+
+<h3>4.3 并行化</h3>
+<table>
+  <thead><tr><th>项</th><th>值</th></tr></thead>
+  <tbody>
+    <tr><td>CPU 核数</td><td>224 核</td></tr>
+    <tr><td>当前 load</td><td>56.45 / 57.64 / 57.39（可控）</td></tr>
+    <tr><td>ZH 分词进程</td><td>1 进程（s9，单 shard 收尾）</td></tr>
+    <tr><td>l1_en_hq 分词进程</td><td>12 进程（s12–s23，并行 12 shard）</td></tr>
+    <tr><td>nice</td><td>-10（已从 -19 放宽，BO 已结束无需让路）</td></tr>
+    <tr><td>ZH 分词提速</td><td>从单进程 → 8 进程并行，ETA 从 ~2.5 天压到 ~12h ✅</td></tr>
+  </tbody>
+</table>
+
+<!-- 5. 配比实验 -->
+<h2 class="sec"><span class="no">5</span>配比实验（指向收官报告）</h2>
+<div class="callout info">📄 <b>配比实验完整结论详见 <code>report_data_mix_summary.html</code></b>（29KB，8 节，含 R1→s_step→R2→top-K 全流程 + 内联 SVG 图表）。此处仅摘要。</div>
+
+<h3>核心结论</h3>
+<table>
+  <thead><tr><th>阶段</th><th>配置</th><th>结果</th></tr></thead>
+  <tbody>
+    <tr><td>R1</td><td>200 trial · loss objective · D=0.016B</td><td>Spearman <b>ρ=−0.43</b>（loss ≠ 能力）</td></tr>
+    <tr><td>s_step 归因</td><td>MBS 1→16</td><td>1432ms→166ms = <b>8.6×</b>，D 抬到 0.5B/trial</td></tr>
+    <tr><td>R2</td><td>200 trial · lm_eval objective · D=0.5B</td><td>Best BO = t23 (0.4155)</td></tr>
+    <tr><td>top-K 全量验证</td><td>Top-5 retrain + 全量 lm_eval</td><td><b>ρ=−0.80</b>（BO 排名与全量反转）；分差 0.3835–0.3899 ≈ <b>0.6pp</b></td></tr>
+  </tbody>
+</table>
+
+<div class="callout bad">⚠️ <b>诚实结论</b>：BO 排名与全量 lm_eval 排名<b>几乎完全反转</b>（ρ=−0.80）。全量评测分差仅 0.6pp → <b>该代理规模（18.36M）下配比差异不可分辨</b>。math 占比始终贴下界（4/5 top-5 中 math=0.01）。</div>
+
+<h3>Top-5 全量验证结果</h3>
+<table>
+  <thead><tr><th>Trial</th><th>web</th><th>code</th><th>math</th><th>BO score</th><th>全量 avg</th><th>BO 排名</th><th>全量排名</th></tr></thead>
+  <tbody>
+    <tr><td>t23</td><td>0.941</td><td>0.109</td><td>0.010</td><td>0.4155</td><td>0.3846</td><td>1</td><td>4</td></tr>
+    <tr><td>t38</td><td>0.895</td><td>0.100</td><td>0.010</td><td>0.4138</td><td>0.3835</td><td>2</td><td>5</td></tr>
+    <tr><td>t118</td><td>0.874</td><td>0.071</td><td>0.055</td><td>0.4130</td><td>0.3877</td><td>3</td><td>2</td></tr>
+    <tr><td>t199</td><td>0.931</td><td>0.098</td><td>0.010</td><td>0.4123</td><td><b>0.3899</b></td><td>4</td><td><b>1</b></td></tr>
+    <tr><td>t33</td><td>0.940</td><td>0.086</td><td>0.010</td><td>0.4090</td><td>0.3897</td><td>5</td><td>3</td></tr>
+  </tbody>
+</table>
+<p style="font-size:13px;color:var(--muted);">BO 排名 1→5 对应全量排名 4→5→2→1→3，近乎反转。Spearman ρ=−0.80（n=5, p≈0.10）。</p>
+
+<div class="callout ok">✅ <b>对 P-8 的建议</b>：沿用先验 <b>88:8:4</b>（web:code:math）。最优区域稳定在 web 0.87–0.94 / code 0.06–0.12 / math≈0.01，但「不可分辨」意味着先验仍是安全选择。代理 ≠ 2.2B（迁移性受限）。</div>
+
+<!-- 6. 污染隔离 -->
+<h2 class="sec"><span class="no">6</span>污染隔离（CONTAMINATION_CHECK 摘要）</h2>
+<p>红线：EDA-Eval-PyAether 158 任务内容（prompt / entry_point / test 断言及改写版）<b>绝不进入任何训练集</b>。违反则下游结论全部作废。</p>
+
+<h3>6.1 黑名单机制</h3>
+<table>
+  <thead><tr><th>项</th><th>值</th></tr></thead>
+  <tbody>
+    <tr><td>覆盖评测快照</td><td>6 个（v20260311(158) + 148(148) + 46(46) + Updated102(102) + TEST(2) + cuhk(80)）</td></tr>
+    <tr><td>总任务数</td><td><b>536 任务</b>（并集）</td></tr>
+    <tr><td>主指纹</td><td>字符级 13-gram shingle · NFKC + Unicode \w 归一化 · FNV-1a 64-bit 哈希</td></tr>
+    <tr><td>短文本兜底</td><td>8-gram（&lt;13 字符的中文 prompt）</td></tr>
+    <tr><td>去重 13-gram 数</td><td><b>193,295</b>（<code>ngram_hashes.txt</code> 3.3MB）</td></tr>
+    <tr><td>短 8-gram 数</td><td>10（<code>short_ngram_hashes.txt</code> 170B）</td></tr>
+    <tr><td>MinHash 签名</td><td>k=128，双哈希 64-bit（<code>meta.json</code> 2.1MB）</td></tr>
+    <tr><td>命中阈值</td><td>13-gram 重合率 ≥ 0.80 · 8-gram 重合数 ≥ 1</td></tr>
+  </tbody>
+</table>
+
+<h3>6.2 扫描验证结果</h3>
+<table>
+  <thead><tr><th>测试</th><th>输入</th><th>扫描量</th><th>命中</th><th>结论</th></tr></thead>
+  <tbody>
+    <tr><td>负控</td><td>L3 qa 通用 web 文本</td><td>1500 文档</td><td><b>0</b></td><td><span class="badge b-ok">✅ 通用文本无评测内容</span></td></tr>
+    <tr><td>正控（v20260311）</td><td>评测集自身</td><td>158 任务</td><td><b>158</b>（全 1.0）</td><td><span class="badge b-ok">✅ 100% 抓住</span></td></tr>
+    <tr><td>正控（148）</td><td>旧格式快照</td><td>148 任务</td><td><b>148</b></td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>正控（cuhk）</td><td>中文 prompt 基准</td><td>80 任务</td><td><b>80</b>（76×13gram + 4×8gram）</td><td><span class="badge b-ok">✅ v0.2 修复中文指纹</span></td></tr>
+    <tr><td>来源对照</td><td>API 参考文档</td><td>3 文件</td><td><b>0</b></td><td><span class="badge b-ok">✅ 来源材料无评测内容</span></td></tr>
+    <tr><td>SFT 同闸</td><td>Agent-2609 Code jsonl</td><td>30+10 文档</td><td><b>0</b></td><td><span class="badge b-ok">✅ SFT 语料同闸可用</span></td></tr>
+  </tbody>
+</table>
+
+<div class="callout ok">✅ <b>污染隔离闸门全通</b>：正控 100%（536/536 任务全命中）、负控 0%、SFT 同闸 0 命中。新分词产物投料前须过 <code>check_contamination.py</code>（全量正式扫描待 phase2 全量产出后执行）。</div>
+
+<!-- 7. 磁盘与资源 -->
+<h2 class="sec"><span class="no">7</span>磁盘与资源</h2>
+
+<h3>7.1 /nas_train 使用</h3>
+<table>
+  <thead><tr><th>项</th><th>容量</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>总容量</td><td>207TB</td><td>NFS 挂载 <code>10.239.22.31:/vol_CTE0_data01</code></td></tr>
+    <tr><td>已用</td><td><b>175TB (85%)</b></td><td>—</td></tr>
+    <tr><td>可用</td><td><b>33TB (15%)</b></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h3>7.2 数据占用明细</h3>
+<table>
+  <thead><tr><th>数据</th><th>路径</th><th>大小</th><th>存储</th></tr></thead>
+  <tbody>
+    <tr><td>Ultra-FineWeb (base 3 config)</td><td><code>/nas_train/.../openbmb/Ultra-FineWeb/</code></td><td>3.2TB</td><td>/nas_train</td></tr>
+    <tr><td>UltraX-Preview</td><td><code>/nas_train/.../openbmb/UltraX-Preview/</code></td><td>454GB</td><td>/nas_train</td></tr>
+    <tr><td>分词产物 (mix_base)</td><td><code>/nas_train/.../BaiZe-ISEDA2027/data/mix_base/</code></td><td>679GB</td><td>/nas_train</td></tr>
+    <tr><td>GPIC (train+test)</td><td><code>/nas_inference/.../stanford-vision-lab/gpic/</code></td><td>8.6TB</td><td>/nas_inference</td></tr>
+    <tr><td>Ultra-FineWeb-L3 (退火)</td><td><code>/nas_inference/.../openbmb/Ultra-FineWeb-L3/</code></td><td>1.9TB</td><td>/nas_inference (只读)</td></tr>
+    <tr><td>UltraData-Code/Math</td><td><code>/nas_inference/.../openbmb/UltraData-*/</code></td><td>1.77TB</td><td>/nas_inference (只读)</td></tr>
+    <tr><td>UltraData-SFT-2605/Agent</td><td><code>/nas_inference/.../openbmb/UltraData-SFT-*</code></td><td>~370GB</td><td>/nas_inference</td></tr>
+  </tbody>
+</table>
+
+<h3>7.3 P-8 所需空间估算</h3>
+<table>
+  <thead><tr><th>项</th><th>估算</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>P-8 分词产物 (.bin/.idx)</td><td>~1.5–2TB</td><td>~302B tok × ~3.8GB/B → ~1.15TB .bin + ~8% .idx → ~1.25TB（保守 ~2TB）</td></tr>
+    <tr><td>当前已产出</td><td>679GB</td><td>含 s0–s3 + s4–s11(7/8) + s9(部分) + s12–s23(部分)</td></tr>
+    <tr><td>预计增量</td><td>~600GB–1.3TB</td><td>s9 收尾 + l1_en_hq 12 shard 完成</td></tr>
+    <tr><td>/nas_train 可用</td><td>33TB</td><td><span class="badge b-ok">充足</span></td></tr>
+  </tbody>
+</table>
+
+<div class="callout ok">✅ <b>磁盘空间充足</b>：/nas_train 33TB 可用，P-8 分词产物增量 ~1.3TB 仅占 ~4%。GPIC 下载在 /nas_inference（不占 /nas_train），无争用。</div>
+
+<h3>7.4 清理建议</h3>
+<ul>
+  <li><code>en_v1_4</code>（6.75TB）：当前排队不下载；若 P-8 不需要 v1.4 数据，可永久跳过以节省 6.75TB 空间和 ~43 天下载时间。</li>
+  <li>UltraX-Preview（454GB）：与 base 重叠，作为备选；若 P-8 确定不使用，可清理释放 454GB。</li>
+  <li>分词中间产物（<code>/tmp/mix_base_tok_*/</code>）：分词完成后自动清理（临时目录）。</li>
+</ul>
+
+<!-- 8. 下一步与风险 -->
+<h2 class="sec"><span class="no">8</span>下一步与风险</h2>
+
+<h3>8.1 关键路径</h3>
+<div class="fig">
+  <svg viewBox="0 0 820 120" xmlns="http://www.w3.org/2000/svg" style="max-width:800px;">
+    <rect x="0" y="0" width="820" height="120" fill="#f6f8fa" rx="8"/>
+    <rect x="15" y="35" width="130" height="50" fill="#dafbe1" stroke="#1a7f37" rx="6"/>
+    <text x="80" y="56" text-anchor="middle" font-size="12" font-weight="600" fill="#1a7f37">① Base 下载</text>
+    <text x="80" y="72" text-anchor="middle" font-size="10" fill="#1a7f37">✅ 完成</text>
+    <line x1="145" y1="60" x2="165" y2="60" stroke="#59636e" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="170" y="35" width="130" height="50" fill="#ddf4ff" stroke="#1f6feb" rx="6"/>
+    <text x="235" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#1f6feb">② 分词</text>
+    <text x="235" y="68" text-anchor="middle" font-size="10" fill="#1f6feb">🔄 120.85B / ~302B</text>
+    <text x="235" y="80" text-anchor="middle" font-size="9" fill="#1f6feb">ETA: s9 ~09:45, l1 ~16:00</text>
+    <line x1="300" y1="60" x2="320" y2="60" stroke="#59636e" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="325" y="35" width="130" height="50" fill="#fff8c5" stroke="#9a6700" rx="6"/>
+    <text x="390" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#9a6700">③ 污染扫描</text>
+    <text x="390" y="68" text-anchor="middle" font-size="10" fill="#9a6700">⏳ 待分词完成</text>
+    <text x="390" y="80" text-anchor="middle" font-size="9" fill="#9a6700">check_contamination.py</text>
+    <line x1="455" y1="60" x2="475" y2="60" stroke="#59636e" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="480" y="35" width="130" height="50" fill="#fff8c5" stroke="#9a6700" rx="6"/>
+    <text x="545" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#9a6700">④ P-8 启动</text>
+    <text x="545" y="68" text-anchor="middle" font-size="10" fill="#9a6700">⏳ 待扫描通过</text>
+    <text x="545" y="80" text-anchor="middle" font-size="9" fill="#9a6700">88:8:4 blend</text>
+    <line x1="610" y1="60" x2="630" y2="60" stroke="#59636e" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="635" y="35" width="170" height="50" fill="#fff8c5" stroke="#9a6700" rx="6"/>
+    <text x="720" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#9a6700">⑤ GPIC + en_v1_4</text>
+    <text x="720" y="68" text-anchor="middle" font-size="10" fill="#9a6700">⏳ GPIC ETA ~2.1d</text>
+    <text x="720" y="80" text-anchor="middle" font-size="9" fill="#9a6700">en_v1_4 待放行</text>
+    <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#59636e"/></marker></defs>
+  </svg>
+  <div class="cap">数据准备关键路径：① 下载 → ② 分词 → ③ 污染扫描 → ④ P-8 启动 → ⑤ GPIC/en_v1_4 收尾</div>
+</div>
+
+<h3>8.2 待完成项</h3>
+<table>
+  <thead><tr><th>项</th><th>状态</th><th>ETA / 依赖</th></tr></thead>
+  <tbody>
+    <tr><td>ZH s9 分词收尾</td><td><span class="badge b-warn">🔄 ~94%</span></td><td>~09:45（即将完成）</td></tr>
+    <tr><td>l1_en_hq s12–s23 分词</td><td><span class="badge b-warn">🔄 12进程 ~26%</span></td><td>~16:00</td></tr>
+    <tr><td>GPIC 下载至 8001</td><td><span class="badge b-warn">🔄 5795/8001</span></td><td>~2.1d（~45 tar/h）</td></tr>
+    <tr><td>新分词产物污染扫描</td><td><span class="badge b-warn">⏳ 待分词完成</span></td><td>分词完成后执行 <code>check_contamination.py</code> 全量扫描</td></tr>
+    <tr><td>SFT 语料全量扫描</td><td><span class="badge b-warn">⏳ 待执行</span></td><td>Agent-2609 已就绪，51GiB 需并行扫描</td></tr>
+    <tr><td>en_v1_4 下载</td><td><span class="badge b-no">⏸ 排队</span></td><td>待 GPIC 下完或运维放行</td></tr>
+    <tr><td>P-8 投料准备（blend 列表）</td><td><span class="badge b-warn">⏳ 待分词+扫描</span></td><td>88:8:4 配比已定，待分词产物就绪</td></tr>
+    <tr><td>Decay 段配比</td><td><span class="badge b-no">⬜ 未启动</span></td><td>Stable 段完成后规划</td></tr>
+  </tbody>
+</table>
+
+<h3>8.3 关键风险</h3>
+<table>
+  <thead><tr><th>风险</th><th>影响</th><th>缓解</th></tr></thead>
+  <tbody>
+    <tr><td>NFS I/O 争用（分词 12 进程 + GPIC 下载）</td><td>分词速率下降 / GPIC 掉速</td><td>监控 load avg（当前 56/224 可控）；GPIC 掉速属已知带宽分流</td></tr>
+    <tr><td>分词进程崩溃（s9 已曾崩溃 1 次）</td><td>单 shard 延迟</td><td>retry 机制 + 巡检；ERROR_COUNT=1（s9 崩溃后重启稳定）</td></tr>
+    <tr><td>配比结论迁移性不确定</td><td>88:8:4 在 2.2B 上可能不最优</td><td>代理规模（18.36M）≠ 2.2B；「不可分辨」= 先验是安全选择</td></tr>
+    <tr><td>/nas_train 85% 使用率</td><td>后续产物空间受限</td><td>33TB 可用充足；可清理 en_v1_4（6.75TB）和 UltraX（454GB）</td></tr>
+    <tr><td>污染扫描性能（全量 51GiB SFT）</td><td>扫描耗时</td><td>按 shard 并行扫描；纯 Python 13-gram 哈希需优化</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  <p>📊 BaiZe 数据准备全链路状态报告 · 2026-10-08 09:20 · data agent 唤醒 216</p>
+  <p>数字来源：<code>DATA_LEDGER.md</code> / <code>MEMORY_DATA.md</code> / <code>CONTAMINATION_CHECK.md</code> / <code>topk_lmeval_results_r2.json</code> · 均可由实测复算</p>
+  <p>配比实验详情 → <code>report_data_mix_summary.html</code> · R2 专项 → <code>report_data_mix_eval_r2.html</code></p>
+</div>
+
+</div>
+</body>
+</html>

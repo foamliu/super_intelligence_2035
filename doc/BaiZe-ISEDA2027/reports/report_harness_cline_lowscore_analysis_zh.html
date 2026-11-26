@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cline 低分系统归因 · SWE-bench Verified full500</title>
+<style>
+ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1e293b;max-width:1080px;margin:0 auto;padding:24px;line-height:1.6;background:#f8fafc;}
+ h1{font-size:1.5rem;border-bottom:3px solid #2563eb;padding-bottom:8px;}
+ h2{font-size:1.2rem;color:#1e3a8a;margin-top:32px;border-left:5px solid #2563eb;padding-left:10px;}
+ h3{font-size:1.05rem;color:#334155;margin-top:20px;}
+ .meta{color:#64748b;font-size:0.85rem;}
+ .tldr{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:16px 20px;margin:16px 0;}
+ .tldr b{color:#1d4ed8;}
+ .box{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:14px 0;}
+ table{border-collapse:collapse;width:100%;font-size:0.82rem;margin:12px 0;background:#fff;}
+ th,td{border:1px solid #e2e8f0;padding:6px 9px;text-align:left;}
+ th{background:#f1f5f9;color:#1e3a8a;font-weight:600;}
+ tr:nth-child(even){background:#f8fafc;}
+ .mono{font-family:ui-monospace,Consolas,monospace;font-size:0.78rem;}
+ .swatch{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:middle;margin-right:4px;}
+ .kv td:first-child{width:34%;color:#475569;font-weight:600;}
+ .small{font-size:0.8rem;color:#64748b;}
+ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:0.82rem;}
+ .scrollx{overflow-x:auto;}
+ .pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:0.74rem;color:#fff;}
+</style></head><body>
+<h1>cline 低分系统归因报告 · SWE-bench Verified full500</h1>
+<div class="meta">生成时间 2026-11-06 17:32 · 数据源 <code>run/harness/swebench_verified_full/</code> · 正文一律写 cline（代码标识符 cline-patched 不改）· 0 script / 0 外链 / 自包含</div>
+
+
+<div class="tldr">
+<b>TL;DR</b>（基于 full500 完整数据，逐实例配对）：<br>
+① 最终 resolved：<b>cline 356/500（71.2%）</b> vs <b>opencode 401/500（80.2%）</b>，净差 <b>45</b> 题（约 9.0pp）。<br>
+② 差距集（opencode 解、cline 未解）共 <b>58</b> 题，归因为：<b>补丁质量/能力 50</b>（86%）· <b>静默退出/超时（harness 适配）7</b>（12%）· <b>infra 1</b>（2%）。<br>
+③ McNemar 配对检验：n₀₁(cline-only)=13，n₁₀(opencode-only)=58，不一致 71，<b>p = 6.27e-08</b>（极显著）。<br>
+④ 结论：<b>修复后 cline 与 opencode 的差距以「补丁质量/能力」为主（50/58=86%），接入损耗已大幅压缩（7/58=12%）</b>。R1569 适配器修复已把静默退出/超时从主要矛盾降为次要。
+</div>
+
+<h2>1. 背景与口径</h2>
+<div class="box">
+<ul>
+<li>评测集：princeton-nlp/SWE-bench Verified（500 题，非 Lite）。</li>
+<li>模型：统一骨干 kimi-k2.6-cloud（7 路仅 harness 不同）。</li>
+<li>打分：官方 swebench v5.0.2 docker harness。</li>
+<li>此前 R1567 已做一次归因（cline <b>326</b> 阶段，3 类根因 = 静默退出 35 / 超时卡死 18 / 补丁质量 116，McNemar 极显著）；R1569 适配器修复（commit 29df7ba7f）+ R1633 rerun 58/58 后 cline 抬到 <b>356</b>（比 326 时 +30）。本轮回答的是<b>修复后仍存在的差距</b>。</li>
+<li>本轮「cline」= 适配器修复后的终态数据（eval_cline-patched.json，resolved=356）；与 opencode（resolved=401）逐实例配对。</li>
+<li>铁律：infra-or-fetch-timeout 单列不计能力；结果 JSON 不入库；所有数字可由本脚本复算。</li>
+</ul>
+</div>
+
+<h2>2. 方法（逐实例配对拆解）</h2>
+<div class="box">
+<ol>
+<li>取 cline 与 opencode 的 per-instance eval 结果（<code>eval_*.json</code> 的 resolved/failed/no_patch）。</li>
+<li>交集 common = 两路均有明确 eval 状态的实例 = <b>500</b> 题。</li>
+<li>差距集 gap = opencode resolved ∩ cline 未 resolved = <b>58</b> 题。</li>
+<li>逐题看 cline predict 行为（<code>progress_cline-patched.json</code>：model_patch_len/wall_s/returncode/quota_blocked），归因：① 补丁质量/能力（产了 patch 但测试不过）② 静默退出/超时（无 patch，wall≥1700s 超时墙或 wall&lt;300s 秒级静默）③ no-patch 其它 ④ infra（quota_blocked）。</li>
+<li>McNemar 精确双侧检验（cline vs opencode，common 题配对）。</li>
+<li>对补丁质量子集，对照 opencode 同题 patch 大小/耗时/repo 分布。</li>
+</ol>
+</div>
+
+<h2>3. McNemar 配对检验</h2>
+<div class="box">
+<table class="kv">
+<tr><td>配对集合 common</td><td><b>500</b> 题</td></tr>
+<tr><td>cline resolved（common 内）</td><td><b>356</b>（71.2%）</td></tr>
+<tr><td>opencode resolved（common 内）</td><td><b>401</b>（80.2%）</td></tr>
+<tr><td>n₀₁（cline 解而 opencode 未解）</td><td><b>13</b></td></tr>
+<tr><td>n₁₀（opencode 解而 cline 未解）</td><td><b>58</b></td></tr>
+<tr><td>不一致对 discordant</td><td><b>71</b></td></tr>
+<tr><td>精确双侧 p 值</td><td><b>6.27e-08</b></td></tr>
+<tr><td>opencode/cline 优势比 OR（=n₁₀/n₀₁）</td><td><b>4.46</b></td></tr>
+</table>
+<div class="small">判读：p ≈ 6.27e-08 ≪ 0.001，两路差异<b>极显著</b>；OR=4.46 意味着不一致对中 opencode 解而 cline 未解的频次约为反向的 4.46 倍。</div>
+</div>
+
+<h2>4. 差距集归因（58 题）</h2>
+<div class="box">
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;">
+<div><svg width="410" height="240" viewBox="0 0 410 240" xmlns="http://www.w3.org/2000/svg"><path d="M120,120 L120.00,30.00 A90,90 0 1 1 51.41,61.74 Z" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><path d="M120,120 L51.41,61.74 A90,90 0 0 1 110.27,30.53 Z" fill="#f59e0b" stroke="#fff" stroke-width="1.5"/><path d="M120,120 L110.27,30.53 A90,90 0 0 1 120.00,30.00 Z" fill="#9ca3af" stroke="#fff" stroke-width="1.5"/><rect x="234" y="10" width="14" height="14" fill="#2563eb"/><text x="254" y="22" font-size="12" fill="#334155">① 补丁质量/能力 (50, 86.2%)</text><rect x="234" y="32" width="14" height="14" fill="#f59e0b"/><text x="254" y="44" font-size="12" fill="#334155">② 静默退出/超时 (7, 12.1%)</text><rect x="234" y="54" width="14" height="14" fill="#9ca3af"/><text x="254" y="66" font-size="12" fill="#334155">④ infra (1, 1.7%)</text></svg></div>
+<div style="flex:1;min-width:280px;">
+<table>
+<tr><th>归因</th><th>题数</th><th>占比</th><th>性质</th></tr>
+<tr><td><span class="swatch" style="background:#2563eb"></span>① 补丁质量/能力</td><td><b>50</b></td><td>86.2%</td><td>能力差（模型/底座）</td></tr>
+<tr><td><span class="swatch" style="background:#f59e0b"></span>② 静默退出/超时（harness 适配）</td><td><b>7</b></td><td>12.1%</td><td>接入损耗</td></tr>
+<tr><td><span class="swatch" style="background:#9ca3af"></span>④ infra（quota/网络）</td><td><b>1</b></td><td>1.7%</td><td>不计能力</td></tr>
+<tr><th colspan="2">合计</th><th>58</th><th>100%</th></tr>
+</table>
+<div class="small" style="margin-top:8px;">② 含：超时墙 1800s 命中 6 题 + 秒级静默退出 1 题；③ no-patch 其它 0 题。</div>
+</div>
+</div>
+</div>
+
+<h2>5. 补丁质量/能力深挖（50 题）</h2>
+<div class="box">
+<p>这 50 题 cline 都<b>产出了 patch 但测试不过</b>，属「能力差」而非「没跑通」。对照 opencode 同题：</p>
+<table class="kv">
+<tr><td>cline patch 字节数</td><td class="mono">均值 6177 · 中位 2876 · min 448 · max 56655</td></tr>
+<tr><td>opencode patch 字节数</td><td class="mono">均值 5887 · 中位 3362 · min 636 · max 85150</td></tr>
+<tr><td>cline wall_s（秒）</td><td class="mono">均值 620 · 中位 481 · min 129.0 · max 1739.8</td></tr>
+<tr><td>opencode wall_s（秒）</td><td class="mono">均值 501 · 中位 425 · min 86.7 · max 1612.3</td></tr>
+<tr><td>opencode patch 比 cline 更大的题数</td><td><b>30</b> / 50</td></tr>
+</table>
+<p class="small">解读：补丁质量子集里 cline patch 中位 2876B vs opencode 3362B，opencode 在 30/50 题上 patch 更大；但「更大」不等于「更好」——多数是 cline 改对了位置但<b>不够完整</b>（漏改关联文件/测试覆盖不足）或<b>改错方向</b>。cline 平均耗时 620s 略高于 opencode 501s，说明 cline 多花了时间却没换来更高 resolved 率，提示其工具循环/上下文组织效率偏低。</p>
+</div>
+
+<h2>6. 差距集 repo 分布</h2>
+<div class="box">
+<svg width="520" height="340" xmlns="http://www.w3.org/2000/svg"><text x="0" y="26" font-size="12" fill="#334155">django (27)</text><rect x="150" y="8" width="340.0" height="26" fill="#2563eb" rx="3"/><text x="496.0" y="26" font-size="12" fill="#334155">27</text><text x="0" y="60" font-size="12" fill="#334155">sympy (7)</text><rect x="150" y="42" width="88.1" height="26" fill="#2563eb" rx="3"/><text x="244.1" y="60" font-size="12" fill="#334155">7</text><text x="0" y="94" font-size="12" fill="#334155">sphinx-doc (6)</text><rect x="150" y="76" width="75.6" height="26" fill="#2563eb" rx="3"/><text x="231.6" y="94" font-size="12" fill="#334155">6</text><text x="0" y="128" font-size="12" fill="#334155">astropy (4)</text><rect x="150" y="110" width="50.4" height="26" fill="#2563eb" rx="3"/><text x="206.4" y="128" font-size="12" fill="#334155">4</text><text x="0" y="162" font-size="12" fill="#334155">scikit-learn (4)</text><rect x="150" y="144" width="50.4" height="26" fill="#2563eb" rx="3"/><text x="206.4" y="162" font-size="12" fill="#334155">4</text><text x="0" y="196" font-size="12" fill="#334155">matplotlib (3)</text><rect x="150" y="178" width="37.8" height="26" fill="#2563eb" rx="3"/><text x="193.8" y="196" font-size="12" fill="#334155">3</text><text x="0" y="230" font-size="12" fill="#334155">pydata (2)</text><rect x="150" y="212" width="25.2" height="26" fill="#2563eb" rx="3"/><text x="181.2" y="230" font-size="12" fill="#334155">2</text><text x="0" y="264" font-size="12" fill="#334155">pylint-dev (2)</text><rect x="150" y="246" width="25.2" height="26" fill="#2563eb" rx="3"/><text x="181.2" y="264" font-size="12" fill="#334155">2</text><text x="0" y="298" font-size="12" fill="#334155">pytest-dev (2)</text><rect x="150" y="280" width="25.2" height="26" fill="#2563eb" rx="3"/><text x="181.2" y="298" font-size="12" fill="#334155">2</text><text x="0" y="332" font-size="12" fill="#334155">mwaskom (1)</text><rect x="150" y="314" width="12.6" height="26" fill="#2563eb" rx="3"/><text x="168.6" y="332" font-size="12" fill="#334155">1</text></svg>
+<p class="small">差距集中在 <b>django（27 题）</b>，其次 sympy/sphinx-doc。django 占比高与该库题量大、多文件改动需求多有关。</p>
+</div>
+
+<h2>7. 静默退出/超时 与 infra（8 题）</h2>
+<div class="box">
+<p>这些题 cline <b>没产出 patch</b>，属接入损耗或 infra，不计能力差：</p>
+<div class="scrollx"><table>
+<tr><th>instance_id</th><th>类型</th><th>cline wall</th><th>cline rc</th><th>quota</th><th>opencode patch(B)</th></tr>
+<tr><td class='mono'>django__django-10554</td><td>超时1800s</td><td class='mono'>1801s</td><td class='mono'>rc=1</td><td class='mono'>-</td><td class='mono'>3413</td></tr><tr><td class='mono'>django__django-12663</td><td>超时1800s</td><td class='mono'>1800s</td><td class='mono'>rc=1</td><td class='mono'>-</td><td class='mono'>2803</td></tr><tr><td class='mono'>django__django-15280</td><td>infra/quota</td><td class='mono'>1800s</td><td class='mono'>rc=1</td><td class='mono'>quota</td><td class='mono'>8611</td></tr><tr><td class='mono'>django__django-15695</td><td>超时1800s</td><td class='mono'>1800s</td><td class='mono'>rc=1</td><td class='mono'>-</td><td class='mono'>1721</td></tr><tr><td class='mono'>django__django-16661</td><td>秒级静默退出</td><td class='mono'>3s</td><td class='mono'>rc=0</td><td class='mono'>-</td><td class='mono'>2100</td></tr><tr><td class='mono'>django__django-16950</td><td>超时1800s</td><td class='mono'>1801s</td><td class='mono'>rc=1</td><td class='mono'>-</td><td class='mono'>2361</td></tr><tr><td class='mono'>sympy__sympy-13878</td><td>超时1800s</td><td class='mono'>1800s</td><td class='mono'>rc=1</td><td class='mono'>-</td><td class='mono'>7564</td></tr><tr><td class='mono'>sympy__sympy-22456</td><td>超时1800s</td><td class='mono'>1801s</td><td class='mono'>rc=1</td><td class='mono'>-</td><td class='mono'>847</td></tr>
+</table></div>
+<p class="small">判读：6 题 cline 命中 1800s 超时墙（rc=1，未产 patch）——harness 适配层的<b>超时硬限</b>；1 题（django__django-16661）秒级静默退出（2.9s, rc=0）——残余 silent-exit bug；1 题 quota_blocked。opencode 在这些同题上均产出了 patch 并 resolved，说明题本身可解，cline 只是没跑通。</p>
+</div>
+
+<h2>8. 差距集逐实例表（opencode 解、cline 未解，共 58 题）</h2>
+<div class="box scrollx">
+<table>
+<tr><th>#</th><th>instance_id</th><th>归因</th><th>cline patch(B)</th><th>cline wall(s)</th><th>cline rc</th><th>opencode patch(B)</th><th>opencode wall(s)</th></tr>
+<tr><td>1</td><td class='mono'>astropy__astropy-12907</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2144</td><td class='mono'>367</td><td class='mono'>0</td><td class='mono'>1716</td><td class='mono'>353</td></tr>
+<tr><td>2</td><td class='mono'>astropy__astropy-13236</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1644</td><td class='mono'>729</td><td class='mono'>0</td><td class='mono'>6247</td><td class='mono'>365</td></tr>
+<tr><td>3</td><td class='mono'>astropy__astropy-13453</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1514</td><td class='mono'>283</td><td class='mono'>0</td><td class='mono'>1234</td><td class='mono'>426</td></tr>
+<tr><td>4</td><td class='mono'>astropy__astropy-14369</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>12926</td><td class='mono'>1156</td><td class='mono'>0</td><td class='mono'>12762</td><td class='mono'>888</td></tr>
+<tr><td>5</td><td class='mono'>django__django-10554</td><td><span class='pill' style='background:#f59e0b'>② 静默退出/超时</span></td><td class='mono'>0</td><td class='mono'>1801</td><td class='mono'>1</td><td class='mono'>3413</td><td class='mono'>1609</td></tr>
+<tr><td>6</td><td class='mono'>django__django-11433</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2921</td><td class='mono'>1249</td><td class='mono'>0</td><td class='mono'>3092</td><td class='mono'>937</td></tr>
+<tr><td>7</td><td class='mono'>django__django-11477</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2086</td><td class='mono'>422</td><td class='mono'>0</td><td class='mono'>4097</td><td class='mono'>556</td></tr>
+<tr><td>8</td><td class='mono'>django__django-11749</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>3187</td><td class='mono'>280</td><td class='mono'>0</td><td class='mono'>3544</td><td class='mono'>301</td></tr>
+<tr><td>9</td><td class='mono'>django__django-11790</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2025</td><td class='mono'>469</td><td class='mono'>0</td><td class='mono'>707</td><td class='mono'>233</td></tr>
+<tr><td>10</td><td class='mono'>django__django-11885</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>6616</td><td class='mono'>1740</td><td class='mono'>0</td><td class='mono'>8204</td><td class='mono'>355</td></tr>
+<tr><td>11</td><td class='mono'>django__django-11999</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2439</td><td class='mono'>197</td><td class='mono'>0</td><td class='mono'>2912</td><td class='mono'>145</td></tr>
+<tr><td>12</td><td class='mono'>django__django-12663</td><td><span class='pill' style='background:#f59e0b'>② 静默退出/超时</span></td><td class='mono'>0</td><td class='mono'>1800</td><td class='mono'>1</td><td class='mono'>2803</td><td class='mono'>775</td></tr>
+<tr><td>13</td><td class='mono'>django__django-13195</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>5279</td><td class='mono'>136</td><td class='mono'>0</td><td class='mono'>6120</td><td class='mono'>189</td></tr>
+<tr><td>14</td><td class='mono'>django__django-13344</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>9211</td><td class='mono'>1722</td><td class='mono'>0</td><td class='mono'>3235</td><td class='mono'>455</td></tr>
+<tr><td>15</td><td class='mono'>django__django-13512</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2416</td><td class='mono'>132</td><td class='mono'>0</td><td class='mono'>3226</td><td class='mono'>148</td></tr>
+<tr><td>16</td><td class='mono'>django__django-13794</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2534</td><td class='mono'>412</td><td class='mono'>0</td><td class='mono'>2536</td><td class='mono'>280</td></tr>
+<tr><td>17</td><td class='mono'>django__django-13837</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>8944</td><td class='mono'>406</td><td class='mono'>0</td><td class='mono'>3422</td><td class='mono'>202</td></tr>
+<tr><td>18</td><td class='mono'>django__django-14011</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1868</td><td class='mono'>515</td><td class='mono'>0</td><td class='mono'>8316</td><td class='mono'>518</td></tr>
+<tr><td>19</td><td class='mono'>django__django-14034</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>4629</td><td class='mono'>272</td><td class='mono'>0</td><td class='mono'>6052</td><td class='mono'>250</td></tr>
+<tr><td>20</td><td class='mono'>django__django-14170</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>6568</td><td class='mono'>248</td><td class='mono'>0</td><td class='mono'>6106</td><td class='mono'>141</td></tr>
+<tr><td>21</td><td class='mono'>django__django-14311</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2035</td><td class='mono'>257</td><td class='mono'>0</td><td class='mono'>2366</td><td class='mono'>241</td></tr>
+<tr><td>22</td><td class='mono'>django__django-14725</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>17567</td><td class='mono'>800</td><td class='mono'>0</td><td class='mono'>15146</td><td class='mono'>415</td></tr>
+<tr><td>23</td><td class='mono'>django__django-14771</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2383</td><td class='mono'>129</td><td class='mono'>0</td><td class='mono'>3647</td><td class='mono'>87</td></tr>
+<tr><td>24</td><td class='mono'>django__django-14792</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>6703</td><td class='mono'>610</td><td class='mono'>0</td><td class='mono'>1944</td><td class='mono'>289</td></tr>
+<tr><td>25</td><td class='mono'>django__django-15252</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>3290</td><td class='mono'>888</td><td class='mono'>0</td><td class='mono'>5235</td><td class='mono'>428</td></tr>
+<tr><td>26</td><td class='mono'>django__django-15280</td><td><span class='pill' style='background:#9ca3af'>④ infra</span></td><td class='mono'>0</td><td class='mono'>1800</td><td class='mono'>1</td><td class='mono'>8611</td><td class='mono'>817</td></tr>
+<tr><td>27</td><td class='mono'>django__django-15695</td><td><span class='pill' style='background:#f59e0b'>② 静默退出/超时</span></td><td class='mono'>0</td><td class='mono'>1800</td><td class='mono'>1</td><td class='mono'>1721</td><td class='mono'>227</td></tr>
+<tr><td>28</td><td class='mono'>django__django-15732</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2832</td><td class='mono'>400</td><td class='mono'>0</td><td class='mono'>6911</td><td class='mono'>482</td></tr>
+<tr><td>29</td><td class='mono'>django__django-15973</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>9902</td><td class='mono'>1548</td><td class='mono'>0</td><td class='mono'>3157</td><td class='mono'>425</td></tr>
+<tr><td>30</td><td class='mono'>django__django-16661</td><td><span class='pill' style='background:#fbbf24'>② 静默退出/超时</span></td><td class='mono'>0</td><td class='mono'>3</td><td class='mono'>0</td><td class='mono'>2100</td><td class='mono'>228</td></tr>
+<tr><td>31</td><td class='mono'>django__django-16950</td><td><span class='pill' style='background:#f59e0b'>② 静默退出/超时</span></td><td class='mono'>0</td><td class='mono'>1801</td><td class='mono'>1</td><td class='mono'>2361</td><td class='mono'>1302</td></tr>
+<tr><td>32</td><td class='mono'>matplotlib__matplotlib-20859</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1979</td><td class='mono'>211</td><td class='mono'>0</td><td class='mono'>2261</td><td class='mono'>299</td></tr>
+<tr><td>33</td><td class='mono'>matplotlib__matplotlib-21568</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1312</td><td class='mono'>595</td><td class='mono'>0</td><td class='mono'>3415</td><td class='mono'>409</td></tr>
+<tr><td>34</td><td class='mono'>matplotlib__matplotlib-23476</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2052</td><td class='mono'>364</td><td class='mono'>0</td><td class='mono'>1299</td><td class='mono'>504</td></tr>
+<tr><td>35</td><td class='mono'>mwaskom__seaborn-3187</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>11620</td><td class='mono'>999</td><td class='mono'>0</td><td class='mono'>2529</td><td class='mono'>1290</td></tr>
+<tr><td>36</td><td class='mono'>pydata__xarray-2905</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1979</td><td class='mono'>371</td><td class='mono'>0</td><td class='mono'>3310</td><td class='mono'>769</td></tr>
+<tr><td>37</td><td class='mono'>pydata__xarray-4687</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>3415</td><td class='mono'>713</td><td class='mono'>0</td><td class='mono'>3073</td><td class='mono'>840</td></tr>
+<tr><td>38</td><td class='mono'>pylint-dev__pylint-4970</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2477</td><td class='mono'>494</td><td class='mono'>0</td><td class='mono'>2911</td><td class='mono'>510</td></tr>
+<tr><td>39</td><td class='mono'>pylint-dev__pylint-8898</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>5936</td><td class='mono'>419</td><td class='mono'>0</td><td class='mono'>5299</td><td class='mono'>750</td></tr>
+<tr><td>40</td><td class='mono'>pytest-dev__pytest-10356</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>3256</td><td class='mono'>884</td><td class='mono'>0</td><td class='mono'>4124</td><td class='mono'>1150</td></tr>
+<tr><td>41</td><td class='mono'>pytest-dev__pytest-5840</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1415</td><td class='mono'>342</td><td class='mono'>0</td><td class='mono'>6961</td><td class='mono'>663</td></tr>
+<tr><td>42</td><td class='mono'>scikit-learn__scikit-learn-12682</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>14313</td><td class='mono'>644</td><td class='mono'>0</td><td class='mono'>7980</td><td class='mono'>710</td></tr>
+<tr><td>43</td><td class='mono'>scikit-learn__scikit-learn-14053</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>56655</td><td class='mono'>178</td><td class='mono'>0</td><td class='mono'>85150</td><td class='mono'>384</td></tr>
+<tr><td>44</td><td class='mono'>scikit-learn__scikit-learn-14629</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>46486</td><td class='mono'>365</td><td class='mono'>0</td><td class='mono'>3281</td><td class='mono'>378</td></tr>
+<tr><td>45</td><td class='mono'>scikit-learn__scikit-learn-25232</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>448</td><td class='mono'>789</td><td class='mono'>0</td><td class='mono'>4330</td><td class='mono'>857</td></tr>
+<tr><td>46</td><td class='mono'>sphinx-doc__sphinx-10323</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2930</td><td class='mono'>511</td><td class='mono'>0</td><td class='mono'>2098</td><td class='mono'>784</td></tr>
+<tr><td>47</td><td class='mono'>sphinx-doc__sphinx-8548</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>6034</td><td class='mono'>1352</td><td class='mono'>0</td><td class='mono'>6758</td><td class='mono'>695</td></tr>
+<tr><td>48</td><td class='mono'>sphinx-doc__sphinx-8595</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1659</td><td class='mono'>169</td><td class='mono'>0</td><td class='mono'>636</td><td class='mono'>172</td></tr>
+<tr><td>49</td><td class='mono'>sphinx-doc__sphinx-8638</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1989</td><td class='mono'>1137</td><td class='mono'>0</td><td class='mono'>685</td><td class='mono'>741</td></tr>
+<tr><td>50</td><td class='mono'>sphinx-doc__sphinx-9229</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2249</td><td class='mono'>1603</td><td class='mono'>0</td><td class='mono'>3142</td><td class='mono'>1612</td></tr>
+<tr><td>51</td><td class='mono'>sphinx-doc__sphinx-9602</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>3740</td><td class='mono'>590</td><td class='mono'>0</td><td class='mono'>6858</td><td class='mono'>336</td></tr>
+<tr><td>52</td><td class='mono'>sympy__sympy-13878</td><td><span class='pill' style='background:#f59e0b'>② 静默退出/超时</span></td><td class='mono'>0</td><td class='mono'>1800</td><td class='mono'>1</td><td class='mono'>7564</td><td class='mono'>1518</td></tr>
+<tr><td>53</td><td class='mono'>sympy__sympy-14976</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2127</td><td class='mono'>331</td><td class='mono'>0</td><td class='mono'>2685</td><td class='mono'>324</td></tr>
+<tr><td>54</td><td class='mono'>sympy__sympy-15017</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>3254</td><td class='mono'>205</td><td class='mono'>0</td><td class='mono'>3202</td><td class='mono'>110</td></tr>
+<tr><td>55</td><td class='mono'>sympy__sympy-17318</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>1809</td><td class='mono'>785</td><td class='mono'>0</td><td class='mono'>2527</td><td class='mono'>569</td></tr>
+<tr><td>56</td><td class='mono'>sympy__sympy-20438</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>2444</td><td class='mono'>641</td><td class='mono'>0</td><td class='mono'>4117</td><td class='mono'>471</td></tr>
+<tr><td>57</td><td class='mono'>sympy__sympy-22080</td><td><span class='pill' style='background:#2563eb'>① 补丁质量/能力</span></td><td class='mono'>3627</td><td class='mono'>958</td><td class='mono'>0</td><td class='mono'>3807</td><td class='mono'>605</td></tr>
+<tr><td>58</td><td class='mono'>sympy__sympy-22456</td><td><span class='pill' style='background:#f59e0b'>② 静默退出/超时</span></td><td class='mono'>0</td><td class='mono'>1801</td><td class='mono'>1</td><td class='mono'>847</td><td class='mono'>768</td></tr>
+</table></div>
+
+<h2>9. 根因结论：能力差 vs 接入损耗</h2>
+<div class="box">
+<table class="kv">
+<tr><td>能力差（补丁质量/模型底座）</td><td><b>50 题（86%）</b> —— cline 产了 patch 但测试不过</td></tr>
+<tr><td>接入损耗（harness 适配/超时/静默退出）</td><td><b>7 题（12%）</b></td></tr>
+<tr><td>infra（不计能力）</td><td><b>1 题（2%）</b></td></tr>
+</table>
+<p><b>结论</b>：R1569 适配器修复后，cline 与 opencode 的差距<b>已从「接入损耗为主」转为「能力差为主」</b>。修复前（326 阶段）静默退出 35 + 超时 18 占主要矛盾；修复后静默退出/超时仅 7 题，<b>50/58=86% 的差距是 cline 产了 patch 但不完整/不正确</b>——这是 kimi-k2.6 底座在 cline harness 的上下文组织与工具循环下「能定位但改不全/改不对」的能力问题，而非 harness 没跑通。统计上该差距极显著（McNemar p=6.27e-08）。</p>
+<p class="small">注：能力差≠「cline harness 设计差」。同一 kimi-k2.6 底座在 opencode harness 下 resolved 401，说明 harness 的<b>上下文组织/工具授予/探索策略</b>会显著放大或抑制底座能力。cline 的差距可拆为「底座固有上限」与「harness 对底座能力的利用率」两部分，后者是可改进的接入损耗-能力复合项。</p>
+</div>
+
+<h2>10. 可落地改进清单（标注置信度）</h2>
+<div class="box">
+<table>
+<tr><th>方向</th><th>措施</th><th>预期收益</th><th>置信度</th></tr>
+<tr><td>接入损耗</td><td>把 cline 超时墙 1800s 对易超时题（django 大库）分级上调或动态限时，减少 6 题硬超时</td><td>回收 ~6 题</td><td>中</td></tr>
+<tr><td>接入损耗</td><td>排查 1 题秒级静默退出残余 bug（rc=0 但无 patch），run_single 加 exit-code 与 patch 双校验重试</td><td>回收 ~1 题</td><td>高</td></tr>
+<tr><td>能力复合</td><td>增大 cline 单次可见上下文/文件检索范围，减少「改对位置漏改关联文件」（补丁质量 50 题主因）</td><td>回收 5–15 题（估）</td><td>中</td></tr>
+<tr><td>能力复合</td><td>对 cline 工具循环加「测试自检」步骤：产 patch 后本地跑目标测试，失败则迭代，对标 opencode 探索策略</td><td>回收 5–10 题（估）</td><td>中</td></tr>
+<tr><td>底座</td><td>换更强底座或 kimi-k2.6 更新版本（同 harness 对比可隔离 harness 因素）</td><td>回收 10–20 题（估）</td><td>低</td></tr>
+<tr><td>infra</td><td>quota_blocked 1 题：重试/错峰，配额恢复后重跑</td><td>回收 ~1 题</td><td>高</td></tr>
+</table>
+<p class="small">「回收」为乐观估计，需逐题重跑验证；置信度：高=有同类成功先例，中=有理论依据待验证，低=依赖外部条件。</p>
+</div>
+
+<h2>11. 可复现性</h2>
+<div class="box">
+<p>本报告全部数字由 <code>gen_report_cline_lowscore_analysis_zh.py</code> 从以下源文件现算，无手填常量：</p>
+<pre class="mono">数据源：
+  run/harness/swebench_verified_full/reports/eval_cline-patched.json   (resolved=356)
+  run/harness/swebench_verified_full/reports/eval_opencode.json        (resolved=401)
+  run/harness/swebench_verified_full/reports/progress_cline-patched.json
+  run/harness/swebench_verified_full/reports/progress_opencode.json
+  run/harness/swebench_verified_full/predictions/{h}__{iid}.json
+
+复算：
+  cd run/harness && python3 gen_report_cline_lowscore_analysis_zh.py
+  # → doc/BaiZe-ISEDA2027/reports/report_harness_cline_lowscore_analysis_zh.html</pre>
+<p class="small">铁律遵守：结果 JSON 不入库（仅本地保留供分析）；命名合规（正文写 cline 不写 cline-patched）；报告产在项目级 reports/ 目录。</p>
+</div>
+<div class="meta" style="margin-top:24px;">— 报告结束 · BaiZe harness 线 · 2026-11-06 17:32 —</div>
+</body></html>

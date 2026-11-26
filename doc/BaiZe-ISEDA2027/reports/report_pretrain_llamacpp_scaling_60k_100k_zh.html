@@ -1,0 +1,453 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>
+<title>BaiZe-2B llama.cpp 常识推理 10 点能力曲线（10k–100k）与 700k 预测</title>
+<style>
+body{font-family:-apple-system,"Microsoft YaHei",sans-serif;margin:0 auto;padding:20px;
+background:#f8fafc;color:#1e293b;max-width:1180px;line-height:1.6}
+h1{color:#1e40af;border-bottom:3px solid #3b82f6;padding-bottom:10px;font-size:22px}
+h2{color:#334155;margin-top:28px;font-size:18px;border-bottom:1px solid #cbd5e1;padding-bottom:5px}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:12.5px}
+th,td{border:1px solid #cbd5e1;padding:5px 8px;text-align:center}
+th{background:#475569;color:white}
+tr:nth-child(even){background:#f1f5f9}
+.avg{background:#dbeafe;font-weight:bold}
+.ref{background:#ecfdf5;color:#065f46}
+.na{color:#94a3b8}
+.card{background:white;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin:14px 0}
+.chart{text-align:center;margin:18px 0}
+.note{background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 15px;margin:14px 0;font-size:13px}
+.success{background:#dcfce7;border-left:4px solid #16a34a;padding:10px 15px;margin:14px 0;font-size:13px}
+.warn{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 15px;margin:14px 0;font-size:13px}
+.small{font-size:11px;color:#64748b}
+code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
+.foot{margin-top:30px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center}
+</style></head><body>
+<h1>BaiZe-2B llama.cpp 全 checkpoint 常识推理评测 · 10 点能力曲线（10k–100k）与 700k 预测</h1>
+<p class='small'>生成时间：2026-11-19 23:53:31　|　后端：llama.cpp 修复分支 <code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　已完成 26/30 ckpt　|　8 集 zero-shot <code>limit=100</code></p>
+<div class='card'><h2>① 评测配置</h2><table>
+<tr><th>项目</th><th>说明</th></tr>
+<tr><td>模型</td><td>BaiZe-2B（Mamba2-hybrid，2.22B 参数）</td></tr>
+<tr><td>后端</td><td>llama.cpp（C++ SSM scan，数值稳定），GGUF F16，<code>-t 8</code> / <code>nice 19</code> / <code>OMP_NUM_THREADS=8</code></td></tr>
+<tr><td>8 个任务集</td><td>ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / OpenBookQA / PIQA / SciQ / Winogrande（zero-shot，与 P-6 同口径）</td></tr>
+<tr><td>检查点</td><td>iter_{10000,20000,30000,40000,50000,60000,70000,80000,90000,100000,110000,120000,130000,140000,150000,160000,170000,180000,190000,200000,210000,220000,230000,240000,250000,260000,270000,280000,290000,300000}（token/step=4,194,304，即 41.94B ~ 1.26T）</td></tr>
+<tr><td>参照线</td><td>P-6 起点 0.4395@655M/20k；Xmodel-2 s1 (1.2B)；Phi-1.5 (1.3B)</td></tr>
+<tr><td>每任务样本</td><td><code>limit=100</code>（非全量），acc_stderr ≈ ±4.5%，逐集绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong></td></tr>
+</table></div>
+<div class='card'><h2>② 关键发现</h2><ul>
+<li>已完成 <strong>26/30</strong> 个检查点（iter_10000, iter_20000, iter_30000, iter_40000, iter_50000, iter_60000, iter_70000, iter_80000, iter_90000, iter_100000, iter_110000, iter_120000, iter_130000, iter_140000, iter_150000, iter_160000, iter_170000, iter_180000, iter_190000, iter_200000, iter_210000, iter_220000, iter_230000, iter_240000, iter_250000, iter_260000）。</li>
+<li>常识推理 Avg 从 iter_10000 的 <strong>51.50%</strong> 到 iter_200000 的 <strong>60.12%</strong>。</li>
+<li>相对 P-6 起点（44.0%@655M/20k）：当前最高 <strong>+16.2 pp</strong>（注：P-6 为 655M，本评测为 2B，参数量不同，仅作趋势参照）。</li>
+<li><strong>50k→60k 拐点分析</strong>：Avg 54.25% → 54.25%（Δ=+0.00 pp），趋于平台（50k 前 10k 段斜率 -0.88 pp → 50k 后 +0.00 pp）。S1 于 iter_58000 resume，此拐点可反映 resume 前后训练连续性影响。</li>
+<li><strong>llama.cpp 修复后恢复退化 ckpt</strong>：HF 侧（PyTorch CPU float32）iter_20000/40000/50000 因 Mamba2 SSM 数值不稳定 logits 全 NaN → sciq=0.0 退化；llama.cpp C++ SSM scan 数值稳定，<strong>所有已评测 ckpt 全部可正常出分</strong>，本报告即为修复后真实能力曲线。</li>
+</ul></div>
+<div class='card'><h2>③ 30 ckpt × 8 集汇总表（acc / acc_norm）</h2>
+<table><tr><th>iter</th><th>已训 token</th>
+<th>ARC-C<br><span class='small'>acc/norm</span></th>
+<th>ARC-E<br><span class='small'>acc/norm</span></th>
+<th>BoolQ<br><span class='small'>acc/norm</span></th>
+<th>HellaSwag<br><span class='small'>acc/norm</span></th>
+<th>OpenBookQA<br><span class='small'>acc/norm</span></th>
+<th>PIQA<br><span class='small'>acc/norm</span></th>
+<th>SciQ<br><span class='small'>acc/norm</span></th>
+<th>Winogrande<br><span class='small'>acc/norm</span></th>
+<th class='avg'>Avg<br>(harness)</th><th class='avg'>Avg<br>(raw acc)</th></tr>
+<tr><td><strong>iter_10000</strong></td><td>41.94B</td>
+<td>27.0 / 26.0</td>
+<td>49.0 / 47.0</td>
+<td>62.0 / —</td>
+<td>35.0 / 45.0</td>
+<td>21.0 / 35.0</td>
+<td>72.0 / 73.0</td>
+<td>79.0 / 70.0</td>
+<td>54.0 / —</td>
+<td class='avg'>51.50%</td><td class='avg'>49.88%</td></tr>
+<tr><td><strong>iter_20000</strong></td><td>83.89B</td>
+<td>24.0 / 29.0</td>
+<td>57.0 / 55.0</td>
+<td>56.0 / —</td>
+<td>36.0 / 45.0</td>
+<td>22.0 / 32.0</td>
+<td>69.0 / 68.0</td>
+<td>82.0 / 74.0</td>
+<td>57.0 / —</td>
+<td class='avg'>52.00%</td><td class='avg'>50.37%</td></tr>
+<tr><td><strong>iter_30000</strong></td><td>125.83B</td>
+<td>27.0 / 26.0</td>
+<td>54.0 / 58.0</td>
+<td>47.0 / —</td>
+<td>38.0 / 44.0</td>
+<td>21.0 / 37.0</td>
+<td>69.0 / 72.0</td>
+<td>83.0 / 80.0</td>
+<td>60.0 / —</td>
+<td class='avg'>53.00%</td><td class='avg'>49.88%</td></tr>
+<tr><td><strong>iter_40000</strong></td><td>167.77B</td>
+<td>24.0 / 32.0</td>
+<td>58.0 / 58.0</td>
+<td>67.0 / —</td>
+<td>35.0 / 46.0</td>
+<td>20.0 / 34.0</td>
+<td>71.0 / 73.0</td>
+<td>80.0 / 77.0</td>
+<td>54.0 / —</td>
+<td class='avg'>55.12%</td><td class='avg'>51.12%</td></tr>
+<tr><td><strong>iter_50000</strong></td><td>209.72B</td>
+<td>30.0 / 29.0</td>
+<td>57.0 / 56.0</td>
+<td>67.0 / —</td>
+<td>37.0 / 46.0</td>
+<td>20.0 / 34.0</td>
+<td>69.0 / 72.0</td>
+<td>83.0 / 77.0</td>
+<td>53.0 / —</td>
+<td class='avg'>54.25%</td><td class='avg'>52.00%</td></tr>
+<tr><td><strong>iter_60000</strong></td><td>251.66B</td>
+<td>31.0 / 33.0</td>
+<td>58.0 / 61.0</td>
+<td>58.0 / —</td>
+<td>39.0 / 49.0</td>
+<td>22.0 / 33.0</td>
+<td>69.0 / 70.0</td>
+<td>80.0 / 83.0</td>
+<td>47.0 / —</td>
+<td class='avg'>54.25%</td><td class='avg'>50.50%</td></tr>
+<tr><td><strong>iter_70000</strong></td><td>293.60B</td>
+<td>29.0 / 30.0</td>
+<td>58.0 / 57.0</td>
+<td>68.0 / —</td>
+<td>40.0 / 51.0</td>
+<td>21.0 / 39.0</td>
+<td>73.0 / 74.0</td>
+<td>84.0 / 78.0</td>
+<td>51.0 / —</td>
+<td class='avg'>56.00%</td><td class='avg'>53.00%</td></tr>
+<tr><td><strong>iter_80000</strong></td><td>335.54B</td>
+<td>36.0 / 35.0</td>
+<td>56.0 / 56.0</td>
+<td>66.0 / —</td>
+<td>41.0 / 52.0</td>
+<td>22.0 / 36.0</td>
+<td>70.0 / 68.0</td>
+<td>84.0 / 84.0</td>
+<td>59.0 / —</td>
+<td class='avg'>57.00%</td><td class='avg'>54.25%</td></tr>
+<tr><td><strong>iter_90000</strong></td><td>377.49B</td>
+<td>30.0 / 31.0</td>
+<td>55.0 / 53.0</td>
+<td>66.0 / —</td>
+<td>42.0 / 53.0</td>
+<td>22.0 / 42.0</td>
+<td>74.0 / 77.0</td>
+<td>84.0 / 77.0</td>
+<td>64.0 / —</td>
+<td class='avg'>57.88%</td><td class='avg'>54.62%</td></tr>
+<tr><td><strong>iter_100000</strong></td><td>419.43B</td>
+<td>30.0 / 32.0</td>
+<td>57.0 / 56.0</td>
+<td>67.0 / —</td>
+<td>41.0 / 50.0</td>
+<td>21.0 / 40.0</td>
+<td>74.0 / 73.0</td>
+<td>88.0 / 84.0</td>
+<td>60.0 / —</td>
+<td class='avg'>57.75%</td><td class='avg'>54.75%</td></tr>
+<tr><td><strong>iter_110000</strong></td><td>461.37B</td>
+<td>34.0 / 30.0</td>
+<td>63.0 / 61.0</td>
+<td>63.0 / —</td>
+<td>41.0 / 53.0</td>
+<td>23.0 / 37.0</td>
+<td>73.0 / 73.0</td>
+<td>87.0 / 80.0</td>
+<td>67.0 / —</td>
+<td class='avg'>58.00%</td><td class='avg'>56.38%</td></tr>
+<tr><td><strong>iter_120000</strong></td><td>503.32B</td>
+<td>41.0 / 33.0</td>
+<td>60.0 / 59.0</td>
+<td>57.0 / —</td>
+<td>41.0 / 53.0</td>
+<td>24.0 / 36.0</td>
+<td>76.0 / 76.0</td>
+<td>86.0 / 82.0</td>
+<td>58.0 / —</td>
+<td class='avg'>56.75%</td><td class='avg'>55.38%</td></tr>
+<tr><td><strong>iter_130000</strong></td><td>545.26B</td>
+<td>33.0 / 31.0</td>
+<td>61.0 / 60.0</td>
+<td>65.0 / —</td>
+<td>40.0 / 51.0</td>
+<td>26.0 / 40.0</td>
+<td>75.0 / 74.0</td>
+<td>87.0 / 83.0</td>
+<td>60.0 / —</td>
+<td class='avg'>58.00%</td><td class='avg'>55.88%</td></tr>
+<tr><td><strong>iter_140000</strong></td><td>587.20B</td>
+<td>36.0 / 33.0</td>
+<td>63.0 / 59.0</td>
+<td>48.0 / —</td>
+<td>41.0 / 53.0</td>
+<td>20.0 / 33.0</td>
+<td>75.0 / 75.0</td>
+<td>89.0 / 81.0</td>
+<td>60.0 / —</td>
+<td class='avg'>55.25%</td><td class='avg'>54.00%</td></tr>
+<tr><td><strong>iter_150000</strong></td><td>629.15B</td>
+<td>31.0 / 29.0</td>
+<td>68.0 / 62.0</td>
+<td>66.0 / —</td>
+<td>41.0 / 49.0</td>
+<td>29.0 / 39.0</td>
+<td>74.0 / 76.0</td>
+<td>87.0 / 80.0</td>
+<td>56.0 / —</td>
+<td class='avg'>57.12%</td><td class='avg'>56.50%</td></tr>
+<tr><td><strong>iter_160000</strong></td><td>671.09B</td>
+<td>35.0 / 34.0</td>
+<td>61.0 / 62.0</td>
+<td>67.0 / —</td>
+<td>39.0 / 53.0</td>
+<td>24.0 / 34.0</td>
+<td>75.0 / 75.0</td>
+<td>89.0 / 82.0</td>
+<td>58.0 / —</td>
+<td class='avg'>58.13%</td><td class='avg'>56.00%</td></tr>
+<tr><td><strong>iter_170000</strong></td><td>713.03B</td>
+<td>37.0 / 34.0</td>
+<td>66.0 / 57.0</td>
+<td>60.0 / —</td>
+<td>42.0 / 55.0</td>
+<td>26.0 / 37.0</td>
+<td>76.0 / 76.0</td>
+<td>88.0 / 85.0</td>
+<td>58.0 / —</td>
+<td class='avg'>57.75%</td><td class='avg'>56.62%</td></tr>
+<tr><td><strong>iter_180000</strong></td><td>754.97B</td>
+<td>32.0 / 29.0</td>
+<td>64.0 / 63.0</td>
+<td>58.0 / —</td>
+<td>42.0 / 56.0</td>
+<td>23.0 / 36.0</td>
+<td>76.0 / 79.0</td>
+<td>84.0 / 79.0</td>
+<td>58.0 / —</td>
+<td class='avg'>57.25%</td><td class='avg'>54.62%</td></tr>
+<tr><td><strong>iter_190000</strong></td><td>796.92B</td>
+<td>35.0 / 30.0</td>
+<td>59.0 / 62.0</td>
+<td>66.0 / —</td>
+<td>43.0 / 51.0</td>
+<td>21.0 / 39.0</td>
+<td>76.0 / 76.0</td>
+<td>83.0 / 83.0</td>
+<td>58.0 / —</td>
+<td class='avg'>58.13%</td><td class='avg'>55.12%</td></tr>
+<tr><td><strong>iter_200000</strong></td><td>838.86B</td>
+<td>32.0 / 31.0</td>
+<td>66.0 / 67.0</td>
+<td>70.0 / —</td>
+<td>42.0 / 54.0</td>
+<td>23.0 / 38.0</td>
+<td>75.0 / 77.0</td>
+<td>88.0 / 84.0</td>
+<td>60.0 / —</td>
+<td class='avg'>60.12%</td><td class='avg'>57.00%</td></tr>
+<tr><td><strong>iter_210000</strong></td><td>880.80B</td>
+<td>36.0 / 33.0</td>
+<td>69.0 / 64.0</td>
+<td>64.0 / —</td>
+<td>40.0 / 51.0</td>
+<td>22.0 / 37.0</td>
+<td>80.0 / 77.0</td>
+<td>89.0 / 86.0</td>
+<td>56.0 / —</td>
+<td class='avg'>58.50%</td><td class='avg'>57.00%</td></tr>
+<tr><td><strong>iter_220000</strong></td><td>922.75B</td>
+<td>39.0 / 33.0</td>
+<td>66.0 / 60.0</td>
+<td>59.0 / —</td>
+<td>42.0 / 55.0</td>
+<td>24.0 / 37.0</td>
+<td>79.0 / 80.0</td>
+<td>86.0 / 83.0</td>
+<td>55.0 / —</td>
+<td class='avg'>57.75%</td><td class='avg'>56.25%</td></tr>
+<tr><td><strong>iter_230000</strong></td><td>964.69B</td>
+<td>34.0 / 36.0</td>
+<td>71.0 / 65.0</td>
+<td>57.0 / —</td>
+<td>42.0 / 56.0</td>
+<td>24.0 / 40.0</td>
+<td>76.0 / 76.0</td>
+<td>84.0 / 84.0</td>
+<td>57.0 / —</td>
+<td class='avg'>58.88%</td><td class='avg'>55.62%</td></tr>
+<tr><td><strong>iter_240000</strong></td><td>1.01T</td>
+<td>33.0 / 36.0</td>
+<td>70.0 / 64.0</td>
+<td>56.0 / —</td>
+<td>41.0 / 50.0</td>
+<td>28.0 / 35.0</td>
+<td>72.0 / 72.0</td>
+<td>86.0 / 84.0</td>
+<td>66.0 / —</td>
+<td class='avg'>57.88%</td><td class='avg'>56.50%</td></tr>
+<tr><td><strong>iter_250000</strong></td><td>1.05T</td>
+<td>33.0 / 36.0</td>
+<td>68.0 / 66.0</td>
+<td>49.0 / —</td>
+<td>40.0 / 55.0</td>
+<td>27.0 / 35.0</td>
+<td>79.0 / 72.0</td>
+<td>87.0 / 83.0</td>
+<td>64.0 / —</td>
+<td class='avg'>57.50%</td><td class='avg'>55.88%</td></tr>
+<tr><td><strong>iter_260000</strong></td><td>1.09T</td>
+<td>32.0 / 32.0</td>
+<td>73.0 / 66.0</td>
+<td>65.0 / —</td>
+<td>42.0 / 51.0</td>
+<td>27.0 / 36.0</td>
+<td>77.0 / 76.0</td>
+<td>88.0 / 82.0</td>
+<td>64.0 / —</td>
+<td class='avg'>59.00%</td><td class='avg'>58.50%</td></tr>
+<tr><td>iter_270000</td><td>1.13T</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td>iter_280000</td><td>1.17T</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td>iter_290000</td><td>1.22T</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td>iter_300000</td><td>1.26T</td><td colspan='10' class='na'>评测中…</td></tr>
+<tr><td colspan='12' style='background:#eef2f7;font-weight:600;text-align:left'>参照线</td></tr>
+<tr class='ref'><td>BaiZe P-6 (655M,20k)</td><td>655M tok</td><td colspan='8' class='na'>逐集见 P-6 报告</td><td class='avg'>44.0%</td><td class='avg'>43.1%</td></tr>
+<tr class='ref'><td>Xmodel-2 s1/10K (39.3B tok)</td><td>41.9B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>46.7%</td><td>—</td></tr>
+<tr class='ref'><td>Xmodel-2 s1/20K (78.6B tok)</td><td>83.9B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>49.1%</td><td>—</td></tr>
+<tr class='ref'><td>Xmodel-2 s1/30K (117.9B tok)</td><td>125.8B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>49.6%</td><td>—</td></tr>
+<tr class='ref'><td>Xmodel-2 s1/40K (157.2B tok)</td><td>167.8B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>50.3%</td><td>—</td></tr>
+<tr class='ref'><td>Phi-1.5 (1.3B, ~300B tok)</td><td>~300B</td><td colspan='8' class='na'>逐集未列</td><td class='avg'>50%</td><td>—</td></tr>
+</table>
+<p class='small'>注：每格「acc / acc_norm」（百分比）。Avg(harness)=与 P-6 同口径（ARC-C/E/HellaSwag/OBQA/PIQA/SciQ 取 acc_norm，BoolQ/Winogrande 取 acc）；Avg(raw acc)=8 集全取 acc。<code>limit=100</code> 下 acc_stderr ≈ ±4.5%。</p>
+</div>
+<div class='card'><h2>④ 能力-vs-step 曲线</h2>
+<div class='chart'><svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" style="font-family:monospace;background:#fff">
+<rect width="900" height="560" fill="white"/>
+<line x1="70" y1="500.0" x2="750" y2="500.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="503.0" font-size="10" fill="#64748b" text-anchor="end">35%</text>
+<line x1="70" y1="408.0" x2="750" y2="408.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="411.0" font-size="10" fill="#64748b" text-anchor="end">49%</text>
+<line x1="70" y1="316.0" x2="750" y2="316.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="319.0" font-size="10" fill="#64748b" text-anchor="end">62%</text>
+<line x1="70" y1="224.0" x2="750" y2="224.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="227.0" font-size="10" fill="#64748b" text-anchor="end">75%</text>
+<line x1="70" y1="132.0" x2="750" y2="132.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="135.0" font-size="10" fill="#64748b" text-anchor="end">89%</text>
+<line x1="70" y1="40.0" x2="750" y2="40.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="64" y="43.0" font-size="10" fill="#64748b" text-anchor="end">102%</text>
+<line x1="116.9" y1="40" x2="116.9" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="116.9" y="516" font-size="10" fill="#64748b" text-anchor="middle">10k</text>
+<line x1="212.5" y1="40" x2="212.5" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="212.5" y="516" font-size="10" fill="#64748b" text-anchor="middle">20k</text>
+<line x1="268.5" y1="40" x2="268.5" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="268.5" y="516" font-size="10" fill="#64748b" text-anchor="middle">30k</text>
+<line x1="308.2" y1="40" x2="308.2" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="308.2" y="516" font-size="10" fill="#64748b" text-anchor="middle">40k</text>
+<line x1="339.0" y1="40" x2="339.0" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="339.0" y="516" font-size="10" fill="#64748b" text-anchor="middle">50k</text>
+<line x1="364.1" y1="40" x2="364.1" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="364.1" y="516" font-size="10" fill="#64748b" text-anchor="middle">60k</text>
+<line x1="385.4" y1="40" x2="385.4" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="385.4" y="516" font-size="10" fill="#64748b" text-anchor="middle">70k</text>
+<line x1="403.8" y1="40" x2="403.8" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="403.8" y="516" font-size="10" fill="#64748b" text-anchor="middle">80k</text>
+<line x1="420.1" y1="40" x2="420.1" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="420.1" y="516" font-size="10" fill="#64748b" text-anchor="middle">90k</text>
+<line x1="434.6" y1="40" x2="434.6" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="434.6" y="516" font-size="10" fill="#64748b" text-anchor="middle">100k</text>
+<line x1="530.2" y1="40" x2="530.2" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="530.2" y="516" font-size="10" fill="#64748b" text-anchor="middle">200k</text>
+<line x1="656.7" y1="40" x2="656.7" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="656.7" y="516" font-size="10" fill="#64748b" text-anchor="middle">500k</text>
+<line x1="703.1" y1="40" x2="703.1" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+<text x="703.1" y="516" font-size="10" fill="#64748b" text-anchor="middle">700k</text>
+<line x1="70" y1="40" x2="70" y2="500" stroke="#334155" stroke-width="1.5"/>
+<line x1="70" y1="500" x2="750" y2="500" stroke="#334155" stroke-width="1.5"/>
+<text x="410" y="542" font-size="11" fill="#334155" text-anchor="middle">训练步数 iter（对数轴）</text>
+<text x="18" y="270" font-size="11" fill="#334155" text-anchor="middle" transform="rotate(-90 18 270)">8 集常识推理 Avg (harness口径)</text>
+<polyline points="116.9,561.8 212.5,541.3 268.5,561.8 308.2,520.8 339.0,541.3 364.1,513.9 385.4,534.5 403.8,500.3 420.1,527.6 434.6,520.8 447.8,534.5 459.8,513.9 470.8,527.6 481.0,513.9 490.6,541.3 499.5,507.1 507.8,507.1 515.7,541.3 523.2,534.5 530.2,527.6 537.0,513.9 543.4,513.9 549.5,493.4 555.4,493.4 561.0,493.4 566.4,520.8" fill="none" stroke="#94a3b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,418.3 212.5,363.6 268.5,343.1 308.2,343.1 339.0,356.8 364.1,322.6 385.4,349.9 403.8,356.8 420.1,377.3 434.6,356.8 447.8,322.6 459.8,336.3 470.8,329.4 481.0,336.3 490.6,315.8 499.5,315.8 507.8,349.9 515.7,308.9 523.2,315.8 530.2,281.6 537.0,302.1 543.4,329.4 549.5,295.3 555.4,302.1 561.0,288.4 566.4,288.4" fill="none" stroke="#a3b8c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,315.8 212.5,356.8 268.5,418.3 308.2,281.6 339.0,281.6 364.1,343.1 385.4,274.8 403.8,288.4 420.1,288.4 434.6,281.6 447.8,308.9 459.8,349.9 470.8,295.3 481.0,411.4 490.6,288.4 499.5,281.6 507.8,329.4 515.7,343.1 523.2,288.4 530.2,261.1 537.0,302.1 543.4,336.3 549.5,349.9 555.4,356.8 561.0,404.6 566.4,295.3" fill="none" stroke="#b8a3c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,431.9 212.5,431.9 268.5,438.8 308.2,425.1 339.0,425.1 364.1,404.6 385.4,390.9 403.8,384.1 420.1,377.3 434.6,397.8 447.8,377.3 459.8,377.3 470.8,390.9 481.0,377.3 490.6,404.6 499.5,377.3 507.8,363.6 515.7,356.8 523.2,390.9 530.2,370.4 537.0,390.9 543.4,363.6 549.5,356.8 555.4,397.8 561.0,363.6 566.4,390.9" fill="none" stroke="#c8a3b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,500.3 212.5,520.8 268.5,486.6 308.2,507.1 339.0,507.1 364.1,513.9 385.4,472.9 403.8,493.4 420.1,452.4 434.6,466.1 447.8,486.6 459.8,493.4 470.8,466.1 481.0,513.9 490.6,472.9 499.5,507.1 507.8,486.6 515.7,493.4 523.2,472.9 530.2,479.8 537.0,486.6 543.4,486.6 549.5,466.1 555.4,500.3 561.0,500.3 566.4,493.4" fill="none" stroke="#a3c8b8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,240.6 212.5,274.8 268.5,247.4 308.2,240.6 339.0,247.4 364.1,261.1 385.4,233.8 403.8,274.8 420.1,213.3 434.6,240.6 447.8,240.6 459.8,220.1 470.8,233.8 481.0,226.9 490.6,220.1 499.5,226.9 507.8,220.1 515.7,199.6 523.2,220.1 530.2,213.3 537.0,213.3 543.4,192.8 549.5,220.1 555.4,247.4 561.0,247.4 566.4,220.1" fill="none" stroke="#c8b8a3" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,261.1 212.5,233.8 268.5,192.8 308.2,213.3 339.0,213.3 364.1,172.3 385.4,206.4 403.8,165.4 420.1,213.3 434.6,165.4 447.8,192.8 459.8,179.1 470.8,172.3 481.0,185.9 490.6,192.8 499.5,179.1 507.8,158.6 515.7,199.6 523.2,172.3 530.2,165.4 537.0,151.8 543.4,172.3 549.5,165.4 555.4,165.4 561.0,172.3 566.4,179.1" fill="none" stroke="#b8c8a3" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,370.4 212.5,349.9 268.5,329.4 308.2,370.4 339.0,377.3 364.1,418.3 385.4,390.9 403.8,336.3 420.1,302.1 434.6,329.4 447.8,281.6 459.8,343.1 470.8,329.4 481.0,329.4 490.6,356.8 499.5,343.1 507.8,343.1 515.7,343.1 523.2,343.1 530.2,329.4 537.0,356.8 543.4,363.6 549.5,349.9 555.4,288.4 561.0,302.1 566.4,302.1" fill="none" stroke="#c8a3c8" stroke-width="1" opacity="0.55"/>
+<polyline points="116.9,387.5 212.5,384.1 268.5,377.3 308.2,362.7 339.0,368.7 364.1,368.7 385.4,356.8 403.8,349.9 420.1,344.0 434.6,344.8 447.8,343.1 459.8,351.6 470.8,343.1 481.0,361.9 490.6,349.1 499.5,342.2 507.8,344.8 515.7,348.2 523.2,342.2 530.2,328.6 537.0,339.7 543.4,344.8 549.5,337.1 555.4,344.0 561.0,346.5 566.4,336.3" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+<circle cx="116.9" cy="387.5" r="4" fill="#1d4ed8"/>
+<circle cx="212.5" cy="384.1" r="4" fill="#1d4ed8"/>
+<circle cx="268.5" cy="377.3" r="4" fill="#1d4ed8"/>
+<circle cx="308.2" cy="362.7" r="4" fill="#1d4ed8"/>
+<circle cx="339.0" cy="368.7" r="4" fill="#1d4ed8"/>
+<circle cx="364.1" cy="368.7" r="4" fill="#1d4ed8"/>
+<circle cx="385.4" cy="356.8" r="4" fill="#1d4ed8"/>
+<circle cx="403.8" cy="349.9" r="4" fill="#1d4ed8"/>
+<circle cx="420.1" cy="344.0" r="4" fill="#1d4ed8"/>
+<circle cx="434.6" cy="344.8" r="4" fill="#1d4ed8"/>
+<circle cx="447.8" cy="343.1" r="4" fill="#1d4ed8"/>
+<circle cx="459.8" cy="351.6" r="4" fill="#1d4ed8"/>
+<circle cx="470.8" cy="343.1" r="4" fill="#1d4ed8"/>
+<circle cx="481.0" cy="361.9" r="4" fill="#1d4ed8"/>
+<circle cx="490.6" cy="349.1" r="4" fill="#1d4ed8"/>
+<circle cx="499.5" cy="342.2" r="4" fill="#1d4ed8"/>
+<circle cx="507.8" cy="344.8" r="4" fill="#1d4ed8"/>
+<circle cx="515.7" cy="348.2" r="4" fill="#1d4ed8"/>
+<circle cx="523.2" cy="342.2" r="4" fill="#1d4ed8"/>
+<circle cx="530.2" cy="328.6" r="4" fill="#1d4ed8"/>
+<circle cx="537.0" cy="339.7" r="4" fill="#1d4ed8"/>
+<circle cx="543.4" cy="344.8" r="4" fill="#1d4ed8"/>
+<circle cx="549.5" cy="337.1" r="4" fill="#1d4ed8"/>
+<circle cx="555.4" cy="344.0" r="4" fill="#1d4ed8"/>
+<circle cx="561.0" cy="346.5" r="4" fill="#1d4ed8"/>
+<circle cx="566.4" cy="336.3" r="4" fill="#1d4ed8"/>
+<polyline points="116.9,34.0 127.5,35.5 138.1,37.0 148.8,38.5 159.4,40.0 170.0,41.5 180.6,42.9 191.2,44.3 201.8,45.8 212.5,47.2 223.1,48.6 233.7,50.0 244.3,51.3 254.9,52.7 265.6,54.0 276.2,55.4 286.8,56.7 297.4,58.0 308.0,59.3 318.7,60.6 329.3,61.9 339.9,63.2 350.5,64.5 361.1,65.7 371.8,67.0 382.4,68.2 393.0,69.4 403.6,70.6 414.2,71.8 424.8,73.0 435.5,74.2 446.1,75.4 456.7,76.5 467.3,77.7 477.9,78.8 488.6,80.0 499.2,81.1 509.8,82.2 520.4,83.3 531.0,84.4 541.7,85.5 552.3,86.5 562.9,87.6 573.5,88.7 584.1,89.7 594.8,90.8 605.4,91.8 616.0,92.8 626.6,93.8 637.2,94.8 647.9,95.8 658.5,96.8 669.1,97.8 679.7,98.8 690.3,99.7 700.9,100.7" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="6,4"/>
+<circle cx="703.1" cy="100.9" r="5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+<text x="697.1" y="92.9" font-size="10" fill="#dc2626" text-anchor="end">700k 预测 93.4%</text>
+<line x1="70" y1="439.1" x2="750" y2="439.1" stroke="#16a34a" stroke-width="1.2" stroke-dasharray="3,3"/>
+<line x1="70" y1="397.8" x2="750" y2="397.8" stroke="#9333ea" stroke-width="1.2" stroke-dasharray="3,3"/>
+<circle cx="116.9" cy="420.7" r="3.5" fill="#ea580c"/>
+<circle cx="212.5" cy="404.1" r="3.5" fill="#ea580c"/>
+<circle cx="268.5" cy="400.5" r="3.5" fill="#ea580c"/>
+<circle cx="308.2" cy="395.7" r="3.5" fill="#ea580c"/>
+<line x1="758" y1="54" x2="774" y2="54" stroke="#1d4ed8" stroke-width="2"/>
+<text x="778" y="57" font-size="9" fill="#334155">BaiZe-2B Avg（llama.cpp 修复后）</text>
+<line x1="758" y1="70" x2="774" y2="70" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,3"/>
+<text x="778" y="73" font-size="9" fill="#334155">拟合外推（power, R²=0.817)</text>
+<circle cx="766" cy="86" r="3.5" fill="#ea580c"/>
+<text x="778" y="89" font-size="9" fill="#334155">Xmodel-2 s1 (1.2B)</text>
+<line x1="758" y1="102" x2="774" y2="102" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3"/>
+<text x="778" y="105" font-size="9" fill="#334155">P-6 起点 (44.0%)</text>
+<line x1="758" y1="118" x2="774" y2="118" stroke="#9333ea" stroke-width="1.5" stroke-dasharray="3,3"/>
+<text x="778" y="121" font-size="9" fill="#334155">Phi-1.5 (50%)</text>
+<line x1="758" y1="134" x2="774" y2="134" stroke="#94a3b8" stroke-width="2"/>
+<text x="778" y="137" font-size="9" fill="#334155">逐集细线</text>
+</svg></div>
+<p class='small' style='text-align:center'>图1：8 集 Avg acc vs 训练步数（对数轴）。蓝粗线=BaiZe-2B Avg，灰细线=逐集，橙点=Xmodel-2 s1，绿/紫虚线=P-6/Phi-1.5 参照，红虚线=拟合外推，红点=700k 预测。</p>
+</div>
+<div class='card'><h2>⑤ 700k 步（≈2.94T token）常识推理水平预测</h2>
+<p>对 26 个完成点（iter 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000, 210000, 220000, 230000, 240000, 250000, 260000）的 8 集 Avg 做两种拟合，取 R² 更高者为预测：</p>
+<table><tr><th>拟合形式</th><th>公式</th><th>R²</th><th>RMSE</th><th>700k 预测 Avg</th></tr>
+<tr><td>log</td><td><code>acc = 0.2947 + 0.0542·log10(step)</code></td><td>0.8144</td><td>0.0092</td><td class='avg'>61.18%</td></tr>
+<tr><td>power ★</td><td><code>acc = 0.7702 - -0.7216·step^{-0.110}</code></td><td>0.8173</td><td>0.4080</td><td class='avg'>93.44%</td></tr>
+</table>
+<div class='note'><strong>预测结论</strong>：取 power 拟合 （R²=0.817），700k 步（≈2.94T token）时 8 集常识推理 Avg 预测为 <strong>93.44%</strong>。公式：<code>acc = 0.7702 - -0.7216·step^{-0.110}</code>。</div>
+<div class='warn'><strong>⚠️ 外推不确定度（务必明示）</strong>：<ul><li>拟合仅基于 <strong>26 个点</strong>，覆盖 iter 10000–260000，700k 距最末点 <strong>2× 外推</strong>，误差可能很大。</li><li>两种拟合（对数=无上界单调增；幂律=逼近渐近上界 a）假设不同，二者 700k 预测值的差距即体现模型选择的不确定度。</li><li>RMSE ≈ 0.4080（40.80 pp）为拟合段内残差，<strong>外推误差通常远大于此</strong>。</li><li>每任务 <code>limit=100</code>（样本量小，逐集 ±4.5%），Avg 本身带统计噪声。</li><li>结论应理解为<strong>量级估计</strong>，非精确预测；需更多检查点（如 200k/500k）收窄区间。</li></ul></div>
+</div>
+<div class='card'><h2>⑥ llama.cpp vs HF（PyTorch CPU）后端对比</h2><ul>
+<li><strong>HF 侧（PyTorch CPU float32）</strong>：iter_20000 / 40000 / 50000 因 Mamba2 SSM 数值不稳定（≥17 token 序列 logits 全 NaN）→ sciq=0.0 退化，仅 iter_10000（Avg 50.0%）/ iter_30000（Avg 50.25%）有效。</li>
+<li><strong>llama.cpp 侧（C++ SSM scan，修复后）</strong>：1-token logits 与 HF 对齐 （Δmax=0.006），sciq/piqa limit=100 复判 Δ≤1pp；C++ SSM 数值稳定，<strong>全部 26 个 ckpt 可正常出分</strong>。</li>
+<li><strong>结论</strong>：本报告（llama.cpp）给出真实的 26 点能力曲线，克服了 HF CPU 侧的 NaN 退化问题；NaN 为 PyTorch reference 实现的数值问题，非 ckpt 权重问题（逐张量扫描 ckpt 全无 NaN/Inf）。</li>
+</ul></div>
+<div class='card'><h2>⑦ 诚实条款与限制</h2><ul>
+<li>本评测为<strong>纯 CPU</strong>，llama.cpp 后端，<code>limit=100</code>，样本量较小，逐集 acc_stderr ≈ ±4.5%，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>
+<li>700k 预测为<strong>外推</strong>，仅基于 26 点，<strong>误差大，仅作量级估计</strong>（见 §⑤ 不确定度）。</li>
+<li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>
+<li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响；iter_60000+ 为 resume 后检查点。</li>
+<li>全程 <code>CUDA_VISIBLE_DEVICES=""</code>，未碰 GPU/S1，CPU load ≪80%。</li>
+</ul></div>
+<div class='foot'>报告生成器：<code>run/gen_llamacpp_scaling_report.py</code>（幂等，可随评测进度反复刷新）　|　数据源：<code>nemo_experiments/baize2b/lm_eval_results/gguf_iter_*_fixed_8set/</code>　|　2026-11-19 23:53:31</div>
+</body></html>

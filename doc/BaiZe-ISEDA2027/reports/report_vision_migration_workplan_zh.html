@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>白泽视觉线 · 迁移后新环境工作计划</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--teal:#39d0d8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;line-height:1.7;padding:24px;max-width:1100px;margin:0 auto}
+h1{font-size:1.7em;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:8px}
+h2{font-size:1.35em;color:var(--accent);margin:28px 0 12px;border-left:4px solid var(--accent);padding-left:12px}
+h3{font-size:1.12em;color:var(--purple);margin:20px 0 8px}
+h4{font-size:1.0em;color:var(--teal);margin:14px 0 6px}
+.subtitle{color:var(--muted);font-size:.9em;margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th,td{padding:8px 12px;border:1px solid var(--border);text-align:left}
+th{background:#1c2330;color:var(--accent);font-weight:600}
+tr:nth-child(even){background:#1c2330}
+code{background:#1c2330;padding:2px 6px;border-radius:4px;font-size:.88em;color:var(--teal)}
+pre{background:#1c2330;padding:12px;border-radius:6px;overflow-x:auto;border:1px solid var(--border);margin:10px 0;font-size:.85em}
+pre code{background:none;padding:0}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.8em;font-weight:600}
+.badge-green{background:rgba(63,185,80,.15);color:var(--green);border:1px solid var(--green)}
+.badge-red{background:rgba(248,81,73,.15);color:var(--red);border:1px solid var(--red)}
+.badge-yellow{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid var(--yellow)}
+.badge-blue{background:rgba(88,166,255,.15);color:var(--accent);border:1px solid var(--accent)}
+.timeline{position:relative;padding-left:28px;margin:16px 0}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding:8px 0 8px 16px}
+.timeline-item::before{content:'';position:absolute;left:-24px;top:14px;width:10px;height:10px;border-radius:50%;border:2px solid var(--accent);background:var(--bg)}
+.timeline-item.done::before{background:var(--green);border-color:var(--green)}
+.timeline-item.active::before{background:var(--yellow);border-color:var(--yellow)}
+.timeline-item .time{color:var(--muted);font-size:.82em}
+.note{background:rgba(210,153,34,.08);border-left:3px solid var(--yellow);padding:10px 14px;margin:10px 0;border-radius:0 4px 4px 0;font-size:.9em}
+.note-info{background:rgba(88,166,255,.08);border-left-color:var(--accent)}
+.note-ok{background:rgba(63,185,80,.08);border-left-color:var(--green)}
+.note-warn{background:rgba(248,81,73,.08);border-left-color:var(--red)}
+ul{padding-left:20px;margin:8px 0}
+li{margin:4px 0}
+.footer{color:var(--muted);font-size:.82em;text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<h1>白泽视觉线 · 迁移后新环境工作计划</h1>
+<p class="subtitle">报告日期：2026-11-13 14:00 · 服务器：10.252.32.17 (.17) · 撰写人：opencode 操作员 · 状态：待 vision agent 执行</p>
+
+<h2>一、背景与迁移现状</h2>
+<div class="card">
+<p>2026-11-13 09:12，视觉线从 <code>10.252.32.12</code>（.12，CPU-only，GPU 被 pretrain 占用）迁移至 <code>10.252.32.17</code>（.17，8xA40 服务器，与 posttrain 线共享）。迁移带来两个根本性变化：</p>
+<ol>
+<li><strong>GPU 资源</strong>：.17 后四张卡（GPU4-7）可与 posttrain 线协调使用，视觉实验不再受限于 CPU</li>
+<li><strong>EDA 沙盒隧道</strong>：.17 通过 SSH 隧道（端口 3333）连至 .15（EDA 服务器），进而访问 <code>10.129.32.75</code> 沙盒上的 Synopsys WaveView 环境</li>
+</ol>
+</div>
+
+<div class="card">
+<h3>迁移后基础设施断裂情况</h3>
+<table>
+<tr><th>项目</th><th>.12 旧环境</th><th>.17 新环境</th><th>状态</th></tr>
+<tr><td>GPU</td><td>8xH100（被 pretrain 100% 占用）</td><td>8xA40（GPU0-3 root，GPU4-6 posttrain，GPU7 空闲）</td><td><span class="badge badge-yellow">部分可用</span></td></tr>
+<tr><td>/nas_train</td><td>有 datasets/baize-vision/</td><td>未挂载（空/不存在）</td><td><span class="badge badge-red">断裂</span></td></tr>
+<tr><td>WaveView 沙盒</td><td>不可达</td><td>127.0.0.1:8664-8669（隧道转发）</td><td><span class="badge badge-green">可用</span></td></tr>
+<tr><td>v9 实验结果</td><td>在 .12 /nas_train 上</td><td>不可达（.12 SSH 超时）</td><td><span class="badge badge-red">困在 .12</span></td></tr>
+<tr><td>v10 实验结果</td><td>—</td><td>本地 wave_rl/v10_results/</td><td><span class="badge badge-green">在位</span></td></tr>
+<tr><td>基座模型 qwen3vl_2b</td><td>/nas_train/.../baize-vision/</td><td>不可达</td><td><span class="badge badge-red">断裂</span></td></tr>
+<tr><td>Qwen3.5-2B（v10 替代）</td><td>—</td><td>.17 本地可用（已验证 PASS）</td><td><span class="badge badge-green">可用</span></td></tr>
+<tr><td>matplotlib/torch/transformers</td><td>—</td><td>py310 conda 环境已安装</td><td><span class="badge badge-green">可用</span></td></tr>
+</table>
+<div class="note note-warn"><strong>关键断裂</strong>：v9 结果和原基座模型困在 .12 不可达。v10 已切换到 Qwen3.5-2B 并在 .17 本地完成（NOT SIGNIFICANT 2/6）。</div>
+</div>
+
+<h2>二、v8-v10 实验结论回顾</h2>
+<div class="card">
+<h3>核心实验：波形频率比较（频率判别 RL）</h3>
+<p>任务：给定两段波形（各 16 个采样点），判断哪个频率更高。用 SFT + GRPO 训练小模型完成此任务。</p>
+<table>
+<tr><th>版本</th><th>基座</th><th>SFT</th><th>GRPO</th><th>Eval A</th><th>Eval B</th><th>Eval C</th><th>McNemar p</th><th>结论</th></tr>
+<tr><td>v8</td><td>qwen3vl_2b</td><td>200x3ep</td><td>15步</td><td>0%</td><td>45%</td><td>52.5%+6.1%</td><td>0.031(s0)</td><td><span class="badge badge-yellow">MIXED</span></td></tr>
+<tr><td>v9</td><td>qwen3vl_2b</td><td>500x5ep</td><td>30步</td><td>0%</td><td>49.5%</td><td>49.5%</td><td>1.0(n_disc=0)</td><td><span class="badge badge-red">FAIL</span></td></tr>
+<tr><td>v10</td><td>Qwen3.5-2B</td><td>500x5ep</td><td>50步(lr=1e-5)</td><td>46.2%</td><td>54.9%</td><td>51.6%+3.1%</td><td>1.0(n_disc=29)</td><td><span class="badge badge-red">NOT SIG</span></td></tr>
+</table>
+<div class="note"><strong>诚实负结果</strong>：三轮实验一致表明——SFT 有效（A->B = +8-10pp），但 GRPO 在 SFT 基础上无净增益（C <= B，p=1.0）。v10 修复了 n_discordant（0->29），说明确有分歧样本，但 RL 未将分歧转化为准确率提升。</div>
+</div>
+
+<h2>三、新环境能力探查结果</h2>
+
+<h3>3.1 GPU 资源（.17 / 8xA40）</h3>
+<div class="card">
+<table>
+<tr><th>GPU</th><th>显存占用</th><th>利用率</th><th>归属</th><th>vision 可用？</th></tr>
+<tr><td>0-3</td><td>~45GB/卡</td><td>~0%</td><td>root SGLang Qwen3.8-27B</td><td><span class="badge badge-red">不可动</span></td></tr>
+<tr><td>4</td><td>39GB</td><td>~0%</td><td>posttrain vLLM base (8098)</td><td><span class="badge badge-yellow">协调后可用</span></td></tr>
+<tr><td>5</td><td>39GB</td><td>~0%</td><td>posttrain vLLM SFT step60 (8097)</td><td><span class="badge badge-yellow">协调后可用</span></td></tr>
+<tr><td>6</td><td>39GB</td><td>92%</td><td>posttrain vLLM SFT step105 (8096)</td><td><span class="badge badge-red">繁忙</span></td></tr>
+<tr><td>7</td><td>3MB</td><td>0%</td><td><strong>空闲</strong></td><td><span class="badge badge-green">立即可用</span></td></tr>
+</table>
+<div class="note note-info"><strong>GPU7 立即可用</strong>（46GB A40 空闲）。posttrain 5-run eval 完成后（ETA ~6h），GPU4/5 也将释放。vision 可用 1-3 张 A40 进行 GPU 训练/RL，相比 CPU 提速约 50-100x。</div>
+</div>
+
+<h3>3.2 WaveView 沙盒能力（10.129.32.75 via 隧道）</h3>
+<div class="card">
+<p><strong>连接路径</strong>：<code>.17 localhost:8664</code> -> SSH 隧道（端口 3333）-> <code>.15</code> -> <code>10.129.32.75:8664</code>（Synopsys Custom WaveView T-2022.06-SP1）</p>
+<table>
+<tr><th>API 类别</th><th>关键命令</th><th>验证状态</th><th>用途</th></tr>
+<tr><td>信号创建</td><td><code>sx_create_signal</code> + <code>sx_append_data</code></td><td><span class="badge badge-green">PASS</span></td><td>合成任意波形信号</td></tr>
+<tr><td>波形文件保存</td><td><code>sx_open_sim_file_write</code> + <code>sx_save_signal</code></td><td><span class="badge badge-green">PASS</span></td><td>保存为 WDF 格式</td></tr>
+<tr><td>数据点提取</td><td><code>sx_wave_to_list</code></td><td><span class="badge badge-green">PASS</span></td><td>提取 (x,y) 数据点列表</td></tr>
+<tr><td>数据导出</td><td><code>sx_export_data/fsdb/vcd</code></td><td><span class="badge badge-yellow">部分验证</span></td><td>导出文本/FSDB/VCD</td></tr>
+<tr><td>波形截图</td><td><code>sx_dump_png/jpeg</code></td><td><span class="badge badge-red">batch 不可用</span></td><td>需 GUI，headless 崩溃</td></tr>
+<tr><td>波形分析</td><td><code>sx_gmeas_data/scan_data_points</code></td><td><span class="badge badge-green">PASS</span></td><td>测量数据点、扫描波形</td></tr>
+<tr><td>SPICE 仿真</td><td><code>wvpp_setup_simulation/mtb_run_start</code></td><td><span class="badge badge-blue">API 可用</span></td><td>跑仿真生成波形</td></tr>
+</table>
+<div class="note note-warn"><strong>关键限制</strong>：<code>sx_dump_png</code> 在 batch 模式下不可用（WaveView headless 运行）。但 <code>sx_wave_to_list</code> 可提取数据点，在 .17 端用 matplotlib 渲染 PNG（已验证 PASS，36KB PNG）。</div>
+<div class="note note-ok"><strong>替代路径已验证</strong>：WaveView -> <code>sx_wave_to_list</code> 提取数据 -> HTTP 返回 -> .17 端 matplotlib 渲染 PNG。完整闭环已验证：合成正弦波 -> 提取 16 数据点 -> matplotlib 生成 36KB PNG。</div>
+</div>
+
+<h3>3.3 软件环境（.17 py310 conda）</h3>
+<div class="card">
+<table>
+<tr><th>组件</th><th>版本</th><th>状态</th></tr>
+<tr><td>PyTorch</td><td>2.6.0+cu124</td><td><span class="badge badge-green">OK</span></td></tr>
+<tr><td>transformers</td><td>5.20.2</td><td><span class="badge badge-green">OK</span></td></tr>
+<tr><td>peft</td><td>0.21.2</td><td><span class="badge badge-green">OK</span></td></tr>
+<tr><td>matplotlib</td><td>3.10.9（新装）</td><td><span class="badge badge-green">OK</span></td></tr>
+<tr><td>torchvision</td><td>0.21.0+cu124</td><td><span class="badge badge-green">OK</span></td></tr>
+<tr><td>Pillow/numpy</td><td>12.3.0 / 2.2.6</td><td><span class="badge badge-green">OK</span></td></tr>
+</table>
+</div>
+
+<h2>四、工作计划（3 阶段 / 8 项任务）</h2>
+
+<div class="card">
+<h3>阶段一：基础设施修复 + 真实波形数据合成（第 1-3 天）</h3>
+
+<h4>任务 1：修复 /nas_train 挂载或迁移数据</h4>
+<ul>
+<li><strong>问题</strong>：v9 结果、原基座模型 qwen3vl_2b、baize-vision 数据集均在 .12 的 /nas_train 上，.12 SSH 超时不可达</li>
+<li><strong>方案 A</strong>：申请网络团队打通 .17->.12 SSH（优先，因 .12 上有大量历史产物）</li>
+<li><strong>方案 B</strong>：经隧道 SSH 到 .15，检查 .15 的 /nasdata 是否有副本（.15 有 NFS /nasdata -> 10.251.9.180:/g0tedaap）</li>
+<li><strong>方案 C</strong>：在 .17 上重新下载 Qwen3-VL-2B（HuggingFace 或内部镜像），用 Qwen3.5-2B 作为纯文本替代（v10 已验证可行）</li>
+<li><strong>验收</strong>：基座模型可加载，vision 线可在 .17 上独立运行训练脚本</li>
+</ul>
+
+<h4>任务 2：WaveView 真实波形合成 Pipeline</h4>
+<ul>
+<li><strong>目标</strong>：利用 WaveView 沙盒的 SPICE 仿真能力，生成<strong>真实电路仿真波形</strong>（而非纯数学合成的正弦/方波）</li>
+<li><strong>技术路径</strong>：
+<pre><code># 1. 在 WaveView 沙盒中跑 SPICE 仿真 -> 生成波形
+python3 -> HTTP POST -> 127.0.0.1:8664/v1/run_code
+  -> tcl: wvpp_setup_simulation / wvpp_mtb_run_start
+  -> tcl: sx_wave_to_list -> 提取数据点
+# 2. 数据点通过 HTTP response 返回 .17
+# 3. .17 端 matplotlib 渲染为 PNG 波形图
+# 4. PNG + label -> 多模态训练数据</code></pre>
+</li>
+<li><strong>波形类型</strong>：
+<ul>
+<li><strong>反相器链瞬态仿真</strong>：inv chain -> 延迟波形（上升/下降沿、过冲、振铃）</li>
+<li><strong>RC 网络充放电</strong>：RC 电路 -> 指数充放电波形</li>
+<li><strong>振荡器起振</strong>：ring oscillator -> 周期波形 + 起振包络</li>
+<li><strong>差分对放大器</strong>：AC 分析 -> 正弦响应 + 增益/相位</li>
+<li><strong>ADC 动态测试</strong>：斜坡输入 -> 阶梯码 + DNL/INL</li>
+</ul>
+</li>
+<li><strong>产出</strong>：500-2000 张真实 EDA 波形 PNG + JSON 标注（波形类型、关键参数、仿真网表）</li>
+<li><strong>验收</strong>：合成 100 张样本，人工检查 10 张确认波形真实性和图像质量</li>
+</ul>
+
+<h4>任务 3：WaveView -> matplotlib 波形图渲染标准化</h4>
+<ul>
+<li><strong>目标</strong>：建立从 WaveView 数据点到标准化 PNG 的自动化 pipeline</li>
+<li><strong>关键参数</strong>：
+<ul>
+<li>图像尺寸：512x512 或 1024x512（适配 VLM 输入）</li>
+<li>波形样式：黑色背景 + 绿色波形线（仿 WaveView 默认风格）或白底蓝线</li>
+<li>标注类型：时间轴（ns/us）、电压轴（V）、网格、游标</li>
+<li>数据点密度：128-1024 点/周期（从 16 点升级）</li>
+</ul>
+</li>
+<li><strong>多通道支持</strong>：同一 PNG 中显示 2-4 路信号（clock + data + output）</li>
+<li><strong>产出</strong>：<code>waveview_to_png.py</code> 标准化渲染脚本 + 渲染样式规范</li>
+<li><strong>验收</strong>：渲染 5 种波形类型各 10 张，全部通过视觉检查</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>阶段二：多模态波形理解实验（第 4-10 天）</h3>
+
+<h4>任务 4：构建波形图像-文本对数据集</h4>
+<ul>
+<li><strong>数据来源</strong>：
+<table>
+<tr><th>来源</th><th>波形类型</th><th>数量</th><th>标签</th></tr>
+<tr><td>WaveView SPICE 仿真</td><td>反相器/RC/振荡器/放大器/ADC</td><td>1000+</td><td>类型/参数/网表</td></tr>
+<tr><td>数学合成（matplotlib）</td><td>正弦/方波/三角/锯齿 + 噪声</td><td>2000+</td><td>频率/幅度/相位/噪声</td></tr>
+<tr><td>混合（真实 x 数学）</td><td>真实波形 + 参数扰动</td><td>1000+</td><td>参数差异标签</td></tr>
+</table>
+</li>
+<li><strong>任务设计</strong>：
+<ul>
+<li><strong>T1 频率比较</strong>（继承 v8-v10）：给定两波形图，哪个频率更高</li>
+<li><strong>T2 波形类型识别</strong>：给定波形图，分类为 sine/square/triangle/RC/exponential</li>
+<li><strong>T3 参数估计</strong>：给定波形图，估计频率/幅度/上升时间</li>
+<li><strong>T4 异常检测</strong>：给定波形图，判断是否有振铃/过冲/毛刺</li>
+<li><strong>T5 波形描述生成</strong>：给定波形图，生成自然语言描述（用于 SFT）</li>
+</ul>
+</li>
+<li><strong>产出</strong>：4000+ 图文对 JSONL + train/val/test 分割</li>
+</ul>
+
+<h4>任务 5：多模态 SFT 训练（GPU7 -> GPU4-7）</h4>
+<ul>
+<li><strong>模型选择</strong>：
+<ul>
+<li><strong>首选</strong>：Qwen3-VL-2B（若 /nas_train 修复后可用，支持图文输入）</li>
+<li><strong>备选</strong>：Qwen3.5-2B + 16 点数值文本输入（v10 已验证，纯文本路径）</li>
+<li><strong>升级</strong>：在 GPU7（46GB A40）上跑 LoRA SFT，batch_size=4-8</li>
+</ul>
+</li>
+<li><strong>训练配置</strong>：
+<pre><code>CUDA_VISIBLE_DEVICES=7 python train_wave_vision.py \
+  --model_path Qwen3-VL-2B \
+  --train_data wave_image_text_pairs.jsonl \
+  --epochs 5 --lr 2e-5 \
+  --lora_r 16 --lora_alpha 32 \
+  --batch_size 4 --grad_accum 4 \
+  --image_size 512</code></pre>
+</li>
+<li><strong>对比实验</strong>：
+<table>
+<tr><th>实验组</th><th>输入</th><th>训练</th><th>预期</th></tr>
+<tr><td>A: 纯文本 16 点</td><td>数值序列文本</td><td>SFT（v10 复现）</td><td>B~55%</td></tr>
+<tr><td>B: 图像 512x512</td><td>PNG 波形图</td><td>SFT（新）</td><td>B>60%?</td></tr>
+<tr><td>C: 图像 + GRPO</td><td>PNG 波形图</td><td>SFT + RL</td><td>C>B?</td></tr>
+<tr><td>D: 图像 + 数值（融合）</td><td>PNG + 数值</td><td>SFT</td><td>最佳?</td></tr>
+</table>
+</li>
+<li><strong>关键假设</strong>：图像输入比 16 点数值文本包含更多信息（波形形状、边沿、过冲），可能突破 v10 的 55% 瓶颈</li>
+<li><strong>产出</strong>：4 组对比实验结果 + 统计分析（McNemar + paired bootstrap）</li>
+</ul>
+
+<h4>任务 6：GRPO 升级——从 CPU 到 GPU + 真实波形</h4>
+<ul>
+<li><strong>v10 负结果根因分析</strong>：n_disc=29（有分歧样本）但 C < B -> GRPO 在数值文本输入上无法有效区分波形差异；可能原因：16 点数值输入信息量不足</li>
+<li><strong>v11 改进方案</strong>：
+<ul>
+<li>输入升级：16 点数值 -> 512x512 PNG 图像（信息密度 100x↑）</li>
+<li>GPU 训练：CPU 50 步 GRPO ~5h -> GPU 200 步 ~2h（40x 加速 + 4x 步数）</li>
+<li>真实波形：数学合成 -> WaveView SPICE 仿真波形（更复杂的边沿/振铃）</li>
+<li>reward 设计：正确/错误 -> 分级 reward（类型正确 +0.3，参数 +-10% 内 +0.5，完全正确 +1.0）</li>
+<li>grpo_lr：1e-5 -> 5e-6（v10 的 1e-5 可能仍偏高）</li>
+</ul>
+</li>
+<li><strong>预注册判据</strong>（先写后跑）：
+<ul>
+<li>SUCCESS：C > B（mean），McNemar p < 0.05，3 seeds 一致，n_disc > 10</li>
+<li>FAIL：C <= B 或 p >= 0.05 或 seeds 不一致</li>
+<li>新增诊断：图像输入的 B > 数值输入的 B（验证信息密度假设）</li>
+</ul>
+</li>
+<li><strong>产出</strong>：v11 实验报告 + 更新 HTML 报告 + 论文 4.7 节素材</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>阶段三：面向论文的扩展实验（第 11-20 天）</h3>
+
+<h4>任务 7：WaveView 波形分析 Agent（Tool-Use 验证）</h4>
+<ul>
+<li><strong>目标</strong>：训练模型通过 WaveView Tcl 命令分析真实波形文件（FSDB/WDF），而非仅看预渲染 PNG</li>
+<li><strong>技术路径</strong>：
+<pre><code> User: "分析这个 FSDB 波形文件中 CLK 信号的频率"
+ Model: sx_open_sim_file_read("input.fsdb")
+        sx_signal("CLK") -> wave_obj
+        sx_gmeas_data(wave_obj) -> period=10ns -> freq=100MHz
+        "CLK 信号频率为 100MHz"</code></pre>
+</li>
+<li><strong>意义</strong>：验证"小模型 + EDA 工具调用"范式在波形分析领域的可行性，与 BaiZe 主线（代码生成 + 沙盒执行）形成互补</li>
+</ul>
+
+<h4>任务 8：跨任务迁移评估</h4>
+<ul>
+<li>频率比较 SFT 模型在波形类型识别（T2）上的 zero-shot 表现</li>
+<li>真实波形 vs 数学合成波形的性能差异（domain gap 量化）</li>
+<li>不同图像分辨率（256/512/1024）对性能的影响</li>
+</ul>
+</div>
+
+<h2>五、时间线与里程碑</h2>
+<div class="card">
+<div class="timeline">
+<div class="timeline-item done"><div class="time">第 0 天（已完成）</div><div>v8-v10 实验完成 · 诚实负结果（GRPO 对数值文本波形频率比较无效）</div></div>
+<div class="timeline-item done"><div class="time">第 0 天（已完成）</div><div>.17 迁移完成 · WaveView 沙盒隧道验证 PASS · matplotlib 渲染验证 PASS</div></div>
+<div class="timeline-item active"><div class="time">第 1-3 天</div><div><strong>阶段一</strong>：修复 /nas_train（或替代方案）· WaveView 波形合成 Pipeline · 标准化渲染脚本 · 产出 500+ 真实波形 PNG</div></div>
+<div class="timeline-item"><div class="time">第 4-7 天</div><div><strong>阶段二a</strong>：构建 4000+ 图文对数据集 · GPU7 SFT 训练（4 组对比实验 A/B/C/D）</div></div>
+<div class="timeline-item"><div class="time">第 8-10 天</div><div><strong>阶段二b</strong>：v11 GRPO GPU 实验（3 seeds + control）· 统计分析 · 更新报告</div></div>
+<div class="timeline-item"><div class="time">第 11-15 天</div><div><strong>阶段三a</strong>：WaveView 波形分析 Agent（tool-use 验证）· 跨任务迁移评估</div></div>
+<div class="timeline-item"><div class="time">第 16-20 天</div><div><strong>阶段三b</strong>：论文 4.7 节撰写 · 最终报告 · 实验代码入库</div></div>
+</div>
+</div>
+
+<h2>六、风险与缓解</h2>
+<div class="card">
+<table>
+<tr><th>风险</th><th>概率</th><th>影响</th><th>缓解</th></tr>
+<tr><td>/nas_train 持续不可达</td><td>中</td><td>高</td><td>方案 C：用 Qwen3.5-2B 纯文本路径 + 重新下载 Qwen3-VL-2B</td></tr>
+<tr><td>GPU 与 posttrain 冲突</td><td>低</td><td>中</td><td>GPU7 独占不冲突；posttrain eval 完后释放 GPU4/5；协调机制已建立</td></tr>
+<tr><td>WaveView SPICE 仿真需 license</td><td>中</td><td>高</td><td>已确认 license server 配置（TOOL_LICENSE_FILE 2701-2704@hl01-04）；先用 sx_create_signal 数学合成兜底</td></tr>
+<tr><td>图像输入不优于数值输入</td><td>中</td><td>中</td><td>4 组对比实验（A/B/C/D）可量化 domain gap；即使图像不优，真实波形 vs 合成波形对比仍有论文价值</td></tr>
+<tr><td>GRPO 再次无效</td><td>中</td><td>低</td><td>三轮负结果本身是论文贡献（诚实报告）；v11 改进（图像+GPU+分级 reward）有充分理由预期改善</td></tr>
+<tr><td>沙盒隧道不稳定</td><td>低</td><td>中</td><td>tunnel.ps1 有 ServerAliveInterval=30 自动重连；.17 端 SSH -L 也有 keepalive</td></tr>
+</table>
+</div>
+
+<h2>七、预期论文贡献</h2>
+<div class="card">
+<ol>
+<li><strong>负结果（v8-v10）</strong>：GRPO 在低信息密度输入（16 点数值）上对波形频率比较任务无效——n_discordant 修复后仍无净增益，说明 RL 的瓶颈在输入信息量而非算法本身</li>
+<li><strong>正结果（v11 预期）</strong>：图像输入 + GPU 大规模 GRPO + 真实 EDA 波形 -> 验证"信息密度假设"——当输入从 16 数值点升级为 512x512 图像时，RL 才能提取有效梯度</li>
+<li><strong>方法论贡献</strong>：WaveView 沙盒 + matplotlib 渲染 -> 真实 EDA 波形多模态数据合成 pipeline，可推广到其他 EDA 视觉任务</li>
+<li><strong>系统贡献</strong>：WaveView tool-use agent——小模型通过 Tcl 命令调用 EDA 工具分析波形，与 BaiZe 主线（代码生成 + 沙盒执行）形成完整 EDA AI 图景</li>
+</ol>
+</div>
+
+<div class="footer">
+白泽-ISEDA2027 · 视觉线工作计划 · 2026-11-13 · .17 服务器<br>
+探查依据：WaveView 沙盒实测（sx_create_signal/sx_append_data/sx_wave_to_list PASS）· GPU7 空闲实测 · matplotlib 渲染 36KB PNG 验证 · py310 conda 环境确认
+</div>
+
+</body>
+</html>

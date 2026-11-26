@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>BaiZe ch4 压缩报告</title>
+<style>
+body{font-family:sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#2874a6;margin-top:30px;border-left:5px solid #3498db;padding-left:10px}
+h3{color:#2c3e50;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px}
+th{background:#ecf0f1}
+.before{color:#c0392b}.after{color:#27ae60}.save{color:#e67e22;font-weight:bold}
+.ok{color:#27ae60;font-weight:bold}
+code{background:#f4f4f4;padding:2px 6px;border-radius:3px}
+.box{background:#eaf2f8;border:2px solid #2980b9;border-radius:8px;padding:15px;margin:20px 0}
+.m{display:inline-block;margin:5px;padding:5px 15px;border-radius:5px;font-weight:bold}
+.mp{background:#d4edda;color:#155724}
+</style>
+</head>
+<body>
+<h1>BaiZe 论文第 4 章压缩报告（paper-slim）</h1>
+<h2>一、压缩措施逐节清单</h2>
+
+<h3>1. Architecture Selection（§IV-A）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>篇幅</td><td class="before">704字符（复述ch3内容）</td><td class="after">~450字符（只留选型理由+对比结果）</td><td class="save">~254</td></tr>
+</table>
+<p><strong>保留数字：</strong>2.22B, 2.51B, 11.6%, 8% ✅</p>
+
+<h3>2. Training Framework / LR Schedule（§IV-B）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>WSD段</td><td class="before">含lr公式、"curated data"、"256×at 4K"</td><td class="after">删lr公式/curated/256×对比</td><td class="save">~200</td></tr>
+</table>
+<p><strong>保留数字：</strong>LR 1e-3, warmup 2000, 0.29%, 700k, 250, 16384, 613992, 64× ✅</p>
+
+<h3>3. Search Protocol（§IV-C）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>篇幅</td><td class="before">两段~1000字符</td><td class="after">合并一段~600字符</td><td class="save">~400</td></tr>
+</table>
+<p><strong>保留数字：</strong>5000, 82 GPU-hours, S1-S5 ✅</p>
+
+<h3>4. Data（§IV-D）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>七源列表</td><td class="before">逐一列出7源名+权重</td><td class="after">删逐一列举，留74:19:7</td><td class="save">~350</td></tr>
+<tr><td>预混合段</td><td class="before">冗长从句</td><td class="after">精简</td><td class="save">~100</td></tr>
+<tr><td>污染控制</td><td class="before">"fingerprint blacklist built from all 536"</td><td class="after">"blacklist from 536"</td><td class="save">~80</td></tr>
+</table>
+<p><strong>保留数字：</strong>74:19:7, 400, 0.6pp, 193295, 536, 0.80 ✅</p>
+
+<h3>5. Long-Context Data Gate（§IV-E）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>篇幅</td><td class="before">两段含引子+解释</td><td class="after">两短句</td><td class="save">~300</td></tr>
+</table>
+<p><strong>保留数字：</strong>2.52%, 0.03%, 889, 32K, 128K, 20%, 5%, 64K ✅</p>
+
+<h3>6. Results and Production Run（§IV-F）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>消融复述句</td><td class="before">"Each ablation confirms...WSD beats cosine"</td><td class="after">整句删除</td><td class="save">~200</td></tr>
+<tr><td>生产训练段</td><td class="before">含TP/CP/micro-batch/graph/gradient norms/日期</td><td class="after">删冗余参数</td><td class="save">~250</td></tr>
+</table>
+<p><strong>保留数字：</strong>2.2054, 2.6739±0.0469, 2.94T, 4194304, 30660, 700000, 598K, 2.151, 613992 ✅</p>
+
+<h3>7. Decay Tail Long-Context Training（§IV-G）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>定位段</td><td class="before">冗长从句</td><td class="after">精简</td><td class="save">~80</td></tr>
+<tr><td>预算+配置段</td><td class="before">含needle细分/4.19M per step/sixteen GPUs</td><td class="after">删冗余</td><td class="save">~300</td></tr>
+<tr><td>评测段</td><td class="before">"reported separately from post-training"</td><td class="after">删尾句</td><td class="save">~100</td></tr>
+</table>
+<p><strong>保留数字：</strong>83.9B, 20000, 2.9%, 30-40%, 25-34B, 880, 95%, 1.10× ✅</p>
+
+<h3>8. Long-Context Capability / Inference Cost（§IV-H）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>篇幅</td><td class="before">两段含冗余从句</td><td class="after">合并一段</td><td class="save">~200</td></tr>
+</table>
+<p><strong>保留数字：</strong>θ=1e6, 83.2→55.4, 4/56=7.1%, 39377, 128K, 1M, 172s, 34.7GB, 512K, 455K, 52/56 ✅</p>
+
+<h3>9. 表格合并（tab:archcomp + tab:configs）</h3>
+<table>
+<tr><th>项目</th><th>改前</th><th>改后</th><th>省</th></tr>
+<tr><td>浮窗数</td><td class="before">两个独立table浮窗</td><td class="after">合并为一个浮窗</td><td class="save">~8-10行版面</td></tr>
+<tr><td>caption</td><td class="before">两段长caption</td><td class="after">一段简短caption</td><td class="save">~180</td></tr>
+<tr><td>字号</td><td class="before">\small+4pt</td><td class="after">\footnotesize+3pt</td><td class="save">更紧</td></tr>
+</table>
+<p><strong>保留数据：</strong>tab:archcomp 6行 + tab:configs 7行 — 全部完整保留 ✅</p>
+
+<h2>二、验收实测</h2>
+<table>
+<tr><th>检查项</th><th>命令</th><th>结果</th><th>判据</th></tr>
+<tr><td>编译错误</td><td><code>grep -c '^!' main.log</code></td><td class="ok">0</td><td>必须0 ✅</td></tr>
+<tr><td>引用警告</td><td><code>grep 'LaTeX Warning' main.log</code></td><td class="ok">(none)</td><td>必须空 ✅</td></tr>
+<tr><td>Overfull</td><td><code>grep -c 'Overfull' main.log</code></td><td class="ok">0</td><td>尽量0 ✅</td></tr>
+<tr><td>总页数</td><td><code>pdfinfo main.pdf</code></td><td class="ok">6</td><td>必须6 ✅</td></tr>
+<tr><td>p6内容</td><td><code>pdftotext -f 6 -l 6</code></td><td class="ok">以"REFERENCES"开头</td><td>refs独占p6 ✅</td></tr>
+<tr><td>p5末尾</td><td><code>pdftotext -f 5 -l 5</code></td><td class="ok">conclusion末段结束</td><td>正文止于p5 ✅</td></tr>
+</table>
+
+<h2>三、保底清单验证</h2>
+<table>
+<tr><th>数字</th><th>LaTeX格式</th><th>出现次数</th><th>状态</th></tr>
+<tr><td>2.94T</td><td><code>2.94T</code></td><td>1</td><td class="ok">✅</td></tr>
+<tr><td>83.9B</td><td><code>83.9</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>3.02T</td><td><code>3.02T</code></td><td>1</td><td class="ok">✅</td></tr>
+<tr><td>720k</td><td><code>720k</code></td><td>1</td><td class="ok">✅</td></tr>
+<tr><td>613,992</td><td><code>613{,}992</code></td><td>4</td><td class="ok">✅</td></tr>
+<tr><td>351,526</td><td><code>351{,}526</code></td><td>1</td><td class="ok">✅</td></tr>
+<tr><td>2.52%</td><td><code>2.52\%</code></td><td>3</td><td class="ok">✅</td></tr>
+<tr><td>0.03%</td><td><code>0.03\%</code></td><td>3</td><td class="ok">✅</td></tr>
+<tr><td>889</td><td><code>889</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>2.2054</td><td><code>2.2054</code></td><td>3</td><td class="ok">✅</td></tr>
+<tr><td>2.6739±0.0469</td><td><code>2.6739\pm0.0469</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>30,660</td><td><code>30{,}660</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>2.151</td><td><code>2.151</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>598K</td><td><code>598</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>193,295</td><td><code>193{,}295</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>536</td><td><code>536</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>74:19:7</td><td><code>74{:}19{:}7</code></td><td>2</td><td class="ok">✅</td></tr>
+<tr><td>tab:configs(7行)</td><td><code>tab:configs</code></td><td>3</td><td class="ok">✅</td></tr>
+<tr><td>tab:archcomp(6行)</td><td><code>tab:archcomp</code></td><td>3</td><td class="ok">✅</td></tr>
+<tr><td>tab:prod-budget</td><td><code>tab:prod-budget</code></td><td>5</td><td class="ok">✅</td></tr>
+</table>
+<p><strong>结论：</strong>保底清单全部数字原值保留，无一伪造或删除。</p>
+
+<h2>四、未采用项及原因</h2>
+<table>
+<tr><th>候选措施</th><th>原因</th></tr>
+<tr><td>压缩 2_related_work VLM 段</td><td>ch4压缩已达标（6页），无需动其他章节</td></tr>
+<tr><td>压缩 9_conclusion</td><td>同上；红线限定"只改4_llm_pretrain.tex"</td></tr>
+<tr><td>删除 tab:prod-budget</td><td>保底清单要求完整保留</td></tr>
+<tr><td>删除 tab:longctx 合并表</td><td>信息完整且版面效率高</td></tr>
+<tr><td>改 \newpage 为 \clearpage</td><td>红线："不动 main.tex 的 \newpage"</td></tr>
+<tr><td>删 4.19M tokens/step</td><td>在 decay tail 段省略（prod-budget 表已有），非保底清单数字</td></tr>
+</table>
+
+<h2>五、中文注释行检查</h2>
+<p><code>% 中文：</code>双语注释行：改前17行 → 改后17行（<span class="ok">✅ 全部保留，每行与对应英文同步更新</span>）</p>
+
+<h2>六、git 记录</h2>
+<table>
+<tr><th>步骤</th><th>结果</th></tr>
+<tr><td>git fetch + status</td><td>## main...origin/main（无behind）</td></tr>
+<tr><td>git add</td><td>仅 4_llm_pretrain.tex</td></tr>
+<tr><td>git commit</td><td><code>2fef637c8</code>（1 file, 127 ins, 168 del, 86% rewrite）</td></tr>
+<tr><td>git push</td><td><code>66ea84513..2fef637c8</code> ✅</td></tr>
+<tr><td>git status -sb</td><td>无ahead/behind ✅</td></tr>
+</table>
+<p><strong>未commit main.pdf</strong>（二进制，运维统一编译提交）✅</p>
+
+<hr>
+<p style="color:#7f8c8d;font-size:12px">报告生成：2026-10-31 18:10 CST · pretrain线 · commit 2fef637c8</p>
+</body>
+</html>
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>H-D · 5-Harness 对比矩阵 + cline 改进机会点</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#3fb950;--a2:#58a6ff;--warn:#d2991d;--code:#1f2937}
+*{box-sizing:border-box}body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;max-width:1160px;margin:0 auto;padding:2rem}
+h1{font-size:1.9rem;color:#fff;text-align:center}h2{font-size:1.35rem;margin:2.2rem 0 1rem;color:#fff;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+h3{font-size:1.05rem;margin:1.4rem 0 .5rem;color:var(--a2)}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:2rem;font-size:.88rem}
+code,.m{font-family:'SF Mono',Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px;font-size:.85em}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.82rem}
+th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+th{background:#21262d}
+.rowh{background:#161b22;color:#fff;white-space:nowrap}
+.tag{display:inline-block;padding:.1em .6em;border-radius:12px;font-size:.72rem;font-weight:600}
+.t1{background:#1b3826;color:#3fb950}.t2{background:#1a2b3a;color:#58a6ff}.t3{background:#3a2f1a;color:#d2991d}.t4{background:#2a1f3a;color:#bc8cff}.t5{background:#3a1f1f;color:#f85149}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.opp{border-left:4px solid var(--accent);padding:.3rem 1rem;margin:.8rem 0}
+.opp h3{margin-top:.2rem}
+.foot{color:var(--muted);font-size:.8rem}
+</style>
+</head>
+<body>
+
+<h1>H-D · 5-Harness 对比矩阵 + cline 改进机会点</h1>
+<p class="subtitle">H-B 五份源码分析（cline / opencode / deepseek-harness / codex / claude-code）的综合对比 · 2026-10-03<br>
+沿 §2.2 五条「上下文生命周期」主线 · 所有结论贴 <code>路径:行号</code> 原文 · 详见 <code>harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md</code></p>
+
+<h2>D1 · 对比矩阵（5 harness × 5 主线）</h2>
+<div class="card">
+<table>
+<thead>
+<tr>
+<th class="rowh">harness</th>
+<th>线1 上下文注入/投影</th>
+<th>线2 检查点/回滚</th>
+<th>线3 Hook/扩展</th>
+<th>线4 任务状态解耦</th>
+<th>线5 模型适配/token</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="rowh">cline</td>
+<td>无损投影：<code>MessageBuilder</code>「without mutating original」(<code>message-builder.ts:105-107</code>)；每请求全量 walk + 逐实例缓存(<code>:9</code>)</td>
+<td><b>双事实源</b>：git stash/ref(<code>checkpoint-hooks.ts:16-26</code>)+ 独立 compaction sidecar(<code>session-compaction.ts:25-34</code>)；PR#12747 修 sidecar 可靠性</td>
+<td>7 生命周期回调+<code>prepareTurn</code>（<code>agent.ts:374-402/485</code>）；<b>无 Pre/PostCompact</b></td>
+<td><b>Focus Chain 已移除</b>：<code>currentFocusChainChecklist?:null</code>（<code>task-proxy.ts:144</code>）</td>
+<td>3 字符/token（<code>tokens.ts:8</code>）+ <code>128K/0.9</code>（<code>compaction-shared.ts:13-15</code>）；无窗口信息返回 <code>undefined</code>；per-provider 白名单</td>
+</tr>
+<tr>
+<td class="rowh">opencode</td>
+<td>seq 阈值 + baselineSeq <b>SQL 截断</b>（<code>session/history.ts:30-52</code>）；Context Source 稳定 key</td>
+<td><b>分层</b>：Context Epoch（上下文）+ git snapshot（文件）</td>
+<td>细粒度字符串键 <code>chat.*/tool.*/permission.*/experimental.*</code></td>
+<td><b>TodoTable 独立 SQL 表</b>（schema 保证）</td>
+<td>4 字符/token（<b>乐观</b>）+ Provider 抽象 + config 开关（<code>OPENCODE_DISABLE_AUTOCOMPACT/PRUNE</code>）；<code>PRUNE_PROTECTED_TOOLS=["skill"]</code></td>
+</tr>
+<tr>
+<td class="rowh">deepseek</td>
+<td><b>事件溯源 + surface 投影</b>（`deriveEventMessage`/`foldSurface`，<code>surface.ts:22-26</code>）；影子替换 <code>surfaceOp:{replace}</code>（<code>types.ts:34-40</code>）</td>
+<td><b>重放即回滚</b>：append-only 事件流，flush fail-closed（<code>checkpoint-policy:29-37</code>）</td>
+<td>事件桥 + hook-protocol（27 事件级别的事件驱动）</td>
+<td>Goal/Todo domain（<code>goal/domain.ts</code> / <code>todo/tool-todo</code>）</td>
+<td>4 字符/token + BLOCK/ROLE overhead（<code>estimate.ts:12-19</code>）；阈值 0.8（<code>config.ts:20</code>）</td>
+</tr>
+<tr>
+<td class="rowh">codex</td>
+<td><b>WorldState snapshot + RFC7386 merge_patch 差量渲染</b>（<code>world_state/mod.rs:405/499</code>）；ContextContributor 开放注入点</td>
+<td><b>单事务 Rollout</b>：摘要+新窗口+WorldState 基线原子落盘，<code>window_id</code> 链（<code>mod.rs:3752</code>）</td>
+<td>三层：Hook(12 事件/进程级)/Plugin manifest/Extension ContextContributor（<code>hook_runtime.rs:528-531</code>）</td>
+<td><code>ThreadGoal(goal)+update_plan</code> 脱离对话历史</td>
+<td><b>服务端 usage 优先 + 估算兜底</b>（<code>auto_compact_window.rs:24-30</code>）；压缩=降级第一闸门（<code>compact_model_fallback.rs:9-20</code>）</td>
+</tr>
+<tr>
+<td class="rowh">claude-code</td>
+<td>memoized <code>getSystemContext/getUserContext</code>（<code>context.ts:116/155</code>）+ 归一化终点 <code>normalizeMessagesForAPI</code>（<code>messages.ts:1989</code>）</td>
+<td><b>append-only JSONL + in-band boundary 消息</b>（<code>messages.ts:4530-4555</code>）；切片 <code>getMessagesAfterCompactBoundary</code>（<code>:4643</code>）</td>
+<td><b>27 事件 × 4 形态</b>（command/prompt/http/agent），含 <code>PreCompact/PostCompact</code>（<code>coreTypes.ts:25-53</code>）</td>
+<td>TodoWrite（<code>TodoWriteTool.ts:65-94</code>）+ Session Memory（<code>sessionMemory.ts:1-6</code>）+ auto-memory（<code>extractMemories.ts:1-10</code>）</td>
+<td>usage 回执+粗略估算（<code>tokens.ts:226</code>，4 字符/token <code>tokenEstimation.ts:203-208</code>）；5MB skip 阈值 + 3 连败熔断</td>
+</tr>
+</tbody>
+</table>
+<p class="foot">子项含义：压缩策略（列内「投影/截断」方式）、投影是否无损、检查点粒度、Hook 边界、降级触发条件。完整证据见各 <code>harness/*_SOURCE_ANALYSIS.html</code>。</p>
+</div>
+
+<h2>D2 · 对 cline 的改进机会点（摘要）</h2>
+<p class="foot">完整四段式（① 其它 harness 做法 → ② cline 现状 → ③ 差距 → ④ 建议+收益+风险+优先级，均贴 <code>路径:行号</code>）见
+<a href="CLINE_IMPROVEMENT_OPPORTUNITIES.md">harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md</a>。</p>
+
+<div class="opp"><h3><span class="tag t1">可直接借鉴</span> O1 · 线1 注入/投影 —— 补单一 memoized 归一化终点 + 全链路 Telemetry</h3>
+其他（claude-code）<code>getSystemContext/getUserContext</code> memoize + <code>normalizeMessagesForAPI</code> 收口；cline 现状 = 每请求重走 <code>MessageBuilder</code>（<code>message-builder.ts:105-107</code>）+ 自认的投影旁路 Telemetry 盲区（<code>compaction.ts:251-254</code>）。→ 收口投影 + 补齐埋点。</div>
+
+<div class="opp"><h3><span class="tag t2">需架构改动</span> O2 · 线2 检查点 —— 把文件快照与压缩状态收进同一原子事务</h3>
+其他（deepseek）事件流「重放即回滚」/（codex）单事务 Rollout + <code>window_id</code> 链；cline 现状 = git checkpoint + 独立 sidecar 双事实源（<code>checkpoint-hooks.ts:16-26</code>，PR#12747 的 bug 根源）。→ 消除「sidecar 与文件状态不一致」整类 bug。</div>
+
+<div class="opp"><h3><span class="tag t1">可直接借鉴</span> O3 · 线3 Hook —— 补 <code>PreCompact</code>/<code>PostCompact</code> 压缩生命周期 Hook</h3>
+其他（claude-code）<code>HOOK_EVENTS</code> 27 个显式含 <code>PreCompact/PostCompact</code>（<code>coreTypes.ts:25-53</code>）；cline 现状 = 7 回调 + <code>prepareTurn</code>（<code>agent.ts:374-402/485</code>）无压缩 Hook。→ 直接回答「Auto Compact 能否插件化」= 能观测/干预、不能替换核心。</div>
+
+<div class="opp"><h3><span class="tag t2">需架构改动</span> O4 · 线4 焦点链 —— 补回任务目标/记忆持久层，解耦长期目标与可压缩对话</h3>
+其他（claude-code）TodoWrite + Session Memory + auto-memory（<code>TodoWriteTool.ts:65-94</code> 等）；cline 现状 = Focus Chain 已移除（<code>task-proxy.ts:144</code>「stub — focus chain removed」）。→ 压缩后进度不丢、跨会话记忆复用。</div>
+
+<div class="opp"><h3><span class="tag t1">可直接借鉴</span> O5 · 线5 模型适配 —— token 计量改「服务端 usage 优先 + 保守兜底」</h3>
+其他（codex）<code>AutoCompactWindowPrefill{ServerObserved,Estimated}</code>（<code>auto_compact_window.rs:24-30</code>）+ 压缩为降级闸门；（claude-code）<code>tokenCountWithEstimation</code>（<code>tokens.ts:226</code>）；cline 现状 = 纯 3 字符/token（<code>tokens.ts:8</code>）、无窗口信息返回 <code>undefined</code>（<code>compaction-shared.ts:67-68</code>）→ 正面撞 Issue #7772。→ 阈值准确、本地模型不踩 128K 假窗口。</div>
+
+<div class="card">
+<p class="foot" style="margin:0">🔑 共同结论（五份分析的收敛点）：<b>「状态 ≠ 文本」</b> —— 五个 harness 不约而同把「意图/目标/环境快照」放进不可压缩的侧表，只让「对话文本」进可压缩历史；且「压缩引擎」几乎都<b>硬编码在核心</b>、「观察与外围改写」才开放给 Hook。这正是 BaiZe/ZhuLong「情境化观测保真度」论点在工程层上的体现。</p>
+</div>
+
+<footer style="text-align:center;color:var(--muted);font-size:.82rem;margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border)">
+<p>H-D 交付物 · <code>harness/HARNESS_COMPARE_MATRIX.html</code> + <code>harness/CLINE_IMPROVEMENT_OPPORTUNITIES.md</code> · 2026-10-03</p>
+</footer>
+
+</body>
+</html>

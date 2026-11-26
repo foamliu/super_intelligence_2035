@@ -74,33 +74,26 @@ code{background:#eef;padding:1px 5px;border-radius:3px;font-size:0.9em}
 <p class="small">拒绝原因分布：missing-required-field 527 / other-type-error 378 / string-not-array 321 / unavailable-tool 41 / wrong-type-boolean 37（多为 run_commands 被以错误 schema 调用）。</p>
 <h2>8. 总结论</h2>
 <div class="box"><ol>
-<li><b>口径</b>：36.15 zhulong 口径 5-run 基线 = <b>6.84%±6.12%</b>（n=5，rca_status=CLEAN，见 §10），序列 [18.99, 4.43, 2.53, 3.80, 4.43]%。cline 版本：zhulong 3.0.29 / cline 3.0.51。<b>⚠ 更正</b>：旧 interim 报「run2/3/4 各=0.0% = 模型 degenerate collapse」<b>已作废</b>——根因是管线 ws/no-ws 路径失配（抽取器只读 ws/，丢 no-ws 代码），经 <code>rca_recover_extract.py</code> 回补后 run2/3/4 = 4.43/2.53/3.80%（execution_results 43/28/35 ≫1），<b>非模型 collapse</b>。run1=18.99% 为 ws-only 锚点 outlier（caveat 见 §10）。⇒ <b>5-run mean±std 为准，单 run 不可代表能力</b>。</li>
+<li><b>口径</b>：36.15 run1 (18.99%) = zhulong 口径新基线。cline 版本：zhulong 3.0.29 / cline 3.0.51。5-run 复测进行中（见 §10）：interim n=2 mean=9.49%±9.49% [18.99%, 0.0%]，run2=0.0% 系模型 agent 回路退化（非 infra），证实高方差 ⇒ <b>单 run 不可代表能力，5-run mean±std 为准</b>。</li>
 <li><b>旧归因作废（PENDING-REMOTEST）</b>：「模型不会按 MCP 协议调工具」「损失大头在提交协议」——前提（80.6% run_commands 拒绝=能力缺陷）<b>错误</b>。run_commands 是被 hook 主动禁用的内置工具。</li>
 <li><b>真归因</b>：真 MCP 拒绝率 6.0%、run_code 3.0%——模型<b>会</b>检索、<b>会</b>执行。损失大头 = <b>45 题静默未进入 agent 回路</b>（28.5%）+ 76 题把 turn 烧在被禁的 run_commands 上。</li>
-<li><b>新旧基线</b>：zhulong 口径 6.84%±6.12% vs 旧 .17 口径 3.04%±0.74%，Δ=<b>+3.80pp</b>，McNemar chi2=13.5（p&lt;0.001，显著）。+15.95pp 的 run1 单点跳升主因 = 环境（RAG+沙盒可达），非 prompt、非工具协议。</li>
-<li><b>下一步</b>：5-run zhulong 口径复测 <b>已完成（2026-11-17 08:43，rca_status=CLEAN）</b>——见 §10；用全 recovered 同口径 fresh 5-run 定论 run1 outlier；并推进 SFT/RL 主线。</li>
+<li><b>5× 跳升</b>：+15.95pp 主因 = 环境（RAG+沙盒可达），非 prompt、非工具协议。</li>
+<li><b>下一步</b>：5-run zhulong 口径复测 <b>已起跑（2026-11-15 09:15）</b>——见 §10；针对「静默未进入回路」的 prompt/系统提示迭代（而非工具格式补丁）。</li>
 </ol></div>
-<h2>10. 5-run 复测结果（✅ 完成 · rca_status=CLEAN · 2026-11-17 08:43 收口）</h2>
+<h2>10. 5-run 复测状态（2026-11-15 起跑 · 进行中 · 截至 2026-11-15 17:38）</h2>
 <div class="box">
-<p><b>⚠ 口径 caveat（必读）</b>：① <b>run1 = ws-only 锚点</b>（batch <code>2026_1114_180019</code> 已清理、不可回补），其抽取器仅读到 36 段 <code>ws/pyAether_code</code>，Pass@1=18.99% 是 ws-only 子集口径；② <b>run2–run5 = recovered 口径</b>（ws+no-ws 经 <code>rca_recover_extract.py</code> 回补后 <code>run_eval.py -g</code> 干净重评测）。两者口径<b>不完全一致</b>，5-run mean 须带此 caveat。③ <b>「run1 18.99% vs run2–4 2.5–4.4% 的落差」</b>：fresh 5-run（run5=4.43%）已落定——run2–5 聚集在 2.5–4.4%，run1=18.99% 为<b>高 outlier</b>（其 36 个 ws 段通过率 83% 异常高）；落差主因是 run1 的 ws-only 锚点口径偏选（只取写到 ws/ 的题），<b>非模型能力突变</b>。是否为真 outlier 待后续同口径 fresh 5-run（全 recovered）再定论。</p>
-<p><b>RCA 更正（2026-11-16）</b>：此前 §10 旧版记录 run2/3/4 各=0.0%（gen_success=1）为「模型 degenerate collapse」——<b>该结论已作废</b>。根因取证（见 <code>reports/report_posttrain_collapse_rca_zh.html</code>）：抽取器 <code>format_cline_cli_output.py:163</code> 只读 <code>code/&lt;task&gt;/ws/pyAether_code</code>（ws-only、无 no-ws 回退），而 run2/3/4 大量代码写到无 ws 的 <code>code/&lt;task&gt;/pyAether_code</code>，被整题跳过 → jsonl 真码仅 1/1/0 行 → 0.0%。<b>主因 = 管线 ws/no-ws 路径失配（非模型 collapse）</b>；次因 = 共享 temp race + 链脚本陈旧拷贝。修复：链脚本接入 <code>rca_recover_extract.py</code> 回补 wrapper（ws+no-ws）+ <code>run_eval.py -g</code> 干净重评测 → run2/3/4 recovered 真码 42/27/32 → Pass@1 4.43/2.53/3.80%，execution_results 43/28/35 条（≫1，彻底证伪 1/158 collapse）。</p>
-<p><b>5-run 同表（n=5 · zhulong 口径 · 2026-11-17 收口）</b>：</p>
-<table><tr><th>run</th><th>Pass@1</th><th>execution_results 行数</th><th>口径</th><th>batch</th><th>状态</th></tr>
-<tr><td>run1</td><td><b>18.99%</b></td><td>36</td><td>ws-only 锚点</td><td>2026_1114_180019</td><td>✅ 完成（锚点，不可回补）</td></tr>
-<tr><td>run2</td><td><b>4.43%</b></td><td>43</td><td>recovered (ws+no-ws)</td><td>2026_1116_110435</td><td>✅ 完成（rca_recover 回补）</td></tr>
-<tr><td>run3</td><td><b>2.53%</b></td><td>28</td><td>recovered (ws+no-ws)</td><td>2026_1116_*</td><td>✅ 完成（rca_recover 回补）</td></tr>
-<tr><td>run4</td><td><b>3.80%</b></td><td>35</td><td>recovered (ws+no-ws)</td><td>2026_1116_110435</td><td>✅ 完成（rca_recover 回补）</td></tr>
-<tr><td>run5</td><td><b>4.43%</b></td><td>44</td><td>recovered (ws+no-ws)</td><td>2026_1116_223524</td><td>✅ 完成（fresh，-p 2 共用 8090 池）</td></tr>
-<tr style="background:#eafaf1;font-weight:700"><td>5-run</td><td>mean=6.84%±6.12%</td><td>—</td><td>混合（见 caveat）</td><td>—</td><td>rca_status=CLEAN</td></tr></table>
-<p><b>新旧基线同表（配对检验）</b>：</p>
-<table><tr><th>口径</th><th>n</th><th>Pass@1 mean±std</th><th>序列(%)</th></tr>
-<tr><td>旧 = .17 非zhulong（无 RAG/无沙盒，run_commands 启用）</td><td>5</td><td>3.04%±0.74%</td><td>[3.8, 1.9, 2.53, 3.16, 3.8]</td></tr>
-<tr><td>新 = 36.15 zhulong 口径（PreToolUse hook，RAG+沙盒可达，run_commands 禁用）</td><td>5</td><td><b>6.84%±6.12%</b></td><td>[18.99, 4.43, 2.53, 3.8, 4.43]</td></tr>
-<tr style="font-weight:700"><td>Δ(new−old)</td><td>—</td><td><b>+3.80pp</b></td><td>—</td></tr></table>
-<p><b>配对检验</b>：McNemar(pass@any 二值) discordant=54（n10_new_only=41, n01_old_only=13, n11_both_pass=9, n00_both_fail=95），chi2_corrected=<b>13.5</b>（>3.84 ⇒ 新旧差异显著，p&lt;0.001）。Wilcoxon(pass-fraction 配对) n_nonzero=55，scipy 不可用仅报 n。来源：<code>run/5run_zhulong_baseline_analysis.json</code>（<code>rca_status=CLEAN</code>）。</p>
-<p><b>run5 起跑口径（2026-11-16 22:0x 用户令）</b>：STEP1 判定 = <b>共用 8090 MCP 池 + -p 2</b>（与 zhulong 的 -p 4 共存），<b>不起新 MCP</b>。<code>server/sandbox_server/exec_code.py</code> 取证：<code>SandboxEndpointPool.acquire()</code> = <code>await asyncio.Queue.get()</code> → 池满<b>排队等待</b>（非报错、非复用同 endpoint），<code>release()</code> = <code>put_nowait</code> 归还；<code>cap</code> 语义 = 池总并发（= 入队 endpoint 数 = 4，非每 endpoint 上限）。⇒ 独占租借 + 池满排队 ⇒ 同 workdir <code>t0002997_1..4</code>、同 8090 MCP ⇒ <b>run5 与 run1–4 同口径，可并入 5-run mean</b>（env_fingerprint：<code>pool_mode=shared_8090_exclusive_queue</code>、<code>shared_with_zhulong=true</code>、<code>new_mcp=false</code>、<code>can_merge_into_5run_mean=true</code>）。冒烟（<code>run_code</code> 2+2=4 / py 3.9.0）在 zhulong 并发期间 PASS。</p>
-<p><b>结论</b>：zhulong 口径 5-run 基线 = <b>6.84%±6.12%</b>（n=5，rca_status=CLEAN），显著高于旧 .17 口径 3.04%±0.74%（McNemar chi2=13.5, p&lt;0.001）。高 std 主因 = run1 ws-only 锚点 outlier（18.99%）；run2–5 recovered 口径聚集 2.5–4.4%。Q1 真 MCP 工具拒绝率（排除 run_commands）= 6.3%（跨 2 run 聚合）。下一步：用全 recovered 同口径 fresh 5-run 定论 run1 是否真 outlier；并推进 SFT/RL 主线。</p>
-<p><b>产物</b>：<code>attribution_3615_run{1..5}/</code>（final_report.json + execution_results.jsonl，行数 36/43/28/35/44 ≫1）；<code>5run_zhulong_baseline_analysis.json</code>（rca_status=CLEAN + McNemar/Wilcoxon）；<code>attribution_zhulong_5run_attribution.json</code>（Q1–Q4 跨 5-run 聚合）；<code>attribution_3615_run5/env_fingerprint.json</code>（run5 端口/workdir 指纹）。可复算：<code>bash bpt_zhulong_5run_finalize.sh --num-runs 5</code>。</p>
+<p><b>链路</b>：<code>baize_posttrain_zhulong_baseline_5run_chain.sh</code>（PID 43678，日志 <code>/tmp/posttrain_zhulong_baseline_5run_chain.log</code>）。
+照抄 zhulong 入口 <code>run_cline_script.sh -p 8 -n -b EDA-Eval-PyAether-v20260311_fixed.jsonl</code>，CLI_AGENT=zhulong fork 3.0.29，PreToolUse hook 白名单生效（run_commands 禁用），model=minicpm5-2b-sft-v39-final(step105) 经反向隧道 18096→.17:8096。</p>
+<p><b>设计</b>：run1(18.99%) 已存在 = 第 1 run；本链再跑 run2–run5 凑齐 5-run mean±std（总纲 §2 冻结协议）。run_one() 已修 copy-path bug（final_report/execution_results 从 <code>EDA-Eval-Framework/output_evaluation/&lt;ts&gt;/</code> 取，非 batch 目录），幂等跳过已有可解析 pass_rate 的 run（0.0 也算有效）。</p>
+<p><b>当前进度</b>：</p>
+<table><tr><th>run</th><th>Pass@1</th><th>gen_success</th><th>gen_fail</th><th>状态</th><th>说明</th></tr>
+<tr><td>run1</td><td><b>18.99%</b></td><td>36</td><td>121</td><td>✅ 完成</td><td>attribution_3615_run1（36.15 14T20:08 落盘）</td></tr>
+<tr><td>run2</td><td><b>0.0%</b></td><td>1</td><td>156</td><td>✅ 完成</td><td><b>degenerate non-generation</b>：cline session 成功 139 但仅 1/158 产出有效代码；batch_cline.log 无连接/500/超时错误，端点全程健康 → <b>非 infra，系 2B 模型 agent 回路退化</b></td></tr>
+<tr><td>run3</td><td>—</td><td colspan="2">~99% (codegen 157/158：code 目录 150 + 队列剩 1 task，eval 阶段待起)</td><td>⏳ RUNNING</td><td>batch 2026_1115_144001，PID636890 活(etimes≈10775s)，-p 8 并发；端点 :8096 / 隧道 :3333 17:38 实测 PASS；run3 codegen 收尾→run_eval 评分→run4–5 串行 ETA ~22:30–23:40 全 5-run 齐</td></tr>
+<tr><td>run4–5</td><td>—</td><td colspan="2">—</td><td>⬜ 待跑</td><td>串行，ETA ~23:40 全 5-run 齐</td></tr></table>
+<p><b>关键发现（run2 collapse）</b>：run1→run2 = 36→1 有效代码生成的<b>极端 swing</b>，证实 2B 模型 run-to-run <b>高方差</b>。这直接印证 §5/Q3「静默未进入 agent 回路」<b>不是工具格式问题、是模型未完成/未启动 agent 行为</b>，且<b>单 run 不可代表模型能力</b>——这正是总纲 §2 要求 5-run mean±std 的根本理由。run2=0.0% 已记入 <code>attribution_zhulong_5run_attribution.json#run2_collapse_note</code>。</p>
+<p><b>interim 5-run（n=2）</b>：new mean=<b>9.49%±9.49%</b> [18.99%, 0.0%] vs old .17 5-run mean=3.04%±0.83% [3.8,1.9,2.53,3.16,3.8]%，delta=<b>+6.45pp</b>。McNemar(pass@any) discordant=52 chi2=0.94（n=2 偏倚，5-run 齐后公平；scipy 不可用→Wilcoxon 降级报 n）。<b>注意</b>：n=2 的 std=9.49% 极大，正是高方差的直接体现；最终 5-run mean±std 以链尾 <code>5run_zhulong_baseline_analysis.json</code> 为准。</p>
+<p><b>产物</b>：每 run 拷回 <code>attribution_3615_run{2..5}/</code>（final_report.json + execution_results.jsonl + 拒绝统计）；5 run 齐后链尾自动产 <code>5run_zhulong_baseline_analysis.json</code>（mean±std + McNemar/Wilcoxon vs 旧 .17 5-run 3.04%±0.83%），再手动 <code>bash bpt_zhulong_5run_finalize.sh --num-runs 5</code> 出 Q1–Q4 跨 5-run 聚合 + 新旧同表 → 回填本节。</p>
 </div>
 <h2>9. 可复算命令</h2>
 <div class="box"><pre style="font-size:12px;white-space:pre-wrap">python3 bpt_zhulong_reattribution.py        # 重算四问 + attribution_zhulong_reattribution.json
@@ -111,5 +104,5 @@ ls attribution_3615_run1/                    # final_report.json codegen_rejecti
 #   ~/.local/zhulong/bin/zhulong --version  -> 3.0.29
 #   ~/.local/bin/cline --version            -> 3.0.51
 #   curl http://127.0.0.1:18096/v1/models   -> minicpm5-2b-sft-v39-final</pre></div>
-<p class="small">生成时间 2026-11-17 · commit posttrain 5run: · §10 5-run 收口（rca_status=CLEAN，n=5 mean=6.84%±6.12% [18.99,4.43,2.53,3.80,4.43]%，McNemar chi2=13.5 p&lt;0.001 vs 旧 .17 3.04%±0.74%）；run2-4 collapse 已更正为管线 ws/no-ws 路径失配（非模型），rca_recover 回补后 4.43/2.53/3.80%；run5 = -p2 共用 8090 池（STEP1 verdict，不起新 MCP，与 run1-4 同口径）；数据源 attribution_3615_run{1..5}/ + 5run_zhulong_baseline_analysis.json + attribution_3615_run5/env_fingerprint.json</p>
+<p class="small">生成时间 2026-11-15 · commit posttrain attribution: zhulong 口径再归因 · 数据源 attribution_3615_run1/（36.15 run1，2026-11-14T20:08 落盘）</p>
 </body></html>

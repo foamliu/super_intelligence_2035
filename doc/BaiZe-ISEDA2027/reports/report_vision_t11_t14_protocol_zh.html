@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"></meta>
+<title>BaiZe Vision T11-T14 可执行协议细则报告</title>
+<style>
+body{font-family:'Noto Sans SC','Microsoft YaHei',sans-serif;max-width:960px;margin:0 auto;padding:20px;color:#222;line-height:1.7;}
+h1{color:#1a3a5a;border-bottom:3px solid #1a3a5a;padding-bottom:8px;}
+h2{color:#2a5a8a;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:32px;}
+h3{color:#3a6a9a;margin-top:24px;}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px;}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:left;}
+th{background:#eef4fa;font-weight:bold;}
+tr:nth-child(even){background:#f8fafc;}
+.ok{color:#0a7a0a;font-weight:bold;}
+.box{background:#f4f8fc;border:1px solid #d0e0f0;border-radius:6px;padding:12px 16px;margin:12px 0;}
+.ev{background:#f0fff0;border-left:3px solid #6a6;padding:8px 12px;margin:8px 0;font-size:13px;}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:13px;}
+.toc{background:#f8fafc;border:1px solid #ddd;border-radius:6px;padding:12px 20px;margin:16px 0;}
+</style></head><body>
+<h1>BaiZe Vision T11-T14 / RQ5-RQ7 可执行协议细则报告</h1>
+<p style="color:#666;font-size:13px;">生成时间：2026-10-31 wake #438 依据：BAIZE_VISION_TASK.md 12:0x 结构变更通知「新职责」</p>
+<h2>S0 背景与目的</h2>
+<div class="box">
+<p><b>背景</b>：2026-10-31 12:0x 结构变更通知要求 vision 线为 <b>T11-T14 / RQ5-RQ7</b> 补齐可执行细则——<b>任务如何构造、每格 n 多少、判据（断言通过率/容差）、抽检协议</b>。通知原文：「写进你的报告或对应小节表注，不要填任何未测数字（表里保持 [TBD]）」。</p>
+<p><b>现状</b>：v1.2 论文重构（commit d98f7e879）已被 revert（commit 9ab1e4b32），T11-T14 表暂不在 6_vision_encoder.tex 中。本报告将协议细则完整写出，供重构恢复时直接填入表注。</p>
+<p><b>纪律</b>：本报告<b>不含任何实测数字</b>；所有 n / 容差 / 判据均为<b>预注册协议参数</b>（实验尚未运行）。</p>
+</div>
+<div class="toc"><b>目录</b><br>
+S1 T11/RQ5 视觉token消融协议<br>S2 T12/RQ6 细粒度判别协议<br>S3 T13/RQ7 三通道对比协议<br>S4 T14 波形阅读协议<br>S5 通用基础设施<br>S6 事实核对记录<br>S7 编码验证与编译结果</div>
+<h2>S1 T11/RQ5 视觉token消融协议</h2>
+<h3>S1.1 研究问题</h3>
+<p><b>RQ5</b>：在细节密集 EDA 视图（版图/原理图/波形）上，精度是否随视觉 token 预算<b>单调上升</b>？196-token 档（224/16=14x14）是否<b>不高于</b>纯文本基线？</p>
+<h3>S1.2 Token档位定义</h3>
+<table><tr><th>档位</th><th>分辨率/patch</th><th>grid</th><th>token数</th><th>像素/token</th></tr>
+<tr><td>text-only</td><td>—</td><td>—</td><td>0</td><td>—</td></tr>
+<tr><td>T196</td><td>224px/16px</td><td>14x14</td><td>196</td><td>16x16px</td></tr>
+<tr><td>T576</td><td>384px/16px</td><td>24x24</td><td>576</td><td>16x16px</td></tr>
+<tr><td>T1024</td><td>512px/16px</td><td>32x32</td><td>1024</td><td>16x16px</td></tr></table>
+<p>注：patch 固定 16px，通过改变输入分辨率改变 token 数。T196 = 当前编码器训练配置（EXPERIMENTS_VISION.md L51, vision/r11_run_aimv2.sh L8）。</p>
+<h3>S1.3 任务构造</h3>
+<ul><li><b>任务族</b>：image->script（S6.2 第一类任务族）。输入=渲染截图；输出=可执行脚本；评分=stage(ii) 断言沙盒。</li>
+<li><b>视图类型</b>：layout/schematic/waveform，对应 ZhuLong 三类视图。</li>
+<li><b>任务来源</b>：从 ZhuLong PyAether/SKILL/WaveView 追踪中抽取有明确断言的任务，按视图类型分层采样。</li>
+<li><b>渲染控制</b>：同一任务在 3 个 token 档位下分别渲染，脚本内容不变，仅图像分辨率变化。</li></ul>
+<h3>S1.4 样本量与判据</h3>
+<table><tr><th>参数</th><th>值</th><th>依据</th></tr>
+<tr><td>每格n</td><td>≥30任务</td><td>3视图x4档=12格，共≥360任务；np≥5满足正态近似</td></tr>
+<tr><td>指标</td><td>断言通过率(%)</td><td>stage(ii)沙盒自动评分</td></tr>
+<tr><td>可分辨阈值</td><td>|Δ|≥5pp</td><td>ZhuLong主表23.7pp/6 backbone，5pp为保守边界</td></tr>
+<tr><td>抽检</td><td>10%人工</td><td>检查渲染有效性（截图完整/分辨率正确/内容可辨识）</td></tr></table>
+<h3>S1.5 预注册决策树</h3>
+<div class="box">
+<p><b>若T196≤text-only且T576>T196且T1024≥T576</b>：Claim B阈值条款<b>获支持</b>。</p>
+<p><b>若全档|Δ|<5pp</b>：Claim B阈值条款<b>被证伪</b>，报告零结果。</p>
+<p><b>若T196>text-only但T576≈T196</b>：视觉有用但分辨率不敏感。</p></div>
+<h2>S2 T12/RQ6 细粒度判别协议</h2>
+<h3>S2.1 研究问题</h3>
+<p><b>RQ6</b>：16x16 px/token 网格能否物理分辨 EDA 视图中的<b>小整数/符号级</b>信息？即使总体通过率不随token上升，特定任务是否仍因分辨率不足而失败？</p>
+<h3>S2.2 任务构造（6类）</h3>
+<table><tr><th>ID</th><th>任务</th><th>失败类</th><th>答案类型</th><th>ZhuLong证据</th></tr>
+<tr><td>F1</td><td>数Innovus视图中net数量</td><td>composition</td><td>整数</td><td>1869vs1872(差3)</td></tr>
+<tr><td>F2</td><td>识别绘制矩形层号</td><td>API misuse</td><td>符号</td><td>aeAddHighLightRect vs GuCartBox</td></tr>
+<tr><td>F3</td><td>数波形上升沿数</td><td>semantics</td><td>整数</td><td>WaveView-037返回N/A</td></tr>
+<tr><td>F4</td><td>区分高亮标记vs边界框</td><td>API misuse</td><td>符号</td><td>视觉近似替代</td></tr>
+<tr><td>F5</td><td>判断间距违例</td><td>guard</td><td>是/否</td><td>未授权guard检查</td></tr>
+<tr><td>F6</td><td>从符号识别器件类型</td><td>semantics</td><td>符号</td><td>语义不充分</td></tr></table>
+<p>注：失败类遵循 ZhuLong S6.3（composition=API组合错误、guard=未授权guard、semantics=语义不充分、API misuse=错误内部API）。</p>
+<h3>S2.3 样本量与判据</h3>
+<table><tr><th>参数</th><th>值</th><th>依据</th></tr>
+<tr><td>每格n</td><td>≥20实例</td><td>6任务x3档=18格，共≥360实例</td></tr>
+<tr><td>F1/F3</td><td>精确整数匹配</td><td>无容差</td></tr>
+<tr><td>F2/F4/F6</td><td>精确符号匹配</td><td>层名/API名/器件类型完全匹配</td></tr>
+<tr><td>F5</td><td>是/否</td><td>无容差</td></tr>
+<tr><td>抽检</td><td>10%重渲染</td><td>GT脚本重渲染截图，确认答案可从图像物理读取</td></tr></table>
+<h3>S2.4 预注册决策树</h3>
+<div class="box">
+<p><b>若T196在F1/F3上<T576≤T1024</b>：定位分辨率瓶颈——计数/测量类任务失效。</p>
+<p><b>若全档近似相同</b>：分辨率非瓶颈，失败在语义理解。RQ6定位为「语义失败」。</p></div>
+<h2>S3 T13/RQ7 三通道对比协议</h2>
+<h3>S3.1 研究问题</h3>
+<p><b>RQ7</b>：同等任务预算下，<b>组合</b>（文本+视觉）是否优于<b>纯文本</b>？问的是「加视觉是否在文本之上带来净增益」。</p>
+<h3>S3.2 三种配置</h3>
+<table><tr><th>通道</th><th>输入</th><th>流程</th><th>预期</th></tr>
+<tr><td>text only</td><td>脚本+文档</td><td>LLM直接生成</td><td>基线</td></tr>
+<tr><td>vision only</td><td>截图（无文档）</td><td>MLLM图像->描述->脚本</td><td>下降</td></tr>
+<tr><td>text+vision</td><td>截图+文档</td><td>MLLM同时看图像和文档</td><td>若epsilon收缩则上升</td></tr></table>
+<h3>S3.3 任务集与判据</h3>
+<table><tr><th>参数</th><th>值</th><th>依据</th></tr>
+<tr><td>每格n</td><td>≥50任务</td><td>3基准x3通道=9格，共≥450任务</td></tr>
+<tr><td>基准</td><td>PyAether/SKILL/waveform</td><td>覆盖ZhuLong三类视图</td></tr>
+<tr><td>指标</td><td>断言通过率(%)</td><td>stage(ii)沙盒</td></tr>
+<tr><td>可分辨阈值</td><td>|Δ|≥5pp</td><td>与T11一致</td></tr>
+<tr><td>抽检</td><td>10%</td><td>三通道输入一致性（同一任务/GT）</td></tr></table>
+<h3>S3.4 预注册决策树</h3>
+<div class="box">
+<p><b>若text+vision>text-only(Δ≥5pp)</b>：视觉是保真度增益，Claim B正面部分获支持。</p>
+<p><b>若text+vision≈text-only(|Δ|<5pp)</b>：视觉不是保真度增益，Claim B正面部分「不支持」——RQ6仍定位失败位置。</p>
+<p><b>若vision-only>text-only</b>：意外结果，需进一步分析。</p></div>
+<h2>S4 T14 波形阅读协议</h2>
+<h3>S4.1 研究问题</h3>
+<p>波形同时<b>语义密集</b>（周期、占空比、边沿数、毛刺宽度、阈值穿越）和<b>几何密集</b>（测量值非标签）。16x16 px/token 网格能否分离真实上升沿与仅占像素行一小部分的毛刺？</p>
+<h3>S4.2 四个子任务</h3>
+<table><tr><th>子任务</th><th>答案类型</th><th>判据/容差</th><th>物理依据</th></tr>
+<tr><td>周期测量</td><td>浮点数</td><td>±5%相对误差</td><td>SPICE仿真精度1-2%，5%为保守边界</td></tr>
+<tr><td>边沿计数</td><td>整数</td><td>精确匹配</td><td>离散值，无容差</td></tr>
+<tr><td>毛刺检测</td><td>是/否</td><td>精确匹配</td><td>二值判断</td></tr>
+<tr><td>阈值穿越时间</td><td>浮点数</td><td>±10%周期</td><td>依赖周期归一化，10%为工程容差</td></tr></table>
+<h3>S4.3 样本量与任务来源</h3>
+<table><tr><th>参数</th><th>值</th><th>依据</th></tr>
+<tr><td>每格n</td><td>≥20波形</td><td>4子任务x3档=12格，共≥240波形</td></tr>
+<tr><td>任务来源</td><td>ZhuLong WaveView切片(77任务)+WaveView-037</td><td>WaveView-037=单边沿失败(返回N/A)</td></tr>
+<tr><td>评分</td><td>断言沙盒自动评分</td><td>无人工评分，容差由沙盒定义</td></tr>
+<tr><td>抽检</td><td>10%人工</td><td>检查波形截图质量（分辨率/压缩伪影/轴标注可读性）</td></tr></table>
+<h3>S4.4 预注册决策树</h3>
+<div class="box">
+<p><b>若T196全部4子任务≈0%</b>：196 token对波形完全不够，WaveView-037不是个例而是系统性问题。</p>
+<p><b>若T196边沿计数失败但毛刺检测成功</b>：离散计数需更高分辨率，但二值判断可容忍粗粒度。</p>
+<p><b>若T1024仍有子任务失败</b>：即使最高预算也不够，问题在编码器架构或训练。报告为「架构瓶颈」。</p></div>
+<h2>S5 通用基础设施</h2>
+<h3>S5.1 断言沙盒</h3>
+<p>所有T11-T14实验共用stage(ii)断言沙盒——即ZhuLong用于评分脚本执行结果的同一套断言系统。多模态与纯文本在同一指标上比较；评分完全自动化，无人工主观判断（除抽检）；沙盒在沙箱环境中执行脚本验证输出。</p>
+<h3>S5.2 抽检协议</h3>
+<table><tr><th>环节</th><th>比例</th><th>检查内容</th><th>失败处置</th></tr>
+<tr><td>渲染有效性</td><td>10%</td><td>截图完整/分辨率正确</td><td>剔除并补充</td></tr>
+<tr><td>答案可读性</td><td>10%</td><td>GT答案能否从图像物理读取</td><td>剔除并补充</td></tr>
+<tr><td>通道一致性(T13)</td><td>10%</td><td>三通道同一任务/GT</td><td>剔除并补充</td></tr></table>
+<p>抽检由人工执行，但不替代沙盒评分——仅用于剔除无效任务，不影响有效任务通过率计算。</p>
+<h3>S5.3 预注册原则</h3>
+<ul><li><b>判据先定后测</b>：所有n、容差、可分辨阈值在实验运行前固定，不许事后调整。</li>
+<li><b>反向contingencies明示</b>：每个RQ同时声明正面和负面的报告方式。</li>
+<li><b>不填未测数字</b>：表中结果格保持[TBD]直到实验完成并经沙盒评分。</li></ul>
+<h2>S6 S6.1 事实核对记录</h2>
+<p>12:0x 通知要求：S6任何数字与EXPERIMENTS_VISION.md冲突时，以实验记录为准改文并给文件+行号证据。当前6_vision_encoder.tex（wake#437版，20行）逐项核对：</p>
+<table><tr><th>数字</th><th>论文中</th><th>实验记录</th><th>证据</th><th>判定</th></tr>
+<tr><td>参数量</td><td>126.8M(w512)</td><td>126,779,392=126.78M</td><td>r10_scaling2d.py L23; EXPERIMENTS_VISION.md L51</td><td class='ok'>一致</td></tr>
+<tr><td>数据量</td><td>≈18.5M pairs</td><td>≈18.5M(CC12M~11M+Amshaker~6M)</td><td>EXPERIMENTS_VISION.md L64</td><td class='ok'>一致</td></tr>
+<tr><td>四臂消融</td><td>6.1%/6.2%/+6.0pp</td><td>6.08%/6.23%/12.08%(Δ=+6.0pp)</td><td>EXPERIMENTS_VISION.md L85-88; ROUND11.md L887</td><td class='ok'>一致(四舍五入)</td></tr>
+<tr><td>+12.4pp基准</td><td>vs contrastive-only</td><td>19.76%-7.40%=+12.36pp</td><td>ROUND11.md L887(InfoNCE baseline=R9 stage-2)</td><td class='ok'>一致</td></tr>
+<tr><td>lp轨迹</td><td>11.50%->19.76%@55.3M</td><td>R11-G 11点严格单调递增</td><td>ROUND11.md L877-887</td><td class='ok'>一致</td></tr>
+<tr><td>20.27%@176M</td><td>58.8M-pair(adding GPIC)</td><td>3-epoch,344k steps,58.8M unique</td><td>ROUND11.md L1543; EXPERIMENTS_VISION.md L129</td><td class='ok'>一致(已标注数据差异)</td></tr>
+<tr><td>196 token</td><td>224/16=14x14=196</td><td>r11_run_aimv2.sh:224px,patch16</td><td>vision/r11_run_aimv2.sh L8</td><td class='ok'>一致</td></tr>
+<tr><td>mask ratio</td><td>0.6</td><td>--mask-ratio 0.6(BP-2最优)</td><td>EXPERIMENTS_VISION.md L146; BP-2</td><td class='ok'>一致</td></tr>
+<tr><td>loss权重</td><td>1:1</td><td>contrast_weight=1.0,patch_loss_weight=1.0</td><td>BP-2; r11_run_aimv2.sh L57</td><td class='ok'>一致</td></tr></table>
+<p><b>结论</b>：S6.1全部数字与实验记录一致，无需修改。wake#437已修复的P0(width-1024->512)、P1(交互措辞+数据差异标注)、P2(删除trunk degrades)均已体现在当前版本中。</p>
+<h2>S7 编码验证与编译结果</h2>
+<p><b>编码硬规则</b>（12:0x通知第6条）：所有.tex必须UTF-8 with BOM。</p>
+<div class="ev">
+<b>事实</b>：v1.2重构revert(commit 9ab1e4b32)同时撤销了BOM修复(commit be789c18c)。已重新运行python scripts/check_tex_encoding.py --fix，全部11个.tex文件恢复BOM -> <b>0 problem(s)</b>。
+</div>
+<p><b>编译结果</b>（revert后原始稿）：</p>
+<table><tr><th>指标</th><th>值</th></tr>
+<tr><td>页数</td><td>6页</td></tr>
+<tr><td>ERR(控制序列错误)</td><td>0</td></tr>
+<tr><td>Overfull</td><td>0</td></tr>
+<tr><td>Undefined control sequence</td><td>0</td></tr>
+<tr><td>Undefined reference(warnings)</td><td>37(原稿已有，非本轮引入)</td></tr>
+<tr><td>编码检查</td><td>11 files, 0 problem(s)</td></tr></table>
+<p><b>注</b>：未commit main.pdf（二进制文件，多线并发会冲突；最终PDF由运维统一编译提交）。</p>
+<hr>
+<p style="color:#999;font-size:12px;">BaiZe Vision wake#438 2026-10-31 报告生成器: vision/generate_t11_t14_protocol_report.py(幂等)</p>
+</body></html>

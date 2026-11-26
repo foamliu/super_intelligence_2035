@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Pretrain 线 · 文献借鉴报告（2026-10-11）</title>
+<style>
+:root{--pri:#0b3d6e;--acc:#1f6feb;--ok:#1a7f37;--warn:#9a6700;--bad:#cf222e;--bg:#f6f8fa;--card:#fff;--bd:#d0d7de;--tx:#1f2328;--mut:#59636e;--pur:#8250df}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--tx);background:var(--bg);line-height:1.75;font-size:15px}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 20px 70px}
+header.hero{background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%);color:#fff;border-radius:14px;padding:28px 32px;margin-bottom:20px;box-shadow:0 6px 20px rgba(11,61,110,.16)}
+header.hero h1{font-size:23px;margin-bottom:4px}
+header.hero .sub{font-size:14.5px;opacity:.95}
+header.hero .meta{margin-top:12px;font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px 16px}
+header.hero .meta span{background:rgba(255,255,255,.14);border-radius:999px;padding:2px 11px}
+.disc{margin-top:12px;font-size:12px;background:rgba(0,0,0,.16);border-radius:8px;padding:7px 12px;opacity:.95}
+h2.sec{font-size:19px;margin:30px 0 10px;padding-bottom:7px;border-bottom:2px solid var(--bd);color:var(--pri)}
+h3{font-size:16px;margin:18px 0 6px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px 22px;margin:14px 0;box-shadow:0 1px 3px rgba(27,31,36,.06)}
+.card h3{font-size:17px;margin:0 0 6px}
+.rank{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin-right:8px;border-radius:50%;background:var(--acc);color:#fff;font-size:15px;font-weight:700;vertical-align:middle}
+.row{display:flex;gap:10px;margin:6px 0;font-size:13.5px}
+.row .k{flex:0 0 96px;color:var(--mut);font-weight:600}
+.row .v{flex:1}
+.orig{font-style:italic;color:var(--pri)}
+code{background:#eef1f4;border:1px solid #e1e4e8;border-radius:5px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:12px;color:var(--pri)}
+a{color:var(--acc);word-break:break-all}
+.badge{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:700;vertical-align:middle}
+.b-data{background:#dafbe1;color:var(--ok)}.b-arch{background:#f0e8ff;color:var(--pur)}.b-infer{background:#fff8ef;color:var(--warn)}.b-post{background:#ffeef8;color:#a3238e}
+.b-verified{background:#dafbe1;color:var(--ok)}.b-inspire{background:#fff8ef;color:var(--warn)}
+.reason{background:#f0f6ff;border:1px solid #cfe0f5;border-left:4px solid var(--acc);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13px}
+.reason.warn{background:#fff8ef;border-color:#f0d9b5;border-left-color:var(--warn)}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:12.5px;background:var(--card)}
+th,td{border:1px solid var(--bd);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#eef3f8;color:var(--pri);font-weight:600}
+tr:nth-child(even) td{background:#fafbfc}
+.note{background:#fff8ef;border:1px solid #f0d9b5;border-left:4px solid var(--warn);border-radius:8px;padding:10px 15px;font-size:12.5px;color:#6a4a00;margin:12px 0}
+.ok-box{background:#f0fff4;border:1px solid #b7f0c5;border-left:4px solid var(--ok);border-radius:8px;padding:10px 15px;font-size:12.5px;color:#0d5c22;margin:12px 0}
+.score{display:inline-block;min-width:48px;text-align:center;padding:2px 8px;border-radius:6px;font-weight:700;font-size:13px}
+.s-high{background:#dafbe1;color:var(--ok)}.s-mid{background:#fff8ef;color:var(--warn)}
+.tldr{background:#1a1f2e;color:#c9d1d9;border:1px solid var(--acc);border-radius:10px;padding:16px 20px;margin:16px 0}
+.tldr h2{color:#58a6ff;border:none;margin-top:0;font-size:18px}
+.tldr ol{margin:8px 0 0 20px}.tldr li{margin:5px 0;color:#c9d1d9}.tldr code{background:#0d1117;color:#d29922}
+.p8s{background:#eef6ff;border:1px solid #cfe0f5;border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px}
+footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--bd);color:var(--mut);font-size:12px}
+.exp-box{background:#f6f0ff;border:1px solid #d8c5f5;border-left:4px solid var(--pur);border-radius:8px;padding:12px 16px;margin:10px 0;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<h1>📚 BaiZe Pretrain 线 · 文献借鉴报告</h1>
+<div class="sub">research 线近期论文（2026-10-07~11 · 25 篇日报 + TOP_K 台账）· 按「对本线可执行价值」精选 TOP-5 + 附表 8 条</div>
+<div class="meta">
+<span>📅 2026-10-11</span><span>🎯 BaiZe Stage(i) Mamba2-hybrid 2.22B · P-8 进行中</span><span>📝 纯阅读·不占GPU·不打断P-8</span><span>📊 45篇→13篇入线</span>
+</div>
+<div class="disc">⚠️ 基于 research 日报（arXiv 标题+摘要+comment，API HTTP 200+published 核验），<b>未逐篇精读全文</b>。判断标「我们判断」；数字标「作者自报·未复现」。</div>
+</header>
+
+<div class="tldr">
+<h2>🎯 执行摘要</h2>
+<p>从 45 篇中按「对 pretrain 线可执行价值」筛出 <b>13 篇</b>，TOP-5：</p>
+<ol>
+<li><b>Conditional Transfer（2610.11548）</b>—数据配比三信号判据，「可教≠有用」「loss自适应背离下游」→100B档数据配方。</li>
+<li><b>Mamba Recall Scaling Laws（2609.07681）</b>—Mamba回忆规模律，支撑52:4 SSM:Attn选型。有代码。</li>
+<li><b>PHBA（2610.08527）</b>—混合架构 top-k块稀疏+前缀状态替代滑窗注意力，注意力层升级候选。</li>
+<li><b>YANchor-4B（2610.10118）</b>—循环-记忆 O(N)/O(1)，锚点检索，有代码+权重，架构对照。</li>
+<li><b>MiMo-V2.6（2610.11959）</b>—工业级RL扩展，hybrid-SWA+1M ctx+三轴扩算力，对标Stage(ii-v)。</li>
+</ol>
+<p style="margin-top:10px">5 条均为「<span class="badge b-inspire">仅灵感/未验证</span>」。🚫 <b>本轮不跑实验</b>；验证见§4，须运维批准。</p>
+</div>
+
+<h2 class="sec">§0—P-8现状对齐</h2>
+<div class="p8s"><b>P-8【44B】运行中</b>（~19:30）：Mamba2-hybrid 2.22B(52SSM+4Attn)，TP1·DP8，MBS2，GBS1024，seq4096，bf16，dist_muon，LR1e-3，WSD。step~4340/10490(41.4%)，loss≈2.534，~249K tok/s，8卡52-55GB。ckpt=iter_1049/2098/3147/4196✅，next@5245，decay@9441。<b>本报告不触碰P-8/不新跑实验</b>。</div>
+
+<h2 class="sec">§1—方法与口径</h2>
+<div class="note"><b>输入</b>：①日报<code>daily/2026-10-07~11.html</code>(25篇) ②<code>TOP_K.md</code>(TOP-20)+<code>TAKEAWAYS.md</code> ③对照<code>LIT_IDEAS_2026-10-04/05.html</code>(无重复)。<br><b>关注面</b>：预训练配方·优化器·架构·长上下文·数据配比·scaling law·稳定性·吞吐。<br><b>筛选</b>：排除科普+ZhuLong独占类，按可执行性排序。<br><b>标记</b>：<span class="badge b-verified">已验证</span>=有代码/权重+可核验；<span class="badge b-inspire">仅灵感</span>=仅摘要须读全文。</div>
+
+<h2 class="sec">§2—TOP-5（按对本线可执行价值排序）</h2>
+
+<div class="card">
+<h3><span class="rank">1</span>Conditional Transfer from Controlled Pretraining Mixtures to Code <span class="badge b-data">数据配比</span> <span class="badge b-inspire">仅灵感</span></h3>
+<div class="row"><div class="k">出处</div><div class="v"><span class="orig">Conditional Transfer from Controlled Pretraining Mixtures to Code</span><br>arXiv:<a href="https://arxiv.org/abs/2610.11548">2610.11548</a> ｜ 2026-10-08 ｜ research日报10-10#2</div></div>
+<div class="row"><div class="k">一句话</div><div class="v">区分三信号—<b>diagnostic</b>(loss是否跟踪全局进展)、<b>teachable</b>(loss是否响应自身token预算)、<b>transfer</b>(纳入后是否改善下游)—受控预训练固定70%Python、30%做单纯形配比扫描，发现「<b>可教≠有用</b>」且「<b>loss自适应调度器背离下游</b>」(Ado把OpenCodeInstruct压到~1%后比固定配比差2.4–11.0pp)。</div></div>
+<div class="row"><div class="k">与本线关系</div><div class="v"><b>直击BaiZe数据配比核心</b>(R3 BO刚完成、P-8 decay配比已定、100B档待规划)。<br>(a) <b>R3搜索</b>：套用「固定主干+30%单纯形扫描」受控消融协议，升级为三信号分离评估；<br>(b) <b>P-8 decay SFT64%</b>：来源分层「先过transfer关而非loss关」；<br>(c) <b>100B档</b>：反直觉「loss自适应背离下游」=直接警告—若用loss反馈调配比须以下游lm_eval而非残余loss做控制信号。</div></div>
+<div class="row"><div class="k">借鉴成本</div><div class="v"><b>GPU·h</b>:0(纯读)；落地~8 GPU·h(小规模单纯形~500M token)。<b>墙钟</b>:读~2h+复现~1天。<b>依赖</b>:无。</div></div>
+<div class="row"><div class="k">风险</div><div class="v">①单作者，审稿未知；②仅代码域，web/math迁移未验；③27任务中14可教，比例受任务选择影响；④pass@20 15.9→22.6小规模，统计显著性未报。</div></div>
+<div class="row"><div class="k">价签</div><div class="v"><span class="score s-high">可行9</span>×<span class="score s-high">潜力8</span>=<b>72</b>(本批最高)</div></div>
+<div class="reason"><b>我们判断</b>：最立即可执行—价值不在某数字，而在「<b>不要被loss下降骗了</b>」的方法论判据。BaiZe R3用BO优化下游lm_eval(已对齐transfer)，但「可教性」「诊断性」尚未分离。建议P-8完成后100B档数据规划阶段做三信号分离评估。</div>
+</div>
+
+<div class="card">
+<h3><span class="rank">2</span>On the Recall Scaling Laws in Mamba <span class="badge b-arch">架构/规模律</span> <span class="badge b-verified">有代码</span></h3>
+<div class="row"><div class="k">出处</div><div class="v"><span class="orig">On the Recall Scaling Laws in Mamba: A Theoretical and Mechanistic Study via Hashing</span><br>arXiv:<a href="https://arxiv.org/abs/2609.07681">2609.07681</a> ｜ 2026-09 ｜ TOP_K#15<br>代码:<a href="https://github.com/yuvalko1/mamba-recall-scaling-laws">github.com/yuvalko1/mamba-recall-scaling-laws</a> ｜ 53p,20fig</div></div>
+<div class="row"><div class="k">一句话</div><div class="v">从<b>理论+机制</b>(hashing视角)刻画<b>Mamba的recall(精确回忆)规模律</b>，解释SSM在精确回忆上的能力边界与随规模走向。</div></div>
+<div class="row"><div class="k">与本线关系</div><div class="v"><b>直接支撑Mamba2-hybrid架构选型</b>(52SSM+4Attn)。<br>(a) <b>P-3选型复核</b>:52:4比例基于经验，此论文给「<b>哪些能力(recall/检索)归attention、哪些(长程聚合)归SSM</b>」理论依据→验证或修正比例；<br>(b) <b>规模外推</b>:2.22B→更大规模时SSM recall预期走向可预测；<br>(c) <b>P-6 scaling law交叉验证</b>:BaiZe已有48/48 runs R²=0.986，可与recall专项规模律交叉验证。</div></div>
+<div class="row"><div class="k">借鉴成本</div><div class="v"><b>GPU·h</b>:~4(小规模recall测试,对照现有ckpt)；<b>墙钟</b>:读~3h+实验~0.5天；<b>依赖</b>:可用BaiZe现有ckpt(iter_1049~4196)+论文代码。</div></div>
+<div class="row"><div class="k">风险</div><div class="v">①理论基于特定Mamba构造，<b>Mamba2直接适用性待验</b>(SSD结构不同)；②hashing是近似模型；③53页需精读。</div></div>
+<div class="row"><div class="k">价签</div><div class="v"><span class="score s-high">可行8</span>×<span class="score s-high">潜力8</span>=<b>64</b></div></div>
+<div class="reason"><b>我们判断</b>：混合架构是论文核心卖点，但52:4缺理论支撑。此论文给「recall归attention、长程聚合归SSM」的机制解释—在BaiZe ckpt上复现recall测试→给§3架构补<b>理论依据</b>。建议P-8完成后用其代码对final ckpt做recall评估。</div>
+</div>
+
+<div class="card">
+<h3><span class="rank">3</span>PHBA: Prefix-State Hybrid Block Attention <span class="badge b-arch">混合架构</span> <span class="badge b-inspire">仅灵感</span></h3>
+<div class="row"><div class="k">出处</div><div class="v"><span class="orig">PHBA: Prefix-State Hybrid Block Attention</span><br>arXiv:<a href="https://arxiv.org/abs/2610.08527">2610.08527</a> ｜ 2026-10-06 ｜ research日报10-08#1</div></div>
+<div class="row"><div class="k">一句话</div><div class="v">在「线性序列模型+softmax注意力」混合架构里，把<b>固定滑窗注意力</b>换成<b>top-k块稀疏检索</b>，每个被检索块附带紧凑「<b>前缀状态</b>」(块边界门控线性递推生成)，同层内同时拿精确远程证据+压缩历史；给<b>硬件友好Triton实现</b>，流式处理不落地大中间张量。</div></div>
+<div class="row"><div class="k">与本线关系</div><div class="v"><b>与BaiZe Mamba2×attention同技术线</b>。<br>(a) <b>注意力层升级候选</b>:4个attention层用标准全局/滑窗；PHBA的top-k块稀疏+前缀状态可作滑窗<b>替换候选</b>(与NHA对照)；<br>(b) <b>存储/带宽</b>:硬件感知Triton、流式路由、不落地大张量→呼应长上下文KV/中间张量瓶颈(P-9.11已证hybrid 1M ctx VRAM近恒定~26GB)；<br>(c) <b>与Mamba2兼容</b>:前缀状态由门控线性递推生成，与SSM状态机制<b>概念同源</b>。</div></div>
+<div class="row"><div class="k">借鉴成本</div><div class="v"><b>GPU·h</b>:~16(小规模对比~500M token)；<b>墙钟</b>:读+Triton复现~2天+实验~1天；<b>依赖</b>:须从头训小模型(架构不同,不能用P-8 ckpt)。</div></div>
+<div class="row"><div class="k">风险</div><div class="v">①「优于强线性/混合基线」<b>自报未复现</b>；②<b>无代码开源</b>，Triton须自复现；③与~2B兼容性未知；④top-k块检索额外计算可能抵消KV节省。</div></div>
+<div class="row"><div class="k">价签</div><div class="v"><span class="score s-mid">可行5</span>×<span class="score s-high">潜力8</span>=<b>40</b></div></div>
+<div class="reason warn"><b>我们判断</b>：概念<b>最对口</b>(混合架构+注意力升级+KV压缩)，但落地门槛最高(无代码+从头训)。建议先读原文确认前缀状态与Mamba2 SSM接口兼容性，再决定是否投~16 GPU·h。归入「<b>下一轮架构迭代</b>」候选。</div>
+</div>
+
+<div class="card">
+<h3><span class="rank">4</span>YANchor-4B: O(N) Time, O(1) Memory <span class="badge b-arch">架构/推理</span> <span class="badge b-verified">有代码+权重</span></h3>
+<div class="row"><div class="k">出处</div><div class="v"><span class="orig">YANchor-4B: Effective Long-Horizon Reasoning in O(N) Time with O(1) Memory</span><br>arXiv:<a href="https://arxiv.org/abs/2610.10118">2610.10118</a> ｜ 2026-10-07 ｜ research日报10-09#2<br>代码:<a href="https://github.com/RocoreMatrix/YANchor">github.com/RocoreMatrix/YANchor</a> ｜ 权重:HF HuishanJi/YANchor-4B ｜ 24p,8fig</div></div>
+<div class="row"><div class="k">一句话</div><div class="v">通用<b>循环模型</b>：关键记忆保留为「<b>锚点(Anchors)</b>」供后续检索，<b>O(N)生成时间+O(1)记忆</b>，配多维记忆机制。AIME2024-26 pass@1 82.93%、HMMT 63.64%，称优于含更大模型的线性/常数状态同类；H100批量长生成吞吐称数倍提升。</div></div>
+<div class="row"><div class="k">与本线关系</div><div class="v"><b>混合架构/高效推理/训练成本主线</b>，落在<b>存储-带宽视角</b>。<br>(a) <b>架构对照候选</b>:Mamba2×attention之外的<b>循环-记忆</b>候选—「<b>锚点检索</b>」可启发在SSM状态外增加可检索锚点；<br>(b) <b>推理部署</b>:O(1)记忆=长程推理KV/中间状态不随长度膨胀—P-9.11已证hybrid 1M VRAM近恒定，锚点机制可作替代/补充；<br>(c) ✅<b>有代码+权重</b>便于零训练复现。</div></div>
+<div class="row"><div class="k">借鉴成本</div><div class="v"><b>GPU·h</b>:~8(读开源实现+小规模推理对照)；<b>墙钟</b>:读代码~1天+实验~0.5天；<b>依赖</b>:用官方4B权重直接推理(无需训练)。</div></div>
+<div class="row"><div class="k">风险</div><div class="v">①「优于更大模型/数倍吞吐」<b>自报未复现</b>；②4B≠2.22B档，吞吐不可直接对比；③纯循环模型(非SSM-Attn混合)，迁移是「借鉴机制」非「直接替换」；④数学推理优势不一定迁移到通用语言建模。</div></div>
+<div class="row"><div class="k">价签</div><div class="v"><span class="score s-high">可行7</span>×<span class="score s-mid">潜力6</span>=<b>42</b></div></div>
+<div class="reason"><b>我们判断</b>：核心价值=「<b>锚点记忆</b>」机制—SSM状态压缩之外的另一种「不丢精确信息」思路。BaiZe的SSM做长程聚合(可能丢recall)，attention做精确检索(但KV贵)，锚点检索是介于二者的<b>第三条路</b>。建议先下载4B权重做推理吞吐/显存对照(零训练成本)。</div>
+</div>
+
+<div class="card">
+<h3><span class="rank">5</span>MiMo-V2.6: Scaling RL Towards Self-Improvement <span class="badge b-post">后训练/RL</span> <span class="badge b-inspire">仅灵感</span></h3>
+<div class="row"><div class="k">出处</div><div class="v"><span class="orig">MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement</span><br>arXiv:<a href="https://arxiv.org/abs/2610.11959">2610.11959</a> ｜ 2026-10-08 ｜ research日报10-11#1<br>作者:Xiaomi LLM-Core Team(150位署名)</div></div>
+<div class="row"><div class="k">一句话</div><div class="v">工业级「扩RL算力」报告：RL前做多模态mid-training，在<b>预训练hybrid-SWA架构</b>上备基建；三维度扩RL—①更大batch+更高吞吐(异步,每步1568样本/2.7-3.7B token,ctx最长1M) ②更多样环境(code/general/visual/cyber,混合agent harness) ③更多grader算力(groupwise agentic grading→更短更省token解)。稳定性:<b>冻结MoE router+多层反reward hacking</b>；基建:统一轨迹表示+高并发多框架rollout+训练-推理一致性。开源。</div></div>
+<div class="row"><div class="k">与本线关系</div><div class="v"><b>同时命中后训练(Stage ii-v)+架构稳定性</b>。<br>(a) <b>Stage(ii) RL路线图</b>:「<b>三轴扩算力</b>」(批/吞吐,环境多样性,grader算力)→BaiZe RL规划框架；<br>(b) <b>训练稳定性</b>:「冻结MoE router+反reward hacking」→若上MoE主干直接参考；「训练-推理一致性」→长上下文/混合架构RL阶段参考；<br>(c) <b>架构对照</b>:MiMo用hybrid-SWA(滑窗注意力)，与BaiZe 4-attention层是不同混合路线→对照SWA设计差异；<br>(d) <b>groupwise grading导向更短解</b>→后训练轨迹长度/成本可控。</div></div>
+<div class="row"><div class="k">借鉴成本</div><div class="v"><b>GPU·h</b>:0(纯读)；落地>100 GPU·h级。<b>墙钟</b>:读~4h(工业级长文)。<b>依赖</b>:无(借鉴思路)。</div></div>
+<div class="row"><div class="k">风险</div><div class="v">①<b>工业级规模</b>(150作者)，与2.22B差距大，经验不可直接照搬；②模型规模/架构细节未展开；③「开源」仓库地址未给出；④MoE经验对BaiZe当前dense架构<b>暂不适用</b>。</div></div>
+<div class="row"><div class="k">价签</div><div class="v"><span class="score s-high">可行8</span>×<span class="score s-mid">潜力6</span>=<b>48</b></div></div>
+<div class="reason"><b>我们判断</b>：价值=「<b>RL算力该往哪里扩</b>」的工业级清单。BaiZe在Stage(i)，但Stage(ii) RL迟早要做。三轴扩展+稳定性防线+训练-推理一致性框架→BaiZe RL阶段<b>规划模板</b>。建议P-8完成后Stage(ii)启动前以此做差距分析。</div>
+</div>
+
+<h2 class="sec">§3—附表：其余相关论文（按相关性降序）</h2>
+<div class="note">以下8篇与本线有相关性但可执行价值低于TOP-5，列入备查。</div>
+<table>
+<tr><th>#</th><th>标题+arXiv</th><th>一句话</th><th>相关面</th><th>价签</th><th>来源</th></tr>
+<tr><td>6</td><td><b>DeepSeek-V4.1-Flash</b><br><a href="https://arxiv.org/abs/2609.19969">2609.19969</a></td><td>长上下文瓶颈→HBM/SSD带宽；跨层KV复用(CSA2)+FP4 KV+SWA Bounded Replay，全局KV压到890 bytes/token(≈1/4)；非对称激活8B prefill/16B decode。</td><td><span class="badge b-infer">长上下文/推理</span> KV压缩、FP4 KV、HBM/SSD分层→P-9.11长上下文部署工程范式。</td><td><span class="score s-mid">6×7=42</span></td><td>TOP_K#1</td></tr>
+<tr><td>7</td><td><b>Bridging KV-Cache Quant & Linear Attention</b><br><a href="https://arxiv.org/abs/2610.11214">2610.11214</a></td><td>KV量化(离散化)与线性注意力(递归压缩)可由「软地址分配」统一(RAM-Net)；Transformer→RAM-Net权重迁移仅500M token恢复~87%增益。</td><td><span class="badge b-arch">架构迁移</span> 「不必从零重训」迁权重→降本路线；500M-token迁移预算可作成本基准。</td><td><span class="score s-mid">5×7=35</span></td><td>日报10-10#3</td></tr>
+<tr><td>8</td><td><b>Why On-Policy Distillation Fails</b><br><a href="https://arxiv.org/abs/2610.11247">2610.11247</a></td><td>OPD用更大教师反学不动(loss仅降25.1%)，self-RL教师达96.2%；信号坍缩可由梯度学习信号代理早期衰减诊断；参数变动<0.1%/CKA>0.98=表示未适应。有代码。</td><td><span class="badge b-post">后训练/蒸馏</span> Stage(ii)若用OPD迁教师→先扫教师规模+配self-RL基线；CKA/参数变动入监控面板。</td><td><span class="score s-high">8×6=48</span></td><td>日报10-11#2</td></tr>
+<tr><td>9</td><td><b>Sharpening Tax in Post-Training</b><br><a href="https://arxiv.org/abs/2610.01509">2610.01509</a></td><td>预训练LLM+轻量harness即可是能干agent；后训练把任务推向「总解/永不解」两端，提升采样效率却牺牲覆盖；给足test-time预算时预训练版pass@K常胜过post-trained。给Sharpening Tax指标+PTGS。</td><td><span class="badge b-post">后训练策略</span> 后训练应加pass@K(覆盖度)诊断，避免「评测涨、实战覆盖反降」。action=试跑。</td><td><span class="score s-high">9×6=54</span></td><td>TOP_K#18</td></tr>
+<tr><td>10</td><td><b>QuantCode Model</b><br><a href="https://arxiv.org/abs/2609.39420">2609.39420</a></td><td>两段式领域专业化：「继续预训练框架代码→agent验证过的request→code对上SFT」；反直觉：继续预训练损伤指令跟随(47.5%→32.5%)，SFT使首轮与终局双升(22.3%→58.3%)。</td><td><span class="badge b-data">数据/后训练</span> 若做领域代码专业化：继续预训练有副作用，SFT更安全。action=试跑。</td><td><span class="score s-mid">6×6=36</span></td><td>TOP_K#19</td></tr>
+<tr><td>11</td><td><b>When Lower Reconstruction Loss Hurts (DRQ)</b><br><a href="https://arxiv.org/abs/2610.11226">2610.11226</a></td><td>weight-only PTQ以最小化重构loss为准绳，但更低loss可能让性能更差(激活分布漂移)；DRQ在受限分布上最小化最坏情况loss，只精修整数码、不改算子、不增开销，可叠加AWQ/GPTQ之后。</td><td><span class="badge b-infer">推理/量化</span> 量化后处理(PTQ后加DRQ精修)+评测补「激活分布漂移」用例。</td><td><span class="score s-high">7×5=35</span></td><td>日报10-11#3</td></tr>
+<tr><td>12</td><td><b>UNREAL</b><br><a href="https://arxiv.org/abs/2610.08463">2610.08463</a></td><td>长上下文走「证据稀疏」：只喂被选中证据，~32K起降低FLOPs与首token时延；NoLiMa 128K 1.0%→24.83%，LV-Eval 256K F1 49.97%→54.66%。</td><td><span class="badge b-infer">长上下文/RAG</span> prefill成本与KV预算控制；agentic「先检索后推理」融合。</td><td><span class="score s-mid">5×5=25</span></td><td>日报10-07#3</td></tr>
+<tr><td>13</td><td><b>VETTA</b><br><a href="https://arxiv.org/abs/2610.08402">2610.08402</a></td><td>多轮agent信用分配：同一次更新里同时学turn级与token级价值，共享轻量critic接两个头；critic只保留前若干层。ALFWorld/WebShop +37.5%/+22.3%。有代码。</td><td><span class="badge b-post">后训练/RL</span> 若做agentic RL，「turn级优势+token级残差」可迁移；「轻量critic/只留前几层」省显存。</td><td><span class="score s-mid">6×5=30</span></td><td>日报10-08#3</td></tr>
+</table>
+
+<h2 class="sec">§4—待验证实验清单（🚫须运维批准后再跑）</h2>
+<div class="note"><b>纪律</b>：本轮<b>不跑任何实验</b>。以下为「若批准后的验证方案+成本」，供决策。均在<b>P-8完成后</b>或运维另批窗口，绝不争用P-8的8卡。</div>
+
+<div class="exp-box"><b>V1：数据配比三信号分离评估</b>(对应TOP-1, 2610.11548)<br><b>目的</b>：验证「可教≠有用」在BaiZe web/code/math三域是否成立。<br><b>方案</b>：固定70%web，30%在code/math做单纯形扫描(~10点)，每点~500M token(~2K步)，测diagnostic/teachable/transfer(lm_eval 4集)。<br><b>成本</b>：10点×2K步×16.75s≈<b>~93 GPU·h</b>(~12h,8卡)。<b>须P-8完成后</b>。</div>
+
+<div class="exp-box"><b>V2：Mamba recall规模律在BaiZe ckpt上复现</b>(对应TOP-2, 2609.07681)<br><b>目的</b>：用现有ckpt(655M~2.22B)复现recall测试，验证52:4比例合理性。<br><b>方案</b>：下载论文代码，对P-6的48 ckpt+P-8的iter_1049~final做recall评估(MQAR/passkey)，画recall vs规模曲线。<br><b>成本</b>：<b>~4 GPU·h</b>(纯推理)。可P-8期间用1卡空闲做(不争用)。</div>
+
+<div class="exp-box"><b>V3：YANchor-4B推理吞吐/显存对照</b>(对应TOP-4, 2610.10118)<br><b>目的</b>：零训练评估锚点机制在长上下文推理上的显存/吞吐，与BaiZe hybrid对照。<br><b>方案</b>：下载YANchor-4B权重，SGLang/vLLM测32K~128K ctx TTFT/decode/VRAM，与P-9.11数据对照。<br><b>成本</b>：<b>~2 GPU·h</b>(纯推理)。可P-8期间用1卡做(不争用,需确认磁盘)。</div>
+
+<div class="exp-box"><b>V4：PHBA小规模架构对照</b>(对应TOP-3, 2610.08527)<br><b>目的</b>：评估top-k块稀疏+前缀状态在~500M上与滑窗的loss/吞吐差异。<br><b>方案</b>：从头训3个~500M小模型(标准滑窗/PHBA块稀疏/纯SSM)，各~500M token，对比loss+长上下文recall。<br><b>成本</b>：<b>~16 GPU·h</b>(~2h,8卡)。<b>须P-8完成后+运维批准</b>(无代码须自复现Triton,实际~3天)。</div>
+
+<h2 class="sec">§5—与已有LIT_IDEAS报告的去重</h2>
+<div class="ok-box">
+本仓已有<code>LIT_IDEAS_2026-10-04.html</code>(记忆驱动52条)和<code>LIT_IDEAS_2026-10-05.html</code>(发现驱动52条,34条2024-2026)。<br>
+<b>差异</b>：①<b>输入源</b>：10-04/05用cimi_search主动检索；本报告读research arXiv日报(10-07~11,25篇)+TOP_K台账，被动接收精选。<br>②<b>聚焦面</b>：10-04/05覆盖7方向(含vision/RLVR/cost)；本报告<b>仅pretrain线</b>。<br>③<b>时效</b>：10-04/05以已发表/知名为主；本报告13条均为<b>2026-09~10一手预印本</b>(≤72h窗口)，与10-04/05<b>无重复</b>(已逐ID比对)。<br>④<b>深度</b>：10-05有5+fetches；本报告基于摘要(research已做API复核但未精读)，标「<span class="badge b-inspire">仅灵感</span>」，落地前须读全文。
+</div>
+
+<h2 class="sec">§6—TOP-5与BaiZe各阶段的映射</h2>
+<table>
+<tr><th>BaiZe阶段</th><th>当前状态</th><th>相关idea</th><th>可借鉴时机</th></tr>
+<tr><td><b>P-8预训练</b>(44B stable→decay)</td><td>step~4340/10490, loss2.534</td><td>—(不打断)</td><td>P-8完成后</td></tr>
+<tr><td><b>P-8 decay段</b>(SFT64%退火)</td><td>未开始(step9441切换)</td><td><b>TOP-1</b>(三信号→decay配比先过transfer关)</td><td>decay启动前读原文</td></tr>
+<tr><td><b>P-8收官eval</b>(lm_eval8集)</td><td>未开始</td><td><b>TOP-2</b>(recall评估叠加到eval)</td><td>final ckpt产出后</td></tr>
+<tr><td><b>100B档数据规划</b></td><td>未启动(运维另令)</td><td><b>TOP-1</b>(三信号→配比搜索升级)</td><td>100B档启动前</td></tr>
+<tr><td><b>架构迭代</b>(下一代hybrid)</td><td>未启动</td><td><b>TOP-2/3/4</b>(recall律/PHBA/锚点)</td><td>论文投出后/下一代设计期</td></tr>
+<tr><td><b>Stage(ii) RL</b></td><td>未启动</td><td><b>TOP-5</b>(MiMo三轴+稳定性)+附表#8/9/13</td><td>Stage(ii)启动前差距分析</td></tr>
+<tr><td><b>推理部署</b></td><td>P-9.11已测1M ctx</td><td>附表#6/7/11(DeepSeek KV/RAM-Net/DRQ)</td><td>部署优化期</td></tr>
+</table>
+
+<h2 class="sec">§7—口径声明与纪律</h2>
+<div class="note">
+<b>溯源</b>：每条arXiv ID+URL+日期来自research日报(经API HTTP 200+published复核)，<b>可溯源</b>。<br>
+<b>一手vs二手</b>：research日报基于arXiv<b>标题+摘要+comment</b>(一手元数据)，但<b>未逐篇精读</b>。本报告在此基础上二次分析，标「<span class="badge b-inspire">仅灵感/未验证</span>」。<b>🚫不得据以声称「已验证/可复现/SOTA已证」</b>。<br>
+<b>区分</b>：<span class="badge b-verified">已验证</span>=有代码/权重+可核验(TOP-2/4+附表#8)；<span class="badge b-inspire">仅灵感</span>=仅摘要(TOP-1/3/5+附表多数)。<br>
+<b>数字</b>：所有数字均为<b>作者自报·未复现</b>。<br>
+<b>纪律</b>：🚫不改P-8在飞配置 / 🚫不新跑实验(须验证先报运维并列成本) / commit前缀<code>pretrain lit-rpt:</code>。
+</div>
+
+<footer>
+BaiZe Pretrain线·文献借鉴报告·2026-10-11 ｜ 输入：research日报2026-10-07~11(25篇)+TOP_K台账(20篇)<br>
+纯阅读+写作(不占GPU·不打断P-8) ｜ 每条可溯源至arXiv ID+URL ｜ 标「仅灵感/未验证」须读全文再落地<br>
+生成于2026-10-11(P-8 step~4340, stable推进中)
+</footer>
+</div>
+</body>
+</html>

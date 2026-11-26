@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BaiZe-2B 预训练计划（定稿）</title>
+<style>
+  :root { --bg:#0f1420; --panel:#161d2d; --line:#263049; --txt:#e6ebf4; --mut:#8b97ad; --acc:#4da3ff; --ok:#3ddc84; --warn:#ffb454; --bad:#ff5d5d; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:15px/1.7 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width: 980px; margin:0 auto; padding:32px 24px 80px; }
+  h1 { font-size:26px; margin:0 0 4px; letter-spacing:.5px; }
+  h2 { font-size:19px; margin:34px 0 12px; padding-left:10px; border-left:4px solid var(--acc); }
+  h3 { font-size:16px; margin:20px 0 8px; color:var(--acc); }
+  .sub { color:var(--mut); font-size:13px; margin-bottom:22px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:18px 20px; margin:14px 0; }
+  table { width:100%; border-collapse:collapse; margin:10px 0; font-size:13.5px; }
+  th,td { border:1px solid var(--line); padding:7px 10px; text-align:left; }
+  th { background:#1b2340; color:#cdd7ea; font-weight:600; }
+  tr:nth-child(even) td { background:#131a2b; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .k { color:var(--mut); font-size:12.5px; }
+  .tag { display:inline-block; padding:1px 9px; border-radius:20px; font-size:12px; margin:0 3px 3px 0; border:1px solid var(--line); }
+  .tag.ok { color:var(--ok); border-color:#1f5a3d; }
+  .tag.warn { color:var(--warn); border-color:#5a4320; }
+  .tag.bad { color:var(--bad); border-color:#5a2222; }
+  code { background:#0b1120; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font:12.5px ui-monospace,"SFMono-Regular",Consolas,monospace; color:#9fd0ff; }
+  .tldr { background:#141b30; border:1px solid #2a3a63; border-radius:10px; padding:16px 18px; }
+  ul { margin:8px 0; padding-left:22px; }
+  li { margin:4px 0; }
+  .note { color:var(--mut); font-size:13px; }
+  .hl { color:#ffd98a; font-weight:600; }
+  .footer { margin-top:40px; color:var(--mut); font-size:12px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>BaiZe-2B 预训练计划（定稿）</h1>
+<div class="sub">用户直令 2026-10-28 · 口径冻结 · 本文件为单一事实源</div>
+
+<div class="tldr">
+  <b>一句话</b>：2.2B Mamba2-hybrid，16K 双机 16 卡（CP1·DP16·graph-OFF·FP8-tensorwise = <b class="hl">613,992 tok/s</b>），WSD（warmup 2000 步 → 1e-3 保持），Stable 段 <b>4M tok/step × 70w 步 = 2.94T token</b> + Decay 段 80B，ABF（θ=1e6）外推 1M 上下文；数据 pre-blend 后恢复 <code>nw=8</code> 保吞吐。
+</div>
+
+<h2>1. 模型与训练配方</h2>
+<div class="card">
+  <table>
+    <tr><th>项</th><th>值</th></tr>
+    <tr><td>模型</td><td>Mamba2-hybrid · 56 层（Nemotron-H 式顺序混合：4 层全注意力 + 24 层 Mamba2 + 28 层 MLP）</td></tr>
+    <tr><td>参数量</td><td class="num">2.2B（= 2,220,268,032，rank 实测口径）</td></tr>
+    <tr><td>序列长度</td><td class="num">16,384（16K，产品目标长上下文因此必须 16K，勿降）</td></tr>
+    <tr><td>并行</td><td>CP=1 · DP=16 · TP=1 · 2×8 H100（.12 + .29）</td></tr>
+    <tr><td>微批 / 全局批</td><td class="num">mbs=1 · gbs=256 → accum=16</td></tr>
+    <tr><td>精度 / 图</td><td>FP8 tensorwise · CUDA Graph <b>OFF</b></td></tr>
+    <tr><td>吞吐（实测 #792 E1）</td><td class="num hl">613,992 tok/s（6.831 s/step，38.4K tok/s/GPU）</td></tr>
+    <tr><td>优化器 / LR</td><td>AdamW · WSD：2000 步 warmup → 1e-3 恒定（stable）→ Decay 段指数衰减</td></tr>
+  </table>
+</div>
+
+<h2>2. Stable 段（S1+S2 合并为 S）</h2>
+<div class="card">
+  <table>
+    <tr><th>项</th><th>值</th></tr>
+    <tr><td>tok/step</td><td class="num">4,194,304（= gbs256 × seq16384，即「4M」）</td></tr>
+    <tr><td>总 token</td><td class="num">2.94T（= 700,000 步 × 4.19M）</td></tr>
+    <tr><td>步数</td><td class="num">700,000</td></tr>
+  </table>
+
+  <h3>数据配比（7 源）</h3>
+  <table>
+    <tr><th>源</th><th class="num">sampling prop</th><th class="num">目标 epochs</th></tr>
+    <tr><td>en_v1_4（ultrafineweb_en_v1_4）</td><td class="num">0.65</td><td class="num">0.81</td></tr>
+    <tr><td>ufw_l1_en_hq（ultrafineweb_l1_en_hq）</td><td class="num">0.05</td><td class="num">0.93</td></tr>
+    <tr><td>ufw_zh（ultrafineweb_zh）</td><td class="num">0.04</td><td class="num">0.99</td></tr>
+    <tr><td>Math-L1（UltraData-Math-L1）</td><td class="num">0.05</td><td class="num">0.85</td></tr>
+    <tr><td>Math-L3（UltraData-Math-L3）</td><td class="num">0.02</td><td class="num">0.72</td></tr>
+    <tr><td>Code-L2（UltraData-Code-L2）</td><td class="num">0.15</td><td class="num">1.00</td></tr>
+    <tr><td>Code-L3（UltraData-Code-L3）</td><td class="num">0.04</td><td class="num">0.87</td></tr>
+  </table>
+
+  <div class="note">语料核对：7 源合计 <b class="hl">≈3.29T token</b>（数据线实测）。S=2.94T → 整体 ≈0.9 轮、逐源 0.75~1.05 轮，<b>无重复采样</b>（旧的 1.468T 反而只吃了语料 ~45%）。<code>gen_blend --verify</code> 的 epochs 目标与 2.94T 仅差 ~5%（&lt;10% 告警线）。</div>
+</div>
+
+<h2>3. Decay 段（后置，暂不 pre-blend）</h2>
+<div class="card">
+  <table>
+    <tr><th>项</th><th>值</th></tr>
+    <tr><td>tok/step</td><td class="num">4,194,304（4M）</td></tr>
+    <tr><td>总 token</td><td class="num">80B（≈20,000 步；按 4.19M/step 精确为 83.9B，Decay 起跑前定夺 80B/19,073 步 vs 20,000/83.9B）</td></tr>
+    <tr><td>步数</td><td class="num">~20,000</td></tr>
+  </table>
+
+  <h3>数据配比（6 源）</h3>
+  <table>
+    <tr><th>源</th><th class="num">prop</th></tr>
+    <tr><td>ufw_en_l3（ultrafineweb_en_l3/qa）</td><td class="num">0.18</td></tr>
+    <tr><td>ufw_zh（ultrafineweb_zh）</td><td class="num">0.04</td></tr>
+    <tr><td>Math-L3（UltraData-Math-L3）</td><td class="num">0.04</td></tr>
+    <tr><td>Code-L3（UltraData-Code-L3）</td><td class="num">0.02</td></tr>
+    <tr><td>UltraData-SFT-2605</td><td class="num">0.60</td></tr>
+    <tr><td>UltraData-SFT-Agent-2609</td><td class="num">0.12</td></tr>
+  </table>
+  <div class="note">⚠️ UltraData-SFT-2605 / SFT-Agent-2609 现为「未分词」，属数据线待办；Decay 起跑前需分词完成。</div>
+</div>
+
+<h2>4. 监控 / 长上下文</h2>
+<div class="card">
+  <table>
+    <tr><th>项</th><th>值</th></tr>
+    <tr><td>监控</td><td>TensorBoard · 常驻 <code>10.239.2.29:6006</code></td></tr>
+    <tr><td>长上下文目标</td><td class="num">1M</td></tr>
+    <tr><td>方案</td><td>ABF 外推：<b>θ=1e6</b> + RoPE max embedding position = <b>1,048,576</b>（4 层注意力；只改 max_pos 不改 θ 会全 NaN）</td></tr>
+  </table>
+</div>
+
+<h2>5. 数据 pre-blend（保证 613K 吞吐的关键）</h2>
+<div class="card">
+  <ul>
+    <li><b>为什么做</b>：613K(nw=8) → 308K(nw=0) 的差额 ≈100% 来自「627 片小 shard 的同步 blend 采样/索引」把 fork-COW 逼成 OOM，退到 nw=0 后数据/计算串行。</li>
+    <li><b>做法</b>：把 Stable 的 7 源各自 pre-blend 成大 shard，总量压到 <b>~16–32 片</b>（对齐 613K 基线用的 p5b_l3 16 片结构），索引变小 → fork-COW 可忽略 → 恢复 <code>nw=8</code>。</li>
+    <li><b>范围</b>：只 Stable；Decay 暂不 pre-blend。</li>
+    <li><b>目录</b>：<code>/nas_user/app.e0031982/datasets/pre-blend</code>。</li>
+    <li><b>并发</b>：.12 / .29 一起做，多开并发。</li>
+    <li><b>渐进</b>：按源分开 pre-blend，<b>预训练无需等全部源完成即可开始</b>（每个源做完即换入 <code>gen_blend</code>）。</li>
+  </ul>
+</div>
+
+<h2>6. 时间估计</h2>
+<div class="card">
+  <table>
+    <tr><th>阶段</th><th class="num">步数</th><th class="num">token</th><th class="num">预计墙钟 @613K</th></tr>
+    <tr><td>Stable（S）</td><td class="num">700,000</td><td class="num">2.94T</td><td class="num">≈55.3 天</td></tr>
+    <tr><td>Decay</td><td class="num">~20,000</td><td class="num">80B</td><td class="num">≈1.6 天</td></tr>
+    <tr><td><b>合计</b></td><td class="num">~720,000</td><td class="num">≈3.02T</td><td class="num hl">≈57 天</td></tr>
+  </table>
+  <div class="note">6.831 s/step（613,992 tok/s 实测口径）；不含 pre-blend、eval、ckpt 维护开销。</div>
+</div>
+
+<div class="footer">BaiZe-2B 预训练计划 · 自包含中文 HTML（0 外链 / 0 script）· 2026-10-28</div>
+
+</div>
+</body>
+</html>

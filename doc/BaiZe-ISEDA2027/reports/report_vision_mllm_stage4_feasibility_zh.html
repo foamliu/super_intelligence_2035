@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(iv) MLLM 对齐方案可行性评估报告</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--border:#2a2d3a;--text:#e0e0e0;--dim:#8b8fa0;--accent:#4fc3f7;--green:#4caf50;--orange:#ff9800;--red:#f44336;--yellow:#ffd54f;--code-bg:#0d0d0d;--th:#232631}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;padding:20px;max-width:1100px;margin:0 auto}
+h1{font-size:1.7em;color:var(--accent);border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:20px}
+h2{font-size:1.35em;color:var(--accent);margin-top:35px;margin-bottom:12px;border-left:4px solid var(--accent);padding-left:12px}
+h3{font-size:1.15em;color:var(--yellow);margin-top:22px;margin-bottom:8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:12px 0}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.82em;font-weight:600}
+.bg{background:rgba(76,175,80,.2);color:var(--green);border:1px solid var(--green)}
+.bo{background:rgba(255,152,0,.2);color:var(--orange);border:1px solid var(--orange)}
+.br{background:rgba(244,67,54,.2);color:var(--red);border:1px solid var(--red)}
+.by{background:rgba(255,213,79,.2);color:var(--yellow);border:1px solid var(--yellow)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92em}
+th{background:var(--th);color:var(--accent);padding:8px 12px;text-align:left;border:1px solid var(--border)}
+td{padding:8px 12px;border:1px solid var(--border)}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+code{background:var(--code-bg);padding:1px 6px;border-radius:4px;font-family:'Fira Code','Consolas',monospace;font-size:.88em;color:var(--yellow)}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:12px;overflow-x:auto;margin:10px 0;font-size:.85em;line-height:1.5}
+pre code{background:none;color:var(--text);padding:0}
+.tldr{background:rgba(79,195,247,.08);border:1px solid var(--accent);border-radius:8px;padding:14px 20px;margin:16px 0}
+.tldr-t{color:var(--accent);font-weight:700;font-size:1.1em;margin-bottom:6px}
+.warn{background:rgba(255,152,0,.08);border:1px solid var(--orange);border-radius:8px;padding:10px 16px;margin:10px 0}
+.danger{background:rgba(244,67,54,.08);border:1px solid var(--red);border-radius:8px;padding:10px 16px;margin:10px 0}
+.ok-box{background:rgba(76,175,80,.08);border:1px solid var(--green);border-radius:8px;padding:10px 16px;margin:10px 0}
+.footer{margin-top:40px;padding-top:15px;border-top:1px solid var(--border);color:var(--dim);font-size:.85em;text-align:center}
+.tag{color:var(--dim);font-size:.82em}
+ul,ol{margin-left:24px;margin-bottom:10px}li{margin-bottom:4px}
+.ev{color:var(--green);font-family:monospace;font-size:.85em}
+</style>
+</head>
+<body>
+<h1>BaiZe Stage(iv) MLLM 对齐方案可行性评估报告</h1>
+<div class="tag">生成时间：2026-10-14 ｜ 生成者：vision agent (wake #73) ｜ 性质：纯评估调研，<b>未起训、未占 GPU</b></div>
+<div class="tldr">
+<div class="tldr-t">📋 TL;DR（执行摘要）</div>
+<p>用户给定方案（LLaVA-OneVision-1.5 / Qwen3-4B / BaiZe ④-4ep / 2层MLP / ms-swift / lmms-eval）经逐项本机核查：</p>
+<ul>
+<li><span class="badge bg">🟢</span> <b>数据全在盘</b>：3个Stage共265GB均已完整下载。</li>
+<li><span class="badge bg">🟢</span> <b>LLM在盘</b>：Qwen3-4B-Instruct-2507(8GB,HF)可直接被ms-swift载入。</li>
+<li><span class="badge bg">🟢</span> <b>框架已装</b>：ms-swift 4.5.3(py310) + lmms-eval 0.7.1(ov_encoder)，ms-swift含<code>llava_onevision1_5</code>模板。</li>
+<li><span class="badge br">🔴</span> <b>视觉编码器桥接</b>：BaiZe ④-4ep是自定义ViT(<code>models.py:OpenVision2</code>)，原始<code>.pt</code>state_dict，非HF/open_clip格式，与LLaVA-OV1.5的RICE ViT接口不兼容→需编写wrapper+改modeling。</li>
+<li><span class="badge br">🔴</span> <b>训练框架不匹配</b>：<code>train_4b.sh</code>用AIAK Megatron(非ms-swift)。需用ms-swift另行实现训练管线。</li>
+<li><span class="badge bo">🟠</span> <b>分辨率不匹配</b>：BaiZe 224×224(p=16→196tokens)，LLaVA-OV1.5评测用高分辨率(<code>max_pixels=3240000</code>)。</li>
+</ul>
+<p><b>总体判断</b>：方案<b>技术上可行</b>，数据/LLM/框架三大条件已具备；主要工作量在<b>视觉编码器桥接</b>(~1-2天工程)，算力~200-400 GPU·h(8×H100约1-2天)，需等ArmC完成后释放GPU。</p>
+</div>
+<h2>§1 用户给定方案（逐字传达）</h2>
+<div class="card">
+<table>
+<tr><th style="width:180px">组件</th><th>规格</th><th>本机路径</th></tr>
+<tr><td>配方</td><td><b>LLaVA-OneVision-1.5</b></td><td>—</td></tr>
+<tr><td>LLM</td><td><b>Qwen3-4B-Instruct-2507</b></td><td><code>/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507</code></td></tr>
+<tr><td>projector</td><td><b>2层MLP</b></td><td>—</td></tr>
+<tr><td>vision encoder</td><td><b>BaiZe ④-4ep(ProtB 67.05±0.02%)</b></td><td><code>/nas_train/app.e0031982/datasets/baize-vision/out/scaling_E4_4ep_ov2_w512_d30_p16_224/vision.pt</code></td></tr>
+<tr><td>训练框架</td><td><b>ms-swift</b></td><td>py310 conda环境(v4.5.3)</td></tr>
+<tr><td>Stage-1数据</td><td>LLaVA-558K-Webdataset</td><td><code>.../mvp-lab/LLaVA-558K-Webdataset</code></td></tr>
+<tr><td>Stage-1.5数据</td><td>LLaVA-OneVision-1.5-Mid-Training-...-3M</td><td><code>.../mvp-lab/LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M</code></td></tr>
+<tr><td>Stage-2数据</td><td>LLaVA-NeXT-780k-webdataset</td><td><code>.../mvp-lab/LLaVA-NeXT-780k-webdataset</code></td></tr>
+<tr><td>超参参考</td><td><code>train_4b.sh</code></td><td><code>/nas_train/app.e0031982/code/LLaVA-OneVision-1.5/train_4b.sh</code></td></tr>
+<tr><td>评测框架</td><td><b>lmms-eval</b></td><td>ov_encoder环境(v0.7.1)+代码库<code>.../code/lmms-eval/</code></td></tr>
+<tr><td>评测集(17)</td><td>ai2d,blink,chartqa,docvqa_val,gqa,infovqa_val,mme,mmmu_val,mmstar,ocrbench,realworldqa,scienceqa_img,textvqa_val,vizwiz_vqa_val,vqav2_val,countbench,mmmu_pro_standard</td><td>—</td></tr>
+</table>
+</div>
+<h2>§2 数据可获取性（实测ls+du）</h2>
+<h3>2.1 三个Stage数据路径核查</h3>
+<table>
+<tr><th>Stage</th><th>路径</th><th>大小(du-sh)</th><th>状态</th></tr>
+<tr><td>Stage-1(558K)</td><td><code>.../mvp-lab/LLaVA-558K-Webdataset</code></td><td><span class="ev">15G</span></td><td><span class="badge bg">✅已下全</span></td></tr>
+<tr><td>Stage-1.5(3M)</td><td><code>.../mvp-lab/LLaVA-OneVision-1.5-Mid-Training-Webdataset-Quick-Start-3M</code></td><td><span class="ev">149G</span></td><td><span class="badge bg">✅已下全</span></td></tr>
+<tr><td>Stage-2(780K)</td><td><code>.../mvp-lab/LLaVA-NeXT-780k-webdataset</code></td><td><span class="ev">101G</span></td><td><span class="badge bg">✅已下全</span></td></tr>
+<tr><td colspan=2><b>合计</b></td><td><b>265G</b></td><td><span class="badge bg">✅全部在盘</span></td></tr>
+</table>
+<div class="ok-box"><b>结论</b>：三个Stage数据集均已完整落盘，<b>无需额外下载</b>。数据格式为WebDataset(tar shard)，与LLaVA-OV1.5训练管线兼容。</div>
+<h3>2.2 补充资源</h3>
+<table>
+<tr><th>资源</th><th>路径</th><th>大小</th><th>状态</th></tr>
+<tr><td>LLaVA-OV1.5-4B-stage0(含RICE ViT+Qwen3-4B+projector)</td><td><code>.../models/lmms-lab/LLaVA-OneVision-1.5-4B-stage0</code></td><td><span class="ev">~17GB(4 shards)</span></td><td><span class="badge bg">✅</span></td></tr>
+<tr><td>LLaVA-OV1.5 repo(含train_4b.sh+AIAK Megatron)</td><td><code>.../code/LLaVA-OneVision-1.5</code></td><td>—</td><td><span class="badge bg">✅</span></td></tr>
+</table>
+<h2>§3 LLM（Qwen3-4B）核查</h2>
+<div class="card">
+<h3>3.1 磁盘存在性</h3>
+<pre><code>/nas_train/app.e0031982/models/Qwen/Qwen3-4B-Instruct-2507/
+├── config.json              (727 B)
+├── model-00001-of-00003.safetensors  (3.96 GB)
+├── model-00002-of-00003.safetensors  (3.99 GB)
+├── model-00003-of-00003.safetensors  (99.6 MB)
+├── tokenizer.json / vocab.json / merges.txt / tokenizer_config.json
+└── README.md</code></pre>
+<p>总大小≈<span class="ev">8.05 GB</span>，3个safetensors分片+完整tokenizer。</p>
+</div>
+<h3>3.2 架构与config</h3>
+<pre><code>{
+  "architectures": ["Qwen3ForCausalLM"],
+  "hidden_size": 2560,
+  "num_hidden_layers": 36,
+  "num_attention_heads": 32,
+  "num_key_value_heads": 8,  // GQA
+  "intermediate_size": 9728,
+  "vocab_size": 151936,
+  "torch_dtype": "bfloat16"
+}</code></pre>
+<table>
+<tr><th>项</th><th>值</th><th>说明</th></tr>
+<tr><td>架构</td><td>Qwen3ForCausalLM</td><td>标准HF格式，<code>AutoModelForCausalLM</code>可直接载入</td></tr>
+<tr><td>hidden_size</td><td><b>2560</b></td><td>projector输出维需对齐此值(1024→2560)</td></tr>
+<tr><td>HF兼容性</td><td><span class="badge bg">✅直接可用</span></td><td>ms-swift通过AutoModelForCausalLM载入，无需转换</td></tr>
+</table>
+<div class="ok-box"><b>结论</b>：Qwen3-4B在盘、HF标准格式、config完整，<b>可被ms-swift直接载入</b>，无需额外处理。</div>
+<h2>§4 Vision Encoder接入评估（<span class="badge br">🔴最关键挑战</span>）</h2>
+<h3>4.1 ④-4ep checkpoint格式与位置</h3>
+<table>
+<tr><th>项</th><th>值</th><th>证据</th></tr>
+<tr><td>路径</td><td><code>.../baize-vision/out/scaling_E4_4ep_ov2_w512_d30_p16_224/vision.pt</code></td><td><span class="ev">ls-la✓(Oct13 10:12)</span></td></tr>
+<tr><td>大小</td><td>487MB</td><td><span class="ev">du-sh→487M</span></td></tr>
+<tr><td>格式</td><td><b>自定义PyTorch state_dict</b>(torch.save)</td><td><code>r9_train.py</code>:torch.save(state,...)</td></tr>
+<tr><td>open_clip格式</td><td><span class="badge br">❌否</span></td><td>BaiZe用自定义<code>models.py</code></td></tr>
+<tr><td>HF格式</td><td><span class="badge br">❌否</span></td><td>无config.json/safetensors/modeling_*.py</td></tr>
+<tr><td>附加ckpt</td><td>37个step checkpoint(380k-740k,每10k步)</td><td><span class="ev">ls vision_step*.pt→37files</span></td></tr>
+</table>
+<h3>4.2 BaiZe编码器架构（vision/models.py:OpenVision2）</h3>
+<pre><code>class OpenVision2(nn.Module):
+    def __init__(self, image_size=224, patch_size=16,
+                 width=1024, depth=30, heads=16, mlp_dim=4096):
+        self.embed = PatchEmbed(224, 16, 1024)  # Conv2d(3,1024,16,16)+pos_emb
+        self.blocks = [AttentionBlock(1024,16,4096) for _ in range(30)]  # SwiGLU
+        self.norm = LayerNorm(1024)
+        self.head = ReadoutHead(1024)  # LN→Linear(1024,512)→mean-pool
+    def forward(self, x, return_patch=False):
+        x = self.embed(x)       # [B,196,1024]
+        for b in self.blocks: x = b(x)
+        x = self.norm(x)         # [B,196,1024]
+        pooled = self.head(x)    # [B,512]
+        return (pooled, x) if return_patch else pooled</code></pre>
+<table>
+<tr><th>属性</th><th>BaiZe OpenVision2</th><th>LLaVA-OV1.5 RICE ViT(stage0)</th><th>差异</th></tr>
+<tr><td>层数</td><td><b>30</b></td><td>24</td><td>🔴不同</td></tr>
+<tr><td>宽度</td><td><b>1024</b></td><td>1024</td><td>🟢相同</td></tr>
+<tr><td>patch_size</td><td><b>16</b></td><td>14</td><td>🟠不同</td></tr>
+<tr><td>image_size</td><td><b>224</b></td><td>336+(动态)</td><td>🟠不同</td></tr>
+<tr><td>FFN</td><td><b>SwiGLU</b></td><td>gelu</td><td>🟠不同</td></tr>
+<tr><td>token数(224px)</td><td><b>196</b>(14×14)</td><td>576(24×24@336px)</td><td>🟠不同</td></tr>
+<tr><td>spatial_merge</td><td><b>无</b>(直出patch features)</td><td>2(4patch→1token)</td><td>🟠需处理</td></tr>
+<tr><td>patch输出维</td><td><b>1024-dim</b></td><td>1024-dim→merge→1024</td><td>🟢一致</td></tr>
+<tr><td>参数量</td><td>~505M</td><td>~304M</td><td>不同</td></tr>
+<tr><td>格式</td><td>原始.pt state_dict</td><td>HF safetensors</td><td>🔴不同</td></tr>
+</table>
+<h3>4.3 桥接方案（如何接入ms-swift/LLaVA）</h3>
+<div class="danger"><b>🔴核心挑战</b>：BaiZe编码器是<b>完全自定义的PyTorch模型</b>，非open_clip、非HF Transformers原生支持。LLaVA-OV1.5的stage0使用RICE ViT vision tower，modeling代码(<code>modeling_llavaonevision1_5.py</code>,99KB)硬编码了RICE ViT接口(spatial_merge_size=2,patch_size=14,动态分辨率)。<b>直接替换vision tower不可行</b>，需编写自定义wrapper。</div>
+<p><b>推荐桥接路径（3步）</b>：</p>
+<ol>
+<li><b>编写BaiZe vision tower HF wrapper</b>(~200行)：将<code>OpenVision2</code>包装为HF<code>PreTrainedModel</code>子类，输出patch-level features(<code>return_patch=True</code>→[B,196,1024])；添加<code>config.json</code>(<code>model_type:baize_vision</code>)；加载<code>vision.pt</code>并映射参数名。</li>
+<li><b>编写自定义LLaVA modeling文件</b>(基于<code>modeling_llavaonevision1_5.py</code>改写)：替换vision tower调用(RICE ViT→BaiZe wrapper)；修改projector为2层MLP(1024→2560)；处理spatial_merge_size差异(BaiZe无merge,196tokens直出vs RICE 576/4=144tokens)；处理分辨率(固定224或位置编码插值)。</li>
+<li><b>注册到ms-swift</b>：通过<code>llava_onevision1_5</code>模板+自定义model path加载；在<code>SftArguments</code>中指定自定义模型目录。</li>
+</ol>
+<div class="warn"><b>⚠️关键注意</b>：<ul>
+<li><b>spatial_merge_size</b>：RICE ViT用merge_size=2(576→144 tokens)，BaiZe无merge(196 tokens直出)→LLM的image token占位需调整(196 vs 144)。</li>
+<li><b>分辨率策略</b>：BaiZe训练于224×224。MLLM评测图像多高于224。策略：①固定224(简单,损失信息)②位置编码插值(需验证)。建议Stage-1用224固定,评测时做消融。</li>
+<li><b>ReadoutHead</b>：BaiZe的ReadoutHead做mean-pool→Linear(1024,512/768)用于对比学习。MLLM需<b>patch-level features</b>(非pooled)，应使用<code>return_patch=True</code>取<code>x</code>([B,196,1024])，<b>跳过ReadoutHead</b>。</li>
+</ul></div>
+<h2>§5 框架与工具核查</h2>
+<h3>5.1 ms-swift</h3>
+<table>
+<tr><th>项</th><th>值</th><th>证据</th></tr>
+<tr><td>版本</td><td><b>4.5.3</b></td><td><span class="ev">pip show ms_swift→4.5.3</span></td></tr>
+<tr><td>位置</td><td>py310 conda环境</td><td><code>.../miniforge3/envs/py310/</code></td></tr>
+<tr><td>sft_main</td><td><span class="badge bg">✅可用</span></td><td><code>swift.sft_main</code>存在</td></tr>
+<tr><td>pretrain_main</td><td><span class="badge bg">✅可用</span></td><td><code>swift.pretrain_main</code>存在(用于Stage-1 alignment)</td></tr>
+<tr><td>llava_onevision1_5模板</td><td><span class="badge bg">✅注册</span></td><td><code>swift/template/constant.py</code></td></tr>
+<tr><td>Megatron支持</td><td><span class="badge bg">✅有</span></td><td><code>swift.megatron</code>模块</td></tr>
+<tr><td>deepspeed</td><td><span class="badge bg">✅已装</span></td><td>v0.18.4(py310)</td></tr>
+<tr><td>modelscope</td><td><span class="badge bg">✅已装</span></td><td>v1.33.0(py310)</td></tr>
+</table>
+<div class="ok-box"><b>结论</b>：ms-swift 4.5.3已装在py310环境，支持LLaVA-OneVision-1.5模板、SFT/pretrain训练、deepspeed加速。<b>无需额外安装</b>。但ms-swift原生LLaVA训练管线假设vision tower已嵌入HF模型，替换为BaiZe自定义编码器需自定义model loading。</div>
+<h3>5.2 lmms-eval</h3>
+<table>
+<tr><th>项</th><th>值</th><th>证据</th></tr>
+<tr><td>版本</td><td><b>0.7.1</b></td><td><span class="ev">pip show→lmms_eval-0.7.1(ov_encoder)</span></td></tr>
+<tr><td>位置</td><td>ov_encoder conda环境(Python3.11)</td><td><code>.../miniforge3/envs/ov_encoder/</code></td></tr>
+<tr><td>llava_onevision1_5模型</td><td><span class="badge bg">✅有</span></td><td><code>models/chat/llava_onevision1_5.py</code>+<code>simple/llava_onevision1_5.py</code></td></tr>
+<tr><td>17个评测task</td><td><span class="badge bg">✅预置</span></td><td>lmms-eval内置ai2d,chartqa,gqa,mme,mmmu_val,mmstar等</td></tr>
+<tr><td>代码库(更新版)</td><td><code>.../code/lmms-eval/</code></td><td>含setup.py+pyproject.toml,可pip install -e .</td></tr>
+</table>
+<div class="warn"><b>⚠️环境不一致</b>：ms-swift在py310,lmms-eval在ov_encoder。需确保评测环境能加载修改后的BaiZe LLaVA模型(可能需在py310中也装lmms-eval,或模型导出为标准HF格式后在ov_encoder评测)。</div>
+<h3>5.3 train_4b.sh超参汇总（实测）</h3>
+<table>
+<tr><th>Stage</th><th>GBS</th><th>MBS</th><th>Steps</th><th>LR</th><th>Schedule</th><th>Warmup</th><th>SEQ_LEN</th></tr>
+<tr><td>Stage-1(Alignment)</td><td>8</td><td>1</td><td>2,500</td><td>1e-4</td><td>cosine</td><td>0.002</td><td>32,768</td></tr>
+<tr><td>Stage-1.5(Mid)</td><td>16</td><td>1</td><td>20,000</td><td>1e-5</td><td>cosine</td><td>0.002</td><td>32,768</td></tr>
+<tr><td>Stage-2(Instruct)</td><td>224</td><td>1</td><td>3,500</td><td>1e-5</td><td>cosine</td><td>0.002</td><td>32,768</td></tr>
+</table>
+<p class="tag">注：以上为train_4b.sh中RICE ViT+Qwen3-4B的超参。替换vision tower后Stage-1 alignment的LR可能需重新调整。</p>
+<h2>§6 算力粗估</h2>
+<h3>6.1 模型规模与显存</h3>
+<table>
+<tr><th>组件</th><th>参数量</th><th>bf16显存</th><th>训练状态</th></tr>
+<tr><td>BaiZe vision encoder</td><td>~505M</td><td>~1.0GB</td><td>Stage-1冻结</td></tr>
+<tr><td>Qwen3-4B LLM</td><td>~4B</td><td>~8GB</td><td>Stage-1冻结/后续解冻</td></tr>
+<tr><td>2层MLP projector</td><td>~5M(1024→2560)</td><td>~10MB</td><td>全阶段可训</td></tr>
+<tr><td><b>合计(前向)</b></td><td><b>~4.5B</b></td><td><b>~9GB</b></td><td>—</td></tr>
+</table>
+<p>SEQ_LEN=32768下，MBS=1激活显存估算(8×H100 80GB)：LLM激活~30-50GB/sample+梯度优化器~36GB(全参训练)≈~70-90GB/GPU→需gradient checkpointing+ZeRO-2/3。</p>
+<h3>6.2 墙钟预估（8×H100 80GB on .12）</h3>
+<table>
+<tr><th>Stage</th><th>Steps</th><th>GBS</th><th>Samples</th><th>单步耗时</th><th>墙钟</th><th>GPU·h</th></tr>
+<tr><td>Stage-1</td><td>2,500</td><td>8</td><td>20K</td><td>~3-5s</td><td>~2-3.5h</td><td>~16-28</td></tr>
+<tr><td>Stage-1.5</td><td>20,000</td><td>16</td><td>320K</td><td>~3-5s</td><td>~17-28h</td><td>~136-224</td></tr>
+<tr><td>Stage-2</td><td>3,500</td><td>224</td><td>784K</td><td>~4-6s</td><td>~4-6h</td><td>~32-48</td></tr>
+<tr><td><b>合计</b></td><td><b>26K</b></td><td>—</td><td><b>1.12M</b></td><td>—</td><td><b>~23-37h</b></td><td><b>~184-300</b></td></tr>
+</table>
+<p class="tag">注：单步耗时为粗估(Qwen3-4B+SEQ_LEN=32768+MBS=1+gradient checkpointing)。若SEQ_LEN中位数远小于32768(如~4K)吞吐显著提升。</p>
+<h3>6.3 评测算力预估</h3>
+<table>
+<tr><th>Benchmark</th><th>预估样本</th><th>耗时(8×H100)</th></tr>
+<tr><td>vqav2_val</td><td>~214K</td><td>~3-5h</td></tr>
+<tr><td>gqa</td><td>~13K</td><td>~20-30min</td></tr>
+<tr><td>其余15个benchmark</td><td>~5K-20K各</td><td>~10-30min各</td></tr>
+<tr><td><b>合计(17)</b></td><td>—</td><td><b>~6-10h</b></td></tr>
+</table>
+<div class="card"><b>总算力</b>：训练~184-300 GPU·h+评测~50-80 GPU·h=<b>~234-380 GPU·h</b>。8×H100上≈<b>1.5-2.5天墙钟</b>(含评测)。</div>
+<h2>§7 困难分级清单</h2>
+<h3>🔴 阻塞级（必须解决才能启动）</h3>
+<table>
+<tr><th style="width:50px">#</th><th>困难</th><th>依据</th><th>建议绕过</th></tr>
+<tr><td>R1</td><td><b>视觉编码器桥接</b>：BaiZe OpenVision2自定义ViT，非HF/open_clip格式，与LLaVA-OV1.5 RICE ViT接口不兼容</td><td><code>vision/models.py</code>自定义类；<code>vision.pt</code>原始state_dict；stage0的modeling硬编码RICE ViT接口</td><td>①编写BaiZe vision tower HF wrapper(~200行)②基于modeling_llavaonevision1_5.py改写③导出HF格式模型目录</td></tr>
+<tr><td>R2</td><td><b>训练框架不匹配</b>：train_4b.sh用AIAK Megatron，用户指定ms-swift</td><td>train_4b.sh调用aiak_megatron+Megatron Core格式转换；ms-swift用HF Transformers+DeepSpeed</td><td>①<b>方案A(推荐)</b>：用ms-swift实现LLaVA SFT(<code>swift sft --model baize_llava_dir --template llava_onevision1_5</code>)②方案B：放弃ms-swift改用AIAK Megatron(需转BaiZe编码器为Megatron格式,更复杂)③方案C：Stage-1自定义脚本,Stage-1.5/2用ms-swift</td></tr>
+</table>
+<h3>🟠 需解决级（有已知方法）</h3>
+<table>
+<tr><th style="width:50px">#</th><th>困难</th><th>依据</th><th>建议绕过</th></tr>
+<tr><td>O1</td><td><b>分辨率不匹配</b>：BaiZe 224×224(p=16→196tokens)，评测用max_pixels=3240000(≈1800×1800)</td><td>models.py:image_size=224;train_4b.sh eval:max_pixels=3240000</td><td>①Stage-1固定224②评测也用224(需改lmms-eval预处理)③后续位置编码插值到336/448(需验证)</td></tr>
+<tr><td>O2</td><td><b>spatial_merge差异</b>：RICE ViT用merge=2(576→144tokens)，BaiZe无merge(196直出)</td><td>stage0 config:spatial_merge_size:2;BaiZe无此机制</td><td>modeling中跳过spatial merge,直接196 patch tokens→projector→LLM。调整image_token_id占位数</td></tr>
+<tr><td>O3</td><td><b>环境不一致</b>：ms-swift在py310,lmms-eval在ov_encoder</td><td>pip show实测</td><td>①训练py310,评测导出HF格式在ov_encoder用lmms-eval②或py310中pip install lmms-eval</td></tr>
+<tr><td>O4</td><td><b>Stage-1 LR需重调</b>：不同vision encoder特征分布不同</td><td>Shallue et al.2019(arXiv:1811.03600)</td><td>先lr=1e-4基线,不收敛则尝试{5e-5,2e-4,5e-4}小扫描</td></tr>
+<tr><td>O5</td><td><b>SEQ_LEN=32768显存压力</b>：4B LLM激活接近80GB</td><td>§6.1显存估算</td><td>gradient checkpointing+DeepSpeed ZeRO-2;OOM则降SEQ_LEN到8192/16384</td></tr>
+<tr><td>O6</td><td><b>ArmC训练占用GPU</b>：8×H100全被merge3ds ArmC占用</td><td>nvidia-smi:GPU0-7均在~48GB/100%</td><td>等ArmC完成+eval chain结束(ETA Oct14晚~Oct15早)。本阶段仅评估调研,不占GPU</td></tr>
+</table>
+<h3>🟢 顺利级（已就绪）</h3>
+<table>
+<tr><th style="width:50px">#</th><th>项</th><th>依据</th></tr>
+<tr><td>G1</td><td>3个Stage数据全在盘(265GB)</td><td>du-sh实测:15G+149G+101G</td></tr>
+<tr><td>G2</td><td>Qwen3-4B在盘且HF格式可用</td><td>ls+config.json核验</td></tr>
+<tr><td>G3</td><td>ms-swift 4.5.3已装,含llava_onevision1_5模板</td><td>pip show+constant.py</td></tr>
+<tr><td>G4</td><td>lmms-eval 0.7.1已装,含llava_onevision1_5模型+17评测task</td><td>pip show+models/目录核验</td></tr>
+<tr><td>G5</td><td>④-4ep checkpoint在盘(487MB)+37个step ckpt</td><td>ls-la实测</td></tr>
+<tr><td>G6</td><td>LLaVA-OV1.5 repo+train_4b.sh+stage0模型均在盘</td><td>ls实测</td></tr>
+<tr><td>G7</td><td>deepspeed+modelscope+peft已装(py310)</td><td>pip list核验</td></tr>
+</table>
+<h2>§8 与ArmC训练衔接</h2>
+<h3>8.1 当前ArmC状态</h3>
+<table>
+<tr><th>项</th><th>值</th><th>来源</th></tr>
+<tr><td>实验</td><td>merge3ds合并三数据集·ArmC臂(LR×4=2e-3)</td><td>MEMORY_VISION.md状态头</td></tr>
+<tr><td>进度</td><td>step~76,460/154,500(<b>49.5%</b>)</td><td>wake#72(Oct14~12:46)</td></tr>
+<tr><td>ETA</td><td>~17:15-17:30 Oct14</td><td>avg 215ms/step</td></tr>
+<tr><td>GPU占用</td><td>8×H100全占用(~48GB/卡,99%)</td><td>nvidia-smi实测</td></tr>
+<tr><td>eval chain</td><td>PID 3698490后台等待中</td><td>MEMORY_VISION.md</td></tr>
+</table>
+<h3>8.2 ArmC完成后→Stage(iv)前置清单</h3>
+<table>
+<tr><th style="width:40px">#</th><th>前置任务</th><th>预估耗时</th><th>依赖</th><th>状态</th></tr>
+<tr><td>1</td><td>ArmC训练完成(step154,500)</td><td>~4-5h</td><td>GPU释放</td><td><span class="badge bo">🟠进行中</span></td></tr>
+<tr><td>2</td><td>ArmC eval chain(3-seed ProtB)</td><td>~2-4h</td><td>#1</td><td><span class="badge bo">🟠等待中</span></td></tr>
+<tr><td>3</td><td>编写BaiZe vision tower HF wrapper</td><td>~0.5-1天</td><td>无(纯CPU)</td><td><span class="badge br">🔴未开始</span></td></tr>
+<tr><td>4</td><td>编写自定义LLaVA modeling文件</td><td>~0.5-1天</td><td>#3</td><td><span class="badge br">🔴未开始</span></td></tr>
+<tr><td>5</td><td>smoke test(加载模型+前向1batch)</td><td>~1-2h</td><td>#3,#4,GPU</td><td><span class="badge br">🔴未开始</span></td></tr>
+<tr><td>6</td><td>Stage-1数据格式适配(ms-swift读WebDataset)</td><td>~2-4h</td><td>无</td><td><span class="badge br">🔴未开始</span></td></tr>
+<tr><td>7</td><td>环境统一(py310装lmms-eval或导出方案)</td><td>~1-2h</td><td>无</td><td><span class="badge br">🔴未开始</span></td></tr>
+</table>
+<div class="warn"><b>⏱️关键路径</b>：#3+#4(编写wrapper+modeling)是<b>纯CPU工作</b>，可在ArmC训练期间并行完成，<b>不占GPU</b>。若在ArmC eval chain期间完成#3-#7，则ArmC评测一结束即可启动Stage-1 smoke test→正式训练。<b>无算力空窗期</b>。</div>
+<h3>8.3 建议排期</h3>
+<table>
+<tr><th>阶段</th><th>任务</th><th>时间窗</th><th>GPU</th></tr>
+<tr><td>Phase0(并行)</td><td>#3-#7:wrapper+modeling+数据适配+环境</td><td>Oct14-15(ArmC期间)</td><td>不需要</td></tr>
+<tr><td>Phase1</td><td>Smoke test(100步)</td><td>ArmC eval后~2h</td><td>~1h</td></tr>
+<tr><td>Phase2</td><td>Stage-1 Alignment(2500步)</td><td>Smoke后~3h</td><td>~3h</td></tr>
+<tr><td>Phase3</td><td>Stage-1.5 Mid(20000步)</td><td>Stage-1后~1-1.5天</td><td>~17-28h</td></tr>
+<tr><td>Phase4</td><td>Stage-2 Instruct(3500步)</td><td>Stage-1.5后~5h</td><td>~4-6h</td></tr>
+<tr><td>Phase5</td><td>lmms-eval 17 benchmarks</td><td>Stage-2后~8h</td><td>~6-10h</td></tr>
+<tr><td><b>总计</b></td><td>—</td><td><b>~2-3天</b>(含Phase0并行)</td><td><b>~234-380 GPU·h</b></td></tr>
+</table>
+<h2>§9 总结与建议</h2>
+<div class="card">
+<h3>9.1 可行性判断</h3>
+<p><b>方案技术上可行</b>，且有如下优势：</p>
+<ul>
+<li>🟢数据、LLM、训练框架、评测框架<b>全部在盘就绪</b>，无外部下载依赖</li>
+<li>🟢ms-swift原生支持<code>llava_onevision1_5</code>模板，训练管线成熟</li>
+<li>🟢BaiZe encoder的patch-level特征维度(1024)与RICE ViT一致，projector维度映射(1024→2560)可复用</li>
+<li>🟢算力充裕(8×H100 80GB)，预估~2天可完成全流程</li>
+</ul>
+<p><b>主要风险与工作量</b>：</p>
+<ul>
+<li>🔴<b>视觉编码器桥接</b>是最大工作量(~1-2天工程)，需编写HF wrapper+改写modeling</li>
+<li>🔴<b>框架不匹配</b>：train_4b.sh用AIAK Megatron，需改用ms-swift训练管线</li>
+<li>🟠<b>分辨率/merge差异</b>需在modeling中处理，对效果有潜在影响</li>
+</ul>
+</div>
+<h3>9.2 建议执行路径</h3>
+<ol>
+<li><b>立即可做(不占GPU)</b>：编写BaiZe vision tower HF wrapper+自定义LLaVA modeling，在ArmC训练期间并行完成</li>
+<li><b>ArmC完成后</b>：Smoke test→Stage-1 alignment(冻结LLM+vision,只训projector)</li>
+<li><b>Stage-1通过后</b>：Stage-1.5 mid-training(解冻LLM或LoRA)→Stage-2 instruct</li>
+<li><b>训练完成后</b>：lmms-eval 17 benchmarks评测，产出对比报告</li>
+<li><b>消融建议</b>：①224 vs 336分辨率消融②BaiZe encoder vs RICE ViT对比(用stage0做基线)③projector结构消融(2-MLP vs linear)</li>
+</ol>
+<h3>9.3 方案B备选（降低工程复杂度）</h3>
+<div class="warn">若视觉编码器桥接工程量过大，可考虑<b>方案B</b>：直接使用LLaVA-OV1.5-4B-stage0(RICE ViT+Qwen3-4B)，仅用ms-swift做下游SFT(Stage-2 instruct)。<ul>
+<li>✅无需编写wrapper(stage0已HF格式)</li>
+<li>✅可直接<code>swift sft --model .../LLaVA-OneVision-1.5-4B-stage0 --template llava_onevision1_5</code></li>
+<li>❌不使用BaiZe自研视觉编码器(放弃Stage(iii)成果下游验证)</li>
+<li>⚠️仅作为快速验证ms-swift+lmms-eval管线可用性的<b>先行smoke</b>，不替代BaiZe encoder方案</li>
+</ul></div>
+<div class="footer">
+<p>本报告基于2026-10-14本机实测数据(ls/du/pip show/cat config.json/nvidia-smi等)撰写。<br>所有路径均已验证存在，版本号来自pip show实测。<br>报告性质：纯评估调研，<b>未起训、未占GPU</b>。commit前缀：<code>vision mllm-plan:</code></p>
+</div>
+</body>
+</html>

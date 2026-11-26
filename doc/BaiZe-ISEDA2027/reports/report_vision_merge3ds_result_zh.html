@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 合并三数据集实验结果报告（merge3ds ArmC）</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:960px;margin:0 auto;padding:20px;background:#1a1a2e;color:#e0e0e0;line-height:1.7}
+h1{color:#7ec8e3;border-bottom:2px solid #7ec8e3;padding-bottom:10px}
+h2{color:#98d4c4;margin-top:2em;border-left:4px solid #98d4c4;padding-left:12px}
+h3{color:#c9a86c}
+table{border-collapse:collapse;width:100%;margin:1em 0}
+th,td{border:1px solid #444;padding:8px 12px;text-align:left}
+th{background:#2a2a4e;color:#7ec8e3}
+tr:nth-child(even){background:#22223e}
+.pos{color:#6bcf7f;font-weight:bold}
+.neg{color:#f85149;font-weight:bold}
+.warn{color:#f0a050;font-weight:bold}
+.info{color:#7ec8e3}
+.note{color:#888;font-size:0.9em}
+code{background:#2a2a4e;padding:2px 6px;border-radius:3px;color:#e0c060}
+.tldr{background:#1e2e1e;border:1px solid #4a7a4a;border-radius:8px;padding:16px;margin:1em 0}
+.tldr h2{border:none;color:#6bcf7f;margin-top:0}
+.mc{display:inline-block;border:1px solid #555;border-radius:8px;padding:12px 20px;margin:8px;text-align:center;min-width:140px}
+.mv{font-size:1.6em;font-weight:bold}.ml{font-size:0.85em;color:#aaa}
+</style>
+</head>
+<body>
+<h1>BaiZe 合并三数据集实验结果报告</h1>
+<p class="note">merge3ds ArmC（GBS/MBS ×4 · LR ×4 · 三数据集合并 · ~3 epoch）<br>生成时间：2026-10-15 03:40</p>
+<div class="tldr"><h2>TL;DR</h2>
+<p><b>ProtB 68.25±0.01%</b>（Δ=+1.20pp vs ④-4ep 67.05±0.02%）→ 严格判据 <span class="warn">NULL</span>（Δ&lt;1.5pp）。
+但 <b>zero-shot +5.53pp</b> 和 <b>ProtA +2.71pp</b> 显示表征质量有实质提升。</p></div>
+
+<h2>1. 实验配置</h2>
+<table>
+<tr><th>参数</th><th>④-4ep 基线</th><th>merge3ds ArmC</th><th>变化</th></tr>
+<tr><td>数据</td><td>CC12M + Amshaker (~94M)</td><td>GPIC + CC12M + Amshaker (~111M)</td><td class="info">+GPIC</td></tr>
+<tr><td>GBS (MBS×8)</td><td>512</td><td><b>2048</b></td><td>×4</td></tr>
+<tr><td>MBS</td><td>64</td><td><b>256</b></td><td>×4</td></tr>
+<tr><td>LR</td><td>5e-4</td><td><b>2e-3</b></td><td>×4（Goyal arXiv:1706.02677）</td></tr>
+<tr><td>Warmup</td><td>2000</td><td>8000</td><td>×4</td></tr>
+<tr><td>Steps</td><td>748,404 (~4ep)</td><td>154,500 (~2.85ep @ GBS=2048)</td><td>—</td></tr>
+<tr><td>其他</td><td colspan="2">逐字节一致（w512/d30, AIMv2 loss, mask=0.6, cosine）</td><td>—</td></tr>
+</table>
+
+<h2>2. 训练摘要</h2>
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>总步数</td><td>154,500/154,500 (100%)</td></tr>
+<tr><td>墙钟时间</td><td>81,667s ≈ 22.7h</td></tr>
+<tr><td>稳态吞吐</td><td>9,978 img/s（vs ④-4ep 2,818, 3.54×）</td></tr>
+<tr><td>final_loss</td><td>0.2169</td></tr>
+<tr><td>C1</td><td>0.6668（vs ④-4ep 0.5932, +0.0736）</td></tr>
+<tr><td>C4</td><td>OK 全程无坍缩</td></tr>
+<tr><td>ckpt</td><td><code>merge3ds_bs4_lrC_w512_d30_p16_224/vision.pt</code></td></tr>
+</table>
+
+<h2>3. 评测结果（vs ④-4ep 基线）</h2>
+<div>
+<div class="mc"><div class="mv pos">68.25%</div><div class="ml">ProtB (±0.01%)</div><div class="pos">Δ +1.20pp</div></div>
+<div class="mc"><div class="mv pos">59.41%</div><div class="ml">ProtA</div><div class="pos">Δ +2.71pp</div></div>
+<div class="mc"><div class="mv pos">46.17%</div><div class="ml">Zero-shot top1</div><div class="pos">Δ +5.53pp</div></div>
+<div class="mc"><div class="mv pos">77.43%</div><div class="ml">Zero-shot top5</div><div class="pos">Δ +4.79pp</div></div>
+</div>
+<table>
+<tr><th>指标</th><th>④-4ep 基线</th><th>merge3ds ArmC</th><th>Δ</th><th>说明</th></tr>
+<tr><td><b>ProtB (3 seeds)</b></td><td>67.05±0.02%</td><td class="pos"><b>68.25±0.01%</b></td><td class="pos">+1.20pp</td><td>68.27/68.24/68.25%</td></tr>
+<tr><td><b>ProtA</b></td><td>56.70%</td><td class="pos"><b>59.41%</b></td><td class="pos">+2.71pp</td><td>AdamW full-batch 100ep</td></tr>
+<tr><td><b>Zero-shot top1</b></td><td>40.64%</td><td class="pos"><b>46.17%</b></td><td class="pos">+5.53pp</td><td>CLIP text × 80 templates</td></tr>
+<tr><td><b>Zero-shot top5</b></td><td>72.64%</td><td class="pos"><b>77.43%</b></td><td class="pos">+4.79pp</td><td>—</td></tr>
+<tr><td><b>k-NN</b></td><td>42.35% (k=20)</td><td class="pos"><b>44.88%</b></td><td class="pos">+2.53pp</td><td>k=5: 41.85%, k=10: 44.24%</td></tr>
+</table>
+<p class="note">ProtB=SGD+cosine 90ep bs1024 IN-1k full 3 seeds; ProtA=AdamW 100ep self-split; zs=CLIP-L/14-336 frozen ×80 templates IN-1k val 50k; k-NN=non-parametric</p>
+
+<h2>4. 预注册判据裁定</h2>
+<table>
+<tr><th>判据</th><th>阈值</th><th>结果</th><th>命中</th></tr>
+<tr><td>VICTORY</td><td>ProtB ≥ 70%</td><td>68.25%</td><td class="neg">❌</td></tr>
+<tr><td>MODERATE</td><td>ProtB 68-70% & Δ≥1.5pp</td><td>Δ=1.20pp &lt; 1.5pp</td><td class="neg">❌</td></tr>
+<tr><td>NULL</td><td>ProtB&lt;68.5% or Δ&lt;1.5pp</td><td>两者均满足</td><td class="warn">✅ NULL</td></tr>
+<tr><td>COLLAPSE</td><td>C1&gt;0.95</td><td>C1=0.6668</td><td class="neg">❌</td></tr>
+</table>
+<p><b>裁定：NULL</b> — ProtB Δ=+1.20pp 未达 1.5pp。但 zero-shot (+5.53pp) 和 ProtA (+2.71pp) 显示表征通用性有实质改善。</p>
+
+<h2>5. 分析</h2>
+<h3>5.1 ProtB 增益小但 zero-shot 增益大</h3>
+<p>ProtB 测线性可分性，zero-shot 测文本对齐质量。GPIC 短 caption (~20 token, 0% 截断) 提供密集 image-text 对 → C1 +0.0736 → zero-shot 大幅提升。但线性可分性受 trunk 表征能力限制。</p>
+<h3>5.2 大 batch + 高 LR</h3>
+<p>GBS 512→2048, LR 5e-4→2e-3（Goyal 线性缩放）。154,500 步 ≈ 2.85 epoch（vs ④-4ep 4 epoch），更少 epoch 取得更高指标。</p>
+<h3>5.3 多变量问题</h3>
+<p>同时变更数据组成(+GPIC)、GBS/MBS(×4)、LR(×4)，无法隔离单一因素贡献。后续可消融。</p>
+<h3>5.4 训练效率</h3>
+<table>
+<tr><th>指标</th><th>④-4ep</th><th>ArmC</th><th>比值</th></tr>
+<tr><td>墙钟</td><td>16.8h</td><td>22.7h</td><td>1.35×</td></tr>
+<tr><td>吞吐</td><td>2,818 img/s</td><td>9,978 img/s</td><td>3.54×</td></tr>
+<tr><td>总 pairs</td><td>~383M</td><td>~316M</td><td>0.83×</td></tr>
+</table>
+
+<h2>6. 外部编码器参照</h2>
+<table>
+<tr><th>模型</th><th>分辨率</th><th>参数</th><th>ProtB</th></tr>
+<tr><td>SigLIP2-SO400M</td><td>384px</td><td>~400M</td><td class="pos">87.46%</td></tr>
+<tr><td>AIMv2-1B</td><td>336px</td><td>~1B</td><td>85.22%</td></tr>
+<tr><td>CLIP-ViT-L/14</td><td>336px</td><td>~304M</td><td>82.66%</td></tr>
+<tr style="border-top:2px solid #f85149"><td style="color:#f85149">BaiZe ④-4ep</td><td>224px</td><td>126.8M</td><td style="color:#f85149">67.05%</td></tr>
+<tr style="color:#f0a050"><td>BaiZe merge3ds</td><td>224px</td><td>126.8M</td><td>68.25%</td></tr>
+</table>
+<p class="note">BaiZe 从零训练，不参与排名，仅作绝对值参考。</p>
+
+<h2>7. 结论</h2>
+<ol>
+<li>ProtB 68.25±0.01%（Δ=+1.20pp）→ 严格判据 NULL，但 4 指标中 3 个显著提升</li>
+<li>合并三数据集 + 大 batch 改善表征通用性（zs +5.53pp, ProtA +2.71pp）</li>
+<li>C1 +0.0736 表明对比对齐增强，GPIC 短 caption 有正向贡献</li>
+<li>多变量变更无法隔离贡献 → 后续可消融</li>
+<li>k-NN k=20: 44.88%（Δ=+2.53pp vs ④-4ep 42.35%）— 4 指标全部提升</li>
+</ol>
+
+<h2>8. 原始评测日志</h2>
+<pre style="background:#22223e;padding:12px;border-radius:6px;overflow-x:auto;font-size:0.85em">
+[BRIDGE] B seed=0: lp_top1=0.6827 (68.27%)
+[BRIDGE] B seed=1: lp_top1=0.6824 (68.24%)
+[BRIDGE] B seed=2: lp_top1=0.6825 (68.25%)
+[BRIDGE] B: lp_top1=0.6825±0.0001 (68.25±0.01%)
+[BRIDGE] A: lp_top1=0.5941 (59.41%)
+[zs] E1fair zs: top1=46.17% top5=77.43% (raw cosine: 46.17%)
+[probe] knn_k5: 41.85%  knn_k10: 44.24%  knn_k20: 44.88%
+[2026-10-15 03:41:49] ===== merge3ds ArmC EVAL DONE =====
+</pre>
+<p class="note">日志：/tmp/merge3ds_armC_eval.log · eval chain: post_merge3ds_chain.sh PID 3698490</p>
+
+</body>
+</html>

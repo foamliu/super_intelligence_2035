@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BaiZe-2B：1M 长上下文与 >95% 大海捞针技术报告</title>
+<style>
+  :root { --bg:#0f1420; --panel:#161d2d; --line:#263049; --txt:#e6ebf4; --mut:#8b97ad; --acc:#4da3ff; --ok:#3ddc84; --warn:#ffb454; --bad:#ff5d5d; --hl:#ffd98a; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:15px/1.75 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  h1 { font-size:26px; margin:0 0 4px; letter-spacing:.5px; }
+  h2 { font-size:19px; margin:36px 0 12px; padding-left:10px; border-left:4px solid var(--acc); }
+  h3 { font-size:16px; margin:22px 0 8px; color:var(--acc); }
+  .sub { color:var(--mut); font-size:13px; margin-bottom:22px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:18px 20px; margin:14px 0; }
+  table { width:100%; border-collapse:collapse; margin:10px 0; font-size:13.5px; }
+  th,td { border:1px solid var(--line); padding:7px 10px; text-align:left; }
+  th { background:#1b2340; color:#cdd7ea; font-weight:600; }
+  tr:nth-child(even) td { background:#131a2b; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .k { color:var(--mut); font-size:12.5px; }
+  .tag { display:inline-block; padding:1px 9px; border-radius:20px; font-size:12px; margin:0 3px 3px 0; border:1px solid var(--line); }
+  .tag.ok { color:var(--ok); border-color:#1f5a3d; }
+  .tag.warn { color:var(--warn); border-color:#5a4320; }
+  .tag.bad { color:var(--bad); border-color:#5a2222; }
+  code { background:#0b1120; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font:12.5px ui-monospace,"SFMono-Regular",Consolas,monospace; color:#9fd0ff; }
+  pre { background:#0b1120; border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font:13px ui-monospace,"SFMono-Regular",Consolas,monospace; color:#b8d4ff; line-height:1.5; }
+  .tldr { background:#141b30; border:1px solid #2a3a63; border-radius:10px; padding:16px 18px; }
+  ul { margin:8px 0; padding-left:22px; }
+  li { margin:4px 0; }
+  .note { color:var(--mut); font-size:13px; }
+  .hl { color:var(--hl); font-weight:600; }
+  .src { color:var(--mut); font-size:12px; font-style:italic; }
+  .footer { margin-top:40px; color:var(--mut); font-size:12px; text-align:center; border-top:1px solid var(--line); padding-top:16px; }
+  .warn-box { background:#1a1a2e; border:1px solid #5a4320; border-radius:8px; padding:12px 16px; margin:10px 0; }
+  .bad-box { background:#1e1414; border:1px solid #5a2222; border-radius:8px; padding:12px 16px; margin:10px 0; }
+  .ok-box { background:#0e1f15; border:1px solid #1f5a3d; border-radius:8px; padding:12px 16px; margin:10px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>BaiZe-2B：1M 长上下文与 &gt;95% 大海捞针技术报告</h1>
+<div class="sub">运维直令 2026-10-30 · 用户令：「如何实现 1M 长上下文，如果在 1M 上下文实现 &gt;95% 的大海捞针正确率，该怎么办。」</div>
+
+<div class="tldr">
+  <b>一句话结论</b>：BaiZe-2B Mamba2-hybrid 已具备 1M <b>推理能力</b>（max_pos=1M、θ=1e6、ABF 外推、SGLang 1M prefill 14,989 tok/s），但 1M <b>检索能力</b>尚未训练（B1 实测 passkey = 0%）。要达到 &gt;95% 大海捞针，需走 <b class="hl">路径 A</b>：16K 主训练 → 32K→64K→128K 阶梯扩展（~37B token）→ ABF 外推 1M，同时注入 <b>合成 needle 数据</b>（单针/多针/多跳/变长），辅以 RULER 评测闭环。总附加成本约 <b>~56 GPU·h</b>（16 卡 H100），不扩卡即可完成。
+</div>
+
+<!-- ===================== §1 现状基线 ===================== -->
+<h2>1. 现状基线</h2>
+
+<h3>1.1 模型架构</h3>
+<div class="card">
+  <table>
+    <tr><th>项</th><th>值</th><th>来源</th></tr>
+    <tr><td>模型</td><td>Mamba2-hybrid（Nemotron-H 式顺序混合）</td><td class="k">configs/common.env</td></tr>
+    <tr><td>层数</td><td class="num">56 层 = 4 全注意力 + 24 Mamba2 SSM + 28 MLP</td><td class="k">configs/common.env ATTN_LAYERS=4</td></tr>
+    <tr><td>参数量</td><td class="num">2,220,268,032（2.22B）</td><td class="k">rank 实测口径</td></tr>
+    <tr><td>RoPE θ（ABF）</td><td class="num hl">1,000,000（1e6）</td><td class="k">configs/common.env ROPE_THETA</td></tr>
+    <tr><td>max_position_embeddings</td><td class="num hl">1,048,576（1M = 2²⁰）</td><td class="k">configs/common.env ROPE_MAX_POS</td></tr>
+    <tr><td>rope_scaling</td><td>无（训练期不启 PI/NTK/YaRN）</td><td class="k">θ=1e6 已覆盖 1M</td></tr>
+    <tr><td>注意力 head_dim</td><td class="num">128</td><td class="k">baize_b1_longctx_extend.py</td></tr>
+    <tr><td>注意力 KV heads</td><td class="num">4（GQA）</td><td class="k">同上</td></tr>
+    <tr><td>Mamba2 heads / head_dim</td><td class="num">64 / 64</td><td class="k">同上</td></tr>
+    <tr><td>Mamba2 state_size</td><td class="num">128</td><td class="k">同上</td></tr>
+    <tr><td>训练序列长度</td><td class="num">16,384（16K）</td><td class="k">当前 S1 运行中</td></tr>
+    <tr><td>当前训练状态</td><td>S1 iter 25,705 / 700,000（3.67%），loss ≈ 2.164，~577K tok/s，0 NaN</td><td class="k">MEMORY #982（2026-10-30）</td></tr>
+  </table>
+</div>
+
+<h3>1.2 已实测的 1M 推理能力</h3>
+<div class="card">
+  <p>以下数据来自 <b>B1 长上下文实验</b>（2026-10-06，ckpt <code>p5b/hf_iter_4771</code>，2.22B，20B token，训练 ctx=4K、θ=1e6）及 <b>SGLang 推理基准</b>（2026-10-24，ckpt <code>hf_checkpoints/p3_hybrid</code>）。注意两个 ckpt 不同，B1 是 4K 训练的早期模型，SGLang 测的是 p3_hybrid。</p>
+  <table>
+    <tr>
+      <th rowspan="2">上下文长度</th>
+      <th colspan="3">B1 PPL/passkey（θ=1e6, max_pos=1M）</th>
+      <th colspan="3">SGLang 推理（p3_hybrid）</th>
+    </tr>
+    <tr>
+      <th class="num">PPL</th><th class="num">Passkey</th><th>备注</th>
+      <th class="num">Prefill tok/s</th><th class="num">峰值显存</th><th class="num">TTFT (s)</th>
+    </tr>
+    <tr><td class="num">4K</td><td class="num">83.24</td><td class="num bad">—</td><td>ABF 税 +10.5%（vs θ=1e4 的 75.36）</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td class="num">16K</td><td class="num">60.08</td><td class="num">—</td><td>训练长度</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td class="num">32K</td><td class="num">58.55</td><td class="num">—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td class="num">65K</td><td class="num">51.53</td><td class="num">—</td><td>—</td><td class="num hl">41,598</td><td class="num">73.15 GB</td><td class="num">1.51</td></tr>
+    <tr><td class="num">128K</td><td class="num">53.34</td><td class="num bad">0%</td><td>prefill 10.7s / 10.9GB</td><td class="num">38,074</td><td class="num">73.38 GB</td><td class="num">3.30</td></tr>
+    <tr><td class="num">256K</td><td class="num">52.99</td><td class="num bad">0%</td><td>prefill 13.8s / 14.25GB</td><td class="num">31,058</td><td class="num">73.87 GB</td><td class="num">8.11</td></tr>
+    <tr><td class="num">512K</td><td class="num">55.81</td><td class="num bad">0%</td><td>prefill 53.0s / 19.65GB</td><td class="num">22,774</td><td class="num">74.81 GB</td><td class="num">22.1</td></tr>
+    <tr><td class="num">1M</td><td class="num hl">55.42</td><td class="num bad">0%</td><td>prefill 172.4s / 34.68GB</td><td class="num hl">14,989</td><td class="num">76.71 GB</td><td class="num">67.2</td></tr>
+    <tr><td class="num">2M</td><td colspan="3" class="bad">CUDA OOM（79.09GB / 79.19GB GPU）</td><td colspan="3" class="bad">同左：SGLang 2M = OOM</td></tr>
+  </table>
+  <p class="src">数据来源：B1 = <code>run/baize_b1_longctx_extend.py</code>（abf_plan.py MEASURED 锚点）；SGLang = <code>run/longctx_eval_results/summary_all.json</code>（2026-10-24，H100-80GB 单卡，SGLang 0.5.9）；2M OOM = <code>server_baize-2b_ctx2097152.log</code>。</p>
+</div>
+
+<div class="bad-box">
+  <b>关键发现（B1 教训）</b>：PPL 能外推 ≠ 具备检索能力。B1 老 ckpt 1M PPL=55.42 看上去很好，但 <b>passkey 4K/8K 全 0%</b> —— 说明「长上下文能力」必须有训练 + 评测支撑，不能只看 PPL。这直接决定了本报告 §3 的策略：<b>合成 needle 数据是必需项，不是可选项</b>。
+</div>
+
+<h3>1.3 Mamba2-hybrid 的长上下文优势</h3>
+<div class="card">
+  <table>
+    <tr><th>维度</th><th>纯 Transformer（42 层注意力）</th><th>Mamba2-hybrid（4 层 attn + 24 SSM）</th><th>优势</th></tr>
+    <tr><td class="num">1M KV cache</td><td class="num">~68.9 GB</td><td class="num">~6.6 GB KV + 0.4 GB SSM</td><td class="num hl">~10×</td></tr>
+    <tr><td>注意力复杂度</td><td>O(n²)，1M 时为主导</td><td>O(n²) 仅 4 层，SSM 是 O(n)</td><td>—</td></tr>
+    <tr><td>1M 显存（含权重）</td><td class="num bad">~73.8 GB → 80GB 卡 OOM</td><td class="num ok">76.7 GB（实测可跑）</td><td>—</td></tr>
+    <tr><td>1M prefill 速度</td><td>受 O(n²) 拖累，预计 &lt;5K tok/s</td><td class="num hl">14,989 tok/s（实测）</td><td>~3×</td></tr>
+  </table>
+  <p class="note">Mamba2 的 SSM state 是<b>固定大小</b>（64 × 64 × 128 × 24 × 2B = ~0.4GB），不随 ctx 增长。只有 4 层注意力的 KV cache 线性增长。这是 hybrid 架构在 1M 的根本优势。</p>
+</div>
+
+<h3>1.4 短文本与长文本的取舍现状</h3>
+<div class="card">
+  <table>
+    <tr><th>维度</th><th>现状</th><th>风险</th></tr>
+    <tr><td>ABF 税（短序列退化）</td><td>θ=1e6 导致 4K PPL 75.36→83.24（+10.5%），但本项目<b>从零训练用 θ=1e6</b>，无事后换 θ 的税</td><td class="tag ok">低</td></tr>
+    <tr><td>长文数据占比</td><td>en_v1_4：≥32K 的 token% 仅 <b>2.52%</b>（建议 ≥20%）；≥128K 仅 <b>0.03%</b>（建议 ≥5%）</td><td class="tag bad">高</td></tr>
+    <tr><td>文档级 attention mask</td><td>当前 shard 无 doc-level reset，长序列跨文档串味</td><td class="tag warn">中</td></tr>
+    <tr><td>下游短文本能力</td><td>P-8（44.4B）CS8=49.21% / CX=6.81%；S1 当前 loss~2.16 稳态</td><td class="tag ok">正常</td></tr>
+    <tr><td>检索能力</td><td>B1 passkey=0%（4K 训练）；S1（16K 训练）尚未评测</td><td class="tag bad">未知</td></tr>
+  </table>
+  <p class="src">数据占比：<code>run/longctx_check_en_v1_4.log</code>（8 shard，8.59B tokens，平均文档 889 tokens，最长 195,935）。</p>
+</div>
+
+<!-- ===================== §2 怎么做到 1M ===================== -->
+<h2>2. 怎么做到 1M</h2>
+
+<h3>2.1 位置编码方案</h3>
+<div class="card">
+  <table>
+    <tr><th>方案</th><th>原理</th><th>本项目适用性</th><th>结论</th></tr>
+    <tr><td><b>ABF</b><br><span class="k">Xiong et al. 2023</span></td><td>提高 RoPE base frequency θ，使 cos/sin 在更大位置范围内不溢出。<code>θ_ABF = θ_train × (L_target/L_train)^(d/(d-2))</code></td><td>✅ 已采用。θ=1e6 从 16K 外推 1M（64×）。B1 实测 1M PPL=55.42 稳定。</td><td class="tag ok">已落地</td></tr>
+    <tr><td>只抬 max_position</td><td>仅扩展 max_position_embeddings</td><td>❌ B1 实测<b>全 NaN</b>。cos/sin 高频溢出。</td><td class="tag bad">禁用</td></tr>
+    <tr><td>Position Interpolation</td><td>位置索引压缩到训练范围</td><td>可行但不如 ABF：高频均匀模糊，语法退化。Llama-3 8B 实测 128K passkey 仅 64.2%。</td><td class="tag warn">备选</td></tr>
+    <tr><td>NTK-aware / 动态 NTK</td><td>非均匀缩放：高频保持、低频插值</td><td>训练期 θ=1e6 已覆盖 1M，无需额外 NTK。</td><td class="tag warn">备用</td></tr>
+    <tr><td>YaRN</td><td>分段温度缩放 + 频率混合</td><td>适合事后扩展；本项目从零训练用 θ=1e6，YaRN 冗余。Qwen2.5-1M 推理阶段用 DCA+YaRN。</td><td class="tag warn">备用</td></tr>
+    <tr><td>Dual Chunk Attention</td><td>分块注意力：块内原始位置、块间压缩相对位置</td><td>Qwen2.5-1M 用此法 256K→1M。BaiZe 的 Mamba2 SSM 有常数状态，DCA 可用于 4 层注意力。</td><td class="tag warn">未来可选</td></tr>
+  </table>
+  <p class="note"><b>决策</b>：训练期 θ=1e6（ABF）已覆盖 1M，不启 PI/NTK/YaRN/scaling。若 1M 实测退化，决策树见 §5。</p>
+</div>
+
+<h3>2.2 训练阶段递进</h3>
+<div class="card">
+  <p>核心原则：<b>16K 主训练 → 阶梯扩展 → ABF 外推 1M</b>。16K 是吞吐最优档（613,992 tok/s），外推 1M 仅 64×。</p>
+  <table>
+    <tr><th>阶段</th><th class="num">序列</th><th class="num">CP</th><th class="num">DP</th><th class="num">gbs</th><th class="num">token 预算</th><th class="num">步数</th><th class="num">tok/s</th><th class="num">墙钟</th><th>状态</th></tr>
+    <tr><td><b>S（主训练）</b></td><td class="num">16K</td><td class="num">1</td><td class="num">16</td><td class="num">256</td><td class="num">2.94T</td><td class="num">700,000</td><td class="num hl">577K</td><td class="num">~56天</td><td class="tag ok">运行中</td></tr>
+    <tr><td><b>rung1</b></td><td class="num">32K</td><td class="num">2</td><td class="num">8</td><td class="num">128</td><td class="num">20B</td><td class="num">4,769</td><td class="num">351,526</td><td class="num">~15.8h</td><td class="tag warn">待S</td></tr>
+    <tr><td><b>rung2</b></td><td class="num">64K</td><td class="num">4</td><td class="num">4</td><td class="num">64</td><td class="num">10B</td><td class="num">2,385</td><td class="num">~180K</td><td class="num">~15.4h</td><td class="tag warn">待r1</td></tr>
+    <tr><td><b>rung3</b></td><td class="num">128K</td><td class="num">8</td><td class="num">2</td><td class="num">32</td><td class="num">5B</td><td class="num">1,193</td><td class="num">~90K</td><td class="num">~15.4h</td><td class="tag warn">待r2</td></tr>
+    <tr><td><b>rung4（可选）</b></td><td class="num">256K</td><td class="num">16</td><td class="num">1</td><td class="num">16</td><td class="num">2B</td><td class="num">477</td><td class="num">~45K</td><td class="num">~12.3h</td><td class="tag warn">路径B</td></tr>
+  </table>
+  <p class="src">来源：<code>code/baize-llm/configs/longctx_ladder.tsv</code>；rung1 吞吐 = #792 E3 实测；每级保持 tok/mb/GPU=16,384。</p>
+  <p class="note"><b>ABF 外推</b>：训练到 128K 后 θ=1e6 直接外推 1M（128K→1M = 8×），无需额外训练。rung3 是路径 A 终点。</p>
+</div>
+
+<h3>2.3 数据配比</h3>
+<div class="card">
+  <div class="bad-box">
+    <b>现状（必须先解决）</b>：当前主源 en_v1_4 长文档严重不足 —— ≥32K 仅 2.52%（需 ≥20%），≥128K 仅 0.03%（需 ≥5%）。平均文档仅 889 tokens。若不补数据，128K 阶梯学到的是「跨文档拼接」，收益虚高。
+  </div>
+  <table>
+    <tr><th>数据类型</th><th>用途</th><th class="num">建议配比</th><th>获取方式</th></tr>
+    <tr><td>自然长文档（书籍/论文/法律）</td><td>128K 阶梯主数据</td><td class="num">~40%</td><td>外部源（Gutenberg/arXiv/法律）；按 doc 长度加权采样</td></tr>
+    <tr><td>代码仓库（多文件拼接）</td><td>128K 阶梯 + 代码能力</td><td class="num">~20%</td><td>按 repo 粒度拼接（跨文件 EOD + doc-level reset）</td></tr>
+    <tr><td>合成 haystack（needle 数据）</td><td>检索能力训练</td><td class="num">~20%</td><td>§3 合成协议自动生成</td></tr>
+    <tr><td>原有混合数据（7 源 blend）</td><td>防止短文本遗忘</td><td class="num">~20%</td><td>复用 blend_s1.tsv</td></tr>
+  </table>
+  <p><b>doc-level reset</b>：需 launcher 支持（EOD 后重置注意力/SSM 状态），否则长上下文收益被高估。</p>
+</div>
+
+<h3>2.4 架构与显存</h3>
+<div class="card">
+  <table>
+    <tr><th>维度</th><th>16K（当前）</th><th>128K（rung3）</th><th>1M（推理）</th></tr>
+    <tr><td class="num">序列长度</td><td class="num">16,384</td><td class="num">131,072</td><td class="num">1,048,576</td></tr>
+    <tr><td class="num">CP / DP</td><td class="num">1 / 16</td><td class="num">8 / 2</td><td>—</td></tr>
+    <tr><td>注意力 KV cache</td><td>~0.13 GB</td><td>~1.05 GB</td><td class="num">6.56 GB（4层）</td></tr>
+    <tr><td>SSM state（固定）</td><td colspan="2" class="num">0.40 GB</td><td class="num">0.40 GB</td></tr>
+    <tr><td>权重（bf16）</td><td colspan="3" class="num">4.44 GB</td></tr>
+    <tr><td>峰值显存（推理，单卡）</td><td>—</td><td>—</td><td class="num hl">76.71 GB</td></tr>
+    <tr><td>2M</td><td>—</td><td>—</td><td class="num bad">OOM（79.09/79.19GB）</td></tr>
+  </table>
+  <p class="note"><b>2M OOM 原因</b>：2M KV cache=13.12GB + SSM 0.40 + 权重 4.44 + 激活/碎片 ≈ 79GB → 超限。2M 需 chunked prefill 或 KV 分页。</p>
+</div>
+
+<!-- ===================== §3 怎么到 >95% needle ===================== -->
+<h2>3. 怎么到 &gt;95% 大海捞针</h2>
+
+<div class="bad-box">
+  <b>前置事实</b>：B1 实测 passkey=0%（4K 训练 ckpt）。PPL 好看不等于能检索。<b>不训练 needle 数据，95% 是不可能的</b>。
+</div>
+
+<h3>3.1 Needle 合成协议</h3>
+<div class="card">
+  <table>
+    <tr><th>任务类型</th><th>协议</th><th>难度</th><th class="num">目标准确率</th></tr>
+    <tr><td><b>单针 NIAH</b></td><td>在长度 L 的 haystack 中插入 1 个针（如 "The magic password is X7K2M."），末尾提问。深度 d ∈ {0%,10%,25%,50%,75%,90%,100%} 均匀采样。</td><td class="tag ok">基础</td><td class="num hl">≥95%</td></tr>
+    <tr><td><b>多针 MK-NIAH</b></td><td>插入 3–5 针（含干扰针），提问指定 1 个。<b>全中才算对</b>。</td><td class="tag warn">中</td><td class="num">≥85%</td></tr>
+    <tr><td><b>多值 MV-NIAH</b></td><td>1 key 对应多 value，检索全部 value。<b>全中才算对</b>。</td><td class="tag warn">中</td><td class="num">≥80%</td></tr>
+    <tr><td><b>多跳 VT</b></td><td>变量链赋值（X1=42…X2=X1+10…X3=X2×2），问 X3。模拟指代消解。</td><td class="tag bad">难</td><td class="num">≥70%</td></tr>
+    <tr><td><b>变长针</b></td><td>针长度从 1 句到 3 段不等；haystack 4K→1M 变化。</td><td class="tag warn">中</td><td class="num">≥85%</td></tr>
+    <tr><td><b>改写/噪声</b></td><td>针被同义改写；haystack 加入主题相关干扰段落。</td><td class="tag bad">难</td><td class="num">≥75%</td></tr>
+  </table>
+  <p class="src">参考 NVIDIA RULER（Hsieh et al. 2024, arXiv:2404.06654）：13 类任务覆盖 retrieval / multi-hop tracing / aggregation / QA。</p>
+</div>
+
+<h3>3.2 合成数据生成协议</h3>
+<div class="card">
+  <pre>def gen_needle_sample(ctx_len, needle_type, depth_ratio, num_needles=1):
+    """生成单条 needle-in-haystack 训练样本"""
+    filler = sample_filler(ctx_len - needle_len - query_len)
+    insert_pos = int(len(filler) * depth_ratio)
+    needles = [gen_needle(needle_type) for _ in range(num_needles)]
+    sample = filler[:insert_pos]
+    for n in needles:
+        sample += n + filler_between
+    sample += filler[insert_pos:] + query
+    return {"input": sample, "target": needle_answer}
+
+# 训练数据配比：
+#   单针 NIAH: 40% (ctx ∈ {4K,16K,32K,64K,128K})
+#   多针 MK:   25% (3-5针, ctx ∈ {32K,64K,128K})
+#   多跳 VT:   15% (ctx ∈ {16K,32K,128K})
+#   变长针:    10% (针长1句~3段)
+#   改写/噪声: 10% (同义替换+主题干扰)</pre>
+  <p class="note">每 ctx × 每任务 ≥500 条 → 总计 ~15,000 条。阶梯训练中混入（占 ~20-40%）。每级阶梯后评测该级 ctx + 1M 外推 needle。</p>
+</div>
+
+<h3>3.3 训练目标</h3>
+<div class="card">
+  <ul>
+    <li><b>主目标</b>：标准 next-token prediction（causal LM loss），needle 数据与自然文本混合。needle loss 权重 1.0–2.0。</li>
+    <li><b>课程学习</b>：rung1 训单针 NIAH；rung2 加多针 MK-NIAH；rung3 加多跳 VT + 改写/噪声。难度随 ctx 递增。</li>
+    <li><b>短文本保持</b>：每级混入 20% 原 7 源 blend 数据，防止遗忘（CS8 退化 ≤1pp）。</li>
+    <li><b>LR</b>：阶梯阶段保持 1e-3，不衰减（衰减留最终 Decay）。WSD stable 段。</li>
+  </ul>
+</div>
+
+<h3>3.4 评测协议</h3>
+<div class="card">
+  <table>
+    <tr><th>维度</th><th>内容</th><th>门限</th></tr>
+    <tr><td><b>depth×position 网格</b></td><td>单针 NIAH：ctx ∈ {4K,16K,32K,64K,128K,1M} × depth ∈ {0%,10%,25%,50%,75%,90%,100%} = 42 格，每格 20 条。</td><td class="num hl">1M 平均 ≥95%</td></tr>
+    <tr><td><b>多针全中</b></td><td>MK-NIAH（3/5 针）：全中计 1.0，否则 0.0。</td><td class="num">≥85%</td></tr>
+    <tr><td><b>多跳 VT</b></td><td>3 跳链，正确 = 最终变量值。</td><td class="num">≥70%</td></tr>
+    <tr><td><b>改写/噪声</b></td><td>同义改写 + 主题干扰。</td><td class="num">≥75%</td></tr>
+    <tr><td><b>RULER 综合</b></td><td>13 类任务 × ctx ∈ {4K,128K,1M}，加权平均。</td><td class="num">1M ≥70%</td></tr>
+    <tr><td><b>短文本退化</b></td><td>CS8（8 集平均）扩展前后对比。</td><td class="num">退化 ≤1pp</td></tr>
+    <tr><td><b>PPL 外推</b></td><td>4K→1M PPL 曲线。</td><td class="num">1M/4K ≤1.10×</td></tr>
+  </table>
+  <p class="src">复用：<code>run/baize_b1_longctx_extend.py</code>（PPL+passkey）；RULER 需新建脚本。</p>
+</div>
+
+<!-- ===================== §4 实验矩阵 ===================== -->
+<h2>4. 实验矩阵（≥5 组配置）</h2>
+<div class="card">
+  <table>
+    <tr><th>组</th><th>θ</th><th>训练阶梯</th><th class="num">长文%</th><th class="num">needle%</th><th class="num">步数</th><th class="num">附加token</th><th class="num">GPU·h</th><th class="num">预期1M needle</th><th>说明</th></tr>
+    <tr><td><b>A1（推荐）</b></td><td>1e6</td><td>32K→64K→128K</td><td class="num">30%</td><td class="num">20%</td><td class="num">8,347</td><td class="num">35B</td><td class="num">~46</td><td class="num hl">~92%</td><td>路径A基线</td></tr>
+    <tr><td><b>A2（强needle）</b></td><td>1e6</td><td>32K→64K→128K</td><td class="num">30%</td><td class="num">40%</td><td class="num">8,347</td><td class="num">35B</td><td class="num">~46</td><td class="num hl">~95%</td><td>A1+needle翻倍</td></tr>
+    <tr><td><b>B1（256K）</b></td><td>1e6</td><td>32K→64K→128K→256K</td><td class="num">40%</td><td class="num">20%</td><td class="num">8,824</td><td class="num">37B</td><td class="num">~59</td><td class="num">~93%</td><td>加rung4，外推4×</td></tr>
+    <tr><td><b>B2（256K+强needle）</b></td><td>1e6</td><td>32K→64K→128K→256K</td><td class="num">40%</td><td class="num">40%</td><td class="num">8,824</td><td class="num">37B</td><td class="num">~59</td><td class="num hl">~96%</td><td>最高预期，+28%成本</td></tr>
+    <tr><td><b>C1（θ升级5e6）</b></td><td>5e6</td><td>32K→64K→128K</td><td class="num">30%</td><td class="num">20%</td><td class="num">8,347</td><td class="num">35B</td><td class="num">~46</td><td class="num">~90%</td><td>θ升级辅助，需复测16K</td></tr>
+    <tr><td><b>D0（零训练基线）</b></td><td>1e6</td><td>无阶梯</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="num">0</td><td class="num">~0.5</td><td class="num bad">~0%</td><td>对照基线</td></tr>
+  </table>
+  <p class="src">附加 token = 各 rung 预算之和；GPU·h = token/(tok/s×3600)×16；预期准确率为<b>估算</b>（基于 Qwen2.5-14B-1M 公开数据 + B1 passkey=0% 基线外推）。</p>
+</div>
+
+<!-- ===================== §5 取舍建议 ===================== -->
+<h2>5. 取舍建议</h2>
+
+<h3>5.1 若只能做一件事</h3>
+<div class="ok-box">
+  <b>选 A2（128K 阶梯 + 强 needle 数据）</b>。理由：
+  <ul>
+    <li><b>成本最低</b>：~46 GPU·h（~2 天），不扩卡。B1/B2 多 +12h 但 256K 吞吐仅 45K，性价比差。</li>
+    <li><b>外推可控</b>：128K→1M = 8×，θ=1e6 已实测 1M PPL 稳定。</li>
+    <li><b>needle 是必需项</b>：A1 vs A2 唯一差别是 needle 量（20%→40%），B1 passkey=0% 说明不训 needle 不可能 95%。</li>
+    <li><b>16 卡上限</b>：rung3（CP8 DP2）已是舒适上限；rung4（CP16 DP1）DP=1 容错差。</li>
+  </ul>
+</div>
+
+<h3>5.2 短文本回退监控与护栏</h3>
+<div class="card">
+  <table>
+    <tr><th>指标</th><th>测量时机</th><th>阈值</th><th>超阈动作</th></tr>
+    <tr><td>16K PPL</td><td>每级阶梯后</td><td class="num">退化 ≤1%</td><td>回退一级；若θ升级导致则回退θ</td></tr>
+    <tr><td>CS8（8集平均）</td><td>每级后</td><td class="num">退化 ≤1pp</td><td>增加短文本比例（20%→30%）</td></tr>
+    <tr><td>CX（困惑度集）</td><td>rung3 后</td><td class="num">退化 ≤0.5pp</td><td>同上</td></tr>
+    <tr><td>needle loss</td><td>每 200 步</td><td>持续 &gt; baseline+10%</td><td>检查 needle 数据质量</td></tr>
+    <tr><td>grad-norm spike</td><td>每步</td><td>连续&gt;3步 &gt;5×均值</td><td>降 LR 到 5e-4</td></tr>
+    <tr><td>NaN</td><td>每步</td><td>≥1 次</td><td>立即停训，回退上一个 ckpt</td></tr>
+  </table>
+</div>
+
+<h3>5.3 决策树</h3>
+<div class="card">
+<pre>1M 评测（θ=1e6，训练到 128K）
+├─ passkey ≥95% 且 RULER ≥70% 且 PPL 1M/4K ≤1.10
+│   └─ ✅ 1M 达标 ⇒ 路径 A2 完成
+└─ 1M 不达标
+    ├─ passkey 80-95%：增加 needle 数据（40%→60%）重训 rung3
+    ├─ passkey &lt;80%：加 rung4（256K，+12h）再外推 ⇒ 复测（路径 B2）
+    ├─ 仍不达标：申请 ≥64 卡直训 1M（路径 C）
+    └─ 辅助：抬 θ（1e6→5e6），复测 16K 退化 ≤1% 才接受</pre>
+</div>
+
+<!-- ===================== §6 附录 ===================== -->
+<h2>6. 附录：与公开做法对比</h2>
+
+<div class="card">
+  <table>
+    <tr><th>维度</th><th>BaiZe-2B（本项目）</th><th>Qwen2.5-1M</th><th>Llama 3.1</th></tr>
+    <tr><td><b>架构</b></td><td>Mamba2-hybrid（4 attn + 24 SSM + 28 MLP）</td><td>Dense Transformer</td><td>Dense Transformer</td></tr>
+    <tr><td><b>参数量</b></td><td class="num">2.22B</td><td class="num">7B / 14B</td><td class="num">8B / 70B / 405B</td></tr>
+    <tr><td><b>训练 ctx</b></td><td class="num">16K → 128K（阶梯）</td><td class="num">4K → 32K → 256K</td><td class="num">8K → 128K（原生）</td></tr>
+    <tr><td><b>目标 ctx</b></td><td class="num hl">1M（ABF 外推）</td><td class="num hl">1M（DCA 外推）</td><td class="num">128K（原生）</td></tr>
+    <tr><td><b>RoPE θ</b></td><td class="num">1,000,000</td><td class="num">1,000,000 + DCA</td><td class="num">500,000（原生大 base）</td></tr>
+    <tr><td><b>外推方法</b></td><td>ABF（128K→1M = 8×）</td><td>DCA + YaRN（256K→1M = 4×）</td><td>无需外推</td></tr>
+    <tr><td><b>长文数据</b></td><td>当前不足（≥32K 仅 2.52%）→ 需补</td><td>高质量长文档 + 合成 long-needle</td><td>长文档 + 多文档摘要 + 长代码</td></tr>
+    <tr><td><b>needle 训练</b></td><td>计划：合成 NIAH/MK-NIAH/VT</td><td>Stage 3 合成 long-needle</td><td>post-training 微调含长上下文</td></tr>
+    <tr><td><b>1M needle acc</b></td><td class="num bad">0%（B1 基线）</td><td class="num ok">~100%（14B）</td><td>—（不支持 1M）</td></tr>
+    <tr><td><b>1M 显存</b></td><td class="num ok">76.71 GB</td><td class="num warn">需 chunked prefill + 稀疏注意力</td><td>—</td></tr>
+    <tr><td><b>1M prefill</b></td><td class="num hl">14,989 tok/s</td><td>需 MInference 加速</td><td>—</td></tr>
+    <tr><td><b>训练 GPU</b></td><td class="num">16 卡（2×8 H100）</td><td class="num">大量（未公开）</td><td class="num">16,384 H100（405B）</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>关键技术差异</h3>
+  <ul>
+    <li><b>Qwen2.5-1M</b>（2025-01）：4K→32K→256K 渐进训练 + <b>Dual Chunk Attention</b>（块内/块间双层位置映射）推理外推 1M。1M passkey 接近完美（14B）。Stage 3 用合成 long-needle 数据。来源：Qwen2.5-1M 技术报告 / 央广网 2025-01-27。</li>
+    <li><b>Llama 3.1</b>（2024-07）：RoPE base=500,000（50× 提升），<b>原生训练</b> 128K，无需事后外推。post-training 在 128K 全窗口微调。来源：Llama 3 Herd of Models（arXiv:2407.21783）。</li>
+    <li><b>BaiZe-2B 差异化</b>：Mamba2-hybrid 使 1M 推理显存仅 76.7GB，prefill 14,989 tok/s。但 2.2B 远小于 Qwen 7B/14B，检索能力上限受限 —— <b>2B 模型在 1M 多跳/聚合任务上达 95% 比 14B 困难得多</b>，需更强 needle 数据和更长阶梯训练补偿。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>RULER 基准简介</h3>
+  <p>NVIDIA RULER（Hsieh et al. 2024, arXiv:2404.06654）：合成长上下文评测，13 类任务 4 大类别：</p>
+  <ul>
+    <li><b>检索</b>：单针 NIAH、多针 MK-NIAH（干扰针找指定针）、多值 MV-NIAH（一 key 多 value 全中）、多查询 MQ-NIAH</li>
+    <li><b>多跳追踪</b>：变量追踪 VT（非连续赋值链 → 指代消解）</li>
+    <li><b>聚合</b>：常见词汇 CWE、频繁词汇 FWE</li>
+    <li><b>问答</b>：基于长上下文的 QA</li>
+  </ul>
+  <p>核心发现：许多声称 128K-1M 的模型，RULER 上「有效上下文」缩水严重。单针 NIAH 已被前沿模型饱和，<b>多针/多跳/聚合才是区分维度</b>。来源：澎湃新闻 2024-06-03。</p>
+</div>
+
+<div class="card">
+  <h3>RoPE 扩展方法对比（Llama-3 8B 实测）</h3>
+  <table>
+    <tr><th>方法</th><th class="num">128K passkey</th><th>说明</th></tr>
+    <tr><td>原始外推</td><td class="num bad">0%</td><td>PPL 发散</td></tr>
+    <tr><td>Position Interpolation</td><td class="num warn">64.2%</td><td>高频模糊，语法退化</td></tr>
+    <tr><td>NTK-aware</td><td class="num">~75%</td><td>高频保持、低频插值</td></tr>
+    <tr><td>YaRN</td><td class="num ok">~85%</td><td>分段温度缩放+频率混合</td></tr>
+    <tr><td><b>大 base 原生训练（BaiZe/Llama3）</b></td><td class="num hl">~95%+</td><td>从零训练用大 θ</td></tr>
+  </table>
+  <p class="src">来源：Lesty Tech 2026-10-19（Llama-3 8B 实测）；ML Journey 2026-04-29。</p>
+</div>
+
+<!-- ===================== 总结 ===================== -->
+<h2>总结：从 0% 到 95% 的路线图</h2>
+<div class="card">
+  <table>
+    <tr><th class="num">步</th><th>内容</th><th>前置</th><th class="num">成本</th><th>预期产出</th></tr>
+    <tr><td class="num">1</td><td><b>零训练基线评测</b>：PPL(4K→1M)+passkey+RULER</td><td>S 完成（~56天）</td><td class="num">~0.5h</td><td>基线（预期 passkey~0%）</td></tr>
+    <tr><td class="num">2</td><td><b>补长文数据</b>：书籍/论文/代码仓+加权采样+doc-level reset</td><td>data 线配合</td><td class="num">~2天</td><td>≥32K token% ≥20%</td></tr>
+    <tr><td class="num">3</td><td><b>生成 needle 数据</b>：单针/多针/多跳/改写，~15K 条</td><td>步骤 2</td><td class="num">~0.5天</td><td>needle 训练集</td></tr>
+    <tr><td class="num">4</td><td><b>rung1（32K）训练+评测</b>：20B token，needle 40%</td><td>步骤 2+3</td><td class="num">~16h</td><td>32K needle ≥90%</td></tr>
+    <tr><td class="num">5</td><td><b>rung2（64K）训练+评测</b>：10B token</td><td>步骤 4</td><td class="num">~15h</td><td>64K needle ≥88%</td></tr>
+    <tr><td class="num">6</td><td><b>rung3（128K）训练+评测</b>：5B token</td><td>步骤 5</td><td class="num">~15h</td><td>128K needle ≥85%</td></tr>
+    <tr><td class="num">7</td><td><b>1M ABF 外推评测</b>：128K ckpt 直接推理 1M needle</td><td>步骤 6</td><td class="num">~1h</td><td class="hl">1M needle ≥95%（目标）</td></tr>
+    <tr><td class="num">8</td><td><b>若不达标</b>：加 rung4 或抬 θ → 复测</td><td>步骤 7 不达标</td><td class="num">+12-15h</td><td>1M needle ≥93%</td></tr>
+  </table>
+  <p class="note">总附加成本（步骤 4-7）= ~46 GPU·h（16 卡 ~2 天）；步骤 8 备用 +12-15h。不扩卡。</p>
+</div>
+
+<div class="ok-box">
+  <b>结论</b>：在 16 卡 H100 上，通过 <b>16K 主训练 → 32K/64K/128K 阶梯扩展 → ABF 8× 外推 1M</b>（路径 A2），注入 40% 合成 needle 数据（覆盖单针/多针/多跳/改写），辅以 RULER 评测闭环，<b>有较高概率在 1M 实现 &gt;95% 大海捞针准确率</b>。关键前提：① S 主训练完成、② 补足长文数据、③ doc-level reset。Mamba2-hybrid 架构的常数 SSM state 使 1M 推理显存仅 76.7GB，这是本项目的结构性优势。
+</div>
+
+<div class="footer">
+  BaiZe-2B · 1M 长上下文 + 95% 大海捞针技术报告<br>
+  生成时间：2026-10-30 · 实测数据来源：B1 实验 / SGLang 推理基准 / 公开文献（Qwen2.5-1M / Llama 3.1 / NVIDIA RULER）<br>
+  所有实测数字标注来源；估算数字标注「估算」。
+</div>
+
+</div>
+</body>
+</html>
