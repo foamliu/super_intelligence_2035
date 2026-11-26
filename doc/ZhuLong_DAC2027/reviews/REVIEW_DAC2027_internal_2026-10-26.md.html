@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ZhuLong DAC 2027 内部审阅报告（2026-10-26 v2）</title>
+<style>
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; max-width: 980px; margin: 0 auto; padding: 28px 36px; color: #1d1d1f; line-height: 1.72; background: #fafafa; }
+h1 { font-size: 1.55em; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; margin-bottom: 6px; }
+h2 { font-size: 1.22em; color: #2c3e50; margin-top: 2.2em; border-left: 5px solid #2c3e50; padding-left: 10px; }
+h3 { font-size: 1.05em; color: #34495e; margin-top: 1.6em; }
+h4 { font-size: 0.98em; color: #555; margin-top: 1.2em; margin-bottom: 0.3em; }
+.meta { color: #666; font-size: 0.9em; margin-bottom: 22px; }
+.meta b { color: #333; }
+table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 0.9em; background: #fff; }
+th, td { border: 1px solid #d0d0d4; padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: #eef1f5; font-weight: 600; }
+tr:nth-child(even) td { background: #f7f8fa; }
+code { background: #eef1f5; padding: 1px 5px; border-radius: 3px; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 0.88em; color: #c0392b; }
+pre { background: #f4f4f6; padding: 10px 14px; border-radius: 5px; overflow-x: auto; font-size: 0.85em; }
+.kbox { border-radius: 6px; padding: 14px 18px; margin: 16px 0; }
+.crit { background: #fdecea; border-left: 4px solid #c0392b; }
+.high { background: #fff4e5; border-left: 4px solid #e67e22; }
+.med  { background: #fffbe6; border-left: 4px solid #d4ac0d; }
+.low  { background: #eafaf1; border-left: 4px solid #27ae60; }
+.note { background: #eef4fb; border-left: 4px solid #2980b9; }
+.title { background: #f0eefb; border-left: 4px solid #6c5ce7; }
+.tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.78em; font-weight: 600; margin-right: 4px; }
+.t-crit { background: #fdecea; color: #c0392b; }
+.t-high { background: #fff4e5; color: #b3541a; }
+.t-med  { background: #fffbe6; color: #8a6d0b; }
+.t-low  { background: #eafaf1; color: #1e7e3a; }
+.t-done { background: #eaeaea; color: #555; }
+.t-rec  { background: #f0eefb; color: #5a4cc0; }
+.ok { color: #1e7e3a; font-weight: 600; }
+.bad { color: #c0392b; font-weight: 600; }
+.warn { color: #b3541a; font-weight: 600; }
+.rec { color: #5a4cc0; font-weight: 600; }
+.summary-tbl td:first-child { width: 22%; }
+ul, ol { padding-left: 22px; }
+li { margin: 3px 0; }
+.small { font-size: 0.85em; color: #666; }
+hr { border: 0; border-top: 1px solid #d0d0d4; margin: 2.4em 0; }
+.title-card { border: 1px solid #d0c8f0; border-radius: 6px; padding: 12px 16px; margin: 10px 0; background: #fff; }
+.title-card.rec { background: #f5f3fc; border-color: #6c5ce7; }
+.pro { color: #1e7e3a; }
+.con { color: #b3541a; }
+</style>
+</head>
+<body>
+
+<h1>ZhuLong（DAC 2027）论文内部审阅报告</h1>
+<div class="meta">
+  <b>审阅日期：</b>2026-10-26（v2 刷新）｜ <b>审阅对象：</b>main.pdf（commit <code>b5a54062</code>，8 页 = 正文 6.5 + refs 1）<br>
+  <b>审阅方式：</b>论文全文逐节读 + <code>zhulong_results.md</code> 原始 5-run 数据逐格交叉核对<br>
+  <b>判定口径：</b>每条标注 <span class="tag t-crit">阻断</span> <span class="tag t-high">高</span> <span class="tag t-med">中</span> <span class="tag t-low">低</span> 四级<br>
+  <b>v2 增量：</b>新增 3 条（中 #12 benchmark 采样、低 #16 deterministic T 澄清、低 #17 5-run 统计），新增<b>第九章论文标题建议</b>，原 15 条复核全部仍成立
+</div>
+
+<h2>一、总体判断</h2>
+
+<p>论文核心贡献清晰——把 EDA 脚本生成从"端到端一次性生成"重新定位为"执行接地的闭环搜索"，并用贝叶斯框架把"观测保真度 &gt; 模型规模"提为可证伪预测。框架有理论、有系统、有 449 任务 × 5 轮 × 6 backbone 的实测支撑，结构完整。但当前版本存在若干<b>数据-叙事一致性</b>与<b>评测稳健性</b>问题，部分定量主张的支撑材料已被删除却仍被引用，是评审最易攻击处。</p>
+
+<table class="summary-tbl">
+<tr><th>问题数（v2）</th><th>阻断</th><th>高</th><th>中</th><th>低</th><th>合计</th></tr>
+<tr><td></td><td class="bad">2</td><td class="warn">4</td><td>6</td><td class="ok">6</td><td><b>18</b></td></tr>
+<tr><th>页数合规</th><td colspan="5">正文 6.5 页（p1–p6 主体 + p7 上半 conclusion 尾巴），refs 1 页（p8）。DAC 限 6+1。<b>略超半页</b>，压 conclusion 即可收回，<b>非 desk-reject 级</b>。</td></tr>
+<tr><th>编译</th><td colspan="5">0 undefined，6 Overfull/Underfull，bbl 无空白占位（review E 已通过）。</td></tr>
+<tr><th>评测侧</th><td colspan="5">配置对齐 5-run 进行中：r1=58.9%（warmup）/ r2=75.9% / r3 跑中（30%）/ r4-r5 待跑。r2 已接近旧线 75.6±4.4%，<b>8192 配置未明显损失精度</b>。</td></tr>
+</table>
+
+<h2>二、阻断级问题（必改）</h2>
+
+<div class="kbox crit">
+<h3><span class="tag t-crit">阻断 #1</span> 三处定量成本主张引用了已被删除的 supplementary material</h3>
+
+<p>10-24 为压页删除了附录（<code>9_appendix.tex</code> 现为空注释），但正文仍保留三处"see supplementary material"的<b>定量主张</b>，造成"引用不存在的证据"——这是评审 desk-check 即可发现且必批的硬伤：</p>
+
+<ul>
+<li><b>§3.4（3_design.tex:34）</b>："removing it makes the agent both slower and more token-hungry <b>(see supplementary material)</b>" —— 慢多少、费多少 token 无任何支撑。</li>
+<li><b>§6.1（6_exp.tex:61）</b>："Self-exploration is the one cost-negative rung <b>(cutting net-active solve time by 27.0%, see supplementary material)</b>" —— <b>27.0%</b> 是具体数字，无表无脚注无附录。</li>
+<li><b>§6.2（6_exp.tex:67）</b>：Φ 预算 k 与 lagged 通道的"per-task table <b>in supplementary material</b>" —— 整个 S2 闭合环的关键数据（k=1/3/10 单调、lagged 落点、Converged 99.1→76.3）全在已删附录里。</li>
+</ul>
+
+<h4>影响</h4>
+<p>§6.2 的 "Principle 3 requires ... Φ run continuously" 整段论证<b>失去数据支撑</b>——RQ2（必要组件）的贡献声明依赖这些数字。评审一句"where is the evidence for the lagged channel?"即可令 RQ2 主张悬空。</p>
+
+<h4>建议</h4>
+<ol>
+<li><b>首选</b>：恢复 <code>tab:cost</code>（291-task subset，5 runs mean±std，Time/In.tok/Rounds/run_code 四列）到 §6.1 self-exploration 段后——既补 27.0%/2.3× 支撑，又顺势把"see supplementary material"改为 <code>Table~\ref{tab:cost}</code>。表 8 行紧凑单栏，约占 0.3 页。</li>
+<li>Φ 预算表（k=1/3/10 + lagged）至少以<b>精简脚注或 4 行内嵌小表</b>形式回正文，给出 PyAether 上 4 个 k 值的 Pass@1 与 Converged 数字。否则 S2 整段只能降格为"we observed monotonic trend"叙述，弱化 RQ2。</li>
+<li>若坚决不补表：删掉所有具体数字（27.0%、2.3×、99.1→76.3、k=10 未饱和），改为定性叙述。但这会让 self-exploration "cost-negative" 与 Φ "continuous update" 两个论点失去定量锐度，<b>不推荐</b>。</li>
+</ol>
+</div>
+
+<div class="kbox crit">
+<h3><span class="tag t-crit">阻断 #2</span> "hundreds of engineers" 部署表述前后不一致</h3>
+
+<p>conclusion（本轮重写）已删 "serving hundreds of engineers"，但 abstract 与 intro 仍保留：</p>
+<ul>
+<li><b>0_abstract.tex:21</b>："deployed in production EDA flows serving <b>hundreds of engineers</b> at a leading memory design house"</li>
+<li><b>1_intro.tex:13</b>："a system already deployed in production EDA flows serving <b>hundreds of engineers</b> at a leading memory design house"</li>
+<li><b>8_conclusion.tex</b>（已改）："deployed in production EDA flows at a leading memory design house" —— 删了 "hundreds of engineers"</li>
+</ul>
+
+<h4>影响</h4>
+<p>双盲评审下"数百名工程师"是<b>具体可识别数字</b>，且三处不一致会被评审解读为"主张不一致 = 不可信"。这是双盲 + 一致性双重风险。</p>
+
+<h4>建议</h4>
+<p>三处统一。推荐<b>全部删除"hundreds of engineers"</b>，保留"deployed in production EDA flows at a leading memory design house"——匿名表述，无具体数字，三处一致。abstract/intro 各改 1 处。</p>
+</div>
+
+<h2>三、高优先级问题</h2>
+
+<div class="kbox high">
+<h3><span class="tag t-high">高 #3</span> RQ2 "组件不可互换"主张被合并层数据弱化</h3>
+
+<p>intro contribution 写："Ablation isolates retrieval, execution, and belief update as <b>jointly necessary and not interchangeable</b>"。但合并层数据：</p>
+<table>
+<tr><th>配置</th><th>Overall (449)</th><th>PyAether</th><th>SKILL</th><th>Tcl</th></tr>
+<tr><td>RAG（仅检索）</td><td>62.5 ± 3.9</td><td>72.2</td><td>33.9</td><td>84.6</td></tr>
+<tr><td>w/o Retrieval（仅执行）</td><td>64.0 ± 6.4</td><td>81.0</td><td>39.0</td><td>73.1</td></tr>
+</table>
+<p>合并层仅差 <b>1.5pp</b>（62.5 vs 64.0），且都在对方 1σ 内（3.9 / 6.4）。<b>"不可互换"在合并层不成立</b>——检索与执行在 aggregate 上近乎可替代。真正的"不可互换"只在切片层显现（PyAether 上 w/o Retrieval 81.0 &gt;&gt; RAG 72.2，即执行 &gt; 检索；Tcl 上 RAG 84.6 &gt; w/o Retrieval 73.1，即检索 &gt; 执行），方向还<b>因工具链翻转</b>。</p>
+
+<h4>建议</h4>
+<p>把 RQ2 措辞从"jointly necessary and not interchangeable"软化为"<b>jointly necessary, with toolchain-specific magnitudes that make them complementary rather than interchangeable</b>"。论文 §6.3 S4 已写"component magnitudes are toolchain-specific"，把这句的逻辑提到 intro/§6.2 即可自洽。这是措辞校准，不改数据。</p>
+</div>
+
+<div class="kbox high">
+<h3><span class="tag t-high">高 #4</span> Tcl w/o Retrieval 的 Innovus r3 = 1.8% 疑似基础设施故障</h3>
+
+<p><code>zhulong_results.md</code> 中 C1.wo_retrieval 的 Innovus 5 轮：</p>
+<pre>86.0 / 63.2 / <b style="color:#c0392b">1.8</b> / 78.9 / 78.9   → mean 61.8 ± 34.6</pre>
+<p>r3 = 1.8% 与其余 4 轮（63–86%）严重脱节，std 高达 <b>34.6</b>。这几乎肯定是某次 sandbox/端口/MCP 桥故障（57 个 Innovus 任务里 55+ 个失败），而非模型真实能力波动。该异常把 Innovus 均值从 ~76.75（剔 r3）拉到 61.8，进而把 pooled Tcl 从 ~79.5 拉到 73.1±13.8。</p>
+
+<h4>建议</h4>
+<ol>
+<li><b>核实</b>：查 r3 Innovus 的 log，确认 1.8% 是否 infra 故障（端口不可用 / sandbox 超时 / MCP 60s 客户端超时）。</li>
+<li>若是 infra 故障：<b>保留原始数据留证，但正文加脚注</b>"one Innovus run in the w/o-Retrieval arm was affected by a sandbox outage (r3 = 1.8%); we report the unfiltered mean per protocol, the across-run median is X%"。</li>
+<li>若确属真实能力波动：维持现状，但 std 34.6 必须在 limitations 里点名（§7 已有"per-slice dispersions can be large"，可点名此例）。</li>
+</ol>
+</div>
+
+<div class="kbox high">
+<h3><span class="tag t-high">高 #5</span> Self-exploration 在 SKILL 上是<b>负效应</b>，被合并 +3.1pp 掩盖</h3>
+
+<p>原始数据：</p>
+<table>
+<tr><th>切片</th><th>Full（自探索 ON）</th><th>w/o Self-Expl</th><th>差（自探索效应）</th></tr>
+<tr><td>PyAether</td><td>81.4 ± 1.5</td><td>77.3 ± 2.9</td><td class="ok">+4.1pp</td></tr>
+<tr><td>SKILL</td><td>60.3 ± 6.7</td><td>61.5 ± 0.7</td><td class="bad">−1.2pp</td></tr>
+<tr><td>Tcl pooled</td><td>87.2 ± 6.0</td><td>80.1 ± 4.2</td><td class="ok">+7.1pp</td></tr>
+<tr><td><b>Overall</b></td><td>75.7</td><td>72.6</td><td class="ok">+3.1pp</td></tr>
+</table>
+
+<p>论文 §6.3 S4 已<b>诚实披露</b>"the one exception being SKILL, where the full system trails its w/o-Self-Exploration variant by 1.2pp"。但 §3.4 仍把自探索定位为 "efficiency and robustness mechanism"——<b>与 SKILL 数据冲突</b>（SKILL 上既变差又变不稳，σ 6.7 vs 0.7）。<code>zhulong_results.md</code> C1.full 备注自己写了"SKILL 可能要重测"。</p>
+
+<h4>建议</h4>
+<ol>
+<li>§3.4 把 "efficiency and robustness mechanism" 改为 "<b>efficiency mechanism</b>"，删 robustness（SKILL 数据不支持 robustness 主张）。</li>
+<li>§6.1 self-exploration 段补一句"<b>on SKILL the effect is negative (−1.2pp), within run-to-run noise (Full σ=6.7), suggesting the self-explored constraints for the SKILL API surface can introduce noise; we retain the configuration for consistency but flag this as a per-language caveat</b>"。主动披露比让评审发现更安全。</li>
+</ol>
+</div>
+
+<div class="kbox high">
+<h3><span class="tag t-high">高 #6</span> abstract 的 "57.4pp, 22.0pp" 并列读起来像两个数属同一轴</h3>
+
+<p>0_abstract.tex:20："the observation-fidelity axis (no observation → full observation) spans <b>57.4~pp, 22.0~pp</b>"</p>
+
+<p>两个数字紧挨，语法上像是"observation-fidelity axis spans 57.4pp and 22.0pp"（同一轴跨两个值？），实际 22.0pp 是<b>backbone 轴</b>的跨度。10-26 改术语（ladder→axis）后这处没把对比关系补全。</p>
+
+<h4>建议</h4>
+<p>改为："the observation-fidelity axis (no observation → full observation) spans <b>57.4~pp, versus 22.0~pp for the backbone axis</b>"——加 "versus" 与 "for the backbone axis"。intro contribution RQ1（1_intro.tex:35-37）已写对（"57.4pp ... while the backbone axis spans 22.0pp"），abstract 对齐即可。</p>
+</div>
+
+<h2>四、中优先级问题</h2>
+
+<div class="kbox med">
+<h3><span class="tag t-med">中 #7</span> Tcl 回读轴"中间档倒挂"的解释不完整</h3>
+
+<p>§6.1：Tcl 上 N′(无回读)=86.6 &gt; B(二值)=82.1 &lt; F(全观测)=87.2，B 既低于 N′ 又低于 F。论文解释："Tcl scripts are short and near-single-shot, largely solved from documentation, so a binary signal supplies no actionable information"。</p>
+
+<p>这只说明 B≈N′（二值无用），但<b>没解释 B &lt; N′（二值比无回读更差 4.5pp）</b>。若二值"无用"，B 应等于 N′，不应更低。合理解释是：binary "fail" 信号诱导 agent 在预算内重试错误修复，消耗 message budget 后被迫提交更差解；而 N′（无任何回读）让 agent 直接提交首次最佳猜测。</p>
+
+<h4>建议</h4>
+<p>§6.1 Tcl 倒挂段补半句："a binary 'fail' signal can <b>mislead the agent into spending its budget on ill-informed retries</b>, whereas no feedback leaves the first (often documentation-grounded) guess intact"。这把"倒挂"从瑕疵转为对 Principle 3 的精细化（反馈<b>质量</b>而非反馈<b>有无</b>才关键），反而强化框架。</p>
+</div>
+
+<div class="kbox med">
+<h3><span class="tag t-med">中 #8</span> "Pure LLM"基线的执行语义未讲清</h3>
+
+<p>§6 tab:main-ablation "Baseline 1: Pure LLM = 18.3%"。但 Pure LLM 关闭了 <code>run_code</code>，agent 无法执行代码——那 18.3% 的 pass 是怎么来的？读者会困惑："no sandbox"是否等于"代码根本不跑"。</p>
+
+<p>实际机制（论文未明说）：agent 仍可写代码到文件（Cline-CLI 的 file-write 未禁），eval harness 在 trace 结束后<b>单独执行</b>该文件评分。所以 18.3% = "无任何执行反馈下一次性写对的代码"。</p>
+
+<h4>建议</h4>
+<p>§6.1 setup 段或 Pure LLM 行表注补一句："For the Pure LLM arm, <code>run_code</code> is unregistered so the agent writes code without execution feedback; the harness scores the final file against assertions <b>after</b> the trace." 1 句话消除困惑。</p>
+</div>
+
+<div class="kbox med">
+<h3><span class="tag t-med">中 #9</span> 表注 "Baseline 2: RAG (retrieval only)" 与正文 "RAG = retrieval + self-exploration" 命名冲突</h3>
+
+<p>tab:main-ablation 表注写 "RAG (retrieval only)"，但 §6.1 正文写 "RAG (retrieval + self-exploration, no sandbox; coincides with w/o-Sandbox)"。<b>"retrieval only" 与 "retrieval + self-exploration" 自相矛盾</b>。</p>
+
+<h4>建议</h4>
+<p>表注改为 "Baseline 2: RAG (retrieval + self-exploration, no sandbox)"，与正文一致。</p>
+</div>
+
+<div class="kbox med">
+<h3><span class="tag t-med">中 #10</span> Innovus 各臂 std 普遍偏高，提示运行时不稳</h3>
+
+<p>Innovus（57 任务）在多个臂上 std 异常：C1.full 85.3±15.4（5 轮 63.2/75.4/93.0/93.0/93.0 呈双峰）、B.glm-5.2 68.4±16.2、C1.wo_retrieval 61.8±34.6（含 r3=1.8% 异常）。Innovus licence breaker 历史上多次 OPEN（8663/8666/8667/8670），用 8650 组兜底，这种 infra 抖动会渗入 std。</p>
+
+<h4>建议</h4>
+<p>§7 limitations 加半句"the Innovus slice (57 tasks, smallest n) shows elevated variance across arms, partly attributable to runtime licence availability; pooled results are robust but Innovus-level point estimates should be read as indicative"。</p>
+</div>
+
+<div class="kbox med">
+<h3><span class="tag t-med">中 #11</span> backbone 轴 22.0pp 跨度含不可部署弱模型，"观测&gt;规模"修辞被弱化</h3>
+
+<p>§6.3 S3："the backbone remains decisive—22.0pp spread"。22.0pp = DeepSeek-V4-Pro 75.7 − Doubao 53.7。但 Doubao-Seed-2.0-Pro（53.7）是<b>明显不达标</b>的弱模型，真实部署不会用它。若只比可部署梯队（DeepSeek-V4-Pro 75.7 / GLM-5.3-Flash 74.8 / GLM-5.2 70.9），跨度仅 <b>4.8pp</b>，而非 22.0pp。</p>
+
+<h4>建议</h4>
+<p>§6.3 补一句限定："the 22.0pp span includes markedly weaker backbones (e.g., Doubao 53.7%) that would not be deployed in practice; <b>among deployable backbones the spread narrows to 4.8pp</b>, further underscoring that observation, not backbone choice, sets the ceiling for production use"。把潜在攻击转为论点加强。</p>
+</div>
+
+<div class="kbox med">
+<h3><span class="tag t-med">中 #12（v2 新增）</span> Benchmark task 采样策略与代表性未交代</h3>
+
+<p>§5 只说 "EDA experts curated each assertion to be self-contained"，但<b>没交代</b>：</p>
+<ul>
+<li>449 task 是从 vendor 文档里<b>怎么采样</b>出来的？随机？分层？按 API 受欢迎度？</li>
+<li>几个专家 curate？是否双盲？inter-annotator agreement？</li>
+<li>任务是否覆盖各运行时的<b>代表性 API 分布</b>，还是偏向某类（如 layout 多、schematic 少）？</li>
+</ul>
+<p>评审（尤其 ML 背景）会问"how were tasks sampled, what is the coverage, is the benchmark representative"。当前 §5 只说"span layout, schematic, and design-management workflows"，无定量分布。</p>
+
+<h4>建议</h4>
+<p>§5 PyAether slice 段补 2-3 句：sampling 策略（如"sampled from the most-frequently-used API families in internal design-flow logs, stratified by workflow type"）+ 分布表或一句"layout/schematic/management 占比 X/Y/Z%"+ 标注流程（"curated by N EDA engineers, assertions reviewed by a second engineer"）。6 页限制下不必展开 inter-annotator agreement 数字，但<b>至少交代 sampling 策略与分布</b>。</p>
+</div>
+
+<h2>五、低优先级问题</h2>
+
+<div class="kbox low">
+<h3><span class="tag t-low">低 #13</span> 表注未明示 N′/B 是否开自探索</h3>
+<p>tab:main-ablation 下半块 "(F) coincides with the Full row"（Full = 自探索 ON），但 N′(无回读)、B(二值) 两行是否同样自探索 ON 没写。<b>表注补一句</b>"N′, B, F all retain self-exploration; only <code>run_code</code> read-back varies"。</p>
+</div>
+
+<div class="kbox low">
+<h3><span class="tag t-low">低 #14</span> 错误分析仅 PyAether，缺 SKILL/Tcl</h3>
+<p>§6.4 错误分析 21 例全来自 PyAether（129/158）。SKILL（60.3%）、Tcl（87.2%）的错误结构未分析。<b>脚注一句</b>"error analysis on PyAether (largest slice); SKILL/Tcl failure modes qualitatively similar (API-misuse, composition) but n smaller"。</p>
+</div>
+
+<div class="kbox low">
+<h3><span class="tag t-low">低 #15</span> "harness-budget" 超时与 message-budget 耗尽未量化</h3>
+<p>§6.4："Generation-stage failures are a harness-budget, not a grounding, phenomenon—mostly timeouts ... or message-budget exhaustion"。多少 timeout、多少 budget 耗尽？无数字。若 §6.1 的 Φ 预算表（阻断 #1）回正文，可顺带给 PyAether 的 Converged 99.1% @ k=∞ → 76.3% @ k=1 作为量化锚点。</p>
+</div>
+
+<div class="kbox low">
+<h3><span class="tag t-low">低 #16（v2 新增）</span> §4.2 "transition is deterministic" 论证可澄清 policy stochasticity</h3>
+<p>§4.2："the same action in the same state yields the same result, with no action stochasticity—so $\mathcal{T}$ is exact"。这描述的是<b>环境</b>转移 $\mathcal{T}$（确实 deterministic），但读者可能困惑：agent 的 LLM 调用是 stochastic 的（temperature&gt;0），那"no action stochasticity"是否成立？</p>
+<p>实际"action stochasticity"指<b>环境对同一 action 的响应</b>是否随机，与 policy 是否 stochastic 无关——论证成立。但<b>可加半句澄清</b>："stochasticity in the policy $\Pi$ is orthogonal to $\mathcal{T}$; the bound concerns the environment's response to a given action, not the action's distribution"。低优先，澄清即妥。</p>
+</div>
+
+<div class="kbox low">
+<h3><span class="tag t-low">低 #17（v2 新增）</span> 5-run 仅 mean±std，无 Wilson CI / paired test</h3>
+<p>所有表报 mean±s.d. over 5 runs，但<b>无置信区间、无 paired significance test</b>。+3.1pp（self-exploration）这种小效应在 n=5 下统计功效不足——§7 limitations 已提"benchmark size limits power to certify small effects"，但未点明"无 CI/test"。</p>
+<p>评审 I 已判定低优先 defer supplementary。建议<b>维持现状</b>，limitations 已覆盖。若空间允许可加半句"we report mean±s.d. rather than confidence intervals; with n=5, small effects (e.g., +3.1pp) should be read as indicative, not certified"。</p>
+</div>
+
+<div class="kbox low">
+<h3><span class="tag t-low">低 #18</span> §4.2 Claim 措辞 "we posit" 偏弱</h3>
+<p>"We posit that D_grounding ≤ g(ε)"。论文已声明这是"prediction the experiments can test rather than a theorem"，措辞诚实。但"posit"在审稿人眼里≈"猜"。<b>可保留</b>（诚实优于过度声称），或改为"we conjecture (and test below)"。</p>
+</div>
+
+<h2>六、已做且通过的事项（无需再动）</h2>
+
+<div class="kbox note">
+<ul>
+<li><span class="tag t-done">已做</span> <b>review A（57.4pp 归因术语）</b>：ladder → observation-fidelity axis，§4.2 拆"回读阶梯 13.5pp"与"系统级 ε 轴 57.4pp"两句，框架立场守住，数字未改。</li>
+<li><span class="tag t-done">已做</span> <b>review D（related work）</b>：6 方法分两类各细化差异，加 survey positioning（liu2026agentic）+ benchmark 对比（xu2026iscript / li2026pdagent）。</li>
+<li><span class="tag t-done">已做</span> <b>review E（参考文献占位符）</b>：bbl 无 "Proceedings of . ACM" 空白占位，编译 0 undefined。</li>
+<li><span class="tag t-done">不做</span> <b>review C（benchmark 开源）</b>：EDA 商业运行时不可再分发，行业惯例不支持。</li>
+<li><span class="tag t-done">不做</span> <b>review H（Tcl 拆分）</b>：WaveView(77)+Innovus(57) 拆开 n 更小 std 更大，弱化"统一接口"叙事。</li>
+<li><span class="tag t-done">不做</span> <b>review J（部署声明）</b>：双盲下加一句"metrics omitted"是空话。但需配合<b>阻断 #2</b>统一删除"hundreds of engineers"。</li>
+<li><span class="tag t-done">已做</span> <b>conclusion / future work 重写</b>：三方向（领域化 harness / 长期记忆自进化 / 多模态接地）已写入。</li>
+</ul>
+</div>
+
+<h2>七、页数与改动预算</h2>
+
+<table>
+<tr><th>改动</th><th>净行数</th><th>对页数影响</th></tr>
+<tr><td>阻断 #1 恢复 tab:cost（§6.1 段后）</td><td>+8 行表</td><td>+0.3 页</td></tr>
+<tr><td>阻断 #1 Φ 预算精简表/脚注</td><td>+4 行</td><td>+0.15 页</td></tr>
+<tr><td>阻断 #2 删 "hundreds of engineers" ×2</td><td>0（替换）</td><td>0</td></tr>
+<tr><td>高 #3 RQ2 措辞软化</td><td>0（替换）</td><td>0</td></tr>
+<tr><td>高 #4 Innovus r3 脚注</td><td>+2 行脚注</td><td>+0.05 页</td></tr>
+<tr><td>高 #5 SKILL 自探索负效应披露</td><td>+2 行</td><td>+0.05 页</td></tr>
+<tr><td>高 #6 abstract "versus" 修补</td><td>0（替换）</td><td>0</td></tr>
+<tr><td>中 #7 Tcl 倒挂补半句</td><td>+1 行</td><td>+0.03 页</td></tr>
+<tr><td>中 #8 Pure LLM 评分路径 1 句</td><td>+1 行</td><td>+0.03 页</td></tr>
+<tr><td>中 #9 表注改 "retrieval only"</td><td>0（替换）</td><td>0</td></tr>
+<tr><td>中 #10 Innovus std limitations 半句</td><td>+1 行</td><td>+0.03 页</td></tr>
+<tr><td>中 #11 可部署 backbone 4.8pp 限定句</td><td>+2 行</td><td>+0.05 页</td></tr>
+<tr><td>中 #12 benchmark sampling 2-3 句</td><td>+3 行</td><td>+0.1 页</td></tr>
+<tr><td><b>合计净增</b></td><td>~+24 行</td><td><b>~+0.8 页</b></td></tr>
+</table>
+
+<p>当前正文 6.5 页，加这些改动 → ~7.3 页，<b>超 1.3 页</b>。必须配套压缩：</p>
+<ol>
+<li><b>压 conclusion</b>（现溢出 p7 约 15 行）：future work 三条每条压 1 句，省 ~6 行。</li>
+<li><b>§6.3 S4 与 §6.1 重复的"component magnitudes toolchain-specific"</b>合并，省 ~3 行。</li>
+<li><b>§4.2 实验对应段</b>与 §6.1/§6.3 重复"13.5pp / 57.4pp / 22.0pp"叙述，§4.2 只留"predictions tested in §6"，省 ~4 行。</li>
+<li><b>§7 discussion 第 1 段</b>与 §4.4 设计原则重复"observation not scale"，合并，省 ~3 行。</li>
+<li>中 #11、中 #10、低 #13、低 #14、低 #16 若空间紧可降为脚注合并，省 ~5 行。</li>
+</ol>
+<p>合计可省 ~21 行，净增降至 ~3 行 → 正文 ~6.55 页，<b>基本守住 6 页 + 半行溢出</b>，与现状持平。</p>
+
+<h2>八、推荐执行顺序</h2>
+
+<ol>
+<li><b>阻断 #1 + #2</b>（必改，可并行）：恢复 tab:cost + 补 Φ 脚注；删 "hundreds of engineers" ×2。</li>
+<li><b>高 #6</b>（1 处替换，秒级）：abstract "versus" 修补。</li>
+<li><b>高 #3 + 高 #5</b>（措辞校准 + 主动披露）：RQ2 软化 + SKILL 负效应披露 + §3.4 删 robustness。</li>
+<li><b>中 #9 + 中 #8 + 中 #12</b>（表注 + 1 句 + sampling 2-3 句）。</li>
+<li><b>高 #4 + 中 #10</b>（需先核实 r3 Innovus log）：Innovus 异常披露。</li>
+<li><b>配套压页</b>：conclusion / §6.3 / §4.2 / §7 去重。</li>
+<li><b>中 #7 / 中 #11 / 低 #13-#18</b>：空间允许则加，否则降级脚注或不做。</li>
+</ol>
+
+<h2>九、论文标题建议（v2 新增）</h2>
+
+<p>当前标题：<code>ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting</code></p>
+
+<h4>评估</h4>
+<ul>
+<li class="pro">"Execution-Grounded" 是论文核心理论概念（§4 grounding gap / observation fidelity），与正文呼应，术语一致性高。</li>
+<li class="pro">简洁、符合 DAC "X: A Y for Z" 惯例。</li>
+<li class="con">"EDA Scripting" 偏泛——论文实际聚焦 <b>custom/analog</b> scripting（PyAether/SKILL/Tcl on commercial runtimes），与已有数字流程 EDA agent（ChatEDA/MCP4EDA/AutoEDA on Yosys/OpenLane）区分。标题未体现这一定位。</li>
+<li class="con">未体现 <b>benchmark</b>（EDA-Scripting-Bench，449 tasks）与<b>理论框架</b>（grounding gap）两个贡献——只突出了 system。</li>
+<li class="con">未传递核心发现"observation fidelity &gt; model scale"——这是 RQ1 的头条结论。</li>
+</ul>
+
+<h4>候选标题（按推荐度排序）</h4>
+
+<div class="title-card rec">
+<p><span class="tag t-rec">推荐 ★1</span> <b>ZhuLong: Execution-Grounded LLM Agents for EDA Scripting</b></p>
+<p class="small">改动极小（"An" → 删，"Agent" → "Agents" 复数化与 RQ3 多运行时呼应）。保留现标题的所有优点，去掉冗余冠词。<b>风险最低、收益清晰</b>——适合"想稳"的场景。</p>
+</div>
+
+<div class="title-card rec">
+<p><span class="tag t-rec">推荐 ★2</span> <b>ZhuLong: Closing the Grounding Gap in EDA Scripting with Execution-Grounded LLM Agents</b></p>
+<p class="small">把<b>核心理论贡献</b>"grounding gap"提到标题。与 §4 标题 "Theoretical Grounding: The Grounding Gap" 直接呼应，给评审一个理论锚点。<br>
+<span class="con">略长（14 词），但 DAC 历史上 14-16 词标题常见。</span><br>
+适合"想突出理论 + 区别纯系统论文"的场景。</p>
+</div>
+
+<div class="title-card">
+<p><span class="tag">候选 ★3</span> <b>ZhuLong: An Execution-Grounded LLM Agent and Benchmark for EDA Scripting</b></p>
+<p class="small">加 "and Benchmark" 突出<b>双贡献</b>（system + EDA-Scripting-Bench）。DAC 评审常看重 benchmark 贡献，标题点明可加分。<br>
+<span class="con">"An ... Agent and Benchmark" 略堆砌，节奏不如 ★1 紧凑。</span></p>
+</div>
+
+<div class="title-card">
+<p><span class="tag">候选 ★4</span> <b>ZhuLong: Observation Fidelity, Not Model Scale, Bounds LLM Agents for EDA Scripting</b></p>
+<p class="small">把<b>核心发现</b>（RQ1: observation &gt; scale）放标题，最具冲击力。<br>
+<span class="con">把结论放标题有争议——若评审质疑 57.4pp 归因（review A 已遇过），标题会被反噬。且"Observation Fidelity"是论文内术语，标题首次出现无解释，陌生读者可能跳过。</span><br>
+<b>不推荐</b>，除非想赌一把"标题即结论"的传播力。</p>
+</div>
+
+<div class="title-card">
+<p><span class="tag">候选 ★5</span> <b>ZhuLong: Execution-Grounded LLM Agents for Custom and Analog EDA Scripting</b></p>
+<p class="small">把"Custom and Analog"明确化，与数字流程 EDA agent（ChatEDA/MCP4EDA/AutoEDA）<b>标题级区隔</b>。related work 段已强调这一定位，标题呼应可强化。<br>
+<span class="con">"Custom and Analog" 缩窄了范围，但论文 Tcl slice 含 Innovus（floorplanning/place/route，偏数字后端），严格说不是"analog"——术语边界模糊可能被挑刺。</span><br>
+若选此标题，需把 §5 Innovus 描述改为"custom+back-end scripting"而非纯 analog。</p>
+</div>
+
+<div class="title-card">
+<p><span class="tag">候选 ★6</span> <b>ZhuLong: An LLM Agent that Orchestrates EDA Design Flows via Execution-Grounded Scripting</b></p>
+<p class="small">突出 abstract/intro 的"connective tissue / flow orchestration"定位——这是论文的<b>动机叙事钩子</b>。<br>
+<span class="con">标题把"orchestrate flows"与"scripting"并列，但论文实测是 per-task Pass@1，<b>没有端到端 flow 跑通的量化指标</b>。标题说"orchestrates flows"但实验只测单任务，可能被评审抓"claims vs evidence mismatch"。</span><br>
+<b>不推荐</b>——除非补一个 end-to-end flow case study。</p>
+</div>
+
+<h4>综合建议</h4>
+
+<div class="kbox note">
+<p><b>首选 ★1</b>（稳）：改动最小，保留现标题所有优点，去掉冗余冠词。若想<b>零风险</b>就选这个。</p>
+<p><b>次选 ★2</b>（突出理论）：把 "grounding gap" 提到标题，给评审一个理论锚点，区别于纯系统论文。DAC 评审里有 ML 理论背景的会买单。这是我<b>个人最推荐的</b>——论文的理论贡献（§4 贝叶斯框架 + 可证伪预测）是区别于其他 EDA agent 论文的核心差异点，标题应体现。</p>
+<p><b>不推荐 ★4 / ★6</b>：前者结论性标题有反噬风险，后者 claims-evidence mismatch。</p>
+<p><b>★3 / ★5</b>是中间选项：★3 突出 benchmark 双贡献，★5 突出 custom/analog 定位——但都有副作用（堆砌 / 范围边界模糊）。</p>
+</div>
+
+<hr>
+<p class="small">本报告 v2 基于 commit <code>b5a54062</code> 的论文 PDF + <code>zhulong_results.md</code> 原始 5-run 数据逐格核对。v2 较 v1 新增 3 条问题（中 #12 / 低 #16 / 低 #17）+ 第九章标题建议，原 15 条复核全部仍成立。评测侧 r1=58.9% / r2=75.9% / r3 跑中（30%），r2 已接近旧线 75.6±4.4% 表明 8192 配置未明显损失精度，<b>本报告不依赖未完成的 r3-r5</b>。</p>
+
+</body>
+</html>
