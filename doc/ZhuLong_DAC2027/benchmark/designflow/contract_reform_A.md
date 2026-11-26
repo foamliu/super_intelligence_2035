@@ -339,3 +339,55 @@ P1/P2/P3/P4 全闭合后首轮回归 spot-check。确认 r1274/r1275 判分逻�
 - ✅ 全量 116 条 verdict + reason + round 填入 live_eval_review_A.tsv
 - ⏳ 2 新 REQ 待冻结窗口解冻后 R2 改造（拆 check_static/check_live + route .75 + live-neg + §5 七项）
 
+---
+
+## R2 改造设计草案（待解冻 · 2026-11-26 r1313 只读深读）
+
+> **状态**：冻结窗口未解冻（zhulong r3' 47.8% 进行中，ETA ~00:12 Nov-27）⇒ 本节为**只读设计草案**，🚫 未改 check.py / cases / negative。解冻后照此执行 R2（≤3 条/轮，本 shard 恰好 2 条）。
+> **方法**：逐行精读 2 新 REQ 的 reference/check.py + 参考解，按 §2.1 两问（Q1 语义保真 / Q2 能否被骗）定罪，并设计 check_live + live-neg。改造手法遵 §3 非侵入包装（原 `check`→`_check_static_impl` 一字不动 + `check_static` 收口三元组 + `check_live(sess)` 新增 + `check` 兼容包装），judge_layers `[L0,L1]`→`[L0,L1,L2.live]`，JSON `test` 字段与磁盘 check.py sha 同步。
+
+### REQ-1 · VpsRegrErrorEngineer-001（k_check=12 a–l，level=L2，当前 [L0,L1]）
+
+**桩机制**：参考解 `engineer.py` 检测 `which("vcs")`；真 vcs 不在 PATH 时往 work_root 写一个「faithful vcs mock」（`_VCS_MOCK`，L42–212），解析 `-v` 库找 `module NAME(ports);` 缺分号→`Error-[SE]`，解析 `-f` filelist + `+define` 激活分支找未定义实例→`Error-[URMI]`；并给每个改后 `.sh` 前置 `export PATH="<work_root>:$PATH"`，使 check cond(h) 独立重跑 `.sh` 时命中 mock。
+
+**Q1 语义保真**：✅ 部分保真——mock 真解析库/filelist 计算 SE/URMI，非硬编码 GT 常量。⚠️ 但仅覆盖这 2 类错误，是真实 vcs 的**简化**；真实 vcs 对本 case 资产可能给出不同 error_code/分类（mock 教的"标准答案"可能偏离真 vcs）。这正是需 live 验的根因。
+
+**Q2 能否被骗**：✅ **能骗**——候选**同时控制**改后 `.sh` 内容与 `run_report.json`。一个不调 vcs 的候选可生成 `.sh` = `echo "Error-[SE] ... syntax error"; exit 1`（swap_svp）/ `echo "Error-[URMI] ... unresolved module"; exit 1`（strip_noerror），再伪造 `run_report.json` 匹配；check cond(h) 重跑该假 `.sh` 得到伪造 marker → 分类匹配伪造 report ⇒ **静态全过而不跑真 vcs**。cond(d) 只验 `.sh` 文本含 lib_bad/无 lib_good（候选保留 verilogrun 文本即可），不挡此骗。
+
+**check_live(sess) 设计**（route .75 真 vcs `/apps/synopsys/SRB/vcs/R-2020.12/bin/vcs`）：
+1. `sess` 上传 submit.zip + spec_A（A 用于 live 验；B 仍 hidden 不外泄）。
+2. 对 specA 每个 case：取**原始** verilogrun `.sh`，按 spec `mod`（swap_svp/strip_noerror/keep）应用修改（复用参考解 `apply_mod` 逻辑，**不**前置 mock PATH export），用真 vcs 跑 `_run_script`，得真 exit_code + log → `_classify` → **真 vcs ground-truth category**。
+3. 断言：候选 `run_report.json` per_case 的 `exit_code` 与 `category` **逐 case 等于**真 vcs ground-truth（容差：exit_code 精确等；category 精确等）。
+4. 附带断言：真 vcs log 含 vcs banner（`Chronologic VCS` / `$VCS_HOME`）证明确跑了真二进制（非 mock/非 echo）。
+5. **mock 保真性体检**（顺带产出）：若 mock 分类 ≠ 真 vcs 分类 ⇒ 记 `MOCK_DIVERGENCE` 报 A（题本身可能坏，按 §1.4 记 TODO(BLOCKED) 不退题）；若一致 ⇒ mock 保真确认，case 健康。
+
+**live-neg（静态过/实跑错）**：候选 `.sh` 用 `echo` 伪造 marker（swap_svp 全报 error1、strip_noerror 全报 error2）+ 伪造 report 匹配 → check_static cond(h) 过（假 marker 匹配假 report）→ check_live step3 真 vcs ground-truth 为 strip_noerror→error2 而候选 report 报 error1（或反之）⇒ **MISMATCH FAIL**。注入点：strip_noerror case 的真 vcs 可能产 error2(URMI)，候选统一伪造 error1(SE) 即可拉开差异。
+
+**§5 七项预检**：① ref 真 vcs PASS（解冻后验）；② ≥3 neg 含此 live-neg，first-fail distinct；③ 3-seed md5；④ SKIP_RUN=1 静态仍 PASS；⑤ judge_layers/test/check.py sha 三方同步；⑥ 断言只增（+真 vcs ground-truth 逐 case 等 + banner，不删 a–l）；⑦ hidden-B 不外泄、check_live 不读 reference/。
+
+### REQ-2 · TotemSC-001（k_check=14 a–n，当前 [L0,L1]）
+
+**桩机制**：check.py **永远**用 mock——`_setup_mock_finesim()`（L134）写 `MOCK_FINESIM_PY` 到 temp bin dir，`_find_finesim(mock_dir)` 优先命中 mock（L148–160），**即使 .75 有真 finesim 也不调用**。mock 只重现一个语义：`models.sp` 含 `.model ./` → `can't find model` error；候选把 `.model ./` 改成 `.model ` 后 → mock 报 success（`FineSim Successfully Completed`/`DC converged`/`End of Transient Analysis`）。check cond(f) 验 `.model ./` 计数==0；cond(h) 验 dut.log 新建且含 "FineSim"；cond(i–m) 验 report 字段 + log marker 双对齐。
+
+**Q1 语义保真**：⚠️ 弱保真——mock 只覆盖 `.model ./` 单语义，success 路径**无脑**写固定 banner（不真跑 DC/tran，不验模型语法合法性）。真实 FineSim 可能因模型参数/网表语法/transient 不收敛而失败，mock 全报 success。
+
+**Q2 能否被骗**：✅ **能骗**——候选控制 stage 目录，可直接**手写假 dut.log**（echo "FineSim Successfully Completed"/"DC converged"/"End of Transient Analysis"）+ 伪造 `finesim_fix_report.json` 匹配，**完全不跑 finesim**。check cond(h) 只验 dut.log 存在+新鲜+含 "FineSim"（候选自写全满足）；cond(f) 验 `.model ./` 计数==0（候选删掉或改掉即可）。⇒ 静态全过而无任何真 finesim 调用。
+
+**check_live(sess) 设计**（route .75 真 finesim `/apps/synopsys/SRB/finesim`）：
+1. `sess` 上传 submit.zip；在 .75 上 `_build_B(stage, seed)` 生成 hidden B（seed 101/202/303，复用 check.py 的 B 生成逻辑，**不读 reference/**）。
+2. 跑候选 `fix_finesim_models.py stage`（候选改写 `models.sp` 的 `.model ./`）。
+3. **跑真 finesim** `finesim -np 2 dut.sp`（cwd=stage），捕真 exit_code + dut.log。
+4. 断言：真 finesim exit==0 **且** log 无 `can't find model` **且** 含真 finesim success marker（`FineSim Successfully Completed` 或等效）**且**（若 log 可解析）transient 完成。3 seed 全一致。
+5. 断言：候选 report 的 `devices_fixed` == 真 B count（与静态 cond(g) 同源，live 层重验防伪造）。
+
+**live-neg（静态过/实跑错）**：候选**删除** `.model ./` 整行（而非改 `./`→`` ）⇒ mock 见 `.model ./` 计数==0 → success（mock 不验模型是否真定义）→ check_static 全过；但真 finesim 发现设备引用的模型未定义 → `can't find model` error exit≠0 ⇒ **check_live FAIL**。注入点明确、与静态正交。
+
+**§5 七项预检**：同 REQ-1；额外注意真 finesim license/可达（r1310 已确认 `/apps/synopsys/SRB/finesim` 在 .75 PATH）；若真 finesim 跑 B 网表超时/不收敛 ⇒ 记 `infra`（铁律 2）不写能力结论，降级 LIVE-OPT。
+
+### R2 执行清单（解冻后）
+1. VpsRegrErrorEngineer-001：非侵入包装 + check_live(route .75 真 vcs ground-truth 逐 case) + live-neg(echo 伪造 marker) + judge_layers/test sha 同步 + §5 七项自验。
+2. TotemSC-001：非侵入包装 + check_live(route .75 真 finesim) + live-neg(删 `.model ./` 行) + judge_layers/test sha 同步 + §5 七项自验。
+3. 两案 `negative_selftest.py` 同步登记 live-neg；`contract_reform_A.md` 记改造前后逐条 diff。
+4. 收口后报 zhulong（口径变更：2 条升 L2.live）。
+**🚫 冻结窗口内不落盘 check.py/cases；本节为只读设计，r1313。**
+
