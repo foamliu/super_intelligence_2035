@@ -478,3 +478,47 @@ deliverable = 文本/脚本/日志分析/网表变换/诊断报告/问答。chec
 - **文档修复**：3 条 NA pyAether case（CellCrtVw/RsCalcLabelAdd/SchPinAdd）的 `live_reason` 由通用 boilerplate（误提 hspice/finesim/calibre/vcs）细化为 pyAether-specific 的 Q1（无 mock 桩）/ Q2（deliverable=生成脚本非跑工具）推理；tsv 已更新，round=R1+R1.5(r1480复验)。
 - **关键判据确认**：lite-121 内 pyAether NA 族**均无自写 mock 桩**（pyAether 仅作候选 emit 脚本的 API token，check 跑候选 python 生成器校验输出结构），故 §2.1 Q1 N/A、Q2 低风险；与 Full 集里 hspice_mock/finesim_mock 假二进制桩（lite-121 外，本轮范围外）本质不同。
 - **冻结窗口**：zhulong r3' 仍进行中（run_batch PID 1498010 未收口），本轮纯只读复验 + tsv reason 细化，未触 check.py/cases/*.json。
+
+---
+
+## §R2 实测（r1482 · 用户令「不设等待」后 .75 实跑验证 · 修正 R2-prep FEASIBLE 误判）
+
+> 2026-11-26 20:5x 用户裁定「designflow=主线不设等待」+ §1.1 清账（zhulong r3' 已不在运行：`ps` 无 run_batch/zhulong 进程，status.jsonl tail 10:45 stale ⇒ 旧「冻结窗口」表述失效，已从 MEMORY 顶部删除，WAITING=0，心跳补 freeze-removed:2026-11-26）。本轮对 D 唯一 R2 FEASIBLE 候选 LDOGen-001 做 .75 实跑验证，**修正 R2-prep r1479 的 FEASIBLE 误判**（r1479 仅做 bare ptn smoke test w=2u/l=180n，未测真实 ref deliverable sizing）。
+
+### 实测过程（经 eda_flow MCP open_session→run_commands 在 .75 hfhds201）
+
+1. 本地跑 ref `gen_ldo.py` on `config_B.json` 生成 `dut_ldo.sp`（pass PMOS `Xpass vout ea_out vdd vdd ptn w=8.0u l=0.25u nf=400`，nf=400 来自 config_B `pass_nf=400`）。
+2. cp pinus lib（`Model_v1d0_pinus.sp` + `incFile_pinus` from `/apps/imctf/models/cxmt10G3/v1.0/`）+ 建 DC testbench（`.lib './Model_v1d0_pinus.sp' tt` + `.include dut_ldo.sp` + `XDUT ... ldo_b7` + VDD=1.2/VREF=0.6/ILOAD=10m + `.dc VDD 1.2 1.2 1` + `.meas dc dc_vout`）。
+3. real hspice V-2023.12-SP1-1 → **job aborted**：
+   ```
+   **error** (./incFile_pinus:6135) Reference ptn not found, or instance width or length
+   does not fit into the wmax/wmin or lmax/lmin range. It was referenced in element
+   xdut.xpass.mp1. The channel width=   7.280E-09 and length=   9.100E-08 .
+   ***** job aborted
+   ```
+   per-finger w = 8u/400 = 20nm × scale(0.364) = 7.28nm，违 pinus `ptn` BSIM `wmin`；l=0.25u×0.364=91nm。
+4. 根因隔离（3 变体独立 hspice job，各只含 1 个 ptn 元件）：
+
+| 变体 | sizing | hspice 结果 |
+|:--|:--|:--|
+| nf=400（ref 真实 sizing） | w=8u l=0.25u nf=400 | **job aborted**（per-finger w=7.28nm 违 wmin） |
+| nf=1 | w=8u l=0.25u nf=1 | job concluded（0.09s） |
+| nf=4 | w=8u l=0.25u nf=4 | job concluded（0.10s） |
+
+   ⇒ 确认 `nf=400`（per-finger w 过小）是唯一因。
+
+### 结论
+
+ref `dut_ldo.sp` 忠实 emit config_B `pass_nf=400`，但该 sizing 在真实 pinus `ptn` BSIM 物理非法 → real hspice DC/AC spec 验证（PSRR/gain/PM）**不可行**，除非改 `config_B.pass_nf`（assets 难度，§7 禁止）或改 ref deliverable（§7 禁止）⇒ 按 §3.6 降级 **LDOGen-001 OPT（FEASIBLE → BLOCKED-实测）**。静态设计方程 `R1/R2 = vout/vref − 1` 校验（cond o）防 Q2 维持，无判分变更。
+
+### 三分类与登记
+
+- 三分类**不变**：REQ=3（全闭合）· OPT=9 · NA=109。无 verdict 升降（LDOGen 仍 OPT，仅 evidence 由 FEASIBLE 改 BLOCKED-实测）；无 `judge_layers` 变更（仍 `[L0,L1]`）。
+- **无 `live_eval_changes.tsv` 登记**（§1.2 仅 `judge_layers` 变更才登记；本次仅 evidence 修正）。
+- **R2 OPT→L2.live 升级路径就此闭合**：LDOGen 实测 BLOCKED + DlySigmaSweep FEASIBLE-WITH-EFFORT（高 effort：v0.8p1 lib + MC deck + montecarlo setup）+ mock-pyAether 族 4 BLOCKED（缺 db* geometry API）+ RsCalcFlow 待 probe（CXMT 内部工具，非标准 EDA 二进制）+ PyaetherScreenshotVerifyQA PARTIAL（增量低）+ DominoPVTsweep/InvCSOpt 收口 ⇒ D shard 无低成本 OPT→L2.live 升级候选，**R2 实质收口**。
+
+### 产出
+
+- `live_eval_review_D.tsv` LDOGen 行 `live_evidence` 由 `check_live=FEASIBLE` 改 `check_live=BLOCKED(r1482 .75实测...)`，`round` = `R1+R2-prep+R2(r1482实测)`。
+- 本节（contract_reform_D.md §R2 实测）。
+- MEMORY §1.1 清账 + r1479/r1480 归档释体积。
