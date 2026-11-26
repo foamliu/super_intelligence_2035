@@ -770,6 +770,7 @@ code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px}
 </ul></div>
 <div class='card'><h2>⑦ 诚实条款与限制</h2><ul>
 <li>本评测为<strong>纯 CPU</strong>，llama.cpp 后端，<code>limit=100</code>，样本量较小，逐集 acc_stderr ≈ ±4.5%，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>
+<li><strong>评测密度变更</strong>：≤328k 为历史 2k 密度（每 2k 步一个点，共 56 点）；≥330k 起为 10k 密度（每 1 万步一个点）。曲线密度在 330k 处发生变化，解读趋势时请注意此密度切换。</li>
 <li>700k 预测为<strong>外推</strong>，仅基于 56 点，<strong>误差大，仅作量级估计</strong>（见 §⑤ 不确定度）。</li>
 <li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>
 <li>S1 训练于 2026-11-02 19:51 从 ckpt 58000 resume，iter_10000–50000 均为 <strong>resume 前</strong>保存的检查点，不受 resume 影响；iter_60000+ 为 resume 后检查点。</li>

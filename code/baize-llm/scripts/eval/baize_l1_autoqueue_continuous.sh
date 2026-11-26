@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
-# Continuous L1 autoqueue: evaluate every newly-landed 2k ckpt (>=274000) in order.
-# Per 11-21 user order "放行 autoqueue" + 11-09 order: serial, one ckpt at a time,
-# -t 4, nice 19, CPU only, MUST NOT drag training (step<7.4s).
+# Continuous L1 autoqueue: evaluate every 10k-boundary ckpt (>=MIN_ITER) in order.
+# Per 11-26 user order "每 1w 步评测一次" (supersedes 11-21 2k cadence) + 11-09 order:
+# serial, one ckpt at a time, -t 4, nice 19, CPU only, MUST NOT drag training (step<7.4s).
 #
 # Design:
 #   1. Serial guard -- wait for ANY running llama-server to exit (so the 272k
 #      one-shot autoqueue finishes first; no two evals overlap).
-#   2. Find the lowest unevaluated ckpt >= MIN_ITER (274000) whose dir is stable.
+#   2. Find the lowest unevaluated 10k-boundary ckpt >= MIN_ITER whose dir is stable.
 #   3. Re-check it is still unevaluated right before eval (race safety).
 #   4. Check train step time < 7.4s; if not, pause 10 min and retry.
 #   5. HF export -> patch config -> check_rope -> GGUF F16 -> lm_eval 8-set
 #      limit=100 -> regenerate scaling report -> delete GGUF (keep results.json).
 #   6. Loop back to 1.
 #
-# 270k / 272k are handled by their own one-shot scripts (already running/done);
-# this daemon starts from 274k so there is no double-eval.
+# 270k / 272k are handled by their own one-shot scripts (already done);
+# this daemon starts from MIN_ITER=274000 so there is no double-eval.
+# 2026-11-26: cadence changed from every 2k to every 10k (iter % 10000 == 0).
+# Already-evaluated 2k-density points (274k–328k) are kept; non-10k ckpts
+# without results are now skipped.
 set -uo pipefail
 export CUDA_VISIBLE_DEVICES=''
 export OMP_NUM_THREADS=4
@@ -90,6 +93,10 @@ next_iter() {
     it=$((10#$it))
     [ "$it" -ge "$MIN_ITER" ] 2>/dev/null || continue
     [ "$it" -le "$MAX_ITER" ] 2>/dev/null || continue
+    # Per 2026-11-26 user order: only evaluate 10k-boundary ckpts (iter % 10000 == 0).
+    # This supersedes the previous 2k cadence. Already-evaluated non-10k points
+    # (274k–328k at 2k density) are kept via has_results; new non-10k ckpts are skipped.
+    [ $((it % 10000)) -eq 0 ] || continue
     has_results "$it" && continue
     ckpt_stable "$d" || continue
     if [ -z "$best" ] || [ "$it" -lt "$best" ]; then best="$it"; fi

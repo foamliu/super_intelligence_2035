@@ -61,8 +61,9 @@ TARGET_ITERS = [10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 1
 def discover_iters():
     """动态扫描 RESULTS_BASE，找出所有已落盘 results.json 的 gguf_iter_<n>_fixed_8set。
 
-    2026-11-21 用户令放行 autoqueue 后，万整数评测改为每 2k 步一个点（270k/272k/274k…），
-    不再限于静态 TARGET_ITERS 的 10k 级。本函数让报告自动纳入任何已评测检查点。
+    2026-11-21 用户令放行 autoqueue 后，评测改为每 2k 步一个点（270k/272k/274k…）。
+    2026-11-26 用户令改为每 10k 步一个点（iter % 10000 == 0）。
+    本函数让报告自动纳入任何已评测检查点，无论密度如何。
     """
     found = set()
     try:
@@ -531,6 +532,9 @@ def build_html(data, now_str):
     h.append("<div class='card'><h2>⑦ 诚实条款与限制</h2><ul>")
     h.append("<li>本评测为<strong>纯 CPU</strong>，llama.cpp 后端，<code>limit=100</code>，样本量较小，"
              "逐集 acc_stderr ≈ ±4.5%，<strong>Avg 趋势比单集绝对值更可信</strong>。</li>")
+    h.append("<li><strong>评测密度变更</strong>：≤328k 为历史 2k 密度（每 2k 步一个点，共 56 点）；"
+             "≥330k 起为 10k 密度（每 1 万步一个点）。曲线密度在 330k 处发生变化，"
+             "解读趋势时请注意此密度切换。</li>")
     h.append(f"<li>700k 预测为<strong>外推</strong>，仅基于 {len(steps_for_fit)} 点，"
              "<strong>误差大，仅作量级估计</strong>（见 §⑤ 不确定度）。</li>")
     h.append("<li>Xmodel-2 / Phi-1.5 参照线为公开报告值，评测口径可能与我方不完全一致，仅作量级参照。</li>")
