@@ -1,57 +1,0 @@
-=== incr_eval_2routes R1268 START Mon Nov  2 08:04:39 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
-[Mon Nov  2 08:04:39 AM CST 2026] === merge codex predictions ===
-codex: 243 real patches merged
-[Mon Nov  2 08:04:39 AM CST 2026] === codex eval START 2 new instances ===
-Running 2 instances...
-  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:32<00:32, 32.08s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:32<00:32, 32.08s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:38<00:00, 19.43s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:38<00:00, 19.43s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:38<00:00, 19.44s/it]
-All instances run.
-Total instances: 2
-Instances submitted: 2
-Instances completed: 2
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 1
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 1
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 1
-Unremoved images: 2
-Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
-[Mon Nov  2 08:05:21 AM CST 2026] === codex eval DONE ===
-[Mon Nov  2 08:05:21 AM CST 2026] === merge hermes predictions ===
-hermes: 108 real patches merged
-[Mon Nov  2 08:05:21 AM CST 2026] === hermes eval START 1 new instances ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.59s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.59s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.59s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 0
-Instances unresolved: 1
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
-[Mon Nov  2 08:05:51 AM CST 2026] === hermes eval DONE ===
-[Mon Nov  2 08:05:51 AM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
-  opencode: unchanged (n=497 resolved=401 failed=96 infra=0)
-  pi: unchanged (n=463 resolved=333 failed=130 infra=0)
-  claude-code: unchanged (n=358 resolved=273 failed=85 infra=0)
-  codex: WROTE eval_codex.json  n=243 resolved=188 failed=55 infra=0
-  hermes: WROTE eval_hermes.json  n=108 resolved=84 failed=24 infra=0
-  deepseek-harness: unchanged (n=100 resolved=81 failed=19 infra=0)
-[Mon Nov  2 08:05:52 AM CST 2026] === gen report HTML ===
-  pi           done=500/500 patch=463 no_patch=4 infra=25 eval=Y resolved=333
-  claude-code  done=500/500 patch=358 no_patch=67 infra=67 eval=Y resolved=273
-  codex        done=500/500 patch=243 no_patch=68 infra=184 eval=Y resolved=188
-  hermes       done=199/500 patch=107 no_patch=48 infra=43 eval=Y resolved=84
-  deepseek-harness done=264/500 patch=98 no_patch=4 infra=118 eval=Y resolved=81
-=== incr_eval_2routes R1268 DONE Mon Nov  2 08:05:52 AM CST 2026 ===

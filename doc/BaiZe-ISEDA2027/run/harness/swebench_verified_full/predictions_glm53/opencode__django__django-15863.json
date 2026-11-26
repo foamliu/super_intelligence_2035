@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-15863",
-    "model_name_or_path": "opencode-glm-5.3-flash",
-    "model_patch": "diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py\nindex 7a5b28d159..23c3a08c67 100644\n--- a/django/template/defaultfilters.py\n+++ b/django/template/defaultfilters.py\n@@ -151,7 +151,7 @@ def floatformat(text, arg=-1):\n             use_l10n = False\n             arg = arg[:-1] or -1\n     try:\n-        input_val = repr(text)\n+        input_val = str(text)\n         d = Decimal(input_val)\n     except InvalidOperation:\n         try:\ndiff --git a/tests/template_tests/filter_tests/test_floatformat.py b/tests/template_tests/filter_tests/test_floatformat.py\nindex 8dc69b2437..d76b695a20 100644\n--- a/tests/template_tests/filter_tests/test_floatformat.py\n+++ b/tests/template_tests/filter_tests/test_floatformat.py\n@@ -56,6 +56,12 @@ class FunctionTests(SimpleTestCase):\n         self.assertEqual(floatformat(0.12345, 2), \"0.12\")\n         self.assertEqual(floatformat(Decimal(\"555.555\"), 2), \"555.56\")\n         self.assertEqual(floatformat(Decimal(\"09.000\")), \"9\")\n+        self.assertEqual(\n+            floatformat(\n+                Decimal(\"12345678901234567890.12345678901234567890\"), 20\n+            ),\n+            \"12345678901234567890.12345678901234567890\",\n+        )\n         self.assertEqual(floatformat(\"foo\"), \"\")\n         self.assertEqual(floatformat(13.1031, \"bar\"), \"13.1031\")\n         self.assertEqual(floatformat(18.125, 2), \"18.13\")\n"
-  }
-]

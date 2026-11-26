@@ -1,17 +1,0 @@
-Warning: Missing predictions for 1 instance IDs.
-Running 4 instances...
-  0%|          | 0/4 [00:00<?, ?it/s] 25%|██▌       | 1/4 [00:22<01:07, 22.57s/it]1 ran successfully, 0 failed:  25%|██▌       | 1/4 [00:22<01:07, 22.57s/it]1 ran successfully, 0 failed:  50%|█████     | 2/4 [00:22<00:22, 11.36s/it]2 ran successfully, 0 failed:  50%|█████     | 2/4 [00:22<00:22, 11.36s/it]2 ran successfully, 0 failed:  75%|███████▌  | 3/4 [00:24<00:08,  8.25s/it]3 ran successfully, 0 failed:  75%|███████▌  | 3/4 [00:24<00:08,  8.25s/it]3 ran successfully, 0 failed: 100%|██████████| 4/4 [05:25<00:00, 81.37s/it]4 ran successfully, 0 failed: 100%|██████████| 4/4 [05:25<00:00, 81.37s/it]4 ran successfully, 0 failed: 100%|██████████| 4/4 [05:25<00:00, 81.37s/it]
-All instances run.
-Total instances: 5
-Instances submitted: 4
-Instances completed: 4
-Instances incomplete: 1
-Instances resolved: 2
-Instances unresolved: 2
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 5
-Report written to deepseek-harness-kimi-k2.6-cloud.verify5b_deepseek.json

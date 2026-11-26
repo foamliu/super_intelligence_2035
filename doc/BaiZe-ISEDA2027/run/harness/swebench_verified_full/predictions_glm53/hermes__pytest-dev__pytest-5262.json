@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-5262",
-    "model_name_or_path": "hermes-glm-5.3-flash",
-    "model_patch": "diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 25eab7fdf..560171134 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -447,6 +447,10 @@ class EncodedFile(object):\n         \"\"\"Ensure that file.name is a string.\"\"\"\n         return repr(self.buffer)\n \n+    @property\n+    def mode(self):\n+        return self.buffer.mode.replace(\"b\", \"\")\n+\n     def __getattr__(self, name):\n         return getattr(object.__getattribute__(self, \"buffer\"), name)\n \ndiff --git a/testing/test_capture.py b/testing/test_capture.py\nindex 5d80eb63d..01312bac8 100644\n--- a/testing/test_capture.py\n+++ b/testing/test_capture.py\n@@ -944,6 +944,11 @@ def test_dupfile_on_bytesio():\n     assert \"BytesIO object\" in f.name\n \n \n+def test_dupfile_on_bytesio_with_binary_mode():\n+    f = capture.safe_text_dupfile(io.BytesIO(), \"wb\")\n+    assert f.mode == \"w\"\n+\n+\n def test_dupfile_on_textio():\n     tio = py.io.TextIO()\n     f = capture.safe_text_dupfile(tio, \"wb\")\n"
-  }
-]

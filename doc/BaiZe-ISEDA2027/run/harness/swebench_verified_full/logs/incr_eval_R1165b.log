@@ -1,56 +1,0 @@
-=== incr_eval R1165b START Sun Nov  1 12:45:13 PM CST 2026 ===
-[Sun Nov  1 12:45:13 PM CST 2026] === pi eval: sympy__sympy-12419 ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:22<00:00, 22.47s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:22<00:00, 22.47s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:22<00:00, 22.47s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
-[Sun Nov  1 12:45:39 PM CST 2026] === pi eval DONE ===
-[Sun Nov  1 12:45:39 PM CST 2026] === hermes eval: 3 astropy instances ===
-Running 3 instances...
-  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:24<00:48, 24.16s/it]1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:24<00:48, 24.16s/it]1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:24<00:12, 12.17s/it]2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:24<00:12, 12.17s/it]2 ran successfully, 0 failed: 100%|██████████| 3/3 [00:26<00:00,  8.99s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:26<00:00,  8.99s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:26<00:00,  8.99s/it]
-All instances run.
-Total instances: 3
-Instances submitted: 3
-Instances completed: 3
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 2
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 3
-Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
-[Sun Nov  1 12:46:10 PM CST 2026] === hermes eval DONE ===
-[Sun Nov  1 12:46:10 PM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
-  opencode: WROTE eval_opencode.json  n=491 resolved=397 failed=94 infra=0
-  pi: WROTE eval_pi.json  n=411 resolved=299 failed=112 infra=0
-  claude-code: unchanged (n=344 resolved=263 failed=81 infra=0)
-  codex: unchanged (n=224 resolved=176 failed=48 infra=0)
-  hermes: WROTE eval_hermes.json  n=68 resolved=50 failed=18 infra=0
-  deepseek-harness: unchanged (n=73 resolved=57 failed=16 infra=0)
-[Sun Nov  1 12:46:11 PM CST 2026] === gen report HTML ===
-written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (15374B)
-  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=326
-  opencode     done=500/500 patch=491 no_patch=-1 infra=0 eval=Y resolved=397
-  pi           done=500/500 patch=412 no_patch=21 infra=59 eval=Y resolved=299
-  claude-code  done=500/500 patch=344 no_patch=79 infra=70 eval=Y resolved=263
-  codex        done=500/500 patch=224 no_patch=74 infra=197 eval=Y resolved=176
-  hermes       done=102/500 patch=67 no_patch=34 infra=0 eval=Y resolved=50
-  deepseek-harness done=219/500 patch=71 no_patch=4 infra=118 eval=Y resolved=57
-=== incr_eval R1165b DONE Sun Nov  1 12:46:11 PM CST 2026 ===

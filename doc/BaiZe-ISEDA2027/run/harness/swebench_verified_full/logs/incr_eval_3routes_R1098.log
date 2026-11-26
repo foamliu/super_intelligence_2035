@@ -1,77 +1,0 @@
-=== incr_eval_3routes R1098 START Sat Oct 31 11:46:13 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
-[Sat Oct 31 11:46:13 PM CST 2026] === merge codex predictions ===
-codex: 216 real patches merged
-[Sat Oct 31 11:46:13 PM CST 2026] === codex eval START 1 new instances ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:24<00:00, 24.74s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.74s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.74s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 0
-Instances unresolved: 1
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
-[Sat Oct 31 11:46:42 PM CST 2026] === codex eval DONE ===
-[Sat Oct 31 11:46:42 PM CST 2026] === merge deepseek-harness predictions ===
-deepseek-harness: 55 real patches merged
-[Sat Oct 31 11:46:42 PM CST 2026] === deepseek-harness eval START 1 new instances ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.22s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.22s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.22s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
-[Sat Oct 31 11:47:11 PM CST 2026] === deepseek-harness eval DONE ===
-[Sat Oct 31 11:47:11 PM CST 2026] === merge hermes predictions ===
-hermes: 42 real patches merged
-[Sat Oct 31 11:47:11 PM CST 2026] === hermes eval START 1 new instances ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:32<00:00, 32.78s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:32<00:00, 32.78s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:32<00:00, 32.78s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 0
-Instances unresolved: 1
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
-[Sat Oct 31 11:47:48 PM CST 2026] === hermes eval DONE ===
-[Sat Oct 31 11:47:48 PM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
-  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
-  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
-  claude-code: unchanged (n=334 resolved=257 failed=77 infra=0)
-  codex: WROTE eval_codex.json  n=216 resolved=169 failed=47 infra=0
-  hermes: WROTE eval_hermes.json  n=42 resolved=31 failed=11 infra=0
-  deepseek-harness: WROTE eval_deepseek-harness.json  n=55 resolved=43 failed=12 infra=0
-[Sat Oct 31 11:47:49 PM CST 2026] === gen report HTML ===
-  pi           done=500/500 patch=410 no_patch=23 infra=59 eval=Y resolved=298
-  claude-code  done=428/500 patch=334 no_patch=87 infra=1 eval=Y resolved=257
-  codex        done=485/500 patch=216 no_patch=79 infra=185 eval=Y resolved=169
-  hermes       done=66/500 patch=41 no_patch=25 infra=0 eval=Y resolved=31
-  deepseek-harness done=185/500 patch=53 no_patch=4 infra=112 eval=Y resolved=43
-=== incr_eval_3routes R1098 DONE Sat Oct 31 11:47:49 PM CST 2026 ===

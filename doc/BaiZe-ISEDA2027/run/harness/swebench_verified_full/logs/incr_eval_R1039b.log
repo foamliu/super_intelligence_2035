@@ -1,93 +1,0 @@
-=== incr_eval R1039b START Sat Oct 31 11:33:46 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
-cline-patched: merged 442 patches, report_json=441, uneval=1
-opencode: merged 488 patches, report_json=487, uneval=1
-pi: merged 410 patches, report_json=410, uneval=0
-claude-code: merged 302 patches, report_json=301, uneval=1
-codex: merged 194 patches, report_json=192, uneval=2
-hermes: merged 23 patches, report_json=23, uneval=0
-deepseek-harness: merged 32 patches, report_json=32, uneval=0
-[Sat Oct 31 11:33:47 AM CST 2026] === cline-patched eval START 1 instances: scikit-learn__scikit-learn-14710  ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [01:04<00:00, 64.26s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:04<00:00, 64.26s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:04<00:00, 64.26s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json
-[Sat Oct 31 11:34:56 AM CST 2026] === cline-patched eval DONE ===
-[Sat Oct 31 11:34:56 AM CST 2026] === opencode eval START 1 instances: scikit-learn__scikit-learn-14710  ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [01:22<00:00, 82.15s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:22<00:00, 82.15s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:22<00:00, 82.15s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to opencode-kimi-k2.6-cloud.verified_full_opencode.json
-[Sat Oct 31 11:36:22 AM CST 2026] === opencode eval DONE ===
-[Sat Oct 31 11:36:22 AM CST 2026] pi: no unevaluated IDs, skip
-[Sat Oct 31 11:36:22 AM CST 2026] === claude-code eval START 1 instances: django__django-12708  ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:28<00:00, 28.53s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:28<00:00, 28.53s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:28<00:00, 28.53s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json
-[Sat Oct 31 11:36:55 AM CST 2026] === claude-code eval DONE ===
-[Sat Oct 31 11:36:55 AM CST 2026] === codex eval START 2 instances: django__django-11490 django__django-11532  ===
-Running 2 instances...
-  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:24<00:24, 25.00s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:24<00:24, 25.00s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:25<00:00, 12.93s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:25<00:00, 12.93s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:25<00:00, 12.93s/it]
-All instances run.
-Total instances: 2
-Instances submitted: 2
-Instances completed: 2
-Instances incomplete: 0
-Instances resolved: 2
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 2
-Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
-[Sat Oct 31 11:37:25 AM CST 2026] === codex eval DONE ===
-[Sat Oct 31 11:37:25 AM CST 2026] hermes: no unevaluated IDs, skip
-[Sat Oct 31 11:37:25 AM CST 2026] deepseek-harness: no unevaluated IDs, skip
-[Sat Oct 31 11:37:25 AM CST 2026] === regen summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: WROTE eval_cline-patched.json  n=442 resolved=326 failed=116 infra=0
-  opencode: WROTE eval_opencode.json  n=488 resolved=395 failed=93 infra=0
-  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
-  claude-code: WROTE eval_claude-code.json  n=302 resolved=230 failed=72 infra=0
-  codex: WROTE eval_codex.json  n=194 resolved=153 failed=41 infra=0
-  hermes: unchanged (n=23 resolved=16 failed=7 infra=0)
-  deepseek-harness: unchanged (n=32 resolved=26 failed=6 infra=0)
-=== incr_eval R1039b DONE Sat Oct 31 11:37:25 AM CST 2026 ===

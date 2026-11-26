@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sphinx-doc__sphinx-8548",
-    "model_name_or_path": "opencode-glm-5.3-flash",
-    "model_patch": "diff --git a/tests/test_repro_issue741.py b/tests/test_repro_issue741.py\nnew file mode 100644\nindex 00000000..d16c68bb\n--- /dev/null\n+++ b/tests/test_repro_issue741.py\n@@ -0,0 +1,11 @@\n+import pytest\n+\n+from tests.test_ext_autodoc import do_autodoc\n+\n+\n+@pytest.mark.sphinx('html', testroot='ext-autodoc')\n+def test_repro_inherited_attr(app):\n+    options = {\"members\": None,\n+               \"inherited-members\": None}\n+    actual = do_autodoc(app, 'class', 'target.inheritance_attr.Derived', options)\n+    print('\\n'.join(actual))\n"
-  }
-]

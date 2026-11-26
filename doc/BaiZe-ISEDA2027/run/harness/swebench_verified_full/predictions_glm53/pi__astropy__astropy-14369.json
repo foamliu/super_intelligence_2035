@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "astropy__astropy-14369",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/astropy_helpers b/astropy_helpers\nnew file mode 160000\nindex 00000000..7f11678c\n--- /dev/null\n+++ b/astropy_helpers\n@@ -0,0 +1 @@\n+Subproject commit 7f11678c03286f72acc9bab77868dabaeb368fda\n"
-  }
-]

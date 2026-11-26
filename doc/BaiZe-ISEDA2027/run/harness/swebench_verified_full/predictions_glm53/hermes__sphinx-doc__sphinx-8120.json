@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sphinx-doc__sphinx-8120",
-    "model_name_or_path": "hermes-glm-5.3-flash",
-    "model_patch": "diff --git a/sphinx/application.py b/sphinx/application.py\nindex 385b74d8a..bdd234425 100644\n--- a/sphinx/application.py\n+++ b/sphinx/application.py\n@@ -293,7 +293,9 @@ class Sphinx:\n                 if catalog.domain == 'sphinx' and catalog.is_outdated():\n                     catalog.write_mo(self.config.language)\n \n-            locale_dirs = [None, path.join(package_dir, 'locale')] + list(repo.locale_dirs)\n+            # Note: The user's locale directories are searched first to allow\n+            # users to override the built-in messages (e.g. sphinx.mo).\n+            locale_dirs = list(repo.locale_dirs) + [None, path.join(package_dir, 'locale')]\n             self.translator, has_translation = locale.init(locale_dirs, self.config.language)\n             if has_translation or self.config.language == 'en':\n                 # \"en\" never needs to be translated\n"
-  }
-]

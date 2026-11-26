@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-11555",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/repro_bug.py b/repro_bug.py\nnew file mode 100644\nindex 0000000000..112ff14edf\n--- /dev/null\n+++ b/repro_bug.py\n@@ -0,0 +1,30 @@\n+import django\n+from django.conf import settings\n+\n+settings.configure(\n+    DEBUG=True,\n+    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},\n+    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth', 'ordering'],\n+    DEFAULT_AUTO_FIELD='django.db.models.AutoField',\n+)\n+django.setup()\n+\n+from ordering.models import Author, Article\n+call_command('migrate', run_syncdb=True, verbosity=0)\n+\n+from tests.ordering.models import Author, Article\n+\n+# Ordering by a reverse relation to a model whose Meta.ordering\n+# contains expressions -> find_ordering_name() recursion -> get_order_dir()\n+# receives an expression object instead of a string.\n+try:\n+    list(Author.objects.order_by('article'))\n+    print('OK: Author.objects.order_by(\"article\")')\n+except Exception as e:\n+    print('CRASH 1: %r' % (e,))\n+\n+try:\n+    list(Author.objects.order_by('-article'))\n+    print('OK: Author.objects.order_by(\"-article\")')\n+except Exception as e:\n+    print('CRASH 2: %r' % (e,))\n"
-  }
-]

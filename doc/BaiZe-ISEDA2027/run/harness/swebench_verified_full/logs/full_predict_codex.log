@@ -1,4 +1,0 @@
-[verified-full 13:18:53] resume: loaded 10 existing results
-[verified-full 13:18:53] [1/500] PREDICT codex on django__django-13128
-[verified-full 13:49:43]   -> no-patch (patch=0B wall=1800.6s)
-[verified-full 13:49:43] [2/500] PREDICT codex on django__django-13158

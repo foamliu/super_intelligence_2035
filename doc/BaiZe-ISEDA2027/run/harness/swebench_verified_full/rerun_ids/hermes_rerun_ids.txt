@@ -1,4 +1,0 @@
-sympy__sympy-19495
-sympy__sympy-21612
-sympy__sympy-22080
-sympy__sympy-22456

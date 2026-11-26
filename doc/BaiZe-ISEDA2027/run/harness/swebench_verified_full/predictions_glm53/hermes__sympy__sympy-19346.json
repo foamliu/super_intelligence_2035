@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-19346",
-    "model_name_or_path": "hermes-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/printing/repr.py b/sympy/printing/repr.py\nindex c936a692c0..b8942fa53f 100644\n--- a/sympy/printing/repr.py\n+++ b/sympy/printing/repr.py\n@@ -250,6 +250,15 @@ def _print_tuple(self, expr):\n         else:\n             return \"(%s)\" % self.reprify(expr, \", \")\n \n+    def _print_dict(self, expr):\n+        return \"{%s}\" % \", \".join(\n+            \"%s: %s\" % (self._print(key), self._print(value))\n+            for key, value in expr.items())\n+\n+    def _print_set(self, expr):\n+        # {} is an empty dict, so use the set([...]) constructor form\n+        return \"set([%s])\" % self.reprify(expr, \", \")\n+\n     def _print_WildFunction(self, expr):\n         return \"%s('%s')\" % (expr.__class__.__name__, expr.name)\n \ndiff --git a/sympy/printing/tests/test_repr.py b/sympy/printing/tests/test_repr.py\nindex f749683ff7..b43b44bcb4 100644\n--- a/sympy/printing/tests/test_repr.py\n+++ b/sympy/printing/tests/test_repr.py\n@@ -193,6 +193,17 @@ def test_tuple():\n     sT((x, y), \"(Symbol('x'), Symbol('y'))\")\n \n \n+def test_dict():\n+    sT({x: y}, \"{Symbol('x'): Symbol('y')}\")\n+    sT({1: x}, \"{1: Symbol('x')}\")\n+\n+\n+def test_set():\n+    sT({x}, \"set([Symbol('x')])\")\n+    # order of a set is not deterministic, so just check the round trip\n+    assert eval(srepr({x, y})) == {x, y}\n+\n+\n def test_WildFunction():\n     sT(WildFunction('w'), \"WildFunction('w')\")\n \n"
-  }
-]

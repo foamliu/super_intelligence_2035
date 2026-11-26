@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-20916",
-    "model_name_or_path": "opencode-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py\nindex 9a3be6bb..5e3aa1ab 100644\n--- a/sympy/printing/conventions.py\n+++ b/sympy/printing/conventions.py\n@@ -7,7 +7,7 @@\n from collections.abc import Iterable\n from sympy import Derivative\n \n-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')\n+_name_with_digits_p = re.compile(r'^([^\\W\\d_]+)([0-9]+)$')\n \n \n def split_super_sub(text):\ndiff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py\nindex 87689aa8..1eaebdcb 100644\n--- a/sympy/printing/tests/test_conventions.py\n+++ b/sympy/printing/tests/test_conventions.py\n@@ -30,6 +30,8 @@ def test_super_sub():\n     assert split_super_sub(\"alpha_11\") == (\"alpha\", [], [\"11\"])\n     assert split_super_sub(\"alpha_11_11\") == (\"alpha\", [], [\"11\", \"11\"])\n     assert split_super_sub(\"\") == (\"\", [], [])\n+    assert split_super_sub(\"\u03c90\") == (\"\u03c9\", [], [\"0\"])\n+    assert split_super_sub(\"\u03c9\") == (\"\u03c9\", [], [])\n \n \n def test_requires_partial():\n"
-  }
-]

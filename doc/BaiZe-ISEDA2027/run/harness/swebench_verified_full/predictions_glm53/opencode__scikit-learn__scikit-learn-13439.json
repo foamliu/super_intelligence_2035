@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-13439",
-    "model_name_or_path": "opencode-glm-5.3-flash",
-    "model_patch": "diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py\nindex 7eaf9a46..fe79cfa0 100644\n--- a/sklearn/pipeline.py\n+++ b/sklearn/pipeline.py\n@@ -219,6 +219,12 @@ class Pipeline(_BaseComposition):\n             return self.named_steps[ind]\n         return est\n \n+    def __len__(self):\n+        \"\"\"\n+        Returns the length of the Pipeline\n+        \"\"\"\n+        return len(self.steps)\n+\n     @property\n     def _estimator_type(self):\n         return self.steps[-1][1]._estimator_type\ndiff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py\nindex 8d6fe8f7..d965c84b 100644\n--- a/sklearn/tests/test_pipeline.py\n+++ b/sklearn/tests/test_pipeline.py\n@@ -552,6 +552,14 @@ def test_pipeline_index():\n     assert_raises(KeyError, lambda: pipe['foobar'])\n \n \n+def test_pipeline_len():\n+    pipe = Pipeline([('transf1', Transf()),\n+                     ('transf2', Transf()),\n+                     ('clf', FitParamT())])\n+    assert 3 == len(pipe)\n+    assert 3 == len(pipe[:2])\n+\n+\n def test_set_pipeline_steps():\n     transf1 = Transf()\n     transf2 = Transf()\n"
-  }
-]

@@ -1,62 +1,0 @@
-=== incr_eval_pi_claude R1004 START Sat Oct 31 05:02:36 AM CST 2026 ===
-[Sat Oct 31 05:02:36 AM CST 2026] === merge pi predictions ===
-pi: 403 patches merged, 403 eval IDs
-[Sat Oct 31 05:02:37 AM CST 2026] === pi eval START 403 instances (swebench skips already-done) ===
-400 instances already run, skipping...
-Running 3 instances...
-  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:23<00:46, 23.14s/it]1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:23<00:46, 23.14s/it]1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:23<00:11, 11.70s/it]2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:23<00:11, 11.70s/it]2 ran successfully, 0 failed: 100%|██████████| 3/3 [00:23<00:00,  7.84s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:23<00:00,  7.84s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:23<00:00,  7.84s/it]
-All instances run.
-Total instances: 403
-Instances submitted: 403
-Instances completed: 403
-Instances incomplete: 0
-Instances resolved: 294
-Instances unresolved: 109
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 8
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 403
-Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
-[Sat Oct 31 05:03:06 AM CST 2026] === pi eval DONE rc=0 ===
-[Sat Oct 31 05:03:06 AM CST 2026] === merge claude-code predictions ===
-claude-code: 288 patches merged, 288 eval IDs
-[Sat Oct 31 05:03:06 AM CST 2026] === claude-code eval START 288 instances (swebench skips already-done) ===
-283 instances already run, skipping...
-Running 5 instances...
-  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:26<01:44, 26.02s/it]1 ran successfully, 0 failed:  20%|██        | 1/5 [00:26<01:44, 26.02s/it]1 ran successfully, 0 failed:  40%|████      | 2/5 [00:27<00:40, 13.59s/it]2 ran successfully, 0 failed:  40%|████      | 2/5 [00:27<00:40, 13.59s/it]2 ran successfully, 0 failed:  60%|██████    | 3/5 [00:28<00:19,  9.60s/it]3 ran successfully, 0 failed:  60%|██████    | 3/5 [00:28<00:19,  9.60s/it]3 ran successfully, 0 failed:  80%|████████  | 4/5 [00:31<00:07,  7.84s/it]4 ran successfully, 0 failed:  80%|████████  | 4/5 [00:31<00:07,  7.84s/it]4 ran successfully, 0 failed: 100%|██████████| 5/5 [30:17<00:00, 363.58s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [30:17<00:00, 363.58s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [30:17<00:00, 363.58s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 288
-Instances submitted: 288
-Instances completed: 287
-Instances incomplete: 0
-Instances resolved: 218
-Instances unresolved: 69
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 12
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 288
-Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json
-[Sat Oct 31 05:33:29 AM CST 2026] === claude-code eval DONE rc=0 ===
-[Sat Oct 31 05:33:29 AM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=442 resolved=325 failed=116 infra=1)
-  opencode: unchanged (n=488 resolved=394 failed=93 infra=1)
-  pi: WROTE eval_pi.json  n=403 resolved=294 failed=109 infra=0
-  claude-code: WROTE eval_claude-code.json  n=288 resolved=218 failed=69 infra=1
-  codex: unchanged (n=185 resolved=144 failed=41 infra=0)
-  hermes: no run dir /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/run_evaluation/verified_full_hermes — skip
-  deepseek-harness: no run dir /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/run_evaluation/verified_full_deepseek-harness — skip
-[Sat Oct 31 05:33:30 AM CST 2026] === gen report HTML ===
-written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (13182B)
-  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=325
-  opencode     done=500/500 patch=488 no_patch=2 infra=0 eval=Y resolved=394
-  pi           done=493/500 patch=404 no_patch=22 infra=59 eval=Y resolved=294
-  claude-code  done=366/500 patch=288 no_patch=73 infra=0 eval=Y resolved=218
-  codex        done=438/500 patch=186 no_patch=62 infra=185 eval=Y resolved=144
-=== incr_eval_pi_claude R1004 DONE Sat Oct 31 05:33:30 AM CST 2026 ===

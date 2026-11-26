@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-7521",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/changelog/7517.bugfix.rst b/changelog/7517.bugfix.rst\nnew file mode 100644\nindex 0000000..3466cbd\n--- /dev/null\n+++ b/changelog/7517.bugfix.rst\n@@ -0,0 +1 @@\n+Fix a regression in pytest 6.0.0rc1: :meth:`capfd.readouterr() <_pytest.capture.CaptureFixture.readouterr>` no longer converts ``\\r`` to ``\\n``.\ndiff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 3f9c60f..f538b67 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -388,6 +388,7 @@ class FDCaptureBinary:\n                 TemporaryFile(buffering=0),  # type: ignore[arg-type]\n                 encoding=\"utf-8\",\n                 errors=\"replace\",\n+                newline=\"\",\n                 write_through=True,\n             )\n             if targetfd in patchsysdict:\ndiff --git a/testing/test_capture.py b/testing/test_capture.py\nindex a3bd4b6..b526a2a 100644\n--- a/testing/test_capture.py\n+++ b/testing/test_capture.py\n@@ -970,6 +970,11 @@ class TestFDCapture:\n     def test_capfd_sys_stdout_mode(self, capfd):\n         assert \"b\" not in sys.stdout.mode\n \n+    def test_cafd_includes_carriage_return(self, capfd):\n+        print(\"Greetings from DOS\", end=\"\\r\")\n+        out, err = capfd.readouterr()\n+        assert out.endswith(\"\\r\")\n+\n \n @contextlib.contextmanager\n def saved_fd(fd):\n"
-  }
-]

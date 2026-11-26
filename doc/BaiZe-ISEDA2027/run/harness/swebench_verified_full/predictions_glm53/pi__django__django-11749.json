@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-11749",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/repro_28360.py b/repro_28360.py\nnew file mode 100644\nindex 0000000000..efd677847e\n--- /dev/null\n+++ b/repro_28360.py\n@@ -0,0 +1,30 @@\n+import django\n+from django.conf import settings\n+\n+settings.configure(DEBUG=True, INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'])\n+django.setup()\n+\n+from django.core.management import call_command\n+from django.core.management.base import BaseCommand, CommandError\n+\n+\n+class Command(BaseCommand):\n+    def add_arguments(self, parser):\n+        shop = parser.add_mutually_exclusive_group(required=True)\n+        shop.add_argument('--shop-id', nargs='?', type=int, default=None, dest='shop_id')\n+        shop.add_argument('--shop', nargs='?', type=str, default=None, dest='shop_name')\n+\n+    def handle(self, *args, **options):\n+        print('OK: shop_id=%r shop_name=%r' % (options['shop_id'], options['shop_name']))\n+\n+\n+# Works: option passed as a CLI-style arg.\n+call_command(Command(), '--shop-id=1')\n+\n+# Fails: option passed as a kwarg.\n+try:\n+    call_command(Command(), shop_id=1)\n+except CommandError as e:\n+    print('FAIL (kwarg): %s' % e)\n+else:\n+    print('PASS (kwarg)')\n"
-  }
-]

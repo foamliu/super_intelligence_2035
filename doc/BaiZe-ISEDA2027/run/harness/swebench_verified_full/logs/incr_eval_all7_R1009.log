@@ -1,175 +1,0 @@
-=== incr_eval_all7 R1009 START Sat Oct 31 06:07:31 AM CST 2026 ===
-[Sat Oct 31 06:07:31 AM CST 2026] === merge cline-patched predictions ===
-cline-patched: 442 patches merged, 442 eval IDs
-[Sat Oct 31 06:07:32 AM CST 2026] === cline-patched eval START 442 instances ===
-441 instances already run, skipping...
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [30:16<00:00, 1816.89s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:16<00:00, 1816.89s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:16<00:00, 1816.89s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 442
-Instances submitted: 442
-Instances completed: 441
-Instances incomplete: 0
-Instances resolved: 325
-Instances unresolved: 116
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 19
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 442
-Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json
-[Sat Oct 31 06:37:55 AM CST 2026] === cline-patched eval DONE rc=0 ===
-[Sat Oct 31 06:37:55 AM CST 2026] === merge opencode predictions ===
-opencode: 488 patches merged, 488 eval IDs
-[Sat Oct 31 06:37:55 AM CST 2026] === opencode eval START 488 instances ===
-487 instances already run, skipping...
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [30:17<00:00, 1817.05s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:17<00:00, 1817.05s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [30:17<00:00, 1817.05s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 488
-Instances submitted: 488
-Instances completed: 487
-Instances incomplete: 0
-Instances resolved: 394
-Instances unresolved: 93
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 13
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 488
-Report written to opencode-kimi-k2.6-cloud.verified_full_opencode.json
-[Sat Oct 31 07:08:17 AM CST 2026] === opencode eval DONE rc=0 ===
-[Sat Oct 31 07:08:17 AM CST 2026] === merge claude-code predictions ===
-claude-code: 293 patches merged, 293 eval IDs
-[Sat Oct 31 07:08:17 AM CST 2026] === claude-code eval START 293 instances ===
-287 instances already run, skipping...
-Running 6 instances...
-  0%|          | 0/6 [00:00<?, ?it/s] 17%|█▋        | 1/6 [00:25<02:08, 25.74s/it]1 ran successfully, 0 failed:  17%|█▋        | 1/6 [00:25<02:08, 25.74s/it]2 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:25<00:51, 12.91s/it]2 ran successfully, 0 failed:  50%|█████     | 3/6 [00:26<00:26,  8.84s/it]3 ran successfully, 0 failed:  50%|█████     | 3/6 [00:26<00:26,  8.84s/it]4 ran successfully, 0 failed:  67%|██████▋   | 4/6 [00:26<00:13,  6.73s/it]4 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:27<00:05,  5.43s/it]5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:27<00:05,  5.43s/it]5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:40<00:08,  8.00s/it]5 ran successfully, 0 failed: 100%|██████████| 6/6 [30:18<00:00, 303.05s/it]6 ran successfully, 0 failed: 100%|██████████| 6/6 [30:18<00:00, 303.05s/it]6 ran successfully, 0 failed: 100%|██████████| 6/6 [30:18<00:00, 303.05s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 293
-Instances submitted: 293
-Instances completed: 292
-Instances incomplete: 0
-Instances resolved: 222
-Instances unresolved: 70
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 12
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 293
-Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json
-[Sat Oct 31 07:38:39 AM CST 2026] === claude-code eval DONE rc=0 ===
-[Sat Oct 31 07:38:39 AM CST 2026] === merge codex predictions ===
-codex: 189 patches merged, 189 eval IDs
-[Sat Oct 31 07:38:39 AM CST 2026] === codex eval START 189 instances ===
-185 instances already run, skipping...
-Running 4 instances...
-  0%|          | 0/4 [00:00<?, ?it/s] 25%|██▌       | 1/4 [00:24<01:12, 24.00s/it]1 ran successfully, 0 failed:  25%|██▌       | 1/4 [00:24<01:12, 24.00s/it]1 ran successfully, 0 failed:  50%|█████     | 2/4 [00:25<00:25, 12.77s/it]2 ran successfully, 0 failed:  50%|█████     | 2/4 [00:25<00:25, 12.77s/it]2 ran successfully, 0 failed:  75%|███████▌  | 3/4 [00:27<00:09,  9.09s/it]3 ran successfully, 0 failed:  75%|███████▌  | 3/4 [00:27<00:09,  9.09s/it]3 ran successfully, 0 failed: 100%|██████████| 4/4 [00:27<00:00,  6.84s/it]4 ran successfully, 0 failed: 100%|██████████| 4/4 [00:27<00:00,  6.84s/it]4 ran successfully, 0 failed: 100%|██████████| 4/4 [00:27<00:00,  6.84s/it]
-All instances run.
-Total instances: 189
-Instances submitted: 189
-Instances completed: 189
-Instances incomplete: 0
-Instances resolved: 148
-Instances unresolved: 41
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 7
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 189
-Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
-[Sat Oct 31 07:39:11 AM CST 2026] === codex eval DONE rc=0 ===
-[Sat Oct 31 07:39:11 AM CST 2026] === merge pi predictions ===
-pi: 410 patches merged, 410 eval IDs
-[Sat Oct 31 07:39:11 AM CST 2026] === pi eval START 410 instances ===
-403 instances already run, skipping...
-Running 7 instances...
-  0%|          | 0/7 [00:00<?, ?it/s] 14%|█▍        | 1/7 [00:22<02:13, 22.24s/it]1 ran successfully, 0 failed:  14%|█▍        | 1/7 [00:22<02:13, 22.24s/it]1 ran successfully, 0 failed:  29%|██▊       | 2/7 [00:23<00:59, 11.95s/it]2 ran successfully, 0 failed:  29%|██▊       | 2/7 [00:23<00:59, 11.95s/it]2 ran successfully, 0 failed:  43%|████▎     | 3/7 [00:24<00:32,  8.09s/it]3 ran successfully, 0 failed:  43%|████▎     | 3/7 [00:24<00:32,  8.09s/it]3 ran successfully, 0 failed:  57%|█████▋    | 4/7 [00:24<00:18,  6.13s/it]4 ran successfully, 0 failed:  57%|█████▋    | 4/7 [00:24<00:18,  6.13s/it]4 ran successfully, 0 failed:  71%|███████▏  | 5/7 [00:24<00:09,  4.93s/it]5 ran successfully, 0 failed:  71%|███████▏  | 5/7 [00:24<00:09,  4.93s/it]5 ran successfully, 0 failed:  86%|████████▌ | 6/7 [00:29<00:04,  4.84s/it]6 ran successfully, 0 failed:  86%|████████▌ | 6/7 [00:29<00:04,  4.84s/it]6 ran successfully, 0 failed: 100%|██████████| 7/7 [00:30<00:00,  4.31s/it]7 ran successfully, 0 failed: 100%|██████████| 7/7 [00:30<00:00,  4.31s/it]7 ran successfully, 0 failed: 100%|██████████| 7/7 [00:30<00:00,  4.31s/it]
-All instances run.
-Total instances: 410
-Instances submitted: 410
-Instances completed: 410
-Instances incomplete: 0
-Instances resolved: 298
-Instances unresolved: 112
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 8
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 410
-Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
-[Sat Oct 31 07:39:47 AM CST 2026] === pi eval DONE rc=0 ===
-[Sat Oct 31 07:39:47 AM CST 2026] === merge hermes predictions ===
-hermes: 17 patches merged, 17 eval IDs
-[Sat Oct 31 07:39:47 AM CST 2026] === hermes eval START 17 instances ===
-14 instances already run, skipping...
-Running 3 instances...
-  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:23<00:47, 23.55s/it]1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:23<00:47, 23.55s/it]1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:27<00:13, 13.96s/it]2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:27<00:13, 13.96s/it]2 ran successfully, 0 failed: 100%|██████████| 3/3 [00:28<00:00,  9.43s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:28<00:00,  9.43s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:28<00:00,  9.43s/it]
-All instances run.
-Total instances: 17
-Instances submitted: 17
-Instances completed: 17
-Instances incomplete: 0
-Instances resolved: 11
-Instances unresolved: 6
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 17
-Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
-[Sat Oct 31 07:40:19 AM CST 2026] === hermes eval DONE rc=0 ===
-[Sat Oct 31 07:40:19 AM CST 2026] === merge deepseek-harness predictions ===
-deepseek-harness: 27 patches merged, 27 eval IDs
-[Sat Oct 31 07:40:19 AM CST 2026] === deepseek-harness eval START 27 instances ===
-19 instances already run, skipping...
-Running 8 instances...
-  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:26<03:04, 26.42s/it]1 ran successfully, 0 failed:  12%|█▎        | 1/8 [00:26<03:04, 26.42s/it]1 ran successfully, 0 failed:  25%|██▌       | 2/8 [00:29<01:27, 14.56s/it]2 ran successfully, 0 failed:  25%|██▌       | 2/8 [00:29<01:27, 14.56s/it]2 ran successfully, 0 failed:  38%|███▊      | 3/8 [00:29<00:49,  9.81s/it]3 ran successfully, 0 failed:  38%|███▊      | 3/8 [00:29<00:49,  9.81s/it]3 ran successfully, 0 failed:  50%|█████     | 4/8 [00:29<00:29,  7.44s/it]4 ran successfully, 0 failed:  50%|█████     | 4/8 [00:29<00:29,  7.44s/it]4 ran successfully, 0 failed:  62%|██████▎   | 5/8 [00:40<00:24,  8.03s/it]5 ran successfully, 0 failed:  62%|██████▎   | 5/8 [00:40<00:24,  8.03s/it]5 ran successfully, 0 failed:  75%|███████▌  | 6/8 [01:38<00:32, 16.44s/it]6 ran successfully, 0 failed:  75%|███████▌  | 6/8 [01:38<00:32, 16.44s/it]6 ran successfully, 0 failed:  88%|████████▊ | 7/8 [01:40<00:14, 14.40s/it]7 ran successfully, 0 failed:  88%|████████▊ | 7/8 [01:40<00:14, 14.40s/it]7 ran successfully, 0 failed: 100%|██████████| 8/8 [30:18<00:00, 227.35s/it]8 ran successfully, 0 failed: 100%|██████████| 8/8 [30:18<00:00, 227.35s/it]8 ran successfully, 0 failed: 100%|██████████| 8/8 [30:18<00:00, 227.35s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 27
-Instances submitted: 27
-Instances completed: 26
-Instances incomplete: 0
-Instances resolved: 21
-Instances unresolved: 5
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 1
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 27
-Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
-[Sat Oct 31 08:10:41 AM CST 2026] === deepseek-harness eval DONE rc=0 ===
-[Sat Oct 31 08:10:41 AM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=442 resolved=325 failed=116 infra=1)
-  opencode: unchanged (n=488 resolved=394 failed=93 infra=1)
-  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
-  claude-code: unchanged (n=293 resolved=222 failed=70 infra=1)
-  codex: unchanged (n=189 resolved=148 failed=41 infra=0)
-  hermes: unchanged (n=17 resolved=11 failed=6 infra=0)
-  deepseek-harness: unchanged (n=27 resolved=21 failed=5 infra=1)
-[Sat Oct 31 08:10:42 AM CST 2026] === gen report HTML ===
-written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (15349B)
-  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=325
-  opencode     done=500/500 patch=488 no_patch=2 infra=0 eval=Y resolved=394
-  pi           done=500/500 patch=410 no_patch=23 infra=59 eval=Y resolved=298
-  claude-code  done=376/500 patch=295 no_patch=76 infra=0 eval=Y resolved=222
-  codex        done=444/500 patch=189 no_patch=65 infra=185 eval=Y resolved=148
-  hermes       done=25/500 patch=17 no_patch=8 infra=0 eval=Y resolved=11
-  deepseek-harness done=35/500 patch=26 no_patch=4 infra=1 eval=Y resolved=21
-=== incr_eval_all7 R1009 DONE Sat Oct 31 08:10:42 AM CST 2026 ===

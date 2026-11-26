@@ -1,27 +1,0 @@
-[Tue Nov  3 07:25:13 PM CST 2026] === hermes eval START sphinx-7454 ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:23<00:00, 23.40s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.40s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.40s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 9
-Unremoved images: 1
-Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
-[Tue Nov  3 07:25:40 PM CST 2026] === hermes eval DONE ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=500 resolved=326 failed=116 infra=0 no_patch=58)
-  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
-  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
-  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
-  codex: unchanged (n=421 resolved=246 failed=66 infra=0 no_patch=109)
-  hermes: WROTE eval_hermes.json  n=280 resolved=162 failed=45 infra=0 no_patch=73)
-  deepseek-harness: unchanged (n=171 resolved=137 failed=28 infra=0 no_patch=6)
-=== R1452b DONE Tue Nov  3 07:25:41 PM CST 2026 ===

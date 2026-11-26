@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-16801",
-    "model_name_or_path": "opencode-glm-5.3-flash",
-    "model_patch": "diff --git a/django/db/models/fields/files.py b/django/db/models/fields/files.py\nindex 7f8eb128e..7468ba675 100644\n--- a/django/db/models/fields/files.py\n+++ b/django/db/models/fields/files.py\n@@ -441,7 +441,9 @@ class ImageField(FileField):\n         # after their corresponding image field don't stay cleared by\n         # Model.__init__, see bug #11196.\n         # Only run post-initialization dimension update on non-abstract models\n-        if not cls._meta.abstract:\n+        # The signal handler is a noop if width_field and height_field are\n+        # not set, so avoid connecting it in that case.\n+        if not cls._meta.abstract and (self.width_field or self.height_field):\n             signals.post_init.connect(self.update_dimension_fields, sender=cls)\n \n     def update_dimension_fields(self, instance, force=False, *args, **kwargs):\n"
-  }
-]

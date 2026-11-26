@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-13925",
-    "model_name_or_path": "hermes-glm-5.3-flash",
-    "model_patch": "diff --git a/django/db/models/options.py b/django/db/models/options.py\nindex 4028e05b99..a45487bb81 100644\n--- a/django/db/models/options.py\n+++ b/django/db/models/options.py\n@@ -280,6 +280,10 @@ class Options:\n                 if already_created:\n                     field = already_created[0]\n                 field.primary_key = True\n+                try:\n+                    field.auto_created = field.reverse_related_fields[0][0].auto_created\n+                except ValueError:\n+                    pass\n                 self.setup_pk(field)\n             else:\n                 pk_class = self._get_default_pk_class()\ndiff --git a/tests/check_framework/test_model_checks.py b/tests/check_framework/test_model_checks.py\nindex d4342ada07..9b5b873098 100644\n--- a/tests/check_framework/test_model_checks.py\n+++ b/tests/check_framework/test_model_checks.py\n@@ -395,6 +395,15 @@ class ModelDefaultAutoFieldTests(SimpleTestCase):\n             ),\n         ])\n \n+    def test_inherited_pk(self):\n+        class Parent(models.Model):\n+            id = models.AutoField(primary_key=True)\n+\n+        class Child(Parent):\n+            pass\n+\n+        self.assertEqual(checks.run_checks(app_configs=self.apps.get_app_configs()), [])\n+\n     @override_settings(DEFAULT_AUTO_FIELD='django.db.models.BigAutoField')\n     def test_default_auto_field_setting(self):\n         class Model(models.Model):\n"
-  }
-]

@@ -1,7 +1,0 @@
-=== incr_eval_deepseek R1071 START Sat Oct 31 05:57:55 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
-[Sat Oct 31 05:57:55 PM CST 2026] === re-merge deepseek-harness predictions (avoid stale merge) ===
-deepseek-harness: 40 patches merged, 40 eval IDs
-[Sat Oct 31 05:57:55 PM CST 2026] === deepseek-harness eval START 40 instances (stable run_id skips already-done) ===
-39 instances already run, skipping...
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]

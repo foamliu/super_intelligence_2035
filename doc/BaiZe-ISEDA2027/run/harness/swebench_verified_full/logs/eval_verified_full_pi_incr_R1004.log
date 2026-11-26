@@ -1,17 +1,0 @@
-400 instances already run, skipping...
-Running 3 instances...
-  0%|          | 0/3 [00:00<?, ?it/s] 33%|███▎      | 1/3 [00:23<00:46, 23.14s/it]1 ran successfully, 0 failed:  33%|███▎      | 1/3 [00:23<00:46, 23.14s/it]1 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:23<00:11, 11.70s/it]2 ran successfully, 0 failed:  67%|██████▋   | 2/3 [00:23<00:11, 11.70s/it]2 ran successfully, 0 failed: 100%|██████████| 3/3 [00:23<00:00,  7.84s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:23<00:00,  7.84s/it]3 ran successfully, 0 failed: 100%|██████████| 3/3 [00:23<00:00,  7.84s/it]
-All instances run.
-Total instances: 403
-Instances submitted: 403
-Instances completed: 403
-Instances incomplete: 0
-Instances resolved: 294
-Instances unresolved: 109
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 8
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 403
-Report written to pi-kimi-k2.6-cloud.verified_full_pi.json

@@ -1,5 +1,0 @@
-regen_eval_summaries: cline-patched, deepseek-harness
-  cline-patched: scanned 4 run dir(s), 457 instances with report.json
-  cline-patched: WROTE eval_cline-patched.json  n=466 resolved=337 failed=120 infra=1 no_patch=8)
-  deepseek-harness: scanned 5 run dir(s), 219 instances with report.json
-  deepseek-harness: WROTE eval_deepseek-harness.json  n=228 resolved=181 failed=38 infra=2 no_patch=7)

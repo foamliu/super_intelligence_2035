@@ -1,40 +1,0 @@
-=== incr_eval R1083c START Sat Oct 31 08:30:23 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
-[Sat Oct 31 08:30:23 PM CST 2026] === merge hermes predictions ===
-hermes: 38 real patches merged
-[Sat Oct 31 08:30:23 PM CST 2026] === hermes eval START 1 instances: sympy__sympy-20154 ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:23<00:00, 23.09s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.09s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.09s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
-[Sat Oct 31 08:30:50 PM CST 2026] === hermes eval DONE ===
-[Sat Oct 31 08:30:50 PM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
-  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
-  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
-  claude-code: unchanged (n=322 resolved=248 failed=74 infra=0)
-  codex: unchanged (n=209 resolved=165 failed=44 infra=0)
-  hermes: WROTE eval_hermes.json  n=38 resolved=29 failed=9 infra=0
-  deepseek-harness: unchanged (n=44 resolved=35 failed=9 infra=0)
-[Sat Oct 31 08:30:51 PM CST 2026] === gen report HTML ===
-written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (15374B)
-  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=326
-  opencode     done=500/500 patch=488 no_patch=2 infra=0 eval=Y resolved=395
-  pi           done=500/500 patch=410 no_patch=23 infra=59 eval=Y resolved=298
-  claude-code  done=414/500 patch=322 no_patch=85 infra=1 eval=Y resolved=248
-  codex        done=475/500 patch=209 no_patch=76 infra=185 eval=Y resolved=165
-  hermes       done=59/500 patch=37 no_patch=22 infra=0 eval=Y resolved=29
-  deepseek-harness done=173/500 patch=42 no_patch=4 infra=112 eval=Y resolved=35
-=== incr_eval R1083c DONE Sat Oct 31 08:30:51 PM CST 2026 ===

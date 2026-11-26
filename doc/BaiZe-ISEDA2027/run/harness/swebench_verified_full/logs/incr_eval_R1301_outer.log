@@ -1,71 +1,0 @@
-[R1301] start 16:19:06
-[R1301] === merge codex predictions ===
-codex: 272 patches merged, 272 eval IDs
-[R1301] === codex eval START scikit-learn__scikit-learn-26323 ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.76s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.76s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.76s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 4
-Unremoved images: 1
-Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
-[R1301] === codex eval DONE rc=0 ===
-[R1301] === regen eval summaries for codex ===
-regen_eval_summaries: codex
-  codex: WROTE eval_codex.json  n=272 resolved=214 failed=58 infra=0
-[R1301] === merge hermes predictions ===
-hermes: 129 patches merged, 129 eval IDs
-[R1301] === hermes eval START django__django-14089 ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.95s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.95s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.95s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 2
-Unremoved images: 1
-Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
-[R1301] === hermes eval DONE rc=0 ===
-[R1301] === regen eval summaries for hermes ===
-regen_eval_summaries: hermes
-  hermes: WROTE eval_hermes.json  n=129 resolved=102 failed=27 infra=0
-[R1301] === merge deepseek-harness predictions ===
-deepseek-harness: 117 patches merged, 117 eval IDs
-[R1301] === deepseek-harness eval START django__django-13810 ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:24<00:00, 24.52s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.52s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.52s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
-[R1301] === deepseek-harness eval DONE rc=0 ===
-[R1301] === regen eval summaries for deepseek-harness ===
-regen_eval_summaries: deepseek-harness
-  deepseek-harness: WROTE eval_deepseek-harness.json  n=117 resolved=97 failed=20 infra=0
-[R1301] ALL DONE 16:20:35

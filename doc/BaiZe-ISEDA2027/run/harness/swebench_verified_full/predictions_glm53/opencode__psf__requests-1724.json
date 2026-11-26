@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "psf__requests-1724",
-    "model_name_or_path": "opencode-glm-5.3-flash",
-    "model_patch": "diff --git a/requests/sessions.py b/requests/sessions.py\nindex cc72f65..68c549f 100644\n--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -22,7 +22,7 @@ from .structures import CaseInsensitiveDict\n \n from .adapters import HTTPAdapter\n \n-from .utils import requote_uri, get_environ_proxies, get_netrc_auth\n+from .utils import requote_uri, get_environ_proxies, get_netrc_auth, to_native_string\n \n from .status_codes import codes\n REDIRECT_STATI = (\n@@ -311,7 +311,7 @@ class Session(SessionRedirectMixin):\n         \"\"\"\n         # Create the Request.\n         req = Request(\n-            method = method.upper(),\n+            method = to_native_string(method).upper(),\n             url = url,\n             headers = headers,\n             files = files,\n"
-  }
-]
