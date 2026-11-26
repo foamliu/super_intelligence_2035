@@ -332,3 +332,36 @@ def check_live(sess):
 2. CdlBulkSanitize-001 作为 R2 首条改造样板（通路+设计稿已就绪）：落 _check_static_impl/check_static/check_live + judge_layers=[L0,L1,L2.live] + live-neg + §5 七项自验。
 3. 其余 39 条 Type A 按家族批量复用样板（hspice-mock → finesim-mock）。
 - 心跳：`LIVE: B review=126/126 · REQ=40(done 0) · OPT=8(done 0) · NA=76 · L2.live 0→0`（done 仍 0，未落盘）。
+
+---
+
+## R2 改造（2026-11-26 r1294 · 冻结已清除 · designflow 主线）
+
+> **§1.1 清账**：2026-11-26 20:5x 用户裁定「designflow 主、zhulong 辅，不设等待」⇒ 本节清除上方 r1293「仍只读/冻结中」表述。
+> `freeze-removed: 2026-11-26`。主树 check.py/cases 本轮起正常改，仅在 `live_eval_changes.tsv` 登记。
+
+### R2-001：CdlBulkSanitize-001（hspice-mock · Type A）✅ DONE
+
+- **改造手法（§3 非侵入包装）**：
+  1. 原 `check` → 改名 `_check_static_impl`，**一字不动**（12 断言 a..l + mock + return True 原封保留）。
+  2. `check_static(deliverable, workdir)` 包 try/except，收口三元组 `(ok, errs, stage)`。
+  3. 新增 `check_live(deliverable, workdir, sess)`：经 eda_flow 在 .75 跑真 hspice（`/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/hspice`），上传 deliverable + hidden B → 候选 sanitize → 组同款 INVXB testbench → 真跑 hspice → 读真实 `.mt0` → 断**同物理量同阈值**（v_lo < 0.15·VPWR / v_hi > 0.85·VPWR，与 cond j/k 一致，只增不减）。不读 reference/、不读隐藏 GT 文件。
+  4. `check()` 兼容包装保留；case JSON `metadata.judge_layers` → `["L0","L1","L2.live"]`；JSON `test` 字段与磁盘 `check.py` sha 三方同步（sha256 短=`87f20ed995fa`，34261B 一致）。
+  5. **live-neg** = `negative/cheat_wl_corrupt.py`：正确 bulk 显式化（过静态 cond c-h + mock 回放 GT 过 cond i/j/k/l）但 W/L 篡改 `w=1e-21u l=1e3u`（电死反相器）⇒ 静态全过、实跑产物错。`negative_selftest.py` 同步登记（静态 5 neg FAIL distinct + live-neg static-pass/live-fail）。
+
+- **§5 七项自验（全勾）**：
+  - ① `.75` 真跑 ref（L2.live）PASS：`hostname=hfhds201`，hspice V-2023.12-SP1-1 license ok，wall <1s，`.mt0` v_lo=-2.545e-07 / v_hi=0.72（==mock GT，Q1 保真），产物 md5=`602f3f777be0c65eaa947a69204a5ab2`。
+  - ② ≥3 neg 全 FAIL、first-fail distinct（{b,c,d,e}=4-distinct），含 1 条 live-neg（cheat_wl_corrupt：static PASS / live FAIL）。
+  - ③ 3-seed 确定性：ref `.mt0` md5 三次一致（`602f3f777be0c65eaa947a69204a5ab2`）。
+  - ④ 静态判分仍 PASS：`check_static(ref_zip)` → PASS 12/12（实跑层独立，不拖垮静态）。
+  - ⑤ `judge_layers`/JSON `test`/磁盘 `check.py` sha 三方同步（`87f20ed995fa`）。
+  - ⑥ 断言条数只增不减、阈值不放宽、条件不删：`_check_static_impl` 原文未改一字；`check_live` 新增 2 条同阈值物理断言（v_lo/v_hi）。
+  - ⑦ L5 不退化：hidden-B 不外泄（框架上传，check_live 不读 reference/）；`check_live` 不读 `reference/`；沙箱不含 `.jsonl`/`test` 字段。
+
+- **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
+- **心跳**：`LIVE: B review=126/126 · REQ=40(done 1) · OPT=8(done 0) · NA=76 · L2.live 0→1`。
+
+### R2 续办（下一轮）
+- 其余 39 条 Type A 按家族批量复用 CdlBulkSanitize 样板（hspice-mock 优先 → finesim-mock）。
+- B 预算 ≤6-8 条/轮（§4 前提：逐条独立自验、wall ≤90min、.75 串行、单条不过降级 BLOCKED）。
+- 优先序：AlterDeckSplit / AOI21ArcChar / SpiceSim / InvTripDelay ...（hspice-mock，GT 签名维度少）。
