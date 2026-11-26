@@ -612,3 +612,27 @@ assign full = (wr_ptr_gray == {~wr_ptr_gray_sync2[PTR_WIDTH-1],
 - ✅ 只动：live_eval_review_A.tsv（2 行 verdict/reason/evidence 更新）+ 本文档（OPT 表 + §R3 节）
 - ✅ 不登记 live_eval_changes.tsv（本轮无 judge_layers 变更，仅审视结论）
 - .75 两 session 均已 close_session cleaned
+
+---
+
+## R3.1 · AsyncFifoSim-001 — REQ-BLOCKED → DONE (r1321, ref-bug-fix + check_live 落盘)
+
+**背景**：r1320 OPT 收口发现 ref `full` 检测用 MSB-only 翻转（`{~sync2[W-1], sync2[W-2:0]}`），按 Cummings 对 DEPTH=2^ADDR_WIDTH 应翻转 top-2-bit（gray(N) 与 gray(N-DEPTH) 差 top-2）。MSB-only 导致 full 永不置位 → FIFO 溢出 → 真 VCS TEST FAILED 3err。OPT「static sufficient, no false-pos」被证伪（16-cond 静态放过功能坏 FIFO）。判 REQ-BLOCKED 待 ref+TB 修复。
+
+**本轮修复（r1321）**：
+1. **ref full fix**（`async_fifo_template.v`）：`{~sync2[PTR_WIDTH-1], sync2[PTR_WIDTH-2:0]}` → `{~sync2[PTR_WIDTH-1], ~sync2[PTR_WIDTH-2], sync2[PTR_WIDTH-3:0]}`（Cummings top-2-bit）。
+2. **TB race fix**（`async_fifo_tb.sv`）：
+   - `do_write`/`do_read`：原 `posedge+#1` 复检 `!full`/`!empty` 漏 push（flag 刚置位）→ 改 **negedge-decide / posedge-commit / #1-push**（full/empty 在 negedge→posedge 间稳定，因指针 reg 只 posedge NBA 更新）。
+   - `do_write` 加 `#1` 让 DUT `always_ff` 采 `wr_en=1`（NBA）再 deassert —— 修 VCS active-region race（无 #1 时 `wr_en=1'b0` 抢先 DUT 采样 → wr_ptr=0 不 commit，debug 实测 wcount=19 但 wr_ptr_bin=0）。
+   - phase3：单循环 `posedge+#1` 复检 racy → **fork/join 双进程**（writer/reader 各 negedge-decide/posedge-commit），wq/rq 跟踪 ACTUAL commit。
+3. **check_live 非侵入包装**：`_check_static_impl`（原 check 16 cond a-p 一字不动）+ `check_static`（三元组）+ `check_live(deliverable, workdir, sess)`（upload submit.zip → unzip → `make run` → 断 `ALL TESTS PASSED` + `Chronologic VCS` banner）+ `check`（兼容）。
+4. **live-neg**：`negative/live_msb_only_bug/`（buggy RTL MSB-only full + 正确 TB）—— 静态过 cond(f) `~[W-1]` pattern / 实跑 TEST FAILED 3err（full-asserted/fill_level/phase3）。
+5. **negative_selftest** 改：区分 static-neg（3 条 FAIL distinct{c,d,o}）vs live-neg（静态 PASS，牙在 check_live .75）。
+
+**.75 实跑（hfhds201, VCS R-2020.12）**：ref `make run` → **ALL TESTS PASSED** 3/3 runs（determinism, wall ~18s）；live-neg → TEST FAILED 3err。session close_session cleaned。
+
+**§5 七项全绿**：① ref check_live PASS 3/3 ② 3 static neg FAIL distinct{c,d,o} + live-neg FAIL ③ 3-seed ④ SKIP_RUN loads clean（neg_selftest REF PASS）⑤ sha 876a1144 3-way sync（JSON test / 磁盘 check.py / test_sha8）⑥ 断言只增（check_static 一字不动，check_live 新增 live 断言）⑦ workdir leak check pass（workdir clean, no check.py/reference/hidden）。
+
+**口径变更**：`judge_layers` [L0,L1] → [L0,L1,L2.live]，已登记 `live_eval_changes.tsv`。A shard REQ 7 done 7（0 BLOCKED），L2.live 8→11。
+
+**纪律**：🚫 未改 prompt/assets/hidden/断言严格度/strictness/别 shard/jsonl/论文宏。✅ 改：check.py（非侵入包装）+ ref RTL/TB（bug fix）+ reference_submit.zip（regen）+ negative/live_msb_only_bug（新）+ negative_selftest.py + case JSON（judge_layers/level/test sha）。
