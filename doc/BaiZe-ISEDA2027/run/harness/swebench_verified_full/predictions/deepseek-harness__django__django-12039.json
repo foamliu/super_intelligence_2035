@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-12039",
-    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/db/backends/ddl_references.py b/django/db/backends/ddl_references.py\nindex 44e49806f8..784e9b68c2 100644\n--- a/django/db/backends/ddl_references.py\n+++ b/django/db/backends/ddl_references.py\n@@ -84,7 +84,10 @@ class Columns(TableColumns):\n     def __str__(self):\n         def col_str(column, idx):\n             try:\n-                return self.quote_name(column) + self.col_suffixes[idx]\n+                col_suffix = self.col_suffixes[idx]\n+                if col_suffix:\n+                    return '%s %s' % (self.quote_name(column), col_suffix)\n+                return self.quote_name(column)\n             except IndexError:\n                 return self.quote_name(column)\n \n@@ -112,9 +115,11 @@ class IndexColumns(Columns):\n         def col_str(column, idx):\n             # Index.__init__() guarantees that self.opclasses is the same\n             # length as self.columns.\n-            col = '{} {}'.format(self.quote_name(column), self.opclasses[idx])\n+            col = '%s %s' % (self.quote_name(column), self.opclasses[idx])\n             try:\n-                col = '{} {}'.format(col, self.col_suffixes[idx])\n+                col_suffix = self.col_suffixes[idx]\n+                if col_suffix:\n+                    col = '%s %s' % (col, col_suffix)\n             except IndexError:\n                 pass\n             return col\n"
-  }
-]

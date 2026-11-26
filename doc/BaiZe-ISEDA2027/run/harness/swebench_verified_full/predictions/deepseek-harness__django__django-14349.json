@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-14349",
-    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/core/validators.py b/django/core/validators.py\nindex a38581951..e56d27e58 100644\n--- a/django/core/validators.py\n+++ b/django/core/validators.py\n@@ -105,6 +105,11 @@ class URLValidator(RegexValidator):\n         scheme = value.split('://')[0].lower()\n         if scheme not in self.schemes:\n             raise ValidationError(self.message, code=self.code, params={'value': value})\n+        # bpo-43882: urlsplit strips leading and trailing \\n, \\r, and \\t.\n+        # Reject URLs with these characters to prevent them from being\n+        # silently stripped and considered valid.\n+        if re.search(\"[\\t\\n\\r]\", value):\n+            raise ValidationError(self.message, code=self.code, params={'value': value})\n \n         # Then check full URL\n         try:\n"
-  }
-]

@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-19637",
-    "model_name_or_path": "cline-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/core/sympify.py b/sympy/core/sympify.py\nindex a3f1ce285..4266773df 100644\n--- a/sympy/core/sympify.py\n+++ b/sympy/core/sympify.py\n@@ -513,7 +513,7 @@ def kernS(s):\n             while kern in s:\n                 kern += choice(string.ascii_letters + string.digits)\n             s = s.replace(' ', kern)\n-        hit = kern in s\n+            hit = kern in s\n \n     for i in range(2):\n         try:\ndiff --git a/sympy/core/tests/test_sympify.py b/sympy/core/tests/test_sympify.py\nindex 3413df283..ae7cd4147 100644\n--- a/sympy/core/tests/test_sympify.py\n+++ b/sympy/core/tests/test_sympify.py\n@@ -512,6 +512,8 @@ def test_kernS():\n     assert kernS('(1-2.*(1-y)*x)') == 1 - 2.*x*(1 - y)\n     one = kernS('x - (x - 1)')\n     assert one != 1 and one.expand() == 1\n+    # issue: kern referenced before assignment when no space is inserted\n+    assert kernS('(2*x)/(x-1)') == 2*x/(x - 1)\n \n \n def test_issue_6540_6552():\n"
-  }
-]

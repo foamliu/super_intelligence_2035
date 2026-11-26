@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-16116",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/core/management/commands/makemigrations.py b/django/core/management/commands/makemigrations.py\nindex 2e97d9064..049f86b50 100644\n--- a/django/core/management/commands/makemigrations.py\n+++ b/django/core/management/commands/makemigrations.py\n@@ -113,6 +113,8 @@ class Command(BaseCommand):\n         check_changes = options[\"check_changes\"]\n         self.scriptable = options[\"scriptable\"]\n         self.update = options[\"update\"]\n+        if check_changes:\n+            self.dry_run = True\n         # If logs and prompts are diverted to stderr, remove the ERROR style.\n         if self.scriptable:\n             self.stderr.style_func = None\n@@ -248,12 +250,12 @@ class Command(BaseCommand):\n                 else:\n                     self.log(\"No changes detected\")\n         else:\n+            if check_changes:\n+                sys.exit(1)\n             if self.update:\n                 self.write_to_last_migration_files(changes)\n             else:\n                 self.write_migration_files(changes)\n-            if check_changes:\n-                sys.exit(1)\n \n     def write_to_last_migration_files(self, changes):\n         loader = MigrationLoader(connections[DEFAULT_DB_ALIAS])\n"
-  }
-]

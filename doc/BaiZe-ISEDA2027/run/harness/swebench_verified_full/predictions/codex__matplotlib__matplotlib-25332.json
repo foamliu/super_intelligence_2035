@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "matplotlib__matplotlib-25332",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/lib/matplotlib/cbook.py b/lib/matplotlib/cbook.py\nindex c9699b2e2..3972eec1f 100644\n--- a/lib/matplotlib/cbook.py\n+++ b/lib/matplotlib/cbook.py\n@@ -791,6 +791,15 @@ class Grouper:\n     def __contains__(self, item):\n         return weakref.ref(item) in self._mapping\n \n+    def __getstate__(self):\n+        return {i: group for i, group in enumerate(self)}\n+\n+    def __setstate__(self, state):\n+        self.__init__()  # type: ignore\n+        for group in state.values():\n+            if group:\n+                self.join(*group)\n+\n     def clean(self):\n         \"\"\"Clean dead weak references from the dictionary.\"\"\"\n         mapping = self._mapping\ndiff --git a/lib/matplotlib/tests/test_figure.py b/lib/matplotlib/tests/test_figure.py\nindex 80d80f969..08f099742 100644\n--- a/lib/matplotlib/tests/test_figure.py\n+++ b/lib/matplotlib/tests/test_figure.py\n@@ -1548,3 +1548,15 @@ def test_gridspec_no_mutate_input():\n     plt.subplots(1, 2, width_ratios=[1, 2], gridspec_kw=gs)\n     assert gs == gs_orig\n     plt.subplot_mosaic('AB', width_ratios=[1, 2], gridspec_kw=gs)\n+\n+\n+def test_pickle_after_align_labels():\n+    fig = plt.figure()\n+    ax1 = fig.add_subplot(211)\n+    ax2 = fig.add_subplot(212)\n+    ax1.plot([0, 1], [40000, 4300])\n+    ax1.set_ylabel('speed')\n+    ax2.plot([0, 1], [10, 11])\n+    ax2.set_ylabel('acc')\n+    fig.align_labels()\n+    pickle.dumps(fig)\n"
-  }
-]

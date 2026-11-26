@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-14141",
-    "model_name_or_path": "cline-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/ISSUE_TEMPLATE.md b/ISSUE_TEMPLATE.md\nindex c8ce3e49..f33a5752 100644\n--- a/ISSUE_TEMPLATE.md\n+++ b/ISSUE_TEMPLATE.md\n@@ -51,6 +51,7 @@ import sys; print(\"Python\", sys.version)\n import numpy; print(\"NumPy\", numpy.__version__)\n import scipy; print(\"SciPy\", scipy.__version__)\n import sklearn; print(\"Scikit-Learn\", sklearn.__version__)\n+import joblib; print(\"Joblib\", joblib.__version__)\n -->\n \n \ndiff --git a/sklearn/utils/_show_versions.py b/sklearn/utils/_show_versions.py\nindex e5d3141b..bb6194dd 100644\n--- a/sklearn/utils/_show_versions.py\n+++ b/sklearn/utils/_show_versions.py\n@@ -45,6 +45,7 @@ def _get_deps_info():\n         \"sklearn\",\n         \"numpy\",\n         \"scipy\",\n+        \"joblib\",\n         \"Cython\",\n         \"pandas\",\n         \"matplotlib\",\ndiff --git a/sklearn/utils/tests/test_show_versions.py b/sklearn/utils/tests/test_show_versions.py\nindex 31153c96..b6f28072 100644\n--- a/sklearn/utils/tests/test_show_versions.py\n+++ b/sklearn/utils/tests/test_show_versions.py\n@@ -20,6 +20,7 @@ def test_get_deps_info():\n     assert 'sklearn' in deps_info\n     assert 'numpy' in deps_info\n     assert 'scipy' in deps_info\n+    assert 'joblib' in deps_info\n     assert 'Cython' in deps_info\n     assert 'pandas' in deps_info\n     assert 'matplotlib' in deps_info\n"
-  }
-]

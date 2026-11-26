@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-14351",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py\nindex 6629a1fd51..965040551f 100644\n--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -244,6 +244,9 @@ class Query(BaseExpression):\n     def has_select_fields(self):\n         return bool(self.select or self.annotation_select_mask or self.extra_select_mask)\n \n+    def get_group_by_cols(self, alias=None):\n+        return []\n+\n     @cached_property\n     def base_table(self):\n         for alias in self.alias_map:\ndiff --git a/tests/queries/tests.py b/tests/queries/tests.py\nindex f6437e1175..b918cef4ab 100644\n--- a/tests/queries/tests.py\n+++ b/tests/queries/tests.py\n@@ -99,6 +99,14 @@ class Queries1Tests(TestCase):\n         # So, 'U0.\"id\"' is referenced in SELECT and WHERE twice.\n         self.assertEqual(str(qs4.query).lower().count('u0.'), 4)\n \n+    def test_q_or_in_subquery_with_annotate(self):\n+        # Regression test for subquery returning multiple columns when used\n+        # in a Q object OR with an annotation.\n+        qs = Item.objects.annotate(Count('tags')).filter(\n+            Q(tags__in=Tag.objects.filter(name=self.t1.name)) | Q(tags__count=0)\n+        ).distinct()\n+        self.assertCountEqual(list(qs), [self.i1, self.i2, self.i3])\n+\n     def test_ticket1050(self):\n         self.assertSequenceEqual(\n             Item.objects.filter(tags__isnull=True),\n"
-  }
-]

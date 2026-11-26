@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pydata__xarray-4075",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/xarray/core/weighted.py b/xarray/core/weighted.py\nindex 996d2e4..82bd5f8 100644\n--- a/xarray/core/weighted.py\n+++ b/xarray/core/weighted.py\n@@ -107,7 +107,7 @@ class Weighted:\n             )\n \n         self.obj = obj\n-        self.weights = weights\n+        self.weights = weights.astype(int) if weights.dtype == bool else weights\n \n     @staticmethod\n     def _reduce(\n"
-  }
-]

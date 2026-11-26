@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-14089",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/utils/datastructures.py b/django/utils/datastructures.py\nindex 871b01671..28a4fb09b 100644\n--- a/django/utils/datastructures.py\n+++ b/django/utils/datastructures.py\n@@ -22,6 +22,9 @@ class OrderedSet:\n         except KeyError:\n             pass\n \n+    def __reversed__(self):\n+        return reversed(self.dict)\n+\n     def __iter__(self):\n         return iter(self.dict)\n \ndiff --git a/tests/utils_tests/test_datastructures.py b/tests/utils_tests/test_datastructures.py\nindex 45d172f98..0edfcd904 100644\n--- a/tests/utils_tests/test_datastructures.py\n+++ b/tests/utils_tests/test_datastructures.py\n@@ -47,6 +47,10 @@ class OrderedSetTests(SimpleTestCase):\n         s.add(1)\n         self.assertTrue(s)\n \n+    def test_reversed(self):\n+        s = OrderedSet([1, 2, 3])\n+        self.assertEqual(list(reversed(s)), [3, 2, 1])\n+\n     def test_len(self):\n         s = OrderedSet()\n         self.assertEqual(len(s), 0)\n"
-  }
-]

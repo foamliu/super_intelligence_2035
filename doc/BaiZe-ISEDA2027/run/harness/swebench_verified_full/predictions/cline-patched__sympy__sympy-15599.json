@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-15599",
-    "model_name_or_path": "cline-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/core/mod.py b/sympy/core/mod.py\nindex eae25630..e0920dc9 100644\n--- a/sympy/core/mod.py\n+++ b/sympy/core/mod.py\n@@ -70,6 +70,14 @@ def doit(p, q):\n                         rv += q\n                     return rv\n \n+            # handle integer products like Mod(3*i, 2) -> Mod(i, 2)\n+            if p.is_Mul and p.is_integer and q.is_Integer:\n+                coeff, rest = p.as_coeff_Mul()\n+                if coeff.is_Integer and rest.is_integer:\n+                    r = coeff % q\n+                    if r != coeff:\n+                        return cls(r*rest, q)\n+\n             # by difference\n             # -2|q| < p < 2|q|\n             d = abs(p)\ndiff --git a/sympy/core/tests/test_arit.py b/sympy/core/tests/test_arit.py\nindex 04d3b1ab..05e2d197 100644\n--- a/sympy/core/tests/test_arit.py\n+++ b/sympy/core/tests/test_arit.py\n@@ -1624,6 +1624,7 @@ def test_Mod():\n     i = Symbol('i', integer=True)\n     assert (3*i*x) % (2*i*y) == i*Mod(3*x, 2*y)\n     assert Mod(4*i, 4) == 0\n+    assert Mod(3*i, 2) == Mod(i, 2)\n \n     # issue 8677\n     n = Symbol('n', integer=True, positive=True)\n"
-  }
-]

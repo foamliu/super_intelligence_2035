@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "astropy__astropy-13453",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/astropy/io/ascii/html.py b/astropy/io/ascii/html.py\nindex 266cf22..34e76bb 100644\n--- a/astropy/io/ascii/html.py\n+++ b/astropy/io/ascii/html.py\n@@ -354,7 +354,8 @@ class HTML(core.BaseReader):\n             self.data.fill_values = [self.data.fill_values]\n \n         self.data._set_fill_values(cols)\n-\n+        self.data.cols = cols\n+        self.data._set_col_formats()\n         lines = []\n \n         # Set HTML escaping to False for any column in the raw_html_cols input\n@@ -429,7 +430,7 @@ class HTML(core.BaseReader):\n                                 for i in range(span):\n                                     # Split up multicolumns into separate columns\n                                     new_col = Column([el[i] for el in col])\n-\n+                                    new_col.info.format = col.info.format\n                                     new_col_iter_str_vals = self.fill_values(\n                                         col, new_col.info.iter_str_vals())\n                                     col_str_iters.append(new_col_iter_str_vals)\n"
-  }
-]

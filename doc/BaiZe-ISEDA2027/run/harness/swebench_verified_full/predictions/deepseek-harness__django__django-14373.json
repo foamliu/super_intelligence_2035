@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-14373",
-    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/utils/dateformat.py b/django/utils/dateformat.py\nindex 38e89c47b..7185c6921 100644\n--- a/django/utils/dateformat.py\n+++ b/django/utils/dateformat.py\n@@ -314,7 +314,7 @@ class DateFormat(TimeFormat):\n \n     def Y(self):\n         \"Year, 4 digits; e.g. '1999'\"\n-        return self.data.year\n+        return '%04d' % self.data.year\n \n     def z(self):\n         \"\"\"Day of the year, i.e. 1 to 366.\"\"\"\ndiff --git a/tests/utils_tests/test_dateformat.py b/tests/utils_tests/test_dateformat.py\nindex c6d3ded80..2a839e4ae 100644\n--- a/tests/utils_tests/test_dateformat.py\n+++ b/tests/utils_tests/test_dateformat.py\n@@ -178,6 +178,19 @@ class DateFormatTests(SimpleTestCase):\n                     dateformat.format(datetime(year, 9, 8, 5, 0), 'y'),\n                     expected_date,\n                 )\n+    def test_year_before_1000_Y(self):\n+        tests = [\n+            (476, '0476'),\n+            (42, '0042'),\n+            (4, '0004'),\n+        ]\n+        for year, expected_date in tests:\n+            with self.subTest(year=year):\n+                self.assertEqual(\n+                    dateformat.format(datetime(year, 9, 8, 5, 0), 'Y'),\n+                    expected_date,\n+                )\n+\n \n     def test_twelve_hour_format(self):\n         tests = [\n"
-  }
-]

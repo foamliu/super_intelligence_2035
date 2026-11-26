@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-14983",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sklearn/model_selection/_split.py b/sklearn/model_selection/_split.py\nindex c49a3ce6..92b8dbf5 100644\n--- a/sklearn/model_selection/_split.py\n+++ b/sklearn/model_selection/_split.py\n@@ -1102,6 +1102,8 @@ class _RepeatedSplits(metaclass=ABCMeta):\n         self.n_repeats = n_repeats\n         self.random_state = random_state\n         self.cvargs = cvargs\n+        for key, value in cvargs.items():\n+            setattr(self, key, value)\n \n     def split(self, X, y=None, groups=None):\n         \"\"\"Generates indices to split data into training and test set.\n@@ -1163,6 +1165,9 @@ class _RepeatedSplits(metaclass=ABCMeta):\n                      **self.cvargs)\n         return cv.get_n_splits(X, y, groups) * self.n_repeats\n \n+    def __repr__(self):\n+        return _build_repr(self)\n+\n \n class RepeatedKFold(_RepeatedSplits):\n     \"\"\"Repeated K-Fold cross validator.\n"
-  }
-]

@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sphinx-doc__sphinx-7889",
-    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py\nindex 98a3a3a9..6cb52581 100644\n--- a/sphinx/ext/autodoc/mock.py\n+++ b/sphinx/ext/autodoc/mock.py\n@@ -70,6 +70,7 @@ class _MockObject:\n \n def _make_subclass(name: str, module: str, superclass: Any = _MockObject,\n                    attributes: Any = None) -> Any:\n+    name = str(name)\n     attrs = {'__module__': module, '__display_name__': module + '.' + name}\n     attrs.update(attributes or {})\n \ndiff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py\nindex 4760493c..aafced67 100644\n--- a/tests/test_ext_autodoc_mock.py\n+++ b/tests/test_ext_autodoc_mock.py\n@@ -117,3 +117,12 @@ def test_mock_decorator():\n     assert func.__doc__ == \"docstring\"\n     assert Foo.meth.__doc__ == \"docstring\"\n     assert Bar.__doc__ == \"docstring\"\n+\n+\n+def test_MockObject_with_TypeVar():\n+    mock = _MockObject()\n+    from typing import TypeVar, Generic\n+    T = TypeVar('T')\n+    # subscripting with a TypeVar (as in Generic[T]) should not raise\n+    result = mock[T]\n+    assert isinstance(result, _MockObject)\n"
-  }
-]

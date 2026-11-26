@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-14539",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/utils/html.py b/django/utils/html.py\nindex 3bc02b8dd..2d6d2f448 100644\n--- a/django/utils/html.py\n+++ b/django/utils/html.py\n@@ -283,9 +283,12 @@ def urlize(text, trim_url_limit=None, nofollow=False, autoescape=False):\n             middle_unescaped = html.unescape(middle)\n             stripped = middle_unescaped.rstrip(TRAILING_PUNCTUATION_CHARS)\n             if middle_unescaped != stripped:\n-                trail = middle[len(stripped):] + trail\n-                middle = middle[:len(stripped) - len(middle_unescaped)]\n-                trimmed_something = True\n+                for i in range(len(middle), -1, -1):\n+                    if html.unescape(middle[:i]) == stripped:\n+                        trail = middle[i:] + trail\n+                        middle = middle[:i]\n+                        trimmed_something = True\n+                        break\n         return lead, middle, trail\n \n     def is_email_simple(value):\n"
-  }
-]

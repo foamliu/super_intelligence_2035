@@ -22,7 +22,38 @@
 
 ## 心跳
 
-`CONTRACT: P1=1/1 done · P2=2 L2.live (TrMatchHelper-001 + FullAdderSchemBuild-001 done) · P3=497/608 judge_layers`
+`CONTRACT: P1=1/1 done · P2=3 L2.live (TrMatchHelper-001 + FullAdderSchemBuild-001 + OpenDmViewsProduce-001 done) · P3=497/608 judge_layers`
+
+## r1444 交付：P2 第 3 条 check_live（OpenDmViewsProduce-001）
+
+- **候选选择**：从余 11 条 api 子类候选中选第 3 条。OpenDmViewsProduce-001 是
+  pyAether-import=8 的最强候选（p2_pool_D.tsv 中 api 子类指标最高），候选
+  open_dm_and_views.py 调 8 个真实 pyAether API（emyInitAether/aeDMShow/
+  aeGetDmWindow/aeOpenDesign/aeGetWndList/dbOpenCV/aeCreateWindow/aeDisplayWindow）。
+  实测 .75 pyAether：8 API 全部 present（aeCloseAllWindows 缺失，但候选必须 NOT
+  调它——anti-close 断言），与 r1442/r1443 API 覆盖不重叠（r1442=match-helper,
+  r1443=schematic-build，本轮=dm-views-open）。
+- **非侵入包装**：_check_static_impl = 原 check 函数体逐字保留（原 check 已是
+  raise-on-fail + return True，无 teeth bug）；check_static 三元组包装；check_live
+  新增；check 兼容包装。negative_selftest 改用 check_static（新契约返回值）。
+- **check_live 策略** = strategy 1（fake-input graceful probe + spec-driven 探针）：
+  upload LIVE 探针 lib+cells（OdvLiveProbeLib/OdvProbeCellA/B/C，与 A=ztest/AG_* 和
+  B=analog_lib/pll_aux/rf_rx 都结构性不同）→ .75 上 import 真实 pyAether 验证 8 个
+  required API 属性存在 → monkey-patch 设计类 API 记录调用 + 返回 graceful fake
+  （候选不 crash）→ SIGALRM 90s → 跑候选 sut.main() with LIVE argv → 断言调了
+  emyInitAether+aeDMShow(True)+每个 LIVE cell 的 aeOpenDesign(schematic+layout)+
+  dbOpenCV+aeCreateWindow+aeDisplayWindow fallback + 禁 A/B token 泄漏 + 禁 aeClose* +
+  exit_code==0。
+- **关键设计**：monkey-patch 拦截设计类 API（aeOpenDesign 等返回 True/graceful），
+  emyInitAether 也被 patch 记录（避免真实 init 需要 display/license）。"live" 价值
+  = 真实 pyAether 模块在 .75 导入成功（证 `import pyAether` 工作）+ 8 个 API 属性名
+  真实存在（typo'd API 如 ae.opnDesign 会 AttributeError）+ LIVE spec 防硬编码 A/B。
+- **自验**（全 PASS）：check.py SELF-TEST PASS（L0+L1 12 断言）；negative_selftest
+  3neg ALL FAIL（empty_shell/print_expected/delcore）；check_live(ref) via EDASession
+  PASS（infra_fail=0）；check_live(3 neg) ALL FAIL（no-engagement / missing calls）；
+  check_live(hardcode-B 候选) FAIL（不用 LIVE lib/cells）。pure ASCII 探针代码。
+- **case JSON**：metadata.judge_layers=[L0,L1,L2.live] + test 同步（20189 chars）+
+  check_sha256/check_size 更新；reference_submit.zip 新建（4530B，parity with FullAdderSchemBuild）。
 
 ## r1443 交付：P2 第 2 条 check_live（FullAdderSchemBuild-001）
 
@@ -49,7 +80,7 @@
 
 ## 下一轮计划
 
-1. P2：从余 11 条 api 子类候选中选下一条（OpenDmViewsProduce / AeDelCellCurCellProduce / WtmWriteCheckReviewQA / DirectivePairAudit / ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce / VerdictJoinPassLib 等），按 SkillToAether 模板实现 `check_live`
+1. P2：从余 10 条 api 子类候选中选下一条（AeDelCellCurCellProduce / WtmWriteCheckReviewQA / DirectivePairAudit / ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce / VerdictJoinPassLib / AutoPR / SelFigReport 等），按 OpenDmViewsProduce/SkillToAether 模板实现 `check_live`
 2. P3：继续逐批把 sim-keyword 子类中确属 mock 的 case 补声明（需逐题读 check.py 区分 netlist-text 假阳性 vs 真二进制调用）
 3. 造新题让位给 P2（运维令：P1>P2>P3，造题让位 P1/P2）
 

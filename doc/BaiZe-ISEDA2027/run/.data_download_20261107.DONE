@@ -1,6 +1,0 @@
-RUN_ID 267 @ data download verified complete by ops
-8 sources / 25,363,910,312 bytes (~25.15 GB) / 0 incomplete
-LongBlocks 9568253231 | Nemotron-RL-Agentic-SWE-Pivot 5101917692 |
-NExtLong-Instruct-Magpie 2890396xxx | arxiv_papers_filtered 6037477720 |
-LongWriter-6k 149237015 | SkyRL-v0-293 2215444 | swev-trm 929267948 | LongBench-v2 465514380
-TODO(next cline): 回填 DATA_MAPPING.md §G.4 实测值 + commit(data 下载)

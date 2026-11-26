@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-23262",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/utilities/lambdify.py b/sympy/utilities/lambdify.py\nindex da67263b..f05d0d1b 100644\n--- a/sympy/utilities/lambdify.py\n+++ b/sympy/utilities/lambdify.py\n@@ -961,7 +961,9 @@ def _recursive_to_string(doprint, arg):\n             left, right = \"()\"\n         else:\n             raise NotImplementedError(\"unhandled type: %s, %s\" % (type(arg), arg))\n-        return left +', '.join(_recursive_to_string(doprint, e) for e in arg) + right\n+        if isinstance(arg, tuple) and len(arg) == 1:\n+            return left + _recursive_to_string(doprint, arg[0]) + ',)'\n+        return left + ', '.join(_recursive_to_string(doprint, e) for e in arg) + right\n     elif isinstance(arg, str):\n         return arg\n     else:\n"
-  }
-]

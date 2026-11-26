@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-13513",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/views/debug.py b/django/views/debug.py\nindex 7a89f7bd15..b9e88d6e99 100644\n--- a/django/views/debug.py\n+++ b/django/views/debug.py\n@@ -424,6 +424,9 @@ class ExceptionReporter:\n         # In case there's just one exception, take the traceback from self.tb\n         exc_value = exceptions.pop()\n         tb = self.tb if not exceptions else exc_value.__traceback__\n+        while tb is None and exceptions:\n+            exc_value = exceptions.pop()\n+            tb = exc_value.__traceback__\n \n         while tb is not None:\n             # Support for __traceback_hide__ which is used by a few libraries\n@@ -465,6 +468,9 @@ class ExceptionReporter:\n             if not tb.tb_next and exceptions:\n                 exc_value = exceptions.pop()\n                 tb = exc_value.__traceback__\n+                while tb is None and exceptions:\n+                    exc_value = exceptions.pop()\n+                    tb = exc_value.__traceback__\n             else:\n                 tb = tb.tb_next\n \n"
-  }
-]

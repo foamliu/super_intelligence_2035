@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-7521",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 3f9c60f..f538b67 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -388,6 +388,7 @@ class FDCaptureBinary:\n                 TemporaryFile(buffering=0),  # type: ignore[arg-type]\n                 encoding=\"utf-8\",\n                 errors=\"replace\",\n+                newline=\"\",\n                 write_through=True,\n             )\n             if targetfd in patchsysdict:\ndiff --git a/test_carriage_return.py b/test_carriage_return.py\nnew file mode 100644\nindex 0000000..8f63ab6\n--- /dev/null\n+++ b/test_carriage_return.py\n@@ -0,0 +1,12 @@\n+import pytest\n+\n+def test_capfd_includes_carriage_return(capfd):\n+    print('Greetings from DOS', end='\\r')\n+    out, err = capfd.readouterr()\n+    assert out.endswith('\\r'), repr(out)\n+\n+def test_capfd_stderr_carriage_return(capfd):\n+    import sys\n+    sys.stderr.write('hello\\r')\n+    out, err = capfd.readouterr()\n+    assert err.endswith('\\r'), repr(err)\n"
-  }
-]

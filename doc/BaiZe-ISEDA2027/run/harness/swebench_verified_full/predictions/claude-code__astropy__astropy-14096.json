@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "astropy__astropy-14096",
-    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/astropy/coordinates/sky_coordinate.py b/astropy/coordinates/sky_coordinate.py\nindex ab475f7..f97b947 100644\n--- a/astropy/coordinates/sky_coordinate.py\n+++ b/astropy/coordinates/sky_coordinate.py\n@@ -871,6 +871,16 @@ class SkyCoord(ShapedLikeNDArray):\n         Overrides getattr to return coordinates that this can be transformed\n         to, based on the alias attr in the primary transform graph.\n         \"\"\"\n+        # If the attribute is defined on the class (e.g. a property or method\n+        # on a subclass), calling super().__getattribute__ will properly\n+        # trigger the attribute access and let any exception from it propagate.\n+        # This prevents masking AttributeError from property getters (e.g. a\n+        # property that accesses a non-existent attribute) with a misleading\n+        # AttributeError about the property itself.\n+        for cls in type(self).__mro__:\n+            if attr in cls.__dict__:\n+                return super().__getattribute__(attr)\n+\n         if \"_sky_coord_frame\" in self.__dict__:\n             if self._is_name(attr):\n                 return self  # Should this be a deepcopy of self?\n"
-  }
-]

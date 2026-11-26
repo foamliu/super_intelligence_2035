@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-15863",
-    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py\nindex 7a5b28d159..7a2f741ab7 100644\n--- a/django/template/defaultfilters.py\n+++ b/django/template/defaultfilters.py\n@@ -151,8 +151,12 @@ def floatformat(text, arg=-1):\n             use_l10n = False\n             arg = arg[:-1] or -1\n     try:\n-        input_val = repr(text)\n-        d = Decimal(input_val)\n+        if isinstance(text, Decimal):\n+            d = text\n+            input_val = str(text)\n+        else:\n+            input_val = repr(text)\n+            d = Decimal(input_val)\n     except InvalidOperation:\n         try:\n             d = Decimal(str(float(text)))\n"
-  }
-]

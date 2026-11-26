@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-17139",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/simplify/fu.py b/sympy/simplify/fu.py\nindex ad1130ef..4b182e34 100644\n--- a/sympy/simplify/fu.py\n+++ b/sympy/simplify/fu.py\n@@ -501,9 +501,9 @@ def _f(rv):\n         if not (rv.is_Pow and rv.base.func == f):\n             return rv\n \n-        if (rv.exp < 0) == True:\n+        if rv.exp.is_negative:\n             return rv\n-        if (rv.exp > max) == True:\n+        if rv.exp.is_positive and (rv.exp > max) == True:\n             return rv\n         if rv.exp == 2:\n             return h(g(rv.base.args[0])**2)\ndiff --git a/sympy/simplify/tests/test_fu.py b/sympy/simplify/tests/test_fu.py\nindex 54be6e1d..839a6c67 100644\n--- a/sympy/simplify/tests/test_fu.py\n+++ b/sympy/simplify/tests/test_fu.py\n@@ -81,12 +81,14 @@ def test_TR5():\n     assert TR5(sin(x)**2) == -cos(x)**2 + 1\n     assert TR5(sin(x)**-2) == sin(x)**(-2)\n     assert TR5(sin(x)**4) == (-cos(x)**2 + 1)**2\n+    assert TR5(sin(x)**I) == sin(x)**I\n \n \n def test_TR6():\n     assert TR6(cos(x)**2) == -sin(x)**2 + 1\n     assert TR6(cos(x)**-2) == cos(x)**(-2)\n     assert TR6(cos(x)**4) == (-sin(x)**2 + 1)**2\n+    assert TR6(cos(x)**I) == cos(x)**I\n \n \n def test_TR7():\n"
-  }
-]

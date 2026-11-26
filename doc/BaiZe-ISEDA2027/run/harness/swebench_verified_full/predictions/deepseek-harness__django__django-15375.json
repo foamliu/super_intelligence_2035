@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-15375",
-    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py\nindex 8c4eae790..bc31b48d8 100644\n--- a/django/db/models/aggregates.py\n+++ b/django/db/models/aggregates.py\n@@ -65,7 +65,9 @@ class Aggregate(Func):\n         if hasattr(default, 'resolve_expression'):\n             default = default.resolve_expression(query, allow_joins, reuse, summarize)\n         c.default = None  # Reset the default argument before wrapping.\n-        return Coalesce(c, default, output_field=c._output_field_or_none)\n+        coalesce = Coalesce(c, default, output_field=c._output_field_or_none)\n+        coalesce.is_summary = c.is_summary\n+        return coalesce\n \n     @property\n     def default_alias(self):\ndiff --git a/tests/runtests.py b/tests/runtests.py\nindex 6bad838a9..dbd096d31 100755\n--- a/tests/runtests.py\n+++ b/tests/runtests.py\n@@ -27,7 +27,7 @@ else:\n     from django.test.runner import get_max_test_processes, parallel_type\n     from django.test.selenium import SeleniumTestCaseBase\n     from django.test.utils import NullTimeKeeper, TimeKeeper, get_runner\n-    from django.utils.deprecation import RemovedInDjango50Warning\n+    RemovedInDjango50Warning = DeprecationWarning\n     from django.utils.log import DEFAULT_LOGGING\n \n try:\n"
-  }
-]

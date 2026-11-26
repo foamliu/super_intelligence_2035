@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-25232",
-    "model_name_or_path": "cline-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sklearn/utils/fixes.py b/sklearn/utils/fixes.py\nindex b43afa95..e96066f6 100644\n--- a/sklearn/utils/fixes.py\n+++ b/sklearn/utils/fixes.py\n@@ -26,6 +26,7 @@ from ..externals._packaging.version import parse as parse_version\n \n np_version = parse_version(np.__version__)\n sp_version = parse_version(scipy.__version__)\n+sp_base_version = sp_version  # compatibility stub for compiled extensions\n \n \n if sp_version >= parse_version(\"1.4\"):\n"
-  }
-]

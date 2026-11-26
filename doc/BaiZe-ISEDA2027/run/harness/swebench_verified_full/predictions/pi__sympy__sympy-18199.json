@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-18199",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/ntheory/residue_ntheory.py b/sympy/ntheory/residue_ntheory.py\nindex 9a3052d4..a489a6e4 100644\n--- a/sympy/ntheory/residue_ntheory.py\n+++ b/sympy/ntheory/residue_ntheory.py\n@@ -776,6 +776,10 @@ def nthroot_mod(a, n, p, all_roots=False):\n     if not isprime(p):\n         raise NotImplementedError(\"Not implemented for composite p\")\n \n+    if a % p == 0:\n+        if all_roots:\n+            return [0]\n+        return 0\n     if (p - 1) % n == 0:\n         return _nthroot_mod1(a, n, p, all_roots)\n     # The roots of ``x**n - a = 0 (mod p)`` are roots of\ndiff --git a/sympy/ntheory/tests/test_residue.py b/sympy/ntheory/tests/test_residue.py\nindex d4854547..35ad50d6 100644\n--- a/sympy/ntheory/tests/test_residue.py\n+++ b/sympy/ntheory/tests/test_residue.py\n@@ -173,6 +173,14 @@ def test_residue():\n     raises(NotImplementedError, lambda: nthroot_mod(16, 5, 36))\n     raises(NotImplementedError, lambda: nthroot_mod(9, 16, 36))\n \n+    # Test that x = 0 mod p is returned when a % p == 0\n+    assert nthroot_mod(0, 3, 7) == 0\n+    assert nthroot_mod(0, 3, 7, True) == [0]\n+    assert nthroot_mod(0, 6, 7, True) == [0]\n+    assert nthroot_mod(0, 5, 17) == 0\n+    assert nthroot_mod(0, 5, 17, True) == [0]\n+    assert nthroot_mod(17*17, 5, 17) == 0\n+    assert nthroot_mod(17*17, 5, 17, True) == [0]\n     for p in primerange(5, 100):\n         qv = range(3, p, 4)\n         for q in qv:\n"
-  }
-]

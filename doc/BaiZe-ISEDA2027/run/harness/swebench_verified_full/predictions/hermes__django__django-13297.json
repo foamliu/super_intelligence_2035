@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-13297",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/utils/functional.py b/django/utils/functional.py\nindex 6d38f932f9..1c81e35484 100644\n--- a/django/utils/functional.py\n+++ b/django/utils/functional.py\n@@ -344,6 +344,11 @@ class LazyObject:\n     __len__ = new_method_proxy(len)\n     __contains__ = new_method_proxy(operator.contains)\n \n+    def __conform__(self, protocol):\n+        if self._wrapped is empty:\n+            self._setup()\n+        return self._wrapped\n+\n \n def unpickle_lazyobject(wrapped):\n     \"\"\"\ndiff --git a/tests/utils_tests/test_lazyobject.py b/tests/utils_tests/test_lazyobject.py\nindex e5bccc6362..e6dceba748 100644\n--- a/tests/utils_tests/test_lazyobject.py\n+++ b/tests/utils_tests/test_lazyobject.py\n@@ -367,6 +367,15 @@ class SimpleLazyObjectTestCase(LazyObjectTestCase):\n         self.assertEqual(len(lazy_list), 5)\n         self.assertEqual(len(lazy_set), 4)\n \n+    def test_sqlite_parameter(self):\n+        import sqlite3\n+        lazy_value = SimpleLazyObject(lambda: 'test_value')\n+        conn = sqlite3.connect(':memory:')\n+        cursor = conn.cursor()\n+        cursor.execute('SELECT ?', [lazy_value])\n+        self.assertEqual(cursor.fetchone(), ('test_value',))\n+        conn.close()\n+\n \n class BaseBaz:\n     \"\"\"\n"
-  }
-]

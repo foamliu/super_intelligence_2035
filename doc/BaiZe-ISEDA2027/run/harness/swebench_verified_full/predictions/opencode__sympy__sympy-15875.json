@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-15875",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/core/add.py b/sympy/core/add.py\nindex 83a5f2ae..b7b169ee 100644\n--- a/sympy/core/add.py\n+++ b/sympy/core/add.py\n@@ -560,8 +560,10 @@ def _eval_is_zero(self):\n         if b.is_zero:\n             if not im_or_z and not im:\n                 return True\n-            if im and not im_or_z:\n-                return False\n+            im_args = [a*S.ImaginaryUnit for a in self.args if not a.is_real]\n+            if im_args:\n+                return self.func(*im_args).is_zero\n+            return True\n         if b.is_zero is False:\n             return False\n \ndiff --git a/sympy/core/tests/test_arit.py b/sympy/core/tests/test_arit.py\nindex e2398a4e..1114d886 100644\n--- a/sympy/core/tests/test_arit.py\n+++ b/sympy/core/tests/test_arit.py\n@@ -1985,6 +1985,9 @@ def test_issue_8247_8354():\n def test_Add_is_zero():\n     x, y = symbols('x y', zero=True)\n     assert (x + y).is_zero\n+    # issue 15872\n+    e = -2*I + (1 + I)**2\n+    assert e.is_zero is True\n \n \n def test_issue_14392():\n"
-  }
-]

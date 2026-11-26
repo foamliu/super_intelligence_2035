@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-16485",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py\nindex 23c3a08c67..7ace6675d5 100644\n--- a/django/template/defaultfilters.py\n+++ b/django/template/defaultfilters.py\n@@ -183,7 +183,7 @@ def floatformat(text, arg=-1):\n     tupl = d.as_tuple()\n     units = len(tupl[1])\n     units += -tupl[2] if m else tupl[2]\n-    prec = abs(p) + units + 1\n+    prec = max(abs(p) + units + 1, 1)\n \n     # Avoid conversion to scientific notation by accessing `sign`, `digits`,\n     # and `exponent` from Decimal.as_tuple() directly.\ndiff --git a/tests/template_tests/filter_tests/test_floatformat.py b/tests/template_tests/filter_tests/test_floatformat.py\nindex 361a888ce3..373a146fed 100644\n--- a/tests/template_tests/filter_tests/test_floatformat.py\n+++ b/tests/template_tests/filter_tests/test_floatformat.py\n@@ -112,6 +112,10 @@ class FunctionTests(SimpleTestCase):\n             floatformat(0.000000000000000000015, 20), \"0.00000000000000000002\"\n         )\n \n+\n+        self.assertEqual(floatformat(\"0.00\", 0), \"0\")\n+        self.assertEqual(floatformat(Decimal(\"0.00\"), 0), \"0\")\n+\n     def test_negative_zero_values(self):\n         tests = [\n             (-0.01, -1, \"0.0\"),\n"
-  }
-]

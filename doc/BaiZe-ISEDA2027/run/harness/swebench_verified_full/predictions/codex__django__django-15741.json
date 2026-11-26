@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-15741",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/utils/formats.py b/django/utils/formats.py\nindex 3f38322d8..f55780a23 100644\n--- a/django/utils/formats.py\n+++ b/django/utils/formats.py\n@@ -113,6 +113,7 @@ def get_format(format_type, lang=None, use_l10n=None):\n             use_l10n = settings.USE_L10N\n     if use_l10n and lang is None:\n         lang = get_language()\n+    format_type = str(format_type)\n     cache_key = (format_type, lang)\n     try:\n         return _format_cache[cache_key]\ndiff --git a/tests/i18n/tests.py b/tests/i18n/tests.py\nindex 0093181f6..2076d6c53 100644\n--- a/tests/i18n/tests.py\n+++ b/tests/i18n/tests.py\n@@ -1652,6 +1652,9 @@ class FormattingTests(SimpleTestCase):\n     def test_format_arbitrary_settings(self):\n         self.assertEqual(get_format(\"DEBUG\"), \"DEBUG\")\n \n+    def test_get_format_lazy(self):\n+        self.assertEqual(get_format(gettext_lazy(\"DATE_FORMAT\")), \"N j, Y\")\n+\n     def test_get_custom_format(self):\n         reset_format_cache()\n         with self.settings(FORMAT_MODULE_PATH=\"i18n.other.locale\"):\n"
-  }
-]

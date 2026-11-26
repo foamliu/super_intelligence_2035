@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-18763",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/printing/latex.py b/sympy/printing/latex.py\nindex 8743723ea..15d5954ec 100644\n--- a/sympy/printing/latex.py\n+++ b/sympy/printing/latex.py\n@@ -698,7 +698,9 @@ def _print_Derivative(self, expr):\n \n     def _print_Subs(self, subs):\n         expr, old, new = subs.args\n-        latex_expr = self._print(expr)\n+        latex_expr = self.parenthesize(expr,\n+                                                  PRECEDENCE[\"Mul\"],\n+                                                  strict=True)\n         latex_old = (self._print(e) for e in old)\n         latex_new = (self._print(e) for e in new)\n         latex_subs = r'\\\\ '.join(\ndiff --git a/sympy/printing/tests/test_latex.py b/sympy/printing/tests/test_latex.py\nindex 3d387cf05..6cc31b488 100644\n--- a/sympy/printing/tests/test_latex.py\n+++ b/sympy/printing/tests/test_latex.py\n@@ -675,7 +675,8 @@ def test_latex_derivatives():\n def test_latex_subs():\n     assert latex(Subs(x*y, (\n         x, y), (1, 2))) == r'\\left. x y \\right|_{\\substack{ x=1\\\\ y=2 }}'\n-\n+    assert latex(Subs(-x + y, (x,), (1,))) == \\\n+        r'\\left. \\left(- x + y\\right) \\right|_{\\substack{ x=1 }}'\n \n def test_latex_integrals():\n     assert latex(Integral(log(x), x)) == r\"\\int \\log{\\left(x \\right)}\\, dx\"\n"
-  }
-]

@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-14089",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/utils/datastructures.py b/django/utils/datastructures.py\nindex 871b016715..721b0ee951 100644\n--- a/django/utils/datastructures.py\n+++ b/django/utils/datastructures.py\n@@ -34,6 +34,9 @@ class OrderedSet:\n     def __len__(self):\n         return len(self.dict)\n \n+    def __reversed__(self):\n+        return reversed(self.dict)\n+\n \n class MultiValueDictKeyError(KeyError):\n     pass\ndiff --git a/tests/utils_tests/test_datastructures.py b/tests/utils_tests/test_datastructures.py\nindex 45d172f984..7d78f64bcc 100644\n--- a/tests/utils_tests/test_datastructures.py\n+++ b/tests/utils_tests/test_datastructures.py\n@@ -55,6 +55,13 @@ class OrderedSetTests(SimpleTestCase):\n         s.add(2)\n         self.assertEqual(len(s), 2)\n \n+    def test_reversed(self):\n+        s = OrderedSet()\n+        s.add(1)\n+        s.add(2)\n+        s.add(3)\n+        self.assertEqual(list(reversed(s)), [3, 2, 1])\n+\n \n class MultiValueDictTests(SimpleTestCase):\n \n"
-  }
-]
