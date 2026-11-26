@@ -532,6 +532,51 @@ Type B ⇒ 候选不 author deck ⇒ Q2「shape-right-physics-wrong deck 会判�
 
 ### 待办（R2 续）
 
-- 真 Type A 剩 **30 条**待改造（38 − 7 done − 1 DffSetupHoldChar(done) = 30；按 hspice-mock 家族优先 ≤6-8/轮）。
-- 3 条降级**不动 judge_layers**（仍 [L0,L1]）⇒ 无 `live_eval_changes.tsv` 登记（OPT 不加 L2.live）。
-- 心跳：`LIVE: B review=126/126 · REQ=37(done 7) · OPT=11(done 0) · NA=76 · L2.live 7→7`。
+- 真 Type A 剩 **29 条**待改造（38 − 7 done − 1 DffSetupHoldChar(done) − 1 PwlStimTransform 降级 = 29；按 hspice-mock 家族优先 ≤6-8/轮）。
+- 4 条降级**不动 judge_layers**（仍 [L0,L1]）⇒ 无 `live_eval_changes.tsv` 登记（OPT 不加 L2.live）。
+- 心跳：`LIVE: B review=126/126 · REQ=36(done 7) · OPT=12(done 0) · NA=76 · L2.live 7→7`。
+
+---
+
+## R1 再复核 #2（2026-11-27 r1302 · 桩体检：syntax-validator vs GT-replay · 只读）
+
+### 背景
+
+§2.1 #1 桩体检要求逐条答 Q1/Q2。R1/r1291/r1301 把所有 hspice-mock/finesim-mock case 用**通用 boilerplate**（"replays .75-captured GT keyed on .param/.inc/deck signature, validates candidate deck text not netlist topology"）一律判 REQ。但 boilerplate 只对 **GT-replay-by-signature** 桩成立；对**纯语法/收敛 validator 桩**（conclude/abort only，无 .measure、无 GT 数值回放）不成立——后者 real hspice 同样只查 conclude/abort，加不了物理断言 ⇒ 应为 OPT。本轮逐条读 check.py 桩体，按桩体真实结构（不是家族名）重判。
+
+### 降级 4：PwlStimTransform-001（hspice-mock · 纯语法 validator 桩）REQ→OPT
+
+- **桩体结构**：`HSPICE_MOCK_SRC` 是 deck-driven **PWL 语法 validator**——解析 `.include` 目标文件，校验 `Vxxx net 0 PWL(` + 数字数据行格式，输出 "job concluded"（合法）/ "job aborted"（非法）。**不回放任何 GT 测量值**，无 `.measure` 断言。docstring 自述 faithfulness 已对 .75 真 hspice 验证（conclude/abort 语义）。
+- **cond k 桩 deck**：`R<net> <net> 0 1k` × 8 + `.include 'stim.pwl'` + `.tran 0.5n 25n` + `.end`，**无 .measure**。cond k 仅断言 `concluded and not err`——**纯语法/收敛检查，零物理值断言**。
+- **Q2**：garbage-values-but-valid-syntax PWL（8 块、B net 名全对、所有 value=999）过 mock（concluded=True err=False）**且**过真 hspice——因为无 .measure，真 hspice 也只 conclude/abort，不查值。real hspice **加不了** cond k 之外的物理断言 ⇒ 非 REQ。
+- **静态牙**：conds e/f/g/h/j 已直接解析 PWL **数值**（重命名/参数化/clip/rail 归类）——物理已由静态层覆盖，cond k 只是"hspice 能不能吞下语法"的冗余证据。
+- **实证（r1302 .75 hfhds201 hspice V-2023.12-SP1-1）**：
+  - 本地 mock：cheat PWL（value=999）→ `_run_hspice` concluded=True err=False。
+  - .75 真跑：同 cheat deck 上传 session `designflowB_r1302-reverify`，`hspice -i run_deck.sp` → RC=0，lis 含 "job concluded"、node voltages=999.0000、transient 51 points converged、无 error token。**真 hspice 对 garbage-values 合法语法 PWL 照样 conclude** ⇒ 与 mock 同语义，无物理增益。
+- **判据**：§2.1 #1 Q2=会判过但真 hspice 也会判过 ⇒ 非 REQ（real hspice catches nothing the mock misses）。§2.1 #3 旧 R1 结论（generic REQ boilerplate）不作数。verdict REQ→OPT。
+- **不动 judge_layers**（仍 [L0,L1]）⇒ 无 `live_eval_changes.tsv` 登记。只改 `live_eval_review_B.tsv` 1 条 verdict/reason/evidence + 本节。
+
+### 系统性发现：R1 generic boilerplate 需逐条桩体检
+
+R1 对全部 hspice-mock/finesim-mock case 套同一句 "replays .75-captured GT keyed on .param signature" ⇒ 对**纯语法 validator 桩**误判 REQ。本轮 grep 扫 30 条未改造 REQ case 的桩体指标（`_MOCK_VALUES`/`_GT_B`/`.measure`/`job concluded`/`_detect`），初步分两类：
+
+| 类 | 指标特征 | verdict | 本轮处理 |
+|:--|:--|:--|:--|
+| **GT-replay-by-signature**（真 REQ） | `_MOCK_VALUES`/`_GT_B`/`MULTI[` + `.measure` + `_detect`/signature | REQ | 续 R2 改造 |
+| **纯语法/收敛 validator** | gt_vals=0 + measure=0 + conclude>0 | OPT（候选） | **需逐条读桩体复验**，未读全不降级 |
+
+候选 OPT（gt_vals=0 measure=0，疑似纯语法桩，**待下轮读桩体全文复验**，未降级）：
+- `SpGen-001`（cond k 有 measure-match，需读桩体判断 GT-replay vs deck-driven）。
+- `GmidLut-001`（cond p candidate-lut vs judge-ref-rerun 数值比对，需读 ref_build/桩 .lis 输出判断）。
+- `PlatMosThinIdsatIoffSweep-001`（cond m/n 有 idsat 数值 cross，需读桩 dc-transfer-curves 解析判断）。
+- `FineSimModelScopeFix-001` / `FineSimNoRefCktFix-001`（finesim 桩，需读桩 .log/.mt0 输出判断）。
+
+⚠️ 上述 5 条**未降级**——指标 grep 不足以定论（有 measure/cross conds），必须读桩体全文 + 实证才能改 verdict。下轮 R1 再复核 #3 逐条处理。**已降级仅 PwlStimTransform-001 1 条**（桩体已读全 + .75 实证）。
+
+### 与 r1301 的差异
+
+| 项 | r1301 | r1302 | 依据 |
+|:--|:--|:--|:--|
+| REQ 合计 | 37 | **36** | PwlStimTransform-001 桩体检降级（syntax-validator 非 GT-replay） |
+| OPT 合计 | 11 | **12** | +1 降级 |
+| 降级维度 | Type A vs Type B（候选是否 author deck） | **桩体结构**（GT-replay vs syntax-validator） | r1301 只区分候选调用签名；r1302 深入桩体语义 |
