@@ -1,6 +1,13 @@
+> 📌 索引：**§A.52 = 2026-11-26 09:5x（第 355 轮重试 · **回评落库判据看公开页（后台「评论管理」不显示楼内回复）/ 别把 loop 的 FATAL_RE 源码行打进日志**）**
 > 📌 索引：**§A.50 = 2026-11-26 07:0x（第 354 轮 · **量子位全篇图右下角带「公众号·量子位」水印 / IT之家图带站标 ⇒ 发布前逐张目视右下角 / 他人帖逐字 `dispatchKeyEvent` 本轮成功落字并可提交**）**
 > 📌 索引：**§A.49 = 2026-11-24 15:5x（第 347 轮 · **`common.py` 带着上一轮 `IMG` 常量 ⇒ 两次传错图 / 删图正解 = 点图选中后点 `.ttcore-remove-blot` / `setFileInputFiles` 只对 `ids[0]` / 首勾会把默认「头条首发」点掉**）**
 > 📌 索引：**§A.48 = 2026-11-24 13:0x（第 346 轮 · 插图必须先点 `.syl-toolbar-tool.image` / `input[type=file]` 有 2 个会上传 2 份 / `ttcore-remove-blot` 删多余图 / `.pgc-img` 与 `.pgc-img-wrapper` 并存 / Python 里没有 `t.indexOf`）**
+## §A.52 第 355 轮「同窗重试」实测（2026-11-26 09:5x · 2 条 · **回评验收看公开页 / 别把 loop 正则源码打进日志**）
+
+1. 💬 **楼内回复（回评）落库判据 = 公开文章页 DOM，不是后台「评论管理」**：在后台 `/profile_v4/manage/comment/all` 对读者评论填回复并提交后，重载该后台页仍显示 `回复`、`document.body.innerText.indexOf(回复文本) === false`（后台不展示/延迟展示楼内嵌套回复）——**不要据此判失败再发一次（会重复）**。正解：开公开页 `www.toutiao.com/article/<id>/`，读 `.ttp-comment-item`，应见 `Xmodel唠两句 … <回复文本> … 刚刚 … 删除`，并 `评论 N→N+1`。
+   - 后台填写链路：点该条 `回复`（`el.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window}))`）→ 原生 setter 写 `textarea.byte-textarea` 再 `dispatchEvent(new Event('input',{bubbles:true}))`（`Input.insertText` 本轮落到空）→ 确认 `.reply-box-submit` 的 `disabled=false` → `button.reply-box-submit.click()`。**真实鼠标点该按钮本轮未触发提交**。
+2. 🐚 **排查 loop 时不要把 `watch_news_loop.sh` 的 FATAL_RE 定义行打进 cline 日志**：该行本身含 `cline: command not found` / `USAGE:` / `unexpected argument` / `Model unavailable` 等字样；`grep -nE '…|cline|…' watch_news_loop.sh` 会把它原样输出 ⇒ loop 侧 FATAL_RE 命中**自己的源码文本**，判本轮失败并整轮重跑（本日 09:40→09:45 实录：上一会话 exit 0 且已推送，仍被重试）。要看配置就只看行号或换不含这些词的检索词；这些字样一律不要出现在日志里。
+
 ## §A.51 第 355 轮实测（2026-11-26 09:3x · 2 条 · **四硬标准③以 `<article>` 内为准 / PUBTID 传参用 env**）
 
 1. 🔎 **第 ③ 条「无版权/低质警告」必须限定在 `<article>` 内**：本轮 `chkpub` 全文 `document.body.innerText` 命中「版权」，回溯上下文发现来自**推荐流里一篇讲二创作者版权警告的别人文章**；`document.querySelector('article').innerText` 内 `hits:[]` 才是真判据（承 §A.3 第 3 条）。
