@@ -1,0 +1,75 @@
+\section{Harness with Memory and Self-Improvement}
+\label{sec:harness}
+% 【中文】\section{含记忆与自我改进的执行框架}
+
+\subsection{Three-Layer Memory (L0/L1/L2)}
+\label{sec:memory-arch}
+% 【中文】\subsection{三层记忆（L0/L1/L2）}
+
+We extend the three-layer memory architecture from prior script-layer work \cite{liu2026runreadbackrefine} to the flow setting. \textbf{L0} (working memory): the current trace's context window. \textbf{L1} (session memory): distilled lessons from the current run (error $\rightarrow$ fix mappings, tool-sequence templates), with reliability gating---ground-truth anchoring (a binary validator must cover self-reported success), disconfirmation filtering (2 refutations $\rightarrow$ evict), 5-round unconfirmed demotion, and held-out gated evolution (regress $>5$pp $\rightarrow$ rollback). \textbf{L2} (cross-session skill library): durable, versioned skills indexed by abstraction/reusability/actionability/faithfulness, with anti-leakage retrieval (names-only injection, docstring generalization, problem-side embedding) to prevent cross-task answer copying.
+% 【中文】
+% 我们将先前脚本层工作 \cite{liu2026runreadbackrefine} 的三层记忆架构扩展到流程场景。\textbf{L0}
+%（工作记忆）：当前轨迹的上下文窗口。\textbf{L1}（会话记忆）：从当前 run 蒸馏的教训（错误 $\rightarrow$
+% 修复映射、工具序列模板），含可靠性门控——真值锚定（一个二元校验器必须覆盖自报成功）、证伪过滤
+%（2 次反驳 $\rightarrow$ 驱逐）、5 轮未确认降级、留出门控演化（回退 $>5$pp $\rightarrow$ 回滚）。
+% \textbf{L2}（跨会话技能库）：持久、版本化的技能，按抽象度/可复用性/可行动性/忠实度索引，含防泄漏检索
+%（仅注入名称、docstring 泛化、问题侧嵌入）以防止跨任务答案抄袭。
+
+\subsection{Affective-Memory Mechanisms: From Biology to Computation}
+\label{sec:affective}
+% 【中文】\subsection{情绪记忆机制：从生物到计算}
+
+The L1/L2 architecture above is \emph{functional}: it asks ``does memory help?'' but not ``\emph{which} mechanism brings the gain?'' We introduce three mechanisms inspired by cognitive-neuroscience principles of emotional memory, each a \emph{computable} mapping ablatable with a mechanism-level negative control (equal-token budget, mechanism off).
+% 【中文】
+% 上述 L1/L2 架构是\emph{功能性}的：它问"记忆是否有用？"而非"\emph{哪个}可计算机制带来增益？"
+% 我们引入三个受情绪记忆认知神经科学原理启发的机制，每个给出一个\emph{可计算}映射，可用机制级阴性对照
+%（等 token 预算、机制关闭）消融。
+
+{\hbadness=10000\sloppy \textbf{Mechanism 1: Surprise/Penalty-Gated Writing.} Emotionally arousing events---unexpected failures or breakthroughs---are preferentially consolidated via amygdala--hippocampus interaction \cite{mcgaugh2004}. We map this to a \emph{write-gating weight}:\par}
+% 【中文】
+% \textbf{机制 1：惊异/惩罚门控写入。} 人类不会均匀记录每个事件；情绪唤起的事件——意外失败或突破——
+% 经杏仁核-海马交互被优先巩固 \cite{mcgaugh2004}。我们将其映射为一个\emph{写入门控权重}：
+\begin{equation}
+\label{eq:write-gate}
+w_{\text{write}}(e) = \alpha \cdot \text{surprise}(e) + \beta \cdot \text{penalty}(e),
+\end{equation}
+where $\text{surprise}(e) = \text{KL}(p_{\text{posterior}} \| p_{\text{prior}})$ is the Bayesian surprise of event $e$ relative to the memory bank's prior \cite{ittibaldi2009}, and $\text{penalty}(e)$ is the sunk cost (tool calls / tokens consumed before a mid-chain crash). The agent writes preferentially to high-$w_{\text{write}}$ events; $\alpha,\beta$ are calibrated by ablation (M5 vs.\ M2 uniform sampling), with total memory budget held equal to control for ``just remembering more.''
+% 【中文】
+% 其中 $\text{surprise}(e) = \text{KL}(p_{\text{posterior}} \| p_{\text{prior}})$ 是事件 $e$ 相对
+% 记忆库先验的贝叶斯惊异 \cite{ittibaldi2009}，$\text{penalty}(e)$ 是沉没成本（链中途崩溃前消耗的
+% 工具调用/token）。智能体优先写入高 $w_{\text{write}}$ 事件；$\alpha,\beta$ 由消融校准（M5 vs.\ M2
+% 均匀采样），总记忆预算保持相等以对照"只是记得更多"。
+
+\textbf{Mechanism 2: Weapon-Focus Compression.} Under high arousal, the brain consolidates \emph{central} details at the expense of \emph{peripheral} ones \cite{loftus1987}. We map this to a compression ratio:
+% 【中文】
+% \textbf{机制 2：武器焦点压缩。} 高觉醒下，大脑以\emph{外围}细节为代价巩固\emph{中心}细节（威胁性
+% 刺激）\cite{loftus1987}。我们将其映射为一个压缩比：
+\begin{equation}
+\label{eq:weapon-focus}
+r_{\text{cp}} = \frac{|\text{central tokens}|}{|\text{total tokens}|},
+\end{equation}
+where \emph{central} = error stack trace + root-cause causal chain, and \emph{peripheral} = intermediate tool-call logs. When surprise exceeds a threshold (same trigger as M5), the agent writes only central content into L1/L2, stripping peripheral noise. This predicts: smaller memory $\wedge$ equal-or-better Pass@1.
+% 【中文】
+% 其中 \emph{central} = 错误堆栈轨迹 + 根因因果链，\emph{peripheral} = 中间工具调用日志。当惊异超过
+% 阈值（与 M5 同一触发器）时，智能体仅将中心内容写入 L1/L2，剥离外围噪声。这预测：更小记忆 $\wedge$
+% 相等或更优 Pass@1。
+
+\textbf{Mechanism 3: State-Aware Retrieval.} Mood-congruent, state-dependent recall \cite{bower1981} predicts that a ``failing streak'' state should retrieve pitfall-avoidance lessons while ``smooth progress'' retrieves success templates. We map this to a retrieval score:
+% 【中文】
+% \textbf{机制 3：状态感知检索。} 情绪一致与状态依赖的回忆 \cite{bower1981} 预测：处于"失败连击"状态的
+% 智能体应优先检索防御性的避坑教训，而"顺利推进"状态应检索成功模板。我们将其映射为一个检索评分：
+\begin{equation}
+\label{eq:state-retrieval}
+\text{score}(q, m) = \text{sim}(q, m) + \gamma \cdot \text{sm}(\text{state}(q), \text{state}(m)),
+\end{equation}
+where $\text{sm}$ denotes state-match, the state tuple is $\text{state}=(\text{fail-rate}_N,\,\text{tool},\,\text{stage})$---respectively the recent-$N$-step failure rate, the current tool domain, and the chain stage---and $\gamma$ is calibrated by ablation (M6 vs.\ M3 state-agnostic retrieval, same memory content).
+% 【中文】
+% 其中 $\text{state} = (\text{最近 }N\text{ 步失败率}, \text{当前工具领域}, \text{链阶段})$，$\gamma$
+% 由消融校准（M6 vs.\ M3 状态无关检索，相同记忆内容）。
+
+Each mechanism has a \emph{mechanism-level negative control}: turn the mechanism off while holding the token budget equal, isolating ``the mechanism helps'' from ``more context helps''---stricter than the functional-level control (M3 vs.\ M0) and directly addressing the objection that memory gains are just prompt-lengthening. Full derivations, biological-evidence citations, and AI-affective-memory positioning (Generative Agents \cite{park2023}, EM-LLM, PsychoAgent) are in Appendix~\ref{sec:affective-appendix}.
+% 【中文】
+% 每个机制都有一个\emph{机制级阴性对照}：在保持 token 预算相等的前提下关闭该机制，把"该机制有用"与
+% "更多上下文有用"隔离开来。这比功能级对照（M3 vs.\ M0）更严格，并直接回应评审者"记忆增益只是提示
+% 延长"的异议。完整机制推导、生物证据引用与 AI 情绪记忆文献定位（Generative Agents \cite{park2023}、
+% EM-LLM、PsychoAgent）见附录~\ref{sec:affective-appendix}。

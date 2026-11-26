@@ -1,0 +1,114 @@
+﻿\section{Experimental Details}
+\label{sec:experimental-details}
+% 【中文】\section{实验细节}
+% 附录 C：实验细节（参考 SWE-bench Appendix D "Additional Experimental Details"）
+% 注：本文件原含 GBK→UTF-8 双重解码导致的乱码中文注释，2026-11-18 中文对照令期间修正为正确 UTF-8。
+
+\subsection{Cline Agent Configuration}
+\label{sec:cline-config}
+% 【中文】\subsection{Cline 智能体配置}
+
+\textbf{Version.} Cline v3.0.51~\cite{cline2026}, open-source.
+% 【中文】\textbf{版本。} Cline v3.0.51~\cite{cline2026}，开源。
+
+\textbf{Thinking budget.} \texttt{thinking=low} (default). We chose low over medium/high to control token cost across the \LiteSet{}-task Lite evaluation set; the trade-off is reduced reasoning depth. A separate context-compaction ablation (basic vs.\ agentic summarization, \texttt{thinking=medium}, 40-task subset) is reported in Appendix~\ref{sec:compaction-ablation}; a full thinking-budget sweep is planned for the camera-ready version.
+% 【中文】
+% \textbf{思考预算。} \texttt{thinking=low}（默认）。我们选 low 而非 medium/high，以在 \LiteSet{}-任务的
+% Lite 评测集上控制 token 成本；代价是推理深度降低。一个单独的上下文压缩消融（basic vs.\ agentic 摘要，
+% \texttt{thinking=medium}、40 任务子集）见附录~\ref{sec:compaction-ablation}；完整的思考预算扫描计划在
+% camera-ready 版本进行。
+
+\textbf{Auto-approve.} All tool calls auto-approved (no human-in-the-loop). The agent may iterate freely within the 2400s timeout.
+% 【中文】
+% \textbf{自动批准。} 所有工具调用自动批准（无人工介入）。智能体可在 2400 秒超时内自由迭代。
+
+{\hbadness=10000\sloppy \textbf{MCP bridge.} The \texttt{eda\_flow} MCP server (port 18891) exposes 8 tools: \texttt{open\_session}, \texttt{close\_session}, \texttt{declare\_done}, \texttt{run\_commands}, \texttt{run\_code}, \texttt{read\_file}, \texttt{write\_file}, \texttt{list\_files}. The agent must call \texttt{open\_session} first to obtain a workdir, then pass it to all subsequent calls.\par}
+% 【中文】
+% \textbf{MCP 网桥。} \texttt{eda\_flow} MCP 服务器（端口 18891）暴露 8 个工具：\texttt{open\_session}、
+% \texttt{close\_session}、\texttt{declare\_done}、\texttt{run\_commands}、\texttt{run\_code}、
+% \texttt{read\_file}、\texttt{write\_file}、\texttt{list\_files}。智能体必须先调用
+% \texttt{open\_session} 取得工作目录，再将其传入所有后续调用。
+
+\subsection{API Gateway Configuration}
+\label{sec:api-config}
+% 【中文】\subsection{API 网关配置}
+
+All models accessed via an OpenAI-compatible API gateway (\texttt{agi-gateway}). The \texttt{providers.json} configuration (with API keys masked):
+% 【中文】
+% 所有模型通过 OpenAI 兼容 API 网关（\texttt{agi-gateway}）访问。\texttt{providers.json} 配置
+%（API 密钥已脱敏）：
+{\scriptsize\begin{verbatim}
+{
+  "baseURL": "http://agi-gateway.internal/cloud/v1",
+  "apiKey": "<MASKED>",
+  "model": "deepseek-v4-pro-cloud"
+}
+\end{verbatim}}
+% 注：主机名已匿名化为 agi-gateway.internal（双盲投稿，原文含公司内部域名）。
+{\hbadness=10000\sloppy We verify API reachability with a \texttt{/chat/completions} health check before each batch run; a 403 response indicates key expiry.\par}
+% 【中文】
+% 每批运行前，我们用 \texttt{/chat/completions} 健康检查验证 API 可达性；403 响应表示密钥失效。
+
+\subsection{Anti-Leakage Hook Implementation}
+\label{sec:hook-impl}
+% 【中文】\subsection{防泄漏钩子实现}
+
+The \texttt{PreToolUse} hook is a shell script invoked before every tool call. It enforces:
+% 【中文】
+% \texttt{PreToolUse} 钩子是一个 shell 脚本，在每次工具调用前触发。它强制执行：
+{\hbadness=10000\sloppy\begin{itemize}
+    \item \textbf{Path whitelist}: only paths under the evaluation workdir root are accessible.
+    % 【中文】\textbf{路径白名单}：仅评测工作目录根之下的路径可访问。
+    \item \textbf{Answer-key blocklist}: any path matching \texttt{check.py}, \texttt{\_check.py}, \texttt{reference/}, \texttt{hidden/}, or \texttt{\_reference\_check.py} is blocked.
+    % 【中文】\textbf{答案黑名单}：任何匹配 \texttt{check.py}、\texttt{\_check.py}、\texttt{reference/}、\texttt{hidden/}、\texttt{\_reference\_check.py} 的路径被阻止。
+    \item \textbf{Tool whitelist}: only \texttt{read\_file}, \texttt{write\_to\_file}, \texttt{eda\_flow/*} MCP tools, and basic shell commands are allowed; code-search tools (\texttt{grep}, \texttt{find} outside the workdir) are blocked.
+    % 【中文】\textbf{工具白名单}：仅允许 \texttt{read\_file}、\texttt{write\_to\_file}、\texttt{eda\_flow/*} MCP 工具及基本 shell 命令；工作目录之外的 \texttt{grep}、\texttt{find} 被阻止。
+    \item \textbf{Blocked-call response}: the hook returns the string ``ACCESS RESTRICTED'' to the agent, which is logged but does not terminate the session.
+    % 【中文】\textbf{被拦截调用的响应}：钩子向智能体返回字符串"ACCESS RESTRICTED"，该事件被记录但不终止会话。
+\end{itemize}}
+We count blocked calls per session (\texttt{hook\_blocks} field in \texttt{status.jsonl}) to verify the hook is firing.
+% 【中文】
+% 我们统计每会话被拦截次数（\texttt{status.jsonl} 的 \texttt{hook\_blocks} 字段），以验证钩子是否触发。
+
+\subsection{Judge Implementation}
+\label{sec:judge-impl}
+% 【中文】\subsection{判分器实现}
+
+The judge runs \emph{after} the agent exits, in a separate directory:
+% 【中文】
+% 判分器在智能体退出\emph{之后}运行，位于独立目录：
+\begin{enumerate}
+    \item Unpack \texttt{submit.zip} into a fresh workdir.
+    % 【中文】将 \texttt{submit.zip} 解包到全新工作目录。
+    \item Invoke \texttt{check.py} with \texttt{(deliverable\_path, workdir)} arguments.
+    % 【中文】以 \texttt{(deliverable\_path, workdir)} 参数调用 \texttt{check.py}。
+    \item \texttt{check.py} uses only Python standard library (no EDA license required).
+    % 【中文】\texttt{check.py} 仅使用 Python 标准库（判分无需 EDA 许可）。
+    \item A task passes iff all $k \geq 8$ assertions hold.
+    % 【中文】当且仅当所有 $k \geq 8$ 条断言成立时，任务判为通过。
+\end{enumerate}
+The \texttt{test\_rationale} field documents each assertion in human-readable form (``k assertions: (1), (2), ...'') for interpretability and audit.
+% 【中文】
+% \texttt{test\_rationale} 字段以可读形式（"k 条断言：(1)、(2)、……"）记录每条断言，便于可解释性与审计。
+
+\subsection{Open-Source EDA Equivalence Mapping}
+\label{sec:repro-details}
+% 【中文】\subsection{开源 EDA 等价映射}
+
+To address the reproducibility limitation of commercial EDA tools, an independent party can construct an open-source-EDA equivalent by mapping each domain to an open-source tool:
+% 【中文】
+% 为应对商用 EDA 工具的可复现性限制，独立方可通过将每个领域映射到对应开源工具来构建开源 EDA 等价基准：
+{\hbadness=10000\sloppy\begin{itemize}
+    \item \textbf{Digital synthesis}: Synopsys DC $\to$ Yosys + OpenROAD.
+    % 【中文】\textbf{数字综合}：Synopsys DC $\to$ Yosys + OpenROAD。
+    \item \textbf{SPICE simulation}: HSPICE/Spectre $\to$ ngspice/Xyce.
+    % 【中文】\textbf{SPICE 仿真}：HSPICE/Spectre $\to$ ngspice/Xyce。
+    \item \textbf{Physical verification}: Calibre $\to$ KLayout + Magic.
+    % 【中文】\textbf{物理验证}：Calibre $\to$ KLayout + Magic。
+    \item \textbf{Layout}: Virtuoso/Aether $\to$ KLayout + OpenROAD.
+    % 【中文】\textbf{版图}：Virtuoso/Aether $\to$ KLayout + OpenROAD。
+\end{itemize}}
+Such an open-source re-implementation would reuse the task schema, harness, and anti-leakage protocol described in this paper, enabling cross-ecosystem comparison. We do not release such an extension; the mapping is provided so that independent parties can re-derive an equivalent benchmark.
+% 【中文】
+% 此类开源再实现将复用本论文描述的任务模式、框架与防泄漏协议，从而支持跨生态比对。我们不发布该扩展；
+% 提供此映射以便独立方可重新推导出等价基准。

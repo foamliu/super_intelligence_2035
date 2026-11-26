@@ -1,0 +1,117 @@
+\section{Falsifiable Hypotheses and Ablation Design}
+\label{sec:hypotheses}
+% 【中文】\section{可证伪假设与消融设计}
+
+We formulate \textbf{3 core falsifiable hypotheses} (H1 functional / H2 mechanistic / H3 boundary) decomposed into \textbf{7 sub-hypotheses}, organized in a \emph{total--mechanism--boundary} three-layer structure, each with falsification conditions.
+% 【中文】
+% 我们提出 \textbf{3 条核心可证伪假设}（H1 功能性 / H2 机制性 / H3 边界性），分解为 \textbf{7 条子假设}，
+% 按\emph{总-机制-边界}三层结构组织，每条含证伪条件。
+
+\subsection{Three-Layer Structure}
+% 【中文】\subsection{三层结构}
+% 【中文】表 1：三层假设结构（列名依次：层级、核心假设、子假设）。tabularx+X 列防双栏越 margin。
+
+\begin{center}
+\small
+\begin{tabularx}{\columnwidth}{@{}lXX@{}}
+\toprule
+\textbf{Layer} & \textbf{Core Hyp.} & \textbf{Sub-Hypotheses} \\
+\midrule
+L1 Total & H1: memory+RSI $\to$ transferable gain & H1a, H1b, H1c \\
+L2 Mechanism & H2: gain from 3 affective mechanisms & H2a, H2b, H2c \\
+L3 Boundary & H3: single-agent $\geq$ multi-agent & H3 (independent) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{H1 (total).} Governed long-term memory + RSI yields transferable Pass@1 gains on long-chain EDA flow. \emph{Falsification (disjunctive):} any of H1a/H1b/H1c falsified $\Rightarrow$ H1 falsified.
+% 【中文】
+% \textbf{H1（总）。} 受治理的长期记忆 + RSI 在长链 EDA 流程上带来可迁移的 Pass@1 增益。
+% \emph{证伪（析取式）：} H1a/H1b/H1c 任一被证伪 $\Rightarrow$ H1 被证伪。
+
+\textbf{H2 (mechanism).} H1's gain arises from the three affective-memory mechanisms (\S\ref{sec:affective}), not prompt lengthening (N1 excludes). \emph{Falsification (conjunctive):} all of H2a/H2b/H2c falsified $\Rightarrow$ H2 falsified; 1--2 surviving $\to$ ``partial mechanisms effective.''
+% 【中文】
+% \textbf{H2（机制）。} H1 的增益源于三个情绪记忆机制（\S\ref{sec:affective}），而非提示延长（N1 排除）。
+% \emph{证伪（合取式）：} H2a/H2b/H2c 全部被证伪 $\Rightarrow$ H2 被证伪；1--2 个机制存活 $\to$
+% "部分机制有效"。
+
+\textbf{H3 (boundary, appendix).} The prior finding (single-agent $\geq$ multi-agent; autonomous-spawn $\geq$ user-custom) replicates in the flow setting. \emph{Independent} of H1/H2. Both outcomes publishable: replication $\to$ consolidates; non-replication $\to$ bounds the single-agent advantage to short chains.
+% 【中文】
+% \textbf{H3（边界，附录）。} 先前发现（单智能体 $\geq$ 多智能体；自主 spawn $\geq$ 用户定制）在流程场景
+% 可复现。\emph{独立于} H1/H2。两种结果均可发表：复现 $\to$ 巩固；不可复现 $\to$ 将单智能体优势限定于
+% 短链。
+
+\subsection{Sub-Hypotheses (compact)}
+% 【中文】\subsection{子假设（紧凑版）}
+% 【中文】表 2：子假设紧凑表（列名依次：子假设、主张（一行）、证伪条件（一行））
+
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}lYY@{}}
+\toprule
+\textbf{Sub} & \textbf{Claim (one line)} & \textbf{Falsification (one line)} \\
+\midrule
+H1a & Memory lifts long-chain Pass@1 (M3 vs M0, $\geq$3pp) & M3$-$M0$<$1pp or McNemar $p>0.05$ or reversal \\
+H1b & RSI gain grows monotonically with chain length ($\Delta_{\text{long}}\geq\Delta_{\text{mid}}\geq\Delta_{\text{short}}$, $\geq$3pp) & monotonicity broken or $\Delta_{\text{long}}-\Delta_{\text{short}}$ CI contains 0 \\
+H1c & Cross-session long-term memory is necessary for cross-session RSI (no-memory cross-session RSI gain $\leq$0; interaction $\geq$2pp) & S1$>$M0+2pp or interaction CI contains 0 \\
+\midrule
+H2a & Surprise-gated writing $>$ uniform (M5 vs M2, $\geq$3pp, equal token) & M5$-$M2$<$1pp or reversal \\
+H2b & Weapon-focus compression $>$ full write (M7 vs M2, $\geq$2pp, memory $\leq$0.6$\times$) & M7$<$M2$-$2pp or memory $\geq$0.8$\times$M2; {\em weak support}: memory 0.6--0.8$\times$M2 \& $|$M7$-$M2$|<$2pp \\
+H2c & State-aware retrieval $>$ state-agnostic (M6 vs M3, $\geq$3pp on fail-streak subset) & fail-streak M6$-$M3$<$1pp or harm in smooth subset \\
+\midrule
+H3 & Single-agent $\geq$ autonomous-spawn in flow (nested in M3+S1) & autonomous-spawn $>$ single-agent +3pp (McNemar $p<0.05$) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Statistics.} McNemar (paired, direction-consistent) + paired bootstrap 95\% CI (1000 resamples); $\alpha=0.05$ (Bonferroni $\alpha=0.05/3=0.0167$ for the 3-hypothesis family). Minimum matrix: 120 tasks/arm (top-120 of the Lite \LiteSet{}-task set by chain length); \emph{ideal matrix = Lite $\times$ 3 repeats} (\LiteSet{} tasks $\times$ 3, power $\geq$0.8). \emph{Power positioning:} at $n{=}120$, McNemar power for a 3pp effect is $\approx$0.62, so minimal-matrix results are reported as \textbf{pilot signal}, not primary verdicts; H1/H2 verdicts are deferred to the ideal matrix (Lite $\times$ 3, power $\geq$0.8). M6's fail-streak subset ($\sim$40 tasks at $n{=}120$, power $<$0.3) is exploratory; H2c is deferred to the ideal matrix (fail-streak $\geq$80). The abstract reports no specific pp numbers for arms.
+% 【中文】
+% \textbf{统计。} McNemar（配对、方向一致）+ 配对 bootstrap 95\% CI（1000 次重采样）；$\alpha=0.05$
+%（3 假设族 Bonferroni $\alpha=0.05/3=0.0167$）。最小矩阵：120 任务/臂（按链长取 Lite \LiteSet{}-任务集
+% 的 top-120）；\emph{理想矩阵 = Lite $\times$ 3 重复}（\LiteSet{} 任务 $\times$ 3、功效 $\geq$0.8）。
+% \emph{功效定位：} $n{=}120$ 下 3pp 效应的 McNemar 功效 $\approx$0.62，
+% 故最小矩阵结果作为\textbf{试点信号}报告，不作主要判据；H1/H2 主要判据延至理想矩阵
+%（Lite $\times$ 3、功效 $\geq$0.8）。M6 的失败连续子集（$n{=}120$ 时 $\sim$40 题、3pp 功效 $<$0.3）
+% 仅为探索性；H2c 判据延至理想矩阵（失败连续 $\geq$80 题）。摘要不报告各臂具体 pp 数字。
+
+\subsection{10-Arm Main Ablation (3 Appendix)}
+\label{sec:arms}
+% 【中文】\subsection{10 臂主消融（3 臂附录）}
+% 【中文】表 3：10 臂主消融设计（列名依次：臂、对应假设、变量、判据）。M2 作 H2a/H2b 对照臂（不进主表）；M1/M8 附录。
+
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabularx}{\columnwidth}{@{}llYY@{}}
+\toprule
+\textbf{Arm} & \textbf{Hyp} & \textbf{Variable} & \textbf{Criteria} \\
+\midrule
+M0 & H1a & no memory (baseline) & anchor = M0 Pass@1 on same top-120-of-Lite subset (\TBD); 696-run \MzeroPass{} is Full-set descriptive only \\
+M3 & H1a & auto memory + reliability gating & \textbf{M3$\geq$M0+3pp} \\
+S1 & H1c & RSI, no memory; inter-session persistence explicitly forbidden (incl.\ harness-level file residue) & S1$\leq$M0 (cross-session RSI null under no inter-session persistence) \\
+M3+S1 & H1b,c & memory + RSI & interaction $\geq$2pp; $\Delta_{\text{long}}\geq\Delta_{\text{mid}}\geq\Delta_{\text{short}}$ \\
+\midrule
+N1 & H1a & killer: equal-token random padding & M3$\geq$N1+3pp (excludes ``prompt longer'') \\
+N2 & H2$^-$ & error/irrelevant memory & N2$\leq$M0; M3$\geq$N2+5pp \\
+M4 & H1+H2 & transfer: train-domain write, target-domain read & $\geq$M0+2pp; leak rate $=0$ (machine-judgeable proxy: n-gram overlap of memory entries vs target-domain prompt/filename/assertion literals; manual only borderline) \\
+\midrule
+M5 & H2a & surprise-gated writing ($w=\alpha\cdot$surprise$+\beta\cdot$penalty) & M5$\geq$M2+3pp; token $\Delta\leq$10\% \\
+M6 & H2c & state-aware retrieval (score=sim$+\gamma\cdot$state\_match) & fail-streak M6$\geq$M3+3pp (minimal-matrix exploratory: $\sim$40 tasks, power $<$0.3; H2c verdict deferred to ideal matrix, fail-streak $\geq$80) \\
+M7 & H2b & weapon-focus compression ($r_{\text{cp}}$) & M7$\geq$M2+2pp; memory $\leq$0.6$\times$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Appendix arms.} M2 (auto memory, no gating) is the H2a/H2b control arm---it appears in H2 criteria rows (M5 vs M2, M7 vs M2) but is \emph{not} a main-table arm; its prior H1a weak-control criteria (M2$\geq$M0+2pp and M3$\geq$M2+1pp) are \textbf{withdrawn} (1pp is below detectable effect at $n{=}120$). M1 (static SOP memory) and M8 (negative-valence bias) are appendix robustness checks.
+% 【中文】
+% \textbf{附录臂。} M2（自动记忆、无门控）作为 H2a/H2b 对照臂评测——出现在 H2 判据行（M5 vs M2、M7 vs M2），
+% 但\emph{不}是主表臂；其先前的 H1a 弱对照判据（M2$\geq$M0+2pp 与 M3$\geq$M2+1pp）\textbf{撤回}
+%（1pp 在 $n{=}120$ 下低于可检效应，§5.3）。M1（静态 SOP 记忆）与 M8（负效价偏倚）为附录稳健性检验，不进主 10 臂表。
+
+All arms use the same \texttt{check.py}, same $\geq$8 assertions, same 2400s timeout, same backbone (DeepSeek-V4-Pro). M1--M8 and N1--N2 results are \TBD (pending evaluation); M0's minimal-matrix anchor is the same-subset M0 on the top-120-of-Lite (\TBD), not the 696-run Full-set \MzeroPass{} (descriptive baseline snapshot).
+% 【中文】
+% 所有臂使用相同的 \texttt{check.py}、相同的 $\geq$8 断言、相同的 2400s 超时、相同的骨干
+%（DeepSeek-V4-Pro）。M1--M8、N1--N2 的结果为 \TBD（待评测）；M0 在最小矩阵中的比较锚点为
+% 同 top-120-of-Lite 子集上实测的 M0 Pass@1（\TBD），而非 696-run Full-set \MzeroPass{}
+%（后者仍为描述性基线快照）。

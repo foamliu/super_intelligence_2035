@@ -1,0 +1,13 @@
+\section{Conclusion}
+
+The paradox that opened this paper is not a knowledge deficit but a structural consequence: an LLM is a static compressor of what has been written, blind to what is happening now. The grounding gap is the distance between offline knowledge (L1--L3) and situated truth (L4). L4 is indexical, ephemeral, and cannot be learned from static text. It must enter through runtime observation, not pretraining. This distinction---recalling what was versus observing what is---is our central contribution.
+% 开篇悖论并非知识匮乏，而是结构性后果：LLM是已书写内容的静态压缩器，对此刻正在发生的事情视而不见。落地鸿沟是离线知识（L1-L3）与情境真实（L4）之间的距离。L4是指示性的、瞬时性的，无法从静态文本中学习。它必须通过运行时观测而非预训练进入系统。这一区分——回忆曾经是什么与观测当前是什么——是我们的核心贡献。
+
+To bridge this gap, we introduced the Agent Harness, formalized as \(\mathcal{H} = (\mathcal{S}, \mathcal{O}, \mathcal{A}, \mathcal{B}, \mathcal{T}, \Omega, \Pi)\). The LLM provides the learned prior \(\mathcal{T}\) and approximates planning; the Harness supplies runtime observation \(\Omega\), belief update \(\Phi\), and execution. The central insight: the grounding gap is bounded by the fidelity of \(\Omega\), not by the capacity of \(\mathcal{T}\). Scaling improves the prior but cannot compensate for a lossy observation channel.
+% 为弥合这一鸿沟，我们引入了智能体框架，形式化为\(\mathcal{H} = (\mathcal{S}, \mathcal{O}, \mathcal{A}, \mathcal{B}, \mathcal{T}, \Omega, \Pi)\)。LLM提供学习先验\(\mathcal{T}\)并近似规划；框架提供运行时观测\(\Omega\)、信念更新\(\Phi\)和执行。核心洞见：落地鸿沟受\(\Omega\)保真度约束，而非\(\mathcal{T}\)的容量。缩放改进了先验，但无法补偿有损的观测通道。
+
+Three principles follow: freeze \(\mathcal{K}\), maximize \(\Omega\), run \(\Phi\) continuously. These shift the field from building larger static artifacts to designing dynamic real-time systems. Training changes knowledge; observation changes belief; action changes the world.
+% 三条原则由此推出：冻结\(\mathcal{K}\)、最大化\(\Omega\)、持续运行\(\Phi\)。它们将领域从构建更大的静态制品转向设计动态的实时系统。训练改变知识；观测改变信念；行动改变世界。
+
+The model compresses the past; the system meets the present; situated intelligence emerges from their coupling.
+% 模型压缩过去；系统面对当下；情境智能从它们的耦合中涌现。

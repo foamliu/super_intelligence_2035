@@ -1,0 +1,41 @@
+\section{Benchmark Construction}
+\label{sec:benchmark}
+
+\subsection{Dataset: EDA-Eval-PyAether}
+
+To evaluate LLM-based code generation for PyAether, we constructed \textbf{EDA-Eval-PyAether}, a benchmark of 158 tasks. Tasks were collected from four sources: API references (61.4\%), documentation examples (27.2\%), internal training materials (7.6\%), and anonymized CAD practical cases (3.8\%). Each task underwent manual review by EDA domain experts.
+% 为了评估基于LLM的PyAether代码生成，我们构建了\textbf{EDA-Eval-PyAether}评测集，包含158个任务。任务收集自四个来源：API参考文档（61.4\%）、官方文档示例（27.2\%）、内部培训材料（7.6\%）和脱敏的CAD实际案例（3.8\%）。每个任务均由EDA领域专家进行了人工审核。
+
+Table~\ref{tab:scenario-distribution} shows the distribution of tasks across different EDA scenarios. Layout and Schematic operations constitute the majority (70.2\%), reflecting the core focus of PyAether usage in physical design workflows.
+% 表~\ref{tab:scenario-distribution}展示了任务在不同EDA场景中的分布。Layout和Schematic操作占大多数（70.2\%），反映了PyAether在物理设计工作流中的核心使用场景。
+
+\begin{table}[htbp]
+\centering
+\caption{Task distribution by scenario}
+\label{tab:scenario-distribution}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Scenario} & \textbf{Tasks} & \textbf{Percentage} \\
+\midrule
+Layout & 64 & 40.5\% \\
+Schematic & 47 & 29.7\% \\
+Design Management & 24 & 15.2\% \\
+Others & 23 & 14.6\% \\
+\midrule
+Total & 158 & 100\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+% 表：按场景划分的任务分布。
+
+\subsection{Evaluation Protocol}
+
+Each task consists of a natural language prompt, a function signature, and assertion-based test code. A task is considered passed if the generated code executes in the PyAether sandbox without errors and all assertions pass. The primary metric is Pass@1 \cite{chen2021evaluating}:
+% 每个任务包含三个部分：自然语言提示、函数签名、以及基于断言的测试代码。如果生成的代码在PyAether沙盒中无错误执行且所有断言通过，则该任务被视为通过。主要指标为Pass@1 \cite{chen2021evaluating}：
+
+\[
+\text{Pass@1} = \frac{\text{\# tasks with all assertions passed}}{\text{Total tasks}} \times 100\%
+\]
+% \[
+% \text{Pass@1} = \frac{\text{所有断言均通过的任务数}}{\text{总任务数}} \times 100\%
+% \]

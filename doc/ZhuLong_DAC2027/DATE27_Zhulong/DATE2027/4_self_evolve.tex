@@ -1,0 +1,29 @@
+\section{Self-Evolution}
+\label{sec:selfev}
+
+Unlike ZhuLong's offline API self-exploration, which augments per-API documentation through counterfactual sandboxing~\cite{liu2026zhulong}, ZhuLong-SE adds a cross-task offline self-evolution system (the blue-highlighted block at right in Figure~\ref{fig:architecture}). It distills task execution traces into reusable knowledge and re-injects it into later tasks. Knowledge is organized in three tiers, following the episodic-semantic-procedural memory distinction~\cite{sumers2023cognitive}: \emph{L0} holds raw traces, \emph{L1} stores aggregated patterns, and \emph{L2} archives distilled skill versions. Within L1, patterns are partitioned into four layers: \emph{solution} (verified API routes), \emph{pitfall} (negative warnings), \emph{meta} (effective query patterns), and \emph{strategy} (decision records). The write side runs offline after each training batch, and the read side injects knowledge at task formatting and on demand when the agent hits an error. The write, promotion, and round-acceptance stages apply reliability gates, as unvalidated experience can mislead~\cite{zhao2024expel,yang2026skillopt}. Distillation and state updates run offline. During inference, the accepted memory is queried locally, without additional evolution or distillation.
+% ZhuLong的离线API自探索通过反事实沙箱实验增强逐API文档~\cite{liu2026zhulong}；与之不同，ZhuLong-SE增加了跨任务离线自进化系统（图~\ref{fig:architecture}右侧蓝色模块）。该系统将任务执行轨迹蒸馏为可复用知识，并将其重新注入后续任务。知识按照情节—语义—程序性记忆的区分组织为三个层级~\cite{sumers2023cognitive}：\emph{L0}保存原始轨迹，\emph{L1}存储聚合模式，\emph{L2}归档蒸馏出的技能版本。在L1内部，模式分为四层：\emph{solution}（已验证API路径）、\emph{pitfall}（负面警告）、\emph{meta}（有效查询模式）和\emph{strategy}（决策记录）。写入侧在每个训练批次后离线运行；读取侧在任务格式化时以及智能体遇到错误时按需注入知识。写入、晋升和轮次接受阶段应用可靠性门控，因为未经验证的经验可能造成误导~\cite{zhao2024expel,yang2026skillopt}。蒸馏和状态更新离线执行；推理期间仅在本地查询已接受的记忆，不进行额外进化或蒸馏。
+
+\subsection{Distillation and Reflection}
+\label{sec:se_distill}
+
+The write side routes each task to the appropriate reflection path. We override the agent's self-reported success with the evaluator's binary verdict before any reflection begins, following Reflexion's observation that reliable feedback is necessary for reflection to help rather than harm~\cite{shinn2023reflexion}. Tasks that still error on their final attempt take the \emph{error path}; tasks whose self-test passed but the evaluator failed take the \emph{contradiction path} instead. This distinction is critical because a self-test-passed task's error log contains only stale errors; mining pitfalls from these would record already-solved bugs rather than genuine gaps in the agent's knowledge. Each L1 entry carries a reliability tier: \emph{verified}, \emph{unverified}, or \emph{pitfall}.
+% 写入侧将每个任务路由到相应的反思路径。我们在任何反思开始之前用评估器的二元判定覆盖智能体自报告的成功，遵循Reflexion的观察——可靠的反馈是反思起作用而非造成伤害的必要条件~\cite{shinn2023reflexion}。在最终尝试中仍然出错的任务走\emph{错误路径}；自测通过但评估器失败的任务则走\emph{矛盾路径}。这种区分至关重要，因为自测通过的任务的错误日志只包含过时错误；从中挖掘陷阱会记录已解决的错误而非智能体知识中的真正空白。每个L1条目带有一个可靠性等级：\emph{verified}、\emph{unverified}或\emph{pitfall}。
+
+\subsection{Knowledge Lifecycle with Reliability Gating}
+\label{sec:se_govern}
+
+Extracted L1 patterns undergo aggregation, gating, aging, and promotion to rules and skills. A verified entry is disconfirmed only when a failed task is an API misuse precisely attributed to that entry; at a count of two or more, the entry is filtered out. Unverified traces cannot downgrade verified entries, and entries not re-confirmed for five rounds drop to unverified. Promotion is guarded by a four-dimensional judge (abstraction, reusability, actionability, faithfulness) following SkillOS~\cite{ouyang2026skillos}, and a MUSE-style create-evaluate-refine loop~\cite{lin2026muse} for low-scoring candidates. We add a zero-exception generality gate that rejects rules whose always/never statements do not hold across the entire API surface, ensuring that distilled rules remain broadly applicable rather than overfitting to specific task patterns.
+% 提取的L1模式经历聚合、门控、老化以及提升为规则和技能。一个已验证条目仅当一个失败任务是被精确定位到该条目的API误用时才被证伪；达到两个或以上时，该条目被过滤掉。未经验证的轨迹不能降级已验证条目，连续五轮未重新确认的已验证条目降级为未验证。提升由两个质量机制把关：遵循SkillOS~\cite{ouyang2026skillos}的四维评判器（抽象性、可重用性、可操作性、忠实性），以及一个针对低分候选的MUSE风格创建-评估-精炼循环~\cite{lin2026muse}。我们增加了一个零异常泛化门控，拒绝任何在全API表面上不成立的always/never语句的规则——确保蒸馏出的规则保持广泛适用性而非过拟合特定任务模式。
+
+\subsection{Anti-Leakage Retrieval}
+\label{sec:se_read}
+
+Under an instance-disjoint split, naive retrieval risks cross-split answer copying. We prevent this through three mechanisms. \textbf{Names-only pre-injection} reduces a solution entry to API names only, dropping call order and parameters. \textbf{Deterministic docstring generalization} strips task-identifying specifics from both distillation and query sides. \textbf{Problem-side embedding} matches on problem similarity while returning solution metadata only at read time. Pitfalls are not pre-injected; they enter through on-demand runtime queries keyed to the agent's actual error.
+% 在实例不相交划分下，朴素的检索存在跨划分答案复制的风险。我们通过三个机制来防止这一问题。\textbf{仅名称预注入}将solution条目缩减为仅API名称，丢弃调用顺序和参数。\textbf{确定性文档字符串泛化}从蒸馏侧和查询侧同时移除任务标识性细节。\textbf{问题侧嵌入}在问题相似性上进行匹配，同时仅在读取时返回解决方案元数据。Pitfalls不预注入；它们通过以智能体实际错误为键的按需运行时查询进入。
+
+\subsection{Held-Out Gated Evolution}
+\label{sec:se_loop}
+
+After each training round, the agent generates on validation tasks (which never carry distillation). The round's full evolved state is accepted only if the validation pass rate does not regress by more than 5~pp against the previous round. Otherwise, it is rolled back. This extends SkillOpt's held-out criterion~\cite{yang2026skillopt} from a single document to the entire evolved state.
+% 每轮训练后，智能体在验证任务上生成（验证任务从不参与蒸馏）。该轮完整进化状态仅在验证通过率相比上一轮被接受的轮次不倒退超过5\%时才被接受；否则从快照回滚。这将SkillOpt的留出准则~\cite{yang2026skillopt}从单个文档扩展到整个进化状态。

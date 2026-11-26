@@ -1,0 +1,40 @@
+\section{Introduction}
+\label{sec:intro}
+% 【中文】\section{引言}
+
+LLM agents have mastered single-function EDA code generation---VerilogEval, RTLLM, and similar benchmarks report $\geq$\ScriptPass{} on isolated scripting tasks---yet they collapse on \emph{long-chain design-flow orchestration}: multi-step tasks that require driving live commercial EDA tools (schematic capture, SPICE simulation, DRC/LVS, synthesis) through dozens of tool calls, inspecting outputs, and recovering from errors. On \bench, a frozen 696-run Full-set evaluation snapshot shows a single frontier backbone (DeepSeek-V4-Pro) reaching only \MzeroPass{} Pass@1---a 7.6$\times$ drop from the scripting ceiling. The gap is not uniform: the highest-passing domain (\texttt{pnr\_signoff}, 20.8\%) exceeds the lowest (\texttt{physical\_verify} and \texttt{layout\_aether}, both 2.9\%) by 7.1$\times$ (descriptive point estimate; CIs overlap), and the hardest domains are precisely those demanding the deepest live-tool interaction.
+% 【中文】
+% LLM 智能体已掌握单功能 EDA 代码生成——VerilogEval、RTLLM 及类似基准在孤立脚本任务上报告
+% $\geq$\ScriptPass{}——但它们在\emph{长链设计流编排}上崩溃：这类多步任务要求驱动真实商用 EDA 工具
+%（原理图录入、SPICE 仿真、DRC/LVS、综合）经数十次工具调用、检视输出并从错误中恢复。在 \bench 上，
+% 一份冻结的 696-run Full-set 评测快照显示，单一前沿骨干（DeepSeek-V4-Pro）仅达到 \MzeroPass{}
+% Pass@1——较脚本上限下降 7.6$\times$。该差距并不均匀：通过率最高的领域（\texttt{pnr\_signoff}，20.8\%）是
+% 最低领域（\texttt{physical\_verify} 与 \texttt{layout\_aether}，均为 2.9\%）的 7.1$\times$
+%（描述性点估计；置信区间重叠），而最难的领域恰恰是那些要求最深实时工具交互的领域。
+
+We argue this is not merely a model-capacity problem but a \emph{memory and self-improvement} deficit. Long-chain flow tasks exceed any context window: an agent that cannot consolidate lessons across sessions---which errors recur, which tool sequences work---is condemned to re-discover the same knowledge every run. Recursive self-improvement (RSI)---expanding a skill library and refining the harness from experience---is only meaningful if memory persists to accumulate that experience.
+% 【中文】
+% 我们论证这并非单纯的模型能力问题，而是一个\emph{记忆与自我改进}缺失。长链流程任务超出任何上下文
+% 窗口：一个无法跨会话巩固经验教训（哪些错误反复出现、哪些工具序列奏效、哪些项目约定要紧）的智能体，
+% 注定每次运行都要重新发现同样的知识。递归自我改进（RSI）——扩展技能库并从经验中改进执行框架本身的
+% 能力——只有在记忆跨会话持久存在以累积经验时才有意义。
+
+\textbf{Contributions.} (1) We \emph{introduce} \bench{}, a two-tier benchmark (\emph{Full}: \FullScale{} long-chain EDA design-flow tasks across 13 domains, continuously growing, count not reported; \emph{Lite}: \LiteSet{} curated tasks filtered from Full by domain-coverage balance and chain-length distribution, used for general evaluation under bounded token/time budgets), each derived from real IC-design engineer coding-agent traces in a production environment, with a \mode{} contract (submit.zip + $\geq$8 executable assertions + a PreToolUse anti-leakage hook) and a frozen \Neval{}-run Full-set evaluation snapshot (\MzeroPass{} Pass@1 vs.\ \ScriptPass{} on single-script EDA benchmarks, a 7.6$\times$ gap); no data or code is released, with reproducibility supported via the protocol in this paper and an NDA-gated review package (\S\ref{sec:benchmark}). (2) We \emph{formulate} 3 core falsifiable hypotheses (H1 functional / H2 mechanistic / H3 boundary) decomposed into 7 sub-hypotheses, each with falsification conditions, and formalize three cognitive-neuroscience mechanisms---arousal $\rightarrow$ surprise/penalty gating, weapon-focus $\rightarrow$ central-peripheral compression, mood-congruence $\rightarrow$ state-aware retrieval---as computable mappings (\S\ref{sec:hypotheses}, \S\ref{sec:harness}). (3) We \emph{design} a 10-arm main ablation (3 appendix arms) with an equal-token killer control (N1, excluding ``prompt just got longer'') and a cross-domain transfer contamination probe (M4, with a machine-judgeable leak-rate audit); negative results are reported as publishable boundary conditions.
+% 【中文】
+% \textbf{贡献。}(1) 我们\emph{引入}\bench{}——一个两层基准（\emph{Full}：\FullScale{} 个长链 EDA
+% 设计流任务、跨 13 个领域、持续增长、不报告具体数字；\emph{Lite}：\LiteSet{} 个按领域覆盖平衡
+% 与链长分布从 Full 筛选的任务，用于在有限 token/时间预算下的一般评测），每个任务源自真实
+% IC 设计工程师在生产环境中的 coding-agent trace，含 \mode{} 契约（submit.zip + $\geq$8 个可执行
+% 断言 + PreToolUse 反泄漏钩子）与冻结的 \Neval{}-run Full-set 评测快照（\MzeroPass{} Pass@1 vs.\
+% 单脚本 EDA 基准 \ScriptPass{}，7.6$\times$ 跳变）；不发布数据/代码，复现性由本论文协议描述
+% + NDA 受控评审包支持（\S\ref{sec:benchmark}）。(2) 我们\emph{提出}
+% 3 条核心可证伪假设（H1 功能性 / H2 机制性 / H3 边界性）下设 7 条子假设、各含证伪条件，
+% 并形式化三个认知神经科学机制——情绪觉醒 $\rightarrow$ 惊异/惩罚门控、武器焦点 $\rightarrow$
+% 中心-外围压缩、情绪一致性 $\rightarrow$ 状态感知检索——为可计算映射
+%（\S\ref{sec:hypotheses}、\S\ref{sec:harness}）。(3) 我们\emph{设计} 10 臂主消融（3 臂附录），
+% 含等 token 杀手对照（N1，排除"提示变长"替代解释）与跨域迁移污染探针（M4，含机器可判的
+% 答案泄露率审计）；阴性结果作为可发表的边界条件报告。
+
+\textbf{Experimental status.} The M0 baseline (\MzeroPass{}) is available from a frozen 696-run snapshot; the other arms (M1--M8, N1--N2) are to be evaluated.
+% 【中文】
+% \textbf{实验状态。} M0 基线（\MzeroPass{}）可从冻结的 696-run 快照获得；其他臂（M1--M8、N1--N2）待评测。
