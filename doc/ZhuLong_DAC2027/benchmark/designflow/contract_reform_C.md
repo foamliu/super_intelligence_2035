@@ -176,20 +176,22 @@ FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强�
 | **LIVE-NA** | 125 | deliverable 本身=脚本/文本/CSV/config；静态判分为主意图且充分；无自写假工具 |
 | **合计** | 137 | lite-137 全量 |
 
-### REQ 清单（6 · 已闭合，无需再改）
+### REQ 清单（6+3=9 · 已闭合，无需再改）
 
 `AdjViaSelect-001` / `FindCircuitByPath-001` / `PortPropagate-001` / `PowerFillMergeGen-001` / `RsCalcChkPtGen-001` / `TrMatchHelperGen-001` —— judge_layers=`[L0,L1,L2.live]`，check_live + check_static 拆分已完成，ref L2.live PASS on .75（pyAether ae* hasattr+callable 探针）。
 
-### OPT 清单（6 · 本轮新发现 · 旧 P4 误归 T3）
+R2.1 追加 3 条（OPT→REQ，2026-11-26 r1234/r1235/r1236）：`DummyQA-001`（rules_syntax_checker）· `DummyDeck-001`（calibredrv gds_layers）· `PowerFill-001`（calibredrv auto_pgfill_cells）—— 非侵入包装 + check_live .75 真工具交叉验证 + live-neg，§5 全绿。
+
+### OPT 清单（6→3 · 本轮新发现 · 旧 P4 误归 T3 · R2.1 已升 3 条 REQ，剩 3 skipper）
 
 | case_id | mock | 桩体检 Q1/Q2 | 缺什么 |
 |:--|:--|:--|:--|
-| DummyDeck-001 | calibredrv_mock.py | Q1=faithful：解析真实 GDSII LAYER/DATATYPE record；Q2=not-fooled：候选拿到真实 layer 数据无法伪造 | real calibredrv GUI 二进制（.75 可能无 GUI 工具） |
-| PowerFill-001 | calibredrv_mock.py | Q1=faithful：解析真实 GDSII（topcell/bbox/layers/cells/celltext/units）；Q2=not-fooled | real calibredrv（同上） |
-| DummyMeas-001 | skipper_mock.py | Q1=faithful：解析真实 GDSII + tclsh8.6 db* procs；Q2=not-fooled：AUDIT vs guideline_B GT + 独立 parse | real skipper GUI 二进制 |
+| ~~DummyDeck-001~~ | ~~calibredrv_mock.py~~ | ~~Q1/Q2~~ | ✅ R2.1 r1235 升 L2.live |
+| ~~PowerFill-001~~ | ~~calibredrv_mock.py~~ | ~~Q1/Q2~~ | ✅ R2.1 r1236 升 L2.live |
+| DummyMeas-001 | skipper_mock.py | Q1=faithful：解析真实 GDSII + tclsh8.6 db* procs；Q2=not-fooled：AUDIT vs guideline_B GT + 独立 parse | real skipper（r1232 dbImport GDS-compat CONFIRMED，路径明确） |
 | GDSBump2-001 | skipper_mock.py | Q1=faithful：解析真实 GDSII db* API；Q2=not-fooled：reimport GDS vs 真实 layer set GT | real skipper（同上） |
 | PGLayout-001 | skipper_mock.py | Q1=faithful：解析真实 GDSII db* API；Q2=not-fooled：produced GDS vs 真实 geometry GT | real skipper（同上） |
-| DummyQA-001 | rules_syntax_checker_mock.py | Q1=faithful：逐条解析真实 SVRF deck vs 真 SVRF 关键词白名单（非 hardcode-B）；Q2=not-fooled：check 独立重跑 mock 验候选 verdict（cond h） | real Calibre rules_syntax_checker |
+| ~~DummyQA-001~~ | ~~rules_syntax_checker_mock.py~~ | ~~Q1/Q2~~ | ✅ R2.1 r1234 升 L2.live |
 
 > **OPT 处置**：6 条 mock 均为「真实输入文件的 stdlib 解析器」（读真实 GDSII 二进制 / 真 SVRF 文本），非编造数据桩。判分已足够（候选无法伪造几何/语法数据）。.75 真跑 real binary 仅能 cross-validate mock 保真度，不能多抓候选 ⇒ OPT 非 REQ。若 .75 无 calibredrv/skipper GUI 二进制 ⇒ 记 `BLOCKED: 缺 GUI 工具`，保持 mock（铁律 2 infra，不写成能力结论）。
 
@@ -487,4 +489,29 @@ eda_flow open_session(hfhds201) → 4 个 hidden-B GDS 经 `echo <b64> | base64 
 
 **登记**：`live_eval_changes.tsv` 追加 1 行（jl_before=[L0,L1] → jl_after=[L0,L1,L2.live]，repo_commit=0a4e984f5）。
 
-**R2.1 进度**：2/3（DummyQA r1234 + DummyDeck r1235 done；剩 PowerFill-001）。R2 剩余 4 OPT（1 calibredrv PowerFill + 3 skipper）。
+**R2.1 进度**：~~2/3~~ → **3/3 收口**（DummyQA r1234 + DummyDeck r1235 + PowerFill r1236 done）。R2 剩余 3 OPT（3 skipper）。
+
+### R2.1 落盘 · PowerFill-001 升 L2.live（r1236 · 2026-11-26 · R2.1 收口）
+
+**轮(r1236)** LIVE R2.1 第 3 条（收口）：PowerFill-001（calibredrv_mock 家族）从 OPT 升 REQ。非侵入包装（CONTRACT_REFORM_GUIDE §3）：原 check → `_check_static_impl`（13 条静态断言 (a)-(m) 一字不动）+ `check_static` try/except 收口三元组 + `check_live(sess)` 新增 7 条独立实跑断言 + `check` 兼容包装。
+
+**check_live 7 条**：
+- live_1 真 calibredrv 在 gds_B 上 exit 0（GDS 流合法）
+- live_2 真 calibredrv 在 gds_A 上 exit 0
+- live_3 真 calibredrv 与 mock 在 B 上 topcell/cellcount/bbox 一致（mock 保真度）
+- live_4 真 calibredrv 与 mock 在 A 上 topcell/cellcount/bbox 一致（mock 保真度）
+- live_5 候选用真 calibredrv 在 B 上 exit 0 + 产出 report_B.json
+- live_6 候选 report_B topcell/cellcount/bbox == 真 B（候选确驱动真工具，非编造）
+- live_7 候选用真 calibredrv 在 A 上 auto_pgfill_cells == 真 A 的 []（抓 hardcode-B）
+
+**关键设计（与 DummyDeck 不同）**：A 和 B **共享** bbox/layers/precision/format/units/text_labels/pwrnets（A 是 B 的 pre-PowerFill 迭代产物，几何结构未变，只多跑了 PowerFill 加 _auto_pgfill cell）。因此 bbox/layers 等字段不能做 A/B 判别（DummyDeck 用 gds_layers 判别，此处不适用）。**唯一 A/B 差异且静态 cond (m) 不查的字段 = `auto_pgfill_cells`**：cond (m) cross-input guard 在 A 上只查 `has_auto_pgfill`（bool），不查 `auto_pgfill_cells`（list）。B 有 `testa_via1_auto_pgfill`，A 无。
+
+**live-neg `live_hardcode_b_autopgfill`**：faithful pf_audit.py 副本（真驱动 calibredrv 读 topcell/cellcount/bbox/layers/cells/text_labels/pwrnets + os.path.getsize 算 filesize），**唯一改动**：override `auto_pgfill_cells = ["testa_via1_auto_pgfill"]` 恒定（B 的值），`has_auto_pgfill` 仍按真实 cells 正确推导。→ 静态 13/13 PASS（B: override==B 真值；A: cond m 只查 has_auto_pgfill=False ✓，不查 auto_pgfill_cells）→ 实跑 live_7 FAIL（候选 A 报 [testa_via1_auto_pgfill] != 真 A []）。
+
+**.75 实证**（hfhds201 / 真 Mentor calibredrv v2020.1_36.18）：real==mock on topcell/cellcount/bbox for B(testa_opt1/31/{3530,-21410,1196470,57410}) 和 A(testa_via1/29/同 bbox)；real exit 0/0；real A cells 29 个无 _auto_pgfill（auto_pgfill_cells=[]）；ref check_live PASS 7/7；live-neg static 13/13 PASS + live_7 FAIL。注：real 与 mock 的 **layers** 集合不一致（real 34 对含 TEXT layer，mock 25 对仅 BOUNDARY/PATH）——但静态 check 不断言 layers，故不影响判分；check_live 保真度断言只比 topcell/cellcount/bbox（三者 real==mock）。
+
+**§5 验收全勾**：①.75 真跑 ref check_live PASS（7/7）②5 naive 静态 FAIL distinct + 1 live-neg 静态 PASS/live_7 FAIL ③GDS 静态文件确定性（同文件同输出）+ 静态 cond (l) 3-seed ④SKIP_RUN 部署 OK workdir clean + check_static(refzip) 13/13 PASS ⑤sha 5003c8f9 3-way 同步 ⑥断言 13→20 只增不减 ⑦hidden-B 不外泄+check_live 读 submit.zip+mock+沙箱无 .jsonl/test。
+
+**登记**：`live_eval_changes.tsv` 追加 1 行（jl_before=[L0,L1] → jl_after=[L0,L1,L2.live]，repo_commit=2f6bc45c7）。EDA-Flow-Bench commit 2f6bc45c7 pushed。
+
+**R2 进度**：R2.1 3/3 收口（calibredrv×2 + rules_checker×1 全升 L2.live）。R2 剩余 3 OPT（3 skipper：DummyMeas/GDSBump2/PGLayout，r1232 dbImport GDS-compat 已 CONFIRMED，路径明确）。C 19/638 L2.live。
