@@ -214,14 +214,17 @@ class ClineDriver:
 
 
 class CodexDriver:
-    """codex CLI (`codex exec`) — pinned to 0.94.0 (last `wire_api="chat"` release).
+    """codex CLI (`codex exec`) — @openai/codex@0.172.0 (upgraded 2026-11-26).
 
-    2026-10-04: codex >=0.95 dropped `wire_api="chat"` (Responses API only), and
-    the gateway only speaks /v1/chat/completions with roles system/user/assistant.
-    So we pin the vendored `@openai/codex@0.94.0` binary (see `harness_work/`) and
-    route it through the local `gw_proxy` (127.0.0.1:9090) which rewrites
-    `developer`->`system` and injects the real gateway key.  `--sandbox
-    workspace-write` lets the agent edit the repo without interactive approvals.
+    2026-11-26: Upgraded from 0.94.0 to 0.172.0 per user order 令 F.  The new
+    version still supports `codex exec --cd <dir> --model <model> --sandbox
+    workspace-write --skip-git-repo-check --json <prompt>`.  Provider routing
+    through local gw_proxy (127.0.0.1:9090) unchanged.
+
+    Historical note (2026-10-04): codex >=0.95 dropped `wire_api="chat"`
+    (Responses API only), and the gateway only speaks /v1/chat/completions.
+    The gw_proxy handles the translation.  `--sandbox workspace-write` lets the
+    agent edit the repo without interactive approvals.
     """
 
     name = "codex"
@@ -240,9 +243,7 @@ class CodexDriver:
         ]
         # codex reads OPENAI_API_KEY for its provider; gw_proxy overrides the real
         # key upstream, so a dummy non-empty value here is sufficient.
-        # 2026-10-14: OPENAI_BASE_URL redirects codex's "refresh available models"
-        # call (hardcoded to https://api.openai.com) to the local gateway, avoiding
-        # network failures when the external proxy is down or external net unreachable.
+        # OPENAI_BASE_URL redirects codex's API calls to the local gateway.
         r = _run(cmd, workdir, timeout, env={
             "OPENAI_API_KEY": DUMMY_KEY,
             "OPENAI_BASE_URL": f"http://127.0.0.1:{GW_PROXY_PORT}/v1",
@@ -253,12 +254,18 @@ class CodexDriver:
 
 
 class OpencodeDriver:
-    """opencode — v1.18.27 single binary (built under harness_work/builds/opencode).
+    """opencode — v2.4.1 single binary (built from source 2026-11-26).
 
-    Headless via `opencode run --dir <workdir> [--format json]`.  Provider/model
-    come from `~/.config/opencode/opencode.json` (`gw/deepseek-v4-flash` ->
-    @ai-sdk/openai-compatible @ gw_proxy).  `--auto` approves the agent's tool
-    calls non-interactively.
+    Upgraded 2026-11-26 from v1.18.27 to v2.4.1 per user order 令 F.
+    Built with `bun run script/build.ts` in packages/cli; binary at
+    ``harness/opencode/packages/cli/dist/cli-linux-x64/bin/opencode``.
+
+    Headless via `opencode run --model <model> --auto <prompt>`.  In v2.x,
+    `--dir` is no longer a flag — the working directory is set via the
+    process cwd (which _run already handles).  Provider/model come from
+    `~/.config/opencode/opencode.json` (`gw/deepseek-v4-flash` ->
+    @ai-sdk/openai-compatible @ gw_proxy).  `--auto` approves the agent's
+    tool calls non-interactively.
     """
 
     name = "opencode"
@@ -269,7 +276,6 @@ class OpencodeDriver:
     def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
         cmd = [
             "opencode", "run",
-            "--dir", str(workdir),
             "--model", OPENCODE_MODEL,
             "--auto",
             instance["problem_statement"],
@@ -280,53 +286,28 @@ class OpencodeDriver:
         return r
 
 
-CLAUDE_CODE_DIR = Path("/nas_train/app.e0031982/harness_work/builds/claude-code")
-CLAUDE_CODE_ENTRY = CLAUDE_CODE_DIR / "src" / "entrypoints" / "cli.tsx"
-CLAUDE_CODE_PRELOAD = CLAUDE_CODE_DIR / "plugins" / "bunBundleDev.ts"
-
-# Build-time macros that bunfig.toml normally injects (--define) when run from
-# the claude-code source dir.  We run bun from the *workdir* (so claude-code's
-# process.cwd() is the repo it must edit), so we re-inject them explicitly.
-CLAUDE_CODE_MACROS = [
-    "MACRO.VERSION:\"1.0.0-dev\"",
-    "MACRO.BUILD_TIME:\"\"",
-    "MACRO.PACKAGE_URL:\"@anthropic-ai/claude-code\"",
-    "MACRO.FEEDBACK_CHANNEL:\"https://github.com/anthropics/claude-code/issues\"",
-    "MACRO.ISSUES_EXPLAINER:\"file an issue at https://github.com/anthropics/claude-code/issues\"",
-    "MACRO.VERSION_CHANGELOG:\"\"",
-]
-
-
 class ClaudeCodeDriver:
-    """claude-code — leaked source (2026-03-31), built under harness_work/.
+    """claude-code — official npm package (@anthropic-ai/claude-code@2.1.332).
 
-    Invocation (verified 2026-10-04 R41, `path:line` cited):
-      - entry  : `bun run src/entrypoints/cli.tsx` (package.json `"start"`)
-      - `-p/--print` headless + `--bare` (strict `ANTHROPIC_API_KEY`) +
-        `--dangerously-skip-permissions` (auto-run tools) — all in src/main.tsx:976.
-      - model API base URL comes from SDK default `ANTHROPIC_BASE_URL`
-        (node_modules/@anthropic-ai/sdk/index.js:56), model from `--model`
-        (src/main.tsx:2012).
+    Installed via ``npm install -g @anthropic-ai/claude-code@2.1.332``.
+    Upgraded 2026-11-26 from source build (2.1.197 leaked source) to official
+    npm release per user order 令 F.
 
-    GOTCHA (corrected 2026-10-04 R41): running `bun run <entry>` from a foreign
-    cwd skips the source dir's `bunfig.toml`, so its `[define]` MACRO globals are
-    undefined -> `ReferenceError: MACRO is not defined` (src/utils/user.ts:108).
-    Fix: re-inject the macros (and the `bun:bundle` dev preload plugin) via bun's
-    own `--preload` / `--define` flags, so the shell cwd can stay the *workdir*
-    (claude-code edits the repo it is launched in, i.e. process.cwd()).
+    Non-interactive mode: ``claude -p <prompt> --model <model> --bare
+    --dangerously-skip-permissions``.
+    API base URL from ``ANTHROPIC_BASE_URL`` env, routed through local gw_proxy
+    (port 9090) which injects the real gateway key.
     """
 
     name = "claude-code"
+    _CLAUDE_BIN = shutil.which("claude") or str(Path.home() / ".npm-global" / "bin" / "claude")
 
     def available(self) -> bool:
-        return CLAUDE_CODE_ENTRY.exists() and shutil.which("bun") is not None
+        return Path(self._CLAUDE_BIN).exists()
 
     def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
-        cmd = ["bun", "run", "--preload", str(CLAUDE_CODE_PRELOAD)]
-        for m in CLAUDE_CODE_MACROS:
-            cmd += ["--define", m]
-        cmd += [
-            str(CLAUDE_CODE_ENTRY), "--", "-p", instance["problem_statement"],
+        cmd = [
+            self._CLAUDE_BIN, "-p", instance["problem_statement"],
             "--model", UNIFIED_MODEL,
             "--bare",
             "--dangerously-skip-permissions",
@@ -338,11 +319,6 @@ class ClaudeCodeDriver:
             "NO_PROXY": "127.0.0.1,localhost",
             "no_proxy": "127.0.0.1,localhost",
             # --- Telemetry shutdown (2026-10-05, operator directive) ---
-            # Two independent telemetry systems, both must be off:
-            #  (A) Statsig operational telemetry  -> DISABLE_TELEMETRY / umbrella
-            #  (B) OpenTelemetry (OTel) export     -> CLAUDE_CODE_ENABLE_TELEMETRY=0 + OTEL_*_EXPORTER=none
-            # Refs: https://code.claude.com/docs/en/env-vars
-            #       https://code.claude.com/docs/en/monitoring-usage
             # CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is the umbrella switch
             # (equiv to DISABLE_AUTOUPDATER+DISABLE_BUG_COMMAND+DISABLE_ERROR_REPORTING+DISABLE_TELEMETRY).
             # Individual vars kept as belt-and-suspenders.
@@ -366,9 +342,12 @@ class ClaudeCodeDriver:
 class DeepseekHarnessDriver:
     """deepseek-harness — Python SDK `deepseek_harness.DeepSeekHarness`.
 
-    Installed via ``pip install --target /tmp/dsh_sdk deepseek-harness-sdk``
-    (avoids touching the shared py310 env).  The SDK launches a bundled native
-    runtime (``dsh``) as a subprocess over JSON-RPC stdio.
+    Upgraded 2026-11-26 from 0.1.5rc1 to 0.2.2rc2 per user order 令 F.
+
+    Installed via ``pip install --target /nas_train/app.e0031982/harness_work/dsh_sdk
+    deepseek-harness-sdk==0.2.2rc2`` (avoids touching the shared py310 env).
+    The SDK launches a bundled native runtime (``dsh``) as a subprocess over
+    JSON-RPC stdio.
 
     Provider/base_url point at the local gw_proxy (port 9090) which injects the
     real gateway key and rewrites ``developer``→``system`` roles.
@@ -458,14 +437,17 @@ class DeepseekHarnessDriver:
 
 
 class PiDriver:
-    """pi — @fleetagent/pi-coding-agent CLI (v0.2.15), run via bun.
+    """pi — @earendil-works/pi-coding-agent CLI (v1.6.1), run via bun.
 
-    Installed via ``npm install -g --ignore-scripts @fleetagent/pi-coding-agent``
-    (requires Node >=22.19 per engines, but bun 1.3.14 runs the dist/cli.js
-    entry point without issue — verified 2026-10-07).
+    Upgraded 2026-11-26 from @fleetagent/pi-coding-agent v0.2.15 to
+    @earendil-works/pi-coding-agent v1.6.1 per user order 令 F.  The package
+    was renamed from @fleetagent to @earendil-works.
+
+    Installed via ``npm install -g @earendil-works/pi-coding-agent@1.6.1``
+    (npm warns about Node >=22 requirement but bun 1.4.5 runs the dist/cli.js
+    entry point without issue — verified 2026-11-26).
 
     Non-interactive mode: ``pi -p`` (print mode — process prompt and exit).
-    Docs: https://github.com/fleetagent/pi (commit debf866e, 2026-10-07 clone).
 
     Provider/model come from ``~/.pi/agent/models.json`` where we registered a
     custom provider ``gw`` pointing at the local gw_proxy (127.0.0.1:9090/v1)
@@ -474,7 +456,7 @@ class PiDriver:
     """
 
     name = "pi"
-    _PI_CLI = Path.home() / ".npm-global" / "lib" / "node_modules" / "@fleetagent" / "pi-coding-agent" / "dist" / "cli.js"
+    _PI_CLI = Path.home() / ".npm-global" / "lib" / "node_modules" / "@earendil-works" / "pi-coding-agent" / "dist" / "cli.js"
     _BUN = shutil.which("bun") or "/home/app.e0031982/.bun/bin/bun"
 
     def available(self) -> bool:
@@ -502,18 +484,16 @@ class PiDriver:
 
 
 class HermesDriver:
-    """hermes — NousResearch/hermes-agent (commit cb6ffe6c, 2026-10-07 clone).
+    """hermes — NousResearch/hermes-agent (commit e0dcc39fb8, 2026-11-26 re-sync).
 
-    Installed via ``uv pip install -e .`` in a Python 3.14.6 venv at
-    ``/nas_train/app.e0031982/harness_work/hermes-venv`` (linked from
-    ``hermes-agent-src/.venv``).  The CLI entry point is symlinked to
-    ``~/.hermes/bin/hermes``.
+    Upgraded 2026-11-26: re-synced source from harness/hermes-agent (latest
+    commit e0dcc39fb8) and reinstalled via ``uv pip install -e .`` in the
+    Python 3.14.6 venv at ``/nas_train/app.e0031982/harness_work/hermes-venv``
+    (linked from ``hermes-agent-src/.venv``).  The CLI entry point is symlinked
+    to ``~/.hermes/bin/hermes``.
 
     Non-interactive mode: ``hermes -z "<prompt>"`` (oneshot — prints ONLY the
     final response text to stdout, no banner/spinner/session_id line).
-
-    Docs: https://github.com/NousResearch/hermes-agent
-    CLI ref: https://hermes-agent.nousresearch.com/docs/reference/cli-commands
 
     Provider config: custom provider ``kimi-proxy`` in ``~/.hermes/config.yaml``
     pointing at the local gw_proxy (127.0.0.1:9090/v1) with
