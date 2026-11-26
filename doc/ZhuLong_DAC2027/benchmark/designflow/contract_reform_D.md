@@ -187,3 +187,79 @@
   ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce /
   VerdictJoinPassLib（指标来自 check.py 注释/docstring 关键字误命中，reference_solution
   无 `import pyAether` / `ae.<api>` 真实调用）
+
+---
+
+## P4 实跑适合性分析 (r1447 · 2026-11-26)
+
+本 shard Lite-500 case 数: 131（lite_health_D.tsv green 去重 133，剔除 2 条
+REGRESSION-SWEEP/SPOTCHECK 非真实 case；磁盘 cases/D/ 实存 128 个，3 条 done-L2.live
+之外另有 3 条 done case 不在 lite 集）。本轮逐 case 读 prompt+test(check.py)，按
+「核心一问」判档：candidate 输出能让文本断言全过但 EDA 实跑不起/结果全错，pass 算不算数。
+
+### 判档汇总
+
+| 档位 | 数量 | 说明 |
+|------|------|------|
+| T1 适合实跑 | 4 | 3 条已 done(L2.live) + 1 条新候选 IOBufTune-001 |
+| T2 可选增强 | 0 | 无收益足够高的可执行子部分（见下「T2 判定」） |
+| T3 不适合 | 124 | 文本/结构判分够用，保持 mock |
+
+### 判定方法与证据
+
+全 128 lite case 扫 check.py（test 字段）的「真实 EDA 工具二进制调用」与
+「pyAether 真实 import」，结果：
+- **subprocess 调 EDA 工具二进制**：仅 1 条 `IOBufTune-001`
+  （`subprocess.run(["hspice", "-i", sp, "-o", lis], ...)`）。
+- **check.py 内 `import pyAether`**：2 条（SelFigReport-001 / SkillToAether-001），
+  均已 done L2.live。
+- **AeDelCellCurCellProduce-001**：check_live 经 sess.run_code 探针调 pyAether
+  （非 check.py 顶层 import），已 done L2.live。
+- 其余 124 条：check.py 要么纯文本/结构断言（regex/zipfile/json 字段比对），
+  要么 subprocess 跑 candidate 的 python 脚本（sys.executable）后验输出结构；
+  "hspice"/"calibre"/"finesim" 字样均为断言 token / forbidden-import 名单 /
+  config 字段值 / pre-baked 仿真产物（.mt0/.csv/.fsdb）的文件名，非真跑。
+
+### T1 清单（优先改造顺序）
+
+| case_id | domain | 当前判分方式 | 实跑要调什么 | assets 齐备? | .75 可复跑? | 改造工作量(S/M/L) |
+|---------|--------|-------------|-------------|-------------|------------|------------------|
+| SkillToAether-001 | schematic_netlist | check_live 已 done（pyAether import+monkey-patch 探针） | 已 done | Y | Y | - |
+| AeDelCellCurCellProduce-001 | schematic_netlist | check_live 已 done（sess.run_code pyAether 探针） | 已 done | Y | Y | - |
+| SelFigReport-001 | analog_context | check_live 已 done（pyAether getSelectedFigs LIVE spec） | 已 done | Y | Y | - |
+| IOBufTune-001 | analog_context | check_static 用 **hspice_mock**（reference/hspice_mock/hspice 是 python Shichman-Hodges transient mock，prepend PATH，候选与 grader 的 _rerun_hspice 均命中 mock 非 real hspice）；jl=[] 未声明 | check_live：upload submit.zip + spec_B/B2 到 .75 → 候选产 tuned params → **real hspice**（.75 PATH /apps/synopsys/...）rerun on hidden B/B2 → 断言 data_H≥0.99*vddq / data_L≤0.001；_rerun_hspice 逻辑已在 check.py 复用 | Y（spec_A/B/B2 + hidden_manifest 齐） | Y（hspice+hspice64+finesim 在 .75 PATH，MEMORY r1440 实测 exit=0） | M（2-4h：_rerun_hspice 改 sess.run_commands on .75，去 mock，补 check_live 三元组+judge_layers+test 同步+neg 重跑） |
+
+### T2 清单
+
+（空）候选复核：NetPathHL-001 / PGcheckTcl-001 / AutoCellDrcFlowGen-001 /
+RsCalcFlow-001 等「写 SKILL/Tcl 脚本」类 case，check.py 均做文本结构断言
+（API 名出现 / proc 存在 / 实例放置命令 / 正则）。可加 L2.live 辅助断言
+（source TCL 进 Innovus / load .il 进 Virtuoso 验语法）但：① .75 无
+Virtuoso/Innovus/calibre（shard C/A 工具域），② 语法 load 过≠语义对，收益
+低于 env 搭建成本，③ 核心一问：脚本结构对即算交付（用户要的是正确结构的
+编排脚本）→ 判 T3，不加 L2.live。
+
+### T3 说明（124 条 · 不逐一列出）
+
+分四子类，均为「文本/结构判分够用，保持 mock」：
+1. **代码生成 + subprocess 跑 candidate python 脚本验输出结构**（~79 条）：
+   candidate 写 parser/generator/report 脚本，check.py 跑它（sys.executable）
+   验 JSON/文件结构/字段。EDA 工具不参与 candidate 任务（如 AddrRtlGateMap /
+   CellMap / DecoderNetlistGen / LatchListMatch）。
+2. **网表/波形文本分析 QA**（~25 条）：candidate 解析 .sp/.svwf/.fsdb/.mt0.csv
+   文本，check.py 比对结构/数值。仿真产物 pre-baked（如 FineSimTskew /
+   FsdbMeasRunGen / DominoPVTsweep / NetlistStructDiff）。
+3. **deck/stimulus/脚本生成**（~15 条）：candidate 产 .sp deck / .svwf / TCL，
+   check.py regex 验 .tran/.measure/proc 结构（如 BitcellMcSpGen / SpiceDeckGen /
+   FifoTbStimGen / FinesimIgnoreGen）。结构对即交付。
+4. **诊断/报告 QA**（~5 条）：candidate 产 Markdown/JSON 报告，check.py 验内容
+   字段（如 Characterization / Backannot / FineSimJobMonitorImproveQA）。
+
+### 与 P2 的关系 / 结论
+
+P4 是 P2 前置分析。D shard lite-128 中真需 L2.live 的 T1 仅 4 条（3 已 done +
+1 新候选 IOBufTune-001）。P2 api 子类既已穷尽（r1446），**唯一剩余 P2 工作 =
+IOBufTune-001 加 check_live**（hspice 真跑 on .75，去 hspice_mock）。
+T3 的 124 条保持 mock 判分，P3 批量声明 `judge_layers=["L0","L1"]` 即可。
+
+下一轮：P2 收尾 IOBufTune-001 check_live（M 工作量），完成后 D shard P2 全闭合。
