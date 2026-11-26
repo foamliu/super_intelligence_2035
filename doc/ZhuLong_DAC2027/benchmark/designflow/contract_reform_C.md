@@ -401,3 +401,49 @@ eda_flow open_session(hfhds201) → 4 个 hidden-B GDS 经 `echo <b64> | base64 
 | PGLayout-001 | skipper_mock | r1231 headless+API ✅ / **r1232 dbImport-compat ✅** | yes(实证) | not-fooled | R2.2 升 L2.live |
 
 **冻结纪律**：本轮 0 改 check.py/cases/*.json/EDA-Flow-Bench 仓库；仅更新 contract_reform_C.md + live_eval_review_C.tsv evidence + 本 MEMORY。解冻凭据 = `run/MEMORY_ZHULONG.md` 首行 r3' 收口。
+
+---
+
+### R2.1 第 1 条改造：DummyQA-001 升 L2.live（r1234 · 冻结解除后首条实跑改造）
+
+> **冻结已解除**（2026-11-26 20:5x 用户裁定：designflow 主线、zhulong 辅线、不设等待）。R2 实跑改造不再 BLOCKED。本节为 R2.1 首条交付。
+
+**改动**（非侵入包装，CONTRACT_REFORM_GUIDE §3）：
+- `check` → `_check_static_impl`（11 条静态断言 (a)-(k) 一字不动）。
+- `check_static` 包 try/except 收口三元组。
+- `check_live(deliverable, workdir, sess)` 新增：7 条独立实跑断言 (h_live_1)-(h_live_7)。
+- `check` 兼容包装保留。
+- case JSON `metadata.judge_layers` = `["L0","L1","L2.live"]`；`test` 字段与 check.py sha 同步（43a61d2292513ddf）。
+- `test_rationale` 11→18 条（11 静态 + 7 实跑）。
+
+**check_live 7 条独立断言**（每条单独可 FAIL）：
+1. (h_live_1) 真 rules_syntax_checker 在 b_syntax_good 上 exit 0（实跑工具可达性）。
+2. (h_live_2) 真 rules_syntax_checker 在 b_syntax_bad 上 exit 非0。
+3. (h_live_3) 真 rules_syntax_checker 在 live-only 隐藏 live_sb2（UNKNOWN_DIRECTIVE）上 exit 非0。
+4. (h_live_4) mock exit == real exit 在 3 个语法 deck 上一致（mock 保真度；分歧→FAIL）。
+5. (h_live_5) 候选在 live_sb2 上 main_status==False（真工具非0；stub verdict→FAIL）。
+6. (h_live_6) 候选在 live-only 隐藏 live_lb2（层号 500/600）上 conflict_count==4（硬编 B 层号范围 200/400→漏检→FAIL）。
+7. (h_live_7) 候选在 live_lb2 上 conflict_types==[layerMap1_2, layerToName]（硬编 B 冲突类型→FAIL）。
+
+**live-only 隐藏 deck**（静态 check.py B 集不含，防止候选硬编 B）：
+- live_sb2：`UNKNOWN_DIRECTIVE foo bar`（真工具 exit 1，mock exit 1，一致）。
+- live_lb2：层号 500/600 的 layerMap1_2 + layerToName 冲突（ref harness conflict_count=4，types=[layerMap1_2,layerToName]）。
+
+**live-neg**（`negative/live_layer_range_hardcode/dummy_qa_harness.py`）：
+- `parse_layers` 跳过 LAYER MAP 源层号 >= 500（硬编 B 的 200/400 范围）。
+- 静态：b_lay_bad（200/400）全保留→正确检测 3 类 6 冲突→PASS 静态全 11 条。
+- 实跑：live_lb2（500/600）LAYER MAP 全跳过→只剩 layerToName 2 冲突→conflict_count=2 != 4→FAIL (h_live_6)。
+- negative_selftest 标记 OK-LIVE-FAIL（静态过、实跑错）✓。
+
+**§5 验收**：
+- ① .75 真跑 ref PASS（hostname=hfhds201, real exit codes 0/1/1/0/0, ref harness main_status=False / conflict_count=4）✓
+- ② ≥3 neg 全 FAIL + 1 live-neg（4 neg：3 naive 静态 FAIL + 1 live-neg 实跑 FAIL，first-fail distinct）✓
+- ③ 确定性：rules_syntax_checker exit code 确定性（同 deck 同 exit）；3-seed 隐含在 5-deck 交叉验证 ✓
+- ④ SKIP_RUN=1 部署 OK（workdir clean, 无 leak）；check_static(refzip) PASS ✓
+- ⑤ judge_layers / test 字段 / check.py sha 三方同步（43a61d2292513ddf）✓
+- ⑥ 断言 11→18（只增不减），阈值不放宽，条件不删 ✓
+- ⑦ L5 不退化：hidden-B 不外泄（live_sb2/live_lb2 仅在 check_live 内联，不进 SUT 沙箱）；check_live 读 submit.zip + mock（判分基建，非参考解）；沙箱不含 .jsonl/test 字段 ✓
+
+**与旧 P4 差异**：旧 P4 判 DummyQA=T2（mock 桩，待审）。本轮重判：mock 保真度经 .75 真工具 5-deck 交叉验证确认（Q1=yes 实证），但静态 cond (h) 在 eval host 用 mock、.75 用真工具——升 L2.live 后 check_live 显式强制 .75 真工具 + mock 保真度断言 + 2 个 live-only 隐藏 deck 抓硬编。 verdict 从 OPT 升 REQ（实跑改造已交付）。
+
+**登记**：`live_eval_changes.tsv` 追加 1 行（jl_before=[L0,L1] → jl_after=[L0,L1,L2.live]）。
