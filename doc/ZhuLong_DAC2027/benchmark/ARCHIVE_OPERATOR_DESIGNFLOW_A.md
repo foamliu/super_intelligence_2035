@@ -327,3 +327,17 @@ r1280-r1283 均为「全部 active 工作(P1/P2/P3/P4+Lite-500)闭合后的 idle
 - r1282: open_session+run_commands hostname=hfhds201 19ms，4 A-owned pilot judge_layers✅。
 - r1281(2 行重复，均为 idle 轮核查)：open_session 100ms，P1 pilot 回归 spot-check。
 - r1280: open_session 218ms，契约状态全量复核 585 A cases(578 [L0,L1]+7 [L0,L1,L2.live])。
+
+---
+
+## 归档块 · 2026-11-26 r1293 瘦身 · A1
+
+> 从 MEMORY_DESIGNFLOW_A.md 移出 r1278/r1279/r1284-r1286 idle 监控轮详块（原文照搬，未改写）。全文见 daily_A_2026-11-26.md 对应轮次。
+
+→ r1284-r1286 详块见 daily_A_2026-11-26.md（3 轮 idle 监控轮: 均为 active 工作(P1/P2/P3/P4+Lite-500)闭合后的回归核查, 核查点相同(两仓 0/0 sync / stats covered=543/case 543/parked 344/claimed 0 / .75 reachability RC=0 hspice+finesim+vcs+vlogan@PATH / 585 A cases judge_layers 齐全[578 L0L1+7 L2.live,0 missing] / FindPcells-001 negative_selftest green[4 negs 全 FAIL NEG_RC=0]), A 全程 116/116 green 不变. 🚫 未改 case/check.py/negative/assets/hidden/别 shard/jsonl）
+
+→ r1279 详块见 daily_A_2026-11-26.md（r1279: 监控/回归轮. 全部 active 工作闭合后的 idle 轮. 核查点: ① trace_ledger.py 恢复确认(infra a058d53207 从 d4dd7d3a0f mass-wipe 恢复, --shard A stats OK covered=543/case 543/parked 344/claimed 0). ② .75 reachability: eda_flow_judge.EDASession run_commands hostname=hfhds201 RC=0, hspice+finesim@PATH, 15ms. ③ P1 pilot 回归 spot-check FindPcells-001: case JSON judge_layers=[L0,L1,L2.live]✅ + check.py 结构完整 + negative_selftest green. 造题: summary_stats.json 缺失+A-pure 池枯竭. 两仓 clean. A 116/116 green 不变）
+
+→ r1278 详块见 daily_A_2026-11-26.md（r1278: 监控/回归轮. 全部 active 工作闭合后的 idle 轮. 核查点: ① P1 4 A pilot case JSON judge_layers+check_live+check_static 复核齐全, _check_static_impl 存在于 FindPcells/PyAetherCurDesignApi, RtlDesign-001/-v2 用 API-存在性探针结构(r1274 确定性, 无需 r1277 改). ② .75 reachability: eda_flow_judge.EDASession run_commands hostname=hfhds201 RC=0, hspice@/apps/synopsys/SRB/hspice_V-2023.12-SP1-1, finesim@/apps/synopsys/SRB/finesim/V-2023.12-1, elapsed 0.1s. ③ L3 回归 spot-check FmRtl2RtlDemo-001(reference/negative_selftest ALL GOOD: neg6_leak/fake_empty/fake_print/fake_core 全 FAIL distinct cond a,b,n)+CovFMFlow-001(NEG_RC=0: fake_empty/fake_print/naive_hardcode_a/naive_runtime_cmdir 全 FAIL, 24 distinct fail labels a-x). L2 standalone check() 缺 hidden B 放置 FAIL 属预期(negative_selftest 内部正确放 hidden B 跑判分 = L2+L3 健康). 造题: summary_stats.json 缺失+A-pure 池枯竭(11-21 令 mc≥5 连续 0 fresh 已验证), 本轮无可造候选. 两仓 0/0 ahead/behind clean. A 116/116 green 不变. 🚫 未改 case/check.py/negative/assets/hidden/别 shard/jsonl）
+
+→ r1276 详块见 designflow/contract_reform_A.md §r1276（r1276: 回归验证轮. P1/P2/P3/P4 全闭合后首轮回归 spot-check. 3 case negative_selftest 全 green 确认 r1274/r1275 判分逻辑无衰减: NetCellMap-001(P2 T1) REF PASS+5negs FAIL 4-distinct{b,e,h,i} / SvIntegrateGen-001(P2 T1) REF PASS+4negs FAIL 4-distinct{c,d,e,m} / PyAetherCurDesignApi-001(P1 pilot) 5negs FAIL 5-distinct{c,h,i,j,l}. .75 eda_flow MCP 可达(list_files 响应). build_jsonl 重建 A=542 case(全 shard 2351, 14 cross-shard 碰撞排除+48 retired 排除). trace_ledger.py/summary_stats.json 已不在工作树(造题工作流已停). 🚫 未改 case/check.py/negative/别 shard. SKIP_RUN=1 不部署 ref 交付件(outputs 空), 回归用 negative_selftest 直跑 check_static 三元组. 两仓 0/0 ahead/behind clean）
