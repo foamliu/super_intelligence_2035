@@ -1,6 +1,14 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 0
+WAITING: 1
+> 🆕 **用户令 · 2026-11-26 (E) — 停止 cline 重跑，停下待命**
+>
+> **用户原话**：「先不开 TB，让 harness 看到令就杀掉 cline 重跑，停下待命」
+>
+> **执行步骤**：
+> 1. 停止 cline-patched predict 进程（`pkill -f "run_verified_full.py predict --harness cline-patched"`）
+> 2. **不启动 TB-2.1**，停下待命，等后续指令
+
 > 🆕 **用户令 · 2026-11-25 (D) — 停止 SWE-bench MM，专心做 SWE-bench Verified，一次只做一个任务**
 >
 > **用户原话**：「把 SWE-bench MM 的评测停下来吧，专心把 SWE-bench Verified 做好，一次只有一个任务，不要再出错了。」
