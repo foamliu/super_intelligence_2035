@@ -1349,3 +1349,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795568047471_54cwt	xxchen	hfeg0pkn003	383	physical_verify	case	EDA-Eval-DesignFlow-SpfNodeTrace-001	2026-11-26 13:56	
 1787122881271_1hkwu	junxu	hfeg0plg79	1950	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoCliDaemonInlineFix-001	2026-11-26 14:34	
 1788488738438_sroz5.messages.json					case	EDA-Eval-DesignFlow-LabelOrientAutoResolve-001	2026-11-26 15:00	
+1790162177197_lmn7f	xinqiaoz	hfeg0plg56	53	physical_verify	case	EDA-Eval-DesignFlow-DrcSwitchDerivedLayerCheck-001	2026-11-26 16:09	
