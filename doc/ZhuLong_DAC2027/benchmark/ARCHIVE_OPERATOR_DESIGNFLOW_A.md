@@ -543,3 +543,11 @@ r1280-r1283 均为「全部 active 工作(P1/P2/P3/P4+Lite-500)闭合后的 idle
 **r1338 唯一产出轮**: teeth-guard 监控 + live_eval_summary.md 刷新(本轮产出)。live_eval_changes.tsv 自 r1322 增至 25 行(B +3 L2.live r1296-r1300 → REQ done 4→7 / D +12 test-field re-syncs r1504)。B 基线歧义确认解: B 预存=0(不在 summary §2 预存清单), changes.tsv 7 行 L2.live-add ⇒ B 总=7; B 心跳「L2.live 6→7」前=B r1300 起点非 review 起点, 与 summary「0→7」不矛盾。刷新 live_eval_summary.md §2(B done 4→7/pending 36→33/L2.live 0→4→0→7/changes 4→7, 合计 done 23→26/pending 36→33/L2.live 31→41→31→44/changes 10→13)+§2 REQ done 明细 B 4→7+§2 基线歧义说明+§4 B pending 36→33+§5 changes.tsv 10→25(13 L2.live-add+12 D re-sync)+§6 L2.live 41→44+header r1338 刷新。无新 case 可造(A-pure 枯竭), B 33 REQ pending 非 A 可动。
 
 🚫 5 轮均未改 case/check.py/判分/别 shard/jsonl/论文宏/别线 in-flight/stash. 全文见 daily_A_2026-11-27.md §r1338 / §r1339 / §r1342 / §r1343 / §r1344。
+
+---
+
+## 归档块 · 2026-11-27 r1347 瘦身 · A1
+
+**r1345 teeth-guard 监控轮（只读·0 改动）原文照搬归档**：
+
+r1345: teeth-guard 监控轮(只读·0 改动). ① .75 REACH_OK: eda_flow open_session teeth-r1345 → hfhds201, hspice/finesim/vcs/vlogan/hspice64 全 @ /apps/synopsys/SRB/ RC0 18ms close cleaned. ② 3 L2.live neg_selftest 全 OK 无回归(VpsRegr 4-distinct{a,d,g,h}/TotemSC 4-distinct{c,d,f,h}/AsyncFifoSim 3-static{c,d,o}+live-neg). ③ 585 cases/A judge_layers 齐(574 L0L1+11 L2.live 0 missing). ④ review tsv 116/116 live_verdict 全填(REQ7/OPT3/NA106, 0 empty). ⑤ 两仓 0/0 sync(SI 0/0/EFB 0/0). EFB stash@{0}=别线 C in-flight 未碰; SI 工作树仅别线 D in-flight(MEMORY_D/ARCHIVE_D/daily_D)+untracked(_fresh_apure_exact.txt)未碰. ⑥ changes.tsv 26 data rows(A=3 不变/B=7/C=3/D=12+1blank, +1 vs r1344 非 A). ⑦ research daily 2026-11-27 designflow 建议(DRC 几何断言/RTL 周期级状态)不适用 A(无 DRC 类/REQ已收口/RTL case 已用 hidden TB B) 归 C/D 评估. ⑧ 无新 thermo_feedback/board/discuss(无 board.md, 无 discuss/A.md). A 三线收口不变, 116/116 green, 0 改动 0 回归. 🚫 未改 case/check.py/判分/别 shard/jsonl/论文宏/别线 in-flight/stash. 全文见 daily_A_2026-11-27.md §r1345。
