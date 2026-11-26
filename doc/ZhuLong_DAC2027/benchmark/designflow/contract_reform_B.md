@@ -788,3 +788,19 @@ L2.live done 16→17；REQ 未改造 33-17=16 条（hspice-mock/finesim-mock GT-
 **登记**：`live_eval_changes.tsv` +1 行（ts=2026-11-27T07:10+08:00, repo_commit=pending）。
 
 **.75 通路 OK**（r1314 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session liveREF/liveCHEAT 用后 close）。自验通道：本地 Python `from eda_flow_judge import EDASession` → `sess.upload_text` 上传 candidate+B/A 资产，REF live PASS + CHEAT live FAIL 一次过。
+
+### r1315：StimPWL-001 + TxRonSize-001 桩体检降级（REQ→OPT，只读 verdict）
+
+**背景**：R1 boilerplate「hspice-mock (deck-driven) replays .75-captured GT keyed on .param/.inc/deck signature」被 generically 套到所有 hspice-mock case。r1302/r1303 已证伪 SpGen/PwlStimTransform/FineSimNoRefCktFix/PlatMosThinIdsatIoffSweep（mock 实为 faithful physics solver / structural validator，非 GT-replay）。本轮续查剩余 REQ，逐条 full-mock-body 读 check.py 验 boilerplate 准确性。
+
+**StimPWL-001 → OPT**：mock `_HSPICE_MOCK_SRC`（L59-147）是 faithful **PWL-crossing solver**——解 candidate `stimulus.sp` 的 PWL 点，`crossing()`（L102-112）线性插值算 half-VCC 过零时间。TB 用 ideal V source（v(net)==source waveform），crossing=纯插值==real hspice。**无 `_GT`/`_MOCK_VALUES` dict，无 signature lookup**（contrast VwlpRefDeckSet `_GT` L28 / DelaySigma `_MOCK_VALUES` L48）。Q2 N/A：garbage stimulus.wrong-times → mock 算错 crossing → cond m（report.transitions GrEn~=GT_B tol 1.5ns）FAIL。candidate 可从 si1.sp 自算 crossing hardcode report，但 real hspice 同样被绕过（mock==real for ideal-V TB）⇒ L2.live 零增益。静态 conds g-l 已直验 stimulus 结构/内容。judge_layers 留 [L0,L1]。
+
+**TxRonSize-001 → OPT**：mock `HSPICE_MOCK_SRC`（L15-117）是 faithful **level-1 (Shichman-Hodges) MOS DC solver**——读 M1 W/L/M + corner.lib kp/vto/lambda，算 Id（saturation kp/2·W/L·M·veff²·(1+λ·vds)；linear 2·veff·vds−vds²），docstring 自称 bit-exact vs real HSPICE V-2023.12-SP1-1。judge 经 `measure_ron()`（L202-211）**INDEPENDENT re-run** candidate 报告的 sizing（conds f-k L283-310）⇒ candidate 无法 fabricate Ron。Q2 N/A：garbage W/L → mock 算错 Id/Ron → cond h/i/j/k FAIL。real hspice level=1==mock bit-exact ⇒ L2.live 零增益。judge_layers 留 [L0,L1]。
+
+**不改** check.py / cases / judge_layers（只读 verdict）。**不进** `live_eval_changes.tsv`（无口径变更）。
+
+**同轮确认 2 条 genuine REQ 供下轮 R2**：
+- **VwlpRefDeckSet-001**：mock `_GT` dict（L28）+ 按 (analysis_type, ref_voltage) 签名 replay .75-captured .measure values，忽略 DUT 网表物理 ⇒ GT-replay-by-signature confirmed。
+- **DelaySigma-001**：mock `_MOCK_VALUES` dict（L48）按 (vdd, L) 签名 lookup STD0..STD19，忽略网表 ⇒ GT-replay-by-signature confirmed。
+
+**累计**：REQ 33→31（done 17，余 14），OPT 15→17，NA=76，L2.live 17 不变。
