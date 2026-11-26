@@ -722,3 +722,32 @@ L2.live done 11→12；REQ 未改造 33-12=21 条（hspice-mock/finesim-mock GT-
 **.75 通路 OK**（r1308 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session r1308live 用后 close）。
 
 **注**：本轮 check.py/negative/selftest 被 concurrent shardA sweep（commit `1d0ddf89c` 04:40:24）提前 commit 入 git（working-tree 广 `git add` 拾取 in-progress 改动），case JSON `judge_layers`+`test` sync 本轮补 commit（`aeee2aa4f`）。sha 校验 HEAD check.py == 本轮工作树 == JSON test = `3d799f7efb4d`，无 corruption。
+
+
+## R2 前置 #2: InvPVTchar-001 设计稿（2026-11-27 r1309 · 只读, 未落盘）
+
+**为何单独成节**：本轮原计划落盘 R2 第 13 条 InvPVTchar-001，因 .75 self-verify 通道排障未在本轮预算内完成，check.py **零改动**。设计稿落此供下轮直接执行。
+
+### 桩体检结论（读桩定论, Type A 稳固）
+- check.py(415L) 单 `check()` 14 conds C1-C14；GT_JSON 45 B combos keyed `corner|vdd|cload`；`_HSPICE_MOCK_SRC` 桩 `parse_deck` 仅解 `.lib <corner>` + `.param vdd_val` + `.param cload`，**不解 wn/wp/网表拓扑/measure 语义**。
+- Q2 可骗：cheat 改 `build_deck` 的 `.param wn/wp` 为 `1e-21u`（电死反相器）但保 `.lib`/`.param vdd_val`/`.param cload` 签名行 → 桩按签名回放 GT_B → C5-C14 全 PASS 假阳。
+- Q1 保真：GT_JSON 数值标称来自 .75 真跑（docstring），待 self-verify 时实测 ref on .75 复核 == mock GT_B byte-exact。
+
+### check_live 设计（待落盘）
+1. 非侵入包装：原 `check` → `_check_static_impl`（一字不动）；`check_static` try/except 收口 3-tuple；`check` 兼容包装；`__main__` 块（STATIC_VERDICT + first_fail）。
+2. `check_live(deliverable, workdir, sess)`：
+   - 从 submit.zip 读候选 `gen_pvt_char.py`（`sess.upload_text`）+ 上传 hidden B `spec_B.json`/`pvt_model_B.sp`（参考 PVTalterChar 路径解析：workdir/hidden → assets/<CASE>/hidden fallback）。
+   - **不调 `_ensure_hspice`**（.75 真 hspice 在 PATH）；`sess.run_commands` 在 sess.workdir 跑 `python3 gen_pvt_char.py spec_B.json pvt_model_B.sp out_B`（候选内部 `subprocess.run(["hspice",...])` 用真 hspice）。
+   - `sess.read_file("out_B/inv_tb.lis")` + `out_B/char_results.json`，复用 check.py 的 `parse_lis`（需在 check_live 内重定义或提到模块级），同阈值复断 C6-C14：C6 n_concl==45 + parsed==45 / C7 tpdf numeric 全 alter / C8 tpdr numeric / C9 worst_tpd<=tpd_max(3.0) / C10 voh>=voh_min(0.9) / C11 vol<=vol_max(0.01) / C12 worst_corner==argmax tpd(ss,1.0,1p) / C13 reported worst_tpd==独立解析 tol 1% / C14 2-run 确定性。only-add never relax。
+3. live-neg `negative/cheat_dead_wl.py`：复制 `gen_pvt_char_ref.py`，`build_deck` 改 `.param wn=1e-21u wp=1e-21u`（保签名行）→ 静态：mock 回放 GT 14/14 PASS；live：真 hspice 死管 → tpdf/tpd=failed → 候选 `run()` raise RuntimeError("no valid tpd") → 无 char_results.json → check_live C6/C7 FAIL。
+4. `negative_selftest.py`：加 `cheat_dead_wl.py` 到 LIVE_NEG（经 EDASession 验 static-pass/live-fail）；§4.9 trio 已齐（empty_shell/print_expected/core_deleted）。
+5. JSON `metadata.judge_layers` → `["L0","L1","L2.live"]`；JSON `test` 与磁盘 `check.py` sha 三方同步。
+
+### .75 通路（r1309 实测）
+- `open_session` 秒级；`which hspice` → `/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/hspice`（hspice64 同在）；hostname=hfhds201；python3=3.7.1。
+
+### 工具链排障（下轮规避）
+- 🚫 `run_commands` 内 `printf '%s' '<b64>' | base64 -d > f`：腐蚀内容（实证 gen_pvt_char_ref.py md5 302e3afa→613c7536，`[`→`{` 单字节替换）。
+- 🚫 execute Code Mode `write_file({content: <json-looking str>})`：JSON-look-alike 串被强制 parse 成 dict → pydantic input_type=dict。
+- 🚫 execute `code` 参数粘贴大 base64 串：抵达 MCP 前已被单字符替换 → `write_file(content_base64=...)` 收到错串 → 解码腐蚀。
+- ✅ 下轮 self-verify 正确通道：本地 Python 脚本 `from eda_flow_judge import EDASession` → `sess.upload_text(name, content)`（直接读本地文件 bytes encode，已验证 base64 往返一致）；或直接 `eval/run_one.sh InvPVTchar-001 --shard B`（框架用 EDASession.upload_text）。
