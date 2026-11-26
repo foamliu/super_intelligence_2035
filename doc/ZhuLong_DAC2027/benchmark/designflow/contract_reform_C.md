@@ -515,3 +515,34 @@ eda_flow open_session(hfhds201) → 4 个 hidden-B GDS 经 `echo <b64> | base64 
 **登记**：`live_eval_changes.tsv` 追加 1 行（jl_before=[L0,L1] → jl_after=[L0,L1,L2.live]，repo_commit=2f6bc45c7）。EDA-Flow-Bench commit 2f6bc45c7 pushed。
 
 **R2 进度**：R2.1 3/3 收口（calibredrv×2 + rules_checker×1 全升 L2.live）。R2 剩余 3 OPT（3 skipper：DummyMeas/GDSBump2/PGLayout，r1232 dbImport GDS-compat 已 CONFIRMED，路径明确）。C 19/638 L2.live。
+
+### R2.2 收口（r1237 · 2026-11-26）— 3 skipper OPT 基于 gap-analysis 证据闭合，不升 L2.live
+
+**轮(r1237)** LIVE R2.2 收口。冻结已解除（2026-11-26 20:5x）。对 3 skipper OPT（DummyMeas/GDSBump2/PGLayout）做**Q2 gap-analysis + Q1 实证**后，判定**保持 LIVE-OPT，不升 L2.live**。这是对 r1232「全升 L2.live」计划的** verdict revision**（r1232 只验证了 feasibility「real skipper 可跑」，未做 Q2 gap-analysis）；按规格 §2「冲突时以本轮 + 落盘证据为准」修订。
+
+**核心判据（Q2 = 会不会被骗）**：三分类 §2.1 规定「Q2 = 会判过 ⇒ LIVE-REQ（哪怕 ref PASS + neg 全 FAIL）」。本轮逐条审 check.py 的「候选产物如何被检验」：
+
+| case | 候选产物 | check 如何检验 | cross-input guard 覆盖面 | Q2 | 判定 |
+|:--|:--|:--|:--|:--|:--|
+| GDSBump2-001 | out.gds（GDSII） | **check 自己的 report.tcl** 独立 dbImport+dbLibLayers+dbFigQuery 解析候选 out.gds（**不信任候选自报**） | cond(k) 用真 A lpp+20000 算期望 | not-fooled | OPT |
+| PGLayout-001 | out.gds（GDSII） | **check 自己的 report.tcl** 独立 _parse_report 解析候选 out.gds（**不信任候选自报**） | cond(l) VDD 落 A overlap（用 A 自身几何算） | not-fooled | OPT |
+| DummyMeas-001 | AUDIT 行（stdout 自报） | check 信任候选 AUDIT 自报，**BUT** cross-input guard cond(m) 在 A 上查 topcell/lpp_csv/filesize | cond(m) 覆盖 A 的 topcell/lpp/filesize；候选无法在不知 hidden B 的情况下选择性伪造（伪造 B 的字段会撞 B 的 cond g/h/i） | not-fooled | OPT |
+| ~~DummyDeck-001~~（REQ 对照） | report JSON（自报） | check 信任候选 report.gds_layers | cond(m) **忽略** A 的 gds_layers ⇒ 候选可伪造 gds_layers=B 集合过静态 | **fooled** | REQ |
+| ~~PowerFill-001~~（REQ 对照） | report JSON（自报） | check 信任候选 report.auto_pgfill_cells | cond(m) **忽略** A 的 auto_pgfill_cells ⇒ 候选可硬编过静态 | **fool** | REQ |
+
+**关键区分**：calibredrv 家族（DummyDeck/PowerFill）的 check 信任候选自报 JSON 字段，且 cross-input guard 不覆盖该字段 ⇒ 真实 static-pass/live-fail gap ⇒ REQ（已 R2.1 升级）。skipper 家族的 check 要么**独立解析候选 GDS**（不信任自报），要么 cross-input guard **覆盖所有自报关键字段** ⇒ **无 static-pass/live-fail gap** ⇒ OPT。
+
+**Q1 实证（r1237, hfhds201, 真 Empyrean skipper v2020.06.sp3, license SKI_EDITOR+SKI_VIEWER OK）**：
+- **GDSBump2**：real skipper REPORT_TCL on hidden_B.gds(md5 7289daa9 双侧一致)→6 lpp{5.0/15.0/25.0/35.0/100.1/200.2}/totalfig=11；hidden_B2.gds(md5 424d107c)→3 lpp{8.0/16.0/24.0}/5fig；A1.gds(md5 86b4b65b)→34 lpp/149fig/2top。**real == mock 逐 lpp/nfig/totalfig 一致**，real exit 0 全 3。
+- **PGLayout**：real skipper dbImport exit 0 on mos_b.gds(md5 efb9bba6)/res_b.gds(ba7025b5)/mos_a.gds(a08c4fe6)/res_a.gds(09918663)，md5 双侧(36.15==.75)一致，各 1-top。
+- **DummyMeas**：real skipper dbImport exit 0 on LTM.gds(142KB, md5 efdb9749 双侧一致)+LM1.gds(md5 e219575a)。reference dummy_audit.tcl 经 **REAL skipper** on LTM.gds → `AUDIT|QA_chip_CMP_LTM|1|1|372_8|1.75|1.75|1498|498.25|1496.25|496.5|142328|10000|GDSII|0` == guideline_B GT（topcell/lpp_csv/filesize/bbox **全字段 match**）。**r1232「LTM.gds 142KB 强推断 PASS」→ CONFIRMED**（传输经 `sess.upload` 二进制通道解决，绕过 r1231 base64 单次腐蚀）。
+
+**为何不升 L2.live**：
+1. Q2 = not-fooled（无 static-pass/live-fail gap，见上表）。
+2. 规格 §3.5 规定「新层必须有牙」——L2.live 升级必须含 ≥1 条「静态全过、实跑产物错」的 live-neg。本 3 case mock==real（Q1 实证）且 check 独立解析/guard 全覆盖 ⇒ **无可构造的 live-neg**（候选要么忠实调 db* 两边都对，要么伪造撞 B 的 cond）。
+3. 强行升级只会加 mock-fidelity cross-validation（real==mock 断言），这是「hardening without teeth」——抓的是 mock 未来 drift，不是候选欺骗 ⇒ 违反 §3.5 + §7.3「为实跑省事把 required 降 optional」。
+4. 规格 §2 LIVE-OPT 动作 = 「排期做；做不了写清缺什么」——本 3 case「缺一个 static-pass/live-fail gap」（非 infra 缺失，是 gap 不存在）。
+
+**登记**：`live_eval_changes.tsv` **0 新行**（无 judge_layers 变更，保持 [L0,L1]）。`live_eval_review_C.tsv` 3 行 round 追加 +r1237，check_live/live_evidence/live_reason 更新 OPT-closed 证据。
+
+**R2 全收口**：REQ 9/9 done（R2.1 calibredrv×2+rules_checker×1 + 既有 6），OPT 3/3 closed（R2.2 skipper×3 OPT-with-evidence），NA 125。C 19/638 L2.live（不变）。LIVE review 137/137 全填满。**报 A 汇总**：C 三分类 REQ=9 / OPT=3 / NA=125，R2 闭合，无口径变更（live_eval_changes.tsv 0 新行）。
