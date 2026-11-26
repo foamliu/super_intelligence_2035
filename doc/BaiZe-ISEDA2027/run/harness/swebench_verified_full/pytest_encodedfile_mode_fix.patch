@@ -1,0 +1,16 @@
+diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py
+index 25eab7fdf..d71fcc5a9 100644
+--- a/src/_pytest/capture.py
++++ b/src/_pytest/capture.py
+@@ -428,6 +428,11 @@ class EncodedFile(object):
+     def __init__(self, buffer, encoding):
+         self.buffer = buffer
+         self.encoding = encoding
++    
++    @property
++    def mode(self):
++        # Remove 'b' from underlying buffer mode as this is a text wrapper
++        return self.buffer.mode.replace('b', '')
+ 
+     def write(self, obj):
+         if isinstance(obj, six.text_type):

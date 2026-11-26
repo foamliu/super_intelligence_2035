@@ -1,34 +1,25 @@
-# Fix for test_huge_range_log failure
+# Fix Summary: _pytest.capture.EncodedFile mode should not include `b` (binary)
 
 ## Issue
-`lib/matplotlib/tests/test_image.py::test_huge_range_log` was intermittently failing with:
+When youtube-dl logs to pytest captured output, it raises a TypeError:
 ```
-ValueError: Invalid vmin or vmax
+TypeError: write() argument must be str, not bytes
 ```
-in `LogNorm.__call__` at line 1477 of colors.py.
+This happens because youtube-dl checks for `b` in `out.mode` to decide whether to write bytes or strings. `EncodedFile` incorrectly inherited the binary mode from its underlying buffer, even though its `write()` method only accepts strings.
 
 ## Root Cause
-When using LogNorm, edge cases during image resampling (e.g. all values becoming masked temporarily) or numpy version differences could cause the transformed vmin/vmax values to be non-finite, triggering the validation error. This happened even when vmin/vmax were explicitly set to valid values (1 and 1e20 in the test).
+The `EncodedFile` class uses `__getattr__` to forward all unknown attributes to the underlying binary buffer, so accessing `.mode` returned the buffer's binary mode (including 'b'). But the `write()` method expects string inputs and encodes them internally.
 
-## Fix Applied
-Modified `matplotlib/lib/matplotlib/colors.py` in the `ScaleNorm.__call__` method (lines 2956-2958):
-
+## Fix
+Added a `mode` property to `EncodedFile` that removes the 'b' character from the underlying buffer's mode:
 ```python
-# Before:
-t_vmin, t_vmax = self._trf.transform([self.vmin, self.vmax])
-if not np.isfinite([t_vmin, t_vmax]).all():
-    raise ValueError("Invalid vmin or vmax")
-
-# After:
-t_vmin, t_vmax = self._trf.transform([self.vmin, self.vmax])
-if not np.isfinite([t_vmin, t_vmax]).all() or t_vmin >= t_vmax:
-    # If vmin/vmax are invalid or equal, return all masked values
-    t_value = np.ma.masked_invalid(t_value, copy=False)
-    return t_value[0] if is_scalar else t_value
+@property
+def mode(self):
+    # Remove 'b' from underlying buffer mode as this is a text wrapper
+    return self.buffer.mode.replace('b', '')
 ```
 
-## Impact
-- **Fixes the test**: No more intermittent failures
-- **Backward compatible**: All valid use cases work exactly as before
-- **Graceful degradation**: Plots render empty/masked regions instead of crashing when edge cases occur
-- **Maintains validation**: Actual invalid use cases (like explicitly setting vmin <= 0 for LogNorm) still behave appropriately
+## Testing
+- Verified that before the fix, accessing `mode` returns `rb+` and writing bytes raises TypeError
+- Verified that after the fix, accessing `mode` returns `r+` and writing strings works correctly
+- All other file attributes continue to work as before via the existing `__getattr__` forwarding
