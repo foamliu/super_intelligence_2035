@@ -580,3 +580,64 @@ R1 对全部 hspice-mock/finesim-mock case 套同一句 "replays .75-captured GT
 | REQ 合计 | 37 | **36** | PwlStimTransform-001 桩体检降级（syntax-validator 非 GT-replay） |
 | OPT 合计 | 11 | **12** | +1 降级 |
 | 降级维度 | Type A vs Type B（候选是否 author deck） | **桩体结构**（GT-replay vs syntax-validator） | r1301 只区分候选调用签名；r1302 深入桩体语义 |
+
+## R1 再复核 #3（2026-11-27 r1303 · 5 候选逐条读桩 + .75 实证 · 只读）
+
+### 背景
+
+r1302 系统性发现 30 条未改造 REQ 中 grep 出 5 条候选 OPT（SpGen/GmidLut/PlatMosThin/FineSimModelScope/FineSimNoRefCkt），但指标 grep 不足以定论（有 measure/cross conds），承诺「下轮 R1 再复核 #3 逐条读桩 + 实证定 verdict，未读全不降级」。本轮兑现：逐条**读桩体全文**（check.py 完整 mock 源 + cond 列表），并对降级者跑 **.75 真模拟器实证**（hspice V-2023.12-SP1-1 / finesim V-2023.12-1 @ hfhds201）。
+
+### 关键区分：faithful-physics-solver vs GT-replay-by-signature
+
+r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第三类**：**faithful-physics-solver**——桩读候选 deck 的真实物理参数（R/kp/vto/W/L/vcc），用与真工具**同一模型**计算物理量，对 honest deck 与真工具 bit-exact。这类桩**不是** GT-replay-by-signature（不查表、不按键回放），garbage-physics deck 会被桩算出错误值并被 cond 交叉校验（cand vs judge-correct-rerun / cand vs GT-on-real-netlist）FAIL。真工具对这类线性/level-1 deck **零边际增益**。
+
+| 桩类 | 特征 | Q2（garbage-physics 过桩？） | verdict |
+|:--|:--|:--|:--|
+| GT-replay-by-signature | 桩按 .param/vdd 签名查预捕 GT 表回放 | **过**（签名对即回放 GT，忽略网表内容）| REQ |
+| faithful-physics-solver | 桩读真实 deck 参数 + 用同模型计算 | **不过**（算出错误值，cond 交叉校验 FAIL）| OPT |
+| 纯语法/结构 validator | 桩只校验语法/收敛/结构，无 measure | **过**（无物理量可断）| OPT |
+
+### 降级 3 条（读桩 + .75 实证定论）
+
+#### 降级 5：SpGen-001（hspice-mock · faithful KCL solver）REQ→OPT
+
+**桩体全文读**（check.py L72-243 `HSPICE_MOCK_SRC`）：桩 `main()` 解析候选 tran.sp 的 `.inc` 目标 → `_read_netlist_resistors(inc_path)` 读**真实** R1(rail→out)/R2(out→gnd) → 读 Vxxx pwl 的 vcc + `.param DC_load` + `iload` 存在性 → **KCL 求解** vnl=vcc·R2/(R1+R2)，vl=(vcc/R1−DC_load)/(1/R1+1/R2)。cond k2 把候选值 vs `gt_measures(b_sp,B)`（桩跑 check.py 自建 GT deck on **真实 b_sp**）交叉校验。garbage R1/R2/vcc/DC_load → 桩算错 → cond k2 FAIL。**桩有牙，非 GT-replay。**
+
+**.75 实证**（r1303 session `r1303-reverify` @ hfhds201 hspice V-2023.12-SP1-1）：honest GT deck（.inc netlist_B.sp Rd1=Rd2=4k vcc=1.0 DC_load=50u）真跑 → `vno_load=500.0000m vload=400.0000m vunload=500.0000m` RC=0 job concluded。桩 KCL 算 vnl=0.5 vl=0.4 vul=0.5 == 真 hspice **bit-exact**。真 hspice 对此线性电阻分压零边际增益。
+
+#### 降级 6：PlatMosThinIdsatIoffSweep-001（hspice-mock · faithful Shichman-Hodges solver）REQ→OPT
+
+**桩体全文读**（check.py L74-204 `HSPICE_MOCK_SRC`）：桩解析候选 deck 的 `.param vhi/wn` + `vgs/vds` 行 + `.model nch kp/vto/lambda/gamma` + `.dc LL start/stop/step` → 用 **level-1 Shichman-Hodges**（饱和 Id=0.5·kp·(W/L)·Vov²·(1+λ·Vds)，线性 Id=kp·(W/L)·(Vov·Vds−0.5·Vds²)·(1+λ·Vds)）逐点算 Id。cond n 把候选 idsat vs check.py `_indep_rerun`（自建正确 deck 跑桩）交叉校验 dev<50%。garbage kp/vto/W/L → 桩算错 → cond n FAIL。**桩有牙，非 GT-replay。**
+
+**.75 实证**（r1303 @ hfhds201 hspice）：honest idsat deck（DEJOA kp=80u vto=0.5 λ=0.04 vhi=1.8 wn=2u .dc LL 0.15u→0.55u step 0.1u）真跑 → L=0.15u: **−966.2293u**，L=0.25u: −579.7376u，L=0.35u: −414.0983u，L=0.45u: −322.0764u，L=0.55u: −263.5171u RC=0 job concluded。桩 Shichman-Hodges 算 L=0.15u: 966.22930u == 真 hspice **bit-exact**（docstring 验证）。真 hspice level-1 对此 deck 零边际增益。
+
+#### 降级 7：FineSimNoRefCktFix-001（finesim-mock · 结构 subckt-resolution validator）REQ→OPT
+
+**桩体全文读**（check.py L115-268 `FINESIM_MOCK_SRC`）：桩 `_all_defs` 收集 deck + `.inc` 递归的 `.subckt` 定义，`_scan_instances` 扫每个 X 实例的 subckt 引用，未解析 → faithful `no reference ckt` 错误；全解析 → `Successfully Completed` + .pt0/.ic/.fsdb。**check.py 全 14 conds 无任何 measure/物理量断言**（i/j/k/l/m/n 只查 Successfully Completed + 无 no-reference-ckt + 无 ERROR! + 输出文件存在）。Q2 N/A：garbage-physics-but-all-subckts-resolve deck 过桩且过真 finesim（无物理量可断）。与 r1302 PwlStimTransform 同型（结构/语法 validator 无物理）。
+
+**.75 实证**（r1303 @ hfhds201 finesim V-2023.12-1）：garbage-resolving deck（.inc spf.inc 全 subckt 解析，但 inv 管 W/L=1e-21u 电死）真跑 → `FineSim Successfully Completed` DC converged 无 ERROR! 产 .pt0/.fsdb/.ic RC=0。桩亦全解析 → Successfully Completed + 输出文件。**两者同过 garbage-physics deck**。真 finesim 无物理增益（无 measure 断言），仅边际 elaboration 严。
+
+### 保留 REQ 2 条（读桩定论为 GT-replay-by-signature）
+
+#### GmidLut-001（hspice-mock · GT-replay-by-signature）REQ 确认
+
+桩（check.py L142-227）解析 deck 的 `.param kp/vto` + `vvd` 行 → 按 **kp/vto 精确值**（0.00012/0.5→A，8e-5/0.45→B，+vvd→VD0）匹配三场景之一 → 回放**预捕 real-HSPICE CSV**（`_MOCK_CSV_A/B/VD0`）。cond p 把候选 lut_A vs `ref_build(params_A)`（桩跑 → 回放 A CSV）交叉校验。garbage deck（正确 kp/vto 签名但 W/L/拓扑/vds 错）→ 桩按签名回放 A CSV → 候选解析得 A 值 → cond p 过；真 hspice 跑 garbage deck 算出不同 op-point → cond p（真 ref）FAIL。**Q2-cheatable，REQ 确认。** R1 boilerplate 准确。
+
+#### FineSimModelScopeFix-001（finesim-mock · GT-replay-by-signature by vdd）REQ 确认
+
+桩（check.py L158-288）解析 deck + `.inc` model 文件，校验 `.model ./` 语法 + instance-model 名匹配，然后按 **vdd 值**（3.3→A tpd=2.1447e-09，2.5→B tpd=9.6430e-12）**查表回放预捕 real-FineSim tpd**。cond j/m 把候选 mt0 tpd vs judge-rerun tpd（桩跑 → 按 vdd 回放）交叉校验。garbage deck（正确 model 名 + vdd 但 W/L/拓扑错）→ 桩按 vdd 回放 GT tpd → 候选 mt0 匹配 → cond j/m 过；真 finesim 跑 garbage deck 算出不同 tpd → FAIL。**Q2-cheatable，REQ 确认。** R1 boilerplate 准确。
+
+### 与 r1302 的差异
+
+| 项 | r1302 | r1303 | 依据 |
+|:--|:--|:--|:--|
+| REQ 合计 | 36 | **33** | SpGen + PlatMosThin + FineSimNoRefCkt 降级（faithful-physics-solver / 结构 validator，非 GT-replay） |
+| OPT 合计 | 12 | **15** | +3 降级 |
+| 降级维度 | 桩体结构（GT-replay vs syntax-validator） | **桩体语义三分类**（+ faithful-physics-solver） | r1302 二分；r1303 发现第三类（faithful physics solver，读真实参数 + 同模型计算，bit-exact 真工具） |
+| R1 boilerplate 修正 | PwlStim 1 条（syntax-validator） | SpGen/PlatMosThin/FineSimNoRefCkt 3 条（faithful-solver/结构 validator） | r1302 grep 候选 5 条本轮读桩 + 实证全结清 |
+
+### 待办（R2 续 / 5 候选已全结清）
+
+- r1302 的 5 候选 OPT 全部结清：3 降级（SpGen/PlatMosThin/FineSimNoRefCkt）+ 2 REQ 确认（GmidLut/FineSimModelScope）。**R1 generic REQ boilerplate 对 faithful-physics-solver / 结构 validator 桩的误判已清零。**
+- R2 续改 GT-replay 真 Type A 家族（hspice-mock/finesim-mock）：当前 REQ 33 条（含已 done 7），未改造 26 条，B 预算 ≤6-8 条/轮，hspice-mock 家族优先。
+- 本轮**只读**：仅改 `live_eval_review_B.tsv` 3 条 verdict + 本节，🚫 未碰 `reference/*/check.py` 与 `cases/*.json`（无 judge_layers 变更，无 `live_eval_changes.tsv` 登记）。.75 通路 OK（r1303 reach: open_session 秒级 / hspice V-2023.12-SP1-1 + finesim V-2023.12-1 在 PATH @ hfhds201）。
