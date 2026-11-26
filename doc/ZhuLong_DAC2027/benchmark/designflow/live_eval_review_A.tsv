@@ -1,117 +1,117 @@
 case_id	owner_shard	lite_status	L0	L1	L2	L3	L4	L5	src_shard	judge_layers_now	live_verdict	live_reason	check_live	live_evidence	round
-DesignListGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-AprLogAudit-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-AprStampFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-AsyncFifoSim-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-AutoCellTclFlow-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-AvgValueCalc-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-Backannot-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-BankskewVecgenCfg-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CalVcoEnvWorkaround-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CaselistPerlDriverGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CdlNetlistAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CdlNetlistAnalyze-001-v2	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CkmuxXlsxExport-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CmpTaskZeroDelayOscDiagnose-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-ConnFileNetChk-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CoreTimingSig-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CosimFlowAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CosimSetup-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CovFMFlow-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CpForceBindInject-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CrEdgeAlignFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CrcErrBitDiag-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-CxdpLintMakefileGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DCDirSwitch-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DRCDeckOpt-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DcLsfQueueMigrate-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DcUpfDiag-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DeadLoopScan-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DelayCellParamGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DiscardRefFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-DrcSyntaxTest-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-EmXlsModel-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-FilelistFlattenGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-FlatNet-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-FloatPinToTop-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-FmRtl2RtlDemo-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-FsdbVerdiInteg-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-GenLefConsistAudit-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-GpioPortRefactor-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-HspiceTbStructAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-IMPSR1253VddPmFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-InnovusAudit-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-InnovusLogAudit-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-IrunSimDiagnose-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-IrunSimDiagnose-001-v2	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-LdoVerifyReport-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-LibToParm-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-Lpddr5CovTermitFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-MakeConvenienceTarget-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-McuAsmGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-MonErrScanReport-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-NandMcuAsm-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-NetCellMap-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-NetlistCompareReport-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-NetlistModSplice-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-NetlistPadDriverTrace-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-NetlistPadDriverTrace-001-v2	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-OdtErrStatScan-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-OstrichSpefRCFactor-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-PDKRunsetExplore-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-ParamRecon-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-PkgVarPassDutTb-001-v2	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-PortCatch-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-PyShebangFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RandStimVecFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RedhawkGenInputs-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RefModelBugFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RefreshRunAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RefreshRunAnalyze-001-v2	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RegrCaseFilter-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RegrCheckMacroMap-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RegrunMakefileGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RunRegrSubmit-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RunRegrSubmit-001-v2	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-RunsetVer-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SacapSignalMissingDiagnose-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SgeStdcellPortDiagnose-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SignalRunXref-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SiliconInstGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SimFailParse-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SimSavedTotalComplete-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SimSpeedupMonitor-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SpefAnnotAudit-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SpefLogAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SpefMismatchModuleLocalize-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-StaFlowScaffold-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-StdcellFamilyRefMatch-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-StdcellMatch-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SvConvTimeoutSkip-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SvPackedFlatten-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SvTbBugFix-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SynLintFlow-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-SyncManifestCheck-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-TbFamilyRoleAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-TclAreaUpdate-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-TotemSC-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-UpfIntentExtract-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-V2lvsCdlCheck-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-VcdToFsdbMigration-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-VecgenProbeDiag-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-Verification-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-VerilogrunPreserve-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-ViewCopyInstCount-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-VirtuosoToolLocator-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-VlibDetConvert-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-VltRetryWave2-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-VmodConnCheck-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-WLMMultibit-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-WaveSig-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-WtmWriteArrayScope-001-v2	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-WvPropDelayMeasure-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-EDA-Eval-DesignFlow-XyzSvEnumPort-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-SvIntegrateGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
-VerilogDriveFsmBlockGen-001	A	green	1	1	1	1	1	1	A	TODO	TODO				
+DesignListGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-AprLogAudit-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-AprStampFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-AsyncFifoSim-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-OPT	OPT: static checks Makefile 'run' target text contains 'vcs -sverilog' (L140); real vcs compile+sim on .75 would verify testbench actually compiles & sim passes. Static sufficient (no false-pos: text check is strict) but real run adds teeth.	OPT	see reason for BLOCKED/feasibility	r1-2026-11-26
+EDA-Eval-DesignFlow-AutoCellTclFlow-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-AvgValueCalc-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = Tcl average-calc script using WaveView ACE API; check uses sx_stub.tcl mock providing controlled config-driven values (test fixture); candidate arithmetic logic validated independent of real WaveView. Stub records API calls (has teeth on call structure).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-Backannot-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-BankskewVecgenCfg-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CalVcoEnvWorkaround-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = test_env.py config/env test script; check writes calibre_vco stub providing controlled output (test fixture); candidate env-resolution logic validated independent of real calibre. calibre = config path string.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CaselistPerlDriverGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CdlNetlistAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CdlNetlistAnalyze-001-v2	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CkmuxXlsxExport-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CmpTaskZeroDelayOscDiagnose-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: debug-Q&A / analysis task; xrun appears in trace-source docstring + evidence text only.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-ConnFileNetChk-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = connectivity-net checker parsing finesim si.inp; finesim in docstring only.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CoreTimingSig-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CosimFlowAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = co-sim flow analyzer (python script); vcs/finesim appear in text checks (build.bash mentions vcs), not invoked.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CosimSetup-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = co-sim config file generator; vcs/verdi appear as config path values (systemcDir=/tool/cbar/apps/vcs/...), not invoked.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CovFMFlow-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-OPT	OPT-BLOCKED: check uses _run_fm_stub (L200, mock formality) + make -n dry-run; real formality (fm) run would validate fm.tcl actually loads/compares. BLOCKED: fm license on .75 unverified (fm not in /apps/synopsys/SRB confirmed list).	OPT	see reason for BLOCKED/feasibility	r1-2026-11-26
+EDA-Eval-DesignFlow-CpForceBindInject-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CrEdgeAlignFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CrcErrBitDiag-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-CxdpLintMakefileGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DCDirSwitch-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DRCDeckOpt-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = DRC rule-deck optimization script; calibre in docstring/trace-source only; check runs python on deck/report text.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DcLsfQueueMigrate-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DcUpfDiag-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DeadLoopScan-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DelayCellParamGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = DFT flow scaffold generator; check runs generated bash scripts in check/mock mode (run_full_flow.sh check exit 0); dc_shell/vcs = text presence checks in generated scripts, not real invocation. Generated scripts have offline check mode.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DiscardRefFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-DrcSyntaxTest-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-EmXlsModel-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-FilelistFlattenGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-FlatNet-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-FloatPinToTop-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-OPT	OPT-BLOCKED: ref _pyaether_pin_float uses dbCreateLabel/dbGetInstByName/dbGetPinShapes; .75 pyAether sandbox lacks these APIs (r1292 real test confirmed MISSING). check.py declares L1-boundary (JSON mode, no real EDA call path). check_live infeasible: strong-probe kills correct solution, weak-probe toothless.	OPT	see reason for BLOCKED/feasibility	r1-2026-11-26
+EDA-Eval-DesignFlow-FmRtl2RtlDemo-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-REQ	already L2.live (r1291); real vcs compile pass/fail variants	Y (existing L2.live)	judge_layers=[L0,L1,L2.live]; check_live(ref) PASS on .75	r1-2026-11-26
+EDA-Eval-DesignFlow-FsdbVerdiInteg-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-OPT	OPT: check does 'make -n build' dry-run + text inspect vcs cmd for +define+USER_ (L234); verdi target text check for -ssf (L229). §2.1 rule2: make -n ≠ real run. Real vcs+verdi build on .75 would verify fsdb actually generated. vcs on .75 ✓; verdi on .75 unverified (BLOCKED if absent).	OPT	see reason for BLOCKED/feasibility	r1-2026-11-26
+EDA-Eval-DesignFlow-GenLefConsistAudit-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-GpioPortRefactor-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-HspiceTbStructAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = netlist structure analyzer; finesim = parsed 'simulator' field value, not invoked.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-IMPSR1253VddPmFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = TCL script fix; check validates TCL syntax via tclsh + stub wrapper (wrapper.tcl tests execution semantics); no real EDA tool invoked. tclsh = standard interpreter.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-InnovusAudit-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-InnovusLogAudit-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = innovus.log auditor (python script); innovus mention = checking innovus.log file existence, not invoked.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-IrunSimDiagnose-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = diagnostic script parsing irun compile log; check runs candidate python on embedded B_LOG text; irun appears only in log content being parsed (L29-65), not invoked. §2.1 rule2 confirmed.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-IrunSimDiagnose-001-v2	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = diagnostic script parsing irun compile log; check runs candidate python on embedded B_LOG text; irun appears only in log content being parsed (L29-65), not invoked. §2.1 rule2 confirmed.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-LdoVerifyReport-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-LibToParm-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-Lpddr5CovTermitFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-MakeConvenienceTarget-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-McuAsmGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-MonErrScanReport-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-NandMcuAsm-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-NetCellMap-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-REQ	already L2.live (r1275); cond j real vcs elaborate on B_MODS	Y (existing L2.live)	judge_layers=[L0,L1,L2.live]; check_live(ref) PASS on .75	r1-2026-11-26
+EDA-Eval-DesignFlow-NetlistCompareReport-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-NetlistModSplice-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-NetlistPadDriverTrace-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-NetlistPadDriverTrace-001-v2	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-OdtErrStatScan-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-OstrichSpefRCFactor-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = TCL script fix; check validates TCL syntax via tclsh + stub wrapper (wrapper.tcl tests execution semantics); no real EDA tool invoked. tclsh = standard interpreter.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-PDKRunsetExplore-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = PDK runset directory-structure explorer; calibre in symlink target path strings, not invoked.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-ParamRecon-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-PkgVarPassDutTb-001-v2	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = SV testbench/package generator; xrun appears in embedded SV file content.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-PortCatch-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-PyShebangFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RandStimVecFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RedhawkGenInputs-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RefModelBugFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RefreshRunAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RefreshRunAnalyze-001-v2	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RegrCaseFilter-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RegrCheckMacroMap-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RegrunMakefileGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RunRegrSubmit-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = regression config/driver generator; check runs candidate python driver + validates output JSON structure; xrun/irun appear only as config string values (B_TOOL='xrun') / embedded setup_vps_sh text, not invoked. §2.1 rule2 confirmed (r1272 misjudgment re-verified: tool name in make -n / embedded logs only).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RunRegrSubmit-001-v2	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = regression config/driver generator; check runs candidate python driver + validates output JSON structure; xrun/irun appear only as config string values (B_TOOL='xrun') / embedded setup_vps_sh text, not invoked. §2.1 rule2 confirmed (r1272 misjudgment re-verified: tool name in make -n / embedded logs only).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-RunsetVer-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = RunsetVersionFinder.py path-handling fix; calibre in path string only.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SacapSignalMissingDiagnose-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SgeStdcellPortDiagnose-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SignalRunXref-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SiliconInstGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SimFailParse-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = sim-failure log parser; irun/xrun appear in embedded xrun.log text, not invoked.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SimSavedTotalComplete-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SimSpeedupMonitor-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SpefAnnotAudit-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SpefLogAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SpefMismatchModuleLocalize-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-StaFlowScaffold-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-StdcellFamilyRefMatch-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-StdcellMatch-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SvConvTimeoutSkip-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SvPackedFlatten-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SvTbBugFix-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SynLintFlow-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-SyncManifestCheck-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-TbFamilyRoleAnalyze-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = testbench-family role analyzer; xrun appears in embedded README/file content.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-TclAreaUpdate-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-TotemSC-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-REQ	NEW REQ: check _setup_mock_finesim (L134) writes MOCK_FINESIM_PY to PATH; candidate fix_finesim_models.py drives finesim model-resolution; check reads finesim_fix_report.json (devices_fixed/models_loaded/finesim_ok/verdict). §2.1 Q2: candidate could fabricate report fields matching _build_B counts without real model fix. Real finesim on .75 (/apps/synopsys/SRB/finesim) needed.	TODO (R2)	see reason; .75 has vcs/finesim	r1-2026-11-26
+EDA-Eval-DesignFlow-UpfIntentExtract-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-V2lvsCdlCheck-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-VcdToFsdbMigration-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = Makefile rewrite for vcd→fsdb/verdi; verdi = text regex on Makefile target, not invoked.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-VecgenProbeDiag-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-Verification-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = virtuoso→aether flow-migration script; check validates NO direct virtuoso call (text check), not invoked.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-VerilogrunPreserve-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-ViewCopyInstCount-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-REQ	already L2.live; pyAether view-copy instance count real API	Y (existing L2.live)	judge_layers=[L0,L1,L2.live]; check_live(ref) PASS on .75	r1-2026-11-26
+EDA-Eval-DesignFlow-VirtuosoToolLocator-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = tool-path locator script; rc/skill = path-finding logic, no tool invocation.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-VlibDetConvert-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-VltRetryWave2-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-VmodConnCheck-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-REQ	NEW REQ (P4 missed): check cond (h) runs candidate .sh which calls 'vcs -full64'; ref engineer.py writes in-process vcs mock on PATH (L15/L38 'faithful vcs mock'); modified .sh prepends 'export PATH=<workroot>'. §2.1 Q2: candidate could fabricate run_report.json matching mock exit codes/error markers without real vcs. Real vcs on .75 (/apps/synopsys/SRB/vcs) needed for anti-hardcode teeth.	TODO (R2)	see reason; .75 has vcs/finesim	r1-2026-11-26
+EDA-Eval-DesignFlow-WLMMultibit-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-WaveSig-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-WtmWriteArrayScope-001-v2	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-WvPropDelayMeasure-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26
+EDA-Eval-DesignFlow-XyzSvEnumPort-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/analysis; check uses dummy/stub test-fixture data (not EDA tool mock); no real EDA tool output dependency. 'rc' signal = return-code variable.	N/A		r1-2026-11-26
+SvIntegrateGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-REQ	already L2.live (r1275); cond h,i real vlogan+vcs produce simv	Y (existing L2.live)	judge_layers=[L0,L1,L2.live]; check_live(ref) PASS on .75	r1-2026-11-26
+VerilogDriveFsmBlockGen-001	A	green	1	1	1	1	1	1	A	TODO	LIVE-NA	NA: deliverable = script/config/log-analysis/Makefile/Q&A task; check validates structure/text/computation via python/tclsh; no real EDA tool output dependency. 'rc'/'vcs'/'skill' signals = variable names or text mentions, not real invocations (§2.1 rule2).	N/A		r1-2026-11-26

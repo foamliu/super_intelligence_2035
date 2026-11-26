@@ -284,3 +284,58 @@ P1/P2/P3/P4 全闭合后首轮回归 spot-check。确认 r1274/r1275 判分逻�
 **影响**：P2 T2 闭合（2/2：FmRtl2RtlDemo-001 → L2.live r1291；FloatPinToTop-001 → 留 L1 本轮自决）。shard A L2.live case 数不变（8），L0L1 case 数不变（577）。🚫 未改 case/check.py/negative/assets/hidden/case JSON。
 
 **教训**：P2「自决」case 必须先探测真实沙盒 API 可用性——若参考解自身引用的 API 在真实 EDA 工具不存在，则该 case 是 infra-honest L1，强行加 L2.live 要么无牙（弱探针）要么误杀正解（强探针）。后续 P2 候选先跑 `hasattr(pyAether, api)` 探测再决定。
+
+---
+
+## Live-eval 审视（2026-11-26 用户令 · R1 只读重判）
+
+> **令源**：`BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`（2026-11-26 18:5x 用户令「Lite-500 逐条实跑评估审视」）
+> **冻结窗口**：zhulong r3' 进行中（ETA ≈ 11-27 00:08）⇒ 本轮仅 R1 只读审视，🚫 未改 reference/*/check.py / cases/*.json
+> **范围**：`live_eval_review_A.tsv` 全量 116 条逐条静态重判三分类
+> **方法**：程序化扫描 116 cases/A JSON + reference check.py 信号（subprocess 调用点 / EDA 二进制提及上下文 / mock-stub 定义 / pyAether import）；对 28 条高风险候选（sub_eda 误判家族 + mock+EDA 组合 + subprocess+EDA 调用点）逐行精读 check.py 的 subprocess 上下文与 EDA 二进制提及位置，区分「真二进制调用」与「文本/日志/config 提及」（§2.1 rule2）
+
+### 三分类结果
+
+| verdict | 计数 | 说明 |
+|:--|--:|:--|
+| **LIVE-REQ** | 6 | 4 已 L2.live（FmRtl2RtlDemo/NetCellMap/SvIntegrateGen/ViewCopyInstCount）+ **2 新发现**（VpsRegrErrorEngineer-001 / TotemSC-001）|
+| **LIVE-OPT** | 4 | AsyncFifoSim-001 / FsdbVerdiInteg-001 / FloatPinToTop-001(BLOCKED) / CovFMFlow-001(BLOCKED) |
+| **LIVE-NA** | 106 | 文本/脚本/日志/config/Makefile/Q&A 任务，静态判分正确 |
+
+### REQ 清单（6）
+
+| case_id | 状态 | 本质问依据 |
+|:--|:--|:--|
+| FmRtl2RtlDemo-001 | ✅ 已 L2.live (r1291) | 真 vcs 编译 pass/fail 变体 |
+| NetCellMap-001 | ✅ 已 L2.live (r1275) | cond j 真 vcs elaborate B_MODS |
+| SvIntegrateGen-001 | ✅ 已 L2.live (r1275) | cond h,i 真 vlogan+vcs 产 simv |
+| ViewCopyInstCount-001 | ✅ 已 L2.live | pyAether view-copy instance count 真 API |
+| **VpsRegrErrorEngineer-001** | 🔴 新发现（P4 漏） | check cond (h) 跑候选 .sh 调 `vcs -full64`；ref engineer.py 写 in-process **vcs mock** 上 PATH（L15/L38「faithful vcs mock」）；.sh 前置 `export PATH=<workroot>`。§2.1 Q2：候选可伪造 run_report.json 匹配 mock exit code/error marker 而不跑真 vcs。.75 有真 vcs（/apps/synopsys/SRB/vcs）可补牙 |
+| **TotemSC-001** | 🔴 新发现 | check `_setup_mock_finesim`（L134）写 MOCK_FINESIM_PY 上 PATH；候选 fix_finesim_models.py 驱动 finesim model-resolution；check 读 finesim_fix_report.json（devices_fixed/models_loaded/finesim_ok/verdict）。§2.1 Q2：候选可伪造 report 字段匹配 _build_B 计数而不做真 model fix。.75 有真 finesim（/apps/synopsys/SRB/finesim）可补牙 |
+
+### OPT 清单（4）
+
+| case_id | 缺什么 | 说明 |
+|:--|:--|:--|
+| AsyncFifoSim-001 | 可行（.75 vcs ✓） | 静态检 Makefile `run` 含 `vcs -sverilog`（L140 文本）；真 vcs 编译+sim 可验 testbench 实跑 |
+| FsdbVerdiInteg-001 | 部分（.75 vcs✓ verdi待验） | `make -n build` 干跑 + vcs cmd 文本检（L234）；§2.1 rule2 make-n≠真跑；真 vcs+verdi 可验 fsdb 实生成 |
+| FloatPinToTop-001 | BLOCKED | ref `_pyaether_pin_float` 用 dbCreateLabel/dbGetInstByName/dbGetPinShapes；.75 pyAether 沙盒缺这 3 API（r1292 实测）；强探针误杀正解/弱探针无牙 ⇒ infra-honest L1 |
+| CovFMFlow-001 | BLOCKED | `_run_fm_stub`（L200 mock formality）+ make -n；真 fm 跑可验 fm.tcl；.75 fm 许可未验（fm 不在 SRB 确认清单） |
+
+### 与旧 P4（r1273）的差异
+
+| 项 | 旧 P4 (r1273) | 本轮 R1 | 说明 |
+|:--|:--|:--|:--|
+| 口径 | 122 A-owned（含 cross-shard） | 116（lite-500 A shard 名册） | 本轮按 live_eval_review_A.tsv 名册 |
+| T1/REQ | 2（NetCellMap/SvIntegrateGen，已做） | 6（4 已 L2.live + **VpsRegrErrorEngineer + TotemSC**） | **VpsRegrErrorEngineer-001 旧 P4 漏判**（r1272 关键词扫见 vcs 文本即归 T3，未深读 engineer.py 写 vcs mock 上 PATH）；**TotemSC-001 旧 P4 漏判**（finesim mock 桩未体检） |
+| T2/OPT | 2（FloatPinToTop/FmRtl2RtlDemo） | 4（+AsyncFifoSim/FsdbVerdiInteg/CovFMFlow） | FmRtl2RtlDemo 已升 REQ-L2.live；新增 3 OPT（make-n/文本检家族，§2.1 rule2） |
+| T3/NA | 117 | 106 | 口径收窄（116 vs 122）+ 2 条升 REQ |
+| r1272 误判家族 | IrunSimDiagnose-001/-v2 / RunRegrSubmit-001-v2 | **复验确认 NA** | irun/xrun 仅出现在嵌入日志/config 文本（§2.1 rule2 证实），非 subprocess 真调用；旧 P4 T3 结论正确 |
+
+### R1 纪律
+
+- 🚫 未改 reference/*/check.py / cases/*.json（冻结窗口 §1.1）
+- 🚫 未降断言/阈值/条件；🚫 未改 prompt/assets/hidden
+- ✅ 全量 116 条 verdict + reason + round 填入 live_eval_review_A.tsv
+- ⏳ 2 新 REQ 待冻结窗口解冻后 R2 改造（拆 check_static/check_live + route .75 + live-neg + §5 七项）
+
