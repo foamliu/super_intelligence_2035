@@ -1,6 +1,6 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 > 🆕 **用户令 · 2026-11-26 — cline 配置修正 + 重新 predict cline 路 + 报告已更新**
 >
 > **用户原话**：「确认 cline 配置是否：关掉 checkpoint、思维链等级设为 low、压缩机制设为 basic 这个降本组合」「在报告表格中包含各 harness 版本号，把 cline-patched 改成 zhulong(cline-patched)」
@@ -147,13 +147,13 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·7/7 predict COMPLETE·7/7 eval COMPLETE✅·报告已生成✅·MM已停(令D)·全部完成，待新指令
+PHASE:        11-26令(cline配置修正+重新predict cline-patched路)·cline-patched re-predict RUNNING(PID1755547·compaction=basic+thinking=low·500 pending)
 已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way predict 7/7 COMPLETE✅**(3500/3500=100%)·**doubao-pro 7way eval 7/7 COMPLETE✅**·**报告已生成✅**(report_harness_doubao_pro_7way_swebench_tb_zh.html)·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**agent-arena repo✅**(33 scripts committed)
-当前动作:     idle·全部完成·例行巡检健康·guard PID931671 LIVE(493116s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092·~81736s≈22.7h)·0 eval/predict·0 Docker·load~27/224=12%·mem681G/2TB avail1.1T
-下一步:     待运维新指令（所有 11-25 令 A/B/C/D 已全部闭环）
+当前动作:     cline-patched re-predict RUNNING(PID1755547·workers=1·500 pending·compaction=basic+thinking=low)·guard PID931671 LIVE(493567s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092·~82959s≈23h)·0 Docker·load~26/224=12%·mem684G/2TB avail1.1T
+下一步:     ①monitor cline-patched re-predict(500题·ETA~3-4h) ②predict完成→eval(incremental_eval_merge.py --route cline-patched --regen) ③REGEN报告(gen_report_doubao_pro_7way.py)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK~27.0KB / MEMORY≈30.0KB（均<32KB✅）
+ 体积: TASK~27.0KB / MEMORY≈30.2KB（均<32KB✅·归档#H-004~#H-008后）
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
   SWE-bench Verified Pass% (doubao-pro 口径): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
@@ -166,15 +166,8 @@ ERROR_COUNT:  0
 
 > 📦 #H-001~#H-003 已归档 → daily-memories-harness/2026-11-25.md「归档」节（2026-11-26 07:55 滚出）
 
-> #H-004（2026-11-25 12:12, 监控巡检·doubao-pro 7way predict 7/7路全RUN健康·538/3500=15.4%·cc100/cline78/opencode81/pi73/hermes71/codex72/dsh63·non-empty patches=510/538=94.8%·⚠️deepseek-harness有5个9.9MB垃圾patch(=git diff整个venv目录·django-11211/11555/11149/11815/11734)·dsh patch_rate=43/63=68.3%远低于其他路95-100%·0 infra·0 quota transient·0 error·token 754M(47948 calls·in=739M+out=14.9M)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(420808s)·SDK持久化✅·资源OK(load27/224·mem672G/2015G·0 high-CPU)·所有7路newest file age<132s=全活跃·research日报2026-11-25已查(无直接可执行建议)·下一步:继续monitor→7way predict完成(ETA~midnight)→eval+报告→MM全量重跑·⚠️eval前需处理dsh垃圾patch(过滤或标注)
-
-> #H-005（2026-11-25 12:34, 监控巡检·doubao-pro 7way predict 7/7路全RUN健康·618/3500=17.7%·cc111/cline89/opencode94/pi82/codex81/hermes82/dsh79·non-empty patches=580/618=93.9%(excl dsh: 529/539=98.1%)·⚠️dsh有6个10.5MB垃圾patch(=git diff整个venv目录·django-11211/11555/11149/11815/11734/11999)·dsh patch_rate=51/79=64.6%远低于其他路96-100%·dsh 28 empty patches(35.4%)·0 errors·16 quota transient全恢复(codex5/opencode1/pi3/cc2/hermes4/dsh1)·429在gw_proxy日志(9090=56/9091=0/9092=26)有retry处理·token 134.5M(8518 calls·in=131.8M+out=2.7M)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(422112s≈4.9d)·SDK持久化✅·资源OK(load28/224·mem672G/2015G·0 high-CPU harness进程)·所有7路newest file age<170s=全活跃·pretrain step7.39s≤7.4s✅·下一步:继续monitor→7way predict完成(ETA~midnight)→eval+报告→MM全量重跑·⚠️eval前需处理dsh垃圾patch(过滤或标注)
-
-> #H-006（2026-11-25 13:04, 监控巡检+MM修复·doubao-pro 7way predict 7/7路全RUN健康·707/3500=20.2%·cc129/cline99/opencode104/pi92/codex93/hermes93/dsh97·patch_rate=652/707=92.2%(excl dsh: 602/649=92.8%)·⚠️dsh 9个>1MB垃圾patch(git diff venv)+38空patch·dsh patch_rate=50/97=51.5%·token ~1.01B(63610 calls)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(423386s≈4.9d)·SDK持久化✅·**MM 2×3全量重跑启动✅**(6/6路RUN·clear stale progress→launch_mm_2x3_full.sh·**fixed opencode KeyError**: run_mm_2x3.py lines 150/154/411 r['llm']→r['model'](config用model不用lll)·agent-arena commit a1fc485 pushed✅·synced to super_intelligence_2035)·⚠️**deepseek-v4-flash不支持多模态**(cline+opencode 2路每题rc=1 "not a multimodal model"·产空patch·非bug是模型限制·2×3实际有效=2×2+2空)·cline__doubao 3/480 has_patch✅·cline__kimi 1/480 running·opencode 3路刚启动·资源OK(load30/224·mem675/2015G·0 high-CPU harness进程·max=cline_mm_doubao 240%=2.4核)·pretrain step7.39s≤7.4s✅·所有7路SWE-bench newest file age<160s=全活跃·下一步:继续monitor 7way+MM→7way完成→eval+报告→MM完成→eval→dsh垃圾patch过滤
-
-> #H-007（2026-11-25 13:28, 监控巡检·doubao-pro 7way predict 7/7路全RUN健康·817/3500=23.3%·cc151/cline112/opencode120/pi105/codex103/hermes106/dsh120·所有7路newest file age<110s=全活跃·token 1.22B(76457 calls·in=1199.8M+out=24.3M·from prediction JSON usage field)·gw_proxy 3进程LIVE(9090/9091/9092)·429 counts: 9090=58/9091=1/9092=26(proxy handles with retries·0.75% rate)·⚠️ConnectionResetError on 9090/9091 tails(predictions still progressing)·guard PID931671 LIVE(425296s≈4.9d)·SDK持久化✅·⚠️dsh 14个>1MB垃圾patch(11MB each·all django·git diff venv目录)需eval前过滤·MM 2×3 LIVE(169/2880=5.9%·⚠️kimi-k2.6 routes very slow)·pretrain iter319060 step7.32s≤7.4s✅·资源OK(load31.65/224·mem676G/2015G)·下一步:继续monitor 7way+MM→7way完成→eval+报告)
-
-> #H-008（2026-11-26 00:37, **令D执行+claude-code重启**·**MM已KILL✅**(pkill run_mm_2x3.py+mm_proxy·令D执行·MM数据保留不删)·**claude-code predict重启✅**(19:24 git-fetch blocked 158题→00:34 setsid重启resume pending=162·PID2440121·log=claude-code_doubao_pro_rerun2.log·resume跳过338已完成题·首题patch-produced 534B✅·⚠️前两次nohup尝试被tool shell退出kill·setsid存活)·doubao-pro 7way predict 7/7路全RUN健康·2787/3500=79.6%·cc342/cline393/opencode410/pi388/codex361/hermes395/dsh498·dsh近完成(2remaining)·token 0.65B(39637 calls·in=633.7M+out=12.2M·from gw_proxy sidecar)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(465665s≈5.4d)·资源OK(load26/224·0 high-CPU)·pretrain step7.29s≤7.4s✅·下一步:继续monitor 7way predict→完成(ETA~04:00)→eval+报告→dsh垃圾patch过滤)
+> 📦 #H-004~#H-006 已归档 → daily-memories-harness/2026-11-25.md「归档」节（2026-11-26 08:25 滚出）
+> 📦 #H-007~#H-008 已归档 → daily-memories-harness/2026-11-25.md「归档」节（2026-11-26 08:38 滚出）
 
 > #H-009（2026-11-26 01:00, 监控巡检·**dsh predict COMPLETE✅**(499/500·299 legit+29 garbage+171 empty·无运行进程)·doubao-pro 7way predict 5路active+CC rerun·2854/3500=81.5%·cline404(93rem)/codex374(126rem·最慢)/opencode416(83rem)/pi398(100rem)/hermes408(91rem)·CC rerun PID2440121(355 files increasing·log=rerun2.log·patch-producing正常·~145 remaining of 162)·⚠️dsh 29个垃圾patch(>1MB=venv git diff·django×27+matplotlib×1+sphinx×1·最大21MB django-17087)需eval前过滤→set model_patch=""·token 0.69B(41845 calls·in=676.6M+out=12.9M)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(466854s≈5.4d)·资源OK(load24.45/224=10.9%·mem670G/2015G avail1114G·0 high-CPU)·pretrain step7.29-7.39s≤7.4s✅·所有5路active newest file age<120s=全活跃·MM已停(令D·数据保留)·下一步:①继续monitor 5路+CC rerun→完成(ETA~05:00 codex bottleneck) ②dsh垃圾patch过滤 ③eval incremental_eval_merge.py --route <h> ④7way报告REGEN)
 
@@ -210,6 +203,8 @@ ERROR_COUNT:  0
 
 > #H-025（2026-11-26 08:05, 例行巡检·**idle·健康**·git fetch+merge origin/main: Already up to date(无新指令)·自检:0 eval/predict进程·0 Docker·guard PID931671 LIVE(492601s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092·~81220s≈22.6h)·资源OK(load23.87/224=11%·mem680G/2TB avail1.1T·0 high-CPU harness进程)·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7083B✅·token sidecar 52884 lines·dsh_sdk持久化✅·agent-arena repo✅·TASK 27.0KB/MEMORY~29.8KB(均<32KB✅)·所有11-25令A/B/C/D已闭环·WAITING:0·下一步:待运维新指令）
 > #H-026（2026-11-26 08:15, 例行巡检·**idle·健康**·git fetch: Already up to date(无新指令)·自检(内存10-30令):0 harness eval/predict进程·gw_proxy 3进程RSS=25-44MB(远<50GB阈值✅)·guard 3.5MB✅·自检(CPU 11-02令):load26.70/224=12%(远<80%阈值✅)·0 harness进程>8000%CPU✅·guard PID931671 LIVE(493116s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092·~81736s≈22.7h)·0 Docker·mem681G/2TB avail1.1T·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7083B✅·token sidecar 52884 lines·dsh_sdk持久化✅·agent-arena repo✅·TASK 27.0KB/MEMORY~30.0KB(均<32KB✅)·research日报2026-11-26已查(无新可执行建议·ShellBench token成本建议已落地✅)·所有11-25令A/B/C/D已闭环·WAITING:0·下一步:待运维新指令）
+> #H-027（2026-11-26 08:25, 例行巡检·**idle·健康**·git fetch: Already up to date(无新指令)·自检(内存10-30令):0 harness eval/predict进程·gw_proxy 3进程RSS=24-43MB(远<50GB阈值✅)·guard 3.5MB✅·自检(CPU 11-02令):load26.21/224=12%(远<80%阈值✅)·0 harness进程>8000%CPU✅·guard PID931671 LIVE(493567s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092·~82187s≈22.8h)·0 Docker·mem684G/2TB avail1.1T·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7083B✅·token sidecar 52884 lines·dsh_sdk持久化✅·agent-arena repo✅·TASK 27.0KB/MEMORY~25.5KB(归档#H-004~#H-006后·均<32KB✅)·research日报2026-11-26已查(无新可执行建议·ShellBench token成本建议已落地✅)·所有11-25令A/B/C/D已闭环·WAITING:0·下一步:待运维新指令）
+> #H-028（2026-11-26 08:38, **cline-patched re-predict STARTED✅**·11-26令接手执行·cline配置修正已验证(run_single.py:109-110 --compaction basic --thinking low✅·run_harness.py:198-199✅·agent-arena synced✅)·报告已更新(7873B·zhulong(cline-patched)+版本号✅)·旧cline-patched predictions/progress/eval已删✅(494 files)·re-predict启动✅(PID1755547·setsid·workers=1·500 pending·nice10·compaction=basic+thinking=low)·gw_proxy 3进程LIVE(9090/9091/9092·~82959s≈23h)·guard PID931671 LIVE(493567s≈5.7d)·0 Docker·load~26/224=12%·mem684G/2TB avail1.1T·自检(内存10-30令):gw_proxy RSS=24-43MB✅·自检(CPU 11-02令):0 harness进程>8000%CPU✅·⚠️cline实际版本3.0.75(MEMORY记3.0.51·待后续确认)·归档#H-004~#H-008→daily-memories·MEMORY~30.2KB(均<32KB✅)·下一步:monitor re-predict(ETA~3-4h)→eval→REGEN报告·WAITING:0）
 
 
 
