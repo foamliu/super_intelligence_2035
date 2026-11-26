@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-26 21:0x · r271）**：作者 **407** 人（编号最大 **407**）· X 已核验 **160**（本轮 **+1**：`@TsungYiLinCV` 由本人主页 <https://tsungyilin.info/> 外链 `twitter.com/TsungYiLinCV` + 代理抓 `x.com/TsungYiLinCV` `200` / 181,529 B，`og:title` = `Tsung-Yi Lin (@TsungYiLinCV) on X` ⇒ 双源；Andrew Zisserman 本人主页与 VGG 人员页均无本人 handle、Karen Simonyan 未定位可核主页 ⇒ 记「未找到 X」，不猜）· 已发信 **184**（台账 #1–#184；今日 **12/12** 已达每日硬上限，本窗**只建档不发**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **71** 封，与 18:00 持平、**无新实质回信**）· 退信 **9**（本窗 **+0**）。本轮 **+3**：Andrew Zisserman（VGG 二作，英文，Oxford VGG 人员页 `mailto:removethisifyouarehuman-az@robots.ox.ac.uk` 去反爬前缀 ⇒ A 级，仅建档）· Karen Simonyan（VGG 一作，英文，未定位可核主页/邮箱 ⇒ 仅建档）· Tsung-Yi Lin（Focal Loss 一作，中文，主页 `mailto:` + X 双源 ⇒ 仅建档，同论文只建一作）。**去重记录**：Mnih / Kavukcuoglu（A3C 作者）已在作者网，本轮不重复新增。
 > **当前计数（2026-11-26 18:0x · r270）**：作者 **404** 人（编号最大 **404**）· X 已核验 **159**（本轮 **+0**：Phillip Isola 主页 `Social media` 仅 Bluesky（`phillipisola.bsky.social`）、Scott Fujimoto 的 `x.com/sfujim` 经代理实测 `og:title` = `もん (@sfujim) on X` 属**他人**、Alexei Efros 主页仅一个 twitter **搜索**链接、无本人 handle ⇒ 一律记「未找到 X」，不猜）· 已发信 **184**（台账 #1–#184；今日 **12/12** 已达每日硬上限，本窗**不发只建档**）· 实质回信 **7 位作者 / 8 封信** · 退信 **9**（本窗 **+1**：#183 UT Austin 反垃圾拦截）。本轮 **+3**：Phillip Isola（pix2pix 一作，英文，MIT 主页空格混淆 `p h i l i p i @ m i t . e d u` 还原 ⇒ A 级，仅建档）· Scott Fujimoto（TD3 一作，语言待核〔日本姓氏 Fujimoto vs 加拿大机构 McGill〕，A 级邮箱未找到、主页 `sfujim.github.io` 404 / `cs.mcgill.ca/~sfujim/` 302 空跳转 / `fujimoto.me` 526、`@sfujim` 属他人 ⇒ 仅建档）· Alexei A. Efros（pix2pix 四作，英文，Berkeley 主页明文 `efros -at- eecs.berkeley.edu` 还原 ⇒ A 级，仅建档，同论文已建 Isola）。
 > **当前计数（2026-11-26 15:0x · r269）**：作者 **401** 人（编号最大 **401**）· X 已核验 **159**（本轮 **+1**：`@erik_nijkamp` 由本人主页 <https://eriknijkamp.com/>（`200` / 35,936 B）外链 `twitter.com/erik_nijkamp` + 代理抓 `x.com/erik_nijkamp` `200` / 180,555 B，`og:title` = `Erik Nijkamp (@erik_nijkamp) on X` ⇒ 双源）· 已发信 **184**（台账 #1–#184；今日 **12/12**，已达每日硬上限）· 实质回信 **7 位作者 / 8 封信**（**口径更正**：11-14 起「0 回信」是测量失败；2026-11-26 15:0x 首次 IMAP 只读核出 9 封来信，详见 `mail/replies/README.md`）· 退信 **8**。本轮 **+3**：Qiang Liu（Rectified Flow 资深作者，中文，主页反爬空格明文 `lqiang@cs.utexas.edu` ⇒ 已发信 #183）· Erik Nijkamp（ProGen2 一作，荷兰语称谓+英文，主页 `mailto:` 百分号编码解出 `enijkamp@ucla.edu` + X 双源 ⇒ 已发信 #184）· Chengyue Gong（Rectified Flow 二作，中文，主页明文 `chengyueg@wustl.edu` ⇒ 仅建档，同论文已发资深作者）。
 > **当前计数（2026-11-26 12:0x · r268）**：作者 **398** 人（编号最大 **398**）· X 已核验 **158**（本轮 **+2**：`@RickyTQChen` 由本人主页 <https://rtqichen.github.io/>（`200` / 36,752 B）外链 `twitter.com/RickyTQChen` + 代理抓 `x.com/RickyTQChen` `200` / 188,658 B，`og:title` = `Ricky T. Q. Chen (@RickyTQChen) on X` ⇒ 双源；`@giffmana` 由本人主页 <https://lucasb.eyer.be/>（`200` / 100,956 B）外链 `twitter.com/giffmana` + 代理抓 `x.com/giffmana` `200` / 186,636 B，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X` ⇒ 双源；Max Welling `@wellingmax` 仅 X 页单源（43,074 followers，UvA 页无 X 外链）⇒ 记「待核」、不计入已核验）· 已发信 **182**（台账 #1–#182；今日 **10/12**）· 回信 **0**（0/182；已回复 0 / 无应答>14d 21 / 未到期 161）。本轮 **+3**：Max Welling（VAE 末位作者，荷兰语称谓+英文正文，UvA 页明文 `m.welling@uva.nl` ⇒ 已发信 #181）· Ricky T. Q. Chen（Neural ODE 一作，中文，本人主页明文 gmail + X 双源 ⇒ 已发信 #182）· Lucas Beyer（ViT 二作，德文姓名，无公开邮箱、X 双源 ⇒ 仅建档）。**去重记录**：VAE 一作 Diederik Kingma 已在 #99 / #363 建档，本轮不重复新增。
@@ -5707,3 +5708,42 @@
 | X 账号 | **未找到 X**（主页仅一个 twitter **搜索**链接 `twitter.com/search?...pix2pix`，无本人 handle；`x.com/aefros` 实测 `og:title` = `Alex Efros@hotma (@aefros) on X`、8 followers ⇒ **他人**，不采用；不猜） |
 | 状态 | **待跟踪**（本窗额度满；pix2pix 同论文已建一作 Isola，若发信守「同论文 ≤1」） |
 | 备注 | 语言=英文(判据=俄裔姓名 Efros 但机构美国 UC Berkeley ⇒ 判据冲突落英文)。研究方向：计算机视觉 / 图像翻译 / 自监督。pix2pix 是「结构条件生成」的经典骨架，适合追问「PatchGAN 感受野对高频结构（版图/波形）的适配」。 |
+
+### 405. Andrew Zisserman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Andrew Zisserman（英国姓名 + 英国机构 ⇒ `语言=英文`） |
+| 机构 | **University of Oxford**（Professor of Computer Vision Engineering；Royal Society Research Professor；Visual Geometry Group 负责人；主页自述） |
+| 代表论文 | **Very Deep Convolutional Networks for Large-Scale Image Recognition**（VGG，`1409.1556`，B 轨 #438，二作）；另著教科书《Multiple View Geometry in Computer Vision》 |
+| 邮箱 | **`az@robots.ox.ac.uk`**（VGG 人员页 <https://www.robots.ox.ac.uk/~vgg/people.html> `HTTP 200`，`mailto:removethisifyouarehuman-az@robots.ox.ac.uk` 去反爬前缀 `removethisifyouarehuman-` 还原；**A 级**） |
+| 主页 | <https://www.robots.ox.ac.uk/~az/>（`200` / **1,314 B**；title = `Andrew Zisserman, University of Oxford`） |
+| X 账号 | **未找到 X**（本人主页与 VGG 人员页均无本人 handle 外链；不猜） |
+| 状态 | **待跟踪**（今日发信额度 **12/12** 已满，本窗只建档不发） |
+| 备注 | 语言=英文(判据=英国姓名 + Oxford)。研究方向：计算机视觉 / 几何 / 识别。VGG 是视觉骨干历史基线，若发信可追问「3×3 小核堆叠在高分辨率波形 / 版图上的感受野与显存取舍」。 |
+
+### 406. Karen Simonyan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Karen Simonyan（亚美尼亚裔姓名 + 英/美机构 ⇒ `语言=英文`） |
+| 机构 | **University of Oxford / Visual Geometry Group**（VGG 论文发表时，2014；据论文署名） |
+| 代表论文 | **Very Deep Convolutional Networks for Large-Scale Image Recognition**（VGG，`1409.1556`，B 轨 #438，一作） |
+| 邮箱 | **未找到**（未定位可核的当前个人主页 / 公开邮箱 ⇒ 按红线不猜地址） |
+| 主页 | **未找到**（未定位当前个人主页） |
+| X 账号 | **未找到 X**（不猜 handle） |
+| 状态 | **仅建档**（无可核邮箱，不发信） |
+| 备注 | 语言=英文(判据=亚美尼亚裔姓名 + 英国机构)。研究方向：视觉骨干 / 大规模识别（VGG 一作）。仅建档，待其可核主页出现后再补邮箱。 |
+
+### 407. Tsung-Yi Lin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tsung-Yi Lin（林宗毅；华人姓名 ⇒ `语言=中文`，判据=姓名族属） |
+| 机构 | **NVIDIA Research**（Principal Research Scientist；主页自述前 Google Research / Brain Team；PhD Cornell，导师 Serge Belongie） |
+| 代表论文 | **Focal Loss for Dense Object Detection**（`1708.02002`，B 轨 #439，一作） |
+| 邮箱 | **`tsungyil@nvidia.com`**（本人当前主页 <https://tsungyilin.info/> `HTTP 200` / **23,343 B**，页内 `mailto:tsungyil@nvidia.com`；**A 级**） |
+| 主页 | <https://tsungyilin.info/>（`200` / 23,343 B；title = `Tsung-Yi Lin`） |
+| X 账号 | **`@TsungYiLinCV`**（主页 `href="https://twitter.com/TsungYiLinCV"` 外链；代理抓 `x.com/TsungYiLinCV` `200` / 181,529 B，`og:title` = `Tsung-Yi Lin (@TsungYiLinCV) on X` ⇒ **双源**；本轮 X +1 → 160） |
+| 状态 | **待跟踪**（今日发信额度 12/12 已满；若后续发信守「同一论文 ≤1」，本篇只发一作） |
+| 备注 | 语言=中文(判据=华人姓名族属；人在 NVIDIA 美国、主页/论文英文 ⇒ 按姓名族属优先仍写中文)。研究方向：计算机视觉 / 目标检测 / 数据（COCO 等）。focal loss 适合追问「极端类别不平衡下 `γ/α` 选取，及向波形 / 版图缺陷检测的迁移」。 |

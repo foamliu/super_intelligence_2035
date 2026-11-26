@@ -40,8 +40,8 @@
 <header class="hero">
   <h1>论文观察日报 · 2026-11-26</h1>
   <div class="sub"><b>03:00 时窗 · A 轨 5/5（今日首窗收满）· B 轨已至第一百二十一轮 → 431 · 作者网 398（X 158）· 发信累计 182 封</b></div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-26 18:0x CST</b>（15:00 增补：作者回信核验；18:00 增补：B 轨+3 / 作者网+3 / 回信再核） ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
-  <div class="meta" style="margin-top:8px;">🔴 <b>口径更正（15:00 时窗）</b>：此前「回信率 0/182」是<b>测量失败</b>。首次用 IMAP 只读核对收件箱，实得 <b>实质回信 7 位作者（8 封信）/ 184 ≈ 4.3%</b>。18:00 再次只读核对：<b>无新增实质回信</b>，新增 <b>1 封退信</b>（#183 UT Austin 被 SpamAssassin 反垃圾拦截）⇒ 退信累计 <b>9</b>。详见下方「作者回信」与「18:00 时窗增补」节。</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-26 18:0x CST</b>（15:00 增补：作者回信核验；18:00 增补：B 轨+3 / 作者网+3 / 回信再核；21:00 增补（r271）：B 轨+3 / 作者网+3 / 回信再核无新增） ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
+  <div class="meta" style="margin-top:8px;">🔴 <b>口径更正（15:00 时窗）</b>：此前「回信率 0/182」是<b>测量失败</b>。首次用 IMAP 只读核对收件箱，实得 <b>实质回信 7 位作者（8 封信）/ 184 ≈ 4.3%</b>。18:00 再次只读核对：<b>无新增实质回信</b>，新增 <b>1 封退信</b>（#183 UT Austin 被 SpamAssassin 反垃圾拦截）⇒ 退信累计 <b>9</b>。详见下方「作者回信」与「18:00 时窗增补」节。21:00 再核：<b>无新增实质回信、无新增退信</b>（INBOX 仍 71），B 轨 +3 → 440、作者网 +3 → 407（X 160）。</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -237,6 +237,50 @@
   <tr><td>harness</td><td>TD3 的「双 critic 取最小」与评测的「保守判分」同构：对不确定的判分宁可判不通过（宁可信其不能），并把「高估」单列为 harness 失败分类项。</td></tr>
   <tr><td>data</td><td>pix2pix「学到损失」可做<b>受控增广</b>的辅助度量，但必须与人评/规则校验并用；🚫 不以合成数据替换真实 trace，避免污染 designflow 的真实性口径。</td></tr>
   <tr><td>zhulong / designflow</td><td>zhulong：RL 结果表增列「高估 / 方差」两栏，与奖励可验证性并列；designflow：pix2pix 只作<b>合成基线</b>，造题仍以真实 PDC/TYA trace 为准（守「1-trace-1-case」）。</td></tr>
+</table>
+
+<h3 class="sec">🅱 21:00 时窗增补（r271）· B 轨 第一百二十四轮 +3 → 440 · 作者网 +3 → 407 · 回信再核无新增</h3>
+<div class="note">
+  <b>A 轨</b>：今日额度 <b>5/5 已满 ⇒ 0 新收</b>（不凑第 6 篇）。本窗主线 = B 轨（转「补充/更正」，补长篇经典的真空白：VGG / Focal Loss / A3C）+ 作者网 + 每日回信核验。
+</div>
+
+<h3 class="sec">B 轨 · 经典论文新增（第一百二十四轮 +3 → 440）</h3>
+<div class="card">
+  <table class="plain">
+    <tr><th>#</th><th>原题 / 作者</th><th>年份 · 会议</th><th>被引</th><th>一句话贡献 · 与我们的关系</th></tr>
+    <tr><td>438</td><td><a href="https://arxiv.org/abs/1409.1556">Very Deep Convolutional Networks for Large-Scale Image Recognition (VGG)</a><br>Simonyan · Zisserman</td><td>2014 · ICLR 2015</td><td><b>111,603</b></td><td>3×3 小核堆叠到 16–19 层，证明「深度」是关键；ILSVRC-2014 定位第一·分类第二。<b>vision（视觉骨干历史基线）· designflow（读图下限对照）</b>。</td></tr>
+    <tr><td>439</td><td><a href="https://arxiv.org/abs/1708.02002">Focal Loss for Dense Object Detection</a><br>Lin · Goyal · Girshick · He · Dollár</td><td>2017 · ICCV / TPAMI</td><td><b>10,051</b></td><td>对易分样本降权的焦点损失（<code>α/γ</code>）+ RetinaNet，单阶段检测器超当时两阶段 SOTA 精度。<b>vision（缺陷/异常检测的类别不平衡）· designflow（难例加权）</b>。</td></tr>
+    <tr><td>440</td><td><a href="https://arxiv.org/abs/1602.01783">Asynchronous Methods for Deep Reinforcement Learning (A3C)</a><br>Mnih · Badia · Mirza 等</td><td>2016 · ICML</td><td><b>11,372</b></td><td>多 actor 在环境副本并行、异步更新共享参数的 A3C；Atari 单多核 CPU、约一半训练时间超当时 SOTA。<b>posttrain（并行 rollout 早期范式）· harness（并行采样记账）</b>。</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--muted);margin:10px 0 0;">核验：abs 3/3 <code>200</code>（41,480 / 43,389 / 43,580 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；OpenAlex 3/3 <code>200</code>（111,603 / 10,051 / 11,372，查询日 2026-11-26）。三 ID 条目级查重 <b>0 命中</b>（VGG/Focal/A3C 此前均未收）。</p>
+</div>
+
+<h3 class="sec">👥 作者关系网新增（404 → 407，X 159 → 160）</h3>
+<div class="card">
+  <table class="plain">
+    <tr><th>#</th><th>姓名 / 机构</th><th>代表论文</th><th>邮箱</th><th>X</th><th>状态</th></tr>
+    <tr><td>405</td><td>Andrew Zisserman / Oxford VGG</td><td>VGG 二作</td><td><code>az@robots.ox.ac.uk</code>（A 级）</td><td>未找到</td><td>待跟踪</td></tr>
+    <tr><td>406</td><td>Karen Simonyan / Oxford VGG（发表时）</td><td>VGG 一作</td><td>未找到 A 级</td><td>未找到</td><td>仅建档</td></tr>
+    <tr><td>407</td><td>Tsung-Yi Lin / NVIDIA Research</td><td>Focal Loss 一作</td><td><code>tsungyil@nvidia.com</code>（A 级）</td><td><code>@TsungYiLinCV</code>（双源）</td><td>待跟踪</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--muted);margin:10px 0 0;">🚫 不猜 handle：Zisserman 本人主页与 VGG 人员页均无本人 handle、Simonyan 未定位可核主页 ⇒ 「未找到 X」。本窗发信额度 <b>12/12 已满</b>，只建档不发。去重：Mnih / Kavukcuoglu（A3C 作者）已在作者网。</p>
+</div>
+
+<h3 class="sec">✉ 回信再核（21:00 · IMAP 只读）· 无新增实质回信 · 无新增退信</h3>
+<div class="card">
+  <p style="margin:0 0 8px;">INBOX <b>71 封</b>（与 18:00 持平，本窗新增 <b>0</b>）。<b>无</b>新的作者实质回信、<b>无</b>新退信。</p>
+  <p style="margin:0;font-size:13px;color:var(--muted);">累计（184 封，不变）：实质回信 <b>8 封 / 7 人（≈4.3% 按信 / 3.8% 按人）</b> · 自动 1 · 退信 9 · 无应答(&gt;14d) 21 · 未到期 145 ⇒ 8+1+9+21+145 = 184 ✔。回信率仍属冷邮件正常量级，继续当观测信号、不作成功判据。</p>
+</div>
+
+<h3 class="sec">🎯 21:00 新增经典对各线的可执行建议（6 线）</h3>
+<table class="plain">
+  <tr><th>线</th><th>可执行建议</th></tr>
+  <tr><td>pretrain</td><td>无</td></tr>
+  <tr><td>vision</td><td>① 把 VGG（3×3 小核 + 深度）设为视觉塔的<b>历史下限基线</b>，在波形/版图高分辨率输入上同报「感受野 / 显存 / 吞吐」，不要只报精度；② 缺陷/异常检测若正负样本极不平衡，预注册 Focal Loss 的 <code>γ</code>（如 1/2）与 <code>α</code> 两个旋钮，并以 <code>γ=0</code>（等价交叉熵）作消融对照。</td></tr>
+  <tr><td>posttrain</td><td>A3C 的「多环境副本并行 actor + 异步更新共享参数」对应我们的 EDA 环境 self-play rollout 调度：预注册 actor 数、每 actor 环境数、参数同步频率三项，并报「同步 vs 异步」对 pass 与方差的配对差异（McNemar / bootstrap）。</td></tr>
+  <tr><td>harness</td><td>并行采样时把「异步带来的策略滞后」单列为失败/方差来源；用它解释 rollout 之间的非独立性问题（避免把相关样本当独立样本做显著性检验）。</td></tr>
+  <tr><td>data</td><td>无</td></tr>
+  <tr><td>zhulong / designflow</td><td>zhulong：RL 表增列「同步/异步、actor 数」元数据，保证成本口径可复算；designflow：VGG/RetinaNet 仅作<b>读图基线</b>，不用于造题，守「1-trace-1-case」与「看图不可降级」。其他线无建议。</td></tr>
 </table>
 
 <h3 class="sec">附录 · 本轮检索式与核验</h3>

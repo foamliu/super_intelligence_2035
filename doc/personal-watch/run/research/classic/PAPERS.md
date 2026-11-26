@@ -9,7 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
-**本轮快照**：累计 **425** 条（**第一百一十九轮 2026-11-26 09:0x +3 → 425**：GCN `1609.02907`（**45,348**，ICLR 2017；谱图卷积的局部一阶近似 ⇒ 边线性扩展的半监督节点分类，表示同时编码局部结构与节点特征）/ WaveNet `1609.03499`（**9,779**，2016 预印本；全概率自回归原始波形，每秒数万点可训，TTS 听众评价超参数式/拼接式，单模型多说话人，兼作音素识别判别模型）/ PixelRNN `1601.06759`（**2,470**，ICML 2016；逐像素二维顺序预测 + 原始像素离散概率 + 快速二维循环层 + 残差，log-likelihood 显著超此前 SOTA，ImageNet 基准）；核验：abs 3/3 `200`（42,227 / 43,245 / 41,831 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（45,348 / 9,779 / 2,470，查询日 2026-11-26）+ PixelRNN 会议归属 OpenAlex source = ICML / PMLR v48；三 ID 条目级查重 **0 命中**；覆盖轴 = 图结构半监督学习 / 原始波形自回归生成 / 像素自回归似然建模；本轮归属：vision +2 · pretrain +3 · data +1 · zhulong +3 · designflow +2 · harness +0）
+**本轮快照**：累计 **440** 条（**第一百二十四轮 2026-11-26 21:0x +3 → 440**：VGG `1409.1556`（**111,603**，2014 预印本 / ICLR 2015；3×3 小核堆叠到 16–19 层，ILSVRC-2014 定位第一·分类第二）/ Focal Loss + RetinaNet `1708.02002`（**10,051**，ICCV 2017 / TPAMI；对易分样本降权的 `α/γ` 焦点损失，单阶段检测器超当时两阶段 SOTA 精度）/ A3C `1602.01783`（**11,372**，ICML 2016；异步 actor-learner 并行 + 共享参数 Hogwild 式更新，Atari 单 CPU 半时间超 SOTA）；核验：abs 3/3 `200`（41,480 / 43,389 / 43,580 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（111,603 / 10,051 / 11,372，查询日 2026-11-26）；三 ID 条目级查重 **0 命中**；覆盖轴 = 深层小核视觉骨干 / 类别不平衡焦点损失 / 异步并行 RL 采样；本轮归属：vision +2 · posttrain +1 · harness +1 · designflow +1 · pretrain +0 · data +0 · zhulong +0）
+**本轮快照（前一）**：累计 **425** 条（**第一百一十九轮 2026-11-26 09:0x +3 → 425**：GCN `1609.02907`（**45,348**，ICLR 2017；谱图卷积的局部一阶近似 ⇒ 边线性扩展的半监督节点分类，表示同时编码局部结构与节点特征）/ WaveNet `1609.03499`（**9,779**，2016 预印本；全概率自回归原始波形，每秒数万点可训，TTS 听众评价超参数式/拼接式，单模型多说话人，兼作音素识别判别模型）/ PixelRNN `1601.06759`（**2,470**，ICML 2016；逐像素二维顺序预测 + 原始像素离散概率 + 快速二维循环层 + 残差，log-likelihood 显著超此前 SOTA，ImageNet 基准）；核验：abs 3/3 `200`（42,227 / 43,245 / 41,831 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（45,348 / 9,779 / 2,470，查询日 2026-11-26）+ PixelRNN 会议归属 OpenAlex source = ICML / PMLR v48；三 ID 条目级查重 **0 命中**；覆盖轴 = 图结构半监督学习 / 原始波形自回归生成 / 像素自回归似然建模；本轮归属：vision +2 · pretrain +3 · data +1 · zhulong +3 · designflow +2 · harness +0）
 
 **本轮快照（前一）**：累计 **419** 条（**第一百一十七轮 2026-11-26 06:0x +3 → 419**：Adapter `1902.00751`（**8,362**，ICML 2019；每个 Transformer 子层后插入瓶颈 adapter + 残差、冻结主干，BERT 迁 26 个文本分类任务含 GLUE，每任务仅加 3.6% 参数、GLUE 距全量微调 0.4% 以内）/ Flow Matching `2210.02747`（**8,925**，ICLR；simulation-free 回归固定条件概率路径的向量场，兼容一般高斯路径、diffusion 为其特例，OT 位移插值路径训练/采样更快，ImageNet 上 likelihood 与样本质量均更好）/ PipeDream `1806.03377`（**353**，**&lt;500 按「开创范式」收**：SOSP 2019；跨机流水线并行 + 权重版本化保证 backward 正确 + 不同输入前后向 round-robin 调度优化 time-to-accuracy，通信最多降 95%、最多快 5×）；核验：abs 3/3 `200`（43,934 / 43,140 / 41,697 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（8,362 / 8,925 / 353，查询日 2026-11-26）+ PipeDream 会议 Crossref DOI `10.1145/3341301.3359646` `200`（SOSP 2019）；三 ID 条目级查重 **0 命中**；覆盖轴 = 参数高效适配的源头 / simulation-free 生成建模 / 流水线并行的调度与记账；本轮归属：pretrain +3 · posttrain +1 · vision +1 · zhulong +2 · designflow +1 · data +0 · harness +0）
 
@@ -7621,3 +7622,48 @@
 | 与我们工作的关系 | **vision（主 · 图像翻译 / 合成）**：条件 GAN + U-Net 生成器 + PatchGAN 判别器 + L1 重建，是「示意图 ↔ 版图 / 掩码 ↔ 版图」等**结构条件生成**的经典骨架。<br>**designflow（次 · 版图合成）**：造题时的「版图 ↔ 规格/标注图」配对合成可用 pix2pix 作为一个**强基线**（但必须防「生成假题」）。<br>**data（次 · 合成增广）**：学到的损失可替代手工度量，适合做**受控增广**（须与人评/规则校验并用）。<br>**pretrain / posttrain / harness / zhulong**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百二十三轮 · 18:00 时窗） |
 | 核验状态 | abs 页 **`200` / 41,771 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（28,513 / 2017 / `conference-paper` / CVPR，查询日 2026-11-26）。条件 GAN / 学到损失 / 三类任务均取自 arXiv 官方摘要逐字核，未做 PDF 公式复核。条目级查重：`1611.07004` 在 `PAPERS.md` **0 命中**（一作 Phillip Isola、四作 Alexei A. Efros 本轮建入作者网；Jun-Yan Zhu 已在作者网）。 |
+
+## 438. Very Deep Convolutional Networks for Large-Scale Image Recognition（VGG）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Very Deep Convolutional Networks for Large-Scale Image Recognition |
+| 作者（前 3） | Karen Simonyan · Andrew Zisserman（arXiv `citation_author` 逐字核；**仅 2 位**） |
+| 年份 | **2014**（v1 `2014/09/04`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICLR 2015**（会议版，普遍口径）；abs 页**无 `comments`**；OpenAlex `type=conference-paper`、`publication_year=2014` ⇒ 以预印本 2014 / 会议 2015 双口径如实记 |
+| 被引数 | **111,603**（OpenAlex `10.48550/arXiv.1409.1556`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1409.1556> ｜ `10.48550/arXiv.1409.1556` |
+| 一句话贡献 | 系统研究**卷积网络深度**对大规模图像识别精度的影响：用 **3×3 小卷积核堆叠**把深度推到 **16–19 个权重层**（VGG-16/19），在 ImageNet ILSVRC-2014 上取得定位赛道**第一**、分类赛道**第二**；并证明其学到的表示可迁移到其他数据集。 |
+| 与我们工作的关系 | **vision（主 · 视觉骨干历史基线）**：小核堆叠 + 深度是本线「波形图 / 版图理解」视觉编码器的经典对照基线，对高分辨率输入的感受野与显存/吞吐 trade-off 仍直接适用。<br>**designflow（次 · 读图基线）**：可作为「深层 CNN 读波形/版图」的下限对照。<br>**pretrain / posttrain / harness / data / zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十四轮 · 21:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,480 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（111,603 / 2014 / `conference-paper`，查询日 2026-11-26）。深度 / 3×3 小核 / 16–19 层 / ILSVRC-2014 定位第一·分类第二均取自 arXiv 官方摘要逐字核，未做 PDF 公式复核。条目级查重：`1409.1556` 在 `PAPERS.md` **0 命中**（一作 Karen Simonyan、二作 Andrew Zisserman 本轮建入作者网 #405/#406）。 |
+
+## 439. Focal Loss for Dense Object Detection
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Focal Loss for Dense Object Detection |
+| 作者（前 3） | Tsung-Yi Lin · Priya Goyal · Ross Girshick（arXiv `citation_author` 逐字核；后续 Kaiming He · Piotr Dollár，共 5 位） |
+| 年份 | **2017**（v1 `2017/08/07`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICCV 2017**（会议版）；abs 页**无 `comments`**；OpenAlex `type=article`、`publication_year=2018` ⇒ 对应 **IEEE TPAMI 扩展版**，以 arXiv 2017 / ICCV 2017 为引用口径 |
+| 被引数 | **10,051**（OpenAlex `10.48550/arXiv.1708.02002`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1708.02002> ｜ `10.48550/arXiv.1708.02002` |
+| 一句话贡献 | 提出 **Focal Loss**：对**易分样本降权**（`FL(p_t) = -α_t (1-p_t)^γ log(p_t)`），使训练聚焦于稀疏难例、避免大量易分负样本淹没检测器；据此设计单阶段稠密检测器 **RetinaNet**，在保持此前单阶段速度的同时**超过当时所有两阶段 SOTA 的精度**。 |
+| 与我们工作的关系 | **vision（主 · 类别不平衡 / 缺陷检测）**：波形 / 版图上的缺陷与异常检测是极端类别不平衡场景，focal loss 的 `α/γ` 是可直接移植的重加权工具。<br>**designflow（次 · 难例与判分）**：造题与弱监督判分里的「难例加权」可借鉴其降权易例的思想。<br>**pretrain / posttrain / harness / data / zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十四轮 · 21:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,389 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（10,051 / 2018 / `article`，查询日 2026-11-26）。Focal Loss 定义式 / RetinaNet / 「超过两阶段 SOTA 精度」均取自 arXiv 官方摘要逐字核（摘要未给具体 mAP 数字 ⇒ 本条不写未核数字）。条目级查重：`1708.02002` 在 `PAPERS.md` **0 命中**（一作 Tsung-Yi Lin 本轮建入作者网 #407）。 |
+
+## 440. Asynchronous Methods for Deep Reinforcement Learning（A3C）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Asynchronous Methods for Deep Reinforcement Learning |
+| 作者（前 3） | Volodymyr Mnih · Adrià Puigdomènech Badia · Mehdi Mirza（arXiv `citation_author` 逐字核；后续 Alex Graves · Timothy P. Lillicrap 等，共 8 位） |
+| 年份 | **2016**（v1 `2016/02/04`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICML 2016**（PMLR 48）；abs 页**无 `comments`**；OpenAlex `type=conference-paper`、`publication_year=2016` |
+| 被引数 | **11,372**（OpenAlex `10.48550/arXiv.1602.01783`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1602.01783> ｜ `10.48550/arXiv.1602.01783` |
+| 一句话贡献 | 提出**异步梯度下降**训练深度网络控制器的框架，给出四种标准 RL 算法的异步变体；并行 actor-learner 对训练有稳定作用；表现最好的 **异步 actor-critic（A3C）** 在 Atari 域**超过当时 SOTA**，且只用**单台多核 CPU、约为对照一半的训练时间**（而非 GPU）。 |
+| 与我们工作的关系 | **posttrain（主 · RL 并行化）**：多个 actor 在各自环境副本并行、异步更新共享参数，是今天 RLVR / self-play 大规模 rollout 的早期范式，直接对应我们「环境内 RL + 可验证奖励」的采样调度。<br>**harness（次 · 并行采样记账）**：多环境并行采样 + 共享参数更新的稳定性与吞吐口径可参考。<br>**pretrain / vision / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十四轮 · 21:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,580 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（11,372 / 2016 / `conference-paper`，查询日 2026-11-26）。异步 actor-critic / 四算法变体 / Atari / 单 CPU 半时间结论均取自 arXiv 官方摘要逐字核（摘要未给具体分数 ⇒ 本条不写未核数字）。条目级查重：`1602.01783` 在 `PAPERS.md` **0 命中**（作者 Mnih / Kavukcuoglu 已在作者网，故本轮作者网改建 Zisserman / Simonyan / Tsung-Yi Lin）。 |
