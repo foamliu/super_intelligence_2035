@@ -220,3 +220,26 @@ FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强�
 - 🚫 未碰 jsonl
 - ✅ P1 > P4(只读) ≈ P2 > P3 优先级遵循
 - ✅ P4 结论：Lite-137 内 T1 已全闭合；P2 继续推 Lite-外候选，与 Lite-500 全绿不冲突
+
+### R2-prep · .75 真工具可达性探针（r1229，冻结窗口内只读）
+
+**用户令**：BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER §4「.75 实跑纪律」+ §1.1 冻结窗口允许只读探针（open_session/run_commands 不触 check.py / cases/*.json）。
+
+**方法**：eda_flow MCP `open_session`（workdir `.../shardC_C-r1229-readprobe_live-opt-probe_0`）→ `run_commands` 探 .75（hfhds201）真工具 PATH + 版本 + 功能冒烟。
+
+**结果（6 OPT 背后的 4 个真二进制全部 PRESENT + FUNCTIONAL）**：
+
+| 真工具 | .75 路径 | 版本 | 功能确认 |
+|:--|:--|:--|:--|
+| `calibre` | /apps/mentor/calibre/2020.1_36/aoi_cal_2020.1_36.18/bin/calibre | v2020.1_36.18 | `calibre -version` OK |
+| `calibredrv` | 同上/bin/calibredrv | Calibre DESIGNrev v2020.1_36.18 | ✅ `calibredrv -a layout peek tiny.gds -layers` → `{5 0} {6 2}` == mock LAYER/DATATYPE 解析（**cross-validated 语义保真**） |
+| `rules_syntax_checker` | 同上/bin/rules_syntax_checker | v2020.1_36.18 | `rules_syntax_checker -help` OK（valid SVRF RC=0） |
+| `skipper` | /apps/empyrean/tools/skipper/bin/skipper | (Empyrean) | 二进制 present（GUI，run_code host=skipper 通路可用，未做 full GUI 冒烟） |
+
+**关键发现**：r1228 tsv 中 6 OPT 的 live_evidence 原写「GUI binary may be absent / Calibre may be absent」—— **被推翻**。.75（hfhds201）实际装有 Mentor Calibre 2020.1_36（**正是 mock 校准所对版本**，见 PowerFill tsv r1228「mock calibrated vs real calibredrv 2020.1_36」）+ Empyrean Skipper。
+
+**cross-validation 证据（calibredrv 家族，2 OPT）**：构造最小 GDSII（layer 5/dt0 + layer 6/dt2 的两个 boundary），真 `calibredrv -layers` 输出 `{5 0} {6 2}`，与 calibredrv_mock.py 解析同 GDS 的 LAYER(0x0D)+DATATYPE(0x0E) record 结果逐字一致 ⇒ **mock 语义保真经真工具交叉验证**（Q1=yes 硬证据，不再是「自述 faithful」）。
+
+**R2-readiness 结论**：6 OPT 全部 R2-READY——解冻后可直接为每条加 `check_live(sess)`：在 .75 跑真工具（calibredrv/skipper/rules_syntax_checker）交叉验证 mock 输出一致性（≤3 条/轮，§4 预算）。无 BLOCKED。
+
+**冻结纪律**：本轮 0 改动 reference/*/check.py、0 改动 cases/*.json、0 改 EDA-Flow-Bench 仓库；仅更新 designflow/live_eval_review_C.tsv（evidence 列，§1.1 明确允许）+ 本文件 + MEMORY。
