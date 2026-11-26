@@ -1,8 +1,10 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（2026-11-27 07:11 wake#2085·🌡️ thermo r1 relaunch 跑中·**健康·不干预**·376/500 judged(75.2%)·57 PASS/311 FAIL/8 ERROR·Pass@1=57/368=15.49%(w=4·log 进度条 6:33:24<2:08:08 62.8s/it·ETA~09:15)·0 FUSE/0 quota/0 熔断·run_batch PID 2030045 活(etime 6h35m)+setsid 父 2030035 活(bash -lc PATH+https_proxy 注入)·log mtime 07:09 活·75 cline(mid-run 峰值正常)·**repo_commit 持续漂移⇒r1 收口将标 MIXED·不入 3-run mean±std**：r1起 e7a9b669c→现 112d9f731(窗口内 17+ commit·shard B 07:07 commit 6a5ca584cd 即此)+live_eval_changes 38 行(窗口内 +2 自 wake#2084)⇒r1 收口将标 MIXED 不入 3-run mean±std·收口后立即起 r2 记新 repo_commit·🚫 自停/降频/减题·infra 记铁律2并保持循环·r1'/r2'/r2/r3 status 保留不动·⚠️/home 98%(11G) eval 写 /nasdata 不阻塞·/nasdata 28%·WAITING=1 30min 轮询）
+WAITING: 1（2026-11-27 07:46 wake#2086·🌡️ thermo r1 relaunch 跑中·**健康·不干预**·410/500 judged(82.0%)·63 PASS/338 FAIL/9 ERROR·Pass@1=63/401=15.71%(w=4·ETA~09:15)·0 FUSE/0 quota/0 熔断·run_batch PID 2030045 活(etime 07:10:47)+setsid 父 2030035 活(bash -lc PATH+https_proxy 注入)·**repo_commit 持续漂移⇒r1 收口将标 MIXED·不入 3-run mean±std**：r1起 e7a9b669c→现 112d9f731(自 wake#2085 起无新 commit·live_eval_changes 38 行未增)⇒r1 收口仍 MIXED·收口后立即起 r2 记新 repo_commit·🚫 自停/降频/减题·infra 记铁律2并保持循环·r1'/r2'/r2/r3 status 保留不动·⚠️/home 98% eval 写 /nasdata 不阻塞·/nasdata 28%·MEMORY 维护:wake#2086 滚出 wake#2068 及更早顶部流水→daily-memories/2026-11-27.md·37642B→26786B·WAITING=1 30min 轮询）
 
-- wake#2085（2026-11-27 07:11 opencode 交互式·**thermo r1 健康监控·不干预·repo_commit 持续漂移→r1 将 MIXED**）：run_batch PID 2030045 活(etime 6h35m·cmdline 直读确认=`bash eval/run_batch.sh --workers 4 --status /nasdata/.../status_thermo_r1.jsonl`·setsid 父 2030035 bash -lc PATH+https_proxy 注入 活)+75 cline(app.e0031982·mid-run 峰值正常)·log mtime 07:09 活·376/500 judged(75.2%)·57 PASS/311 FAIL/8 ERROR·Pass@1=57/368=15.49%·log 进度条 `6:33:24<2:08:08 62.8s/it` ETA~09:15·0 FUSE/0 quota/0 熔断·repo_commit 漂移:r1起 e7a9b669c→现 112d9f731(窗口内 17+ commit·shard B 07:07 commit 6a5ca584cd 即此)+live_eval_changes 38 行(窗口内 +2 自 wake#2084)⇒r1 收口将标 MIXED 不入 3-run mean±std·收口后立即起 r2 记新 repo_commit·/home 98%(11G) eval 写 /nasdata 不阻塞·/nasdata 28%·conductor §7 步骤A:PHASE=running+batch 活→不干预·WAITING=1 30min 轮询。
+- wake#2086（2026-11-27 07:46 opencode 交互式·**thermo r1 健康监控·不干预·MEMORY 滚出维护**）：run_batch PID 2030045 活(etime 07:10:47·cmdline 直读确认=`bash eval/run_batch.sh --workers 4 --status /nasdata/.../status_thermo_r1.jsonl`·setsid 父 2030035 bash -lc PATH+https_proxy 注入 活)·410/500 judged(82.0%)·63 PASS/338 FAIL/9 ERROR·Pass@1=63/401=15.71%·0 FUSE/0 quota/0 熔断·repo_commit 仍 112d9f731(自 wake#2085 起无新 commit·live_eval_changes 38 行未增)⇒r1 收口仍 MIXED·收口后立即起 r2 记新 repo_commit·/home 98% eval 写 /nasdata 不阻塞·/nasdata 28%·**MEMORY 维护**:wake#2068 及更早顶部流水指针(~30 条·11.5KB)原文搬入 `daily-memories/2026-11-27.md`§[MEMORY 顶部流水合并滚出(wake#2068 及更早)]·MEMORY 37642B→26786B 回到 32KB 软限内·conductor §7 步骤A:PHASE=running+batch 活→不干预·WAITING=1 30min 轮询。
+
+- wake#2085（2026-11-27 07:11 opencode 交互式·**thermo r1 健康监控·不干预·repo_commit 持续漂移→r1 将 MIXED**）：run_batch PID 2030045 活(etime 6h35m)+75 cline·376/500 judged(75.2%)·57 PASS/311 FAIL/8 ERROR·Pass@1=57/368=15.49%·ETA~09:15·0 FUSE·repo_commit e7a9b669c→112d9f731(窗口内 17+ commit)+live_eval_changes 38 行(+2)⇒r1 MIXED·不干预·详条已滚出于 wake#2086。原文不改。
 
 - [wake#2084 原文滚出·2026-11-27 wake#2085 维护] thermo r1 健康监控(06:30·342/500=68.4%·Pass@1=14.97%·0 FUSE·repo_commit→a096f7139·live_eval 36 行) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079/#2081/#2082/#2084 原文滚出]。原文不改。
 
@@ -31,67 +33,7 @@ WAITING: 1（2026-11-27 07:11 wake#2085·🌡️ thermo r1 relaunch 跑中·**�
 
 - [wake#2073 原文滚出·2026-11-27 wake#2081 维护] thermo r1 relaunch：修 `--status` 相对路径 bug（kill 原 r1 / fix-验证 canary / 身份四证复验 / repo_commit 漂移记录 / r1 relaunch PID 2030035+2030045 / run_one.sh L443 cwd bug 记录供后续修）详条见 `daily-memories/2026-11-27.md`§[wake#2073]。原文不改。
 
-- [wake#2068-#2071 原文滚出·2026-11-27 wake#2072 维护] rerun#2 r3' 健康监控+体温计衔接详条见 `daily-memories/2026-11-26.md`§[wake#2068-#2071]（#2068:🌡️令到达+rerun#2 MIXED 判定 360/500=72% 16.43%；#2069:399/500=79% 17.14%+designflow 6 行 live_eval_changes；#2070:427/500=85% 17.03%；#2071:463/500=92% 17.04%·均 0 FUSE·6 项自检全过·不干预·维持体温计衔接计划）。原文不改。
-
-- [wake#2070 原文滚出·2026-11-27 wake#2072 维护] rerun#2 r3' 健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2070]（427/500=85% 17.03%·0 FUSE·剩 73 case ETA~00:15 Nov-27·体温计衔接计划·不干预）。原文不改。
-
-- [wake#2068 原文滚出·2026-11-27 wake#2072 维护] 🌡️体温计令到达+rerun#2 MIXED 判定+r3' 早期健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2068]（21:0x 用户令到达·r3' 360/500=72% 16.43%·0 FUSE·rerun#2 全 MIXED 判定·体温计衔接计划·6 项自检全过·不干预）。原文不改。
-
-- [wake#2069 原文滚出·2026-11-27 wake#2072 维护] rerun#2 r3' 健康监控+designflow 持续提交 live_eval_changes 详条见 `daily-memories/2026-11-26.md`§[wake#2069]（399/500=79% 17.14%·0 FUSE·designflow 21:29-22:05 提 6 行 live_eval_changes⇒r3' 亦 MIXED·体温计衔接计划·不干预）。原文不改。
-
-- [wake#2062/#2061/#2060 原文滚出·2026-11-26 wake#2068 维护] rerun#2 r3' 早期健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2060-#2063]（#2060:56/500=11.2% 25.5%；#2061:83/500=16.6% 20.7%；#2062:112/500=22.4% 18.9%；#2063:144/500=28.8% 18.2%·均 0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2064-#2067 原文滚出·2026-11-26 wake#2068 维护] rerun#2 r3' 健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2064-#2067]（#2064:205/500=41% 16.18%；#2065:239/500=47.8% 18.14%；#2066:298/500=59.6% 16.61%；#2067:328/500=65.6% 17.08%·均 0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2060 原文滚出·2026-11-26 wake#2063 维护] rerun#2 r3' 健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2060]（56/500=11.2%·Pass@1=25.5% 早期·0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2054/#2056/#2057/#2058/#2059 原文滚出·2026-11-26 wake#2063 维护] rerun#2 r2' 收口(14.40%)+r3' 起跑+早期健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2054]/§[wake#2056]/§[wake#2057]/§[wake#2058]/§[wake#2059]（#2054: 359/500=71.8%·Pass@1=15.06%；#2056: 445/500=89%·Pass@1=14.98%；#2057: 484/500=96.8%·Pass@1=14.47%；#2058: r2'收口 14.40%+r3'起跑 14:24:10 w=4 restart_hub+canary 两证；#2059: r3' 34/500=6.8%·Pass@1=26.5% 早期·均 0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2049-#2053 原文滚出·2026-11-26 wake#2054 维护] rerun#2 r2' 健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2049]/§[wake#2050]/§[wake#2051]/§[wake#2052]/§[wake#2053]（wake#2049: 34/500=6.8%·Pass@1=20.59% 早期；wake#2050: 66/500=13.2%·Pass@1=18.18% 早期；wake#2051: 108/500=21.6%·Pass@1=16.67% 早期；wake#2052: 300/500=60.0%·Pass@1=16.55% 早期；wake#2053: 328/500=65.6%·Pass@1=15.84% 待收敛·均 0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2045-#2048 原文滚出·2026-11-26 wake#2050 维护] rerun#2 r1' v2 收口(r1'=13.81%)+r2'起跑详条见 `daily-memories/2026-11-26.md`§[wake#2045]/§[wake#2046]/§[wake#2047]/§[wake#2048]（wake#2045: 372/500=74.4%·Pass@1=13.74%；wake#2046: 412/500=82.4%·Pass@1=13.68%；wake#2047: 447/500=89.4%·Pass@1=14.02%；wake#2048: r1'收口 13.81%+r2'起跑 06:03:27 w=4·均 0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2044 原文滚出·2026-11-26 wake#2047 维护] rerun#2 r1' v2 健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2044]（324/500=64.8%·Pass@1=13.88%·0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2042 原文滚出·2026-11-26 wake#2047 维护] rerun#2 r1' v2 健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2042]（249/500=49.8%·Pass@1=15.45% 早期小样本·0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2039-#2041 原文滚出·2026-11-26 wake#2042 维护] rerun#2 r1' v2 健康监控详条见 `daily-memories/2026-11-26.md`§[wake#2039]/§[wake#2040]/§[wake#2041]（wake#2039: 146/500=29%·Pass@1=13.79%；wake#2040: 182/500=36%·Pass@1=14.44%；wake#2041: 214/500=42.8%·Pass@1=15.09%·均 0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2037-#2038 原文滚出·2026-11-26 wake#2039 维护] rerun#2 r1' v2 早期心跳详条见 `daily-memories/2026-11-25.md`§[wake#2037-#2038 原文滚出]（wake#2037: 77/500 judged(15%)·Pass@1=13.16% 早期·0 FUSE；wake#2038: 108/500 judged(21%)·Pass@1=14.02% 早期·0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2035-#2036 原文滚出·2026-11-25 wake#2038 维护] rerun#2 r1' v2 早期心跳详条见 `daily-memories/2026-11-25.md`§[wake#2035-#2036 原文滚出]（wake#2035: 8/500 judged·Pass@1=12.5% 早期·0 FUSE；wake#2036: 42/500 judged(8%)·Pass@1=9.76% 早期·0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2037 原文滚出·2026-11-26 wake#2050 维护] rerun#2 r1' v2 早期健康监控详条见 `daily-memories/2026-11-25.md`§[wake#2037]（77/500=15%·Pass@1=13.16% 早期·0 FUSE·6 项自检全过·不干预）。原文不改。
-
-- [wake#2035 原文滚出·2026-11-25 wake#2038 维护] 见上 §[wake#2035-#2036 原文滚出]。
-
-- [wake#2034 原文滚出·2026-11-26 wake#2050 维护] rerun#2 r1' v2 起跑(MCP 配置修复·disabled pyAether+vqa 致 session.create 60s→3s)详条见 `daily-memories/2026-11-25.md`§[wake#2034]（r1' v2 起跑 22:03:13 w=4·前 2/2 真 FAIL·0 FUSE·ETA~06:30 收口）。原文不改。
-
-- [wake#2030-#2033 原文滚出·2026-11-25 wake#2034 维护] doubao-pro r1 重跑#3 FUSE-VOID + rerun#2 r1' 首跑 VOID(hub MCP 超时)详条见 `daily-memories/2026-11-25.md`§[wake#2030-#2033 原文滚出]（r1#3 w=4 459/500 第3次FUSE-VOID·rerun#2 r1'@21:33 首跑 20/20 全 VOID 因 pyAether MCP 不可达致 session.create 60s>cline 30s 超时·wake#2034 修复）。原文不改。
-
-- [wake#2028-#2029 原文滚出·2026-11-25 wake#2030 维护] doubao-pro r1 重跑#3(w=4)健康推进监控详条见 `daily-memories/2026-11-25.md`§[wake#2028-#2029 原文滚出]（wake#2028: 300/500=60.0%·Pass@1=16.84%；wake#2029: 324/500=64.8%·Pass@1=17.55% 早期偏高·0 FUSE·6 项自检 5 过·不干预）。原文不改。
-
-- [wake#2027 原文滚出·2026-11-25 wake#2029 维护] doubao-pro r1 重跑#3(w=4)健康推进监控 + 新令 rerun#2 计划录入详条见 `daily-memories/2026-11-25.md`§[wake#2027 原文滚出]（266/500 judged·Pass@1=17.36% 早期偏高·0 FUSE·6 项自检 5 过·2 阶段执行计划录入 Phase1 重算 baseline+Phase2 起新 3-run rerun#2·不干预）。原文不改。
-
-- [wake#2014-#2026 原文滚出·2026-11-25 wake#2034 维护] doubao-pro r1 重跑#1(w16 350/500 FUSE-VOID)→重跑#2(w8 67/500 FUSE-VOID)→重跑#3(w4 459/500 第3次FUSE-VOID)全过程 + 各轮中段心跳(37/97/136/163/192/204/229/266/300/324/333/369/401/443 judged·Pass@1 早期偏高 24%→收敛 16-17%)详条见 `daily-memories/2026-11-25.md`§[wake#2014-#2026 原文滚出]。r1 三次全 FUSE-VOID→基线 N/A。原文不改。
-
-- [wake#2010-#2013 原文滚出·2026-11-25 wake#2027 维护] 4 条详条见 `daily-memories/2026-11-24.md`§[wake#2010 原文]+§[wake#2011 原文]+§[wake#2012 原文] + `daily-memories/2026-11-25.md`§[wake#2013 原文]（r1 mid-run 心跳 333/500=66% Pass@1=7.90%·r1 最终收口 5.44%(first-98=10.42%→rest-402=4.25%)·2026-11-25 08:34 用户令「重跑 r1」·TASK 版本核对·r1=5.44% VOID/r2=10.79%/r3=12.01%·r1 重跑脚本 PID 1546884·两修复 restart_hub+strict canary·身份四证·canary 两证过·自检六项全过）。原文不改。
-
-- [wake#1998-#2009 原文滚出·2026-11-26 wake#2051 合并维护] glm-5.2 评测全周期（启动→w=8 健康推进→FUSE VOID 诊断→RESUME→用户令停→回归 standby）详条见 `daily-memories/2026-11-24.md`§[wake#1998 原文]/§[wake#1999 原文]/§[wake#2000-#2001 原文滚出]/§[wake#2002-#2004 原文滚出]/§[wake#2005 原文]/§[wake#2005-#2007 原文滚出]/§[wake#2008-#2009 原文滚出]（串行脚本 PID 189513·run_batch PID 537722 w=8·w=8 run 15:26-15:33 FUSE 死亡 144/500→VOID·resume PID 3343833 后被 wake#2009 用户令停·providers.json 已还原 pro 默认·status_glm52_r1.jsonl 保留不分析·🚫 不重新拉起 3 新模型·v3+强模型 4 组数字不动）。原文不改。
-
-
-
-
-- [wake#1995-#1997 旧指针合并·2026-11-25 wake#2026 维护] 3 条强模型 3-run 收口后 standby 心跳详条见 `daily-memories/2026-11-24.md`§[wake#1995-#1997 原文滚出]（强模型 3-run 收口后 standby·6 项自检全过·pgrep TRULY_NONE✅·providers=pro 默认✅·3-run=20.85±1.03% 收口态不变·报告在位✅·/home 100% 磁盘 watch·不起臂·等用户裁定回填）。原文不改。
-- [wake#1986-#1994 旧指针合并·2026-11-24 wake#1995 维护] 9 条 standby 心跳详条见 `daily-memories/2026-11-24.md`§[wake#1986-#1994 原文滚出]（强模型 3-run 收口后·6 项自检全过·pgrep TRULY_NONE✅·providers=pro 默认态✅·3-run=20.85±1.03% 收口态不变·报告在位✅·/home 100% 磁盘 watch·不起臂·等用户裁定回填）。原文不改。
-
-- [wake#1974-#1985 旧指针合并·2026-11-24 wake#1989 维护] 12 条 standby 心跳详条见 `daily-memories/2026-11-24.md`§[wake#1974-#1979 rolled-out] + §[wake#1980-#1985 原文滚出]（强模型 3-run 收口后·6 项自检全过·pgrep TRULY_NONE✅·providers=pro 默认态✅·3-run=20.85±1.03% 收口态不变·报告在位✅·/home 100% 磁盘 watch·不起臂·等用户裁定回填）。原文不改。
-
-- [wake#1965-#1973 旧指针合并·2026-11-24 wake#1992 维护] 9 条 standby 心跳详条见 `daily-memories/2026-11-24.md`§[wake#1965-#1966 原文滚出] + §[wake#1967-#1972 原文滚出] + §[wake#1973 原文滚出]（强模型 3-run 收口后·6 项自检全过·pgrep TRULY_NONE✅·providers=pro 默认态✅·3-run=20.85±1.03% 收口态不变·报告在位✅·/home 100% 磁盘 watch·不起臂·等用户裁定回填）。原文不改。
-
-- [wake#1959-#1964 旧指针合并·2026-11-24 wake#1967 维护] 6 条 standby 心跳详条见 `daily-memories/2026-11-24.md`§[wake#1959-#1964 原文滚出]（强模型 3-run 收口后·6 项自检全过·pgrep TRULY_NONE✅·providers=pro 默认态✅·3-run=20.85±1.03% 收口态不变·报告在位✅·/home 100% 磁盘 watch·不起臂·等用户裁定回填·wake#1960/#1959 另做 MEMORY 滚出维护）。原文不改。
-
-- [wake#1748-#1958 旧指针合并·2026-11-24 wake#1960 维护] wake#1748-#1877 详条见 `daily-memories/2026-11-22.md`/`2026-11-23.md`/`2026-11-24.md` 各 §[wake#XXXX rolled-out]（v3 收口后 standby 心跳·pro=10.18±1.45%/lite=4.68±0.95%/mini=2.38±0.23%·`\MzeroAnchor=10.1%` 回填 commit `4fa407d35` clean compile 12p/0err/0undef·四条 11-19 红令全交付）；wake#1878-#1958 详条见 `daily-memories/2026-11-23.md`/`2026-11-24.md` 各 §[wake#XXXX 原文滚出]（强模型 3-run 收口后 standby 心跳·pgrep TRULY_NONE✅·providers=pro 默认态✅·3-run=20.85±1.03% 收口态不变·报告在位✅·/home 100% 磁盘 watch·不起臂·等用户裁定回填）。原文不改。
+- [wake#1748-#2072 顶部流水合并滚出·2026-11-27 wake#2086 维护] wake#2068 及更早的所有顶部流水指针（rerun#2 r1'/r2'/r3' 全周期 + r1 重跑#1-#3 + 强模型 3-run 收口后 standby + v3 收口 standby 等，共 ~30 条指针）原文搬入 `daily-memories/2026-11-27.md`§[MEMORY 顶部流水合并滚出（wake#2068 及更早）]。要点：rerun#2 三轮全 MIXED（r1'=13.81%/r2'=14.40%/r3'=16.26% 数字保留不入论文·无 3-run mean±std·窗口内 repo_commit 漂移）；r1 重跑#1/#2/#3 全 FUSE-VOID；强模型 3-run=20.85±1.03% 收口不动；v3 pro=10.18±1.18%/lite=4.68±0.77%/mini=2.39±0.19% 收口不动。原文不改。
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
