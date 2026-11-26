@@ -2791,3 +2791,50 @@ WAITING: 0 · **LITE_FIX: D=124/124 all-green · P0 余 1 true-P0(OpampChar-001=
 ## 归档批次 r1541（r1539 释体积；r1538 原文搬此）
 
 > r1538 流水：监控/teeth-guard 轮（D 全优先级闭合后稳态，无判分改动/无 verdict 升降/无 judge_layers 变更 ⇒ 无 live_eval_changes.tsv 登记）。三事：①.75 可达性自测 fresh：eda_flow MCP open_session(task_id=D-reach-r1538,eval_id=reach,user=D)+run_commands hfhds201 2026-11-27 05:44:14 hspice+hspice64+finesim 均 in PATH(/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/{hspice,hspice64}+.../finesim/V-2023.12-1/bin/finesim) RC=0 33/11/1ms + close cleaned → .75 REACH_OK；②teeth-guard spot-check 1 条 L2.live D case：IOBufTune-001(7 L2.live 轮换到点 最stale 上次r1520 ~17轮前) metadata.judge_layers=['L0','L1','L2.live']✓ + 2-way sha sync OK(sha256[:16]=a71bc59f75476d1c JSON test field==disk check.py, 24939 chars char==byte ASCII) + 4 wrapper 齐(_check_static_impl/check_static 3-tuple/check_live/check compat) + py_compile OK + negative/negative_selftest 6neg{empty/hardcode_a/no_target_check/print_expected/ref_core_deleted/naive_stub} ALL-FAIL-as-expected NEG_RC=0 CRASH_RC=0 牙齿完整(§4.9 trio distinct: empty→(c)/print_expected→(h)(i)/ref_core_deleted→(h)(i); hardcode_a=anti-hardcode第4neg WP1=3.0越界; no_target_check/naive_stub=live-neg扩展) + ref reference_submit.zip(2909B) check_static PASS (True,'','')；③cross-shard P0 re-verify + D回归扫描: EDA-Flow-Bench HEAD=35ef3835f==origin/master(in sync); git log --since r1536(05:25) -- cases/D + 7 L2.live D reference ⇒ 仅commit 5d9521079(05:33:36)实际只touch cases/B/.../InvPVTchar-001{check.py,negative/cheat_dead_wl.py,negative/negative_selftest.py}(B-shard文件) ⇒ 0 D-shard文件被touch ⇒ D判分无回归; OpampChar-001(B) STILL true-P0(refzip 1903B Oct31 06:03 stale从未重生成+check.py Nov25 20:44未变) 挂~174轮 B责任D不可修; InvTripDelay-001(B) RESOLVED✅(check.py Nov26 21:53 fresh+refzip Nov26 03:09 fresh+negative/有live_selftest+negative_selftest); cross_shard P0 stays 1. zhulong: status.jsonl mtime 05:35(fresh 9min前). live_eval_review_D.tsv 121/121 全green(3 REQ done/9 OPT/109 NA) 0 新增行. live_eval_changes.tsv 12 D行(全r1504 a9f22e659) 本轮0新增. D本轮0越界(0 EDA-Flow-Bench net change, 1 spot-check 全green无edit, B/C文件只读). WAITING:0. 详见 daily_D_2026-11-27_r1538.md
+
+## 归档批次 r1544（r1543 释体积；r1542 原文搬此）
+
+**轮次**：r1542（D 全优先级闭合后稳态监控）
+**变更**：无判分改动 / 无 verdict 升降 / 无 judge_layers 变更 ⇒ 无 live_eval_changes.tsv 登记。
+
+## 三事
+
+### ① .75 可达性自测 fresh
+`eda_flow` MCP `open_session(task_id=D-reach-r1542, eval_id=reach, user=D)` → workdir `/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/D_reach_D-reach-r1542_0`
+`run_commands`: `hostname; date '+%Y-%m-%d %H:%M:%S'; which hspice hspice64 finesim; echo RC=$?`
+- stdout: `hfhds201 / 2026-11-27 06:14:56 / hspice + hspice64 + finesim 均 in PATH (/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/{hspice,hspice64} + .../finesim/V-2023.12-1/bin/finesim) / RC=0`
+- duration_ms: 40，exit_code=0
+- `close_session`: cleaned=true
+→ **.75 REACH_OK**
+
+### ② Teeth-guard spot-check 1 条 L2.live D case：AeDelCellCurCellProduce-001
+（7 L2.live 轮换到点，最 stale：上次 spot r1532 ~10 轮前）
+
+| 检查项 | 结果 |
+|:--|:--|
+| `metadata.judge_layers` | `['L0','L1','L2.live']` ✓ |
+| 2-way sha sync | JSON test field sha256[:16]=`3f9f1f1db3ea712b` == disk check.py sha256[:16]=`3f9f1f1db3ea712b` ✓（test 21963 chars == disk 21963 bytes，一致） |
+| wrapper 齐 | `check_static`(3-tuple via `_check_static_impl` try/except) ✓ / `check_live`(sess param) ✓ / `check` compat ✓ — 非侵入包装结构标准 ✓ |
+| py_compile | OK |
+| negative_selftest | **REF: PASS**（reference_submit.zip 1041B）+ **ALL_NEG_FAIL=True** NEG_RC=0，4 neg 全 FAIL：`empty_shell` / `print_expected` / `hardcoded_a` / `neg_fake_hardcode_b` |
+| §4.9 trio + anti-hardcode | 4 distinct 全 FAIL（empty_shell / print_expected / hardcoded_a / neg_fake_hardcode_b 各为不同假提交，check.py 全部判 RESULT: FAIL）✓ |
+| ref check_static | reference_submit.zip 跑 check.py → `RESULT: PASS` RC=0 ✓ |
+
+→ AeDelCellCurCellProduce-001 牙齿完整无回归。
+
+### ③ cross-shard P0 re-verify + D 回归扫描
+- EDA-Flow-Bench HEAD=`251a2a14c` == origin/master（in sync）
+- `git log --since r1541(06:01) -- cases/D + 7 L2.live D reference` ⇒ **0 D-shard 文件被 touch** ⇒ D 判分无回归（期间唯一新 commit `251a2a14c` = B-shard PFDdeadZone-001 R2 改造，非 D）
+- **OpampChar-001 (B) STILL true-P0**：refzip 1903B Oct 31 06:03 stale 从未重生成 + check.py Nov 25 20:44 未变 → 挂 ~177 轮，B 责任 D 不可修
+- **InvTripDelay-001 (B) RESOLVED ✅**：check.py Nov 26 21:53 fresh，negative/ 有 live_selftest + negative_selftest
+- cross_shard P0 stays 1
+- zhulong: `live_eval_changes.tsv` tail 3 行全 B-shard R2 改造（SramSNM-001 / InvPVTchar-001 / PFDdeadZone-001），非 D 回归
+
+## live_eval 状态
+- `live_eval_review_D.tsv`：122 行（表头 + 121）= **121/121 全 green**（3 REQ done / 9 OPT / 109 NA），0 新增行
+- `live_eval_changes.tsv`：D 行 0 新增（全 r1504 `a9f22e659`），本轮 **0 新增**（无 judge_layers 变更）
+- D 本轮 0 越界（0 EDA-Flow-Bench net change，1 spot-check 全 green 无 edit，review_D.tsv 本 shard 文件，B/C 文件只读）
+
+## 收尾
+- `WAITING: 0`
+- 体积：TASK≈32.4KB / MEMORY≈31.8KB（本轮 r1541 full-flow → 1 行归档指针，释体积）
