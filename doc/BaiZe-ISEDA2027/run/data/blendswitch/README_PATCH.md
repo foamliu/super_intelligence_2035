@@ -3,10 +3,10 @@
 > **Base commit**: `14c215dc1472ca75d6f3ce27e423bedfdc51614b` (Xmodel-2.5-code)
 > **Flag**: `--blend-hot-switch` (default OFF)
 > **Safety**: flag OFF = stock byte-equivalent (verified by test_blend_switch.py)
-> **Date**: 2026-11-22 (standalone module) · 2026-11-23 (Megatron integration)
+> **Date**: 2026-11-22 (standalone module) · 2026-11-23 (Megatron integration) · 2026-11-26 (S1→S2 source mapping fix)
 > **Author**: BaiZe Data Agent
 
-## ✅ Integration Status (2026-11-23)
+## ✅ Integration Status (2026-11-26 update)
 
 The patch has been **applied to a real Megatron-LM source tree** and verified:
 
@@ -15,26 +15,44 @@ The patch has been **applied to a real Megatron-LM source tree** and verified:
 | Dev copy repo | `/nas_train/app.e0031982/code/Megatron-LM-blendswitch` |
 | Branch | `blend-hot-switch` (commit `011a05b`) |
 | Base commit | `14c215d` (pinned to live training repo) |
-| Patch file | `blend_hotswitch.patch` (921 lines, `git diff main..blend-hot-switch`) |
+| Patch file | `blend_hotswitch.patch` (1005 lines, `git diff main..blend-hot-switch`) |
 | Integration test | `tests/test_blend_hot_switch_integration.py` (5 tests) |
 | Test results | **5/5 PASSED** (see `verify_results_integration.json`) |
+| Standalone test | `test_blend_switch.py` (8 tests, including real S1→S2 mapping) |
+| Standalone test results | **8/8 PASSED** (see `verify_results.json`) |
 | Python env | `/nas_train/app.e0031982/miniforge3/envs/py310/bin/python` (numpy 1.26.4) |
 | Machine | `10.239.2.12` (CPU-only, no GPU used) |
 
-### Integration test results
+### 🔧 2026-11-26 Critical Fix: S1→S2 Source Mapping
+
+**Problem found**: The real S1 (7 sources) and S2 (12 sources) blend configs have **different source orderings** and **different source counts**. The original `switch_weights()` assumed same ordering/count, which would apply **wrong cursor offsets** — the code_l2 cursor would be applied to math_l1 and vice versa, causing document overlap.
+
+**Fix**: Added `s2_source_keys` parameter to `switch_weights()`. Sources are now mapped **by key** (e.g., "code_l2" in S2 → source index 5 in S1), not by position. New sources (stackv3_filt, megamath, finemath, nemotron, megamath_web) get offset=0 (trivially zero overlap).
+
+**Verification**: Test 8 (`test_real_s1_s2_source_mapping`) uses the actual blend_s1_preblend.tsv and blend_s2_preblend.tsv configurations and confirms:
+- Cursor offset for S2 "code_l2" (position 3) = S1 "code_l2" (position 5) consumption ✓
+- Cursor offset for S2 "math_l1" (position 6) = S1 "math_l1" (position 3) consumption ✓
+- New sources (stackv3_filt, megamath, finemath, nemotron, megamath_web) = offset 0 ✓
+- **Total overlap = 0** ✓
+- Ratio deviation ≤ 1pp ✓
+
+### Test results summary
 
 | Test | Metric | Result |
 |---|---|---|
-| zero_overlap | total_overlap | **0** ✅ |
-| ratio_compliance | max_deviation | **0.0000pp** (≤1pp) ✅ |
+| zero_overlap (7→7 same order) | total_overlap | **0** ✅ |
+| ratio_switch | max_deviation | **0.0087pp** (≤1pp) ✅ |
 | flag_off_equivalence | byte-identical | **yes** ✅ |
 | new_source_zero_overlap | total_overlap | **0** ✅ |
-| checkpoint_roundtrip | state preserved | **yes** ✅ |
+| epoch_wrap | honest reporting | **yes** ✅ |
+| json_roundtrip | state preserved | **yes** ✅ |
+| perf | switch overhead | **~100%** of stock build (one-time) ✅ |
+| **real_s1_s2_source_mapping (7→12, different order)** | total_overlap | **0** ✅ |
 
 ### Files patched (5 modified + 2 new)
 
-1. `megatron/core/datasets/blend_switcher.py` (NEW, 340 lines)
-2. `megatron/core/datasets/blended_dataset.py` (+66 lines: `update_weights()`)
+1. `megatron/core/datasets/blend_switcher.py` (NEW, 416 lines — includes S1→S2 key mapping)
+2. `megatron/core/datasets/blended_dataset.py` (+72 lines: `update_weights()` with s2_to_s1_map)
 3. `megatron/legacy/data/data_samplers.py` (+173 lines: `BlendHotSwitchRandomSampler` + `maybe_trigger_blend_switch()`)
 4. `megatron/training/arguments.py` (+15 lines: `--blend-hot-switch`, `--blend-switch-step`, `--blend-switch-config`)
 5. `megatron/training/training.py` (+9 lines: import + train-loop hook)
@@ -67,15 +85,21 @@ python pretrain_launcher.py \
   ... (all other args unchanged)
 ```
 
-S2 blend config JSON format:
+S2 blend config JSON format (see `s2_blend_switch_config.json` for the actual config):
 ```json
 {
-  "new_weights": [0.40, 0.40, 0.20],
-  "new_size": 1000000,
-  "shared_source_mask": [true, true, true],
-  "source_keys": ["web", "code", "math"]
+  "s1_source_keys": ["en_v1_4", "ufw_l1_en_hq", "ufw_zh", "math_l1", "math_l3", "code_l2", "code_l3"],
+  "s1_weights": [0.65, 0.05, 0.04, 0.05, 0.02, 0.15, 0.04],
+  "s2_source_keys": ["en_v1_4", "ufw_l1_en_hq", "ufw_zh", "code_l2", "code_l3", "stackv3_filt",
+                     "math_l1", "math_l3", "megamath", "finemath", "nemotron", "megamath_web"],
+  "new_weights": [0.35, 0.03, 0.02, 0.18, 0.05, 0.17, 0.025, 0.015, 0.028, 0.005, 0.067, 0.060],
+  "shared_source_mask": [true, true, true, true, true, false, true, true, false, false, false, false],
+  "switch_step": 350000
 }
 ```
+
+**Key**: `s2_source_keys` enables correct S1→S2 source mapping when S2 has different ordering/count.
+Sources not in S1 (marked `false` in `shared_source_mask`) get offset=0 (trivially zero overlap).
 
 ---
 
@@ -94,12 +118,15 @@ def update_weights(self, new_weights, new_size, switcher, build_fn=None):
             from blend_switcher import build_blending_indices_py
             build_fn = build_blending_indices_py
     shared_mask = switcher.shared_source_mask or [True]*len(new_weights)
+    s2_to_s1_map = getattr(switcher, "s2_to_s1_map", None)
     new_di = numpy.zeros(new_size, dtype=numpy.int16)
     new_dsi = numpy.zeros(new_size, dtype=numpy.int64)
     build_fn(new_di, new_dsi, new_weights, len(new_weights), new_size)
     for s in range(len(new_weights)):
         if shared_mask[s]:
-            new_dsi[new_di == s] += int(switcher.consumed_per_source[s])
+            s1_idx = s2_to_s1_map[s] if s2_to_s1_map else s
+            offset = int(switcher.consumed_per_source[s1_idx])
+            new_dsi[new_di == s] += offset
     self.dataset_index = new_di
     self.dataset_sample_index = new_dsi
     self.weights = new_weights
@@ -179,3 +206,4 @@ Caveat: if consumed[s] > len(shuffle_index[s]) (full epoch), wrap causes overlap
 Detected and reported honestly. For BaiZe S1+S2 < 1 epoch for all sources → no wrap.
 
 Verified: `test_blend_switch.py::test_zero_overlap` → overlap = 0.
+Verified: `test_blend_switch.py::test_real_s1_s2_source_mapping` → overlap = 0 (7→12 sources, different order).

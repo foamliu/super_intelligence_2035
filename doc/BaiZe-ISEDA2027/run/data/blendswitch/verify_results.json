@@ -8,7 +8,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 32500
+        "cursor_offset": 32500,
+        "s1_source_idx": 0
       },
       "1": {
         "source_key": "ufw_l1_en_hq",
@@ -17,7 +18,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 2500
+        "cursor_offset": 2500,
+        "s1_source_idx": 1
       },
       "2": {
         "source_key": "ufw_zh",
@@ -26,7 +28,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 2000
+        "cursor_offset": 2000,
+        "s1_source_idx": 2
       },
       "3": {
         "source_key": "math_l1",
@@ -35,7 +38,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 2500
+        "cursor_offset": 2500,
+        "s1_source_idx": 3
       },
       "4": {
         "source_key": "math_l3",
@@ -44,7 +48,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 1000
+        "cursor_offset": 1000,
+        "s1_source_idx": 4
       },
       "5": {
         "source_key": "code_l2",
@@ -53,7 +58,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 7500
+        "cursor_offset": 7500,
+        "s1_source_idx": 5
       },
       "6": {
         "source_key": "code_l3",
@@ -62,7 +68,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 2000
+        "cursor_offset": 2000,
+        "s1_source_idx": 6
       }
     },
     "total_s1_docs": 50000,
@@ -140,7 +147,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 10000
+        "cursor_offset": 10000,
+        "s1_source_idx": 0
       },
       "1": {
         "source_key": "src_b",
@@ -149,7 +157,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 6000
+        "cursor_offset": 6000,
+        "s1_source_idx": 1
       },
       "2": {
         "source_key": "src_c",
@@ -158,7 +167,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": true,
-        "cursor_offset": 4000
+        "cursor_offset": 4000,
+        "s1_source_idx": 2
       },
       "3": {
         "source_key": "new_d",
@@ -167,7 +177,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": false,
-        "cursor_offset": 0
+        "cursor_offset": 0,
+        "s1_source_idx": 3
       },
       "4": {
         "source_key": "new_e",
@@ -176,7 +187,8 @@
         "overlap_docs": 0,
         "overlap_rate": 0.0,
         "shared": false,
-        "cursor_offset": 0
+        "cursor_offset": 0,
+        "s1_source_idx": 4
       }
     },
     "total_s1_docs": 20000,
@@ -195,7 +207,8 @@
         "overlap_docs": 50,
         "overlap_rate": 0.5,
         "shared": true,
-        "cursor_offset": 150
+        "cursor_offset": 150,
+        "s1_source_idx": 0
       }
     },
     "total_s1_docs": 100,
@@ -210,9 +223,139 @@
   "json_roundtrip": true,
   "json_roundtrip_pass": true,
   "perf": {
-    "t_stock": 0.20690441131591797,
-    "t_switch_only": 0.17504024505615234,
-    "t_track": 0.031954050064086914
+    "t_stock": 0.17470574378967285,
+    "t_switch_only": 0.13758087158203125,
+    "t_track": 0.02036428451538086
   },
-  "perf_pass": true
+  "perf_pass": true,
+  "real_s1_s2_source_mapping": {
+    "per_source": {
+      "0": {
+        "source_key": "en_v1_4",
+        "s1_docs": 32500,
+        "s2_docs": 17500,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 32500,
+        "s1_source_idx": 0
+      },
+      "1": {
+        "source_key": "ufw_l1_en_hq",
+        "s1_docs": 2500,
+        "s2_docs": 1500,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 2500,
+        "s1_source_idx": 1
+      },
+      "2": {
+        "source_key": "ufw_zh",
+        "s1_docs": 2000,
+        "s2_docs": 1000,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 2000,
+        "s1_source_idx": 2
+      },
+      "3": {
+        "source_key": "code_l2",
+        "s1_docs": 7500,
+        "s2_docs": 9000,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 7500,
+        "s1_source_idx": 5
+      },
+      "4": {
+        "source_key": "code_l3",
+        "s1_docs": 2000,
+        "s2_docs": 2500,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 2000,
+        "s1_source_idx": 6
+      },
+      "5": {
+        "source_key": "stackv3_filt",
+        "s1_docs": 0,
+        "s2_docs": 8500,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": false,
+        "cursor_offset": 0,
+        "s1_source_idx": -1
+      },
+      "6": {
+        "source_key": "math_l1",
+        "s1_docs": 2500,
+        "s2_docs": 1250,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 2500,
+        "s1_source_idx": 3
+      },
+      "7": {
+        "source_key": "math_l3",
+        "s1_docs": 1000,
+        "s2_docs": 750,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 1000,
+        "s1_source_idx": 4
+      },
+      "8": {
+        "source_key": "megamath",
+        "s1_docs": 0,
+        "s2_docs": 1400,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": false,
+        "cursor_offset": 0,
+        "s1_source_idx": -1
+      },
+      "9": {
+        "source_key": "finemath",
+        "s1_docs": 0,
+        "s2_docs": 250,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": false,
+        "cursor_offset": 0,
+        "s1_source_idx": -1
+      },
+      "10": {
+        "source_key": "nemotron",
+        "s1_docs": 0,
+        "s2_docs": 3350,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": false,
+        "cursor_offset": 0,
+        "s1_source_idx": -1
+      },
+      "11": {
+        "source_key": "megamath_web",
+        "s1_docs": 0,
+        "s2_docs": 3000,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": false,
+        "cursor_offset": 0,
+        "s1_source_idx": -1
+      }
+    },
+    "total_s1_docs": 50000,
+    "total_s2_docs": 50000,
+    "total_overlap_docs": 0,
+    "overlap_rate": 0.0,
+    "epoch_wrap_warnings": []
+  },
+  "real_s1_s2_source_mapping_pass": true
 }

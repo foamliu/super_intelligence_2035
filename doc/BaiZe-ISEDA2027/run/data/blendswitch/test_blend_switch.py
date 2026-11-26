@@ -195,6 +195,108 @@ def make_jsonable(obj):
     return obj
 
 
+def test_real_s1_s2_source_mapping():
+    """Test 8: Real S1→S2 source mapping (7→12 sources, different ordering).
+
+    S1 has 7 sources (from blend_s1_preblend.tsv):
+        en_v1_4, ufw_l1_en_hq, ufw_zh, math_l1, math_l3, code_l2, code_l3
+
+    S2 has 12 sources (from blend_s2_preblend.tsv) with DIFFERENT ordering:
+        en_v1_4, ufw_l1_en_hq, ufw_zh, code_l2, code_l3, stackv3_filt,
+        math_l1, math_l3, megamath, finemath, nemotron, megamath_web
+
+    This test verifies that the s2_source_keys parameter correctly maps
+    shared sources across different orderings, and new sources get offset=0.
+    """
+    print("\n=== Test 8: Real S1→S2 source mapping (7→12, different order) ===")
+
+    # S1 config (from blend_s1_preblend.tsv)
+    S1_KEYS = ["en_v1_4", "ufw_l1_en_hq", "ufw_zh", "math_l1", "math_l3", "code_l2", "code_l3"]
+    S1_W = [0.65, 0.05, 0.04, 0.05, 0.02, 0.15, 0.04]
+    S1_SIZE = 50000
+
+    # S2 config (from blend_s2_preblend.tsv) — NOTE: different order + 5 new sources
+    S2_KEYS = [
+        "en_v1_4", "ufw_l1_en_hq", "ufw_zh",      # Web (shared, same positions 0-2)
+        "code_l2", "code_l3", "stackv3_filt",      # Code (code_l2/l3 SHARED but at positions 3,4 not 5,6!)
+        "math_l1", "math_l3", "megamath",           # Math (math_l1/l3 SHARED but at positions 6,7 not 3,4!)
+        "finemath", "nemotron", "megamath_web",     # Math new sources (positions 9,10,11)
+    ]
+    S2_W = [0.35, 0.03, 0.02, 0.18, 0.05, 0.17, 0.025, 0.015, 0.028, 0.005, 0.067, 0.060]
+    assert abs(sum(S2_W) - 1.0) < 1e-9, f"S2 weights sum={sum(S2_W)}"
+    S2_SIZE = 50000
+
+    # Shared mask: True for the 7 sources in S1, False for 5 new
+    S2_SHARED = [True, True, True, True, True, False, True, True, False, False, False, False]
+
+    # Shuffle indices for all 12 S2 sources (S1 uses first 7 by key)
+    # Make them large enough that S1+S2 < 1 epoch
+    SHUFFLE_SIZES = [100000, 10000, 8000, 30000, 8000, 60000, 10000, 5000, 20000, 20000, 40000, 30000]
+    rng = numpy.random.RandomState(1234)
+    shuffle_indices = []
+    for sz in SHUFFLE_SIZES:
+        idx = numpy.arange(sz, dtype=numpy.int64)
+        rng.shuffle(idx)
+        shuffle_indices.append(idx)
+
+    # Build S1 indices and track consumption
+    s1_di = numpy.zeros(S1_SIZE, dtype=numpy.int16)
+    s1_dsi = numpy.zeros(S1_SIZE, dtype=numpy.int64)
+    build_blending_indices_py(s1_di, s1_dsi, S1_W, 7, S1_SIZE)
+
+    sw = BlendSwitcher(7, S1_KEYS)
+    for i in range(S1_SIZE):
+        sw.track(int(s1_di[i]))
+    print(f"  S1 consumed per source: {sw.get_consumed_per_source()}")
+
+    # Switch to S2 with s2_source_keys for key-based mapping
+    sw.switch_weights(S2_W, S2_SIZE, S2_SHARED, s2_source_keys=S2_KEYS)
+
+    # Verify cursor offsets are correctly mapped by key
+    # S1 source indices: en_v1_4=0, ufw_l1_en_hq=1, ufw_zh=2, math_l1=3, math_l3=4, code_l2=5, code_l3=6
+    # S2 source indices: en_v1_4=0, ufw_l1_en_hq=1, ufw_zh=2, code_l2=3, code_l3=4, stackv3=5,
+    #                    math_l1=6, math_l3=7, megamath=8, finemath=9, nemotron=10, megamath_web=11
+    s1_consumed = sw.get_consumed_per_source()
+
+    # Check: S2 source 3 (code_l2) should have S1 source 5's consumption
+    assert sw.cursor_offsets[3] == int(s1_consumed[5]), \
+        f"code_l2 offset wrong: {sw.cursor_offsets[3]} != {s1_consumed[5]}"
+    # Check: S2 source 6 (math_l1) should have S1 source 3's consumption
+    assert sw.cursor_offsets[6] == int(s1_consumed[3]), \
+        f"math_l1 offset wrong: {sw.cursor_offsets[6]} != {s1_consumed[3]}"
+    # Check: new sources have offset 0
+    assert sw.cursor_offsets[5] == 0, "stackv3_filt should have offset 0"
+    assert sw.cursor_offsets[8] == 0, "megamath should have offset 0"
+    assert sw.cursor_offsets[11] == 0, "megamath_web should have offset 0"
+    print("  Cursor offset mapping verified (code_l2→S1[5], math_l1→S1[3], new=0)")
+
+    # Compute overlap
+    r = sw.compute_overlap(shuffle_indices)
+    print(f"  S1 docs={r['total_s1_docs']} S2 docs={r['total_s2_docs']} "
+          f"overlap={r['total_overlap_docs']} rate={r['overlap_rate']:.6f}")
+    for s, info in sorted(r["per_source"].items(), key=lambda x: int(x[0])):
+        tag = "SHARED" if info["shared"] else "NEW"
+        print(f"    [{tag}] {info['source_key']}: S1={info['s1_docs']} S2={info['s2_docs']} "
+              f"overlap={info['overlap_docs']} offset={info['cursor_offset']}")
+
+    assert r["total_overlap_docs"] == 0, \
+        f"FAIL: overlap={r['total_overlap_docs']} (source mapping bug!)"
+
+    # Also verify ratio
+    ratio = sw.compute_ratio(num_batches=5000, micro_batch_size=1)
+    print(f"  Ratio max dev: {ratio['max_deviation_pct']:.4f}% Pass: {ratio['pass']}")
+    assert ratio["pass"], f"FAIL: ratio dev {ratio['max_deviation_pct']:.4f}% > 1%"
+
+    # Verify JSON roundtrip with new fields
+    j = sw.to_json()
+    sw2 = BlendSwitcher.from_json(j)
+    assert sw2.s2_source_keys == S2_KEYS, "FAIL: s2_source_keys not preserved"
+    assert sw2.s2_to_s1_map == sw.s2_to_s1_map, "FAIL: s2_to_s1_map not preserved"
+
+    print("  PASS: real S1→S2 mapping (7→12, different order, zero overlap)")
+    return r
+
+
 def run_all_tests():
     results = {}
     tests = [
@@ -205,6 +307,7 @@ def run_all_tests():
         ("epoch_wrap", test_epoch_wrap),
         ("json_roundtrip", test_json_roundtrip),
         ("perf", test_perf),
+        ("real_s1_s2_source_mapping", test_real_s1_s2_source_mapping),
     ]
     all_pass = True
     for name, fn in tests:
