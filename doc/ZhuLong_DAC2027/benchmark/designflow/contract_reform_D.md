@@ -22,7 +22,48 @@
 
 ## 心跳
 
-`CONTRACT: P1=1/1 done · P2=3 L2.live (TrMatchHelper-001 + FullAdderSchemBuild-001 + OpenDmViewsProduce-001 done) · P3=497/608 judge_layers`
+`CONTRACT: P1=1/1 done · P2=4 L2.live (TrMatchHelper-001 + FullAdderSchemBuild-001 + OpenDmViewsProduce-001 + AeDelCellCurCellProduce-001 done) · P3=497/608 judge_layers`
+
+## r1445 交付：P2 第 4 条 check_live（AeDelCellCurCellProduce-001）
+
+- **候选选择**：从余 10 条 api 子类候选中选第 4 条。AeDelCellCurCellProduce-001 是
+  pyAether-import=3 的最强剩余候选（p2_pool_D.tsv 中 api 子类指标最高），候选
+  del_cell.py 调 3 个真实 pyAether API（emyInitAether / mdeGetCurrentLibCellView /
+  aeDelCell）。实测 .75 pyAether：3 API 全部 present。与 r1442/r1443/r1444 API 覆盖
+  不重叠（r1442=match-helper 8 API, r1443=schematic-build 10 API, r1444=dm-views-open
+  8 API，本轮=cell-delete-current 3 API）。
+- **非侵入包装**：_check_static_impl = 原 check 函数体逐字保留（原 check 已是
+  raise-on-fail + return True，无 teeth bug）；check_static 三元组包装（含 abspath
+  修复，见下）；check_live 新增；check 兼容包装。negative_selftest 走 check() compat
+  仍全 FAIL（无需改）。
+- **路径健壮性修复（check_static wrapper 内）**：框架调 check_static 时传 workdir='.'
+  而 _check_static_impl 把 candidate subprocess 跑在另一个 cwd (tempfile run_dir)，
+  hidden B 的 cfg 路径 os.path.join(workdir,"hidden",...) 是相对的，从 candidate cwd
+  解析不到。在 check_static wrapper 里加 `workdir = os.path.abspath(workdir)` 一行
+  修复（不动 _check_static_impl 函数体，不改任何断言/严格度）。此 bug 此前未暴露因
+  本 case 不在 lite-500 且从未经框架实跑。
+- **check_live 策略** = strategy 1（fake-input graceful probe）：upload submit.zip →
+  .75 import 真实 pyAether 验证 3 required API 属性存在 → monkey-patch 3 API
+  （emyInitAether 记录、mdeGetCurrentLibCellView 返回 LIVE tuple 并记录、aeDelCell
+  记录 + return True）→ SIGALRM 90s → 跑候选 del_cell.py（main 在 import 时执行）→
+  断言 emyInitAether+mdeGetCurrentLibCellView 被调 + aeDelCell 恰好 1 次 + aeDelCell
+  args == LIVE tuple (AeDelLiveLib/AeDelProbeCell/abstract) + 禁 A/B/A' token 泄漏
+  (analogLib_A/invA/digitalLib_B/nandB/ioLib_B/bufB/rfLib_B/lcB/powerLib_Q/dffQ) +
+  exit 0。LIVE tuple 与 A (analogLib_A/invA/schematic)、B 三 seed、A'-gold
+  (powerLib_Q/dffQ/symbol) 全部结构性不相交 → B-hardcode / A-hardcode / file-reading
+  stub 都打不掉 LIVE tuple。
+- **关键设计**：候选在 .75 必然走 graceful（monkey-patch 后 mdeGetCurrentLibCellView
+  返回 LIVE tuple，aeDelCell 返回 True，不 crash）。"live" 价值 = 真实 pyAether 模块
+  在 .75 导入成功 + 3 API 属性名真实存在（typo API 会 AttributeError）+ LIVE spec
+  防硬编码 A/B/A'。
+- **自验**（全 PASS）：check_static REF PASS（L0+L1 17 条件 a-q）；
+  negative_selftest 4 neg ALL FAIL（empty_shell/print_expected/hardcoded_a/
+  neg_fake_hardcode_b）；check_live(ref) via EDASession PASS（infra_fail=0）；
+  check_live(4 neg) ALL FAIL（no-engagement / A-tuple ≠ LIVE tuple / crash）；
+  框架完整 L0+L1+L2.live 路径 PASS（judge_layers=[L0,L1,L2.live]，infra_fail=0）。
+  pure ASCII 探针代码。
+- **case JSON**：metadata.judge_layers=[L0,L1,L2.live] + test 同步（21963 chars）；
+  reference_submit.zip 新建（1041B，含 del_cell.py）。
 
 ## r1444 交付：P2 第 3 条 check_live（OpenDmViewsProduce-001）
 
@@ -80,7 +121,7 @@
 
 ## 下一轮计划
 
-1. P2：从余 10 条 api 子类候选中选下一条（AeDelCellCurCellProduce / WtmWriteCheckReviewQA / DirectivePairAudit / ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce / VerdictJoinPassLib / AutoPR / SelFigReport 等），按 OpenDmViewsProduce/SkillToAether 模板实现 `check_live`
+1. P2：从余 9 条 api 子类候选中选下一条（WtmWriteCheckReviewQA(pyAether-import=2) / AutoPR / DirectivePairAudit / ExprLogicCheck / FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce / SelFigReport / VerdictJoinPassLib 等，均 pyAether-import=1），按 AeDelCellCurCellProduce/OpenDmViewsProduce 模板实现 `check_live`
 2. P3：继续逐批把 sim-keyword 子类中确属 mock 的 case 补声明（需逐题读 check.py 区分 netlist-text 假阳性 vs 真二进制调用）
 3. 造新题让位给 P2（运维令：P1>P2>P3，造题让位 P1/P2）
 
