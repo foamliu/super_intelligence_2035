@@ -317,8 +317,8 @@ P1/P2/P3/P4 全闭合后首轮回归 spot-check。确认 r1274/r1275 判分逻�
 
 | case_id | 缺什么 | 说明 |
 |:--|:--|:--|
-| AsyncFifoSim-001 | 可行（.75 vcs ✓） | 静态检 Makefile `run` 含 `vcs -sverilog`（L140 文本）；真 vcs 编译+sim 可验 testbench 实跑 |
-| FsdbVerdiInteg-001 | 部分（.75 vcs✓ verdi待验） | `make -n build` 干跑 + vcs cmd 文本检（L234）；§2.1 rule2 make-n≠真跑；真 vcs+verdi 可验 fsdb 实生成 |
+| AsyncFifoSim-001 | **REQ-BLOCKED**（r1320 .75 实跑证伪 OPT） | .75 真 VCS R-2020.12 跑 reference_submit.zip → **TEST FAILED 3 err**（full-detection bug：ref 只翻转 MSB，应翻转 top-2-bits per Cummings）。OPT「static sufficient, no false-pos」**被证伪**：16-cond 静态检放过一个功能坏的 FIFO（溢出）。⇒ 升判 LIVE-REQ，但 check_live 落盘 BLOCKED 待 ref+TB 功能修复（§1.4 TODO）。详见下方 §R3。 |
+| FsdbVerdiInteg-001 | **OPT-BLOCKED**（r1320 .75 实测 verdi 缺） | r1320 .75 `which verdi` → no verdi（vcs ✓ @ /apps/synopsys/SRB/vcs/R-2020.12/bin）。check 用 `make -n build` 干跑 + vcs cmd 文本检（L234）；§2.1 rule2 make-n≠真跑。真 vcs+verdi 可验 fsdb 实生成但 verdi 二进制在 .75 缺失 ⇒ check_live 无法落盘（infra）。 |
 | FloatPinToTop-001 | BLOCKED | ref `_pyaether_pin_float` 用 dbCreateLabel/dbGetInstByName/dbGetPinShapes；.75 pyAether 沙盒缺这 3 API（r1292 实测）；强探针误杀正解/弱探针无牙 ⇒ infra-honest L1 |
 | CovFMFlow-001 | BLOCKED | `_run_fm_stub`（L200 mock formality）+ make -n；真 fm 跑可验 fm.tcl；.75 fm 许可未验（fm 不在 SRB 确认清单） |
 
@@ -561,3 +561,54 @@ REQ-2（TotemSC-001）check_live 设计**经真 finesim 实跑验证成立**：Q
 - EFB 提交 `6c6608e98`（3 files：2 case JSON + VpsRegr check.py 最终修正；TotemSC check.py + 2 neg_selftest 被 concurrent D commit `80eff6abe` additive 扫入，内容正确已验）。
 - live_eval_changes.tsv 登记 2 行（§1.2）。
 - A-owned L2.live: 8 → 10（VpsRegrErrorEngineer-001 + TotemSC-001）。REQ=6 done 6/6 ✅。
+
+---
+
+## R3 OPT 收口 — .75 实跑结论（2026-11-26 r1320 · 只读 · 不改判分）
+
+> **令源**：LIVE_EVAL_ORDER §8 排期「收口：REQ 全绿 + OPT 有结论 + NA 有依据」。本轮对 2 条「可行」OPT（AsyncFifoSim / FsdbVerdiInteg）做 .75 实跑收口，给出可核查结论。**本轮未改任何 check.py / cases / negative / assets / hidden / 主树 / jsonl**；仅 .75 隔离 session 内跑真 vcs + 在本文档/live_eval_review_A.tsv 记证据。
+
+### R3-1 · AsyncFifoSim-001 — OPT→LIVE-REQ(BLOCKED) · .75 真 VCS 证伪 OPT 理据
+
+**OPT 原理据（r1）**：「static sufficient (no false-pos: text check is strict) but real run adds teeth」。
+
+**.75 实跑（r1320）**：eda_flow open_session on .75(hfhds201)，write_file 上传 reference_submit.zip 3 文件（async_fifo_template.v / async_fifo_tb.sv / Makefile，逐文件 size 与本地一致 4805/4910/739），`make run` 命中真 vcs R-2020.12（banner `Chronologic VCS simulator copyright 1991-2020` / `Compiler version R-2020.12_Full64` @ /apps/synopsys/SRB/vcs/R-2020.12/bin）。
+
+**结果**：make rc=0（编译过），但 sim **TEST FAILED (3 errors)**：
+- `CHECK FAIL: full asserted after fill`
+- `CHECK FAIL: fill_level==DEPTH at full`
+- `CHECK FAIL: phase3 all words drained`
+
+**根因（逐行实证）**：reference `async_fifo_template.v` 的 `full` 检测只翻转 MSB：
+```systemverilog
+assign full = (wr_ptr_gray == {~wr_ptr_gray_sync2[PTR_WIDTH-1],
+                                wr_ptr_gray_sync2[PTR_WIDTH-2:0]});
+```
+按 Cummings 异步 FIFO 约定，DEPTH=2^ADDR_WIDTH 时 full 应翻转 **top-2 bits**（gray(2^N) 与 gray(0) 在 top-2 bits 不同）。PTR_WIDTH=5/ADDR_WIDTH=4/DEPTH=16：wr_ptr_bin=16 → gray=11000；rd_sync2_gray=00000；MSB-only 翻转得 10000 ≠ 11000 ⇒ **full 永不置位 ⇒ FIFO 溢出**。
+
+**OPT 理据被证伪**：16-cond 静态检（cond f 查 `~...[W-1]` MSB-invert 模式）**放过这个功能坏的 FIFO**。这正是 §2.1 rule1 Q2「能否被骗」= **会**（参考解本身就是一个骗过静态检的坏解）。⇒ 升判 **LIVE-REQ**（静态不足）。
+
+**fix 验证（r1320 .75 同 session）**：把 full 改为 top-2-bit 翻转 `{~sync2[PTR_WIDTH-1], ~sync2[PTR_WIDTH-2], sync2[PTR_WIDTH-3:0]}`，重跑真 vcs → 3 err 降为 **1 err**（`full asserted after fill` + `fill_level==DEPTH at full` 全过；residual `phase3 all words drained` = 并发随机流量阶段 wq.size≠rq.size，但 phase3 data-integrity mism==0 ⇒ 计数错位非数据损坏，疑 TB race：TB `wq.push_back` 在 posedge+#1 检 !full，DUT 在下一 posedge 才 commit write，full 恰在两检之间置位 ⇒ TB 多记一笔）。
+
+**结论**：AsyncFifoSim-001 **LIVE-REQ(BLOCKED)**。check_live 落盘 BLOCKED 待 reference（full top-2-bit 修复）+ TB（phase3 并发阶段时序 race 修复）功能修复后单独一轮落盘。修复方案已 .75 实跑验证（top-2-bit 修复降 3err→1err），未来落盘为低风险机械执行。**live-neg 天然就位**：当前未修的 reference_submit.zip 即「静态全过/实跑产物错」的 live-neg 样本。
+
+### R3-2 · FsdbVerdiInteg-001 — OPT-BLOCKED(infra: verdi 缺)
+
+**.75 实测（r1320）**：`which vcs vlogan verdi` → vcs rc=0（@ /apps/synopsys/SRB/vcs/R-2020.12/bin），**verdi rc=1（`which: no verdi`）**。check 用 `make -n build` 干跑 + vcs cmd 文本检 + verdi `-ssf` 文本检（§2.1 rule2 make-n≠真跑）。真 vcs+verdi build 可验 fsdb 实生成，但 verdi 二进制在 .75 缺失 ⇒ check_live 无法落盘（infra，铁律 2）。
+
+### OPT 收口结论（4/4 全有结论）
+
+| case_id | r1 结论 | r3 结论 | 证据 |
+|:--|:--|:--|:--|
+| AsyncFifoSim-001 | LIVE-OPT(可行) | **LIVE-REQ(BLOCKED)** | .75 真 VCS 跑 ref TEST FAILED 3err；full-detection MSB-only bug；OPT「no false-pos」证伪 |
+| FsdbVerdiInteg-001 | LIVE-OPT(verdi待验) | **LIVE-OPT(BLOCKED infra)** | .75 `which verdi`=absent |
+| FloatPinToTop-001 | LIVE-OPT(BLOCKED) | LIVE-OPT(BLOCKED) | .75 pyAether 缺 dbCreateLabel/dbGetInstByName/dbGetPinShapes（r1292） |
+| CovFMFlow-001 | LIVE-OPT(BLOCKED) | LIVE-OPT(BLOCKED) | .75 fm 许可未验（fm 不在 SRB 确认清单） |
+
+**A shard OPT 收口**：4/4 全有可核查结论。0 条升 L2.live（2 infra-BLOCKED + 1 ref-bug-BLOCKED + 1 pyAether-API-BLOCKED）。AsyncFifoSim-001 是本轮唯一「.75 实跑证伪 OPT 理据」的发现，已登记为 LIVE-REQ 待 ref+TB 修复后落盘。
+
+### 纪律
+- 🚫 未改 check.py / cases / negative / assets / hidden / 主树 / jsonl / prompt / 断言 / strictness
+- ✅ 只动：live_eval_review_A.tsv（2 行 verdict/reason/evidence 更新）+ 本文档（OPT 表 + §R3 节）
+- ✅ 不登记 live_eval_changes.tsv（本轮无 judge_layers 变更，仅审视结论）
+- .75 两 session 均已 close_session cleaned
