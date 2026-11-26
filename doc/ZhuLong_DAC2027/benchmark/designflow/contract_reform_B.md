@@ -365,3 +365,22 @@ def check_live(sess):
 - 其余 39 条 Type A 按家族批量复用 CdlBulkSanitize 样板（hspice-mock 优先 → finesim-mock）。
 - B 预算 ≤6-8 条/轮（§4 前提：逐条独立自验、wall ≤90min、.75 串行、单条不过降级 BLOCKED）。
 - 优先序：AlterDeckSplit / AOI21ArcChar / SpiceSim / InvTripDelay ...（hspice-mock，GT 签名维度少）。
+
+### R2 改造 #2: InvTripDelay-001 (2026-11-26 r1295)
+- **家族**：hspice-mock (deck-driven)，Type A Q2-cheatable。
+- **Q2 实证（r1295）**：cheat harness（`vin in 0 dc 0` 无翻转 + 正确 `.param vref=2.5 vcc=5.0` + 正确 `.measure tran tpd trig/targ` + `.dc`/`.meas dc vtrip when` + inv 例化）→ `_check_impl` **14/14 PASS 假阳**（mock 按 W/L+vcc+vref 签名 + `.measure` 关键词存在回放 GT，不查 stimulus 翻转/measure 语义）。真 hspice：`vin=dc` 不翻转 → `.measure tran tpd` never reached trig → `tpd=failed`。
+- **改造手法（非侵入包装，照 §3）**：
+  1. 原 `check` → `_check_static_impl`（一字不动，`return all(ok for _,ok in _check_impl(...))`）。
+  2. `check_static` try/except 收口三元组。
+  3. 新增 `check_live(deliverable, workdir, sess)`：经 eda_flow 在 .75 跑真 hspice（`/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/hspice`），本地抽 tb.sp + 读 hidden B1/B2 → `_build_deck`（复用静态同款 inlining + `_strip_defs`）→ 上传 cand/gt 两组 deck → 真跑 hspice → 读真实 `.lis` → 断**同物理量同阈值**（cand tpd ±15% of GT / cand vtrip ±0.15V of GT，与 cond h/i(B1) + j/k(B2) 一致，只增不减）。GT = ref testbench 在同一 hidden B 上真跑。不读 `reference/`、不读隐藏 GT 文件。
+  4. `check()` 兼容包装；`judge_layers=["L0","L1","L2.live"]`；JSON `test` 与磁盘 `check.py` sha 三方同步（`646ce56711a1`，23554B）。
+  5. **live-neg** = `negative/stub_cheat_dcstim/tb.sp`：正确 `.param`/`.measure`/`.tran`/`.dc` 语法 + inv 例化 + 正确 vcc/vref（过静态 cond a-g + mock 回放 GT 过 cond h-k）但 `vin=dc` 无翻转 ⇒ 静态全过、实跑 `tpd=failed`。`negative_selftest.py` 同步登记（4 static neg FAIL distinct + live-neg static-pass）；新增 `negative/live_selftest.py` 在 .75 验 live-neg FAIL。
+- **§5 七项自验（全勾）**：
+  - ① `.75` 真跑 ref（L2.live）PASS：`hostname=hfhds201`，hspice V-2023.12-SP1-1，B1 tpd=106.2369p/vtrip=2.1927、B2 tpd=955.4316p/vtrip=2.4498（==mock _GT，Q1 保真）。
+  - ② 4 static neg FAIL distinct（{b,c,e,f}=4-distinct）+ 1 live-neg（stub_cheat_dcstim：static PASS / live FAIL `tpd=None`）。
+  - ③ 3-seed 确定性：真 hspice GT 值与 mock 捕获值逐位一致（B1 106.2369p / B2 955.4316p）。
+  - ④ 静态判分仍 PASS：`_check_impl(ref)` 14/14（实跑层独立）。
+  - ⑤ `judge_layers`/JSON `test`/磁盘 `check.py` sha 三方同步（`646ce56711a1`）。
+  - ⑥ 断言只增不减：`_check_static_impl` 原文未改一字；`check_live` 新增 4 条同阈值物理断言（B1 tpd/vtrip + B2 tpd/vtrip）。
+  - ⑦ L5 不退化：hidden-B 不外泄；`check_live` 不读 `reference/`；沙箱不含 `.jsonl`/`test`。
+- **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
