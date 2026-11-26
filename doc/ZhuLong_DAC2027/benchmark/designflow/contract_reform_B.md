@@ -384,3 +384,23 @@ def check_live(sess):
   - ⑥ 断言只增不减：`_check_static_impl` 原文未改一字；`check_live` 新增 4 条同阈值物理断言（B1 tpd/vtrip + B2 tpd/vtrip）。
   - ⑦ L5 不退化：hidden-B 不外泄；`check_live` 不读 `reference/`；沙箱不含 `.jsonl`/`test`。
 - **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
+
+### R2 改造 #4: AlterDeckSplit-001 (2026-11-26 r1297)
+- **家族**：hspice-mock (deck-driven, MULTI/ORIG table keyed on rupe_res+corner-file+.ic+.alter)，Type A Q2-cheatable（候选自建 split deck，可注入垃圾网表）。
+- **Q2 实证（r1297）**：cheat 候选产出 split deck 带**正确签名**（`.lib 'corner_B.sp' ss` / `.param rupe_res=4700` / `.ic v(FzOut)=0` / `.meas` 5 行 / `.probe` 收窄 / 无 `.alter` / `.temp`+`.param pvcc` 烘焙）但 EFUSE_CELL 网表物理破坏（`R0 AfInt Lvfsbln 1e12` 开路 + `M0 ... w=1e-21u l=1e3u` 电死）→ `check.py` **10/10 PASS 假阳**（mock 按 rupe_res+corner-file+.ic+.alter 签名回放 `MULTI["B"]` GT，从不解电路）。真 hspice V-2023.12-SP1-1 @ hfhds201：cheat split deck 跑挂、无 `.mt0` → cond (i) split==alter 等价 FAIL。
+- **Q1 保真实证**：真 hspice ref `split_ss.mt0` = `v_fzout=0.3987 / v_lvfsbln=1.0 / i_r0=-3.103e-09 / i_mos=3.156e-09 / v_delta=0.6013` == mock `MULTI["B"]` row0 逐位一致；`multi.mt0` 3 行全部匹配 mock 表。
+- **改造手法（非侵入包装，照 §3）**：
+  1. 原 `check` → `_check_static_impl`（一字不动，10 条 a-j 断言 + cond (i) 等价 + cond (j) 跨输入守卫）。
+  2. `check_static` try/except 收口三元组。
+  3. 新增 `check_live(deliverable, workdir, sess)`：上传 submit.zip + hidden `deck_B.sp`/`corner_B.sp` → .75 跑候选 `alter_deck_split.py deck_B.sp out_B` → 构建 `multi_ic.sp`（deck_B + `.ic v(FzOut)=0` 注入，同 cond (i)）→ 真跑 hspice → 逐角跑 `out_B/split_<corner>.sp` → 读真实 `.mt0` → 复用 `parse_deck_corners`/`_parse_mt0_text`/`equiv_ok` → 断**同 cond (i) 物理**（每角 5 measure `split==alter` within `REL_TOL=1e-3`，阈值不变，只增不减）。不读 `reference/`、不读隐藏 GT。
+  4. `check()` 兼容包装；`judge_layers=["L0","L1","L2.live"]`；JSON `test` 与磁盘 `check.py` sha 三方同步（`7d15035225f87e02`，30835B）。
+  5. **live-neg** = `negative/cheat_garbage_netlist/alter_deck_split.py`：正确签名 + 垃圾网表（R0=1e12 / M0 w=1e-21u l=1e3u）⇒ 静态全过、实跑无 `.mt0` 全 3 角 FAIL。`negative_selftest.py` 重写登记（7 static neg FAIL distinct{a,c,d,e,g} + §4.9 trio {empty:a,print:c,core:g} distinct + live-neg static-pass/live-fail）。
+- **§5 七项自验（全勾）**：
+  - ① `.75` 真跑 ref（L2.live）PASS：`hostname=hfhds201`，hspice V-2023.12-SP1-1，3 corners split==alter（ss/tt/ff 全 measure `equiv_ok`）。
+  - ② 7 static neg FAIL distinct（{a,c,d,e,g}=5-distinct）+ 1 live-neg（cheat_garbage_netlist：static PASS 10/10 / live FAIL 无 `.mt0` 3 角）。
+  - ③ 3-seed 确定性：`multi.mt0` md5=`2803c675ca8c0172bed26453f0e89f03`、`ref_ss.mt0` md5=`3c3f544caf8fb36d34beaa2ca0231bb0` 连跑 3 次一致。
+  - ④ 静态判分仍 PASS：`_check_static_impl(ref)` 10/10（实跑层独立）。
+  - ⑤ `judge_layers`/JSON `test`/磁盘 `check.py` sha 三方同步（`7d15035225f87e02`）。
+  - ⑥ 断言只增不减：`_check_static_impl` 原文未改一字；`check_live` 新增逐角 5-measure 等价断言（同 `REL_TOL=1e-3`）。
+  - ⑦ L5 不退化：hidden-B 不外泄；`check_live` 不读 `reference/`；沙箱不含 `.jsonl`/`test`。
+- **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
