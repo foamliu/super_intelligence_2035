@@ -40,8 +40,8 @@
 <header class="hero">
   <h1>论文观察日报 · 2026-11-26</h1>
   <div class="sub"><b>03:00 时窗 · A 轨 5/5（今日首窗收满）· B 轨已至第一百二十一轮 → 431 · 作者网 398（X 158）· 发信累计 182 封</b></div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-26 03:1x CST</b>（15:00 时窗增补：作者回信核验） ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
-  <div class="meta" style="margin-top:8px;">🔴 <b>口径更正（15:00 时窗）</b>：此前「回信率 0/182」是<b>测量失败</b>。首次用 IMAP 只读核对收件箱，实得 <b>实质回信 7 位作者（8 封信）/ 182 ≈ 4.4%</b>，另有退信 <b>8</b> 封。详见下方「作者回信」节。</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-26 18:0x CST</b>（15:00 增补：作者回信核验；18:00 增补：B 轨+3 / 作者网+3 / 回信再核） ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
+  <div class="meta" style="margin-top:8px;">🔴 <b>口径更正（15:00 时窗）</b>：此前「回信率 0/182」是<b>测量失败</b>。首次用 IMAP 只读核对收件箱，实得 <b>实质回信 7 位作者（8 封信）/ 184 ≈ 4.3%</b>。18:00 再次只读核对：<b>无新增实质回信</b>，新增 <b>1 封退信</b>（#183 UT Austin 被 SpamAssassin 反垃圾拦截）⇒ 退信累计 <b>9</b>。详见下方「作者回信」与「18:00 时窗增补」节。</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -192,6 +192,51 @@
   <tr><td>harness</td><td>① EDAGoat 判分器加「<b>候选与参考共用同一非法输入</b>」陷阱（作者承认 IG batching 越界仍通过）；② 成本三档记账：开发期编译 / 外部 checker / 配对求解（IG 开发 8% / 22%，终验 checker 20%）；③ 静默错误按类别分层统计（否定 / 条目数 / 越界），不只看总 exact-match；④ 长上下文召回不要假设 MemOnce 有 miss 兜底（作者未统计）。</td></tr>
   <tr><td>zhulong</td><td>① 负样本-only 目标<b>不要加权重下限</b>，预算投到提高 verifier <code>r_neg</code>；<code>G∈{8,4}</code> 须自己做消融（作者未测）；② 成本表分「短程线性」与「长驻近线性 + 尾部」，P99 作可调参数；③ MemOnce 类压缩默认<b>最后一层</b>，中间层只作消融；延迟归因写带宽受限。</td></tr>
   <tr><td>designflow</td><td>① 用 ML-for-EDA 综述的层级作 L1–L5 <b>外部锚点</b>，但注明 2021 成稿无 LLM 部分；② 验收契约可预先冻结，但「改动→约束→测试」的对应必须允许 agent 从 diff 自推，控制器只做确定性检查；③ 跨工艺 / 跨 PDK 留出集须同时试「按工艺切」与「按规模切」，作者未给结论。</td></tr>
+</table>
+
+<h3 class="sec">🅱 18:00 时窗增补（r270）· B 轨 第一百二十三轮 +3 → 437 · 作者网 +3 → 404 · 回信再核</h3>
+<div class="note">
+  <b>A 轨</b>：今日额度 <b>5/5 已满 ⇒ 0 新收</b>（不凑第 6 篇，守「宁少勿凑」）。本窗主线 = B 轨 + 作者网 + 每日回信核验。
+</div>
+
+<h3 class="sec">B 轨 · 经典论文新增（第一百二十三轮 +3 → 437）</h3>
+<div class="card">
+  <table class="plain">
+    <tr><th>#</th><th>原题 / 作者</th><th>年份 · 会议</th><th>被引</th><th>一句话贡献 · 与我们的关系</th></tr>
+    <tr><td>435</td><td><a href="https://arxiv.org/abs/1704.04861">MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications</a><br>Howard · Zhu · Chen 等</td><td>2017 · arXiv 预印本</td><td><b>34,220</b></td><td>深度可分离卷积 + 宽度/分辨率两乘子（<code>α</code>/<code>ρ</code>）做延迟-精度取舍。<b>vision（视觉塔选型）· SLM（端侧）· pretrain（效率轴）</b>。</td></tr>
+    <tr><td>436</td><td><a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in Actor-Critic Methods (TD3)</a><br>Fujimoto · van Hoof · Meger</td><td>2018 · ICML</td><td><b>9,037</b></td><td>双 critic 取最小抑制 Q 高估 + 延迟策略更新 + 目标平滑。<b>posttrain（EDA 环境 self-play RL 稳定性）· zhulong（RL 口径）· harness（保守判分）</b>。</td></tr>
+    <tr><td>437</td><td><a href="https://arxiv.org/abs/1611.07004">Image-to-Image Translation with Conditional Adversarial Networks (pix2pix)</a><br>Isola · Zhu · Zhou · Efros</td><td>2017 · CVPR</td><td><b>28,513</b></td><td>条件 GAN 当通用图像翻译框架，同时学损失；U-Net 生成器 + PatchGAN。<b>vision（结构条件生成）· designflow（版图↔规格图合成基线，须防假题）· data（受控增广）</b>。</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--muted);margin:10px 0 0;">核验：abs 3/3 <code>200</code>（42,806 / 41,571 / 41,771 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；OpenAlex 3/3 <code>200</code>（34,220 / 9,037 / 28,513，查询日 2026-11-26）。三 ID 条目级查重 <b>0 命中</b>。</p>
+</div>
+
+<h3 class="sec">👥 作者关系网新增（401 → 404，X 仍 159）</h3>
+<div class="card">
+  <table class="plain">
+    <tr><th>#</th><th>姓名 / 机构</th><th>代表论文</th><th>邮箱</th><th>X</th><th>状态</th></tr>
+    <tr><td>402</td><td>Phillip Isola / MIT EECS·CSAIL</td><td>pix2pix 一作</td><td><code>philipi@mit.edu</code>（A 级）</td><td>未找到（主页仅 Bluesky）</td><td>待跟踪</td></tr>
+    <tr><td>403</td><td>Scott Fujimoto / McGill·Mila</td><td>TD3 一作</td><td>未找到 A 级</td><td>未找到（<code>@sfujim</code> 属他人）</td><td>待跟踪</td></tr>
+    <tr><td>404</td><td>Alexei A. Efros / UC Berkeley EECS·BAIR</td><td>pix2pix 四作</td><td><code>efros@eecs.berkeley.edu</code>（A 级）</td><td>未找到（<code>@aefros</code> 属他人）</td><td>待跟踪</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--muted);margin:10px 0 0;">🚫 不猜 handle：<code>x.com/sfujim</code> 实测为「もん」、<code>x.com/aefros</code> 为 8 粉丝他人账号 ⇒ 一律「未找到 X」。本窗发信额度 <b>12/12 已满</b>，只建档不发。</p>
+</div>
+
+<h3 class="sec">✉ 回信再核（18:00 · IMAP 只读）· 无新增实质回信 · 新增 1 封退信</h3>
+<div class="card">
+  <p style="margin:0 0 8px;">INBOX <b>71 封</b>（15:00 为 67 ⇒ 本窗 +4：Ollama / Facebook / 招聘群发 / <b>1 封系统退信</b>）。<b>无</b>新的作者实质回信。</p>
+  <p style="margin:0 0 8px;">新增退信：<b>#183</b>（<code>lqiang@cs.utexas.edu</code>，Rectified Flow）于 15:10:33 被 <code>cs.utexas.edu</code> 以 <code>550 5.7.1 Blocked by SpamAssassin</code> 拦截 ⇒ <b>地址有效、反垃圾拦截</b>，改判 <code>退信(反垃圾拦截)</code>，不并入「无应答」。</p>
+  <p style="margin:0;font-size:13px;color:var(--muted);">累计（184 封）：实质回信 <b>8 封 / 7 人（≈4.3%）</b> · 自动 1 · <b>退信 9</b> · 无应答(&gt;14d) 21 · 未到期 145 ⇒ 8+1+9+21+145 = 184 ✔。启示：强反垃圾 <code>*.edu</code> 收件侧会直接 550 拦截中文冷邮件 ⇒ 同类机构后续优先英文纯文本短正文；守「不催 / 不重发」。</p>
+</div>
+
+<h3 class="sec">🎯 18:00 新增经典对各线的可执行建议（6 线）</h3>
+<table class="plain">
+  <tr><th>线</th><th>可执行建议</th></tr>
+  <tr><td>pretrain</td><td>把 MobileNet 的 <code>α</code>（宽度乘子）与 <code>ρ</code>（分辨率乘子）做成两个<b>可预注册的效率轴</b>：在同一 FLOPs/延迟预算下对比「更宽深度可分离网 vs 更窄密集网」，报告中必须同报延迟而非只报参数量。</td></tr>
+  <tr><td>vision</td><td>① 视觉塔选型加入 MobileNet 式缩放轴（宽度/分辨率）作为<b>效率基线</b>；② 结构条件生成（版图↔规格图）先跑 pix2pix 作<b>强基线</b>，但生成样本必须经规则/人评校验，🚫 不得直接把生成图当真实样本入评测集。</td></tr>
+  <tr><td>posttrain</td><td>EDA 环境 self-play RL 预注册三项稳定性对冲：① 双 critic 取最小（clipped double-Q）抑制奖励虚高；② 延迟策略更新；③ 目标动作平滑。并把 <b>Q 值高估 / 方差</b>作为单独报告的失败模式（不要只报最终 pass）。</td></tr>
+  <tr><td>harness</td><td>TD3 的「双 critic 取最小」与评测的「保守判分」同构：对不确定的判分宁可判不通过（宁可信其不能），并把「高估」单列为 harness 失败分类项。</td></tr>
+  <tr><td>data</td><td>pix2pix「学到损失」可做<b>受控增广</b>的辅助度量，但必须与人评/规则校验并用；🚫 不以合成数据替换真实 trace，避免污染 designflow 的真实性口径。</td></tr>
+  <tr><td>zhulong / designflow</td><td>zhulong：RL 结果表增列「高估 / 方差」两栏，与奖励可验证性并列；designflow：pix2pix 只作<b>合成基线</b>，造题仍以真实 PDC/TYA trace 为准（守「1-trace-1-case」）。</td></tr>
 </table>
 
 <h3 class="sec">附录 · 本轮检索式与核验</h3>

@@ -7576,3 +7576,48 @@
 | 与我们工作的关系 | **vision（主 · 生成/翻译）**：单步或少步生成对视觉生成与图生图是直接的成本优势；可作为 diffusion/flow 路线的对照基线。<br>**designflow（次 · 分布输运）**：域迁移（示意图域 ↔ 版图域）本质是分布输运，rectified flow 给出「确定耦合 + 成本不增」的可证性质，适合预注册。<br>**zhulong（次 · 成本口径）**：**NFE 与步数**是独立于参数量的成本轴；「单步 Euler 可用」必须与质量指标同时报，不能只报速度。<br>**pretrain（次 · 目标）**：非线性最小二乘回归向量场，可作为「回归式生成目标」与 ELBO/分数匹配并列的第三类。<br>**data / harness**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百二十二轮 · 15:00 时窗） |
 | 核验状态 | abs 页 **`200` / 43,078 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（4,707 / 2023 / `conference-paper` / ICLR，查询日 2026-11-26）。直线路径 / 无时间离散 / rectification / 凸成本不增 / 单步 Euler 均取自 arXiv 官方摘要逐字核，未做 PDF 定理复核。条目级查重：`2209.03003` 在 `PAPERS.md` **0 命中**。 |
+
+## 435. MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications |
+| 作者（前 3） | Andrew G. Howard · Menglong Zhu · Bo Chen（arXiv `citation_author` 逐字核；后续 Dmitry Kalenichenko · Weijun Wang · Tobias Weyand · Marco Andreetto · Hartwig Adam） |
+| 年份 | **2017**（v1 `2017/04/17`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **arXiv preprint 2017**（abs 页**无 `comments`**；OpenAlex `type=preprint`、source = `arXiv` ⇒ 如实记为预印本 / 技术报告，非会议论文） |
+| 被引数 | **34,220**（OpenAlex `10.48550/arXiv.1704.04861`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1704.04861> ｜ `10.48550/arXiv.1704.04861` |
+| 一句话贡献 | 提出 **MobileNets**：以**深度可分离卷积**（depthwise + pointwise 1×1）构建轻量深度网络；给出两个**全局超参数**——宽度乘子 `α`（通道缩放）与分辨率乘子 `ρ`（输入缩放）——让使用者在延迟与精度之间按约束选模型；在 ImageNet 分类及检测 / 细粒度分类 / 人脸属性 / 地理定位上展示高效权衡。 |
+| 与我们工作的关系 | **vision（主 · 高效视觉塔）**：深度可分离卷积 + 两个缩放乘子是「在固定算力/延迟预算下选视觉塔宽度与分辨率」的直接方法学，可用于 2B 级多模态臂的视觉前端选型。<br>**SLM（主 · 端侧）**：`α`/`ρ` 的可预注册缩放轴天然对应小模型/端侧的「参数量 vs 延迟」取舍。<br>**pretrain（次 · 架构）**：「计算量由架构因子决定」提供了与规模化律并列的**效率轴**（同 FLOPs 下更宽的深度可分离网 vs 更窄的密集网）。<br>**harness / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十三轮 · 18:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,806 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（34,220 / 2017 / `preprint` / arXiv，查询日 2026-11-26）。深度可分离卷积 / `α` / `ρ` 两超参数 / 应用面均取自 arXiv 官方摘要逐字核，未做 PDF 公式复核。条目级查重：`1704.04861` 在 `PAPERS.md` **0 命中**（一作 Andrew G. Howard 未在作者网；本轮未新增该人）。 |
+
+## 436. Addressing Function Approximation Error in Actor-Critic Methods（TD3）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Addressing Function Approximation Error in Actor-Critic Methods |
+| 作者（前 3） | Scott Fujimoto · Herke van Hoof · David Meger（arXiv `citation_author` 逐字核；3 位） |
+| 年份 | **2018**（v1 `2018/02/26`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICML 2018**（abs 页**无 `comments`**；OpenAlex `type=conference-paper`、source = *International Conference on Machine Learning*、`publication_year=2018`） |
+| 被引数 | **9,037**（OpenAlex `10.48550/arXiv.1802.09477`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1802.09477> ｜ `10.48550/arXiv.1802.09477` |
+| 一句话贡献 | 指出价值型 RL（如 DQN）中的**函数逼近误差导致 Q 值系统性高估**的问题在 **actor-critic** 下同样存在；提出 **TD3**：以**截断双 Q**（取一对 critic 的最小值）限制高估、**延迟策略更新**（降低每次更新的 per-update error）、**目标策略平滑**（对目标动作加噪声）三项机制；在 OpenAI gym 全部环境上优于当时 SOTA。 |
+| 与我们工作的关系 | **posttrain（主 · RL）**：我们若在 EDA 环境做 self-play / RL，**Q 值高估**会导致策略被「虚高奖励」带偏；TD3 的「双 critic 取最小 + 延迟更新 + 目标平滑」是可预注册的稳定性对冲项。<br>**zhulong（次 · RL 口径）**：「高估」与「方差」是可单独报告的失败模式，与奖励可验证性一起构成 RL 结果的诚实性检查。<br>**harness（次 · 判分）**：双 critic 的「取最小值」与评测的「保守判分」同构（宁可信其不能）。<br>**pretrain / vision / data / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十三轮 · 18:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,571 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（9,037 / 2018 / `conference-paper` / ICML，查询日 2026-11-26）。双 Q 取最小 / 延迟更新 / 目标平滑 / OpenAI gym 结论均取自 arXiv 官方摘要逐字核，未做 PDF 定理复核。条目级查重：`1802.09477` 在 `PAPERS.md` **0 命中**。 |
+
+## 437. Image-to-Image Translation with Conditional Adversarial Networks（pix2pix）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Image-to-Image Translation with Conditional Adversarial Networks |
+| 作者（前 3） | Phillip Isola · Jun-Yan Zhu · Tinghui Zhou（arXiv `citation_author` 逐字核；第 4 位 Alexei A. Efros） |
+| 年份 | **2017**（v1 `2016/11/21`；abs 页 `citation_date` 逐字核；CVPR 2017） |
+| 会议 / 期刊 | **CVPR 2017**（abs 页**无 `comments`**；OpenAlex `type=conference-paper`、source = IEEE/CVF CVPR、DOI `10.1109/cvpr.2017.632`、`publication_year=2017`） |
+| 被引数 | **28,513**（OpenAlex `10.48550/arXiv.1611.07004`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1611.07004> ｜ `10.48550/arXiv.1611.07004`（会议 DOI `10.1109/cvpr.2017.632`） |
+| 一句话贡献 | 提出 **pix2pix**：把**条件 GAN** 当作通用**图像到图像翻译**框架——不只学「输入图→输出图」的映射，还**同时学损失函数**（判别器），从而用同一套方法覆盖过去需要各自设计损失的任务；在「标签图→照片」「边缘→物体」「上色」等任务上有效，并因开源让大量用户（含艺术家）免调参复用。 |
+| 与我们工作的关系 | **vision（主 · 图像翻译 / 合成）**：条件 GAN + U-Net 生成器 + PatchGAN 判别器 + L1 重建，是「示意图 ↔ 版图 / 掩码 ↔ 版图」等**结构条件生成**的经典骨架。<br>**designflow（次 · 版图合成）**：造题时的「版图 ↔ 规格/标注图」配对合成可用 pix2pix 作为一个**强基线**（但必须防「生成假题」）。<br>**data（次 · 合成增广）**：学到的损失可替代手工度量，适合做**受控增广**（须与人评/规则校验并用）。<br>**pretrain / posttrain / harness / zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十三轮 · 18:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,771 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（28,513 / 2017 / `conference-paper` / CVPR，查询日 2026-11-26）。条件 GAN / 学到损失 / 三类任务均取自 arXiv 官方摘要逐字核，未做 PDF 公式复核。条目级查重：`1611.07004` 在 `PAPERS.md` **0 命中**（一作 Phillip Isola、四作 Alexei A. Efros 本轮建入作者网；Jun-Yan Zhu 已在作者网）。 |
