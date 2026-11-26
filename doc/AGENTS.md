@@ -310,6 +310,23 @@
 - **0-case 时进讨论区**：`benchmark/designflow/discuss/`（`README.md` 只读、`board.md` 仅 A 写、
   `A/B/C/D.md` 各写各的、`rounds/` 由 A 存档）。发言必须有**本域依据**，🚫 "我同意 / +1" 不算发言。
 - 交付给下游时给出**清单**：`case_id / domain / k 断言数 / assets / check 路径 / 台账行`。
+### 7.6 Lite-500 逐条「实跑评估」审视（2026-11-26 用户令）
+
+> 用户令：「安排 designflow 4 agent 对 lite-500 中自己的 Case 进行审视，按需进行『实跑评估』改造」。
+> 规格：`ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`；名册：`designflow/live_eval_review_<A|B|C|D>.tsv`（116/126/137/121 = 500）。
+
+| 项 | 约定 |
+|:--|:--|
+| **谁做** | designflow 4 shard **各自只审自己的槽位**（`lite_health_all.tsv` 的 `owner_shard`）；A 兼汇总人（`designflow/live_eval_summary.md`） |
+| **三分类** | `LIVE-REQ`（判分实质依赖真实工具产物 → **必须**升 `L2.live`）/ `LIVE-OPT`（可增强非必需）/ `LIVE-NA`（deliverable 本身是文本，保持 `[L0,L1]` 但须写本质问依据） |
+| **新增判据** | **mock 桩体检**：自写假工具（`hspice_mock`/`finesim_mock`/伪 tcl 桩）若「按模板造对形状、物理量全错」也能判过 ⇒ 记 `LIVE-REQ`。旧 P4 关键词结论**不作数**，一律复验 |
+| **改造手法** | 非侵入包装：原 `check`→`_check_static_impl` 一字不动 + `check_static` 收口 + 新增 `check_live` + `check()` 兼容 + `judge_layers` 加 `L2.live` + test sha 同步 |
+| **只增不减** | 断言条数只增不减、阈值不放宽、条件不删；🚫 为「好跑」把 required 降 optional、🚫 把实跑断言包 `try/except: pass` |
+| **🔴 冻结窗口** | zhulong 正在跑 Lite-500 3-run（`run/MEMORY_ZHULONG.md` 首行）⇒ 期间**只读审视可做，🚫 落盘改 `check.py`/`cases`**；解冻唯一凭据 = 该文件首行出现 r3' 收口 |
+| **口径变更** | 任何 `judge_layers` 变更 = **口径变更**，收口后由 A 汇总报 zhulong，**重跑与否由 zhulong 定**；🚫 shard 自行宣布新基线 |
+| **infra 纪律** | `.75` 缺工具/许可/超时 ⇒ 记 `infra`（铁律 2），`LIVE-REQ` 降级 `LIVE-OPT` + 写 `BLOCKED: 缺 <具体项>`；🚫 写成能力结论、🚫 伪装 `LIVE-NA` |
+
+
 
 ---
 

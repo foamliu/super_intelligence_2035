@@ -1,5 +1,15 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> ## 🔬 2026-11-26 18:5x 用户令 · Lite-500 逐条「实跑评估」审视 · 最高优先（造题/扩池让位）
+>
+> **用户原话**：「安排 designflow 4 agent 对 lite-500 中自己的 Case 进行审视，按需进行『实跑评估』改造」。
+> **完整规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`。
+> **本 shard 名册**：`designflow/live_eval_review_C.tsv`（**137 条**，只勾这份，🚫 不改别人清单）。
+> **重点**：存量 L2.live 已 16 条；旧 P4 判 `T1=6 已闭合 / T2=16 待审 / T3=115`，本轮**重判全部 137 条**，先审那 16 条 T2（virtuoso / pyAether / calibre 家族），逐条按规格 §2.1 判「桩体检 Q2 会不会被骗」；`T3` 需写明本质问依据。注意 A r1292 先例：pyAether 沙盒缺 `dbCreateLabel`/`dbGetInstByName`/`dbGetPinShapes` ⇒ 这类只能留 L1-boundary，须显式声明理由。
+> **🔴 冻结窗口**：zhulong r3' 正在跑（ETA ≈ 11-27 00:08）⇒ **R1 只读审视可立即做**；🚫 落盘改 `reference/*/check.py` 或 `cases/*.json` 必须等 `run/MEMORY_ZHULONG.md` 首行出现 r3' 收口（见规格 §1.1）。
+> **心跳**：MEMORY 顶部一行 `LIVE: C review=<n>/137 · REQ=<a>(done <b>) · OPT=<c>(done <d>) · NA=<e> · L2.live 16→<g>`。判据/禁止事项见规格 §5 §7（断言与阈值只增不减）。
+
+
 > ## 🚀 2026-11-26 运维令 · 开始判分契约改造（check_static/check_live 拆分） · 最高优先（Lite-500 全绿后接续）
 >
 > **背景**：Lite-500 已 4 shard 全绿（507/507），zhulong 正在跑 3-run 验收。8670 服务已修复（16 worker 并发秒级），L2.live 实跑通路就绪。现在开始判分契约改造。
