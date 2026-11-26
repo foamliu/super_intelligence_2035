@@ -1,6 +1,40 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
+> 🆕 **用户令 · 2026-11-26 (F) — 本地 build 升级 7-harness + cline 降本组合 + SWE-bench Verified doubao-pro 7-way 重做**
+>
+> **用户原话**：「安排 Harness 本地 build 升级 7-harness（没有开源的就直接装最新版），对于 cline 则采用"关掉 checkpoint、思维链等级设为 low、压缩机制设为 basic"这个降本组合，用 SWE-bench Verified + doubao-pro 重做 7-way 评测」
+>
+> **7 个 harness 升级清单**（源码已在 `/nas_train/app.e0031982/harness/` 下，已 git pull 到最新）：
+>
+> | Harness | 源码路径 | 当前版本 | 升级后版本 | 升级方式 |
+> |:--|:--|:--|:--|:--|
+> | cline | `/nas_train/app.e0031982/harness/cline` | 3.0.51 | 3.0.76 | `bun install && bun -F @cline/cli build`，然后 `bun link`（apps/cli） |
+> | codex | `/nas_train/app.e0031982/harness/codex` | 0.94.0 | 0.172.0 | `npm install -g @openai/codex@0.172.0`（⚠️ 0.95+ 改用 Responses API，需测 gw_proxy 兼容性） |
+> | opencode | `/nas_train/app.e0031982/harness/opencode` | 1.18.27 | 2.4.1 | 源码 build：`bun install && bun run build`，更新全局链接 |
+> | claude-code | `/nas_train/app.e0031982/harness/claude-code` | 2.1.197 | 2.1.332 | `npm install -g @anthropic-ai/claude-code@2.1.332` |
+> | hermes | `/nas_train/app.e0031982/harness/hermes-agent` | git.0e21933 | git.e0dcc39 | 源码已 pull，重新安装（`pip install -e .` 或按项目方式 rebuild） |
+> | pi | `/nas_train/app.e0031982/harness/pi` | 0.2.15 | 1.6.1 | 源码 build：`bun install && bun run build`，更新全局链接 |
+> | deepseek-harness | `/nas_train/app.e0031982/harness/deepseek-harness` | 0.1.5rc1 | 0.2.2rc2 | `pip install --target /nas_train/app.e0031982/harness_work/dsh_sdk deepseek-harness-sdk`（阿里镜像有 0.2.2rc2） |
+>
+> **cline 降本组合**（已在 `run_single.py` + `run_harness.py` 改好）：
+> - `--compaction basic`
+> - `--thinking low`
+> - checkpoint 已在源码 `defaults.ts:25` 关闭（`enabled: false`）
+>
+> **执行步骤**：
+> 1. 按上表逐个升级 7 个 harness，每个升级后验证 `--version` 或 `--help` 能跑
+> 2. 升级完成后，用 `launch_doubao_7way.sh` 启动 SWE-bench Verified 500 题 × 7 路 × doubao-pro 评测
+> 3. **删除旧 doubao-pro predictions**（`predictions_doubao_pro/` 下的所有文件），全新开始
+> 4. predict 完成后 eval + 生成报告（`gen_report_doubao_pro_7way.py`）
+> 5. 报告中包含各 harness **升级后的版本号**
+>
+> **纪律**：
+> - 一次只做一个任务：先升级，再评测
+> - 升级时如果某个 harness build 失败，记录错误，跳过该 harness 继续下一个，不要卡住
+> - codex 0.95+ 的 Responses API 变化：如果 codex 升级后与 gw_proxy 不兼容，先记录问题，降回 0.94.0 继续评测
+> - 不碰 MM、不碰其他线
+
 > ✅ **用户令 · 2026-11-26 (E) — 停止 cline 重跑，停下待命** · ✅ 已闭环
 >
 > **用户原话**：「先不开 TB，让 harness 看到令就杀掉 cline 重跑，停下待命」
