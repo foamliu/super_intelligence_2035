@@ -1,0 +1,17 @@
+from sklearn.mixture import GaussianMixture
+from numpy.testing import assert_array_equal
+import numpy
+X = numpy.random.randn(1000,5)
+print('no n_init')
+gm = GaussianMixture(n_components=5)
+c1 = gm.fit_predict(X)
+c2 = gm.predict(X)
+assert_array_equal(c1,c2)
+print('✓ passed: no n_init')
+print('n_init=5')
+gm = GaussianMixture(n_components=5, n_init=5)
+c1 = gm.fit_predict(X)
+c2 = gm.predict(X)
+assert_array_equal(c1,c2)
+print('✓ passed: n_init=5')
+print('All tests passed!')
