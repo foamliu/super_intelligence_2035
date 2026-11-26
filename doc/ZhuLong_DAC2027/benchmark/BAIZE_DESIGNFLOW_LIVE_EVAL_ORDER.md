@@ -96,7 +96,9 @@
 - 通路：`eda_flow` MCP `open_session` → `run_commands`；记录 **hostname / RC / wall_s**；session 用完即关。
 - 现成真工具（`/apps/synopsys/SRB/`）：`hspice` / `finesim` / `vcs` / `vlogan` / `hspice64`；`calibre` / `icv` 视可达性；`virtuoso` / `pyAether` 走 `ae.*` 代理（注意 A r1292 先例：`dbCreateLabel`/`dbGetInstByName`/`dbGetPinShapes` 在 .75 pyAether 沙盒**不存在**）。
 - **缺工具/许可/超时 ⇒ 记 `infra`**（铁律 2），写进 tsv `live_evidence`；🚫 不得写成「能力不足」、🚫 不得据此下模型结论。
-- **预算**：审视轮（纯静态读）**20–30 条/轮**；实跑改造 **≤3 条/轮**（每条 5–15 min）；🚫 并发轰炸 `.75`、🚫 起大批量 `run_batch`。
+- **预算**：审视轮（纯静态读）**20–30 条/轮**；实跑改造 **A/C/D ≤3 条/轮**（每条 5–15 min），**B ≤ 6–8 条/轮**（2026-11-26 用户批准：B 的 40 条 Type A 高度同族，可批处理）。
+  - B 放宽的**前提**（缺一即回落 ≤3）：① 批内**逐条独立自验**——每条都要单独跑 ref PASS + ≥3 neg FAIL distinct + live-neg，🚫 不许「一条验过、六条顺带放行」；② 单轮 wall **≤ 90 min**（超了就停，剩下的留到下一轮，🚫 硬顶）；③ `.75` **严格串行**（open→跑→关，🚫 并发多 session）；④ 某条首次 `check_live` 不通过 ⇒ 该条当轮降级记 `BLOCKED`，🚫 拖累整批。
+- 🚫 并发轰炸 `.75`、🚫 起大批量 `run_batch`。
 - **确定性**：同一 case 连跑 3 次产物 md5 一致，才允许把该产物写进 `check_live` 断言；不一致先修确定性再改判分。
 
 ---
@@ -141,7 +143,7 @@
 | 轮 | 内容 | 产出 |
 |:--|:--|:--|
 | **R1** | 读 `live_eval_review_<shard>.tsv` 全量，逐条静态重判三分类（**只读、不落盘判分**） | tsv verdict 填满 + REQ 清单 + 缺口台账 + 心跳行 |
-| **R2…Rn** | 按 REQ 优先级逐条改造（**≤3 条/轮**）；先做「桩体检判为 REQ」的家族（B: hspice/finesim-mock；C: virtuoso/calibre；D: pyAether/hspice_mock；A: vcs/vlogan） | 每条：check_live + live-neg + §5 七项全勾 |
+| **R2…Rn** | 按 REQ 优先级逐条改造（**A/C/D ≤3 条/轮**；**B ≤6–8 条/轮**，见 §4 前提）；先做「桩体检判为 REQ」的家族（B: hspice/finesim-mock；C: virtuoso/calibre；D: pyAether/hspice_mock；A: vcs/vlogan） | 每条：check_live + live-neg + §5 七项全勾 |
 | **收口** | REQ 全绿 + OPT 有结论 + NA 有依据 | 报 A → A 汇总 → 报 zhulong（口径变更候选） |
 
 > **优先级口径**：`LIVE-REQ` > `LIVE-OPT` > 新造题。`LIVE-NA` 条目不占轮次（R1 写完理由即结束）。
