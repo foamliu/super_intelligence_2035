@@ -1355,3 +1355,5 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795245585227_iwrr4	xydou	hfeg0plg69	483	physical_verify	case	EDA-Eval-DesignFlow-CalDrcDeckLint-001	2026-11-26 18:16	
 1795329849230_2slkf	e0039786	hfhds201	200	layout_virtuoso	case	EDA-Eval-DesignFlow-ParaCellLayoutAssembler-001	2026-11-26 18:56	
 1795589069443_4bz6d	xxchen	hfeg0pkn003	781	physical_verify	case	EDA-Eval-DesignFlow-RectSizeSchematicFix-001	2026-11-26 23:26	
+1795583544010_u03z0.messages.json	xxchen	hfeg0pkn003	1795583544010_u03z0	physical_verify	claimed		2026-11-26 23:31	
+1795585155081_qikhb.messages.json	xxchen	hfeg0pkn003	1795585155081_qikhb	physical_verify	parked		2026-11-26 23:39	distinct refactor task (msg#391: split 1099-line examples.py into per-function auto-discovery package) BUT asset too large for single-round self-contained synth (52KB examples.py + _prims + function_group + renderer palette deps; 42 draw fns). Would need scope reduction or multi-round. Park for now. r1239
