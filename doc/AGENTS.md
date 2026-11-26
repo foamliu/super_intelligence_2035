@@ -323,6 +323,7 @@
 | **新增判据** | **mock 桩体检**：自写假工具（`hspice_mock`/`finesim_mock`/伪 tcl 桩）若「按模板造对形状、物理量全错」也能判过 ⇒ 记 `LIVE-REQ`。旧 P4 关键词结论**不作数**，一律复验 |
 | **改造手法** | 非侵入包装：原 `check`→`_check_static_impl` 一字不动 + `check_static` 收口 + 新增 `check_live` + `check()` 兼容 + `judge_layers` 加 `L2.live` + test sha 同步 |
 | **只增不减** | 断言条数只增不减、阈值不放宽、条件不删；🚫 为「好跑」把 required 降 optional、🚫 把实跑断言包 `try/except: pass` |
+| **实跑预算** | A/C/D **≤3 条/轮**；**B ≤6–8 条/轮**（2026-11-26 用户批准，前提：逐条独立自验 / 单轮 wall ≤90 min / `.75` 严格串行 / 单条失败降级不拖批） |
 | **主辅关系** | **designflow 为主、zhulong 评测为辅**（2026-11-26 用户裁定）⇒ **不设等待**，随时可改判分；唯一额外动作 = 往 `designflow/live_eval_changes.tsv` 登记一行（`ts/shard/case_id/变更/jl_before/jl_after/commit/reason`） |
 | **口径变更** | 任何 `judge_layers` 变更 = **口径变更**（改时登记即可，🚫 不需请示）；zhulong 每轮 run 记 `repo_commit`，跨改动的 run 标 `MIXED` **不入 3-run 统计**；🚫 shard 自行宣布新基线 |
 | **infra 纪律** | `.75` 缺工具/许可/超时 ⇒ 记 `infra`（铁律 2），`LIVE-REQ` 降级 `LIVE-OPT` + 写 `BLOCKED: 缺 <具体项>`；🚫 写成能力结论、🚫 伪装 `LIVE-NA` |
