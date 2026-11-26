@@ -426,3 +426,24 @@ def check_live(sess):
   - ⑦ L5 不退化：hidden-B 由 check_live 从 workdir/hidden 上传 sess.workdir（不进 SUT 沙箱）；`check_live` 不读 `reference/`；forbidden-list 阻 reference/negative/hidden 入 SUT。
 - **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`，commit `553134735`）。
 - **心跳**：`LIVE: B review=126/126 · REQ=40(done 5) · OPT=8(done 0) · NA=76 · L2.live 4→5`。
+
+### R2 改造 #6: DffSetupHoldChar-001 (2026-11-27 r1299)
+- **家族**：hspice-mock (deck-driven)，Type A Q2-cheatable（候选自建 setup/hold testbench deck，可注入「D 不翻转」物理破坏）。
+- **Q2 实证（r1299）**：cheat char_gen.py 在 `build_setup_tb` 中将 `t_d_rise = tstop + 1.0`（D 翻转时刻远超仿真结束），deck 仍带正确签名（`* setup_tb tsu_lead=<X>` 首行注释 + `VVDD vdd 0 <vdd>`）⇒ `_check_static_impl` **14/14 PASS 假阳**（mock 仅按 `setup_tb`/`hold_tb` 注释 + VVDD 行查表回放 REF_B/REF_A GT，**不校验 VDIN stimulus 翻转 / DFF 网表 / .measure 语义**）。真 hspice V-2023.12-SP1-1 @ hfhds201：D 永不翻转 → Q 卡在 .ic=0 → vq_setup≈0 (< vthr=0.7) → 无 passing setup point → tSU=None/tCQ=None → cond (i) FAIL。
+- **Q1 保真实证**：真 hspice ref 全量扫描（11 setup + 10 hold = 21 跑）B：tSU=5e-12 / tCQ=9.83877e-11（**== mock REF_B 逐位一致**）/ tH=0 / hspice_ran=true / n_setup=11 / n_hold=10；A：tSU=1e-11 / tCQ=1.300134e-10（vs REF_A=1.289142e-10，0.85%）；cross-input |tSU_B-tSU_A|/tSU_A=50% / |tCQ_B-tCQ_A|/tCQ_A=24% 均 >5%。
+- **改造手法（非侵入包装，照 §3）**：
+  1. 原 `check` → `_check_static_impl`（一字不动，14 断言 a-n + mock + `_summarize` raise/return True）。
+  2. `check_static` try/except 收口三元组。
+  3. 新增 `check_live(deliverable, workdir, sess)`：上传 submit.zip 解出 char_gen.py + hidden B（dff_B.sp/params_B.json）+ visible A（dff_A.sp/params_A.json）到 sess.workdir → .75 跑候选 `python3 char_gen.py dff_B.sp params_B.json out`（真 hspice 在 PATH，候选 `_ensure_hspice` 检测到真 hspice 不装 mock）+ 同样跑 A → 读真实 `out/result.json` → 复用 `json.loads` → 断**同物理量同阈值**（cond h hspice_ran / i tSU∈[2e-12,8e-12] / j tCQ within 20% of REF_B / k tH==0/None / l required keys / m cross-input |B-A|>5% / n n_pts>=8，阈值全同静态，只增不减）。不读 `reference/`、不读隐藏 GT 文件（用嵌入 REF_B/REF_A grader 常量，同 `_check_static_impl`）。
+  4. `check()` 兼容包装 + `__main__` 块（供 negative_selftest subprocess 调用取 STATIC_VERDICT/first-fail）；`judge_layers=["L0","L1","L2.live"]`；JSON `test` 与磁盘 `check.py` sha 三方同步（`9257274fff98`，21451B）。
+  5. **live-neg** = `negative/cheat_no_drise/char_gen.py`：`build_setup_tb` 设 `t_d_rise=tstop+1.0`（D 不翻转）⇒ 静态全过（mock 回放 GT）/ 实跑 cond (i) FAIL（tSU=None）。`negative/negative_selftest.py` 重写（SpiceSim 模式：STATIC_NEGATIVES 7 条 subprocess check.py 取 first-fail distinct + LIVE_NEG cheat_no_drise static-pass/live-fail via EDASession + S4.9 trio distinct）。
+- **§5 七项自验（全勾）**：
+  - ① `.75` 真跑 ref（L2.live）PASS：`hostname=hfhds201`，hspice V-2023.12-SP1-1，B tSU=5e-12/tCQ=9.83877e-11（==mock REF_B，Q1 保真），A tSU=1e-11/tCQ=1.300134e-10，cross-input 50%/24%>5%。
+  - ② 7 static neg FAIL distinct（{b,c,d,g,h,i,m}=7-distinct）+ 1 live-neg（cheat_no_drise：static PASS 14/14 / live FAIL cond(i) tSU=None）。
+  - ③ 3-seed 确定性：真 hspice 对同 deck 确定性（ref tCQ=9.83877e-11 == mock GT 逐位，Q1 run 复现）；candidate 全量扫描参数固定 ⇒ result.json 确定性。
+  - ④ 静态判分仍 PASS：`check_static(ref)` → PASS 14/14（实跑层独立，不拖垮静态）。
+  - ⑤ `judge_layers`/JSON `test`/磁盘 `check.py` sha 三方同步（`9257274fff98`）。
+  - ⑥ 断言只增不减：`_check_static_impl` 原文未改一字；`check_live` 新增 7 条同阈值实跑断言（h-n）。
+  - ⑦ L5 不退化：hidden-B 由 check_live 从本地 workdir/hidden 读取并 upload_text 到 sess.workdir（不进 SUT 沙箱）；`check_live` 不读 `reference/`；SKIP_RUN deploy 自检 workdir clean（无 check.py/reference/hidden 泄漏）。
+- **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
+- **心跳**：`LIVE: B review=126/126 · REQ=40(done 6) · OPT=8(done 0) · NA=76 · L2.live 5→6`。
