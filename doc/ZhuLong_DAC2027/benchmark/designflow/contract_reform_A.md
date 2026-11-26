@@ -233,3 +233,30 @@ P1/P2/P3/P4 全闭合后首轮回归 spot-check。确认 r1274/r1275 判分逻�
 ### 纪律
 - 🚫 未改 case/check.py/negative/prompt/assets/hidden/别 shard
 - ✅ 两仓 0/0 ahead/behind clean
+
+## §r1277 — P1 L2.live 确定性修复（emyLiveProbe 非确定性根因）
+
+**背景**：r1274/r1276 报 P1=4/4 L2.live PASS，但本轮逐 case 复跑发现 **FindPcells-001 与 PyAetherCurDesignApi-001 的 L2.live 是非确定性 PASS**——只在 `emyInitAether('-adv')` 恰好失败（license/超时）时通过，init 成功时 FAIL。r1274/r1276 的 PASS 是侥幸（恰好赶上 init 失败 ⇒ `aeGetCurDesign()` 返回 None ⇒ graceful 路径）。
+
+**根因**：`.75` sandbox 从不打开真实用户 design。`emyInitAether('-adv')` 成功时会加载默认 `emyLiveProbe` 对象（`AeDelLiveLib/AeDelProbeCell/abstract`），`aeGetCurDesign()` 返回该 truthy probe（非 `emyDesign`）：
+- `aeCloseDesign()` 无法关闭它（probe 仍在）。
+- FindPcells 参考 gold `design.block` ⇒ `AttributeError: 'emyLiveProbe' object has no attribute 'block'` ⇒ `LIVE_UNEXPECTED` ⇒ FAIL。
+- PyAetherCurDesignApi 参考 gold + judge 都调 `aeDesignIsSchematic(real_design)` ⇒ `TypeError: argument 1 of type 'emyDesign *'` ⇒ `LIVE_EXC` ⇒ FAIL。
+- RtlDesignScenarioBoot-001 / -v2 不受影响（probe 只检 `emyInitAether` + `hasattr(pyAether, api)` API 存在性，不依赖 design 状态）。
+
+**修复**（strategy-1 结构探针，不依赖真实 design，确定性）：
+- **FindPcells-001** check_live：`code` 探针改为 (a) `import find_pcells` under real pyAether (b) `aeGetCurDesign`/`mdeGetCurrentLibCellView`/`dbCheckIsPCell` 在 .75 真存在且可调用 (c) 候选源码引用这三个 API；`main()` 改 best-effort 遥测（无真实 design 时无法区分真假）。断言 (m_live.import)/(m_live.api_real)/(m_live.api_use)。
+- **PyAetherCurDesignApi-001** check_live：`code` 探针改为 (a) 候选 `import pyAether` + 编译 (b) `aeGetCurDesign`/`aeDesignIsSchematic` 真存在可调用 (c) 源码引用两 API (d) 候选定义 `get_current_design()` 且可调用（design-state `TypeError`/`AttributeError` on 默认 probe 视为 graceful）。断言 (m_live.load)/(m_live.api_real)/(m_live.api_use)/(m_live.fn)。修了一处 `%`-format 冲突（`'%s' %` 在 `) % (cand_remote,)` 内 → 改字符串拼接）。
+- 两 case 的 `test` 字段 sha 重新同步。check_static 一字未动（断言逻辑/条数/严格度不变）。
+
+**自验**（每 case 跑 2 次确认确定性）：
+| case_id | L0+L1 check_static(ref) | L2.live check_live(ref) x2 | negatives |
+|:--|:--|:--|:--|
+| FindPcells-001 | PASS ✅ | PASS ✅ / PASS ✅ | 4 negs 全 FAIL ✅ |
+| PyAetherCurDesignApi-001 | PASS ✅ | PASS ✅ / PASS ✅ | 5 negs 全 FAIL ✅ 5-distinct{c,h,i,j,l} |
+| RtlDesignScenarioBoot-001 | PASS ✅ | PASS ✅ / PASS ✅ | (未改, r1274 已验) |
+| RtlDesignScenarioBoot-001-v2 | PASS ✅ | PASS ✅ / PASS ✅ | (未改, r1274 已验) |
+
+**影响范围**：仅 shard A 2 个 P1 pilot case 的 check_live 探针（+ test 字段同步）。🚫 未改 check_static 断言/strictness/prompt/assets/hidden/case JSON test 外字段/别 shard。RtlDesign 两 case 原本即确定性（API 存在性探针）无需改。
+
+**教训**：L2.live "graceful path" 策略（依赖 `aeGetCurDesign()` 返回 None）在 .75 sandbox 不可靠——init 成功即加载默认 emyLiveProbe。后续 P2 check_live 凡依赖 design 状态的应改用 strategy-1 结构探针（API 名/签名/源码引用），或显式开一个真实 design 再判。NetCellMap-001/SvIntegrateGen-001（r1275 P2）走真 vcs/vlogan elaborate 不依赖 aeGetCurDesign，不受此问题影响。
