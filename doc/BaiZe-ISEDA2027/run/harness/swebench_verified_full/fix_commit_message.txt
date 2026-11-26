@@ -1,0 +1,10 @@
+FIX IndexError in export_text when tree has only one feature
+
+The bug occurred when building the feature_names_ list: leaf nodes have
+tree.feature = TREE_UNDEFINED (-2), which would try to access feature_names[-2]
+when there is only one feature, causing an IndexError.
+
+The fix checks if the feature index is TREE_UNDEFINED before indexing into
+feature_names, using None for leaf nodes (which are never accessed anyway).
+
+Fixes #<issue_number>
