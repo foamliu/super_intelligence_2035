@@ -3945,3 +3945,15 @@
 | 2026-11-26 | 华为陈海波：设计鸿蒙一大重要考虑是性能，以「全栈熵减」实现终端性能持续提升 | IT之家 `1/032/499` | news（第 354 轮 · §6） | https://www.ithome.com/1/032/499.htm |
 | 2026-11-26 | 商汤大装置 × 逐际动力：以 SenseCore 支撑机器人仿真训练与测试（厂商稿） | 量子位 `512683` | 附录（第 354 轮 · tool/PR） | https://www.qbitai.com/2026/11/512683.html |
 | 2026-11-26 | 「我以为这是摄影作品…」商汤 SenseNova U1.6 二次报道（与第 347 轮同模型） | 量子位 `512748` | 附录（第 354 轮 · 重复主题） | https://www.qbitai.com/2026/11/512748.html |
+
+| 2026-11-26 | 谷歌 DeepMind 质谱 Mass Spec Skills 识别准确率不足4%→约97% | IT之家 | https://www.ithome.com/1/032/535.htm |
+| 2026-11-26 | 黎曼猜想形式化证明 1740万行→7.6万行 降99.56% | 量子位 | https://www.qbitai.com/2026/11/512819.html |
+| 2026-11-26 | OpenAI 开测私有推理 零窥探AI 少数企业客户 | IT之家 | https://www.ithome.com/1/032/543.htm |
+| 2026-11-26 | 纽约州暂停联网AI聊天玩具销售5年 每日最高罚1.5万美元 | IT之家 | https://www.ithome.com/1/032/540.htm |
+| 2026-11-26 | 哈萨克斯坦首次利用人工智能起草法案 | 中新网 | https://www.chinanews.com.cn/gj/2026/11-26/10737869.shtml |
+| 2026-11-26 | 三部委新一代通信网方案 大小模型协同网络运维 | IT之家 | https://www.ithome.com/1/032/562.htm |
+| 2026-11-26 | 韩国 Detect AI 考场反作弊 识别AI智能眼镜 12月9日首秀 | IT之家 | https://www.ithome.com/1/032/542.htm |
+| 2026-11-26 | Neuralink 获美国首个植入式脑机接口关键性临床试验批文 | IT之家 | https://www.ithome.com/1/032/551.htm |
+| 2026-11-26 | ElevenLabs 洽谈新融资 目标估值330亿美元 | IT之家 | https://www.ithome.com/1/032/548.htm |
+| 2026-11-26 | FCC批准SpaceX部署最多100万颗数据中心卫星 Starmind | IT之家 | https://www.ithome.com/1/032/546.htm |
+| 2026-11-26 | 哈萨克斯坦首次利用人工智能起草法案 | 中新网 | https://www.chinanews.com.cn/gj/2026/11-26/10737869.shtml |
