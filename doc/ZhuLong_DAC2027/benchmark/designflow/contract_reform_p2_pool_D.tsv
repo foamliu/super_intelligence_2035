@@ -1,0 +1,111 @@
+case_id	subclass	indicator_flags	check_py_size
+OpenDmViewsProduce-001	api	{'pyAether-import': 8}	11217
+AeDelCellCurCellProduce-001	api	{'pyAether-import': 3}	13653
+WtmWriteCheckReviewQA-001	api	{'pyAether-import': 2}	16128
+AutoPR-001	api	{'pyAether-import': 1}	10282
+DirectivePairAudit-001	api	{'pyAether-import': 1}	14526
+ExprLogicCheck-001	api	{'pyAether-import': 1}	24790
+FindCir4CrossProbe-001	api	{'pyAether-import': 1}	16547
+FullAdderSchemBuild-001	api	{'pyAether-import': 1}	10963
+LvsConnDiagnose-001	api	{'pyAether-import': 1}	12961
+McpSseApiDocParseProduce-001	api	{'pyAether-import': 1}	6320
+SelFigReport-001	api	{'pyAether-import': 1}	9988
+TrMatchHelper-001	api	{'pyAether-import': 1}	8184
+VerdictJoinPassLib-001	api	{'pyAether-import': 1}	19200
+IddRegTestFramework-001	sim-keyword	{'hspice': 2, 'finesim': 23}	25296
+SimSetupFolderAnalysisQA-001	sim-keyword	{'hspice': 15, 'finesim': 3}	31747
+SpStimLoopAudit-001	sim-keyword	{'finesim': 13}	14713
+SramButterfly-001	sim-keyword	{'hspice': 13}	19800
+DumWLDeckExplainQA-001	sim-keyword	{'hspice': 7, 'finesim': 2}	21430
+IOBufTune-001	sim-keyword	{'hspice': 8, 'subprocess-eda': 1}	14561
+OpenWaveFmt-001	sim-keyword	{'finesim': 9}	7927
+CdsLibNetlistInventory-001	sim-keyword	{'spectre': 8}	20105
+BtopPoststressJobs-001	sim-keyword	{'finesim': 7}	16467
+SimSpGen-001	sim-keyword	{'hspice': 2, 'finesim': 5}	10817
+FineSimJobMonitorImproveQA-001	sim-keyword	{'hspice': 3, 'finesim': 3}	9045
+InvPulseStimTb-001	sim-keyword	{'spectre': 6}	16639
+RasNetlistAnalyze-001	sim-keyword	{'hspice': 6}	16777
+SpiceIbisConvMethodQA-001	sim-keyword	{'hspice': 2, 'finesim': 2, 'spectre': 1, 'virtuoso': 1}	10553
+FineSimDeckReport-001	sim-keyword	{'finesim': 5}	13351
+FinesimAutoRun-001	sim-keyword	{'finesim': 5}	9445
+FinesimFsdbReaderSkillExplainQA-001	sim-keyword	{'finesim': 5}	14804
+VamCellReco-001	sim-keyword	{'finesim': 5}	9693
+FinesimSyntaxDiagQA-001	sim-keyword	{'hspice': 1, 'finesim': 3}	10256
+GuiScriptExplainQA-001	sim-keyword	{'hspice': 2, 'finesim': 2}	15181
+SpiceOptionAudit-001	sim-keyword	{'finesim': 4}	13139
+AgingStepDirSplit-001	sim-keyword	{'hspice': 1, 'finesim': 2}	9389
+AplmmxDanglingIncDiagQA-001	sim-keyword	{'finesim': 3}	12703
+FineSimWarnAnalysisQA-001	sim-keyword	{'finesim': 3}	13712
+RasFuncExplainQA-v2	sim-keyword	{'hspice': 3}	17242
+SimFailDiagnose-001	sim-keyword	{'finesim': 3}	20890
+SxProbeGen-001	sim-keyword	{'finesim': 3}	11816
+TempThreshChar-001	sim-keyword	{'finesim': 3}	12047
+VamCosimEnvBuild-001	sim-keyword	{'finesim': 3}	11171
+CtleTranPower-001	sim-keyword	{'hspice': 2}	13328
+DQTXStim-001	sim-keyword	{'hspice': 1, 'finesim': 1}	7973
+DlyBiasnBatchDeckGen-001	sim-keyword	{'finesim': 2}	11583
+DominoPVTsweep-001	sim-keyword	{'finesim': 2}	17743
+FifoTbStimGen-001	sim-keyword	{'hspice': 2}	8432
+FineSimDataParse-001	sim-keyword	{'hspice': 1, 'finesim': 1}	13088
+FinesimIgnoreGen-001	sim-keyword	{'hspice': 1, 'finesim': 1}	9911
+FinesimMcConvert-001	sim-keyword	{'finesim': 2}	10756
+FinesimPstlayCrashDiagQA-001	sim-keyword	{'finesim': 2}	10295
+FsdbMeasRunGen-001	sim-keyword	{'finesim': 2}	8380
+InvCSOpt-001	sim-keyword	{'hspice': 1, 'finesim': 1}	14026
+LDOCircuitIdentQA-001	sim-keyword	{'spectre': 2}	11296
+LFSRCircuitIdentQA-001	sim-keyword	{'hspice': 2}	11833
+MBistAnalyze-001	sim-keyword	{'hspice': 2}	31758
+MBistTopoExplainQA-v2	sim-keyword	{'hspice': 2}	15713
+NetPathHL-001	sim-keyword	{'virtuoso': 2}	11762
+NetPrefixHighlight-001	sim-keyword	{'virtuoso': 1, 'subprocess-eda': 1}	11903
+ProfCellReco-001	sim-keyword	{'finesim': 2}	13643
+RefactorInnovSummaryQA-001	sim-keyword	{'hspice': 1, 'finesim': 1}	15261
+RonSmoothnessGen-001	sim-keyword	{'finesim': 2}	16955
+SchematicMOSHilite-001	sim-keyword	{'virtuoso': 2}	8933
+SiInpTokenStrip-001	sim-keyword	{'finesim': 2}	14758
+SkillScriptComprehensionQA-001	sim-keyword	{'virtuoso': 2}	13363
+VmMcStatOrganize-001	sim-keyword	{'finesim': 2}	11503
+WaveformStagePartitionQA-001	sim-keyword	{'finesim': 2}	12784
+SaSlicerSizingPlan-001	sim-keyword	{'finesim': 2}	9847
+BitcellMcSpGen-001	sim-keyword	{'hspice': 1}	8299
+BitlinePrechargeRootCauseQA-001	sim-keyword	{'finesim': 1}	23264
+CapPropsCalc-001	sim-keyword	{'subprocess-eda': 1}	18685
+CellPrefixExtract-001	sim-keyword	{'hspice': 1}	13674
+CompressNetlistToggle-001	sim-keyword	{'subprocess-eda': 1}	12142
+ConnFileNetChk-001	sim-keyword	{'finesim': 1}	17287
+CrcAlertMeasFix-001	sim-keyword	{'finesim': 1}	5607
+DqTrtfMeasure-001	sim-keyword	{'finesim': 1}	9414
+DriverTrace-001	sim-keyword	{'subprocess-eda': 1}	23918
+FineSimLicDcmatchDiagQA-001	sim-keyword	{'finesim': 1}	12106
+FineSimWorkflow-001	sim-keyword	{'finesim': 1}	9354
+GenRunFuncExplainQA-001	sim-keyword	{'finesim': 1}	11562
+InvSpiceSim-001	sim-keyword	{'hspice': 1}	16939
+IpPortRuleAuditQA-001	sim-keyword	{'virtuoso': 1}	7518
+LFGatingCircuitFindQA-001	sim-keyword	{'hspice': 1}	12380
+MeasTranSamplerGen-001	sim-keyword	{'hspice': 1}	11431
+Mt0Period1tVerbatimXlsx-001	sim-keyword	{'finesim': 1}	9609
+NetlistIOPinLogicCheck-001	sim-keyword	{'hspice': 1}	13722
+NetlistMasterDiag-001	sim-keyword	{'virtuoso': 1}	13143
+NetlistStructDiff-001	sim-keyword	{'hspice': 1}	11344
+PexNodeCapExtract-001	sim-keyword	{'subprocess-eda': 1}	15653
+PowerSupplyHierInventory-001	sim-keyword	{'subprocess-eda': 1}	20587
+PvtPwrWinAvg-001	sim-keyword	{'finesim': 1}	28736
+RcVizTool-001	sim-keyword	{'virtuoso': 1}	28810
+RonMismatchMd0-001	sim-keyword	{'finesim': 1}	8797
+SpTestbenchParamFix-001	sim-keyword	{'finesim': 1}	21199
+SpfTriggerMonitor-001	sim-keyword	{'finesim': 1}	11456
+SpiceClosureExtract-001	sim-keyword	{'finesim': 1}	11532
+SpiceDeckGen-001	sim-keyword	{'hspice': 1}	15226
+SvwfHierExpand-001	sim-keyword	{'subprocess-eda': 1}	13061
+Tcs0PatAnalyze-001	sim-keyword	{'finesim': 1}	9824
+TempParamReforge-001	sim-keyword	{'finesim': 1}	10677
+TopoReconstructExtract-001	sim-keyword	{'subprocess-eda': 1}	13577
+TotemScFinesimDepsQA-001	sim-keyword	{'finesim': 1}	9108
+VscForceInsert-001	sim-keyword	{'finesim': 1}	9844
+WaveCmpScriptAnalysisQA-001	sim-keyword	{'finesim': 1}	8721
+Wr2dqEdgeMeas-001	sim-keyword	{'finesim': 1}	11735
+Wr4thCkMeas-001	sim-keyword	{'finesim': 1}	12417
+WvNetVIDisplayQA-001	sim-keyword	{'finesim': 1}	12347
+FinesimMtxCmdAgentProduce-001	sim-keyword	{'finesim': 1}	10502
+FsdbMeasRun-001	sim-keyword	{'hspice': 1}	13550
+NetlistUlvtDelvtoInject-001	sim-keyword	{'hspice': 1}	12900
