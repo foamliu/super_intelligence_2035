@@ -1,42 +1,32 @@
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
-import matplotlib.colors as colors
+import pandas as pd
+from matplotlib.dates import AutoDateFormatter, DateFormatter
 
-# Test the fix with all masked array
-data = np.full((5, 5), -1, dtype=np.float64)
-mask = np.ones_like(data, dtype=bool)  # All masked
-resampled_masked = np.ma.masked_array(data, mask)
+np.random.seed(1)
+matplotlib.rcParams["text.usetex"] = True
 
-# Create LogNorm with vmin=1, vmax=1e20
-norm = colors.LogNorm(vmin=1, vmax=1e20)
-print(f"vmin={norm.vmin}, vmax={norm.vmax}")
+dates = pd.date_range("2020-01-01 00:00:00", end="2020-01-01 00:10:00", periods=100)
+data = np.random.rand(100)
 
-# This used to raise ValueError("Invalid vmin or vmax")?
-try:
-    result = norm(resampled_masked)
-    print("✓ No error raised!")
-    print(f"Result is all masked: {result.mask.all()}")
-except ValueError as e:
-    print(f"✗ Error raised: {e}")
+# Test 1: Default formatter (what's broken)
+fig, ax = plt.subplots(constrained_layout=True)
+ax.plot(dates, data)
+fig.canvas.draw()
+print("=== Default formatter ===")
+for tick in ax.xaxis.get_major_ticks():
+    print(f"Label: {tick.label1.get_text()}, Width: {tick.label1.get_window_extent().width}")
+plt.savefig("test_default.png")
+plt.close()
 
-# Test with some valid values
-data = np.full((5, 5), -1, dtype=np.float64)
-data[0:2, :] = 1e20
-mask = data < 1
-resampled_masked = np.ma.masked_array(data, mask)
-try:
-    result = norm(resampled_masked)
-    print("\n✓ No error raised with partial valid values!")
-    print(f"Result shape: {result.shape}")
-    print(f"Valid values: {result[~result.mask]}")
-except ValueError as e:
-    print(f"\n✗ Error raised with partial valid values: {e}")
-
-# Test with invalid vmin
-print("\n--- Testing with invalid vmin (0) ---")
-norm_invalid = colors.LogNorm(vmin=0, vmax=1e20)
-data = np.array([1, 10, 100])
-try:
-    result = norm_invalid(data)
-    print("✓ No error raised! All masked? {np.ma.is_masked(result)}")
-except ValueError as e:
-    print(f"✗ Error raised: {e}")
+# Test 2: Explicit DateFormatter without math mode
+fig, ax = plt.subplots(constrained_layout=True)
+ax.plot(dates, data)
+ax.xaxis.set_major_formatter(DateFormatter("%d %H:%M"))
+fig.canvas.draw()
+print("\n=== Explicit DateFormatter ===")
+for tick in ax.xaxis.get_major_ticks():
+    print(f"Label: {tick.label1.get_text()}, Width: {tick.label1.get_window_extent().width}")
+plt.savefig("test_explicit_formatter.png")
+plt.close()
