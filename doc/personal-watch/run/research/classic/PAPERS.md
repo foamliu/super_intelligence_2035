@@ -7531,3 +7531,48 @@
 | 与我们工作的关系 | **vision（主 · 视觉骨干）**：patch 序列 + 纯 Transformer 是视觉塔选型必须列的基线；「大规模预训练后才超过 CNN」这一前提直接决定我们的图文对规模门槛。<br>**pretrain（次 · 模态统一）**：视觉与文本共用同一 Transformer 骨架，便于把视觉塔并入统一预训练配方与并行切分方案。<br>**data（次 · 预训练数据量）**：摘要明确「在大量数据上预训练」是成立条件，数据配比实验须把视觉 token 量与图像数一起记账。<br>**zhulong（次 · 成本口径）**：论文的「算力显著更少」指**训练**口径，推理侧 patch 数（分辨率）才是主成本项，须分开测。<br>**harness / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百二十一轮 · 12:00 时窗） |
 | 核验状态 | abs 页 **`200` / 44,035 B**，`citation_title` + `citation_date` 逐字 + `comments` 明文；OpenAlex **`200`**（71,599 / 2020 / `preprint`，查询日 2026-11-26）。patch 序列 / 纯 Transformer / 大规模预训练 / ImageNet·CIFAR-100·VTAB / 训练算力显著更少均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`2010.11929` 在 `PAPERS.md` 中 **0 条现有条目**（仅他条正文引用），非重复。 |
+
+## 432. ProGen2: Exploring the Boundaries of Protein Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ProGen2: Exploring the Boundaries of Protein Language Models |
+| 作者（前 3） | Erik Nijkamp · Jeffrey Ruffolo · Eli N. Weinstein（+ Nikhil Naik et al.；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（v1 `2022/06/27`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **Cell Systems（2023）**（abs 页无 `comments`；OpenAlex 该 DOI `type=article`、source = *Cell Systems*、`publication_year=2023`） |
+| 被引数 | **746**（OpenAlex `10.48550/arXiv.2206.13517`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2206.13517> ｜ `10.48550/arXiv.2206.13517` |
+| 一句话贡献 | 把蛋白语言模型放大到 **6.4B 参数**，在来自基因组 / 宏基因组 / 免疫库的**逾十亿条蛋白序列**的不同数据分布上训练（ProGen2 系列）；在「刻画已观测演化序列分布」「生成新的可行序列」「无需额外微调预测蛋白适应度」三项上达当时 SOTA；结论强调：当模型规模与原始序列量都变得易得时，**数据分布**应成为重点。 |
+| 与我们工作的关系 | **data（主 · 领域语料分布）**：同样是「规模上去后，数据分布比再堆参数更重要」的证据，可支撑我们把 2B 主干的配比实验从「多收」转向「按分布分层抽样」。<br>**pretrain（次 · 规模律）**：6.4B / 十亿级序列的缩放实证，是多模态之外「科学序列」的对照点；注意其任务与自然语言不同，不能直接套 token/参数比。<br>**harness（次 · 零样本适应度）**：无微调的 fitness 预测是「生成式预训练 → 下游判别」的零样本基线，可作为我们 harness 里「不微调能到什么程度」的参照。<br>**vision / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十二轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,625 B**，`citation_title` + `citation_date` 逐字（无 `comments`）；OpenAlex **`200`**（746 / 2023 / `article` / Cell Systems，查询日 2026-11-26）。6.4B / 十亿级蛋白 / 三项 SOTA / 数据分布结论均取自 arXiv 官方摘要逐字核，未做 PDF 表格复核。条目级查重：`2206.13517` 在 `PAPERS.md` **0 命中**。**纠错记录**：候选原拟「ESM-2」，实测 abs 为 ProGen2 ⇒ **按实测收录，不按记忆写**。 |
+
+## 433. Neural Discrete Representation Learning（VQ-VAE）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Neural Discrete Representation Learning |
+| 作者（前 3） | Aaron van den Oord · Oriol Vinyals · Koray Kavukcuoglu（arXiv `citation_author` 逐字核；3 位） |
+| 年份 | **2017**（v1 `2017/11/02`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **NeurIPS 2017**（abs 页无 `comments`；OpenAlex `type=conference-paper`、source = *neural information processing systems*） |
+| 被引数 | **7,685**（OpenAlex `10.48550/arXiv.1711.00937`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1711.00937> ｜ `10.48550/arXiv.1711.00937` |
+| 一句话贡献 | 提出 **VQ-VAE**：编码器输出**离散码**而非连续码，且**先验是学出来的**而非固定；用**向量量化（VQ）**学离散潜表示，从而绕开「后验坍缩」（latent 被强大自回归解码器忽略）；把离散表示配自回归先验后，可生成高质量图像 / 视频 / 语音，并做音色转换与无监督音素学习。 |
+| 与我们工作的关系 | **vision（主 · 视觉 tokenizer）**：离散码 + 可学先验是「视觉塔 → 离散 token → 统一自回归/Transformer」路线的源头；我们若把版图/波形离散成 token，必须处理码本坍缩与码本利用率。<br>**pretrain（次 · 目标函数）**：VQ 目标 = 重建 + 码本 + commitment 三项，是「表征学习 + 生成」联合目标的经典分解。<br>**designflow（次 · 结构化离散化）**：把连续几何离散成有限符号表，与版图格点/层分配的离散化同构；码本大小是可预注册的容量轴。<br>**data（次 · 词表）**：离散码本等价于领域词表，码本利用率是数据覆盖的代理指标。<br>**zhulong / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十二轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,214 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（7,685 / 2017 / `conference-paper` / NeurIPS，查询日 2026-11-26）。离散码 / 可学先验 / VQ / 后验坍缩 / 图像-视频-语音结果均取自 arXiv 官方摘要逐字核，未做 PDF 公式复核。条目级查重：`1711.00937` 在 `PAPERS.md` **0 命中**（一作 Aäron van den Oord 已在作者网 #391，本论文本身未收）。 |
+
+## 434. Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow |
+| 作者（前 3） | Xingchao Liu · Chengyue Gong · Qiang Liu（arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（v1 `2022/09/07`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICLR 2023**（abs 页无 `comments`；OpenAlex `type=conference-paper`、source = *International Conference on Learning Representations*、`publication_year=2023`） |
+| 被引数 | **4,707**（OpenAlex `10.48550/arXiv.2209.03003`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2209.03003> ｜ `10.48550/arXiv.2209.03003` |
+| 一句话贡献 | 提出 **rectified flow**：学一个（神经）ODE，把经验分布 `π0` 输运到 `π1`，尽量沿**连接两分布采样点的直线路径**；用一个**非线性最小二乘**问题求解，不引入超出标准监督学习的新参数；直线路径可用**无需时间离散**的方式精确模拟 ⇒ 推理高效；证明「rectification」把任意耦合变成**凸输运成本不增**的确定性耦合，递归应用可得越来越直的流，粗时间离散也能准确模拟；图像生成与图生图在**单步 Euler**下即得高质量结果。 |
+| 与我们工作的关系 | **vision（主 · 生成/翻译）**：单步或少步生成对视觉生成与图生图是直接的成本优势；可作为 diffusion/flow 路线的对照基线。<br>**designflow（次 · 分布输运）**：域迁移（示意图域 ↔ 版图域）本质是分布输运，rectified flow 给出「确定耦合 + 成本不增」的可证性质，适合预注册。<br>**zhulong（次 · 成本口径）**：**NFE 与步数**是独立于参数量的成本轴；「单步 Euler 可用」必须与质量指标同时报，不能只报速度。<br>**pretrain（次 · 目标）**：非线性最小二乘回归向量场，可作为「回归式生成目标」与 ELBO/分数匹配并列的第三类。<br>**data / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百二十二轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,078 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（4,707 / 2023 / `conference-paper` / ICLR，查询日 2026-11-26）。直线路径 / 无时间离散 / rectification / 凸成本不增 / 单步 Euler 均取自 arXiv 官方摘要逐字核，未做 PDF 定理复核。条目级查重：`2209.03003` 在 `PAPERS.md` **0 命中**。 |

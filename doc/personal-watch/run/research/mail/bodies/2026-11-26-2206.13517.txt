@@ -1,0 +1,16 @@
+Beste heer Nijkamp,
+
+I am Yang Liu, a researcher working on LLM agents; my work is at https://foamliu.github.io/. Your ProGen2 study is the clearest evidence I know that, once scale is available, the data distribution rather than the raw sequence count decides protein-model quality. That is exactly the trade-off we face when allocating a ~2B-token budget across heterogeneous technical corpora.
+
+Three questions:
+
+1. Among genomic, metagenomic, and immune-repertoire sources, which distributional axis did your ablations show to matter most, and was there a proxy measurable before training that predicted downstream fitness?
+2. At 6.4B you could afford breadth. At roughly a third of that compute, would you add more unique sequences or reweight existing ones, and what ablation would settle it?
+3. For zero-shot fitness prediction without finetuning, which baselines would you insist on before accepting a gain (e.g., retrieval from the training set, or likelihood-only ranking)?
+
+Answers would directly shape our corpus-allocation and zero-shot evaluation protocol.
+
+Thank you for the models and the released code.
+
+Best regards,
+Yang Liu

@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-26 15:0x · r269）**：作者 **401** 人（编号最大 **401**）· X 已核验 **159**（本轮 **+1**：`@erik_nijkamp` 由本人主页 <https://eriknijkamp.com/>（`200` / 35,936 B）外链 `twitter.com/erik_nijkamp` + 代理抓 `x.com/erik_nijkamp` `200` / 180,555 B，`og:title` = `Erik Nijkamp (@erik_nijkamp) on X` ⇒ 双源）· 已发信 **184**（台账 #1–#184；今日 **12/12**，已达每日硬上限）· 实质回信 **7 位作者 / 8 封信**（**口径更正**：11-14 起「0 回信」是测量失败；2026-11-26 15:0x 首次 IMAP 只读核出 9 封来信，详见 `mail/replies/README.md`）· 退信 **8**。本轮 **+3**：Qiang Liu（Rectified Flow 资深作者，中文，主页反爬空格明文 `lqiang@cs.utexas.edu` ⇒ 已发信 #183）· Erik Nijkamp（ProGen2 一作，荷兰语称谓+英文，主页 `mailto:` 百分号编码解出 `enijkamp@ucla.edu` + X 双源 ⇒ 已发信 #184）· Chengyue Gong（Rectified Flow 二作，中文，主页明文 `chengyueg@wustl.edu` ⇒ 仅建档，同论文已发资深作者）。
 > **当前计数（2026-11-26 12:0x · r268）**：作者 **398** 人（编号最大 **398**）· X 已核验 **158**（本轮 **+2**：`@RickyTQChen` 由本人主页 <https://rtqichen.github.io/>（`200` / 36,752 B）外链 `twitter.com/RickyTQChen` + 代理抓 `x.com/RickyTQChen` `200` / 188,658 B，`og:title` = `Ricky T. Q. Chen (@RickyTQChen) on X` ⇒ 双源；`@giffmana` 由本人主页 <https://lucasb.eyer.be/>（`200` / 100,956 B）外链 `twitter.com/giffmana` + 代理抓 `x.com/giffmana` `200` / 186,636 B，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X` ⇒ 双源；Max Welling `@wellingmax` 仅 X 页单源（43,074 followers，UvA 页无 X 外链）⇒ 记「待核」、不计入已核验）· 已发信 **182**（台账 #1–#182；今日 **10/12**）· 回信 **0**（0/182；已回复 0 / 无应答>14d 21 / 未到期 161）。本轮 **+3**：Max Welling（VAE 末位作者，荷兰语称谓+英文正文，UvA 页明文 `m.welling@uva.nl` ⇒ 已发信 #181）· Ricky T. Q. Chen（Neural ODE 一作，中文，本人主页明文 gmail + X 双源 ⇒ 已发信 #182）· Lucas Beyer（ViT 二作，德文姓名，无公开邮箱、X 双源 ⇒ 仅建档）。**去重记录**：VAE 一作 Diederik Kingma 已在 #99 / #363 建档，本轮不重复新增。
 > **当前计数（2026-11-26 09:1x 补轮 · r267）**：作者 **395** 人（编号最大 **395**）· X 已核验 **156**（本轮 **+1**：`@junyanz89` 由 GitHub 个人页 <https://github.com/junyanz> 经代理 `200` 外链 `twitter.com/junyanz89` + 代理抓 `x.com/junyanz89` `200` / 211,715 B，`og:title` = `Jun-Yan Zhu (@junyanz89) on X`、`description` = `… Associate Professor (on leave) at … @CarnegieMellon` ⇒ 双源；Lvmin Zhang `x.com/lllyasviel` 实为 `julian gomez` 他人、Mingxing Tan `x.com/MingxingTan` 为 0 followers 空账号 ⇒ 均记「未找到 X」，不猜）· 已发信 **180**（台账 #1–#180；今日 **8/12**）· 回信 **0**（0/180；已回复 0 / 无应答>14d 21 / 未到期 159）。本轮 **+3**：Jun-Yan Zhu（CycleGAN 一作，中文，本人主页明文 `junyanz at cs dot cmu dot edu` + X 双源 ⇒ 已发信 #179）· Lvmin Zhang（ControlNet 一作，中文，本人主页明文 `lvmin AT cs.stanford.edu` ⇒ 已发信 #180）· Mingxing Tan（EfficientNet 一作，中文，`mingxingtan.com` 两路 `000`、GitHub 无邮箱、PDF 无邮箱 ⇒ 仅建档、不发信）。
 > **当前计数（2026-11-26 09:0x · r266）**：作者 **392** 人（编号最大 **392**）· X 已核验 **155**（本轮 **+2**：`@tkipf` 由本人主页 <https://tkipf.github.io/>（`200` / 20,897 B）外链 `twitter.com/tkipf` + 代理抓 `x.com/tkipf` `200` / 185,469 B，`og:title` = `Thomas Kipf (@tkipf) on X`、`description` = `Research at @GoogleDeepMind…` ⇒ 双源；`@sedielem` 由本人主页 <https://sander.ai/>（`200` / 533,520 B）外链 `x.com/sedielem` + 代理抓 `x.com/sedielem` `200` / 194,071 B，`og:title` = `Sander Dieleman (@sedielem) on X`、`description` = `Research Scientist at Google DeepMind (WaveNet…)` ⇒ 双源；Aäron van den Oord `@avdnoord` 仅 X 页单源（`200` / 183,301 B）无本人主页二次核 ⇒ 记「待核」、不计入已核验）· 已发信 **178**（台账 #1–#178；今日 **6/12**）· 回信 **0**（0/178；已回复 0 / 无应答>14d 21 / 未到期 157）。本轮 **+3**：Thomas N. Kipf（GCN 一作，英文，主页无明文邮箱 ⇒ 仅建档，X 双源）/ Aäron van den Oord（WaveNet + PixelRNN 一作，荷兰姓名，无本人主页 / 无公开邮箱 ⇒ 仅建档，X 单源待核）/ Sander Dieleman（WaveNet 二作，荷兰语，本人主页明文 `sanderdieleman@gmail.com` + X 双源 ⇒ 已发信 #178，荷兰语称谓 + 英文正文）。
@@ -5627,3 +5628,42 @@
 | X 账号 | **`@giffmana`**（本人主页外链 `twitter.com/giffmana` + 代理抓 `x.com/giffmana` `200` / **186,636 B**，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X` ⇒ 双源；本轮 X +1） |
 | 状态 | **待跟踪**（无公开邮箱 / X 已核验） |
 | 备注 | 语言=德语称谓+英文正文(判据=德文姓名族属 Beyer)。视觉骨干 / 大规模视觉预训练方向作者。当前无邮箱不发；待有可核地址再问「ViT 在中小规模图文对上何时开始输给 CNN」等。 |
+
+### 399. Qiang Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Qiang Liu（拼音名；汉字未核，不猜）（`语言=中文(判据=华人姓名族属 Liu Qiang)`） |
+| 机构 | **University of Texas at Austin**（Computer Science，Associate Professor；本人主页 2026-11-26 在线） |
+| 代表论文 | **Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow**（`2209.03003`，B 轨 #434，末位作者 / 资深） |
+| 邮箱 | **`lqiang@cs.utexas.edu`**（本人主页 <https://www.cs.utexas.edu/~lqiang/> `HTTP 200` / **12,333 B**，页内反爬空格明文 `lqiang @ cs.utex as .edu` ⇒ 还原；另有 `qiang.liu.research@gmail.com`，本次未用；**A 级**） |
+| 主页 | <https://www.cs.utexas.edu/~lqiang/>（`200` / 12,333 B） |
+| X 账号 | **未找到 X**（主页仅有 `x.com/s` 分享链接，无本人 handle；不猜） |
+| 状态 | **已发信**（#183，2026-11-26 15:07） |
+| 备注 | 语言=中文(判据=华人姓名族属 Liu Qiang；🚫 未因美国机构 / 英文论文 / 英文邮箱判英文)。生成模型 / 输运 / 变分推断方向。问题见 `mail/drafts/2209.03003.md`：① 有限样本下递归 rectification 的直度/曲率在线判据；② 条件生成下步数与 NFE/约束满足率双轴；③ 支撑不重叠时的模式塌缩诊断。主页明确写「请不要直接 email 我」的是招生申请语境，本次为论文技术请教，不违反。 |
+
+### 400. Erik Nijkamp
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Erik (Lennart) Nijkamp（荷兰姓名；`语言=荷兰语称谓+英文正文(判据=荷兰姓名族属 Nijkamp)`） |
+| 机构 | **UCLA**（主页邮箱域为 `ucla.edu`；X bio 仍写 `Director at Salesforce Research`，可能未更新，如实并存） |
+| 代表论文 | **ProGen2: Exploring the Boundaries of Protein Language Models**（`2206.13517`，B 轨 #432，一作） |
+| 邮箱 | **`enijkamp@ucla.edu`**（本人主页 <https://eriknijkamp.com/> `HTTP 200` / **35,936 B**，`mailto:` 为百分号编码 `%65%6E%69%6A%6B%61%6D%70@%75%63%6C%61%2E%65%64%75` ⇒ 解码；**A 级**） |
+| 主页 | <https://eriknijkamp.com/>（`200` / 35,936 B；title = `Erik Lennart Nijkamp`） |
+| X 账号 | **`@erik_nijkamp`**（主页外链 `twitter.com/erik_nijkamp` + 代理抓 `x.com/erik_nijkamp` `200` / **180,555 B**，`og:title` = `Erik Nijkamp (@erik_nijkamp) on X`、`og:description` = `Director at Salesforce Research \| Generative Models - CodeGen, ProGen, XGen LLMs.` ⇒ 双源；本轮 X +1） |
+| 状态 | **已发信**（#184，2026-11-26 15:07） |
+| 备注 | 语言=荷兰语称谓+英文正文(判据=荷兰姓名族属 Nijkamp；🚫 未全文荷兰语，避免敬语写错)。蛋白语言模型 / 科学序列生成方向。问题见 `mail/drafts/2206.13517.md`：① 哪个数据分布轴最要紧、有无训练前可测代理；② 1/3 算力下扩唯一序列还是重加权；③ 零样本 fitness 预测必须对照哪些基线。 |
+
+### 401. Chengyue Gong
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chengyue Gong（拼音名；汉字未核，不猜）（`语言=中文(判据=华人姓名族属 Gong Chengyue)`） |
+| 机构 | **Washington University in St. Louis**（主页邮箱域 `wustl.edu`；具体职级未核） |
+| 代表论文 | **Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow**（`2209.03003`，B 轨 #434，二作） |
+| 邮箱 | **`chengyueg@wustl.edu`**（本人主页 <https://chengyuegong.github.io/> `HTTP 200` / **10,704 B**，页内 `mailto:` 明文；**A 级**） |
+| 主页 | <https://chengyuegong.github.io/>（`200` / 10,704 B） |
+| X 账号 | **未找到 X**（主页无 X 外链；不猜） |
+| 状态 | **待跟踪**（同一论文已发资深作者 #183，守「同一论文 ≤1」；本轮不发） |
+| 备注 | 语言=中文(判据=华人姓名族属 Gong Chengyue；🚫 未因美国机构判英文)。生成模型 / 扩散与流方向。若需追问同一论文，可在 #183 回复后再联系。 |
