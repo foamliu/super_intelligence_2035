@@ -225,3 +225,71 @@ r1289 把 47 条 sim_mock 一律按「deck-driven 桩→Q2 可骗→REQ」处理
   Type B 复核是否亦过粗（疑似 B 候选：CTLESpec 已改；待核 NetlistLintHsp/PostsimPortAudit/PostsimToggleDiag/
   CdlBulkSanitize/MinpulseRewriteRun 等「checker/lint/audit」语义 case）。
 - 心跳：`LIVE: B review=126/126 · REQ=46(done 0) · OPT=2(done 0) · NA=76 · L2.live 0→0`（REQ 47→46，OPT 1→2）。
+
+---
+
+## R1 Type A/B 全量再复核（2026-11-26 r1291 · 仍只读）
+
+> 🔴 冻结窗口仍未解冻（r3' 54.2% @ wake#2065，ETA ~23:58 Nov-26 / ~00:12 Nov-27）。
+> 本轮在 r1290 的 Type A/B 区分框架基础上，对全部 46 条 REQ 逐条核 `run_candidate` 传参 +
+> mock keying + cross-input guard，完成 A/B 分类。只读：仅改 `live_eval_review_B.tsv`
+> 的 verdict/reason/evidence 列 + 本节，🚫 未碰 `reference/*/check.py` / `cases/*.json`。
+
+### 方法
+
+对每条 REQ case，在 check.py 中查三信号：
+1. **候选收什么**：`subprocess.run([sys.executable, <cand>, ...])` 的参数 —— 传 spec+cell/netlist+params（候选**自建** deck → Type A）vs 传 tb/deck/netlist 文件路径（候选**跑给定** deck → Type B）。
+2. **mock key 什么**：GT 回放键 —— 候选-authored deck 签名（`.param`/`.inc`/stimulus，Type A 可骗）vs provided deck/netlist 身份（Type B 不可骗）。
+3. **cross-input guard**：有无 cond 在 A 输入上 rerun 候选并要求 GT_A（强制真跑+解析，挡 hardcode）。
+
+### 分类结果
+
+| 类型 | 候选角色 | Q2 garbage-physics 骗法 | 数量 |
+|:--|:--|:--|--:|
+| **A 候选自建/改写 deck** | harness 读 spec+cell/netlist+params → 生成/改写 deck → 跑 sim | **成立**：造对签名、网表全错，桩回放 GT → 假阳 | 41 |
+| **B 候选跑给定 deck** | checker 传 provided deck/netlist → 候选跑 sim+解析/log+查 spec | **不成立**：候选不造网表、不能 hardcode GT（SUT 瞎）、桩==真工具对该 deck | 5 |
+
+### Type B → OPT 变更（5 条 · r1291）
+
+r1290 仅识别 CTLESpec-001（finesim-mock）。本轮全量复核再发现 5 条同模式（候选跑给定 deck，无 authorship）：
+
+| case | mock 家族 | 候选收 | cross-input guard | 依据 |
+|:--|:--|:--|:--|:--|
+| NetlistLintHsp-001 | hspice-mock | provided netlist.sp | conds j/k: candidate first_error_line/msg == judge INDEPENDENT _judge_hspice(bnet_tmp) | 候选 lint provided netlist，不能注入网表；mock==真 hspice 对该 broken netlist |
+| PostsimToggleDiag-001 | finesim-mock | provided b_net | cond k: rerun on A -> stuck==GT_A | GT_B/GT_A 固定 dict 按 provided netlist 身份回放；候选不能 hardcode（SUT 瞎） |
+| PostsimPortAudit-001 | finesim-mock | provided B_DECK/B_NETLIST/B_SPF/B_SPEC | cond m: cross-input A guard | 候选 audit provided 文件，不产 deck |
+| SimExpl-001 | finesim-mock | provided baseline_b + bloated_b | vout_final proves real sim ran | 候选跑 provided decks，解析 .log counts；不能 fake vout_final |
+| RcurrDirClassify-001 | hspice-mock | provided rdir_B.sp（含 .measure） | cond j: B names!=A names pkneg diff>5%; cond k: rerun A->GT_A; cond l: real hspice log | GT 按 provided netlist 电阻名 keyed；候选不能注入网表 |
+
+> 5 条均同 CTLESpec-001 模式（r1290 已实证分析）：候选跑给定 deck，mock==真工具对该 deck，候选既不产物理也无法 hardcode GT，judge 有 cross-input 牙。
+> 判据信号：`run_candidate`/`_run_cand` 传 **deck/netlist 文件路径**（Type B）vs 传 **spec+cell/params**（Type A）。
+
+### Type A 维持 REQ（41 条 · 待 R2 改造）
+
+41 条 sim_mock 的候选**自建或改写**被仿真的 deck（harness 读 spec+cell/netlist+params/config → 生成 .alter/.tran deck → 跑 mock sim）。
+桩 deck-driven 按 `.param`/`.inc`/stimulus 签名查表回放 GT，**不校验**候选写的网表拓扑/`.measure` 语义/器件尺寸。
+AOI21ArcChar-001（r1290）已实证：garbage-netlist+正确签名 → 13/13 PASS 假阳。此手法可推广到全部 Type A。
+
+**Type A 41 条清单**（按家族）：
+- hspice-mock: AOI21ArcChar(r1290实证), AlterDeckSplit, CmlPvtAcReport, CtleAcChar, DelayChainEdgeMeas, DelaySigma, DffSetupHoldChar, GmidLut, GrDecPwrVerifTb, InvPVTchar, InvTripDelay, OpampACSpec, OpampChar, PFDdeadZone, PVTalterChar, PlatMosThinIdsatIoffSweep, PorCapSweep, PwlStimTransform, SlicerFbTimeOpt, SpGen, SpiceSim, SpiceTbGen, SramSNM, StdLibCharTmpl, StimPWL, StrongarmFomSweep, TaperBufOpt, Tr0TrTfMeas, TxRonSize, Vcc2scActDeckGen, Vcc2scTranGen, VcoKvcoChar, VlshftParamOpt, VwlpRefDeckSet, CdlBulkSanitize(borderline), MinpulseRewriteRun(borderline)
+- finesim-mock: BistOscRccReorder, CTLEAC, FineSimModelScopeFix, FineSimNoRefCktFix, FineSimWorkflowRunner
+
+**borderline 注记（仍归 Type A · 保守）**：
+- CdlBulkSanitize-001：候选 sanitize provided CDL → sanitized_b.cdl 被 check.py 建 tb 仿真。mock 解析候选 CDL 结构（查 PMOS+NMOS+common-drain）+ 假设理想反相器（vin>vpwr/2→out=_MLOW else _MHIGH）。conds c-h 约束候选保留 d/g/s 顺序+.SUBCKT+bulk rail。候选可改 W/L（param token 不被 c-h 检）但静态反相器 high/low 对 W/L 不敏感 ⇒ 真hspice 亦出 ~0/~VPWR。lean Type B 但保守归 REQ，R2 改造时再做 empirical cheat 验证。
+- MinpulseRewriteRun-001：候选 rewrite `.inc` 路径 in provided deck → rewritten deck 被 mock 仿真。mock 解析 `.inc`+balanced parens+statement 结构。候选 authorship 有限（路径替换非电路设计）。lean Type B 但保守归 REQ。
+- FineSimModelScopeFix/FineSimNoRefCktFix/FineSimWorkflowRunner-001：「fix」语义：候选改写 provided broken deck → fixed deck 被 mock 仿真。候选 author fixed deck content ⇒ 可注入 garbage physics（造对 fix 签名但网表错）⇒ Type A。
+
+### 与 r1290 的差异
+
+| 项 | r1290 | r1291 | 依据 |
+|:--|:--|:--|:--|
+| REQ 合计 | 46 | **41** | 5 条 Type B 降 OPT（全量 run_candidate 传参复核） |
+| OPT 合计 | 2 | **7** | +NetlistLintHsp/PostsimToggleDiag/PostsimPortAudit/SimExpl/RcurrDirClassify |
+| Type A/B 区分 | AOI21(A实证)+CTLESpec(B分析) | 全量 46 条分类完成 | 逐条核 run_candidate 传参 + mock keying + cross-input guard |
+
+### 待办（R2 前置 / 解冻后）
+
+- R2 改造 Type A 41 条（≤3/轮）：拆 check_static/check_live + judge_layers 加 L2.live + live-neg。
+- 优先序：hspice-mock 家族（GT 签名维度少 + 网表候选可控 = 最易被骗）→ finesim-mock 家族。
+- CdlBulkSanitize/MinpulseRewriteRun 两条 borderline 在 R2 改造前各做 1 次 empirical cheat 验证（造 shape-right-physics-wrong 提交跑 check.py），确认是否真 Type A。
+- 心跳：`LIVE: B review=126/126 · REQ=41(done 0) · OPT=7(done 0) · NA=76 · L2.live 0→0`。
