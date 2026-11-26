@@ -424,3 +424,45 @@ P1/P2/P3/P4 全闭合后首轮回归 spot-check。确认 r1274/r1275 判分逻�
 4. 收口后报 zhulong（口径变更：2 条升 L2.live）。
 **🚫 冻结窗口内不落盘 check.py/cases；本节为只读设计，r1313。**
 
+---
+
+## R2 check_live 设计 .75 实跑验证（r1317 · 冻结窗口内 · 只读 · 不改判分）
+
+> **背景**：冻结窗口仍活（zhulong r3' 进行中），但 `.75`+`eda_flow` MCP 与 zhulong 无关（§1.2 资源表），可在不碰主树判分文件的前提下，把 REQ-1（VpsRegrErrorEngineer-001）的 check_live 设计**对照真 vcs 跑一遍**，验证 Q1（mock 语义保真）/ Q2（live-neg 牙）是否成立，为解冻后 R2 落盘去风险。**本轮未改任何 check.py / cases / negative / assets / hidden / 主树**；仅在 .75 隔离 session 内跑真 vcs + 在本设计文档记证据。
+
+### 验证方法
+- `eda_flow open_session`（task_id=VpsRegrLiveVal, eval_id=r1317-liveval-20261126, user=designflowA）→ workdir on .75（hfhds201）。
+- 上传 spec_A 的 17 个资产文件（5 verilogrun_A/*.sh + 10 rtl_A/* + libs_A/simlib_base.sv + libs_A.bak/simlib_base.svp）—— **不**上传 engineer.py，直接复刻 check_live 的「apply_mod + 跑真 vcs + 分类」逻辑。
+- 对 5 个 case 按 spec `mod` 改写 .sh（**不**前置 mock PATH export ⇒ 命中真 vcs）：swap_svp=`sed s#libs_A/simlib_base.sv#libs_A.bak/simlib_base.svp#`；strip_noerror=`sed s#+define+SUPPRESS_ERR120343 ##`。
+- `sh mod_<case>.sh` 跑真 vcs，捕 rc + log，按 check.py `classify()` 同款规则分类（`Error-[SE]`→error1 / `Error-[URMI]`→error2 / rc=0→pass）。
+- 验 `Chronologic VCS (TM)` banner 证真二进制跑过（非 mock/非 echo）。
+
+### 实跑结果（.75 hfhds201 · vcs R-2020.12 @ /apps/synopsys/SRB/vcs/R-2020.12/bin/vcs · wall 3.66s 全 5 case · license OK）
+
+| case | mod | rc | vcs log marker | 分类 | spec 期望 |
+|:--|:--|--:|:--|:--|:--|
+| ddr5_addr_dec | swap_svp | 255 | `Error-[SE] Syntax error` + `Chronologic VCS (TM)` | error1 | error1 ✓ |
+| ddr5_wl_train | swap_svp | 255 | `Error-[SE] Syntax error` + `Chronologic VCS (TM)` | error1 | error1 ✓ |
+| ddr5_rd_gate  | swap_svp | 255 | `Error-[SE] Syntax error` + `Chronologic VCS (TM)` | error1 | error1 ✓ |
+| ddr5_dq_crc   | strip_noerror | 255 | `Error-[URMI] Unresolved modules` + `Chronologic VCS (TM)` | error2 | error2 ✓ |
+| ddr5_ref_ctrl | strip_noerror | 255 | `Error-[URMI] Unresolved modules` + `Chronologic VCS (TM)` | error2 | error2 ✓ |
+
+**真 vcs ground-truth distribution = error1:3 / error2:2 / pass:0 == spec expected_distribution 3/2/0 ✓**
+
+### Q1 mock 语义保真 —— CONFIRMED（无 divergence）
+真 vcs 对 5 case 的分类（swap_svp→error1/SE，strip_noerror→error2/URMI）与参考解 `_VCS_MOCK` 的预测**逐 case 一致**，无 `MOCK_DIVERGENCE`。⇒ mock 是忠实的简化，case 本身健康（非「题坏了」），R2 改造不会触发 §1.4 TODO(BLOCKED)。mock 仅覆盖 SE/URMI 两类，真 vcs 对本资产也只产这两类 ⇒ 简化无损。
+
+### Q2 live-neg 牙 —— CONFIRMED（静态过/实跑错正交）
+live-neg 注入：候选用 `echo "Error-[URMI] ... unresolved module"`（伪造 swap_svp case 报 error2）+ 伪造 report 匹配 ⇒ check_static cond(h) 重跑该假 .sh 得伪造 marker → 分类匹配伪造 report ⇒ **静态全过**；但 check_live step3 真 vcs ground-truth 为 error1(SE) ⇄ 候选 report 报 error2(URMI) ⇒ **MISMATCH FAIL**。注入点与静态正交，牙确认。
+
+### §5 七项预检（解冻后落盘时逐项复验，本轮已预证 ①③⑤雏形）
+- ① **ref 真 vcs PASS**：本轮已证 distribution 3/2/0 == spec，banner 在 ⇒ check_live(ref) 必 PASS（解冻后落盘 check_live 复跑确认）。
+- ③ **3-seed 确定性**：vcs 编译对同输入确定性（本轮 5 case 同输入同分类），wall 3.66s ⇒ 3-seed 廉价可跑，解冻后验 md5。
+- ⑤ **judge_layers/test/check.py sha 三方同步**：解冻后落盘时同步。
+- ②④⑥⑦：解冻后落盘时验。
+- 额外：本轮确认 `.75` vcs 通路就绪（which vcs ✓ / R-2020.12 / hfhds201 / license OK / 秒级），R2 落盘无 infra 阻塞。
+
+### 结论
+REQ-1（VpsRegrErrorEngineer-001）check_live 设计**经真 vcs 实跑验证成立**：Q1 mock 保真 ✓ / Q2 live-neg 牙 ✓ / 真 vcs ground-truth == spec ✓ / 通路就绪 ✓。解冻后 R2 落盘为**低风险机械执行**（非侵入包装 + live-neg + sha 同步 + §5 ②④⑥⑦ 复验），无需再设计。REQ-2（TotemSC-001 · 真 finesim）待同类验证（r1310 已确认 finesim @ /apps/synopsys/SRB/ 在 .75 PATH）。
+**🚫 本轮未改 check.py / cases / negative / assets / hidden / 主树 / jsonl。仅 .75 隔离 session 实跑 + 本设计文档记证据。冻结窗口未解冻。**
+
