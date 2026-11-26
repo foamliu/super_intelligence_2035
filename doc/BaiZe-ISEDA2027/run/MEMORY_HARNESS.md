@@ -1,6 +1,16 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 0
+WAITING: 1
+> 🆕 **用户令 · 2026-11-26 (E) — 停止 cline 重跑，启动 TerminalBench-2.1 7-way 评测（doubao-pro）**
+>
+> **用户原话**：「安排 harness 把 cline 重跑停掉。启动 terminalbench-2.1 7-way 评测 模型=doubao-pro」
+>
+> **执行步骤**：
+> 1. 停止 cline-patched predict 进程（`pkill -f "run_verified_full.py predict --harness cline-patched"`）
+> 2. 启动 TerminalBench-2.1 7-way 评测，模型 = doubao-seed-2.0-pro-cloud，7 个 harness 并行，89 题
+> 3. 复用现有 `run_serial_kimi.py` + `launch_glm53_7x300.sh` 架构，改模型为 doubao-pro，gw_proxy 用 doubao key + /cloud upstream（已在运行 9090/9091/9092）
+> 4. predict 完成后 eval + 报告
+
 > 🆕 **用户令 · 2026-11-26 — cline 配置修正 + 重新 predict cline 路 + 报告已更新**
 >
 > **用户原话**：「确认 cline 配置是否：关掉 checkpoint、思维链等级设为 low、压缩机制设为 basic 这个降本组合」「在报告表格中包含各 harness 版本号，把 cline-patched 改成 zhulong(cline-patched)」
