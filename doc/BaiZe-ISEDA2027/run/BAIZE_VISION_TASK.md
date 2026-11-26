@@ -1,36 +1,34 @@
 # BAIZE_VISION_TASK.md
 
-### 🔴 用户令 · 2026-11-24 14:3x（合成波形数据调研 + SFT/RL 路线探索）
+### 🔴 用户令 · 2026-11-26 08:0x（自主探索·千方百计推进·没事就去调研）
 
-> **背景**：P1 GRPOv2 = 负结果（0.6667 < 0.70，McNemar p=1.0），P2 真题复测在 36.15 跑（resumable）。在等 P2 结果的同时，**开辟新路线：用 EDA 环境合成波形数据，生成大规模 SFT/RL 训练集，以继续强化 2B MLLM 读懂波形图的能力。**
+> **总目标（不变）**：强化 2B MLLM 读懂波形图的能力，在 WaveView 真题上做出**统计显著**的提升。
 >
-> **目标**：探索「合成数据 → SFT/RL」这条路线能否突破目前 GRPO 改进遇到的瓶颈（reward 饱和、梯度稀疏、held-out 不提升）。
+> **当前瓶颈**（你必须正视）：
+> - 合成数据 SFT 在 held-out 合成集上显著（0.625→0.8125, p=0.012），但**未迁移到真题**（0/10）
+> - GRPO 两次都是 tie/负结果（reward 饱和、梯度稀疏）
+> - 真题复测 V2=23.63% vs 17.6% 不显著（噪声带）
 >
-> **具体任务**：
+> **新指令：自主探索模式**。没有 step-by-step 指令了——**你自己决定下一步做什么**，但必须：
 >
-> **P4 — 合成波形数据调研（用 research MCP / web search）**：
-> 1. **用 `cimi_search` 调研**以下方向（搜关键词：synthetic waveform generation EDA, VCD/FSDB waveform simulation for ML training, synthetic signal data for vision-language model, waveform2image dataset generation, Verilog testbench auto-generation for waveform synthesis）：
->    - 如何用 EDA 工具链（Icarus Verilog / Verilator / GTKWave / vcd2fst）**批量生成波形文件**（VCD/FST/FSDB）
->    - 如何把波形文件**渲染成波形图 PNG**（GTKWave CLI / waveform-image tools / 自研脚本）
->    - 如何**自动生成配套问答对**（周期/幅度/占空比/边沿/毛刺/多通道关系等问答，附标准答案用于 SFT/RL reward）
->    - 业界是否有类似工作（合成波形数据训 VLM/waveform understanding）
-> 2. **评估可行性**：在 `.17` 上用 Icarus Verilog + GTKWave CLI 做一个 minimal demo（生成 1 个波形 PNG + 1 个 Q&A pair），验证工具链可用。
-> 3. **产出调研报告**：`run/reports/report_synthetic_waveform_research_zh.html`，包含：文献综述、工具链方案、demo 截图、规模估算（能生成多少种波形 × 多少 Q&A）、与现有 SFT/RL pipeline 的对接方案。
+> 1. **没事就去调研**：用 `cimi_search` / `cimi_fetch` 搜文献、搜工具、搜方法。关键词方向（不限于此，你自己扩展）：
+>    - domain gap / sim-to-real transfer for VLM（怎么缩小合成→真实的 gap）
+>    - waveform image style transfer / domain adaptation for signal data
+>    - curriculum learning / hard negative mining for VLM
+>    - 真实波形渲染（GTKWave/waveform3D/waveDrom 的 PNG 输出样式 vs 你的 PIL 渲染——样式差在哪？）
+>    - 更好的数据增强：在真实波形 PNG 上做裁剪/缩放/噪声注入
+>    - RL 新方法：DPO / KTO / RLAIF（不一定非用 GRPO）
+>    - 多模态 CoT / chain-of-thought for waveform understanding
+> 2. **看 research agent 的工作成果**：`doc/research/` 下有 research agent 产出的日报、文献综述等——去读、去找灵感、去找可用的方法。
+> 3. **千方百计不择手段**：可以改渲染管线让合成波形更像真实波形、可以混合合成+真实数据训练、可以试新的 reward 函数、可以试 DPO 替代 GRPO、可以扩大合成数据规模到 5000+、可以加 difficulty curriculum……**只要方向有证据支撑，就放手去做。**
+> 4. **每轮交付**：无论正负结果，都要落盘 JSON + 写进报告。负结果照写。
+> 5. **WAITING=0**：没有异步阻塞就连续推进，不要 standby。有事做就做，没事做就调研。
 >
-> **P5 — 合成数据生成 + SFT/RL（P4 调研通过后执行）**：
-> 1. 基于 P4 方案，**批量合成**波形图 + Q&A 对（目标：≥1000 样本，覆盖周期/幅度/占空比/边沿/毛刺/多通道等类型）。
-> 2. 用合成数据做 **SFT**（在 Qwen3.5-2B + LoRA 上，复用现有训练 pipeline）。
-> 3. 在 **held-out 合成测试集 + WaveView 真题**上评测，看合成数据是否带来增益。
-> 4. 如果 SFT 有提升，继续做 **RL**（GRPO with decomposed reward，复用 P1 的改进）。
-> 5. 配对检验（McNemar / paired bootstrap），负结果照写。
+> **红线（不变）**：反作弊常开报 cheat rate；预注册判据先写 MEMORY 再跑；负结果照写；不编造数字/文献；仅动本线文件。
 >
-> **约束**：
-> - **用 research MCP（`cimi_search` / `cimi_fetch`）做 web search**——已配好，autoApprove 已开。
-> - 合成数据必须**多样化**：不同波形类型（clock/data/bus/reset）、不同参数范围、不同噪声水平、不同通道数。
-> - **反作弊**：合成数据的答案必须是**可验证的**（从波形参数直接计算，不是 LLM 生成），报 cheat rate。
-> - GPU 6-7 可用；SSH 桥到 36.15 保持（P2 真题复测继续跑，不中断）。
-> - 负结果照写；预注册判据先写 MEMORY 再跑。
-> - WAITING=0（连续推进）。
+> **MCP 已配好**：`cimi_search` / `cimi_fetch` / `vqa` / `text_to_image` 全 autoApprove，直接用。
+
+### 📦 §用户令·2026-11-24 14:3x（P4合成波形调研+P5合成数据SFT/RL）✅ P4 调研通过(6次cimi_search+demo)·P5 SFT显著(0.625→0.8125 p=0.012)·P5 GRPO tie(Δ=0 p=1.0)·P5 真题迁移0/10·P2 真题复测182/182 V2=23.63% p=0.100不显著。详见 MEMORY wake#1714-1746。
 
 ### 📦 §用户令·2026-11-24 08:5x（GRPO改进+真题复测）✅ P1=负结果(0.6667<0.70,p=1.0)·P2 在36.15跑(resumable)·P3 §11报告已落(28613B)。详见 MEMORY wake#1710/1711。
 
