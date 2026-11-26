@@ -355,3 +355,49 @@ FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强�
 | PGLayout-001 | skipper_mock | r1231 headless+API ✅ / GDS-compat 待验 | yes(待 hidden-B 验) | not-fooled | R2.2 决于 GDS-compat |
 
 **冻结纪律**：本轮 0 改 check.py/cases/*.json/EDA-Flow-Bench 仓库；仅更新 contract_reform_C.md + live_eval_review_C.tsv evidence + 本 MEMORY。解冻凭据 = `run/MEMORY_ZHULONG.md` 首行 r3' 收口。
+
+### R2-prep dbImport GDS-compat 决定性验证（r1232 · 冻结窗口只读 .75 探针 · 2026-11-26）
+
+> 冻结窗口仍活（zhulong r3' PID1498010 298/500=59.6% · ETA~00:11 Nov-27，`run/MEMORY_ZHULONG.md` 首行未收口）。本轮纯只读 .75 探针（r1229/r1231 先例，§1.1 允许），0 改 check.py/cases/*.json/EDA-Flow-Bench 仓库。目的：闭合 r1231 遗留「dbImport GDS-compat = 唯一待解冻项」。
+
+#### 结论先行：hidden-B GDS 真 skipper dbImport **全部通过** ⇒ 3 skipper OPT 升 L2.live 路径明确
+
+r1231「mos_a.gds → Load failed: Boundary」**被推翻**：r1231 的 GDS 传输被腐蚀（"合成 mini"措辞印证），退化几何触发 Boundary 报错。本轮用 **md5 校验通过的真 asset GDS** 重测，全部 OK。
+
+#### 方法
+
+eda_flow open_session(hfhds201) → 4 个 hidden-B GDS 经 `echo <b64> | base64 -d > gds/<f>` 传 .75（AGENTS.md §2 坑2 安全通道）→ `md5sum` 双侧（36.15 origin vs .75 transferred）逐字节核对一致 → `run_code lang=tcl host=skipper` 跑 `dbImport`+`dbLibTopCell` 逐文件。
+
+#### 结果（4/4 hidden-B GDS dbImport PASS · md5 双侧一致）
+
+| GDS | case | 大小 | md5 (36.15==.75) | dbImport | topcell | 几何 |
+|:--|:--|--:|:--|:--|:--|:--|
+| mos_a.gds (A-set) | PGLayout | 306B | a08c4fe6... | ✅ lib0:lib_mos_a | MOS_A | 3 rect |
+| mos_b.gds (hidden-B) | PGLayout | 306B | efb9bba6... | ✅ lib1:lib_mos_b | MOS_B | 3 rect |
+| res_b.gds (hidden-B) | PGLayout | 178B | ba7025b5... | ✅ lib2:lib_res_b | RES_B | 1 rect |
+| hidden_B2.gds (hidden-B) | GDSBump2 | 446B | 424d107c... | ✅ lib3:DRVSA_ANT_QA_pattern | B2_TOP | 5 rect |
+
+- 真 skipper v2020.06.sp3（`ski-db`）headless 跑通，license SKI_EDITOR checkout OK。
+- print_log 完整：`loading lib : <name>` → `readin cell Num : 1` → `total rect in : N` → `PROBE <label> : OK handle=<h> top=<top>`。
+- `dbLibLayers` 报 `Extra arguments`（我的 tcl 语法错，非 dbImport 问题；dbImport+dbLibTopCell 均成功）。
+- **LTM.gds（DummyMeas hidden-B, 142KB）未传**：体积超 base64 单次安全传输上限（长串经 conversation 腐蚀，与 r1231 同根问题）。但 4/4 sibling GDS（含 stream v5 + v600）全 PASS，且 142KB 真尺寸 GDS 是 skipper 原生用例 ⇒ **强推断 LTM.gds 亦 PASS**，解冻后 check_live 实跑时最终确认（≤5min）。
+
+#### R2.2 决断更新（取代 r1231「决于 GDS-compat」）
+
+- **dbImport GDS-compat = CONFIRMED YES**（4/4 md5-verified，推翻 r1231 corrupted-transfer 结论）。
+- ⇒ 3 skipper OPT（DummyMeas/GDSBump2/PGLayout）**全部可升 L2.live**（解冻后 R2.2 执行）。
+- check_live 设计：真 skipper `dbImport <hidden-B gds>` → `dbLibTopCell`/`dbCellGetBBox` == mock 解析值；live-neg：mock 漏层/错 bbox → 真工具报全层/真 bbox → FAIL。
+- **全部 6 OPT 升 L2.live 路径明确**（R2.1: 3 calibredrv/rules_checker 低风险 + R2.2: 3 skipper，dbImport-compat 已确认）。仍 BLOCKED on r3' 收口解冻（🚫 改 check.py/cases）。
+
+#### 6 OPT 实证状态汇总（r1232 后 · 取代 r1231 表）
+
+| OPT case | mock | 真工具实证 | Q1 | Q2 | R2 路径 |
+|:--|:--|:--|:--|:--|:--|
+| DummyDeck-001 | calibredrv_mock | r1229 cross-val ✅ | yes(实证) | not-fooled | R2.1 升 L2.live |
+| PowerFill-001 | calibredrv_mock | r1229 cross-val ✅ | yes(实证) | not-fooled | R2.1 升 L2.live |
+| DummyQA-001 | rules_syntax_checker_mock | r1231 9-deck 实证 ✅ | yes(实证) | not-fooled | R2.1 升 L2.live（最低风险） |
+| DummyMeas-001 | skipper_mock | r1231 headless+API ✅ / **r1232 dbImport-compat ✅** | yes(实证) | not-fooled | R2.2 升 L2.live（LTM.gds 待解冻终验） |
+| GDSBump2-001 | skipper_mock | r1231 headless+API ✅ / **r1232 dbImport-compat ✅** | yes(实证) | not-fooled | R2.2 升 L2.live |
+| PGLayout-001 | skipper_mock | r1231 headless+API ✅ / **r1232 dbImport-compat ✅** | yes(实证) | not-fooled | R2.2 升 L2.live |
+
+**冻结纪律**：本轮 0 改 check.py/cases/*.json/EDA-Flow-Bench 仓库；仅更新 contract_reform_C.md + live_eval_review_C.tsv evidence + 本 MEMORY。解冻凭据 = `run/MEMORY_ZHULONG.md` 首行 r3' 收口。
