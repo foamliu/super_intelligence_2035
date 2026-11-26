@@ -106,7 +106,7 @@ WAITING: 0
 
 PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·7/7 predict COMPLETE·7/7 eval COMPLETE✅·报告已生成✅·MM已停(令D)·全部完成，待新指令
 已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way predict 7/7 COMPLETE✅**(3500/3500=100%)·**doubao-pro 7way eval 7/7 COMPLETE✅**·**报告已生成✅**(report_harness_doubao_pro_7way_swebench_tb_zh.html)·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**agent-arena repo✅**(33 scripts committed)
-当前动作:     idle·全部完成·例行巡检健康·guard PID931671 LIVE(492019s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092)·0 eval/predict·0 Docker·load~25/224=11%·mem680G/2TB avail1.1T
+当前动作:     idle·全部完成·例行巡检健康·guard PID931671 LIVE(492601s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092)·0 eval/predict·0 Docker·load~24/224=11%·mem680G/2TB avail1.1T
 下一步:     待运维新指令（所有 11-25 令 A/B/C/D 已全部闭环）
 阻塞:         无
 ERROR_COUNT:  0
@@ -164,6 +164,8 @@ ERROR_COUNT:  0
 > #H-023（2026-11-26 07:40, 例行巡检·**idle·健康**·git pull up-to-date(无新指令)·自检:0 eval/predict进程·0 Docker·guard PID931671 LIVE·gw_proxy 3进程LIVE(9090/9091/9092)·资源OK(load26.64/224=12%·mem680G/2015G avail1102G·0 high-CPU harness进程)·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7083B✅·token sidecar 52884 lines·agent-arena repo 3 commits(a1fc485/a431e3c/a50291c)·TASK 27.0KB/MEMORY 31.1KB(均<32KB✅)·所有11-25令A/B/C/D已闭环·WAITING:0·下一步:待运维新指令）
 
 > #H-024（2026-11-26 07:55, 例行巡检·**idle·健康**·git merge origin/main fast-forward(仅posttrain变更·无harness新指令)·自检:0 eval/predict进程·0 Docker·guard PID931671 LIVE(492019s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092)·资源OK(load25/224=11%·mem680G/2TB avail1.1T·0 high-CPU harness进程)·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7083B✅·token sidecar 52884 lines·dsh_sdk持久化✅(/nas_train/app.e0031982/harness_work/dsh_sdk)·agent-arena repo✅·TASK 27.0KB/MEMORY~28.5KB(归档H-001~H-003后·<32KB✅)·research日报2026-11-26已查(ShellBench:模型>harness影响·建议harness-only消融+报token成本·我们已报token✅·AIChipBench:held-out测试条件·非直接可执行)·所有11-25令A/B/C/D已闭环·WAITING:0·下一步:待运维新指令）
+
+> #H-025（2026-11-26 08:05, 例行巡检·**idle·健康**·git fetch+merge origin/main: Already up to date(无新指令)·自检:0 eval/predict进程·0 Docker·guard PID931671 LIVE(492601s≈5.7d)·gw_proxy 3进程LIVE(9090/9091/9092·~81220s≈22.6h)·资源OK(load23.87/224=11%·mem680G/2TB avail1.1T·0 high-CPU harness进程)·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7083B✅·token sidecar 52884 lines·dsh_sdk持久化✅·agent-arena repo✅·TASK 27.0KB/MEMORY~29.8KB(均<32KB✅)·所有11-25令A/B/C/D已闭环·WAITING:0·下一步:待运维新指令）
 
 
 ## 启动说明（首次唤醒）
