@@ -85,3 +85,19 @@ DEBT:3（连续三轮无新 case）触发「转不依赖新候选产出」条款
 - 已达 §4.9 普查 ≥20 条首版目标。后续轮次可继续扩样（D 共 609 case），或转 test_rationale 补断言清单 / ledger 治理 / 跨 shard A/B/C 抽样普查（11-21 令，按职责边界只报告不改）。
 - **r1236 修复**: HierNameViolateCrossProbeProduce-001 的 k=0 test_rationale gap 已修（英文 prose → `14 条断言：①…⑭`，k=14>=8 GATE PASS，test 字段未动，selftest rc=0）。
 - GAP 案例按职责边界处置：D 自己的 case 直接修；A/B/C 的 case 写 discuss/board.md P0 条目（本批全 D，无跨线）。
+
+## r1481 跨 shard A/B/C 抽样首增量（+3 条，累计 33 条全 PASS）
+
+11-21 令授权 D 执行全 bench §4.9 anti-hardcode 普查。D 自有 30 条已闭合（r1233~r1277）。本轮在 LIVE-EVAL R1 全闭合 + 冻结窗口（zhulong r3' 进行中，禁改主树判分文件）约束下，做 **A/B/C 跨线只读抽样首增量**：每 shard 各 1 条，优先 k<12 老题，跑各自 `negative_selftest.py`（REF 须 PASS，全 neg/fake 须 FAIL）。
+
+| shard | case_id | k | selftest 信号 | 三假(print_only/core_deleted/hardcode_a) | 判定 |
+|---|---|---|---|---|---|
+| B | SpiceFlowAuto-001 | 8 | ALL GOOD (REF PASS + 3 neg + 2 §4.9 fake 全 FAIL) | FAIL/FAIL/FAIL(结构: n_corners_b 强约束) | PASS |
+| C | DrcCloseOpenSwap-001 | 10 | PASS (6 neg + 3 fake 全 FAIL_CHECK) | FAIL(print_expected)/FAIL(ref_core_deleted)/FAIL(hardcode_a.py) | PASS |
+| A | AearTbcfgCliEnhanceProduce-001 | 10 | ALL NEGATIVES FAIL (empty/print_only/core_deleted) | FAIL/FAIL/FAIL(结构: B_LIB/B_CELL + 2-run 确定性) | PASS |
+
+**结论**：3 条全 PASS，0 GAP。hidden B 在三例中均经结构性强约束（B config corners / B swap map / B_LIB+确定性）阻断 hardcode_a。**未改任何 A/B/C 线文件**（只读 + 跑 selftest）。
+
+**观察（非 anti-hardcode gap，仅记录）**：A 线 `AearTbcfgCliEnhanceProduce-001` 的 check.py 用 raises-on-fail 风格（`check()` 无显式 `return`，主块 `print PASS`），与 11-24 严格判分契约（`return True/False`）口径可能不符——属 A 线契约事务，本轮不改，留 A 线核对。
+
+**进度**：跨线抽样 A/B/C 各 1/20（首增量）。后续轮次在冻结解除 / 造题主线空闲时继续逐批补全至每 shard ≥20。冻结窗口内仅做只读 selftest 跑，不触主树 `check.py`/`cases`。
