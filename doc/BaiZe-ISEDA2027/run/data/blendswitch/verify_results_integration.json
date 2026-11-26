@@ -1,11 +1,11 @@
 {
   "test_file": "test_blend_hot_switch_integration.py",
   "environment": {
-    "python": "/nas_train/app.e0031982/miniforge3/envs/py310/bin/python",
+    "python": "/usr/bin/python3",
     "numpy": "2.2.6",
     "machine": "whag0pgpuap12",
     "date": "2026-11-26",
-    "megatron_available": true
+    "megatron_available": false
   },
   "results": {
     "test_zero_overlap": {
@@ -206,7 +206,7 @@
     "test_checkpoint_roundtrip": true,
     "test_stock_sampler_epoch_bug": true,
     "test_blended_dataset_compatibility": {
-      "skipped": false
+      "skipped": true
     }
   },
   "statuses": {
