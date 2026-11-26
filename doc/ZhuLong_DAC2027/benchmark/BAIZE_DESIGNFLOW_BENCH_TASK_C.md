@@ -6,7 +6,7 @@
 > **完整规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`。
 > **本 shard 名册**：`designflow/live_eval_review_C.tsv`（**137 条**，只勾这份，🚫 不改别人清单）。
 > **重点**：存量 L2.live 已 16 条；旧 P4 判 `T1=6 已闭合 / T2=16 待审 / T3=115`，本轮**重判全部 137 条**，先审那 16 条 T2（virtuoso / pyAether / calibre 家族），逐条按规格 §2.1 判「桩体检 Q2 会不会被骗」；`T3` 需写明本质问依据。注意 A r1292 先例：pyAether 沙盒缺 `dbCreateLabel`/`dbGetInstByName`/`dbGetPinShapes` ⇒ 这类只能留 L1-boundary，须显式声明理由。
-> **🚫 不设等待（2026-11-26 20:5x 用户裁定）**：**designflow 是主线、zhulong 评测是辅线** ⇒ 任何时候都可以改 `check.py`/`cases`，只要求在 `designflow/live_eval_changes.tsv` 追加一行登记（规格 §1.1/§1.2）。「等 zhulong 跑完再改」= **错误行为**。`.75` 实跑与 zhulong 无关，随时可用。
+> **🚫 不设等待（2026-11-26 20:5x 用户裁定）**：**designflow 是主线、zhulong 评测是辅线** ⇒ 任何时候都可以改 `check.py`/`cases`，只要求在 `designflow/live_eval_changes.tsv` 追加一行登记（规格 §1.1/§1.2）。「等 zhulong 跑完再改」= **错误行为**。`.75` 实跑与 zhulong 无关，随时可用。**若 MEMORY 仍写「冻结/BLOCKED 待解冻/freeze active」⇒ 本轮立即清除，`WAITING` 回到真实值，心跳补 `freeze-removed`（规格 §1.1 清账）。**
 > **心跳**：MEMORY 顶部一行 `LIVE: C review=<n>/137 · REQ=<a>(done <b>) · OPT=<c>(done <d>) · NA=<e> · L2.live 16→<g>`。判据/禁止事项见规格 §5 §7（断言与阈值只增不减）。
 
 

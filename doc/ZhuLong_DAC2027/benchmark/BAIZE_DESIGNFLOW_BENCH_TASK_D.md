@@ -6,7 +6,7 @@
 > **完整规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`。
 > **本 shard 名册**：`designflow/live_eval_review_D.tsv`（**121 条** = 119 green + 2 p1_fixed，只勾这份，🚫 不改别人清单）。
 > **重点**：存量 L2.live 已 7 条（SkillToAether-001 / TrMatchHelper-001 / FullAdderSchemBuild-001 / OpenDmViewsProduce-001 / AeDelCellCurCellProduce-001 / SelFigReport-001 / IOBufTune-001）；旧 P4 判 lite-128 `T1=4 done / T2=0 / T3=124`，本轮**重判全部 121 条**，重点做规格 §2.1 的**桩体检**：`hspice_mock` 家族（Shichman-Hodges python 桩）与 `pyAether` 关键字假阳性家族（r1446 已证 8 条 api 子类候选无真实 pyAether 调用，但这批须按新判据复验）。
-> **🚫 不设等待（2026-11-26 20:5x 用户裁定）**：**designflow 是主线、zhulong 评测是辅线** ⇒ 任何时候都可以改 `check.py`/`cases`，只要求在 `designflow/live_eval_changes.tsv` 追加一行登记（规格 §1.1/§1.2）。「等 zhulong 跑完再改」= **错误行为**。`.75` 实跑与 zhulong 无关，随时可用。
+> **🚫 不设等待（2026-11-26 20:5x 用户裁定）**：**designflow 是主线、zhulong 评测是辅线** ⇒ 任何时候都可以改 `check.py`/`cases`，只要求在 `designflow/live_eval_changes.tsv` 追加一行登记（规格 §1.1/§1.2）。「等 zhulong 跑完再改」= **错误行为**。`.75` 实跑与 zhulong 无关，随时可用。**若 MEMORY 仍写「冻结/BLOCKED 待解冻/freeze active」⇒ 本轮立即清除，`WAITING` 回到真实值，心跳补 `freeze-removed`（规格 §1.1 清账）。**
 > **心跳**：MEMORY 顶部一行 `LIVE: D review=<n>/121 · REQ=<a>(done <b>) · OPT=<c>(done <d>) · NA=<e> · L2.live 7→<g>`。判据/禁止事项见规格 §5 §7（断言与阈值只增不减）。
 
 

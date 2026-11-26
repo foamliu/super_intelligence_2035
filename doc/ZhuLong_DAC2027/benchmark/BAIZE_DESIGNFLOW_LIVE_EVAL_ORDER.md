@@ -45,6 +45,8 @@
 
 > 📌 **两个资源别混**（这一点保持不变）：`.75`（hfhds201）+ `eda_flow` MCP = **实跑**，与 zhulong 无关，随时可用；`36.15` 的 `/nasdata/.../EDA-Flow-Bench/` = 同一棵工作树（designflow 的 cwd 也是 zhulong 的判分源）⇒ **改动照做，只需登记**。
 
+- 🧹 **清账（本轮必做一次）**：若你的 MEMORY 顶部仍写着「冻结窗口 / BLOCKED on 解冻 / freeze active / WAITING:1（因冻结）」⇒ **立即删除该表述**，把 `WAITING` 回到真实值（没有别的实际阻塞就写 `0`），并在心跳补一句 `freeze-removed: <date>`。已按旧令只读等待的轮次不追责，但**从本轮起不得再以「等 zhulong」为由停手**。
+
 ---
 
 ### 1.2 改动登记（唯一额外动作，约 10 秒）
