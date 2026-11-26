@@ -1,0 +1,1811 @@
+[
+  {
+    "instance_id": "django__django-10924",
+    "repo": "django/django",
+    "version": "3.0",
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-10924.json",
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 0,
+          "p2p_total": 1
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-10924.json",
+        "eval": {
+          "eval_rc": 0,
+          "resolved": true,
+          "patch_applied": true,
+          "f2p_pass": 1,
+          "f2p_total": 1,
+          "p2p_pass": 1,
+          "p2p_total": 1
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-10924.json",
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 1,
+          "p2p_total": 1
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-10924.json",
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 1,
+          "p2p_total": 1
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11001",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 0,
+        "wall_s": 145.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11001.json",
+        "stdout_tail": "flash): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 3544 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": true,
+          "patch_applied": true,
+          "f2p_pass": 2,
+          "f2p_total": 2,
+          "p2p_pass": 118,
+          "p2p_total": 118
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 0,
+        "wall_s": 382.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11001.json",
+        "stdout_tail": "t=False wall=381.7s ==\n[stderr tail] ...2026-10-04T15:28:43.914994Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 3263 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": true,
+          "patch_applied": true,
+          "f2p_pass": 2,
+          "f2p_total": 2,
+          "p2p_pass": 118,
+          "p2p_total": 118
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 0,
+        "wall_s": 93.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11001.json",
+        "stdout_tail": "the 'stop' and 'start' parts of slicing notation to offset the ... ok\n\n----------------------------------------------------------------------\nRan 23 tests in 0.037s\n\nOK\nDestroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')\u2026\n\u001b[0m\n\n[run_single] model_patch: 539 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": true,
+          "patch_applied": true,
+          "f2p_pass": 2,
+          "f2p_total": 2,
+          "p2p_pass": 118,
+          "p2p_total": 118
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 0,
+        "wall_s": 76.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11001.json",
+        "stdout_tail": "ango-11001\n[run_single] base_commit=ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] ps_len=2220\n[run_single] git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n[run_single] running claude-code ...\n== harness=claude-code rc=0 timed_out=False wall=75.7s ==\n[run_single] model_patch: 1332 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11001.json\n[run_single] cleanup: git reset --hard ef082ebb84f00e38af4e8880d04e8365c2766d34\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": true,
+          "patch_applied": true,
+          "f2p_pass": 2,
+          "f2p_total": 2,
+          "p2p_pass": 118,
+          "p2p_total": 118
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11019",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 0,
+        "wall_s": 613.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11019.json",
+        "stdout_tail": "flash): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 8276 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11019.json\n[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 16,
+          "p2p_pass": 58,
+          "p2p_total": 58
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 150.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11019.json",
+        "stdout_tail": "_out=False wall=150.6s ==\n[stderr tail] ...2026-10-04T15:51:09.759099Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11019.json\n[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 16,
+          "p2p_pass": 58,
+          "p2p_total": 58
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 76.6,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11019.json",
+        "stdout_tail": "e] git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=76.4s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f854\u5c0f\u65f618\u5206\u949f1\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11019.json\n[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 16,
+          "p2p_pass": 58,
+          "p2p_total": 58
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11019.json",
+        "stdout_tail": "__django-11019\n[run_single] base_commit=93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n[run_single] ps_len=1801\n[run_single] git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11019.json\n[run_single] cleanup: git reset --hard 93e892bb645b16ebaf287beb5fe7f3ffe8d10408\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 16,
+          "p2p_pass": 58,
+          "p2p_total": 58
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11039",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 16.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11039.json",
+        "stdout_tail": "_single] git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=16.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T16:09:08.481Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f854\u5c0f\u65f616\u5206\u949f44\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11039.json\n[run_single] cleanup: git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 88,
+          "p2p_total": 88
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11039.json",
+        "stdout_tail": "4a102776a1e67dcac2884d80dfe\n[run_single] running codex ...\n== harness=codex rc=1 timed_out=False wall=5.3s ==\n[stderr tail] ...2026-10-04T16:09:53.885253Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11039.json\n[run_single] cleanup: git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 88,
+          "p2p_total": 88
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 76.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11039.json",
+        "stdout_tail": "e] git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=76.0s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f854\u5c0f\u65f61\u5206\u949f32\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11039.json\n[run_single] cleanup: git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 88,
+          "p2p_total": 88
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11039.json",
+        "stdout_tail": "o__django-11039\n[run_single] base_commit=d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] ps_len=879\n[run_single] git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11039.json\n[run_single] cleanup: git reset --hard d5276398046ce4a102776a1e67dcac2884d80dfe\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 88,
+          "p2p_total": 88
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11049",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 16.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11049.json",
+        "stdout_tail": "[run_single] git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=16.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T16:25:39.677Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f854\u5c0f\u65f613\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.2,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11049.json",
+        "stdout_tail": "ed_out=False wall=4.9s ==\n[stderr tail] ...2026-10-04T16:26:20.397118Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 74.9,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11049.json",
+        "stdout_tail": "] git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=74.6s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f645\u5206\u949f22\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 3.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11049.json",
+        "stdout_tail": "o__django-11049\n[run_single] base_commit=17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] ps_len=706\n[run_single] git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.8s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11049.json\n[run_single] cleanup: git reset --hard 17455e924e243e7a55e8a38f45966d8cbb27c273\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11099",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 16.6,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11099.json",
+        "stdout_tail": "_single] git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=16.3s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T16:42:10.187Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f643\u5206\u949f43\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11099.json\n[run_single] cleanup: git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 1,
+          "f2p_total": 3,
+          "p2p_pass": 19,
+          "p2p_total": 19
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.1,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11099.json",
+        "stdout_tail": "ed_out=False wall=4.8s ==\n[stderr tail] ...2026-10-04T16:42:53.990265Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11099.json\n[run_single] cleanup: git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 1,
+          "f2p_total": 3,
+          "p2p_pass": 19,
+          "p2p_total": 19
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 73.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11099.json",
+        "stdout_tail": "] git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=73.2s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f628\u5206\u949f47\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11099.json\n[run_single] cleanup: git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 1,
+          "f2p_total": 3,
+          "p2p_pass": 19,
+          "p2p_total": 19
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11099.json",
+        "stdout_tail": "o__django-11099\n[run_single] base_commit=d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] ps_len=764\n[run_single] git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11099.json\n[run_single] cleanup: git reset --hard d26b2424437dabeeca94d7900b37d2df4410da0c\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 1,
+          "f2p_total": 3,
+          "p2p_pass": 19,
+          "p2p_total": 19
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11133",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 17.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11133.json",
+        "stdout_tail": "_single] git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=17.5s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T16:58:36.888Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f627\u5206\u949f16\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11133.json\n[run_single] cleanup: git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 64,
+          "p2p_total": 64
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 4.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11133.json",
+        "stdout_tail": "ed_out=False wall=4.0s ==\n[stderr tail] ...2026-10-04T16:59:24.127166Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11133.json\n[run_single] cleanup: git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 64,
+          "p2p_total": 64
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 74.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11133.json",
+        "stdout_tail": "] git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=74.2s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f612\u5206\u949f22\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11133.json\n[run_single] cleanup: git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 64,
+          "p2p_total": 64
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.1,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11133.json",
+        "stdout_tail": "o__django-11133\n[run_single] base_commit=879cc3da6249e920b8d54518a0ae06de835d7373\n[run_single] ps_len=895\n[run_single] git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=1.9s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11133.json\n[run_single] cleanup: git reset --hard 879cc3da6249e920b8d54518a0ae06de835d7373\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 64,
+          "p2p_total": 64
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11179",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 16.2,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11179.json",
+        "stdout_tail": "_single] git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=15.9s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T17:14:59.443Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f610\u5206\u949f53\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 40,
+          "p2p_total": 40
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 4.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11179.json",
+        "stdout_tail": "ed_out=False wall=3.7s ==\n[stderr tail] ...2026-10-04T17:15:41.900008Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 40,
+          "p2p_total": 40
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 73.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11179.json",
+        "stdout_tail": "] git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=72.7s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f655\u5206\u949f59\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 40,
+          "p2p_total": 40
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11179.json",
+        "stdout_tail": "o__django-11179\n[run_single] base_commit=19fc6376ce67d01ca37a91ef2f55ef769f50513a\n[run_single] ps_len=283\n[run_single] git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11179.json\n[run_single] cleanup: git reset --hard 19fc6376ce67d01ca37a91ef2f55ef769f50513a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 40,
+          "p2p_total": 40
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11283",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 17.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11283.json",
+        "stdout_tail": "_single] git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=17.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T17:31:18.603Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f654\u5206\u949f34\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11283.json\n[run_single] cleanup: git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 4.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11283.json",
+        "stdout_tail": "ed_out=False wall=3.7s ==\n[stderr tail] ...2026-10-04T17:32:02.510284Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11283.json\n[run_single] cleanup: git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 76.2,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11283.json",
+        "stdout_tail": "] git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=75.9s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f639\u5206\u949f33\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11283.json\n[run_single] cleanup: git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.6,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11283.json",
+        "stdout_tail": "__django-11283\n[run_single] base_commit=08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] ps_len=1193\n[run_single] git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.3s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11283.json\n[run_single] cleanup: git reset --hard 08a4ee06510ae45562c228eefbdcaac84bd38c7a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11422",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 17.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11422.json",
+        "stdout_tail": "_single] git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=17.5s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T17:48:09.239Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f637\u5206\u949f43\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 46,
+          "p2p_total": 46
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11422.json",
+        "stdout_tail": "e9e4dc1d60816c1dce6dfc1094e\n[run_single] running codex ...\n== harness=codex rc=1 timed_out=False wall=5.3s ==\n[stderr tail] ...2026-10-04T17:48:54.436231Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 46,
+          "p2p_total": 46
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 74.6,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11422.json",
+        "stdout_tail": "] git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=74.3s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f622\u5206\u949f45\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 46,
+          "p2p_total": 46
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 4.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11422.json",
+        "stdout_tail": "o__django-11422\n[run_single] base_commit=df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] ps_len=669\n[run_single] git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=4.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11422.json\n[run_single] cleanup: git reset --hard df46b329e0900e9e4dc1d60816c1dce6dfc1094e\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 46,
+          "p2p_total": 46
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11564",
+    "repo": "django/django",
+    "version": "3.1",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 17.2,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11564.json",
+        "stdout_tail": "_single] git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=16.7s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T18:04:37.033Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f621\u5206\u949f16\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11564.json\n[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 174,
+          "p2p_total": 174
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11564.json",
+        "stdout_tail": "ed_out=False wall=4.7s ==\n[stderr tail] ...2026-10-04T18:05:24.380215Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11564.json\n[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 174,
+          "p2p_total": 174
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 69.9,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11564.json",
+        "stdout_tail": "e] git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=69.6s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f66\u5206\u949f16\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11564.json\n[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 174,
+          "p2p_total": 174
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 3.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11564.json",
+        "stdout_tail": "o__django-11564\n[run_single] base_commit=580e644f24f1c5ae5b94784fb73a9953a178fd26\n[run_single] ps_len=928\n[run_single] git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=3.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11564.json\n[run_single] cleanup: git reset --hard 580e644f24f1c5ae5b94784fb73a9953a178fd26\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 174,
+          "p2p_total": 174
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11583",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 17.7,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11583.json",
+        "stdout_tail": "un_single] git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=17.3s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T18:20:51.374Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f65\u5206\u949f1\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11583.json\n[run_single] cleanup: git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 50,
+          "p2p_total": 50
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 4.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11583.json",
+        "stdout_tail": "ed_out=False wall=4.6s ==\n[stderr tail] ...2026-10-04T18:21:37.500144Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11583.json\n[run_single] cleanup: git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 50,
+          "p2p_total": 50
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 69.1,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11583.json",
+        "stdout_tail": "e] git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=68.8s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f851\u5c0f\u65f650\u5206\u949f3\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11583.json\n[run_single] cleanup: git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 50,
+          "p2p_total": 50
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 4.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11583.json",
+        "stdout_tail": "__django-11583\n[run_single] base_commit=60dc957a825232fdda9138e2f8878b2ca407a7c9\n[run_single] ps_len=4665\n[run_single] git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=4.1s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11583.json\n[run_single] cleanup: git reset --hard 60dc957a825232fdda9138e2f8878b2ca407a7c9\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 50,
+          "p2p_total": 50
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11620",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 18.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11620.json",
+        "stdout_tail": "_single] git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=17.7s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T18:37:07.134Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f851\u5c0f\u65f648\u5206\u949f45\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11620.json\n[run_single] cleanup: git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 66,
+          "p2p_total": 66
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11620.json",
+        "stdout_tail": "ed_out=False wall=4.7s ==\n[stderr tail] ...2026-10-04T18:37:59.183575Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11620.json\n[run_single] cleanup: git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 66,
+          "p2p_total": 66
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 74.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11620.json",
+        "stdout_tail": "] git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=74.1s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f851\u5c0f\u65f633\u5206\u949f34\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11620.json\n[run_single] cleanup: git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 66,
+          "p2p_total": 66
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.7,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11620.json",
+        "stdout_tail": "o__django-11620\n[run_single] base_commit=514efa3129792ec2abb2444f3e7aeb3f21a38386\n[run_single] ps_len=890\n[run_single] git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.4s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11620.json\n[run_single] cleanup: git reset --hard 514efa3129792ec2abb2444f3e7aeb3f21a38386\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 66,
+          "p2p_total": 66
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11630",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 17.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11630.json",
+        "stdout_tail": "_single] git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=17.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T18:53:37.178Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f851\u5c0f\u65f632\u5206\u949f15\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11630.json\n[run_single] cleanup: git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 16,
+          "p2p_total": 16
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 3.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11630.json",
+        "stdout_tail": "ed_out=False wall=3.6s ==\n[stderr tail] ...2026-10-04T18:54:19.216561Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11630.json\n[run_single] cleanup: git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 16,
+          "p2p_total": 16
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 71.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11630.json",
+        "stdout_tail": "] git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=71.0s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f851\u5c0f\u65f617\u5206\u949f17\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11630.json\n[run_single] cleanup: git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 16,
+          "p2p_total": 16
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 4.6,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11630.json",
+        "stdout_tail": "o__django-11630\n[run_single] base_commit=65e86948b80262574058a94ccaae3a9b59c3faea\n[run_single] ps_len=660\n[run_single] git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=4.4s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11630.json\n[run_single] cleanup: git reset --hard 65e86948b80262574058a94ccaae3a9b59c3faea\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 16,
+          "p2p_total": 16
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "django__django-11742",
+    "repo": "django/django",
+    "version": "3.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template django__django-10914 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 16.7,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11742.json",
+        "stdout_tail": "_single] git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=16.3s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T19:10:14.592Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f851\u5c0f\u65f615\u5206\u949f38\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 43,
+          "p2p_total": 43
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_django__django-11742.json",
+        "stdout_tail": "ed_out=False wall=5.0s ==\n[stderr tail] ...2026-10-04T19:11:01.135056Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 43,
+          "p2p_total": 43
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 70.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_django__django-11742.json",
+        "stdout_tail": "ngle] git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=70.0s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f851\u5c0f\u65f642\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 43,
+          "p2p_total": 43
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11742.json",
+        "stdout_tail": "o__django-11742\n[run_single] base_commit=fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n[run_single] ps_len=328\n[run_single] git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_django__django-11742.json\n[run_single] cleanup: git reset --hard fee75d2aed4e58ada6567c464cfd22e89dc65f4a\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 43,
+          "p2p_total": 43
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "sympy__sympy-11870",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "init+shallow fetch"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 0,
+        "wall_s": 546.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-11870.json",
+        "stdout_tail": "-flash): Deprecated: \"providerOptions key 'openai-compatible'\". Use 'openaiCompatible' instead.\n      at BY (/$bunfs/root/chunk-nd6m62hc.js:26:48090)\n      at cZ (/$bunfs/root/chunk-nd6m62hc.js:26:48389)\n      at transform (/$bunfs/root/chunk-nd6m62hc.js:44:43299)\n\n\n[run_single] model_patch: 12177 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-11870.json\n[run_single] cleanup: git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n",
+        "quota_retry": 2,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 58,
+          "p2p_total": 58
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 0,
+        "wall_s": 400.9,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-11870.json",
+        "stdout_tail": "a778f4ca9ffc9c81557197e\n[run_single] running codex ...\n== harness=codex rc=0 timed_out=False wall=400.7s ==\n[stderr tail] ...2026-10-04T20:48:45.389832Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n\n[run_single] model_patch: 11805 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-11870.json\n[run_single] cleanup: git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 58,
+          "p2p_total": 58
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 0,
+        "wall_s": 496.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-11870.json",
+        "stdout_tail": "('test_trigsimp1: PASS')\ntest_exptrigsimp()\nprint('test_exptrigsimp: PASS')\ntest_Piecewise()\nprint('test_Piecewise: PASS')\nprint()\nprint('All trigsimp tests passed!')\n\" 2>&1\ntest_trigsimp1: PASS\ntest_exptrigsimp: PASS\ntest_Piecewise: PASS\n\nAll trigsimp tests passed!\n\u001b[0m\n\n[run_single] model_patch: 4682 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-11870.json\n[run_single] cleanup: git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 58,
+          "p2p_total": 58
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 95.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-11870.json",
+        "stdout_tail": "mpy__sympy-11870\n[run_single] base_commit=5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n[run_single] ps_len=344\n[run_single] git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=95.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-11870.json\n[run_single] cleanup: git reset --hard 5c2e1f96a7ff562d4a778f4ca9ffc9c81557197e\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 58,
+          "p2p_total": 58
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "sympy__sympy-11897",
+    "repo": "sympy/sympy",
+    "version": "1.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 18.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-11897.json",
+        "stdout_tail": "un_single] git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=18.0s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T21:43:43.772Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f643\u5206\u949f28\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-11897.json\n[run_single] cleanup: git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 95,
+          "p2p_total": 95
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-11897.json",
+        "stdout_tail": "imed_out=False wall=4.8s ==\n[stderr tail] ...2026-10-04T21:44:30.957115Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-11897.json\n[run_single] cleanup: git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 95,
+          "p2p_total": 95
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 72.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-11897.json",
+        "stdout_tail": "le] git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=72.4s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f628\u5206\u949f24\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-11897.json\n[run_single] cleanup: git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 95,
+          "p2p_total": 95
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.2,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-11897.json",
+        "stdout_tail": "ympy__sympy-11897\n[run_single] base_commit=e2918c1205c47345eb73c9be68b14c0f15fdeb17\n[run_single] ps_len=634\n[run_single] git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-11897.json\n[run_single] cleanup: git reset --hard e2918c1205c47345eb73c9be68b14c0f15fdeb17\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 95,
+          "p2p_total": 95
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "sympy__sympy-12171",
+    "repo": "sympy/sympy",
+    "version": "1.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 16.7,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-12171.json",
+        "stdout_tail": "un_single] git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=16.5s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T21:59:58.389Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f627\u5206\u949f13\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-12171.json\n[run_single] cleanup: git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 3.9,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-12171.json",
+        "stdout_tail": "imed_out=False wall=3.7s ==\n[stderr tail] ...2026-10-04T22:00:40.541595Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-12171.json\n[run_single] cleanup: git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 66.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-12171.json",
+        "stdout_tail": "le] git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=66.1s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f612\u5206\u949f30\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-12171.json\n[run_single] cleanup: git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 3.7,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-12171.json",
+        "stdout_tail": "ympy__sympy-12171\n[run_single] base_commit=ca6ef27272be31c9dc3753ede9232c39df9a75d8\n[run_single] ps_len=615\n[run_single] git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=3.5s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-12171.json\n[run_single] cleanup: git reset --hard ca6ef27272be31c9dc3753ede9232c39df9a75d8\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 8,
+          "p2p_total": 8
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "sympy__sympy-12236",
+    "repo": "sympy/sympy",
+    "version": "1.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 15.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-12236.json",
+        "stdout_tail": "un_single] git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=15.7s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T22:16:13.423Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f853\u5c0f\u65f610\u5206\u949f58\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-12236.json\n[run_single] cleanup: git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 133,
+          "p2p_total": 133
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-12236.json",
+        "stdout_tail": "dea7f5e25bc41e9107a6a63694d01\n[run_single] running codex ...\n== harness=codex rc=1 timed_out=False wall=5.3s ==\n[stderr tail] ...2026-10-04T22:17:08.283097Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-12236.json\n[run_single] cleanup: git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 133,
+          "p2p_total": 133
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 72.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-12236.json",
+        "stdout_tail": "le] git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=72.1s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f655\u5206\u949f35\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-12236.json\n[run_single] cleanup: git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 133,
+          "p2p_total": 133
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 1.8,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-12236.json",
+        "stdout_tail": "mpy__sympy-12236\n[run_single] base_commit=d60497958f6dea7f5e25bc41e9107a6a63694d01\n[run_single] ps_len=1870\n[run_single] git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=1.7s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-12236.json\n[run_single] cleanup: git reset --hard d60497958f6dea7f5e25bc41e9107a6a63694d01\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 133,
+          "p2p_total": 133
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "sympy__sympy-12419",
+    "repo": "sympy/sympy",
+    "version": "1.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 18.5,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-12419.json",
+        "stdout_tail": "un_single] git reset --hard 479939f8c65c8c2908bbedc959549a257a7c0b0b\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=18.3s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T22:33:00.116Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f654\u5206\u949f11\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-12419.json\n[run_single] cleanup: git reset --hard 479939f8c65c8c2908bbedc959549a257a7c0b0b\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 25,
+          "p2p_total": 25
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 5.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-12419.json",
+        "stdout_tail": "c8c2908bbedc959549a257a7c0b0b\n[run_single] running codex ...\n== harness=codex rc=1 timed_out=False wall=5.3s ==\n[stderr tail] ...2026-10-04T22:33:43.776841Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-12419.json\n[run_single] cleanup: git reset --hard 479939f8c65c8c2908bbedc959549a257a7c0b0b\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 25,
+          "p2p_total": 25
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 77.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-12419.json",
+        "stdout_tail": "le] git reset --hard 479939f8c65c8c2908bbedc959549a257a7c0b0b\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=76.9s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f639\u5206\u949f12\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-12419.json\n[run_single] cleanup: git reset --hard 479939f8c65c8c2908bbedc959549a257a7c0b0b\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 25,
+          "p2p_total": 25
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.1,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-12419.json",
+        "stdout_tail": "mpy__sympy-12419\n[run_single] base_commit=479939f8c65c8c2908bbedc959549a257a7c0b0b\n[run_single] ps_len=1141\n[run_single] git reset --hard 479939f8c65c8c2908bbedc959549a257a7c0b0b\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.0s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-12419.json\n[run_single] cleanup: git reset --hard 479939f8c65c8c2908bbedc959549a257a7c0b0b\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 1,
+          "p2p_pass": 25,
+          "p2p_total": 25
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "sympy__sympy-12454",
+    "repo": "sympy/sympy",
+    "version": "1.0",
+    "workdir_setup": {
+      "ok": true,
+      "msg": "existing workdir updated"
+    },
+    "rootfs_setup": {
+      "ok": true,
+      "msg": "using template sympy__sympy-11400 directly (shared rootfs)"
+    },
+    "harnesses": {
+      "cline-patched": {
+        "harness": "cline-patched",
+        "returncode": 1,
+        "wall_s": 16.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-12454.json",
+        "stdout_tail": "un_single] git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n[run_single] running cline (patched) ...\n== harness=cline rc=1 timed_out=False wall=16.1s ==\n[stderr tail] ...{\"ts\":\"2026-10-04T22:49:24.087Z\",\"type\":\"error\",\"message\":\"\u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f637\u5206\u949f47\u79d2\u540e\u91cd\u8bd5\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_cline_patched_sympy__sympy-12454.json\n[run_single] cleanup: git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 134,
+          "p2p_total": 134
+        }
+      },
+      "codex": {
+        "harness": "codex",
+        "returncode": 1,
+        "wall_s": 6.0,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-12454.json",
+        "stdout_tail": "imed_out=False wall=5.8s ==\n[stderr tail] ...2026-10-04T22:50:27.160154Z ERROR codex_core::models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/models?client_version=0.94.0)\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_codex_sympy__sympy-12454.json\n[run_single] cleanup: git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 134,
+          "p2p_total": 134
+        }
+      },
+      "opencode": {
+        "harness": "opencode",
+        "returncode": 1,
+        "wall_s": 74.4,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-12454.json",
+        "stdout_tail": "le] git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n[run_single] running opencode ...\n== harness=opencode rc=1 timed_out=False wall=74.3s ==\n[stderr tail] ...\u001b[0m\n> build \u00b7 deepseek-v4-flash\n\u001b[0m\n\u001b[91m\u001b[1mError: \u001b[0mToo Many Requests: \u672c\u6b21Token\u989d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8bf7\u7b49\u5f852\u5c0f\u65f622\u5206\u949f21\u79d2\u540e\u91cd\u8bd5\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_opencode_sympy__sympy-12454.json\n[run_single] cleanup: git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n",
+        "quota_retry": 3,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 134,
+          "p2p_total": 134
+        }
+      },
+      "claude-code": {
+        "harness": "claude-code",
+        "returncode": 1,
+        "wall_s": 2.3,
+        "predictions_file": "/dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-12454.json",
+        "stdout_tail": "mpy__sympy-12454\n[run_single] base_commit=d3fcdb72bfcbb560eb45264ac1c03f359436edef\n[run_single] ps_len=1235\n[run_single] git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n[run_single] running claude-code ...\n== harness=claude-code rc=1 timed_out=False wall=2.2s ==\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /dev/shm/harness_work/workdirs/predictions_claude_code_sympy__sympy-12454.json\n[run_single] cleanup: git reset --hard d3fcdb72bfcbb560eb45264ac1c03f359436edef\n",
+        "quota_retry": null,
+        "eval": {
+          "eval_rc": 0,
+          "resolved": false,
+          "patch_applied": true,
+          "f2p_pass": 0,
+          "f2p_total": 2,
+          "p2p_pass": 134,
+          "p2p_total": 134
+        }
+      }
+    }
+  },
+  {
+    "instance_id": "sympy__sympy-12481",
+    "repo": "sympy/sympy",
+    "version": "1.0",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: \n[TIMEOUT]"
+    },
+    "blocked": "git fetch failed: \n[TIMEOUT]"
+  },
+  {
+    "instance_id": "sympy__sympy-13031",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+    },
+    "blocked": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+  },
+  {
+    "instance_id": "sympy__sympy-13043",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+    },
+    "blocked": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+  },
+  {
+    "instance_id": "sympy__sympy-13146",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+    },
+    "blocked": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+  },
+  {
+    "instance_id": "sympy__sympy-13177",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+    },
+    "blocked": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+  },
+  {
+    "instance_id": "sympy__sympy-13437",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+    },
+    "blocked": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+  },
+  {
+    "instance_id": "sympy__sympy-13471",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+    },
+    "blocked": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+  },
+  {
+    "instance_id": "sympy__sympy-13480",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+    },
+    "blocked": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+  },
+  {
+    "instance_id": "sympy__sympy-13647",
+    "repo": "sympy/sympy",
+    "version": "1.1",
+    "workdir_setup": {
+      "ok": false,
+      "msg": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+    },
+    "blocked": "git fetch failed: fatal: Unable to create '/dev/shm/harness_work/workdirs/sympy_sympy/.git/shallow.lock': File exists.\n\nAnother git process seems to be running in this repository, e.g.\nan editor opened by 'git commit'."
+  }
+]

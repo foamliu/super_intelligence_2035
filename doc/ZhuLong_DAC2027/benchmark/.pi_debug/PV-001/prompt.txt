@@ -1,0 +1,45 @@
+# Scenario: you are part of a PDK QA team that regression-tests a foundry
+# DRC rule deck with Mentor Calibre (2020.1_36). The team's driver script
+# DrcQa.py runs the rule deck over a set of audit-layout patterns and, for
+# each pattern, Calibre emits a DRC summary report. A designer's recurring
+# job is to read one such summary report and produce a compact pass/fail
+# scoreboard so the QA lead can see, at a glance, how many rules ran, how
+# many passed (zero violations) vs failed (>0 violations), the total number
+# of DRC violations across all rules, and which single rule is the worst
+# offender (the rule with the most violations -- the 'hot spot' to fix first).
+#
+# You are given one Calibre DRC summary report file (attached: drc_summary.rpt).
+# Its format:
+#   * Lines starting with '#' are comments (header / metadata) -- ignore them.
+#   * Blank lines -- ignore them.
+#   * Data lines have the form:   RULECHECK <rule_name> <violation_count>
+#     where <violation_count> is a non-negative integer. count == 0 means the
+#     rule PASSED; count > 0 means the rule FAILED with that many violations.
+#
+# Task: implement pv_summarize_drc_report, which reads the report file and
+# RETURNS a flat Tcl dict string (key value pairs, space-separated) with
+# exactly these seven keys:
+#
+#     total_rule_checks   = number of RULECHECK data lines parsed
+#     total_violations    = sum of all violation_count values
+#     num_failing         = number of rules with count > 0
+#     num_passing         = number of rules with count == 0
+#     worst_rule          = the rule_name with the largest violation_count
+#                           (ties broken by first-encountered rule)
+#     worst_count         = that largest violation_count
+#     pass_rate           = num_passing as a fraction of total_rule_checks,
+#                           rounded to 3 decimals (e.g. 0.417)
+#
+# Rules:
+#   * Only count lines that match the RULECHECK <name> <count> pattern.
+#   * Do NOT write any file -- just return the dict string.
+#
+# Args:
+#   path - path to the drc_summary.rpt file
+# Returns:
+#   A string: "total_rule_checks <N> total_violations <N> num_failing <N>
+#   num_passing <N> worst_rule <name> worst_count <N> pass_rate <float>"
+#
+# proc pv_summarize_drc_report {path} {
+#     # your code here
+# }

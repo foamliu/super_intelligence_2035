@@ -1,0 +1,42 @@
+\section{Related Work}
+
+Our work sits at the intersection of scaling and emergent capabilities, continual learning, LLM-based agents, POMDPs and Bayesian filtering, world models, active perception, and retrieval-augmented systems.
+% 我们的工作处于规模扩展与涌现能力、持续学习、基于LLM的智能体、POMDP与贝叶斯滤波、世界模型、主动感知以及检索增强系统的交汇处。
+
+\subsection{LLM Scaling and Emergent Capabilities}
+
+Modern LLMs exhibit emergent abilities at scale---in-context learning, chain-of-thought reasoning, and instruction following \citep{wei2022emergent,brown2020language,schaeffer2023are}. These arise from compressing heterogeneous data under a unified prediction objective. Yet scaling research focuses almost exclusively on training, neglecting deployment in interactive, real-world settings. Scaling improves the prior (L1--L3) but leaves the observational bridge to L4 unaddressed.
+% 现代LLM在规模扩大时展现出涌现能力——上下文学习、思维链推理和指令遵循。这些能力源于在统一预测目标下压缩异质数据。然而规模扩展研究几乎完全聚焦于训练，忽略了在交互式真实环境中的部署。规模扩展改善了先验（L1-L3），却未触及通向L4的观测桥梁。
+
+\subsection{Continual Learning}
+
+Modern LLMs epitomize Sutton's paradox: trained once on a fixed corpus, deployed as static artifacts in a continually changing world, unable to learn ``on the job'' \citep{sutton2022plasticity,patel2025sutton}. Our framework responds structurally: decouple knowledge (fixed prior) from belief (dynamic posterior), preserving plasticity at the belief level while avoiding catastrophic forgetting.
+% 现代LLM是Sutton悖论的缩影：在固定语料上训练一次，却作为静态制品部署在持续变化的世界中，无法“在工作中学习”。我们的框架提供结构性回应：将知识（固定先验）与信念（动态后验）解耦，在信念层面保持可塑性，同时避免灾难性遗忘。
+
+\subsection{LLM-Based Agents}
+
+LLM-based agents treat the LLM as an orchestrator for decisions, plans, and tool calls \citep{kang2026lifecycle,xie2025empowering}. A recurring observation: LLMs are ``not inherently grounded'' and hallucinate without external evidence \citep{kang2026lifecycle}. Recent work proposes agentic world models bridging planning and physical grounding \citep{zhang2024agentic,ren2026aligning}. However, existing frameworks do not systematically distinguish what an LLM can know from static text (L1--L3) from what it must observe at runtime (L4), nor characterize the bottleneck imposed by observation fidelity. Our work fills this gap with an information-theoretic characterization of grounding and the Agent Harness as a concrete prescription. The critique, however, extends beyond LLMs: any offline-learned prior, whether autoregressive, diffusion-based, or learned simulator, faces the same structural gap.
+% 基于LLM的智能体将LLM视为决策、规划和工具调用的编排器。一个反复出现的观察：LLM“本质上没有接地”，没有外部证据时产生幻觉。近期工作提出桥接规划与物理接地的智能体世界模型。然而，现有框架并未系统地区分LLM能从静态文本中知道什么（L1-L3）与它必须在运行时观测什么（L4），也未刻画观测保真度施加的瓶颈。我们的工作通过落地的信息论刻画和Agent Harness作为具体方案填补了这一空白。但这一批判不限于LLM：任何离线学习的先验——无论是自回归、基于扩散的，还是学习到的模拟器——都面临相同的结构性鸿沟。
+
+\subsection{POMDPs, Bayesian Filtering, and Active Perception}
+
+POMDPs provide a mathematical framework for decision-making under uncertainty \citep{kaelbling1998planning,thrun2005probabilistic}. Bayesian filtering---Kalman filters, particle filters---offers principled state estimation from noisy observations \citep{doucet2001sequential}. Active perception treats sensing as part of decision-making \citep{bajcsy1988active,aloimonos1988active}.
+
+Our framework builds on these foundations but differs in purpose. POMDPs formulate the decision problem; we diagnose where the missing information lies architecturally. POMDPs assume well-defined \(\Omega\) and \(\mathcal{T}\); we identify that in LLM-based agents, \(\Omega\) must be supplied by a runtime harness, and its fidelity---not \(\mathcal{T}\)'s capacity---is the bottleneck. We are not solving the POMDP; we are diagnosing why LLM-based agents fail as POMDP solvers.
+% POMDP为不确定性下的决策提供了数学框架。贝叶斯滤波——卡尔曼滤波器、粒子滤波器——提供了从噪声观测中进行状态估计的原则性方法。主动感知将感知视为决策的一部分。
+
+% 我们的框架建立在这些基础之上，但目的不同。POMDP形式化了决策问题；我们诊断缺失信息在架构上的位置。POMDP假设良好定义的\(\Omega\)和\(\mathcal{T}\)；我们识别出在基于LLM的智能体中，\(\Omega\)必须由运行时框架提供，其保真度——而非\(\mathcal{T}\)的容量——是瓶颈。我们不是在求解POMDP；我们是在诊断为何基于LLM的智能体无法成为称职的POMDP求解器。
+
+\subsection{World Models and Learned Priors}
+
+World models---learned simulators of environment dynamics---have been explored in robotics and RL \citep{ha2018world,lecun2022pathways,schmidhuber1990making}. Recent agentic world models incorporate LLMs \citep{zhang2024agentic,ren2026aligning}.
+
+Our framework distinguishes two roles of a world model. Offline, it encodes L1--L3 general regularities. At runtime, the agent must condition this prior on L4 observations. The transition kernel \(\mathcal{T}\) abstracts the world model's prior role, not predictive accuracy. The key limitation: even a perfect world model, frozen at deployment, cannot provide L4 information about the current state---that requires observation. The fidelity of \(\Omega\), not the expressiveness of the world model, is the binding constraint.
+% 世界模型——环境动态的学习模拟器——已在机器人和RL中被广泛探索。最近的智能体世界模型将LLM纳入其中。
+
+% 我们的框架区分了世界模型的两个角色。离线时，它编码L1-L3的一般规律性。运行时，智能体必须将此先验条件化于L4观测之上。转移核\(\mathcal{T}\)抽象了世界模型的先验角色，而非预测准确性。关键限制：即使完美的世界模型，在部署时冻结，也无法提供当前状态的L4信息——这需要观测。\(\Omega\)的保真度，而非世界模型的表达能力，是约束性瓶颈。
+
+\subsection{Grounding, Retrieval, and Memory}
+
+A common confusion equates grounding with retrieval or memory. Retrieval-augmented generation (RAG) retrieves from external datastores \citep{lewis2020retrieval,gao2023retrieval}. Memory stores past experiences \citep{zhong2024memory}. Both are valuable, but neither is grounding. Retrieval queries the past; memory recalls the past. Grounding is the process of bringing offline knowledge into contact with \emph{current} L4 states. An agent with perfect retrieval and infinite memory still cannot know whether the cup is on the table \emph{now} unless it observes. This distinction---recalling what was versus observing what is---is our central contribution.
+% 一个常见混淆是将接地等同于检索或记忆。检索增强生成（RAG）从外部存储检索。记忆存储过去的经验。两者都有价值，但都不是接地。检索查询过去；记忆回忆过去。接地是将离线知识与\emph{当前}L4状态相接触的过程。一个拥有完美检索和无限记忆的智能体，除非观测，否则仍然无法知道杯子此刻是否在桌上。这一区分——回忆曾经是什么与观测当前是什么——是我们的核心贡献。

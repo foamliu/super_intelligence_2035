@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe data 线 · 昨夜工作汇报 · 2026-10-07</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); } .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .tldr { background:#fff; border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  .tldr ol { margin:6px 0; padding-left:22px; } .tldr li { margin:5px 0; }
+  .fig { margin:18px 0; text-align:center; } .fig svg { max-width:100%; height:auto; }
+  .fig .cap { font-size:12.5px; color:var(--muted); margin-top:6px; }
+  .commit-list { font-size:12.5px; font-family:Consolas,Menlo,monospace; } .commit-list li { margin:2px 0; }
+  .footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); font-size:12.5px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<!-- 1. HERO -->
+<header class="hero">
+  <h1>BaiZe data 线 · 昨夜工作汇报</h1>
+  <div class="sub">窗口 2026-10-06 22:00 → 2026-10-07 08:00（本地时区）</div>
+  <div class="meta"><span>📊 数据截止 07:37</span><span>🖥 主机 .12</span><span>⏱ 窗口 9h37m</span></div>
+  <div class="meta" style="margin-top:10px;"><span>💡 三步令①②全收口(s_step 8.6×+Round1 200trial+Spearman ρ=−0.43)，Round2 BO 修3bug后50✅/63trial稳步推进(ETA~21:30)；两条下载线持续健康(base 99%即将下满)。</span></div>
+</header>
+<!-- 2. TL;DR -->
+<div class="tldr">
+  <h3 style="margin-top:0;">📋 TL;DR</h3>
+  <ol>
+    <li><b>s_step 归因完成</b>(23:04)：MBS=1→16 使每步 1432ms→166ms(<b>8.6×</b>)，瓶颈=overhead-bound(16×μbatch kernel-launch)，非 compute-bound → D 从 0.016B→<b>0.5B/trial</b>。</li>
+    <li><b>Round1 BO 200/200 + top-K lm_eval</b>(23:53–00:32)：best=#182；6 ckpt lm_eval 8集，<b>Spearman ρ=−0.43</b>(loss≠能力)，σ=0(确定性)。</li>
+    <li><b>Round2 BO 启动+修3bug</b>(01:52–03:22)：port冲突→random port / ckpt→HF架构硬编码→auto-detect / HF key名mismatch→修。修复后连续<b>50✅</b>，best=<b>0.4155</b>(id=23)。</li>
+    <li><b>两条下载线持续健康</b>：base l1_en_hq 5088→5948/6006(85%→99%)，zh✅256/256，GPIC 4916/8001+test✅128。<b>纠正误记</b>：「进程已死/保持不动」系误读——进程一直健康。</li>
+    <li><b>窗口内 22 次 data 线提交</b>，覆盖 s_step→Round1收口→top-K lm_eval→Round2启动→bug修复→监控全程。</li>
+  </ol>
+</div>
+<!-- 3. KPI 表 -->
+<h2 class="sec"><span class="no">3</span>KPI 表</h2>
+<table>
+  <thead><tr><th>指标</th><th>22:00 起点</th><th>07:37 现值</th><th>Δ</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>Round1 BO trials</td><td>168/200</td><td><span class="badge b-ok">200/200 ✅</span></td><td>+32</td><td>best=#182</td></tr>
+    <tr><td>top-K lm_eval</td><td>未跑</td><td><span class="badge b-ok">6 ckpts ✅</span></td><td>+6</td><td>Spearman ρ=−0.43, σ=0</td></tr>
+    <tr><td>s_step (MBS=1→16)</td><td>1432 ms</td><td><span class="badge b-ok">166 ms</span></td><td>−1266 ms (8.6×)</td><td>overhead-bound</td></tr>
+    <tr><td>D (token/trial)</td><td>0.016 B</td><td><span class="badge b-ok">0.5 B</span></td><td>+31×</td><td>via MBS=16</td></tr>
+    <tr><td>Round2 BO trials</td><td>0</td><td><span class="badge b-warn">63 (50✅/13❌)</span></td><td>+63</td><td>13❌全早期(id1-13)</td></tr>
+    <tr><td>Round2 best score</td><td>—</td><td><span class="badge b-info">0.4155</span></td><td>—</td><td>id=23: web=0.941</td></tr>
+    <tr><td>base l1_en_hq</td><td>5088/6006 (85%)</td><td><span class="badge b-warn">5948/6006 (99%)</span></td><td>+860</td><td>活PID=3076519</td></tr>
+    <tr><td>base zh</td><td>256/256 ✅</td><td>256/256 ✅</td><td>0</td><td>已满</td></tr>
+    <tr><td>GPIC train</td><td>无起点快照</td><td><span class="badge b-warn">4916/8001 (61%)</span></td><td>—</td><td>活PID=144981</td></tr>
+    <tr><td>GPIC test</td><td>无起点快照</td><td><span class="badge b-ok">128/128 ✅</span></td><td>—</td><td>已满</td></tr>
+  </tbody>
+</table>
+<p><b>本窗口有无实质产出</b>：<span class="badge b-ok">有</span> — s_step归因+Round1收口+top-K lm_eval+Round2启动+修复+50✅，9.6h完成三步令①②并启动③。</p>
+<!-- 4. 时间线 -->
+<h2 class="sec"><span class="no">4</span>时间线</h2>
+<table>
+  <thead><tr><th>hh:mm</th><th>动作</th><th>状态</th></tr></thead>
+  <tbody>
+    <tr><td>22:08</td><td>唤醒165：BO 168/200，l1_en_hq 5088/6006(85%)</td><td>⏸ 等待BO收口</td></tr>
+    <tr><td>22:32–22:44</td><td>三步令下发：①收200trial ②s_step归因 ③8卡搜第二轮；MBS×GBS网格分析</td><td>✅ 规划</td></tr>
+    <tr><td>23:04</td><td><b>s_step归因完成</b>：MBS∈{1,4,8,16}，MBS=16→166ms(8.6×)，峰值42GB</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>23:07</td><td>产出 report_data_mix_sstep.html</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>23:53</td><td><b>BO 200/200完成</b>(best=#182)；top-K 6ckpt重训启动；base下载重启</td><td><span class="badge b-ok">✅里程碑</span></td></tr>
+    <tr><td>00:32</td><td><b>top-K lm_eval完成</b>：6ckpt×8集，Spearman ρ=−0.43，σ=0；修HF key/conv1d/dataset/Spearman bug</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>01:15</td><td>产出 report_data_mix_eval.html</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>01:52</td><td><b>Round2 BO启动</b>(PID=3614158@.29)：修3bug(random port/load_trials/run_trial return)</td><td><span class="badge b-ok">🚀</span></td></tr>
+    <tr><td>02:43</td><td><b>修bug#2</b>：ckpt→HF硬编码2B架构→_detect_and_set_arch()自动检测d128/2B</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>03:22</td><td><b>修bug#3</b>：HF转换port冲突→random.randint(20000,60000)</td><td><span class="badge b-ok">✅</span></td></tr>
+    <tr><td>04:07</td><td>24trial(11✅/13❌)：13❌全早期(id1-13,bug修复前)</td><td>🟡修复确认</td></tr>
+    <tr><td>05:55</td><td>40trial(27✅)，best=0.4155(id=23)</td><td>🟢推进</td></tr>
+    <tr><td>06:28</td><td>48trial(35✅)，rate=13.3/h</td><td>🟢推进</td></tr>
+    <tr><td>07:04</td><td>56trial(43✅)</td><td>🟢推进</td></tr>
+    <tr><td>07:15–07:23</td><td>运维P0：作废「不重启下载」误读→正名「数据下载失败需主动重启」</td><td>ℹ️口径修正</td></tr>
+    <tr><td>07:37</td><td><b>唤醒179(本报告)</b>：三条线全活，63trial(50✅)，best=0.4155</td><td>🟢当前</td></tr>
+<!-- 5. 证据 -->
+<h2 class="sec"><span class="no">5</span>证据</h2>
+<h3>5.1 s_step 归因实测（23:04，GPU1@.29，d=128 proxy 18.36M）</h3>
+<div class="fig">
+  <svg viewBox="0 0 560 280" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="560" height="280" fill="#f6f8fa" rx="8"/>
+    <text x="280" y="24" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2328">s_step vs MBS（实测数据）</text>
+    <line x1="70" y1="240" x2="530" y2="240" stroke="#d0d7de" stroke-width="1.5"/>
+    <line x1="70" y1="50" x2="70" y2="240" stroke="#d0d7de" stroke-width="1.5"/>
+    <text x="300" y="262" text-anchor="middle" font-size="11" fill="#59636e">MBS（micro-batch size）</text>
+    <text x="20" y="145" text-anchor="middle" font-size="11" fill="#59636e" transform="rotate(-90 20 145)">s_step (ms)</text>
+    <rect x="100" y="60" width="80" height="180" fill="#cf222e" opacity="0.85" rx="3"/>
+    <text x="140" y="55" text-anchor="middle" font-size="12" font-weight="600" fill="#cf222e">1432ms</text>
+    <text x="140" y="255" text-anchor="middle" font-size="11" fill="#1f2328">MBS=1</text>
+    <text x="140" y="270" text-anchor="middle" font-size="10" fill="#59636e">1.0×</text>
+    <rect x="210" y="187" width="80" height="53" fill="#9a6700" opacity="0.85" rx="3"/>
+    <text x="250" y="182" text-anchor="middle" font-size="12" font-weight="600" fill="#9a6700">418ms</text>
+    <text x="250" y="255" text-anchor="middle" font-size="11" fill="#1f2328">MBS=4</text>
+    <text x="250" y="270" text-anchor="middle" font-size="10" fill="#59636e">3.4×</text>
+    <rect x="320" y="212" width="80" height="28" fill="#1f6feb" opacity="0.85" rx="3"/>
+    <text x="360" y="207" text-anchor="middle" font-size="12" font-weight="600" fill="#1f6feb">220ms</text>
+    <text x="360" y="255" text-anchor="middle" font-size="11" fill="#1f2328">MBS=8</text>
+    <text x="360" y="270" text-anchor="middle" font-size="10" fill="#59636e">6.5×</text>
+    <rect x="430" y="219" width="80" height="21" fill="#1a7f37" opacity="0.85" rx="3"/>
+    <text x="470" y="214" text-anchor="middle" font-size="12" font-weight="600" fill="#1a7f37">166ms</text>
+    <text x="470" y="255" text-anchor="middle" font-size="11" fill="#1f2328">MBS=16</text>
+    <text x="470" y="270" text-anchor="middle" font-size="10" fill="#59636e">8.6×</text>
+  </svg>
+  <div class="cap">【实测数据】s_step 归因：MBS=16 使每步 1432ms→166ms（8.6×加速），峰值显存 42GB</div>
+</div>
+<pre><code>MBS | μbatch/step | 中位 s_step(ms) | tok/s    | 峰值显存(MB) | 加速比
+ 1  |     16      |     1432        |  22,893  |    3,024     | 1.0×(基线)
+ 4  |      4      |      418        |  78,431  |   10,851     | 3.4×
+ 8  |      2      |      220        | 149,211  |   ~20,000    | 6.5×
+16  |      1      |      166        | 197,831  |   42,164     | 8.6×
+结论: 瓶颈=overhead-bound(每μbatch~90-170ms×16μbatch=1.5s), 非 compute-bound
+D投影(MBS=16,D=0.5B): 15259步×0.166s=2533s=42min/trial → 205 trial/24h/6GPU</code></pre>
+<h3>5.2 Round2 BO 进度（07:37，DB mix_search_eval_r2.db）</h3>
+<div class="fig">
+  <svg viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="560" height="260" fill="#f6f8fa" rx="8"/>
+    <text x="280" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2328">Round2 BO 累计完成 trial 数（实测数据）</text>
+    <line x1="60" y1="220" x2="530" y2="220" stroke="#d0d7de" stroke-width="1.5"/>
+    <line x1="60" y1="40" x2="60" y2="220" stroke="#d0d7de" stroke-width="1.5"/>
+    <text x="295" y="242" text-anchor="middle" font-size="11" fill="#59636e">时间</text>
+    <text x="18" y="130" text-anchor="middle" font-size="11" fill="#59636e" transform="rotate(-90 18 130)">complete trials</text>
+    <line x1="60" y1="40" x2="530" y2="40" stroke="#9a6700" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="525" y="36" text-anchor="end" font-size="9" fill="#9a6700">target=200</text>
+    <polygon points="70,220 246,185 293,162 339,159 387,133 430,107 470,82 520,58 520,220 70,220" fill="#1f6feb" opacity="0.1"/>
+    <polyline points="70,220 246,185 293,162 339,159 387,133 430,107 470,82 520,58" fill="none" stroke="#1f6feb" stroke-width="2.5"/>
+    <circle cx="70" cy="220" r="3" fill="#1f6feb"/><text x="70" y="210" text-anchor="middle" font-size="9" fill="#59636e">01:52</text>
+    <circle cx="246" cy="185" r="3" fill="#1f6feb"/><text x="246" y="178" text-anchor="middle" font-size="9" fill="#59636e">04:07</text>
+    <circle cx="387" cy="133" r="3" fill="#1f6feb"/><text x="387" y="126" text-anchor="middle" font-size="9" fill="#59636e">05:55</text>
+    <circle cx="470" cy="82" r="3" fill="#1f6feb"/><text x="470" y="75" text-anchor="middle" font-size="9" fill="#59636e">06:59</text>
+    <circle cx="520" cy="58" r="4" fill="#cf222e"/><text x="520" y="48" text-anchor="middle" font-size="10" font-weight="600" fill="#cf222e">07:37</text>
+    <text x="520" y="38" text-anchor="middle" font-size="10" font-weight="600" fill="#cf222e">50✅</text>
+  </svg>
+  <div class="cap">【实测数据】Round2 BO 累计完成 trial 数。07:37=50✅/200，rate≈11/h，ETA~21:30</div>
+</div>
+<pre><code>$ python3 -c "import sqlite3; c=sqlite3.connect('mix_search_eval_r2.db'); ..."
+status counts: ('complete', 50), ('failed', 13)
+total= 63
+top5 by score:
+ id=23 score=0.4155  params={"web": 0.941, "code": 0.109}
+ id=38 score=0.4138  params={"web": 0.895, "code": 0.100}
+ id=33 score=0.4090  params={"web": 0.940, "code": 0.086}
+ id=57 score=0.4058  params={"web": 0.904, "code": 0.061}
+ id=50 score=0.4045  params={"web": 0.923, "code": 0.085}
+score stats: n=50 min=0.3780 max=0.4155 mean=0.3902 sigma=0.0091</code></pre>
+<h3>5.3 下载线取证（07:37，ps -ef 实测）</h3>
+<pre><code>$ ps -ef | grep -Ei 'hf download|download_it_pairs'
+app.e0031982  144981 3525273 14 Oct04  hf download stanford-vision-lab/gpic   ← GPIC, 活
+app.e0031982 3076502       1  0 Oct04  bash -c retry-loop...                   ← base wrapper, ppid=1, 活
+app.e0031982 3076519 3076502  1 Oct04  hf download openbmb/Ultra-FineWeb ...    ← base hf, 活
+
+$ find data/ultrafineweb_l1_en_hq/ -name '*.parquet' | wc -l  → 5948/6006 (99%)
+$ find data/ultrafineweb_zh/ -name '*.parquet' | wc -l        → 256    ✅ 已满
+$ find data/ultrafineweb_l1_en_hq/ -name '*.incomplete' | wc -l → 0
+$ ls /nas_inference/.../gpic/train/*.tar | wc -l               → 4916/8001 (61%)
+$ ls /nas_inference/.../gpic/test/*.tar | wc -l                → 128    ✅ 已满</code></pre>
+<p><b>⚠️ 纠正旧误记</b>：前几轮心跳连写「base下载进程已死（按指令保持不动）」——经 <code>ps -ef</code> 实测，<b>进程 PID=3076519 自 Oct04 启动以来一直健康运行</b>，从未死亡。根因=运维侧旧巡检纪律「不动下载」被误读为「下载失败也不重启」。2026-10-07 P0 口径已正名「数据下载失败需主动重启」，但本进程并未失败→无需重启。<b>窗口内无实际「进程已死却维持不动」的时段。</b></p>
+<!-- 6. 卡点 / 未完成 -->
+<h2 class="sec"><span class="no">6</span>卡点 / 未完成</h2>
+<table>
+  <tbody>
+    <tr><td><b>Round2 BO 未跑完</b></td><td>63/200 trial（50✅），ETA~21:30。BO进程PID=3614158@.29健康</td><td>需要：时间（自动完成）</td></tr>
+    <tr><td><b>Round2 top-K lm_eval 未跑</b></td><td>BO 200trial 完成后取 top-5 跑 lm_eval 8集 + report_data_mix_eval_r2.html</td><td>需要：BO完成后GPU时间</td></tr>
+    <tr><td><b>base l1_en_hq 差58文件</b></td><td>5948/6006(99%)，ETA~15min。下满后报运维「base族就绪」→解锁P-8备料</td><td>需要：~15min</td></tr>
+    <tr><td><b>DATA_MIX_RECIPE.md §6 未更新</b></td><td>Round2结论待BO+lm_eval完成后回写</td><td>需要：Round2结果</td></tr>
+    <tr><td><b>Decay 段搜索未开始</b></td><td>三步令③=Stable段；Decay段(SFT配比)需Stable完成后跑</td><td>需要：Stable完成</td></tr>
+  </tbody>
+</table>
+<!-- 7. 今晨现状 -->
+<h2 class="sec"><span class="no">7</span>今晨现状</h2>
+<table>
+  <tbody>
+    <tr><td><b>主机</b></td><td>.12（whag0pgpuap12）</td></tr>
+    <tr><td><b>Round2 BO</b></td><td>PID=3614158@.29 运行中，8卡全速（GPU0-7），63/200(50✅/13❌)，best=0.4155(id=23)，ETA~21:30</td></tr>
+    <tr><td><b>base 下载</b></td><td>PID=3076519 健康，l1_en_hq 5948/6006(99%) + zh 256/256✅，ETA~15min</td></tr>
+    <tr><td><b>GPIC 下载</b></td><td>PID=144981 健康，train 4916/8001(61%) + test 128/128✅</td></tr>
+    <tr><td><b>GPU</b></td><td>全8卡被Round2 BO占用（data线独占，pretrain A/B/D已完成）</td></tr>
+    <tr><td><b>产物</b></td><td>report_data_mix_sstep.html✅ · report_data_mix_eval.html✅ · mix_search_eval_r2.db✅ · baize_mix_optuna_r2.py✅</td></tr>
+    <tr><td><b>下一步</b></td><td>①监控BO(ETA~21:30) ②BO 200→top-K lm_eval→report_r2.html ③base下满→报运维 ④更新RECIPE §6</td></tr>
+  </tbody>
+</table>
+<!-- 8. commit 列表 -->
+<h2 class="sec"><span class="no">8</span>窗口内 commit 列表（data 线）</h2>
+<p>取数：<code>git log --since=2026-10-06T22:00:00 --until=2026-10-07T08:00:00 | grep -i 'data'</code></p>
+<ul class="commit-list">
+  <li>c2c2cc41 10-06 22:08 data 唤醒165: BO 168/200, l1_en_hq 5088/6006 85%</li>
+  <li>a4b1e90b 10-06 22:32 data 三步令下发: ①收200trial ②s_step归因 ③8卡搜第二轮</li>
+  <li>67634378 10-06 22:34 data 三步令补注: MBS=1系沿用2.2B基线; MBS16 logits不OOM</li>
+  <li>b1d55ecb 10-06 22:38 data s_step归因升级为MBSxGBS网格</li>
+  <li>eef0ac0c 10-06 22:41 data 修正: 第二轮只需实验内可比</li>
+  <li>14f1727a 10-06 22:42 data 固化LR重扫协议</li>
+  <li>b2eef0e3 10-06 22:44 data 承认'单卡无累积=MBS=GBS'为主候选</li>
+  <li>da020e19 10-06 23:04 data: s_step归因完成(MBS1→16:8.6×)</li>
+  <li>39675735 10-06 23:07 data: report_data_mix_sstep.html</li>
+  <li>e13549b5 10-06 23:53 data 唤醒167: BO 200/200完成+top-K重训+base下载重启</li>
+  <li>049231d1 10-07 00:32 proxy lmeval: 6 top-K ckpts, Spearman rho=-0.43, sigma=0</li>
+  <li>ff8d92ba 10-07 01:15 data 唤醒168: report_data_mix_eval.html</li>
+  <li>e2569c85 10-07 01:33 data 唤醒169: baize_mix_optuna_r2.py创建</li>
+  <li>47382b6a 10-07 01:52 data 唤醒170: Round2 BO启动+修3bug</li>
+  <li>55fd73f1 10-07 02:43 data 唤醒171: fix ckpt2HF for d128 proxy</li>
+  <li>49a2cefa 10-07 03:22 data 唤醒172: fix HF port conflict</li>
+  <li>a911864b 10-07 04:07 data R2: 24trial(11✅/13❌) 修复确认有效</li>
+  <li>4907e022 10-07 04:43 data 唤醒174: 31trial(18✅/13❌)</li>
+  <li>413b8eea 10-07 05:18 data 唤醒175: 32trial(19✅/13❌)</li>
+  <li>bbaa5d55 10-07 05:55 data 唤醒176: 40trial(27✅,best=0.4155)</li>
+  <li>10596eb8 10-07 06:28 data 唤醒177: 48trial(35✅), rate=13.3/h</li>
+  <li>67ab533d 10-07 07:04 data 唤醒178: 56trial(43✅), best=0.4155</li>
+</ul>
+<p style="font-size:12.5px;color:var(--muted);">另有2条ops提交涉及data线（07:15 P0下发、07:23口径修正），非data线自身提交。</p>
+<div class="footer">
+  <p>BaiZe data 线 · 昨夜工作汇报 · 2026-10-07 · 数据截止 07:37 · 自包含HTML（零外部依赖）</p>
+</div>
+</div>
+</body>
+</html>
+  </tbody>
+</table>

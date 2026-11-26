@@ -1,0 +1,8 @@
+module eco_demo ( clk, din, dout );
+  input  clk;
+  input  din;
+  output dout;
+  wire   n0;
+  fdf1a3 u_din_reg  (.CLK(clk), .D(din), .Q(n0)  );
+  fdf1a3 u_dout_reg (.CLK(clk), .D(n0),  .Q(dout) );
+endmodule

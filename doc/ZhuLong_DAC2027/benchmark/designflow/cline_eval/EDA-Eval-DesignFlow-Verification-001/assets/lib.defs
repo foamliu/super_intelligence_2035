@@ -1,0 +1,4 @@
+# lib.defs — bare starter (NEEDS aether handling for step3+ flow).
+# The aether rewrite must: INCLUDE the aether tools lib.defs, and SKIP amsLib
+# (amsLib is not usable in this project and breaks aether load).
+DEFINE drcpa_top ./drcpa_top

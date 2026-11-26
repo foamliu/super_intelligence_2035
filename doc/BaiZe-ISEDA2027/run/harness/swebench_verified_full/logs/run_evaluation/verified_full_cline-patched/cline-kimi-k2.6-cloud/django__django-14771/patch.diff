@@ -1,0 +1,58 @@
+diff --git a/django/utils/autoreload.py b/django/utils/autoreload.py
+index cc65c043a..fc73eddf1 100644
+--- a/django/utils/autoreload.py
++++ b/django/utils/autoreload.py
+@@ -220,6 +220,12 @@ def get_child_arguments():
+     py_script = Path(sys.argv[0])
+ 
+     args = [sys.executable] + ['-W%s' % o for o in sys.warnoptions]
++    for opt in sorted(getattr(sys, '_xoptions', {}).keys()):
++        value = sys._xoptions[opt]
++        if value is True:
++            args.append('-X%s' % opt)
++        else:
++            args.append('-X%s=%s' % (opt, value))
+     # __spec__ is set when the server was started with the `-m` option,
+     # see https://docs.python.org/3/reference/import.html#main-spec
+     # __spec__ may not exist, e.g. when running in a Conda env.
+diff --git a/tests/utils_tests/test_autoreload.py b/tests/utils_tests/test_autoreload.py
+index 7c28a9d4d..f10b75735 100644
+--- a/tests/utils_tests/test_autoreload.py
++++ b/tests/utils_tests/test_autoreload.py
+@@ -235,6 +235,36 @@ class TestChildArguments(SimpleTestCase):
+         with self.assertRaisesMessage(RuntimeError, msg):
+             autoreload.get_child_arguments()
+ 
++    @mock.patch('__main__.__spec__', None)
++    @mock.patch('sys.argv', [__file__, 'runserver'])
++    @mock.patch('sys.warnoptions', [])
++    @mock.patch('sys._xoptions', {'utf8': True})
++    def test_xoptions(self):
++        self.assertEqual(
++            autoreload.get_child_arguments(),
++            [sys.executable, '-Xutf8', __file__, 'runserver']
++        )
++
++    @mock.patch('__main__.__spec__', None)
++    @mock.patch('sys.argv', [__file__, 'runserver'])
++    @mock.patch('sys.warnoptions', [])
++    @mock.patch('sys._xoptions', {'tracemalloc': '2'})
++    def test_xoptions_with_value(self):
++        self.assertEqual(
++            autoreload.get_child_arguments(),
++            [sys.executable, '-Xtracemalloc=2', __file__, 'runserver']
++        )
++
++    @mock.patch('__main__.__spec__', None)
++    @mock.patch('sys.argv', [__file__, 'runserver'])
++    @mock.patch('sys.warnoptions', [])
++    @mock.patch('sys._xoptions', {})
++    def test_xoptions_empty(self):
++        self.assertEqual(
++            autoreload.get_child_arguments(),
++            [sys.executable, __file__, 'runserver']
++        )
++
+     @mock.patch('sys.argv', [__file__, 'runserver'])
+     @mock.patch('sys.warnoptions', [])
+     def test_module_no_spec(self):

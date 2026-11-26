@@ -1,0 +1,31 @@
+\section{Design Principles for Grounded Agents}
+
+The Harness formalization in Section 5 yields three architectural principles that form a coherent thesis: freeze knowledge $\mathcal{K}$, maximize observation $\Omega$, and run belief update $\Phi$ continuously. Training changes $\mathcal{K}$; observation changes belief $b_t$; action changes the environment. The system adapts through belief, not parameter updates.
+% 第5节的框架形式化产生三条架构原则，它们构成一个连贯的论点：冻结知识$\mathcal{K}$、最大化观测$\Omega$、持续运行信念更新$\Phi$。训练改变$\mathcal{K}$；观测改变信念$b_t$；行动改变环境。系统通过信念而非参数更新来适应。
+
+\subsection{Decouple Knowledge from Belief}
+
+Knowledge $\mathcal{K}$ is the static L1--L3 prior encoded in the LLM's parameters---general, context-free, derived from text. Belief $b_t(\theta) = p(\theta_t \mid o_{1:t}, a_{1:t-1}, \mathcal{K})$ is the dynamic posterior maintained by the Harness---specific, context-dependent, updated via $\Phi$ with each observation.
+% 知识$\mathcal{K}$是LLM参数中编码的静态L1--L3先验——通用的、上下文无关的、来源于文本。信念$b_t(\theta) = p(\theta_t \mid o_{1:t}, a_{1:t-1}, \mathcal{K})$是框架维护的动态后验——特定的、上下文依赖的、通过$\Phi$随每次观测更新。
+
+Fine-tuning the LLM during deployment attempts to update $\mathcal{K}$ with limited local observations---inefficient and risks catastrophic forgetting. Instead, freeze $\mathcal{K}$; absorb all adaptation in $b_t$. This separation yields stability (prior robust across tasks) and flexibility (belief tracks the current state) simultaneously.
+% 部署期间微调LLM试图用有限的局部观测更新$\mathcal{K}$——低效且有灾难性遗忘风险。相反，冻结$\mathcal{K}$；将所有适应吸收在$b_t$中。这种分离同时实现了稳定性（先验跨任务稳健）和灵活性（信念跟踪当前状态）。
+
+\subsection{Optimize Observation Over the Prior}
+
+The scaling debate has focused overwhelmingly on the prior. But the formalization reveals a structural asymmetry: the grounding gap is bounded by the \emph{fidelity of the likelihood} $\Omega$, not by the expressiveness of the prior $\mathcal{T}$. As established in Section 4, $D_{\text{grounding}}(t)$ is bounded by $\|\tilde{p} - p_{\text{real}}\|$---a bound independent of model scale.
+% 缩放争论已压倒性地聚焦于先验。但形式化揭示了一个结构不对称：落地鸿沟被似然$\Omega$的\emph{保真度}所界定，而非被先验$\mathcal{T}$的表达能力所界定。如第4节所述，$D_{\text{grounding}}(t)$被$\|\tilde{p} - p_{\text{real}}\|$所界定——该上界与模型规模无关。
+
+Investment in observation---sensors, APIs, connectors, state estimators---has a direct, bounded effect on performance. Investment in model scale, once the prior is sufficiently rich, has diminishing returns: it cannot reduce the grounding gap below the observation-imposed floor.
+% 对观测的投入——传感器、API、连接器、状态估计器——对性能有直接的、有界的效应。一旦先验足够丰富，对模型规模的投入收益递减：它无法将落地鸿沟降低到观测所施加的下限以下。
+
+\subsection{Design for Continuous Belief Updating}
+
+Belief update $\Phi$ operates online: every observation $o_t$ yields a recursive update $b_t \mapsto b_{t+1}$. This fundamentally differs from the static training-then-deploy paradigm. In dynamic L4 environments, the system must update with every observation.
+% 信念更新$\Phi$在线运作：每次观测$o_t$产生递归更新$b_t \mapsto b_{t+1}$。这根本不同于静态的"训练-部署"范式。在动态L4环境中，系统必须在每次观测时更新。
+
+Two implications follow. First, $\Phi$'s update rate must exceed the timescale of L4 dynamics; otherwise $b_t$ becomes stale. Second, $b_t$ must be a structured representation that captures uncertainty and history, enabling recovery from unexpected changes and reasoning under partial observability. (Filtering methods such as particle filters or Kalman filters are familiar instantiations of this principle, but the framework itself does not depend on any particular implementation.)
+% 两个含义：第一，$\Phi$的更新率必须超过L4动态的时间尺度；否则$b_t$会过时。第二，$b_t$必须是一个结构化的表征，捕获不确定性和历史，使其能够从意外变化中恢复并在部分可观测下推理。（粒子滤波器或卡尔曼滤波器等滤波方法是这一原则的常见实例化，但框架本身并不依赖任何特定实现。）
+
+Together, these three principles form a coherent architecture: freeze $\mathcal{K}$, maximize $\Omega$, run $\Phi$ continuously. The Harness operationalizes all three.
+% 这三条原则共同构成一个连贯的架构：冻结$\mathcal{K}$、最大化$\Omega$、持续运行$\Phi$。框架将所有三者操作化。

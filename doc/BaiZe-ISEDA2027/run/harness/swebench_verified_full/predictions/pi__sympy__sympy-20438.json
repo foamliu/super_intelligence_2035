@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-20438",
+    "model_name_or_path": "pi-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/core/relational.py b/sympy/core/relational.py\nindex e2e0b7fb..eddb480c 100644\n--- a/sympy/core/relational.py\n+++ b/sympy/core/relational.py\n@@ -311,7 +311,7 @@ def _eval_simplify(self, **kwargs):\n             v = None\n             if dif.is_comparable:\n                 v = dif.n(2)\n-            elif dif.equals(0):  # XXX this is expensive\n+            elif hasattr(dif, 'equals') and dif.equals(0):  # XXX this is expensive\n                 v = S.Zero\n             if v is not None:\n                 r = r.func._eval_relation(v, S.Zero)\ndiff --git a/sympy/sets/sets.py b/sympy/sets/sets.py\nindex 3c4aa86e..336d2d96 100644\n--- a/sympy/sets/sets.py\n+++ b/sympy/sets/sets.py\n@@ -865,6 +865,17 @@ def __len__(self):\n     def __bool__(self):\n         return all([bool(s) for s in self.sets])\n \n+    def _eval_is_subset(self, other):\n+        if self.is_finite_set and self.is_iterable:\n+            # For ProductSet vs ProductSet with matching dimensions, the generic\n+            # fallback (self.intersect(other) == self) handles it efficiently\n+            # via component-wise intersection.\n+            if isinstance(other, ProductSet) and len(self.sets) == len(other.sets):\n+                return None\n+            return fuzzy_and(other._contains(sympify(e)) for e in self)\n+        return None\n+\n+\n \n class Interval(Set, EvalfMixin):\n     \"\"\"\n"
+  }
+]

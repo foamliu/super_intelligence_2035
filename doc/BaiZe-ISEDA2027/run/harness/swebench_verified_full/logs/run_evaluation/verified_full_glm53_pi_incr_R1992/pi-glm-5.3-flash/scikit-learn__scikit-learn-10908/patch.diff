@@ -1,0 +1,49 @@
+diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py
+index 22fbd3f..eef5cf0 100644
+--- a/sklearn/feature_extraction/tests/test_text.py
++++ b/sklearn/feature_extraction/tests/test_text.py
+@@ -19,6 +19,7 @@ from sklearn.pipeline import Pipeline
+ from sklearn.svm import LinearSVC
+ 
+ from sklearn.base import clone
++from sklearn.exceptions import NotFittedError
+ 
+ import numpy as np
+ from numpy.testing import assert_array_almost_equal
+@@ -559,6 +560,22 @@ def test_feature_names():
+         assert_equal(idx, cv.vocabulary_.get(name))
+ 
+ 
++def test_count_vectorizer_unfitted_vocabulary():
++    # Non-regression test for:
++    # https://github.com/scikit-learn/scikit-learn/issues/13421
++    # Check that ``get_feature_names`` works when a vocabulary is
++    # provided at initialization, even if the vectorizer has not
++    # been fitted, and that it still raises NotFittedError when no
++    # vocabulary was provided and the vectorizer was not fitted.
++    vocabulary = ['and', 'document', 'first', 'is', 'one',
++                  'second', 'the', 'third', 'this']
++    cv = CountVectorizer(vocabulary=vocabulary)
++    assert_equal(cv.get_feature_names(), sorted(vocabulary))
++
++    cv = CountVectorizer()
++    assert_raises(NotFittedError, cv.get_feature_names)
++
++
+ def test_vectorizer_max_features():
+     vec_factories = (
+         CountVectorizer,
+diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py
+index 9b1ebd6..789e101 100644
+--- a/sklearn/feature_extraction/text.py
++++ b/sklearn/feature_extraction/text.py
+@@ -993,6 +993,9 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):
+ 
+     def get_feature_names(self):
+         """Array mapping from feature integer indices to feature name"""
++        if not hasattr(self, 'vocabulary_'):
++            self._validate_vocabulary()
++
+         self._check_vocabulary()
+ 
+         return [t for t, i in sorted(six.iteritems(self.vocabulary_),

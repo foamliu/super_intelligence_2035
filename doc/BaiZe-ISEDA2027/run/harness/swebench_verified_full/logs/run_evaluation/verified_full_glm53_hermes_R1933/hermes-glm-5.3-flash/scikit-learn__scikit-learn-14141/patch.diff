@@ -1,0 +1,12 @@
+diff --git a/sklearn/utils/_show_versions.py b/sklearn/utils/_show_versions.py
+index e5d3141b..d13f28b0 100644
+--- a/sklearn/utils/_show_versions.py
++++ b/sklearn/utils/_show_versions.py
+@@ -46,6 +46,7 @@ def _get_deps_info():
+         "numpy",
+         "scipy",
+         "Cython",
++        "joblib",
+         "pandas",
+         "matplotlib",
+     ]

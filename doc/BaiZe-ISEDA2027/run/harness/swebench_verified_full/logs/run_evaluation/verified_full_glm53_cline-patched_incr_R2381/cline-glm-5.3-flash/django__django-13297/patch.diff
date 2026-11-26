@@ -1,0 +1,86 @@
+diff --git a/repro_31420.py b/repro_31420.py
+new file mode 100644
+index 0000000000..54f2d73fd8
+--- /dev/null
++++ b/repro_31420.py
+@@ -0,0 +1,80 @@
++"""Reproduction of: TemplateView.get_context_data()'s kwargs returns
++SimpleLazyObjects that causes a crash when filtering.
++
++https://code.djangoproject.com/ (Django 3.1 regression)
++"""
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=False,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    ROOT_URLCONF='__main__',
++    USE_TZ=True,
++    ALLOWED_HOSTS=['*'],
++    SECRET_KEY='repro-secret-key',
++)
++
++django.setup()
++
++from django.db import models
++
++
++class Account(models.Model):
++    slug = models.SlugField(unique=True)
++
++    class Meta:
++        app_label = 'auth'
++
++
++from django.urls import path
++from django.views.generic import TemplateView
++from django.shortcuts import get_object_or_404
++
++
++class OfferView(TemplateView):
++    template_name = "offers/offer.html"
++
++    def get_context_data(self, **kwargs):
++        offer_slug = kwargs.get("offer_slug", "")
++        offer = get_object_or_404(Account, slug=offer_slug)
++        return {"offer": offer, "offer_slug": offer_slug}
++
++
++urlpatterns = [
++    path('offers/<slug:offer_slug>/', OfferView.as_view(), name='offer_view'),
++]
++
++from django.db import connection
++
++with connection.schema_editor() as schema_editor:
++    schema_editor.create_model(Account)
++
++Account.objects.create(slug='test-offer')
++
++from django.test import Client
++
++print('type of kwarg seen by view:')
++ctx_kwargs = {}
++
++
++class CaptureView(OfferView):
++    def get_context_data(self, **kwargs):
++        ctx_kwargs.update(kwargs)
++        return super().get_context_data(**kwargs)
++
++
++urlpatterns[0].callback.view_class = CaptureView
++
++c = Client()
++try:
++    response = c.get('/offers/test-offer/')
++    print('response status:', response.status_code)
++    print('kwarg type:', type(ctx_kwargs.get('offer_slug')))
++    print('SUCCESS')
++except Exception:
++    import traceback
++    traceback.print_exc()
++    print('kwarg type:', type(ctx_kwargs.get('offer_slug')))
++    print('FAILED')

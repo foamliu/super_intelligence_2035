@@ -1,0 +1,65 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 5edbbd376..cad0733ce 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -48,8 +48,10 @@ def construct_instance(form, instance, fields=None, exclude=None):
+             continue
+         # Leave defaults for fields that aren't in POST data, except for
+         # checkbox inputs because they don't appear in POST data if not checked.
++        # Also allow cleaned_data to overwrite fields' default values (#30534).
+         if (f.has_default() and
+-                form[f.name].field.widget.value_omitted_from_data(form.data, form.files, form.add_prefix(f.name))):
++                form[f.name].field.widget.value_omitted_from_data(form.data, form.files, form.add_prefix(f.name)) and
++                cleaned_data[f.name] in form[f.name].field.empty_values):
+             continue
+         # Defer saving file-type fields until after the other fields, so a
+         # callable upload_to can use the values from other fields.
+diff --git a/tests/model_forms/tests.py b/tests/model_forms/tests.py
+index 3893eb334..774c5c8ef 100644
+--- a/tests/model_forms/tests.py
++++ b/tests/model_forms/tests.py
+@@ -209,6 +209,44 @@ class ModelFormBaseTest(TestCase):
+         instance = construct_instance(form, Person(), fields=())
+         self.assertEqual(instance.name, '')
+ 
++    def test_default_not_populated_on_non_empty_value_in_cleaned_data(self):
++        """
++        #30534 -- Fields with a default should use cleaned_data when the user
++        explicitly provides a non-empty value, even if the field is omitted
++        from the submitted data.
++        """
++        class DerivedBookFormWithOverride(forms.ModelForm):
++            class Meta:
++                model = DerivedBook
++                fields = '__all__'
++
++            def clean(self):
++                cleaned_data = super().clean()
++                cleaned_data['suffix1'] = 42
++                return cleaned_data
++
++        form = DerivedBookFormWithOverride({'title': 'Test', 'isbn': '12345'})
++        self.assertTrue(form.is_valid())
++        instance = construct_instance(form, DerivedBook())
++        self.assertEqual(instance.suffix1, 42)
++        # suffix2 was not overridden and should keep its default.
++        self.assertEqual(instance.suffix2, 0)
++
++    def test_default_populated_on_empty_value_in_cleaned_data(self):
++        """
++        Fields with a default should keep the default when omitted from the
++        submitted data and cleaned_data contains an empty value.
++        """
++        class DerivedBookFormWithoutOverride(forms.ModelForm):
++            class Meta:
++                model = DerivedBook
++                fields = '__all__'
++
++        form = DerivedBookFormWithoutOverride({'title': 'Test', 'isbn': '12345'})
++        self.assertTrue(form.is_valid())
++        instance = construct_instance(form, DerivedBook())
++        self.assertEqual(instance.suffix1, 0)
++
+     def test_blank_with_null_foreign_key_field(self):
+         """
+         #13776 -- ModelForm's with models having a FK set to null=False and

@@ -1,0 +1,8 @@
+970	56	1785403392139_acdfh	e0014566	10.129.2.10	netlist:215;aether:113;schematic:101;pyaether:95;cellview:50;dbopencv:35;spectre:15;hspice:15;
+950	115	1791616508124_n52mz	yohannw	10.129.2.12	schematic:216;cellview:209;netlist:151;aether:142;virtuoso:76;pyaether:61;dbopencellviewbytype:48;cadence:38;
+950	108	1791783189298_t2hnp	steveny	10.129.2.11	pyaether:720;virtuoso:149;aether:147;cellview:84;schematic:55;netlist:53;cadence:27;dbget:14;
+942	75	1791515463198_50mu7	e0042624	10.129.2.12	aether:881;pdk:159;netlist:98;schematic:93;calibre:80;pyaether:58;lib.defs:48;virtuoso:23;
+874	68	1793081212647_xyj1z	eva1wu	10.129.35.97	aether:344;schematic:211;netlist:96;pyaether:59;pdk:50;lib.defs:26;analog:18;dbget:11;
+866	116	1792057192352_iz828	shuoran	10.129.33.28	cellview:580;pyaether:318;schematic:190;aether:140;netlist:36;dbget:29;virtuoso:13;waveview:10;
+826	108	1791532940009_ca92c	ziyuny	10.129.32.190	aether:321;schematic:245;cellview:71;dbopencv:65;pyaether:62;.lef:54;analog:47;pdk:38;
+809	74	1790663852783_u29lu	cwei	10.129.33.27	aether:356;pdk:103;schematic:96;netlist:80;pyaether:68;calibre:35;cmos:19;lib.defs:12;

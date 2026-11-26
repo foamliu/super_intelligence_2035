@@ -1,0 +1,57 @@
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index 0dc1c77c53..7d1f65e594 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -963,6 +963,9 @@ class MigrationAutodetector:
+                             preserve_default = False
+                     else:
+                         field = new_field
++                    dependencies = []
++                    if new_field.remote_field and new_field.remote_field.model:
++                        dependencies.extend(self._get_dependencies_for_foreign_key(new_field))
+                     self.add_operation(
+                         app_label,
+                         operations.AlterField(
+@@ -970,7 +973,8 @@ class MigrationAutodetector:
+                             name=field_name,
+                             field=field,
+                             preserve_default=preserve_default,
+-                        )
++                        ),
++                        dependencies=dependencies,
+                     )
+                 else:
+                     # We cannot alter between m2m and concrete fields
+diff --git a/tests/migrations/test_autodetector.py b/tests/migrations/test_autodetector.py
+index e9926ba3bf..63c9453f44 100644
+--- a/tests/migrations/test_autodetector.py
++++ b/tests/migrations/test_autodetector.py
+@@ -2391,6 +2391,28 @@ class AutodetectorTests(TestCase):
+         self.assertOperationTypes(changes, 'testapp', 0, ["AddField", "AddField"])
+         self.assertOperationAttributes(changes, 'testapp', 0, 0)
+ 
++    def test_non_fk_to_foreign_key(self):
++        """
++        #29444 - Changing a non-FK field (e.g. UUIDField) to a ForeignKey
++        creates a dependency.
++        """
++        app1_old = ModelState("testapp1", "App1", [
++            ("id", models.AutoField(primary_key=True)),
++            ("another_app", models.UUIDField(null=True, blank=True)),
++        ])
++        app2 = ModelState("testapp2", "App2", [
++            ("id", models.AutoField(primary_key=True)),
++            ("text", models.CharField(max_length=100)),
++        ])
++        app1_new = ModelState("testapp1", "App1", [
++            ("id", models.AutoField(primary_key=True)),
++            ("another_app", models.ForeignKey("testapp2.App2", null=True, blank=True, on_delete=models.SET_NULL)),
++        ])
++        changes = self.get_changes([app1_old, app2], [app1_new, app2])
++        self.assertNumberMigrations(changes, 'testapp1', 1)
++        self.assertOperationTypes(changes, 'testapp1', 0, ["AlterField"])
++        self.assertMigrationDependencies(changes, 'testapp1', 0, [('testapp2', '__first__')])
++
+     def test_mti_inheritance_model_removal(self):
+         Animal = ModelState('app', 'Animal', [
+             ("id", models.AutoField(primary_key=True)),

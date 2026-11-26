@@ -1,0 +1,106 @@
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index dd531708..55b172a6 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -213,7 +213,20 @@ class CheckExternalLinksBuilder(Builder):
+             if len(uri) == 0 or uri.startswith(('#', 'mailto:', 'ftp:')):
+                 return 'unchecked', '', 0
+             elif not uri.startswith(('http:', 'https:')):
+-                return 'local', '', 0
++                if uri.startswith('//'):
++                    return 'local', '', 0
++                # check local file
++                req_url = uri.split('#')[0].split('?')[0]
++                if not req_url:
++                    return 'unchecked', '', 0
++                try:
++                    rel_fn, abs_fn = self.env.relfn2path(req_url, docname)
++                    if path.exists(abs_fn):
++                        return 'working', '', 0
++                    else:
++                        return 'broken', __('file not found'), 0
++                except Exception:
++                    return 'broken', __('file not found'), 0
+             elif uri in self.good:
+                 return 'working', 'old', 0
+             elif uri in self.broken:
+diff --git a/tests/roots/test-linkcheck-local/conf.py b/tests/roots/test-linkcheck-local/conf.py
+new file mode 100644
+index 00000000..1b4dafe8
+--- /dev/null
++++ b/tests/roots/test-linkcheck-local/conf.py
+@@ -0,0 +1,2 @@
++master_doc = 'index'
++exclude_patterns = ['_build']
+diff --git a/tests/roots/test-linkcheck-local/exists.txt b/tests/roots/test-linkcheck-local/exists.txt
+new file mode 100644
+index 00000000..14b7e5b9
+--- /dev/null
++++ b/tests/roots/test-linkcheck-local/exists.txt
+@@ -0,0 +1 @@
++This file exists.
+diff --git a/tests/roots/test-linkcheck-local/index.rst b/tests/roots/test-linkcheck-local/index.rst
+new file mode 100644
+index 00000000..47e90069
+--- /dev/null
++++ b/tests/roots/test-linkcheck-local/index.rst
+@@ -0,0 +1,9 @@
++Test local links
++================
++
++* `valid <exists.txt>`_
++* `broken <doesnotexist.txt>`_
++* `valid with anchor <exists.txt#section>`_
++* `broken with anchor <doesnotexist.txt#section>`_
++* `valid subdir <subdir/nested.rst>`_
++* `valid absolute </exists.txt>`_
+diff --git a/tests/roots/test-linkcheck-local/subdir/nested.rst b/tests/roots/test-linkcheck-local/subdir/nested.rst
+new file mode 100644
+index 00000000..4fb671d1
+--- /dev/null
++++ b/tests/roots/test-linkcheck-local/subdir/nested.rst
+@@ -0,0 +1 @@
++This is a nested file.
+diff --git a/tests/test_build_linkcheck.py b/tests/test_build_linkcheck.py
+index d1fec550..7a6c3ade 100644
+--- a/tests/test_build_linkcheck.py
++++ b/tests/test_build_linkcheck.py
+@@ -157,3 +157,38 @@ def test_linkcheck_request_headers(app, status, warning):
+                 assert headers["X-Secret"] == "open sesami"
+             else:
+                 assert headers["Accept"] == "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8"
++
++
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-local', freshenv=True)
++def test_linkcheck_local(app, status, warning):
++    app.builder.build_all()
++
++    assert (app.outdir / 'output.txt').exists()
++    content = (app.outdir / 'output.txt').read_text()
++
++    print(content)
++    # broken local links should be reported
++    assert "[broken] doesnotexist.txt" in content
++    assert "[broken] doesnotexist.txt#section" in content
++    assert len(content.splitlines()) == 2
++
++
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-local', freshenv=True)
++def test_linkcheck_local_json(app, status, warning):
++    app.builder.build_all()
++
++    assert (app.outdir / 'output.json').exists()
++    content = (app.outdir / 'output.json').read_text()
++    print(content)
++
++    rows = [json.loads(x) for x in content.splitlines()]
++    assert len(rows) == 6
++    rowsby = {row["uri"]: row for row in rows}
++    # valid local links should be working
++    assert rowsby['exists.txt']['status'] == 'working'
++    assert rowsby['exists.txt#section']['status'] == 'working'
++    assert rowsby['subdir/nested.rst']['status'] == 'working'
++    assert rowsby['/exists.txt']['status'] == 'working'
++    # broken local links should be broken
++    assert rowsby['doesnotexist.txt']['status'] == 'broken'
++    assert rowsby['doesnotexist.txt#section']['status'] == 'broken'

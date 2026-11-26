@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-6202",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/src/_pytest/python.py b/src/_pytest/python.py\nindex b8b365a..5f2af31 100644\n--- a/src/_pytest/python.py\n+++ b/src/_pytest/python.py\n@@ -286,7 +286,7 @@ class PyobjMixin(PyobjContext):\n             parts.append(name)\n         parts.reverse()\n         s = \".\".join(parts)\n-        return s.replace(\".[\", \"[\")\n+        return s\n \n     def reportinfo(self):\n         # XXX caching?\ndiff --git a/testing/test_collection.py b/testing/test_collection.py\nindex 8050e80..f45408a 100644\n--- a/testing/test_collection.py\n+++ b/testing/test_collection.py\n@@ -1278,3 +1278,20 @@ def test_does_not_put_src_on_path(testdir):\n     )\n     result = testdir.runpytest()\n     assert result.ret == ExitCode.OK\n+\n+\n+def test_getmodpath_with_brackets_in_id(testdir):\n+    \"\"\"Test that getmodpath preserves dots before brackets in parametrized ids.\"\"\"\n+    p = testdir.makepyfile(\n+        \"\"\"\n+        import pytest\n+\n+        @pytest.mark.parametrize(\"a\", [\"..[\"])\n+        def test_boo(a):\n+            pass\n+    \"\"\"\n+    )\n+    items, reprec = testdir.inline_genitems(p)\n+    assert len(items) == 1\n+    assert items[0].name == \"test_boo[..[]\"\n+    assert items[0].getmodpath() == \"test_boo[..[]\"\n"
+  }
+]

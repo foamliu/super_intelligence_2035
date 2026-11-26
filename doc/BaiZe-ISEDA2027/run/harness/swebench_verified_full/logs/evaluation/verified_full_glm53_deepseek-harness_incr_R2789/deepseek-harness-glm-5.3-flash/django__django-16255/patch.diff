@@ -1,0 +1,79 @@
+diff --git a/django/contrib/sitemaps/__init__.py b/django/contrib/sitemaps/__init__.py
+index 27756d9d96..b40ad806ed 100644
+--- a/django/contrib/sitemaps/__init__.py
++++ b/django/contrib/sitemaps/__init__.py
+@@ -168,7 +168,7 @@ class Sitemap:
+         if callable(self.lastmod):
+             try:
+                 return max([self.lastmod(item) for item in self.items()])
+-            except TypeError:
++            except (TypeError, ValueError):
+                 return None
+         else:
+             return self.lastmod
+diff --git a/tests/sitemaps_tests/test_http.py b/tests/sitemaps_tests/test_http.py
+index 4a269b8737..f905239678 100644
+--- a/tests/sitemaps_tests/test_http.py
++++ b/tests/sitemaps_tests/test_http.py
+@@ -231,6 +231,14 @@ class HTTPSitemapTests(SitemapTestsBase):
+         response = self.client.get("/lastmod/get-latest-lastmod-none-sitemap.xml")
+         self.assertNotContains(response, "<lastmod>")
+ 
++    def test_sitemap_empty_lastmod(self):
++        """
++        sitemapindex.lastmod is omitted when Sitemap.lastmod is callable
++        and Sitemap.items() is empty.
++        """
++        response = self.client.get("/lastmod/empty-lastmod-sitemap.xml")
++        self.assertNotContains(response, "<lastmod>")
++
+     def test_sitemap_get_latest_lastmod(self):
+         """
+         sitemapindex.lastmod is included when Sitemap.lastmod is
+diff --git a/tests/sitemaps_tests/urls/http.py b/tests/sitemaps_tests/urls/http.py
+index 9a468de476..880eb695b2 100644
+--- a/tests/sitemaps_tests/urls/http.py
++++ b/tests/sitemaps_tests/urls/http.py
+@@ -129,6 +129,18 @@ class GetLatestLastmodNoneSiteMap(Sitemap):
+         return None
+ 
+ 
++class EmptyLastmodSitemap(Sitemap):
++    """A sitemap with no items that supports a callable `lastmod`."""
++
++    location = "/location/"
++
++    def items(self):
++        return []
++
++    def lastmod(self, obj):
++        return datetime(2013, 3, 13, 10, 0, 0)
++
++
+ class GetLatestLastmodSiteMap(SimpleSitemap):
+     def get_latest_lastmod(self):
+         return datetime(2013, 3, 13, 10, 0, 0)
+@@ -208,6 +220,10 @@ get_latest_lastmod_none_sitemaps = {
+     "get-latest-lastmod-none": GetLatestLastmodNoneSiteMap,
+ }
+ 
++empty_lastmod_sitemaps = {
++    "empty-lastmod": EmptyLastmodSitemap,
++}
++
+ get_latest_lastmod_sitemaps = {
+     "get-latest-lastmod": GetLatestLastmodSiteMap,
+ }
+@@ -362,6 +378,12 @@ urlpatterns = [
+         {"sitemaps": get_latest_lastmod_sitemaps},
+         name="django.contrib.sitemaps.views.index",
+     ),
++    path(
++        "lastmod/empty-lastmod-sitemap.xml",
++        views.index,
++        {"sitemaps": empty_lastmod_sitemaps},
++        name="django.contrib.sitemaps.views.index",
++    ),
+     path(
+         "lastmod/latest-lastmod-timezone-sitemap.xml",
+         views.index,

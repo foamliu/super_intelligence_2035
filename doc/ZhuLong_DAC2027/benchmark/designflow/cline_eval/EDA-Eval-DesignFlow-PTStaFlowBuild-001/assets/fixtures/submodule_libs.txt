@@ -1,0 +1,7 @@
+# corner          submodule        lib_path
+tt_0p75_25c   CORE   libs/tt/CORE_tt_0p75_25c.lib
+tt_0p75_25c   IO     libs/tt/IO_tt_0p75_25c.lib
+ss_0p81_125c  CORE   libs/ss/CORE_ss_0p81_125c.lib
+ss_0p81_125c  IO     libs/ss/IO_ss_0p81_125c.lib
+ff_0p69_-40c  CORE   libs/ff/CORE_ff_0p69_-40c.lib
+ff_0p69_-40c  IO     libs/ff/IO_ff_0p69_-40c.lib

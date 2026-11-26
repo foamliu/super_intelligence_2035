@@ -1,0 +1,86 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index dafc11f99..aa3fcbd46 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -13,8 +13,8 @@ from django.forms.forms import BaseForm, DeclarativeFieldsMetaclass
+ from django.forms.formsets import BaseFormSet, formset_factory
+ from django.forms.utils import ErrorList
+ from django.forms.widgets import (
+-    HiddenInput, MultipleHiddenInput, SelectMultiple,
+-)
++    HiddenInput, MultipleHiddenInput, RadioSelect, SelectMultiple,
++    )
+ from django.utils.text import capfirst, get_text_list
+ from django.utils.translation import gettext, gettext_lazy as _
+ 
+@@ -1196,6 +1196,11 @@ class ModelChoiceField(ChoiceField):
+             self, required=required, widget=widget, label=label,
+             initial=initial, help_text=help_text, **kwargs
+         )
++        # Don't add a blank option for RadioSelect widgets when the field is
++        # required, as it would be checked by default and look like a valid
++        # choice.
++        if self.empty_label is not None and required and isinstance(self.widget, RadioSelect):
++            self.empty_label = None
+         self.queryset = queryset
+         self.limit_choices_to = limit_choices_to   # limit the queryset later.
+         self.to_field_name = to_field_name
+diff --git a/tests/model_forms/test_modelchoicefield.py b/tests/model_forms/test_modelchoicefield.py
+index 4a2ef30b9..2a68208b1 100644
+--- a/tests/model_forms/test_modelchoicefield.py
++++ b/tests/model_forms/test_modelchoicefield.py
+@@ -169,6 +169,54 @@ class ModelChoiceFieldTests(TestCase):
+ 
+         form = ModelChoiceForm()
+         self.assertCountEqual(form.fields['category'].queryset, [self.c2, self.c3])
++    def test_radioselect_blank_option_required(self):
++        f = forms.ModelChoiceField(Category.objects.all(), widget=forms.RadioSelect)
++        self.assertIsNone(f.empty_label)
++        self.assertEqual(list(f.choices), [
++            (self.c1.pk, 'Entertainment'),
++            (self.c2.pk, 'A test'),
++            (self.c3.pk, 'Third'),
++        ])
++
++    def test_radioselect_blank_option_not_required(self):
++        f = forms.ModelChoiceField(Category.objects.all(), required=False, widget=forms.RadioSelect)
++        self.assertEqual(f.empty_label, '---------')
++        self.assertEqual(list(f.choices), [
++            ('', '---------'),
++            (self.c1.pk, 'Entertainment'),
++            (self.c2.pk, 'A test'),
++            (self.c3.pk, 'Third'),
++        ])
++
++    def test_select_blank_option_required(self):
++        f = forms.ModelChoiceField(Category.objects.all())
++        self.assertEqual(f.empty_label, '---------')
++        self.assertEqual(list(f.choices), [
++            ('', '---------'),
++            (self.c1.pk, 'Entertainment'),
++            (self.c2.pk, 'A test'),
++            (self.c3.pk, 'Third'),
++        ])
++
++    def test_radioselect_blank_option_required_with_initial(self):
++        f = forms.ModelChoiceField(Category.objects.all(), widget=forms.RadioSelect, initial=self.c1.pk)
++        self.assertIsNone(f.empty_label)
++        self.assertEqual(list(f.choices), [
++            (self.c1.pk, 'Entertainment'),
++            (self.c2.pk, 'A test'),
++            (self.c3.pk, 'Third'),
++        ])
++
++    def test_radioselect_blank_option_required_widget_subclass(self):
++        class CustomRadioSelect(forms.RadioSelect):
++            pass
++        f = forms.ModelChoiceField(Category.objects.all(), widget=CustomRadioSelect)
++        self.assertIsNone(f.empty_label)
++        self.assertEqual(list(f.choices), [
++            (self.c1.pk, 'Entertainment'),
++            (self.c2.pk, 'A test'),
++            (self.c3.pk, 'Third'),
++        ])
+ 
+     def test_no_extra_query_when_accessing_attrs(self):
+         """

@@ -1,0 +1,16 @@
+[run_one] 1. 部署 PreToolUse hook
+[run_one]    scope += /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval (multi-shard safe)
+[run_one] 2. 建 workdir: /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval/EDA-Eval-DesignFlow-SweepMeasFix-001
+   task_brief.md: copied from assets (case-specific deliverable manifest)
+   attachments copied: ['prompt.txt', 'task_brief.md', 'summarize_meas.sh', 'submit_ismosc_corner_meas.sh', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s0.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s1.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s2.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s3.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s4.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s5.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s6.mt0', 'meas_result_by_corner_1021/corner0/IsmOscTestSweep_s7.mt0', 'superon_sweep_20261021_133105/fsdb_index.txt']
+   workdir clean (no check.py/reference/hidden)
+[run_one]    workdir leak 自检通过
+[run_one] 3. 跑 cline (model=deepseek-v4-pro-cloud thinking=medium timeout=1800s)
+[run_one]    cline exit=0 dur=1059s timeout_hit=0 stall_hit=0
+[run_one] 3b. harness 打包 outputs/ -> submit.zip (3 个文件，cline 未自建包)
+[run_one] 4. 独立判分: /tmp/judge_EDA-Eval-DesignFlow-SweepMeasFix-001
+[run_one]    verdict=FAIL  detail=exception: AssertionError("SweepMeasFix-001 FAILED 5/16 conditions: (e) fixture_A 上运行不中止：产 all_corners_summary.csv 且非空: [Errno 2] No such file or directory: '/tmp/judge_EDA-Eval-DesignFlow-SweepMeasFix-001/fixture_A/meas_result_by_corner_1021'; (f) fixture_A all_corners_summary.csv 含表头 + 恰好 8 条数据行: 
+[run_one] 5. 记 /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow/cline_eval_status.jsonl
+   recorded: {"ts": "2026-11-05T09:25:46Z", "task_id": "EDA-Eval-DesignFlow-SweepMeasFix-001", "harness": "cline", "cline_version": "3.0.51", "model": "deepseek-v4-pro-cloud", "thinking": "medium", "dur_sec": 1059, "cline_exit": 0, "verdict": "FAIL", "reason": "exception: AssertionError(\"SweepMeasFix-001 FAILED 5/16 conditions: (e) fixture_A 上运行不中止：产 all_corners_summary.csv 且非空: [Errno 2] No such file or directory: '/tmp/judge_EDA-Eval-DesignFlow-SweepMeasFix-001/fixture_A/meas_result_by_corner_1021'; (f) fixture_A all_corners_summary.csv 含表头 + 恰好 8 条数据行: ", "hook": "PreToolUse", "scope": "/home/app.e0031982/.cline/hooks/hook_scope.txt", "os_timeout_hit": 0, "stalled_kill_hit": 0}
+[run_one] DONE  verdict=FAIL  (EDA-Eval-DesignFlow-SweepMeasFix-001)
+FAIL

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-13031",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/matrices/tests/test_commonmatrix.py b/sympy/matrices/tests/test_commonmatrix.py\nindex 3e27ecc..94577ed 100644\n--- a/sympy/matrices/tests/test_commonmatrix.py\n+++ b/sympy/matrices/tests/test_commonmatrix.py\n@@ -249,6 +249,14 @@ def test_vstack():\n     raises(ShapeError, lambda: m.vstack(m, m2))\n     assert Matrix.vstack() == Matrix()\n \n+    # test regression #12938 (vstack analogue)\n+    M1 = Matrix.zeros(0, 0)\n+    M2 = Matrix.zeros(1, 0)\n+    M3 = Matrix.zeros(2, 0)\n+    M4 = Matrix.zeros(3, 0)\n+    m = ShapingOnlyMatrix.vstack(M1, M2, M3, M4)\n+    assert m.rows == 6 and m.cols == 0\n+\n \n # PropertiesOnlyMatrix tests\n def test_atoms():\n"
+  }
+]

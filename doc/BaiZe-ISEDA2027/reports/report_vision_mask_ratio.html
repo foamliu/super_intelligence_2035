@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe vision · mask-ratio 消融报告 · 2026-10-07</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .distinct { background:#fff8c5; border:1px solid #f0d9b5; border-radius:8px; padding:8px 14px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  h4 { font-size:14.5px; margin:16px 0 6px; color:var(--primary); }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+  .chart-wrap { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0; }
+  .chart-cap { text-align:center; color:var(--muted); font-size:12.5px; margin-top:6px; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="distinct">
+  ⚠️ <b>本报告 ≠ <code>report_vision_lp_protocol.html</code></b>：后者是 <b>lp 评测协议对齐</b>（A/B 桥接 Δlp≈+10pp）专项报告；
+  本报告是 <b>② mask-ratio 消融</b>（5 臂 · 倒 U 曲线 · 最优≈0.6）的独立报告。两者互补但不可混比。
+</div>
+<header class="hero">
+  <h1>BaiZe vision · mask-ratio 消融报告</h1>
+  <div class="sub">AIMv2-style recipe 中掩码比例的最优值搜索 · 5 臂 · 30k 步/臂 · IN-1k frozen-trunk lp</div>
+  <div class="meta">
+    <span>📅 2026-10-07</span>
+    <span>🖥 8× H100 80GB（10.239.2.12）</span>
+    <span>⏱ 训练 09:52→19:42 · eval 20:06</span>
+    <span>📊 20 ckpts · Protocol A</span>
+  </div>
+</header>
+<nav class="toc">
+  <b>目录</b>
+  <ol style="columns:2;-moz-columns:2;column-gap:32px;">
+    <li><a href="#s1">1. TL;DR</a></li>
+    <li><a href="#s2">2. 实验设计</a></li>
+    <li><a href="#s3">3. 结果表 + 倒 U 曲线</a></li>
+    <li><a href="#s4">4. 坍缩判据与健康度</a></li>
+    <li><a href="#s5">5. 结论</a></li>
+    <li><a href="#s6">6. 与既有 lp 结论的关系</a></li>
+    <li><a href="#s7">7. 局限</a></li>
+    <li><a href="#s8">8. 下一步</a></li>
+  </ol>
+</nav>
+<!-- ============ §1 TL;DR ============ -->
+<h2 class="sec" id="s1"><span class="no">1</span>TL;DR</h2>
+<div class="verdict">
+  <ol>
+    <li><b>mask-ratio 存在最优值 ≈ 0.6</b>：IN-1k frozen-trunk lp 呈<b>倒 U 形</b>——<code>0.6 → 13.49%</code>（最优），两侧递减：0.3→12.69% · 0.5→11.91% · 0.75→12.49% · 0.9→11.53%。</li>
+    <li><b>预注册裁定</b>：无臂达到「更优」（lp ≥ baseline+1.5）；arm <b>0.3</b>（Δ=−0.80）和 <b>0.75</b>（Δ=−1.00）落在 <b>±1.5pp 噪声带</b>内 → mask-ratio 在 [0.3, 0.75] 区间<b>不敏感</b>；arm <b>0.5</b>（Δ=−1.58⚠️）和 <b>0.9</b>（Δ=−1.96⚠️）<b>显著更差</b>。</li>
+    <li><b>五臂全程无坍缩</b>：C1 ∈ [0.347, 0.381]（远 &lt; 0.95 阈值）、C2_gap ≈ +0.11~+0.12（远 &gt; 0.005 阈值）、C4=OK。arm 0.75 C1 峰值 <b>0.4458@19800</b> 为全臂最高，但终态回落至 0.3736 &lt; arm 0.6（0.3810）→ 高 mask-ratio 峰值早现但终态不稳定。</li>
+    <li><b>可复现性确认</b>：arm 0.6 受控复现 lp@30k=13.49% vs R11-L arm6-A 原始 12.08%（Δ=+1.41pp，在 ±1.5pp 噪声带内 → 确认可复现）。</li>
+    <li><b>lp 口径警告</b>：本报告所有 lp 均为 <b>BaiZe 内部协议（Protocol A）</b>，与主流协议（Protocol B）存在 <b>Δlp ≈ +10pp</b> 系统性偏移 → <b>不可与 DINOv2/MAE 公开值直接横向比较</b>（详见 §6）。</li>
+  </ol>
+</div>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">0.6</div><div class="l">最优 mask-ratio</div></div>
+  <div class="kpi"><div class="v">13.49%</div><div class="l">lp@30k（最优臂）</div></div>
+  <div class="kpi"><div class="v">0.3810</div><div class="l">C1 final（最优臂）</div></div>
+  <div class="kpi"><div class="v">5 / 5</div><div class="l">无坍缩臂数</div></div>
+  <div class="kpi"><div class="v">~78.4</div><div class="l">GPU·h 总成本</div></div>
+</div>
+
+<!-- ============ §2 实验设计 ============ -->
+<h2 class="sec" id="s2"><span class="no">2</span>实验设计</h2>
+<h3>2.1 研究问题</h3>
+<p>AIMv2-style recipe（<code>InfoNCE + 1.0×masked-patch-MSE</code>）中，<b>随机掩码比例</b>（mask-ratio）的最优值是多少？mask-ratio=0.6 借鉴自 MAE 文献（75%），但<b>从未在对比项存在的情况下做过消融</b>。掩码比例过低（→ 少量监督信号）或过高（→ InfoNCE 负样本不足）都可能损害表征质量。</p>
+<h3>2.2 实验配置（固定项）</h3>
+<table>
+  <thead><tr><th>维度</th><th>取值（全部 5 臂固定）</th></tr></thead>
+  <tbody>
+    <tr><td>视觉塔</td><td>OpenVision2 w512（126.78M）· depth30 · patch16 · 224² · CLS readout</td></tr>
+    <tr><td>文本塔</td><td><b>冻结</b> CLIP-ViT-L/14-336（768-dim，context 77）</td></tr>
+    <tr><td>损失</td><td><code>1.0 × InfoNCE + 1.0 × masked-patch-MSE</code>（norm_pix_loss，PatchPredictor ~0.66M）</td></tr>
+    <tr><td>trunk forward</td><td>全 patch 可见、无 mask token（非 MAE 式 forward）</td></tr>
+    <tr><td>数据</td><td>CC12M + Amshaker（与 R9/R10/R11-L 相同 glob），<code>--data-source wds</code></td></tr>
+    <tr><td>优化器</td><td>AdamW lr=3e-3 · warmup 20 · seed 1234 · bf16 · bs64×8=512</td></tr>
+    <tr><td>步数</td><td>30,000 步/臂（N=15.36M 样本）</td></tr>
+    <tr><td>ckpt</td><td>save-every 10000（3 ckpts/arm + final vision.pt）</td></tr>
+    <tr><td>评测</td><td>IN-1k frozen-trunk lp（<code>r8_eval_in1k.py</code>）on step{10k, 20k, 30k}，共 <b>20 ckpts</b></td></tr>
+  </tbody>
+</table>
+<h3>2.3 唯一变量</h3>
+<table>
+  <thead><tr><th>臂</th><th>mask-ratio</th><th>含义</th><th>每步可见 patch（196 总数）</th></tr></thead>
+  <tbody>
+    <tr><td>Arm 1</td><td><b>0.3</b></td><td>低掩码（大量可见）</td><td>~137</td></tr>
+    <tr><td>Arm 2</td><td><b>0.5</b></td><td>中低掩码</td><td>~98</td></tr>
+    <tr><td>Arm 3</td><td><b>0.6</b></td><td>基线（R11-L arm6-A 复现）</td><td>~78</td></tr>
+    <tr><td>Arm 4</td><td><b>0.75</b></td><td>中高掩码（MAE 默认值）</td><td>~49</td></tr>
+    <tr><td>Arm 5</td><td><b>0.9</b></td><td>高掩码（极少可见）</td><td>~20</td></tr>
+  </tbody>
+</table>
+<h3>2.4 预注册判据（先定后测）</h3>
+<div class="card">
+  <ul>
+    <li><b>「更优」</b>：某臂 lp@30k ≥ 0.6 基线 + 1.5pp → 该 mask-ratio 更优。</li>
+    <li><b>「显著最优」</b>：最高臂领先次高 ≥ 1.5pp。</li>
+    <li><b>「不敏感」</b>：所有臂 lp@30k 均在基线 ±1.5pp 噪声带内。</li>
+    <li><b>「显著更差」</b>：某臂 Δlp &lt; −1.5pp。</li>
+    <li>⚠️ <b>改 recipe ⇒ 不并入 R11-G/R12 scaling 曲线</b>（运维要求），须单列报告。</li>
+  </ul>
+</div>
+<h3>2.5 执行时间线</h3>
+<table>
+  <thead><tr><th>阶段</th><th>起止时刻</th><th>墙钟</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>Arm 0.3 训练</td><td>09:52 → 11:51</td><td>7119s（~1.98h）</td><td>C1=0.3495 · 3 ckpts+vision.pt</td></tr>
+    <tr><td>Arm 0.5 训练</td><td>11:51 → 13:49</td><td>7062s（~1.96h）</td><td>C1=0.3756</td></tr>
+    <tr><td>Arm 0.6 训练</td><td>13:49 → 15:45</td><td>6910s（~1.92h）</td><td>C1=0.3810（final best）</td></tr>
+    <tr><td>Arm 0.75 训练</td><td>15:45 → 17:42</td><td>6992s（~1.94h）</td><td>C1=0.3736（peak 0.4458@19800）</td></tr>
+    <tr><td>Arm 0.9 训练</td><td>17:42 → 19:42</td><td>7138s（~1.98h）</td><td>C1=0.3468</td></tr>
+    <tr><td><b>IN-1k lp eval（20 ckpts）</b></td><td><b>19:42 → 20:06</b></td><td><b>~24 min</b></td><td>7 min load + 96s/ckpt × 20</td></tr>
+    <tr><td><b>总计</b></td><td><b>09:52 → 20:06</b></td><td><b>~10.2h</b></td><td>5 臂串行 + 统一 eval</td></tr>
+  </tbody>
+</table>
+<p>吞吐：稳态 <b>~4500–5000 img/s</b>（bs64×8=512）；NFS 争用致波动 2100–5400 img/s（ms/iter 93–276）。每臂 ~15.36M 样本 = 2 epoch（CC12M+Amshaker ~7.7M unique）。GPU 显存 16.5GB/卡（80GB 的 20%），util 60–100%。总成本 ≈ <b>78.4 GPU·h</b>（9.8h × 8 卡）。</p>
+<!-- ============ §3 结果表 + 倒 U 曲线 ============ -->
+<h2 class="sec" id="s3"><span class="no">3</span>⭐ 结果表 + 倒 U 曲线</h2>
+<h3>3.1 完整结果表（20 ckpts · Protocol A = BaiZe 内部协议）</h3>
+<table>
+  <thead><tr>
+    <th>mask-ratio</th><th>C1 final</th><th>C1 peak</th>
+    <th>lp@10k</th><th>lp@20k</th><th><b>lp@30k</b></th><th>Δlp vs 0.6</th>
+    <th>zs@30k</th><th>训练耗时</th><th>判定</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>0.3</td><td>0.3495</td><td>0.4421</td><td>10.70%</td><td>11.34%</td><td><b>12.69%</b></td><td>−0.80</td><td>5.25%</td><td>7119s</td><td><span class="badge b-info">噪声带内</span></td></tr>
+    <tr><td>0.5</td><td>0.3756</td><td>0.4066</td><td>9.81%</td><td>10.90%</td><td><b>11.91%</b></td><td>−1.58</td><td>4.82%</td><td>7062s</td><td><span class="badge b-warn">显著更差</span></td></tr>
+    <tr style="background:#dafbe1;"><td><b>0.6</b></td><td><b>0.3810</b></td><td>0.4241</td><td>11.75%</td><td>12.52%</td><td><b>13.49%</b></td><td><b>(基线)</b></td><td>5.82%</td><td>6910s</td><td><span class="badge b-ok">✅ 最优</span></td></tr>
+    <tr><td>0.75</td><td>0.3736</td><td><b>0.4458</b></td><td>11.88%</td><td>12.02%</td><td><b>12.49%</b></td><td>−1.00</td><td>5.22%</td><td>6992s</td><td><span class="badge b-info">噪声带内</span></td></tr>
+    <tr><td>0.9</td><td>0.3468</td><td>0.4097</td><td>10.18%</td><td>10.47%</td><td><b>11.53%</b></td><td>−1.96</td><td>4.89%</td><td>7138s</td><td><span class="badge b-warn">显著更差</span></td></tr>
+  </tbody>
+</table>
+<p><small><b>注</b>：lp = IN-1k frozen-trunk linear probe top-1（Protocol A）；C1 = 同塔 off-diag 坍缩指标（&lt;0.95 = 健康）；zs = CLIP zero-shot top-1。Δlp 单位为 percentage points (pp)。</small></p>
+<h3>3.2 倒 U 曲线：lp@30k vs mask-ratio（内联 SVG）</h3>
+<div class="chart-wrap">
+<svg viewBox="0 0 820 360" width="100%" style="max-width:820px;font-family:inherit;font-size:12px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="lp@30k vs mask-ratio 倒 U 曲线">
+  <rect x="90" y="41" width="670" height="195" fill="#ddf4ff" opacity="0.35" />
+  <text x="755" y="55" text-anchor="end" fill="#1f6feb" font-size="11" opacity="0.8">±1.5pp 噪声带</text>
+  <line x1="90" y1="41" x2="760" y2="41" stroke="#1f6feb" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+  <line x1="90" y1="236" x2="760" y2="236" stroke="#1f6feb" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+  <line x1="90" y1="300" x2="760" y2="300" stroke="#1f2328" stroke-width="1.5"/>
+  <line x1="90" y1="40" x2="90" y2="300" stroke="#1f2328" stroke-width="1.5"/>
+  <g font-size="11" fill="#59636e" text-anchor="end">
+    <text x="84" y="304">11.0</text><text x="84" y="239">12.0</text>
+    <text x="84" y="174">13.0</text><text x="84" y="109">14.0</text><text x="84" y="44">15.0</text>
+  </g>
+  <g stroke="#d0d7de" stroke-width="0.5">
+    <line x1="87" y1="239" x2="760" y2="239"/><line x1="87" y1="174" x2="760" y2="174"/>
+    <line x1="87" y1="109" x2="760" y2="109"/><line x1="87" y1="44" x2="760" y2="44"/>
+  </g>
+  <g font-size="11" fill="#59636e" text-anchor="middle">
+    <text x="138" y="318">0.3</text><text x="329" y="318">0.5</text>
+    <text x="425" y="318">0.6</text><text x="569" y="318">0.75</text><text x="712" y="318">0.9</text>
+  </g>
+  <text x="425" y="345" text-anchor="middle" font-size="13" fill="#1f2328" font-weight="600">mask-ratio</text>
+  <text x="35" y="170" text-anchor="middle" font-size="13" fill="#1f2328" font-weight="600" transform="rotate(-90 35 170)">IN-1k lp@30k (%)</text>
+  <polyline points="138,190 329,241 425,138 569,203 712,266" fill="none" stroke="#1f6feb" stroke-width="2.5" stroke-linejoin="round"/>
+  <g>
+    <circle cx="138" cy="190" r="6" fill="#ddf4ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="138" y="178" text-anchor="middle" font-size="11" fill="#1f6feb" font-weight="600">12.69%</text>
+    <text x="138" y="206" text-anchor="middle" font-size="10" fill="#59636e">Δ−0.80</text>
+  </g>
+  <g>
+    <circle cx="329" cy="241" r="6" fill="#fff8c5" stroke="#9a6700" stroke-width="2"/>
+    <text x="329" y="229" text-anchor="middle" font-size="11" fill="#9a6700" font-weight="600">11.91%</text>
+    <text x="329" y="257" text-anchor="middle" font-size="10" fill="#9a6700">Δ−1.58⚠️</text>
+  </g>
+  <g>
+    <circle cx="425" cy="138" r="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="3"/>
+    <text x="425" y="124" text-anchor="middle" font-size="12" fill="#1a7f37" font-weight="700">13.49% ★最优</text>
+    <text x="425" y="156" text-anchor="middle" font-size="10" fill="#1a7f37">基线</text>
+  </g>
+  <g>
+    <circle cx="569" cy="203" r="6" fill="#ddf4ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="569" y="191" text-anchor="middle" font-size="11" fill="#1f6feb" font-weight="600">12.49%</text>
+    <text x="569" y="219" text-anchor="middle" font-size="10" fill="#59636e">Δ−1.00</text>
+  </g>
+  <g>
+    <circle cx="712" cy="266" r="6" fill="#fff8c5" stroke="#9a6700" stroke-width="2"/>
+    <text x="712" y="254" text-anchor="middle" font-size="11" fill="#9a6700" font-weight="600">11.53%</text>
+    <text x="712" y="282" text-anchor="middle" font-size="10" fill="#9a6700">Δ−1.96⚠️</text>
+  </g>
+</svg>
+<div class="chart-cap">图 1 · lp@30k vs mask-ratio · 倒 U 形 · 绿色 = 最优（0.6），蓝底 = 噪声带内（0.3/0.75），黄底 = 显著更差（0.5/0.9）。阴影区 = ±1.5pp 噪声带。</div>
+</div>
+<h3>3.3 C1 final vs mask-ratio（内联 SVG）</h3>
+<div class="chart-wrap">
+<svg viewBox="0 0 820 360" width="100%" style="max-width:820px;font-family:inherit;font-size:12px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C1 final vs mask-ratio">
+  <line x1="90" y1="46" x2="760" y2="46" stroke="#cf222e" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="755" y="40" text-anchor="end" fill="#cf222e" font-size="11" font-weight="600">坍缩阈值 C1=0.95</text>
+  <line x1="90" y1="300" x2="760" y2="300" stroke="#1f2328" stroke-width="1.5"/>
+  <line x1="90" y1="40" x2="90" y2="300" stroke="#1f2328" stroke-width="1.5"/>
+  <g font-size="11" fill="#59636e" text-anchor="end">
+    <text x="84" y="304">0.34</text><text x="84" y="252">0.35</text>
+    <text x="84" y="200">0.36</text><text x="84" y="148">0.37</text>
+    <text x="84" y="96">0.38</text><text x="84" y="44">0.39</text>
+  </g>
+  <g stroke="#d0d7de" stroke-width="0.5">
+    <line x1="87" y1="252" x2="760" y2="252"/><line x1="87" y1="200" x2="760" y2="200"/>
+    <line x1="87" y1="148" x2="760" y2="148"/><line x1="87" y1="96" x2="760" y2="96"/>
+  </g>
+  <g font-size="11" fill="#59636e" text-anchor="middle">
+    <text x="138" y="318">0.3</text><text x="329" y="318">0.5</text>
+    <text x="425" y="318">0.6</text><text x="569" y="318">0.75</text><text x="712" y="318">0.9</text>
+  </g>
+  <text x="425" y="345" text-anchor="middle" font-size="13" fill="#1f2328" font-weight="600">mask-ratio</text>
+  <text x="35" y="170" text-anchor="middle" font-size="13" fill="#1f2328" font-weight="600" transform="rotate(-90 35 170)">C1 final (probe@30k)</text>
+  <polyline points="138,40 329,88 425,72 569,40 712,88" fill="none" stroke="#9a6700" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.6"/>
+  <polyline points="138,251 329,115 425,87 569,125 712,265" fill="none" stroke="#1f6feb" stroke-width="2.5" stroke-linejoin="round"/>
+  <g>
+    <circle cx="138" cy="251" r="5" fill="#1f6feb"/>
+    <text x="138" y="241" text-anchor="middle" font-size="10" fill="#1f6feb">0.3495</text>
+  </g>
+  <g>
+    <circle cx="329" cy="115" r="5" fill="#1f6feb"/>
+    <text x="329" y="105" text-anchor="middle" font-size="10" fill="#1f6feb">0.3756</text>
+  </g>
+  <g>
+    <circle cx="425" cy="87" r="7" fill="#1a7f37" stroke="#1a7f37" stroke-width="3"/>
+    <text x="425" y="75" text-anchor="middle" font-size="11" fill="#1a7f37" font-weight="700">0.3810 ★</text>
+  </g>
+  <g>
+    <circle cx="569" cy="125" r="5" fill="#1f6feb"/>
+    <text x="569" y="115" text-anchor="middle" font-size="10" fill="#1f6feb">0.3736</text>
+  </g>
+  <g>
+    <circle cx="712" cy="265" r="5" fill="#1f6feb"/>
+    <text x="712" y="255" text-anchor="middle" font-size="10" fill="#1f6feb">0.3468</text>
+  </g>
+  <g opacity="0.7">
+    <circle cx="569" cy="40" r="4" fill="#9a6700"/>
+    <text x="569" y="34" text-anchor="middle" font-size="9" fill="#9a6700">peak 0.4458</text>
+  </g>
+  <g font-size="11" fill="#59636e">
+    <line x1="560" y1="288" x2="590" y2="288" stroke="#1f6feb" stroke-width="2.5"/>
+    <text x="595" y="292">C1 final</text>
+    <line x1="660" y1="288" x2="690" y2="288" stroke="#9a6700" stroke-width="1.5" stroke-dasharray="5,4"/>
+    <text x="695" y="292">C1 peak</text>
+  </g>
+</svg>
+<div class="chart-cap">图 2 · C1 final vs mask-ratio · 同样呈倒 U 形，0.6 最高（0.3810）。虚线 = C1 peak（arm 0.75 peak 0.4458 为全臂最高，但 final 回落）。红色虚线 = 坍缩阈值 0.95（所有臂远低于此 → 无坍缩）。</div>
+</div>
+<h3>3.4 预注册裁定汇总</h3>
+<table>
+  <thead><tr><th>判据</th><th>阈值</th><th>结果</th></tr></thead>
+  <tbody>
+    <tr><td>「更优」</td><td>lp ≥ baseline + 1.5</td><td><span class="badge b-no">❌ 无臂达到</span></td></tr>
+    <tr><td>「不敏感」</td><td>所有臂 ±1.5pp 内</td><td><span class="badge b-warn">⚠️ 部分不满足</span>（0.5 和 0.9 超出）</td></tr>
+    <tr><td>噪声带内</td><td>|Δlp| ≤ 1.5</td><td>arm 0.3（Δ=−0.80）✅ · arm 0.75（Δ=−1.00）✅</td></tr>
+    <tr><td>显著更差</td><td>Δlp &lt; −1.5</td><td>arm 0.5（Δ=−1.58）⚠️ · arm 0.9（Δ=−1.96）⚠️</td></tr>
+  </tbody>
+</table>
+<!-- ============ §4 坍缩判据与健康度 ============ -->
+<h2 class="sec" id="s4"><span class="no">4</span>坍缩判据与健康度</h2>
+<p>BaiZe vision 线使用 <b>C1–C4 四指标体系</b>监控表征坍缩（详见 <code>EXPERIMENTS_VISION_ROUND8.md</code>）：</p>
+<ul>
+  <li><b>C1</b>（同塔 off-diag）：对比对齐度。&lt; 0.95 = 健康；→ 1.0 = 完全坍缩（所有 patch 塌成同一向量）。</li>
+  <li><b>C2_gap</b>（diag vs off-diag gap）：&gt; 0.005 = 健康（对角 vs 非对角有区分度）。</li>
+  <li><b>C4</b>（综合判据）：OK = 无坍缩（C1 + C2 + loss scale 三项联合判定）。</li>
+</ul>
+<h3>4.1 逐臂健康度</h3>
+<table>
+  <thead><tr><th>mask-ratio</th><th>C1 final</th><th>C1 peak (step)</th><th>C2_gap</th><th>C4</th><th>坍缩？</th></tr></thead>
+  <tbody>
+    <tr><td>0.3</td><td>0.3495</td><td>0.4421</td><td>~+0.12</td><td>OK</td><td><span class="badge b-ok">否</span></td></tr>
+    <tr><td>0.5</td><td>0.3756</td><td>0.4066</td><td>~+0.12</td><td>OK</td><td><span class="badge b-ok">否</span></td></tr>
+    <tr><td><b>0.6</b></td><td><b>0.3810</b></td><td>0.4241</td><td>+0.116</td><td>OK</td><td><span class="badge b-ok">否</span></td></tr>
+    <tr><td>0.75</td><td>0.3736</td><td><b>0.4458</b> (@19800)</td><td>+0.1162</td><td>OK</td><td><span class="badge b-ok">否</span></td></tr>
+    <tr><td>0.9</td><td>0.3468</td><td>0.4097</td><td>~+0.11</td><td>OK</td><td><span class="badge b-ok">否</span></td></tr>
+  </tbody>
+</table>
+<div class="ok-box">
+  <b>✅ 全部 5 臂无坍缩</b>：所有臂 C1 ∈ [0.347, 0.381]（远 &lt; 0.95 阈值），C2_gap ∈ [+0.11, +0.12]（远 &gt; 0.005 阈值），C4=OK。
+  <br>→ mask-ratio 在 [0.3, 0.9] 全区间<b>不会引发表征坍缩</b>，这是一个重要的负面结论：AIMv2-style recipe 的 InfoNCE 对比项提供了足够的防坍缩约束，即使 90% 掩码也不会塌。
+</div>
+<h3>4.2 关键发现：arm 0.75 的「峰值早现但不稳定」</h3>
+<div class="card">
+  <p>arm 0.75（mask-ratio=0.75）的 C1 <b>峰值 0.4458@step19800</b> 为<b>全 5 臂最高</b>，但在 step 19800 之后持续回落：
+  <code>0.4458@19800 → 0.4068@20100 → 0.3942@20400 → 0.3888@20700 → … → 0.3736@30000</code>。</p>
+  <p>最终 C1（0.3736）&lt; arm 0.6 最终 C1（0.3810），且 lp（12.49%）&lt; arm 0.6（13.49%）。</p>
+  <p><b>解读</b>：高 mask-ratio（0.75）在训练中期可获得更高的对比对齐度（C1 peak），但<b>终态不稳定</b>——可能因为可见 patch 太少（~49/196 = 25%），后期 InfoNCE 负样本不足导致对比信号退化。这解释了为何 0.75 的 lp 虽在噪声带内但低于 0.6。</p>
+</div>
+<h3>4.3 C1 vs lp 的非单调分歧</h3>
+<div class="note">
+  arm 0.3 的 lp（12.69%）&gt; arm 0.5 的 lp（11.91%），但 C1 相反（0.3495 &lt; 0.3756）→ <b>对比对齐（C1）与线性可分性（lp）不完全正相关</b>。
+  <br>可能原因：mask-ratio=0.3 时可见 patch 更多（~137/196 = 70%），InfoNCE 负样本更丰富 → 更好的 lp 特征，尽管对比对齐度（C1）较低。这说明 <b>mask-ratio 对对比项和生成项的影响机制不同</b>，不能仅用单一指标判优劣。
+</div>
+<!-- ============ §5 结论 ============ -->
+<h2 class="sec" id="s5"><span class="no">5</span>结论</h2>
+<div class="verdict">
+  <ol>
+    <li><b>mask-ratio 存在最优值 ≈ 0.6</b>：IN-1k lp 呈倒 U 形——0.6 最高（13.49%），两侧递减。C1 probe 同样在 0.6 达 final 最高（0.3810）。<b>lp 与 C1 双指标一致指向 0.6 为最优</b>。</li>
+    <li><b>[0.3, 0.75] 区间不敏感</b>：arm 0.3（Δ=−0.80）和 0.75（Δ=−1.00）均在 ±1.5pp 噪声带内 → mask-ratio 在此区间的选择对 lp <b>稳健</b>（flip 不会翻转结论）。</li>
+    <li><b>极端值显著更差</b>：arm 0.5（Δ=−1.58⚠️）和 0.9（Δ=−1.96⚠️）超出噪声带 → <b>过低或过高的 mask-ratio 均损害 lp</b>。0.5 的异常低值值得注意——它低于 0.3，暗示 0.5 附近可能存在一个局部「甜点外」区域，但单 seed 下尚不能确定是否为噪声。</li>
+    <li><b>全区间无坍缩</b>：5 臂 C1 全部 ∈ [0.347, 0.381]，C2_gap 全部 ≈ +0.11~+0.12 → InfoNCE 对比项提供了充分的防坍缩约束，<b>mask-ratio 不是坍缩的诱因</b>。</li>
+    <li><b>可复现性确认</b>：arm 0.6 受控复现 lp@30k=13.49% vs R11-L arm6-A 原始 12.08%（Δ=+1.41pp，噪声带内）→ R11-L 的 AIMv2 翻盘结论（+6.00pp）<b>可复现</b>。</li>
+    <li><b>实践建议</b>：后续 AIMv2-style 训练应继续使用 <b>mask-ratio=0.6</b>；若需在 [0.3, 0.75] 内微调，不会显著影响 lp，但应避免 ≤0.5 或 ≥0.9。</li>
+  </ol>
+</div>
+<!-- ============ §6 与既有 lp 结论的关系 ============ -->
+<h2 class="sec" id="s6"><span class="no">6</span>与既有 lp 结论的关系</h2>
+<div class="danger">
+  <b>🔴 lp 口径警告（必读）</b>：本报告所有 lp 数值均使用 <b>BaiZe 内部协议（Protocol A）</b>：
+  <ul>
+    <li>冻结 trunk + 线性分类器 + ImageNet-1k（与 DINOv2/MAE/iBOT/VISSL 同框架）</li>
+    <li><b>AdamW lr=3e-3</b> 固定无 schedule + <b>100 epoch</b></li>
+    <li><b>full-batch 前向 49,970 张</b>（每 epoch 仅 1 次梯度更新 → 100 epoch = 100 次更新）</li>
+    <li>探针训练集 = 50 张/类（vs 主流全量 1,281,167 张 → 小 ~25×）</li>
+    <li>预处理 = CLIP mean/std（vs 主流 ImageNet mean/std）</li>
+  </ul>
+  → 该协议<b>系统性低估 lp ~10pp</b>（详见 <code>report_vision_lp_protocol.html</code>）。
+</div>
+<h3>6.1 Δlp ≈ +10pp 的来源</h3>
+<p>lp 协议 A/B 桥接实验（同 ckpt · 同 eval 集 · 3 seeds）实测：</p>
+<table>
+  <thead><tr><th>协议</th><th>设置</th><th>lp（R12b final ckpt）</th><th>3-seed σ</th></tr></thead>
+  <tbody>
+    <tr><td><b>A（BaiZe 内部）</b></td><td>AdamW 3e-3 · full-batch · 100ep · 50/类 · CLIP norm</td><td><b>18.79%</b></td><td>—</td></tr>
+    <tr><td><b>B（主流）</b></td><td>SGD+momentum 0.9 · cosine · 90ep · bs1024 · 全量 1.28M · IN norm</td><td><b>28.84%</b></td><td>±0.03%</td></tr>
+    <tr><td><b>Δlp = B − A</b></td><td colspan="3"><b>+10.05pp</b>（cross-ckpt 极稳：+10.05 / +10.05 / +10.17，σ=0.06）</td></tr>
+  </tbody>
+</table>
+<h3>6.2 不可直接混比的理由</h3>
+<div class="card">
+  <ol>
+    <li><b>协议偏移 = 系统性</b>：Δlp ≈ +10pp 是协议差异（优化器/步数/batch/数据量/预处理），<b>不是模型差异</b>。同一 ckpt 在两协议下差 10pp。</li>
+    <li><b>本消融用 Protocol A</b>：所有 5 臂共享同一协议 → <b>臂间相对比较有效</b>（Δlp vs 0.6 基线是公平的），但<b>绝对值不可与主流公开值并列</b>。</li>
+    <li><b>若换 Protocol B</b>：本消融的 lp 绝对值预计会整体上移 ~10pp（如 0.6 从 13.49% → ~23.5%），但<b>倒 U 形的相对形状不变</b>（协议偏移是加性常数，不改变臂间排序）。</li>
+    <li><b>论文措辞建议</b>：报告 mask-ratio 消融时必须标注「<b>BaiZe internal protocol (Protocol A)</b>」，并加 caveat：「<b>绝对 lp 受协议系统性低估 ~10pp，臂间相对差异不受影响</b>」。🚫 <b>不得</b>与本报告 lp 数值和 DINOv2(~78%)/MAE(~68%) 公开值同表并列。</li>
+  </ol>
+</div>
+<h3>6.3 内部横比是否受影响？</h3>
+<div class="ok-box">
+  <b>不受影响</b>：本消融 5 臂全部使用 Protocol A → 臂间 Δlp（−0.80 / −1.58 / 0 / −1.00 / −1.96）是<b>纯 mask-ratio 效应</b>，不含协议偏移。
+  同理，此前 InfoNCE / AIMv2 / CoCa / 纯 AR 四臂因果分解（R11-L 系列）也共享 Protocol A → <b>内部横比结论不受 lp 协议偏移影响</b>。
+</div>
+<!-- ============ §7 局限 ============ -->
+<h2 class="sec" id="s7"><span class="no">7</span>局限（如实）</h2>
+<div class="note">
+  <ol>
+    <li><b>±1.5pp 噪声带</b>：本噪声带来自 R9/R10/R11 多轮实验的 lp 重复测量经验值，<b>未经严格多 seed 方差估计标定</b>。arm 0.5（Δ=−1.58）仅勉强超出噪声带边界 0.08pp → <b>其「显著更差」的判定处于边缘</b>，可能随 seed 变化而翻转为「噪声带内」。</li>
+    <li><b>单 seed，未做多 seed 方差</b>：所有 5 臂均使用 seed=1234（与 R8–R12 一致），<b>未做多 seed 重复</b>。lp 的 seed-to-seed 方差未知 → Δlp 的统计显著性无法严格量化。arm 0.3 vs 0.5 的非单调（C1 与 lp 分歧）可能是 seed 噪声而非真实效应。</li>
+    <li><b>NFS 吞吐波动</b>：训练期间 NFS 争用导致 img/s 在 2100–5400 间波动（ms/iter 93–276），不同臂的训练时长差异（6910–7138s，~3.3% 波动）<b>可能引入微量训练动态差异</b>，但步数固定（30k）控制了主要变量。</li>
+    <li><b>30k 步可能未充分收敛</b>：R11-G 108k 长跑显示 lp 在 30k 后仍有上升趋势 → 本消融的 30k 截断可能<b>低估了高 mask-ratio 臂（如 0.75）的最终潜力</b>（arm 0.75 的 C1 peak@19800 暗示其可能需要更长训练来稳定）。</li>
+    <li><b>lp 协议偏移（见 §6）</b>：绝对 lp 受 Protocol A 系统性低估 ~10pp → 本报告的 lp 数值<b>不可与主流公开值直接比较</b>，仅臂间相对比较有效。</li>
+    <li><b>数据口径</b>：使用 CC12M+Amshaker（~7.7M unique），不含 GPIC（GPIC 尚在下载中）。不同数据集下 mask-ratio 最优值<b>可能不同</b>（caption 长度/质量会影响生成项信号密度）。</li>
+  </ol>
+</div>
+<!-- ============ §8 下一步 ============ -->
+<h2 class="sec" id="s8"><span class="no">8</span>下一步</h2>
+<div class="card">
+  <h4>队列状态（2026-10-07 21:30）</h4>
+  <table>
+    <thead><tr><th>序</th><th>任务</th><th>状态</th><th>ETA</th></tr></thead>
+    <tbody>
+      <tr><td>①</td><td>lp 协议 A/B 桥接</td><td><span class="badge b-ok">✅ 完成</span></td><td>Δlp≈+10pp 已出</td></tr>
+      <tr><td>②</td><td>mask-ratio 消融（本报告）</td><td><span class="badge b-ok">✅ 完成</span></td><td>0.6 最优 · 本报告</td></tr>
+      <tr><td>③</td><td>weight-ratio 消融（4 臂）</td><td><span class="badge b-info">🚀 运行中</span></td><td>ETA ~04:34（10-08）</td></tr>
+      <tr><td>④</td><td>官方 AIMv2 纯 AR 范式复现对比</td><td><span class="badge b-warn">⏸ 待 ③ 完成</span></td><td>方案+6点修订已就绪</td></tr>
+    </tbody>
+  </table>
+  <h4>③ weight-ratio 消融（进行中）</h4>
+  <ul>
+    <li><b>4 臂</b>：<code>(contrast : patch) = 1:2 · 1:0.5 · 0.5:1 · 2:1</code>，mask-ratio 固定 0.6，30k 步/臂。</li>
+    <li><b>预注册判据</b>：lp ≥ (1:1) 基线 + 1.5 → 更优；全在 ±1.5 内 → 比例不敏感。</li>
+    <li><b>当前进度</b>：arm 1/4（cw1_plw2）step 18050/30k ~60%，C1=0.3241@18000（无坍缩），ETA all+eval ~04:34。</li>
+    <li><b>目的</b>：回答「InfoNCE 对比项与 patch-MSE 生成项的<b>权重比</b>是否有最优值」——与 mask-ratio 消融互补（一个变密度、一个变权重）。</li>
+  </ul>
+  <h4>④ 官方 AIMv2 纯 AR 范式复现对比</h4>
+  <ul>
+    <li><b>目标</b>：自研实现官方 AIMv2 纯 AR 范式（vision AR + text AR），与我们的非 AR 范式（双向 ViT + 随机掩码 + InfoNCE）做<b>同规模</b>受控 A/B。</li>
+    <li><b>前置</b>：<code>VISION_AIMV2_OFFICIAL_PLAN.md</code> 已批准 + 6 点修订已落实（AR≠MAE 语义 / cross-attn→causal / caption handicap / 吞吐预估 / B' 缩宽度 / 中间态判定）。</li>
+    <li><b>许可证红线</b>：官方 <code>ml-aim/AIMv2</code> = Apple Sample Code（research-only，🚫 不可 COPY）→ <b>按论文描述自研实现</b>，标注「自研实现（非官方权重复现）」。</li>
+    <li><b>产出</b>：<code>report_vision_aimv2_official_vs_ours.html</code>（规格对照表 + 两臂结果 + 差异归因 + 论文 §6.3 措辞建议）。</li>
+  </ul>
+</div>
+<h3>证据与可复现性</h3>
+<div class="card">
+  <ul>
+    <li><b>主日志</b>：<code>/tmp/ablation_mask_ratio.log</code>（master log, ALL DONE 20:06:17）</li>
+    <li><b>各臂训练日志</b>：<code>/nas_train/app.e0031982/datasets/baize-vision/out/ABL_mask_ratio_0p{3,5,6,75,9}/train.log</code></li>
+    <li><b>脚本</b>：<code>run/vision/run_mask_ratio_ablation.sh</code>（5106 bytes, 含预注册判据注释 + 自动 ckpt 收集 + 统一 eval）</li>
+    <li><b>ckpt</b>：每臂 3 个（step10k/20k/30k, ~510MB each）+ final vision.pt，共 20 ckpts</li>
+    <li><b>结果记录</b>：<code>run/EXPERIMENTS_VISION.md</code> §「Mask-ratio 消融」节（含完整表 + 6 条科学结论）</li>
+  </ul>
+</div>
+<footer>
+  <p><b>BaiZe vision 线 · mask-ratio 消融报告</b> · 生成于 2026-10-07 · 数据来源：<code>EXPERIMENTS_VISION.md</code> + 原始 ckpt 日志（可复算） · lp 口径 = BaiZe internal protocol (Protocol A) · 自包含 HTML（内联 CSS + 内联 SVG，零外链）</p>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+diff --git a/CHANGES b/CHANGES
+index 327dc5e4..8714d36b 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -93,6 +93,7 @@ Bugs fixed
+ * #8437: Makefile: ``make clean`` with empty BUILDDIR is dangerous
+ * #8352: std domain: Failed to parse an option that starts with bracket
+ * #8519: LaTeX: Prevent page brake in the middle of a seealso
++* #8720: py domain: Fixed wrong doctree of docfield types
+ 
+ Testing
+ --------
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 79d7e4f4..f66b2964 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -1233,6 +1233,12 @@ class PythonDomain(Domain):
+             if mod.docname in docnames:
+                 self.modules[modname] = mod
+ 
++    def process_field_xref(self, pnode: pending_xref) -> None:
++        """Process a pending xref created in a doc field.
++        For example, attach information about the current scope.
++        """
++        pnode.attributes.update(self.env.ref_context)
++
+     def find_obj(self, env: BuildEnvironment, modname: str, classname: str,
+                  name: str, type: str, searchmode: int = 0
+                  ) -> List[Tuple[str, ObjectEntry]]:
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 2dc97bed..9e61b85e 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -508,6 +508,43 @@ def test_pydata(app):
+     assert domain.objects['example.var'] == ('index', 'example.var', 'data')
+ 
+ 
++def test_info_field_list(app):
++    text = (".. py:module:: mod\n"
++            ".. py:class:: mod.A\n"
++            ".. py:class:: mod.submod.A\n"
++            "\n"
++            ".. py:function:: f()\n"
++            "\n"
++            "   :param mod.A a:\n"
++            "   :param mod.submod.A b:\n"
++            "   :rtype: mod.A\n"
++            "   :rtype: mod.submod.A\n"
++            "\n"
++            ".. py:currentmodule:: mod.submod\n"
++            "\n"
++            ".. py:function:: g()\n"
++            "\n"
++            "   :param A a:\n"
++            "   :rtype: A\n")
++    doctree = restructuredtext.parse(app, text)
++    refnodes = list(doctree.traverse(pending_xref))
++    # types in the docfields must be resolved in the context of the current
++    # module (and its parent modules), not by fuzzy matching every module
++    assert len(refnodes) == 6
++    for node in refnodes:
++        assert node['refdomain'] == 'py'
++        assert node['reftype'] == 'class'
++    assert refnodes[0]['reftarget'] == 'mod.A'
++    assert refnodes[1]['reftarget'] == 'mod.submod.A'
++    assert refnodes[2]['reftarget'] == 'mod.A'
++    assert refnodes[3]['reftarget'] == 'mod.submod.A'
++    # unqualified names are resolved in the scope of the current module
++    assert refnodes[4]['reftarget'] == 'A'
++    assert refnodes[5]['reftarget'] == 'A'
++    assert refnodes[4]['py:module'] == 'mod.submod'
++    assert refnodes[5]['py:module'] == 'mod.submod'
++
++
+ def test_pyfunction(app):
+     text = (".. py:function:: func1\n"
+             ".. py:module:: example\n"

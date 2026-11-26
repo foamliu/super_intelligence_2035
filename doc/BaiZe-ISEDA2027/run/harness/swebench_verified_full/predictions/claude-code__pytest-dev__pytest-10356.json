@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-10356",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/src/_pytest/mark/structures.py b/src/_pytest/mark/structures.py\nindex 800a25c..f384c06 100644\n--- a/src/_pytest/mark/structures.py\n+++ b/src/_pytest/mark/structures.py\n@@ -360,6 +360,20 @@ def get_unpacked_marks(obj: object) -> Iterable[Mark]:\n     mark_list = getattr(obj, \"pytestmark\", [])\n     if not isinstance(mark_list, list):\n         mark_list = [mark_list]\n+    if isinstance(obj, type):\n+        # For classes, walk the MRO and collect marks from each class\n+        # that defines pytestmark in its own __dict__. This ensures that\n+        # marks from all base classes are collected in MRO order,\n+        # instead of only getting the first match via attribute lookup.\n+        seen_ids: Set[int] = set()\n+        for mark in mark_list:\n+            seen_ids.add(id(mark))\n+        for base in obj.__mro__[1:]:\n+            if \"pytestmark\" in base.__dict__:\n+                for mark in normalize_mark_list(base.__dict__[\"pytestmark\"]):\n+                    if id(mark) not in seen_ids:\n+                        mark_list.append(mark)\n+                        seen_ids.add(id(mark))\n     return normalize_mark_list(mark_list)\n \n \n"
+  }
+]

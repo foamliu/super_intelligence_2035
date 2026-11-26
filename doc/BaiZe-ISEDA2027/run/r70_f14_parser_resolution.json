@@ -1,0 +1,149 @@
+{
+  "round": "R70",
+  "title": "F14 BLOCKER Resolution",
+  "date": "2026-11-09",
+  "gpu_used": false,
+  "f14_confirmed": true,
+  "sglang_parsers_checked": [
+    {
+      "parser": "llama3",
+      "bot_token": "'<|python_tag|>'",
+      "eot_token": "''",
+      "bot_in_vocab": false,
+      "eot_in_vocab": true,
+      "match": false,
+      "format": "JSON after <|python_tag|>"
+    },
+    {
+      "parser": "qwen25",
+      "bot_token": "'<toolcall>'",
+      "eot_token": "'</toolcall>'",
+      "bot_in_vocab": false,
+      "eot_in_vocab": false,
+      "match": false,
+      "format": "JSON in <toolcall>"
+    },
+    {
+      "parser": "mistral",
+      "bot_token": "'[TOOL_CALLS] ['",
+      "eot_token": "']'",
+      "bot_in_vocab": false,
+      "eot_in_vocab": false,
+      "match": false,
+      "format": "JSON array after [TOOL_CALLS]"
+    },
+    {
+      "parser": "deepseekv3",
+      "bot_token": "'<ｼ┃tool▁calls▁begin┃>'",
+      "eot_token": "'<ｼ┃tool▁calls▁end┃>'",
+      "bot_in_vocab": false,
+      "eot_in_vocab": false,
+      "match": false,
+      "format": "Structured tool_sep"
+    }
+  ],
+  "minicpm5_native_tool_tokens": {
+    "<tool_call>": 2,
+    "</tool_call>": 3,
+    "<|im_sep|>": 4,
+    "<|fim_prefix|>": 5,
+    "<|fim_middle|>": 6,
+    "<|fim_suffix|>": 7,
+    "<think>": 8,
+    "</think>": 9,
+    "<tool_response>": 10,
+    "</tool_response>": 11,
+    "<tools>": 12,
+    "</tools>": 13,
+    "<parameters>": 16,
+    "</parameters>": 17,
+    "<function": 18,
+    "</function>": 19,
+    "<param": 20,
+    "</param>": 21,
+    "<|im_start|>": 130072,
+    "<|im_end|>": 130073,
+    "<|tool_call|>": 130077,
+    "/think": 130080,
+    "/no_think": 130081
+  },
+  "chat_template_patterns": {
+    "tool_definition_block": true,
+    "function_xml_format": true,
+    "param_xml_format": true,
+    "tool_result_block": false,
+    "im_start_end": true,
+    "thinking_format": false,
+    "cdata_support": true,
+    "tool_calls_message": true
+  },
+  "tool_call_format": "XML: <function name=\"NAME\"><param name=\"KEY\">VALUE</param></function>",
+  "impact_analysis": {
+    "single_turn": {
+      "affected": false,
+      "reason": "When multi_turn.tool_config_path is None (line 427-428), _initialize_tools returns early. get_tool_call_parser_type() is never called. Single-turn RL uses reward function on output text.",
+      "config": "multi_turn.enable: False (or tool_config_path: null)"
+    },
+    "multi_turn": {
+      "affected": true,
+      "reason": "When tool_config_path is set (line 465-471), get_tool_call_parser_type(tokenizer) iterates 4 parsers. None match MiniCPM5-2B -> ValueError. SGLang fails to start.",
+      "config": "multi_turn.enable: True + tool_config_path: <path>",
+      "fix": "import baize_posttrain_minicpm5_parser_patch before rollout init"
+    },
+    "smoke_test": {
+      "affected": true,
+      "reason": "If smoke enables multi_turn, it hits ValueError. Recommend: smoke single-turn first, then apply patch for multi-turn.",
+      "check_cmd": "python3 -c \"from transformers import AutoTokenizer; t=AutoTokenizer.from_pretrained('/tmp/models/MiniCPM5-2B'); print(chr(60)+'function' in t.get_vocab())\""
+    }
+  },
+  "dry_run_tests": [
+    {
+      "test": "simple_tool_call",
+      "passed": true,
+      "detail": "func=search_apis params={\"query\": \"get_cell\"}",
+      "expected": "func=search_apis params={\"query\": \"get_cell\"}"
+    },
+    {
+      "test": "multi_param",
+      "passed": true,
+      "detail": "func=run_code params={\"code\": \"import pyAether\", \"timeout\": \"30\"}",
+      "expected": "func=run_code params={\"code\": \"import pyAether\", \"timeout\": \"30\"}"
+    },
+    {
+      "test": "cdata_content",
+      "passed": true,
+      "detail": "func=run_code params={\"code\": \"import pyAether\\ncell = pyAether.Cell()\"}",
+      "expected": "func=run_code params={\"code\": \"import pyAether\\ncell = pyAether.Cell()\"}"
+    },
+    {
+      "test": "no_tool_call",
+      "passed": true,
+      "detail": "No call expected, found 0"
+    },
+    {
+      "test": "text_then_call",
+      "passed": true,
+      "detail": "func=get_api_details params={\"api_name\": \"get_cell\"}",
+      "expected": "func=get_api_details params={\"api_name\": \"get_cell\"}"
+    }
+  ],
+  "dry_run_all_passed": true,
+  "detector_design": {
+    "name": "MiniCPM5FunctionDetector",
+    "parser_key": "minicpm5",
+    "bot_token": "<function",
+    "bot_token_id": 18,
+    "eot_token": "</function>",
+    "eot_token_id": 19,
+    "cdata_support": true,
+    "streaming_support": true
+  },
+  "source_paths_verified": {
+    "model_dir": true,
+    "chat_template": true,
+    "tokenizer_json": true,
+    "config_json": true,
+    "sglang_parser": true,
+    "verl_rollout": true
+  }
+}

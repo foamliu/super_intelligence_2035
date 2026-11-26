@@ -1,0 +1,42 @@
+diff --git a/lib/matplotlib/backend_bases.py b/lib/matplotlib/backend_bases.py
+index 9ae2982c6..93ee6da43 100644
+--- a/lib/matplotlib/backend_bases.py
++++ b/lib/matplotlib/backend_bases.py
+@@ -1653,7 +1653,7 @@ class FigureCanvasBase:
+         self.toolbar = None  # NavigationToolbar2 will set me
+         self._is_idle_drawing = False
+         # We don't want to scale up the figure DPI more than once.
+-        figure._original_dpi = figure.dpi
++        figure._original_dpi = getattr(figure, '_original_dpi', figure.dpi)
+         self._device_pixel_ratio = 1
+         super().__init__()  # Typically the GUI widget init (if any).
+ 
+diff --git a/lib/matplotlib/tests/test_pickle.py b/lib/matplotlib/tests/test_pickle.py
+index 0d0a5e597..e573efd36 100644
+--- a/lib/matplotlib/tests/test_pickle.py
++++ b/lib/matplotlib/tests/test_pickle.py
+@@ -217,6 +217,24 @@ def test_unpickle_canvas():
+     assert fig2.canvas is not None
+ 
+ 
++def test_unpickle_device_pixel_ratio():
++    # Unpickling re-attaches a canvas to the figure; on high-DPI displays the
++    # backend then re-applies the device pixel ratio (the macosx backend does
++    # this when the figure manager is recreated).  The figure DPI must not
++    # compound across pickle/unpickle cycles.
++    fig = plt.figure()
++    try:
++        logical_dpi = fig.dpi
++        fig.canvas._set_device_pixel_ratio(2)
++        assert fig.dpi == 2 * logical_dpi
++        for _ in range(3):
++            fig = pickle.loads(pickle.dumps(fig))
++            fig.canvas._set_device_pixel_ratio(2)
++            assert fig.dpi == 2 * logical_dpi
++    finally:
++        plt.close("all")
++
++
+ def test_mpl_toolkits():
+     ax = parasite_axes.host_axes([0, 0, 1, 1])
+     assert type(pickle.loads(pickle.dumps(ax))) == parasite_axes.HostAxes

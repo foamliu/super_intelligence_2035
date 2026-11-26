@@ -1,0 +1,13 @@
+{
+  "harness": "pi",
+  "run_id": "verified_full_glm53_pi_incr_R2336",
+  "round": "R2336",
+  "n": 2,
+  "resolved": [
+    "sphinx-doc__sphinx-11510"
+  ],
+  "failed": [
+    "sphinx-doc__sphinx-7462"
+  ],
+  "infra_or_quota": []
+}

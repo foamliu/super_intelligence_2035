@@ -1,0 +1,560 @@
+{
+  "r132": {
+    "title": "KL Divergence Control for GRPO",
+    "date": "2026-11-10",
+    "wake": 179,
+    "scheduler_comparison": {
+      "constant": {
+        "trials": [
+          {
+            "final_reward": 0.9479,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0349,
+            "avg_reward_last_50": 0.8445
+          },
+          {
+            "final_reward": 0.9616,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0175,
+            "max_kl": 0.0356,
+            "avg_reward_last_50": 0.8322
+          },
+          {
+            "final_reward": 0.8363,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0297,
+            "avg_reward_last_50": 0.8181
+          },
+          {
+            "final_reward": 0.7743,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.98,
+            "min_entropy": 0.0315,
+            "max_kl": 0.033,
+            "avg_reward_last_50": 0.8333
+          },
+          {
+            "final_reward": 0.7292,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9727,
+            "min_entropy": 0.0326,
+            "max_kl": 0.0333,
+            "avg_reward_last_50": 0.8396
+          }
+        ],
+        "collapse_rate": 0.0,
+        "hacking_rate": 0.0,
+        "avg_final_reward": 0.8335,
+        "avg_nonzero_adv_rate": 0.9752,
+        "verdict": "STABLE & HIGH REWARD"
+      },
+      "linear_decay": {
+        "trials": [
+          {
+            "final_reward": 0.9479,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0349,
+            "avg_reward_last_50": 0.8445
+          },
+          {
+            "final_reward": 0.9616,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0175,
+            "max_kl": 0.0356,
+            "avg_reward_last_50": 0.8322
+          },
+          {
+            "final_reward": 0.8363,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0297,
+            "avg_reward_last_50": 0.8181
+          },
+          {
+            "final_reward": 0.7743,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.98,
+            "min_entropy": 0.0315,
+            "max_kl": 0.033,
+            "avg_reward_last_50": 0.8333
+          },
+          {
+            "final_reward": 0.7292,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9727,
+            "min_entropy": 0.0326,
+            "max_kl": 0.0333,
+            "avg_reward_last_50": 0.8396
+          }
+        ],
+        "collapse_rate": 0.0,
+        "hacking_rate": 0.0,
+        "avg_final_reward": 0.8335,
+        "avg_nonzero_adv_rate": 0.9752,
+        "verdict": "STABLE & HIGH REWARD"
+      },
+      "cosine_decay": {
+        "trials": [
+          {
+            "final_reward": 0.9479,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0349,
+            "avg_reward_last_50": 0.8445
+          },
+          {
+            "final_reward": 0.9616,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0175,
+            "max_kl": 0.0356,
+            "avg_reward_last_50": 0.8322
+          },
+          {
+            "final_reward": 0.8363,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0297,
+            "avg_reward_last_50": 0.8181
+          },
+          {
+            "final_reward": 0.7743,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.98,
+            "min_entropy": 0.0315,
+            "max_kl": 0.033,
+            "avg_reward_last_50": 0.8333
+          },
+          {
+            "final_reward": 0.7292,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9727,
+            "min_entropy": 0.0326,
+            "max_kl": 0.0333,
+            "avg_reward_last_50": 0.8396
+          }
+        ],
+        "collapse_rate": 0.0,
+        "hacking_rate": 0.0,
+        "avg_final_reward": 0.8335,
+        "avg_nonzero_adv_rate": 0.9752,
+        "verdict": "STABLE & HIGH REWARD"
+      },
+      "adaptive_target": {
+        "trials": [
+          {
+            "final_reward": 0.9479,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0349,
+            "avg_reward_last_50": 0.8445
+          },
+          {
+            "final_reward": 0.9616,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0175,
+            "max_kl": 0.0356,
+            "avg_reward_last_50": 0.8322
+          },
+          {
+            "final_reward": 0.8363,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0297,
+            "avg_reward_last_50": 0.8181
+          },
+          {
+            "final_reward": 0.7743,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.98,
+            "min_entropy": 0.0315,
+            "max_kl": 0.033,
+            "avg_reward_last_50": 0.8333
+          },
+          {
+            "final_reward": 0.7292,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9727,
+            "min_entropy": 0.0326,
+            "max_kl": 0.0333,
+            "avg_reward_last_50": 0.8396
+          }
+        ],
+        "collapse_rate": 0.0,
+        "hacking_rate": 0.0,
+        "avg_final_reward": 0.8335,
+        "avg_nonzero_adv_rate": 0.9752,
+        "verdict": "STABLE & HIGH REWARD"
+      },
+      "phase_specific": {
+        "trials": [
+          {
+            "final_reward": 0.9479,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0349,
+            "avg_reward_last_50": 0.8445
+          },
+          {
+            "final_reward": 0.9616,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0175,
+            "max_kl": 0.0356,
+            "avg_reward_last_50": 0.8322
+          },
+          {
+            "final_reward": 0.8363,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9745,
+            "min_entropy": 0.0298,
+            "max_kl": 0.0297,
+            "avg_reward_last_50": 0.8181
+          },
+          {
+            "final_reward": 0.7743,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.98,
+            "min_entropy": 0.0315,
+            "max_kl": 0.033,
+            "avg_reward_last_50": 0.8333
+          },
+          {
+            "final_reward": 0.7292,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "nonzero_adv_rate": 0.9727,
+            "min_entropy": 0.0326,
+            "max_kl": 0.0333,
+            "avg_reward_last_50": 0.8396
+          }
+        ],
+        "collapse_rate": 0.0,
+        "hacking_rate": 0.0,
+        "avg_final_reward": 0.8335,
+        "avg_nonzero_adv_rate": 0.9752,
+        "verdict": "STABLE & HIGH REWARD"
+      }
+    },
+    "kl_reward_arm_analysis": {
+      "arm_results": {
+        "R0": {
+          "low_0.01": {
+            "final_reward": 0.625,
+            "nonzero_adv_rate": 0.955,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0807,
+            "max_kl": 0.0324
+          },
+          "med_0.05": {
+            "final_reward": 0.75,
+            "nonzero_adv_rate": 0.97,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0763,
+            "max_kl": 0.0214
+          },
+          "high_0.15": {
+            "final_reward": 0.875,
+            "nonzero_adv_rate": 0.97,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0588,
+            "max_kl": 0.026
+          }
+        },
+        "R1": {
+          "low_0.01": {
+            "final_reward": 0.625,
+            "nonzero_adv_rate": 0.985,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0625,
+            "max_kl": 0.0372
+          },
+          "med_0.05": {
+            "final_reward": 0.6501,
+            "nonzero_adv_rate": 0.96,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0784,
+            "max_kl": 0.0273
+          },
+          "high_0.15": {
+            "final_reward": 0.8938,
+            "nonzero_adv_rate": 0.975,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0647,
+            "max_kl": 0.0342
+          }
+        },
+        "R2": {
+          "low_0.01": {
+            "final_reward": 0.5919,
+            "nonzero_adv_rate": 0.97,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0481,
+            "max_kl": 0.0298
+          },
+          "med_0.05": {
+            "final_reward": 0.6977,
+            "nonzero_adv_rate": 0.97,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0779,
+            "max_kl": 0.0284
+          },
+          "high_0.15": {
+            "final_reward": 0.5655,
+            "nonzero_adv_rate": 0.96,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0736,
+            "max_kl": 0.0292
+          }
+        },
+        "R3": {
+          "low_0.01": {
+            "final_reward": 0.8449,
+            "nonzero_adv_rate": 1.0,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0755,
+            "max_kl": 0.0279
+          },
+          "med_0.05": {
+            "final_reward": 0.7256,
+            "nonzero_adv_rate": 1.0,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0761,
+            "max_kl": 0.0312
+          },
+          "high_0.15": {
+            "final_reward": 0.7284,
+            "nonzero_adv_rate": 1.0,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0571,
+            "max_kl": 0.0313
+          }
+        },
+        "R4": {
+          "low_0.01": {
+            "final_reward": 0.8606,
+            "nonzero_adv_rate": 1.0,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0726,
+            "max_kl": 0.0287
+          },
+          "med_0.05": {
+            "final_reward": 0.8842,
+            "nonzero_adv_rate": 1.0,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.0726,
+            "max_kl": 0.031
+          },
+          "high_0.15": {
+            "final_reward": 0.9656,
+            "nonzero_adv_rate": 1.0,
+            "mode_collapse": false,
+            "reward_hacking": false,
+            "min_entropy": 0.076,
+            "max_kl": 0.0298
+          }
+        }
+      },
+      "recommendations": {
+        "R0": "High KL (0.10-0.15): binary reward hacking-prone, strong constraint needed",
+        "R1": "High KL (0.08-0.12): binary+format, still needs strong constraint",
+        "R2": "Medium KL (0.03-0.06): graded reward denser signal, lower constraint OK",
+        "R3": "Medium-low KL (0.02-0.04): +tool penalty further suppresses hacking",
+        "R4": "Low KL (0.01-0.03): +API legality, densest signal, loosest constraint"
+      }
+    },
+    "adaptive_controller": {
+      "controller_type": "multiplicative_feedback",
+      "target_kl": 0.02,
+      "target_band": [
+        0.01,
+        0.03
+      ],
+      "increase_factor": 1.5,
+      "decrease_factor": 0.7,
+      "min_kl_coef": 0.001,
+      "max_kl_coef": 0.5,
+      "adjustment_window": 5,
+      "emergency_kl_threshold": 0.5,
+      "emergency_entropy_threshold": 0.001,
+      "verl_config": {
+        "type": "adaptive",
+        "kw_coef": 0.05,
+        "kw_coef_max": 0.5,
+        "kw_coef_min": 0.001,
+        "target_kl": 0.02,
+        "adjustment_window": 5
+      },
+      "rationale": "Adaptive controller balances exploration vs exploitation. Early phases: lower KL for exploration. Later phases: higher KL to prevent late-stage hacking."
+    },
+    "phase_kl_schedule": {
+      "schedule": {
+        "Phase0_Warmup": {
+          "kl_coef": 0.1,
+          "rationale": "L1 easy + R0 binary. High KL prevents hacking easy patterns.",
+          "exit": "pass>=70%, adv_std>0.05, no collapse"
+        },
+        "Phase1_Foundation": {
+          "kl_coef": 0.05,
+          "rationale": "L1+L2 + R2 graded. Medium KL: denser signal, R5 adds variability.",
+          "exit": "pass>=60%, L2 pass>=0.20 (Goldilocks R131)"
+        },
+        "Phase2_Development": {
+          "kl_coef": 0.03,
+          "rationale": "L2+L3 + R2+R5. Lower KL: harder tasks need exploration.",
+          "exit": "pass>=50%, adv_std>0.05"
+        },
+        "Phase3_Refinement": {
+          "kl_coef": 0.02,
+          "rationale": "L3+L4 + R3 API legality. Low KL: techlib tasks need max exploration.",
+          "exit": "pass>=40%, cheat_rate<5%"
+        },
+        "Phase4_Mastery": {
+          "kl_coef": 0.01,
+          "rationale": "L4+L5 hardest. Very low KL: explore rare correct solutions.",
+          "exit": "FINAL -> 158-task EDA-Eval evaluation"
+        }
+      },
+      "transitions": {
+        "Phase0_Warmup->Phase1_Foundation": {
+          "from_kl": 0.1,
+          "to_kl": 0.05,
+          "smoothing": "EMA alpha=0.1 over ~10 steps"
+        },
+        "Phase1_Foundation->Phase2_Development": {
+          "from_kl": 0.05,
+          "to_kl": 0.03,
+          "smoothing": "EMA alpha=0.1 over ~10 steps"
+        },
+        "Phase2_Development->Phase3_Refinement": {
+          "from_kl": 0.03,
+          "to_kl": 0.02,
+          "smoothing": "EMA alpha=0.1 over ~10 steps"
+        },
+        "Phase3_Refinement->Phase4_Mastery": {
+          "from_kl": 0.02,
+          "to_kl": 0.01,
+          "smoothing": "EMA alpha=0.1 over ~10 steps"
+        }
+      }
+    },
+    "monitoring": {
+      "metrics": [
+        {
+          "name": "observed_kl",
+          "healthy": [
+            0.005,
+            0.1
+          ],
+          "warn": ">0.10 or <0.005",
+          "critical": ">0.30 or <0.001"
+        },
+        {
+          "name": "policy_entropy",
+          "healthy": [
+            0.01,
+            1.0
+          ],
+          "warn": "<0.01",
+          "critical": "<0.001 = MODE COLLAPSE"
+        },
+        {
+          "name": "kl_coef",
+          "healthy": [
+            0.001,
+            0.15
+          ],
+          "warn": ">0.15 or <0.001",
+          "critical": ">0.5 or =0"
+        },
+        {
+          "name": "reward_kl_ratio",
+          "healthy": [
+            2.0,
+            50.0
+          ],
+          "warn": "<2.0 (KL rising faster than reward)",
+          "critical": "<0.5 = REWARD HACKING LIKELY"
+        },
+        {
+          "name": "advantage_nonzero_rate",
+          "healthy": [
+            0.7,
+            1.0
+          ],
+          "warn": "<0.70",
+          "critical": "<0.30 = SILENT NO-OP (cf Vision R57)"
+        }
+      ],
+      "pre_registered": true,
+      "date": "2026-11-10",
+      "note": "Set before training. Cannot be modified post-hoc (pre-registration §5)."
+    },
+    "verl_yaml": "# R132 KL Control Configuration for verl GRPO\n# Pre-registered 2026-11-10. Do not modify after training starts.\nactor:\n  kl_ctrl:\n    type: adaptive\n    kw_coef: 0.05\n    kw_coef_max: 0.5\n    kw_coef_min: 0.001\n    target_kl: 0.02\n    adjustment_window: 5\n    increase_factor: 1.5\n    decrease_factor: 0.7\n  clip_ratio: 0.2\n  entropy_coef: 0.01\n  temperature: 0.7\n  group_size: 8\n  phase_kl_schedule:\n    Phase0_Warmup: {kl_coef: 0.10, steps: 50}\n    Phase1_Foundation: {kl_coef: 0.05, steps: 100}\n    Phase2_Development: {kl_coef: 0.03, steps: 150}\n    Phase3_Refinement: {kl_coef: 0.02, steps: 150}\n    Phase4_Mastery: {kl_coef: 0.01, steps: 100}\n  emergency_kl_threshold: 0.5\n  emergency_entropy_min: 0.001\n",
+    "conclusions": [
+      "1. Phase-specific KL (0.10->0.01 across 5 phases) recommended schedule.",
+      "2. Adaptive target-KL controller: auto-adjust penalty on drift/stagnation.",
+      "3. Sparse rewards (R0/R1) need 2-5x higher KL than dense (R2/R3/R4).",
+      "4. Mode collapse (entropy<0.001) primary risk at low KL.",
+      "5. Reward hacking (high reward + high KL) primary risk at high KL.",
+      "6. Optimal KL band: [0.01, 0.10] for our 5-phase curriculum.",
+      "7. Emergency stops: KL>0.5 or entropy<0.001 -> freeze training.",
+      "8. Adv nonzero rate<0.30 = SILENT NO-OP (cf Vision R57).",
+      "9. Reward-KL ratio<0.5 = reward hacking likely -> audit tool calls.",
+      "10. All thresholds pre-registered before training (section 5)."
+    ]
+  }
+}

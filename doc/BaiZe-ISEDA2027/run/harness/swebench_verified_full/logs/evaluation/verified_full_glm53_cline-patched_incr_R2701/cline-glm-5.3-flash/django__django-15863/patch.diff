@@ -1,0 +1,39 @@
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 7a5b28d159..c09db2b165 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -154,10 +154,13 @@ def floatformat(text, arg=-1):
+         input_val = repr(text)
+         d = Decimal(input_val)
+     except InvalidOperation:
+-        try:
+-            d = Decimal(str(float(text)))
+-        except (ValueError, InvalidOperation, TypeError):
+-            return ""
++        if isinstance(text, Decimal):
++            d = text
++        else:
++            try:
++                d = Decimal(str(float(text)))
++            except (ValueError, InvalidOperation, TypeError):
++                return ""
+     try:
+         p = int(arg)
+     except ValueError:
+diff --git a/tests/template_tests/filter_tests/test_floatformat.py b/tests/template_tests/filter_tests/test_floatformat.py
+index 8dc69b2437..c53a215423 100644
+--- a/tests/template_tests/filter_tests/test_floatformat.py
++++ b/tests/template_tests/filter_tests/test_floatformat.py
+@@ -74,6 +74,12 @@ class FunctionTests(SimpleTestCase):
+         self.assertEqual(floatformat(1.5e-15, -20), "0.00000000000000150000")
+         self.assertEqual(floatformat(1.00000000000000015, 16), "1.0000000000000002")
+ 
++    def test_decimal_with_high_precision(self):
++        self.assertEqual(
++            floatformat(Decimal("12345678901234567890.1234567890123456789"), 20),
++            "12345678901234567890.12345678901234567890",
++        )
++
+     def test_force_grouping(self):
+         with translation.override("en"):
+             self.assertEqual(floatformat(10000, "g"), "10,000")

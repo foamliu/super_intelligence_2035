@@ -1,0 +1,34 @@
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index 4b73d52..bc5461a 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -6686,7 +6686,7 @@ optional.
+ 
+         density = bool(density) or bool(normed)
+         if density and not stacked:
+-            hist_kwargs = dict(density=density)
++            hist_kwargs['density'] = density
+ 
+         # List to store all the top coordinates of the histograms
+         tops = []
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index cff4325..2596baf 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -6369,3 +6369,13 @@ def test_hist_nan_data():
+ 
+     assert np.allclose(bins, nanbins)
+     assert np.allclose(edges, nanedges)
++
++
++def test_hist_density_range():
++    # Test that range is respected when density=True
++    # https://github.com/matplotlib/matplotlib/issues/11859
++    np.random.seed(19680801)
++    data = np.random.rand(10)
++    _, bins, _ = plt.hist(data, 'auto', range=(0, 1), density=True)
++    assert bins[0] == 0
++    assert bins[-1] == 1
+diff --git a/matplotlibrc b/matplotlibrc
+new file mode 100644
+index 0000000..e69de29

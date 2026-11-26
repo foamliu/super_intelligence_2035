@@ -1,0 +1,113 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index 488d8ba..b364eff 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -90,6 +90,15 @@ Bug fixes
+   By `Julien Seguinot <https://github.com/juseg>`_.
+ - Add :py:meth:`Dataset.drop_isel` and :py:meth:`DataArray.drop_isel` (:issue:`4658`, :pull:`4819`). By `Daniel Mesejo <https://github.com/mesejo>`_.
+ 
++Deprecations
++~~~~~~~~~~~~
++- Renamed the ``dim`` argument of :py:meth:`DataArray.integrate` to ``coord`` to
++  match :py:meth:`Dataset.integrate` and :py:meth:`DataArray.differentiate`.
++  Using ``dim`` as a keyword argument still works but raises a ``FutureWarning``.
++  (:pull:`XXXX`).
++
++Documentation
++~~~~~~~~~~~~~
+ Documentation
+ ~~~~~~~~~~~~~
+ - add information about requirements for accessor classes (:issue:`2788`, :pull:`4657`).
+diff --git a/xarray/core/dataarray.py b/xarray/core/dataarray.py
+index 2fef3ed..4c48cdc 100644
+--- a/xarray/core/dataarray.py
++++ b/xarray/core/dataarray.py
+@@ -3481,17 +3481,17 @@ class DataArray(AbstractArray, DataWithCoords):
+         return self._from_temp_dataset(ds)
+ 
+     def integrate(
+-        self, dim: Union[Hashable, Sequence[Hashable]], datetime_unit: str = None
++        self, coord: Union[Hashable, Sequence[Hashable]] = None, datetime_unit: str = None, **kwargs
+     ) -> "DataArray":
+         """ integrate the array with the trapezoidal rule.
+ 
+         .. note::
+-            This feature is limited to simple cartesian geometry, i.e. dim
++            This feature is limited to simple cartesian geometry, i.e. coord
+             must be one dimensional.
+ 
+         Parameters
+         ----------
+-        dim : hashable, or sequence of hashable
++        coord : hashable, or sequence of hashable
+             Coordinate(s) used for the integration.
+         datetime_unit : {"Y", "M", "W", "D", "h", "m", "s", "ms", "us", "ns", \
+                          "ps", "fs", "as"}, optional
+@@ -3528,7 +3528,25 @@ class DataArray(AbstractArray, DataWithCoords):
+         array([5.4, 6.6, 7.8])
+         Dimensions without coordinates: y
+         """
+-        ds = self._to_temp_dataset().integrate(dim, datetime_unit)
++        dim = kwargs.pop("dim", None)
++        if kwargs:
++            raise TypeError(
++                f"integrate() got unexpected keyword arguments {list(kwargs)}"
++            )
++        if dim is not None:
++            if coord is not None:
++                raise TypeError(
++                    "Cannot specify both 'coord' and 'dim'. 'dim' has been deprecated, use 'coord' instead."
++                )
++            warnings.warn(
++                "dim has been deprecated. Use coord instead.",
++                FutureWarning,
++                stacklevel=2,
++            )
++            coord = dim
++        if coord is None:
++            raise TypeError("integrate() missing required argument: 'coord'")
++        ds = self._to_temp_dataset().integrate(coord, datetime_unit)
+         return self._from_temp_dataset(ds)
+ 
+     def unify_chunks(self) -> "DataArray":
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index fed9098..e00b1d2 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -6602,8 +6602,22 @@ def test_integrate(dask):
+ 
+     with pytest.raises(ValueError):
+         da.integrate("x2d")
++    with pytest.raises(ValueError):
++        da.integrate("x2d")
+ 
+ 
++def test_integrate_dim_deprecation():
++    da = xr.DataArray([1, 2, 3], dims=["x"], coords={"x": [0, 1, 2]})
++    # positional arg still works
++    da.integrate("x")
++    # coord keyword works
++    da.integrate(coord="x")
++    # dim keyword still works but raises FutureWarning
++    with pytest.warns(FutureWarning, match="dim has been deprecated"):
++        da.integrate(dim="x")
++    # cannot specify both
++    with pytest.raises(TypeError, match="Cannot specify both"):
++        da.integrate(coord="x", dim="x")
+ @pytest.mark.parametrize("dask", [True, False])
+ @pytest.mark.parametrize("which_datetime", ["np", "cftime"])
+ def test_trapz_datetime(dask, which_datetime):
+diff --git a/xarray/tests/test_units.py b/xarray/tests/test_units.py
+index bb3127e..c9b07b0 100644
+--- a/xarray/tests/test_units.py
++++ b/xarray/tests/test_units.py
+@@ -3681,8 +3681,7 @@ class TestDataArray:
+         (
+             method("diff", dim="x"),
+             method("differentiate", coord="x"),
+-            method("integrate", dim="x"),
+-            method("quantile", q=[0.25, 0.75]),
++            method("integrate", coord="x"),
+             method("reduce", func=np.sum, dim="x"),
+             pytest.param(lambda x: x.dot(x), id="method_dot"),
+         ),

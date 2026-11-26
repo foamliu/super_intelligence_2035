@@ -1,0 +1,50 @@
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index 5369eadbd..09b446d1b 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -4848,7 +4848,7 @@ default: :rc:`scatter.edgecolors`
+             Use a linear or log10 scale on the vertical axis.
+ 
+         mincnt : int > 0, default: *None*
+-            If not *None*, only display cells with more than *mincnt*
++            If not *None*, only display cells with at least *mincnt*
+             number of points in the cell.
+ 
+         marginals : bool, default: *False*
+@@ -5014,7 +5014,7 @@ default: :rc:`scatter.edgecolors`
+             if mincnt is None:
+                 mincnt = 0
+             accum = np.array(
+-                [reduce_C_function(acc) if len(acc) > mincnt else np.nan
++                [reduce_C_function(acc) if len(acc) >= mincnt else np.nan
+                  for Cs_at_i in [Cs_at_i1, Cs_at_i2]
+                  for acc in Cs_at_i[1:]],  # [1:] drops out-of-range points.
+                 float)
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index 065d17f95..c484e1cb5 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -999,6 +999,23 @@ def test_hexbin_log_clim():
+     assert h.get_clim() == (2, 100)
+ 
+ 
++def test_hexbin_mincnt():
++    # Test that mincnt behaves consistently with and without C.
++    np.random.seed(42)
++    x = np.array([0.0, 0.0, 1.0])
++    y = np.array([0.0, 0.0, 1.0])
++    C = np.ones_like(x)
++
++    fig, ax = plt.subplots()
++    h1 = ax.hexbin(x, y, mincnt=1)
++    fig2, ax2 = plt.subplots()
++    h2 = ax2.hexbin(x, y, C=C, reduce_C_function=np.sum, mincnt=1)
++
++    # Both should show the same number of hexagons (2 cells: one with 2 points,
++    # one with 1 point).
++    assert h1.get_offsets().shape == h2.get_offsets().shape
++
++
+ def test_inverted_limits():
+     # Test gh:1553
+     # Calling invert_xaxis prior to plotting should not disable autoscaling

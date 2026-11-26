@@ -1,0 +1,39 @@
+diff --git a/django/core/management/base.py b/django/core/management/base.py
+index e6cbf8c64f..463e4e8665 100644
+--- a/django/core/management/base.py
++++ b/django/core/management/base.py
+@@ -140,6 +140,10 @@ class OutputWrapper(TextIOBase):
+     def __getattr__(self, name):
+         return getattr(self._out, name)
+ 
++    def flush(self):
++        if hasattr(self._out, 'flush'):
++            self._out.flush()
++
+     def isatty(self):
+         return hasattr(self._out, 'isatty') and self._out.isatty()
+ 
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index e4aeca2600..d20ebbe03e 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -335,6 +335,19 @@ class CommandTests(SimpleTestCase):
+             with self.assertRaisesMessage(TypeError, msg):
+                 management.call_command('subparser_dest', subcommand='foo', bar=12)
+ 
++    def test_output_wrapper_flush(self):
++        """OutputWrapper.flush() delegates to the underlying stream."""
++        class FlushStream(StringIO):
++            flushed = False
++
++            def flush(self):
++                self.flushed = True
++
++        out = FlushStream()
++        wrapper = management.base.OutputWrapper(out)
++        wrapper.flush()
++        self.assertIs(out.flushed, True)
++
+     def test_create_parser_kwargs(self):
+         """BaseCommand.create_parser() passes kwargs to CommandParser."""
+         epilog = 'some epilog text'

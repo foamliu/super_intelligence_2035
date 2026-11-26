@@ -1,0 +1,76 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index 28374272f4..b1159016a3 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -516,16 +516,26 @@ class Field(RegisterLookupMixin):
+     def __eq__(self, other):
+         # Needed for @total_ordering
+         if isinstance(other, Field):
++            if hasattr(self, 'model') and hasattr(other, 'model'):
++                if self.model != other.model:
++                    return False
+             return self.creation_counter == other.creation_counter
+         return NotImplemented
+ 
+     def __lt__(self, other):
+         # This is needed because bisect does not take a comparison function.
+         if isinstance(other, Field):
+-            return self.creation_counter < other.creation_counter
++            if self.creation_counter != other.creation_counter:
++                return self.creation_counter < other.creation_counter
++            if hasattr(self, 'model') and hasattr(other, 'model'):
++                if self.model != other.model:
++                    return (self.model._meta.app_label, self.model.__name__) < (other.model._meta.app_label, other.model.__name__)
++            return False
+         return NotImplemented
+ 
+     def __hash__(self):
++        if hasattr(self, 'model'):
++            return hash((self.creation_counter, self.model))
+         return hash(self.creation_counter)
+ 
+     def __deepcopy__(self, memodict):
+diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
+index a11eb0ba44..a5477d71e6 100644
+--- a/tests/model_fields/models.py
++++ b/tests/model_fields/models.py
+@@ -437,3 +437,17 @@ class UUIDChild(PrimaryKeyUUIDModel):
+ 
+ class UUIDGrandchild(UUIDChild):
+     pass
++
++
++class AbstractBase(models.Model):
++    class Meta:
++        abstract = True
++    myfield = models.IntegerField()
++
++
++class Child1(AbstractBase):
++    pass
++
++
++class Child2(AbstractBase):
++    pass
+diff --git a/tests/model_fields/tests.py b/tests/model_fields/tests.py
+index b97c99d42d..da9ce73ced 100644
+--- a/tests/model_fields/tests.py
++++ b/tests/model_fields/tests.py
+@@ -323,3 +323,17 @@ class GetChoicesLimitChoicesToTests(TestCase):
+             field.get_choices(include_blank=False, limit_choices_to={}),
+             [self.bar1, self.bar2],
+         )
++
++
++class AbstractFieldEqualityTests(SimpleTestCase):
++    """
++    Fields from abstract base models should not compare equal across
++    different concrete models.
++    """
++    def test_abstract_field_not_equal_across_models(self):
++        from .models import AbstractBase, Child1, Child2
++        child1_field = Child1._meta.get_field('myfield')
++        child2_field = Child2._meta.get_field('myfield')
++        self.assertNotEqual(child1_field, child2_field)
++        self.assertNotEqual(hash(child1_field), hash(child2_field))
++        self.assertEqual(len({child1_field, child2_field}), 2)

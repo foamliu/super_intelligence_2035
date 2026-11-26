@@ -1,0 +1,11 @@
+# cell control: nor3IOLVIOx1_DQS (IO library 3-input nor)
+add_pin A input
+add_pin B input
+add_pin C input
+add_pin Y output
+
+# fixed: netlist name drifted (use actual nor3IOLVIOx1_DQS.spf_RC)
+set_netlist_file netlists/nor3IOLVIOx1_DQS.spf_RC
+cut_netlist       netlists/nor3IOLVIOx1_DQS.spf_RC
+
+add_function Y { !(A | (B | C)) }

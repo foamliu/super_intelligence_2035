@@ -1,0 +1,354 @@
+{
+  "round": "R208",
+  "purpose": "v11-v35 corpus coverage audit vs 158-task eval API requirement (de-risk GPU spend)",
+  "sources": {
+    "eval_apis": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/pyAether_eval_488_apis.txt",
+    "corpus": "sft_pyaether_corpus_v11_v36_merged.jsonl"
+  },
+  "corpus_pairs": 1029,
+  "corpus_unique_apis": 244,
+  "eval_api_entries": 488,
+  "eval_unique_leaf_names": 436,
+  "eval_families": 320,
+  "coverage": {
+    "tier2_class_aware_primary": {
+      "covered": 366,
+      "total": 488,
+      "pct": 75.0
+    },
+    "tier1_leaf_loose": {
+      "covered": 194,
+      "total": 488,
+      "pct": 39.75
+    },
+    "tier3_strict_full": {
+      "covered": 219,
+      "total": 488,
+      "pct": 44.88
+    }
+  },
+  "corpus_type_distribution": {
+    "S4": 217,
+    "S5": 212,
+    "S1": 208,
+    "S6": 188,
+    "S3": 179,
+    "S1_doc_to_code": 10,
+    "S2_api_lookup": 10,
+    "S3_multi_api_chain": 3,
+    "S7_corrected_prompt": 2
+  },
+  "families_total": 320,
+  "families_with_gap": 122,
+  "families_fully_uncovered": 122,
+  "families_fully_covered": 198,
+  "top_uncovered_families": [
+    {
+      "family": "aeAddHighLightRect",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeAddObjectsMapping",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeAddTrace",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeBaseAppFormCallBack",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateAppForm",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateButton",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateDisclosureButton",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateFileSelectorField",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateMenu",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateMenuItem",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateRadioField",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCreateStringField",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCrtHBoxLayout",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCrtHilitPolyline",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCrtHilitRect",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeCrtHilitSet",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeError",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeExtractLayout",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeGenerateViasInArea",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeMenuItemCallBack",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeSdlGenAll",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeShiftOrigin",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeStartSdl",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "aeToggleCallBack",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "car",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "cdfGetParam",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "dbAddFigToFigGroup",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "dbAddFigToNet",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "dbAttachFig",
+      "uncovered": 1,
+      "total": 1
+    },
+    {
+      "family": "dbCV",
+      "uncovered": 1,
+      "total": 1
+    }
+  ],
+  "fully_uncovered_families_sample": [
+    {
+      "family": "aeAddHighLightRect",
+      "total": 1
+    },
+    {
+      "family": "aeAddObjectsMapping",
+      "total": 1
+    },
+    {
+      "family": "aeAddTrace",
+      "total": 1
+    },
+    {
+      "family": "aeBaseAppFormCallBack",
+      "total": 1
+    },
+    {
+      "family": "aeCreateAppForm",
+      "total": 1
+    },
+    {
+      "family": "aeCreateButton",
+      "total": 1
+    },
+    {
+      "family": "aeCreateDisclosureButton",
+      "total": 1
+    },
+    {
+      "family": "aeCreateFileSelectorField",
+      "total": 1
+    },
+    {
+      "family": "aeCreateMenu",
+      "total": 1
+    },
+    {
+      "family": "aeCreateMenuItem",
+      "total": 1
+    },
+    {
+      "family": "aeCreateRadioField",
+      "total": 1
+    },
+    {
+      "family": "aeCreateStringField",
+      "total": 1
+    },
+    {
+      "family": "aeCrtHBoxLayout",
+      "total": 1
+    },
+    {
+      "family": "aeCrtHilitPolyline",
+      "total": 1
+    },
+    {
+      "family": "aeCrtHilitRect",
+      "total": 1
+    },
+    {
+      "family": "aeCrtHilitSet",
+      "total": 1
+    },
+    {
+      "family": "aeError",
+      "total": 1
+    },
+    {
+      "family": "aeExtractLayout",
+      "total": 1
+    },
+    {
+      "family": "aeGenerateViasInArea",
+      "total": 1
+    },
+    {
+      "family": "aeMenuItemCallBack",
+      "total": 1
+    },
+    {
+      "family": "aeSdlGenAll",
+      "total": 1
+    },
+    {
+      "family": "aeShiftOrigin",
+      "total": 1
+    },
+    {
+      "family": "aeStartSdl",
+      "total": 1
+    },
+    {
+      "family": "aeToggleCallBack",
+      "total": 1
+    },
+    {
+      "family": "car",
+      "total": 1
+    },
+    {
+      "family": "cdfGetParam",
+      "total": 1
+    },
+    {
+      "family": "dbAddFigToFigGroup",
+      "total": 1
+    },
+    {
+      "family": "dbAddFigToNet",
+      "total": 1
+    },
+    {
+      "family": "dbAttachFig",
+      "total": 1
+    },
+    {
+      "family": "dbCV",
+      "total": 1
+    }
+  ],
+  "surplus_corpus_apis_count": 50,
+  "surplus_corpus_apis_sample": [
+    "MdeAddSpecificPoints",
+    "MdeSession",
+    "MdeSession.run",
+    "MdeSetting",
+    "MdeSetting.addSpeOutput",
+    "MdeSetting.getSettingFilePath",
+    "MdeSetting.saveSetting",
+    "SleHierQuery",
+    "aeCrtWireLabelsAndPins",
+    "aeLeCreatePin",
+    "aeMakeSleQueryData",
+    "aeSchStretch",
+    "aelPopSignifDigs",
+    "aelPushSignifDigs",
+    "dbCrtSchWireName",
+    "dbCrtWire",
+    "dbFindInst",
+    "dbGetPinFigName",
+    "dbSchGetPinOrder",
+    "dbSchIsWire",
+    "dmCellObj",
+    "dmCellObj.getViews",
+    "dmCellObj.name",
+    "dmLibObj.getCells",
+    "dmLibObj.getType",
+    "dmViewObj",
+    "dmViewObj.getCell",
+    "dmViewObj.getType",
+    "emyArc.create",
+    "emyDesignIsSchematic"
+  ],
+  "pre_gpu_verdict": "GOOD - corpus covers >=70% of eval APIs; proceed to SFT with confidence.",
+  "note": "Tier-2 is the defensible primary metric: 1-dot pyAether.F covered if F in corpus; 2-dot pyAether.C.m covered if C (class) or m (method) in corpus. Surplus = corpus APIs the eval does not test (not necessarily bad)."
+}

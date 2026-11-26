@@ -1,0 +1,98 @@
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index 5369eadbde..bf7944f0f9 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -4847,8 +4847,8 @@ default: :rc:`scatter.edgecolors`
+         yscale : {'linear', 'log'}, default: 'linear'
+             Use a linear or log10 scale on the vertical axis.
+ 
+-        mincnt : int > 0, default: *None*
+-            If not *None*, only display cells with more than *mincnt*
++        mincnt : int >= 0, default: *None*
++            If not *None*, only display cells with at least *mincnt*
+             number of points in the cell.
+ 
+         marginals : bool, default: *False*
+@@ -4915,6 +4915,11 @@ default: :rc:`scatter.edgecolors`
+             - `numpy.sum`: integral of the point values
+             - `numpy.amax`: value taken from the largest point
+ 
++            By default will only reduce cells with at least 1 point because some
++            reduction functions (such as `numpy.amax`) will error/warn with empty
++            input. Changing *mincnt* will adjust the cutoff, and if set to 0 will
++            pass empty input to the reduction function.
++
+         data : indexable object, optional
+             DATA_PARAMETER_PLACEHOLDER
+ 
+@@ -5012,9 +5017,9 @@ default: :rc:`scatter.edgecolors`
+                 else:
+                     Cs_at_i2[i2[i]].append(C[i])
+             if mincnt is None:
+-                mincnt = 0
++                mincnt = 1
+             accum = np.array(
+-                [reduce_C_function(acc) if len(acc) > mincnt else np.nan
++                [reduce_C_function(acc) if len(acc) >= mincnt else np.nan
+                  for Cs_at_i in [Cs_at_i1, Cs_at_i2]
+                  for acc in Cs_at_i[1:]],  # [1:] drops out-of-range points.
+                 float)
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index 065d17f953..028f694da8 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -948,6 +948,8 @@ def test_hexbin_empty():
+     # From #23922: creating hexbin with log scaling from empty
+     # dataset raises ValueError
+     ax.hexbin([], [], bins='log')
++    # From #27103: np.max errors when handed empty data
++    ax.hexbin([], [], C=[], reduce_C_function=np.max)
+ 
+ 
+ def test_hexbin_pickable():
+@@ -999,6 +1001,45 @@ def test_hexbin_log_clim():
+     assert h.get_clim() == (2, 100)
+ 
+ 
++@check_figures_equal(extensions=['png'])
++def test_hexbin_mincnt_behavior_upon_C_parameter(fig_test, fig_ref):
++    # see: gh:12926
++    datapoints = [
++        # list of (x, y)
++        (0, 0),
++        (0, 0),
++        (6, 0),
++        (0, 6),
++    ]
++    X, Y = zip(*datapoints)
++    C = [1] * len(X)
++    extent = [-10., 10, -10., 10]
++    gridsize = (7, 7)
++
++    ax_test = fig_test.subplots()
++    ax_ref = fig_ref.subplots()
++
++    # without C parameter
++    ax_ref.hexbin(
++        X, Y,
++        extent=extent,
++        gridsize=gridsize,
++        mincnt=1,
++    )
++    ax_ref.set_facecolor("green")  # for contrast of background
++
++    # with C parameter
++    ax_test.hexbin(
++        X, Y,
++        C=[1] * len(X),
++        reduce_C_function=lambda v: sum(v),
++        mincnt=1,
++        extent=extent,
++        gridsize=gridsize,
++    )
++    ax_test.set_facecolor("green")
++
++
+ def test_inverted_limits():
+     # Test gh:1553
+     # Calling invert_xaxis prior to plotting should not disable autoscaling

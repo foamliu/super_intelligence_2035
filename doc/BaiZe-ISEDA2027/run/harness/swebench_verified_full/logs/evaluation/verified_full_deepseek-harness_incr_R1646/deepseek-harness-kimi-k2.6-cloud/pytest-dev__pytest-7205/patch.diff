@@ -1,0 +1,65 @@
+diff --git a/src/_pytest/setuponly.py b/src/_pytest/setuponly.py
+index c9cc589..4a6708f 100644
+--- a/src/_pytest/setuponly.py
++++ b/src/_pytest/setuponly.py
+@@ -1,5 +1,6 @@
+ import pytest
+ 
++from _pytest._io.saferepr import saferepr
+ 
+ def pytest_addoption(parser):
+     group = parser.getgroup("debugconfig")
+@@ -66,7 +67,10 @@ def _show_fixture_action(fixturedef, msg):
+             tw.write(" (fixtures used: {})".format(", ".join(deps)))
+ 
+     if hasattr(fixturedef, "cached_param"):
+-        tw.write("[{}]".format(fixturedef.cached_param))
++        param = fixturedef.cached_param
++        if not isinstance(param, str):
++            param = saferepr(param)
++        tw.write("[{}]".format(param))
+ 
+     tw.flush()
+ 
+diff --git a/testing/test_setuponly.py b/testing/test_setuponly.py
+index e26a33d..a71fce4 100644
+--- a/testing/test_setuponly.py
++++ b/testing/test_setuponly.py
+@@ -1,4 +1,7 @@
++import os
+ import pytest
++import sys
++import warnings
+ from _pytest.config import ExitCode
+ 
+ 
+@@ -292,3 +295,29 @@ def test_setup_show_with_KeyboardInterrupt_in_test(testdir):
+         ]
+     )
+     assert result.ret == ExitCode.INTERRUPTED
++
++
++def test_setup_show_with_bytes_param(testdir, monkeypatch):
++    """Regression test for BytesWarning when using --setup-show with bytes parameter."""
++    p = testdir.makepyfile(
++        """
++        import pytest
++
++        @pytest.mark.parametrize('data', [b'Hello World'])
++        def test_data(data):
++            pass
++    """
++    )
++    # -bb turns BytesWarning into errors; need subprocess for -bb to work
++    # We set PYTHONPATH to ensure our source pytest is used.
++    pytest_src = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
++    pythonpath = os.pathsep.join([pytest_src] + sys.path)
++    monkeypatch.setenv("PYTHONPATH", pythonpath)
++    result = testdir.run(
++        sys.executable, "-bb", "-m", "pytest",
++        "--setup-show", "--assert=plain", p,
++    )
++    assert result.ret == 0
++    # Use ? in fnmatch pattern to match literal brackets
++    result.stdout.fnmatch_lines(["*SETUP    F data?b'Hello World'?*"])
++    result.stdout.fnmatch_lines(["*TEARDOWN F data?b'Hello World'?*"])

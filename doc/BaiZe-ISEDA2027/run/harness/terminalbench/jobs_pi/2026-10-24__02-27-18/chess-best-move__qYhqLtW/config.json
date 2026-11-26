@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/tb_pilot_dataset_mPE7ON/chess-best-move",
+        "source": "tb_pilot_dataset_mPE7ON"
+    },
+    "trial_name": "chess-best-move__qYhqLtW",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_pi/2026-10-24__02-27-18",
+    "agent": {
+        "name": "terminalbench.agents.pi:PiTB"
+    },
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "2e1cb210-7da5-41cc-965f-f372e6213bb5"
+}

@@ -1,0 +1,111 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..9534f03d4a 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1172,7 +1172,7 @@ class BaseInlineFormSet(BaseModelFormSet):
+ 
+         # If we're adding a new object, ignore a parent's auto-generated key
+         # as it will be regenerated on the save request.
+-        if self.instance._state.adding:
++        if self.instance._state.adding and not self.is_bound:
+             if kwargs.get("to_field") is not None:
+                 to_field = self.instance._meta.get_field(kwargs["to_field"])
+             else:
+diff --git a/tests/admin_inlines/admin.py b/tests/admin_inlines/admin.py
+index 0ec56d71b3..58ed3508f0 100644
+--- a/tests/admin_inlines/admin.py
++++ b/tests/admin_inlines/admin.py
+@@ -55,6 +55,8 @@ from .models import (
+     Teacher,
+     Title,
+     TitleCollection,
++    UUIDParent,
++    UUIDChild,
+ )
+ 
+ site = admin.AdminSite(name="admin")
+@@ -466,3 +468,15 @@ site3 = admin.AdminSite(name="stacked_inline_hidden_field_in_group_admin")
+ site3.register(SomeParentModel, inlines=[ChildHiddenFieldInFieldsGroupStackedInline])
+ site4 = admin.AdminSite(name="stacked_inline_hidden_field_on_single_line_admin")
+ site4.register(SomeParentModel, inlines=[ChildHiddenFieldOnSingleLineStackedInline])
++
++
++# Admin for #32260
++class UUIDChildInline(admin.StackedInline):
++    model = UUIDChild
++
++
++class UUIDParentAdmin(admin.ModelAdmin):
++    inlines = [UUIDChildInline]
++
++
++site.register(UUIDParent, UUIDParentAdmin)
+diff --git a/tests/admin_inlines/models.py b/tests/admin_inlines/models.py
+index a8d2ee02e1..07c1227e1d 100644
+--- a/tests/admin_inlines/models.py
++++ b/tests/admin_inlines/models.py
+@@ -377,3 +377,23 @@ class BothVerboseNameProfile(Profile):
+     class Meta:
+         verbose_name = "Model with both - name"
+         verbose_name_plural = "Model with both - plural name"
++
++
++# Models for ticket #32260 -- UUID default with inline FK to to_field
++import uuid
++
++
++class UUIDParent(models.Model):
++    pkid = models.BigAutoField(primary_key=True, editable=False)
++    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
++    name = models.CharField(max_length=50)
++
++
++class UUIDChild(models.Model):
++    name = models.CharField(max_length=50)
++    parent = models.ForeignKey(
++        UUIDParent,
++        on_delete=models.CASCADE,
++        to_field="id",
++        related_name="children",
++    )
+diff --git a/tests/admin_inlines/tests.py b/tests/admin_inlines/tests.py
+index 9533cc9af3..9473e623ab 100644
+--- a/tests/admin_inlines/tests.py
++++ b/tests/admin_inlines/tests.py
+@@ -44,6 +44,8 @@ from .models import (
+     Teacher,
+     VerboseNamePluralProfile,
+     VerboseNameProfile,
++    UUIDParent,
++    UUIDChild,
+ )
+ 
+ INLINE_CHANGELINK_HTML = 'class="inlinechangelink">Change</a>'
+@@ -662,6 +664,27 @@ class TestInline(TestDataMixin, TestCase):
+             count=1,
+         )
+ 
++    def test_inline_with_uuid_default_to_field(self):
++        """Adding a parent with a UUID default and an inline FK to to_field works (#32260)."""
++        data = {
++            'name': 'Parent',
++            'children-TOTAL_FORMS': '1',
++            'children-INITIAL_FORMS': '0',
++            'children-MIN_NUM_FORMS': '0',
++            'children-MAX_NUM_FORMS': '1000',
++            'children-0-name': 'Child',
++            'children-0-parent': '',
++            'children-0-id': '',
++            '_save': 'Save',
++        }
++        response = self.client.post(
++            reverse('admin:admin_inlines_uuidparent_add'), data
++        )
++        self.assertEqual(response.status_code, 302)
++        parent = UUIDParent.objects.get(name='Parent')
++        self.assertIsNotNone(parent.id)
++        self.assertEqual(parent.children.count(), 1)
++
+     def test_stacked_inline_edit_form_contains_has_original_class(self):
+         holder = Holder.objects.create(dummy=1)
+         holder.inner_set.create(dummy=1)

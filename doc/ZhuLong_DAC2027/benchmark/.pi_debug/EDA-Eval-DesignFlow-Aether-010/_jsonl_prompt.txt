@@ -1,0 +1,122 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a
+pyAether-emitted textual PG (power/ground) short report for a layout cellview.
+This is a pure text-analysis task (no EDA tool calls needed to produce the
+answer); you will verify your implementation on the Empyrean WaveView Tcl
+sandbox.
+
+TASK
+Implement the Tcl proc `layout_pgshort_audit` that takes ONE string argument
+`report_text` (the full PG short report text) and returns a flat Tcl dict with
+EXACTLY these 12 keys, in this exact order:
+
+    total_shorts  short_count  leak_count  clean_count  power_count
+    ground_count  mixed_pairs  max_resistance  worst_pair  layers_affected
+    mismatched_summary  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments
+and are ignored; blank lines are ignored; a leading "# PG short report" header
+may appear and is ignored):
+
+    SHORT <net_a> <net_b> type=<T> resistance=<R> layer=<L> status=<S>
+    SUMMARY shorts_checked=<N> shorts=<N> leaks=<N> clean=<N> max_resistance=<R> worst_pair=<name>
+
+    - <net_a>, <net_b> : bare tokens (the two net names forming the short pair).
+      The pair is ORDERED: (vdd, vss) and (vss, vdd) are DIFFERENT pairs and
+      each is counted separately in total_shorts. Do NOT normalize/sort them.
+    - type=      : one of power, ground, mixed, signal (case-insensitive for
+                   counting). "mixed" counts in BOTH power_count and ground_count.
+                   May be ABSENT (treated as empty -> no power/ground match).
+    - resistance=: a non-negative real number (ohms). May be ABSENT (default 0.0).
+    - layer=     : a single layer name (e.g. M1). May be ABSENT or EMPTY.
+    - status=    : one of short, leak, clean (CASE-INSENSITIVE). May be ABSENT
+                   or EMPTY -- in that case INFER from resistance:
+                     R < 1.0    -> short
+                     1.0 <= R < 100.0 -> leak
+                     R >= 100.0 -> clean
+                   (NEVER "unknown"/"warn"/"skip". R==1.0 is leak inclusive;
+                    R==100.0 is clean inclusive.)
+
+RETURNED DICT KEYS (exact order):
+  1. total_shorts      : integer -- count of DISTINCT ordered (net_a, net_b)
+                         pairs after LAST-WINS dedup (duplicate pair: the LAST
+                         occurrence replaces type/resistance/layer/status; not
+                         sum, not first-wins; counts ONCE).
+  2. short_count       : integer -- pairs whose effective status == short.
+  3. leak_count        : integer -- pairs whose effective status == leak.
+  4. clean_count       : integer -- pairs whose effective status == clean.
+  5. power_count       : integer -- pairs whose type (case-insensitive) contains
+                         "power", PLUS pairs whose type == "mixed" (mixed counts
+                         here too). Substring match: "power" in "power"=yes.
+  6. ground_count      : integer -- pairs whose type (case-insensitive) contains
+                         "ground", PLUS pairs whose type == "mixed" (mixed counts
+                         here too).
+  7. mixed_pairs       : list of strings -- for each pair with type=="mixed"
+                         (case-insensitive), the string "net_a-net_b" (hyphen-
+                         joined as written). Lex-sorted (lsort -dictionary).
+                         Includes ALL mixed pairs regardless of clean/non-clean.
+  8. max_resistance    : real -- the MAXIMUM resistance over NON-CLEAN pairs
+                         ONLY (clean pairs are EXCLUDED even if their resistance
+                         is higher). If there are NO non-clean pairs, return
+                         -1.0. (A short with missing resistance=0.0 is non-clean
+                         and can be the max if it is the only non-clean pair.)
+  9. worst_pair        : string -- the "net_a-net_b" of the non-clean pair with
+                         max_resistance. On a TIE at max_resistance, choose the
+                         lexicographically SMALLEST "net_a-net_b" string using
+                         lsort -dictionary (numeric-aware: "via2-vss" < "via10-
+                         vss"). If no non-clean pairs, return "".
+  10. layers_affected  : list of strings -- the UNION of layer values over
+                         NON-CLEAN pairs ONLY (clean pairs' layers excluded),
+                         deduplicated, lex-sorted (lsort -dictionary). Empty list
+                         if no non-clean pairs or all non-clean have empty layer.
+  11. mismatched_summary : list of strings -- for each SUMMARY field that does
+                         NOT match the computed value, a string
+                         "field=summary_val vs computed_val". Fields:
+                           shorts_checked vs total_shorts (integer ==)
+                           shorts vs short_count (integer ==)
+                           leaks vs leak_count (integer ==)
+                           clean vs clean_count (integer ==)
+                           max_resistance vs max_resistance (NUMERIC ==, expr,
+                             so 5.0==5 is a MATCH; string compare would fail)
+                           worst_pair vs worst_pair (STRING ==)
+                         ABSENT summary fields are NOT reported (not mismatched).
+                         Empty list if no SUMMARY line. Empty list if all match.
+  12. verdict          : string -- priority:
+                           short_count > 0                          -> "FAIL"
+                           else leak_count > 0                      -> "REVIEW"
+                           else (no summary OR mismatched non-empty)-> "INCOMPLETE"
+                           else                                      -> "PASS"
+
+IMPORTANT RULES (a naive implementation fails these -- the checker enforces
+correct behavior):
+  (1) status is CASE-INSENSITIVE: "short"/"SHORT"/"Short" all match short.
+  (2) Duplicate (net_a, net_b) ordered pair: LAST occurrence WINS (replace
+      type/resistance/layer/status, not sum, not first-wins). Counts ONCE in
+      total_shorts.
+  (3) status ABSENT or EMPTY -> infer from resistance thresholds (above).
+      NEVER treat absent status as clean by default.
+  (4) R==1.0 -> leak (inclusive lower bound); R==100.0 -> clean (inclusive).
+      R==0.999 -> short; R==99.999 -> leak; R==100.001 -> clean.
+  (5) missing resistance -> default 0.0 -> short (0.0 < 1.0).
+  (6) max_resistance / worst_pair / layers_affected over NON-CLEAN pairs ONLY.
+      A clean pair with R=300 is excluded; a non-clean pair with R=50 is the max.
+      No non-clean pairs -> max_resistance=-1.0, worst_pair="", layers_affected={}.
+  (7) worst_pair tie at max_resistance -> lexicographically SMALLEST
+      "net_a-net_b" via lsort -dictionary (numeric-aware: via2 < via10).
+  (8) type "mixed" counts in BOTH power_count AND ground_count (not exclusive).
+  (9) (net_a, net_b) is ORDERED: (a,b) and (b,a) are DIFFERENT pairs, both
+      counted. Do NOT normalize/sort the pair.
+  (10) mismatched_summary: max_resistance compared NUMERICALLY (expr ==, so
+       5.0==5 is MATCH not mismatch). ABSENT fields not reported. worst_pair is
+       STRING compared. Integer fields compared with integer ==.
+  (11) verdict priority: FAIL (short>0) > REVIEW (leak>0) > INCOMPLETE (no
+       summary or mismatched) > PASS. A REVIEW case with mismatched summary is
+       still REVIEW (leak wins over INCOMPLETE).
+
+IMPLEMENTATION NOTES:
+- Use Tcl 'split' on newline, 'string trim', 'string match' globs (e.g.
+  "type=*"), 'lsort -dictionary' for sorting and tie-breaks, 'array'/'info
+  exists' for dedup, 'dict create' for the returned dict in exact key order.
+- Compare SUMMARY numeric fields with 'expr ==' (NOT string equal).
+- The Empyrean WaveView Tcl regexp supports POSIX classes like [[:space:]];
+  do NOT rely on \b / \s / \d / \w Perl classes.
+- Avoid lassign if unsure; use lindex.

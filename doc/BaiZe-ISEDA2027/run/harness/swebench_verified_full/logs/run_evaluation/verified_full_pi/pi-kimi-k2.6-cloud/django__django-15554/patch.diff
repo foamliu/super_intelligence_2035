@@ -1,0 +1,54 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 54f3258ea..9d771934a 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1029,6 +1029,12 @@ class Query(BaseExpression):
+             for a, j in self.alias_map.items()
+             if (reuse is None or a in reuse) and j.equals(join)
+         ]
++        if join.filtered_relation is not None:
++            reuse_aliases = [
++                a
++                for a in reuse_aliases
++                if self.alias_map[a].filtered_relation == join.filtered_relation
++            ]
+         if reuse_aliases:
+             if join.table_alias in reuse_aliases:
+                 reuse_alias = join.table_alias
+diff --git a/tests/filtered_relation/tests.py b/tests/filtered_relation/tests.py
+index 790a90d9e..3b9a360f7 100644
+--- a/tests/filtered_relation/tests.py
++++ b/tests/filtered_relation/tests.py
+@@ -237,6 +237,32 @@ class FilteredRelationTests(TestCase):
+             [self.author1],
+         )
+ 
++    def test_multiple_filtered_relations_same_relation(self):
++        qs = (
++            Author.objects.alias(
++                book_alice=FilteredRelation(
++                    "book", condition=Q(book__title__icontains="alice")
++                ),
++                book_jane=FilteredRelation(
++                    "book", condition=Q(book__title__icontains="jane")
++                ),
++            )
++            .annotate(
++                alice_title=F("book_alice__title"),
++                jane_title=F("book_jane__title"),
++            )
++            .filter(Q(alice_title__isnull=False) & Q(jane_title__isnull=True))
++            .values_list("alice_title", flat=True)
++            .order_by("alice_title")
++        )
++        self.assertSequenceEqual(
++            qs,
++            [
++                "Poem by Alice",
++                "The book by Alice",
++            ],
++        )
++
+     def test_exclude_relation_with_join(self):
+         self.assertSequenceEqual(
+             Author.objects.annotate(

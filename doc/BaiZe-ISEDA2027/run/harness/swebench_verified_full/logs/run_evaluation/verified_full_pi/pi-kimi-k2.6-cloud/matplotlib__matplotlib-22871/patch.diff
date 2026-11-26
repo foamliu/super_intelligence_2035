@@ -1,0 +1,47 @@
+diff --git a/lib/matplotlib/dates.py b/lib/matplotlib/dates.py
+index 4d8ddf3e..6eee820e 100644
+--- a/lib/matplotlib/dates.py
++++ b/lib/matplotlib/dates.py
+@@ -797,8 +797,13 @@ class ConciseDateFormatter(ticker.Formatter):
+         # 3: hours, 4: minutes, 5: seconds, 6: microseconds
+         for level in range(5, -1, -1):
+             if len(np.unique(tickdate[:, level])) > 1:
+-                if level < 2:
++                if level == 0:
+                     show_offset = False
++                elif level == 1:
++                    # Only suppress offset if the year is already shown for
++                    # January (month 1) via zero_formats.
++                    if np.any(tickdate[:, 1] == 1) and '%Y' in zerofmts[level]:
++                        show_offset = False
+                 break
+             elif level == 0:
+                 # all tickdate are the same, so only micros might be different
+diff --git a/lib/matplotlib/tests/test_dates.py b/lib/matplotlib/tests/test_dates.py
+index a78c39c5..e6faf01e 100644
+--- a/lib/matplotlib/tests/test_dates.py
++++ b/lib/matplotlib/tests/test_dates.py
+@@ -613,6 +613,23 @@ def test_concise_formatter_show_offset(t_delta, expected):
+     assert formatter.get_offset() == expected
+ 
+ 
++def test_concise_formatter_show_offset_no_january():
++    # GH#<issue_number>: When plotting < 1 year and January is not included,
++    # the year should still appear in the offset.
++    d1 = datetime.datetime(2021, 2, 14)
++    d2 = datetime.datetime(2021, 8, 31)
++
++    fig, ax = plt.subplots()
++    locator = mdates.AutoDateLocator()
++    formatter = mdates.ConciseDateFormatter(locator)
++    ax.xaxis.set_major_locator(locator)
++    ax.xaxis.set_major_formatter(formatter)
++
++    ax.plot([d1, d2], [0, 0])
++    fig.canvas.draw()
++    assert formatter.get_offset() == '2021'
++
++
+ def test_offset_changes():
+     fig, ax = plt.subplots()
+ 

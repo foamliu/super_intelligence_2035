@@ -1,0 +1,5 @@
+=== pi-SUT Spice-004 start Thu Oct 29 10:31:14 PM CST 2026 ===
+pi exit=0
+--- DESIGN_FLOW_VERDICT result lines ---
+CHECK_RESULT/DETAIL: `CHECK_OK: PASS 5 / FAIL 0 (5 cases: A basic, B subckt-scope-teeth, C idempotency-teeth, D surgical-params-teeth, E decoys+extraction-teeth)`
+DESIGN_FLOW_VERDICT=PASS

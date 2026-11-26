@@ -1,0 +1,53 @@
+diff --git a/sphinx/util/inspect.py b/sphinx/util/inspect.py
+index f216e8797..c743371e9 100644
+--- a/sphinx/util/inspect.py
++++ b/sphinx/util/inspect.py
+@@ -215,6 +215,8 @@ def isNewType(obj: Any) -> bool:
+     __qualname__ = safe_getattr(obj, '__qualname__', None)
+     if __module__ == 'typing' and __qualname__ == 'NewType.<locals>.new_type':
+         return True
++    elif hasattr(typing, 'NewType') and isinstance(obj, typing.NewType):
++        return True
+     else:
+         return False
+ 
+@@ -404,6 +406,9 @@ def isgenericalias(obj: Any) -> bool:
+     elif (hasattr(typing, '_SpecialGenericAlias') and  # for py39+
+             isinstance(obj, typing._SpecialGenericAlias)):  # type: ignore
+         return True
++    elif (hasattr(types, 'UnionType') and  # for py310+
++          isinstance(obj, types.UnionType)):  # type: ignore
++        return True
+     else:
+         return False
+ 
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index af6edcae0..026dbe343 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,7 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    from types import UnionType as types_Union
+ else:
+     types_Union = None
+ 
+@@ -355,6 +355,16 @@ def _stringify_py37(annotation: Any) -> str:
+             else:
+                 args = ', '.join(stringify(a) for a in annotation.__args__)
+                 return 'Union[%s]' % args
++        elif qualname == 'Optional':
++            if len(annotation.__args__) > 1 and annotation.__args__[-1] is NoneType:
++                if len(annotation.__args__) > 2:
++                    args = ', '.join(stringify(a) for a in annotation.__args__[:-1])
++                    return 'Optional[Union[%s]]' % args
++                else:
++                    return 'Optional[%s]' % stringify(annotation.__args__[0])
++            else:
++                args = ', '.join(stringify(a) for a in annotation.__args__)
++                return 'Optional[%s]' % args
+         elif qualname == 'types.Union':
+             if len(annotation.__args__) > 1 and None in annotation.__args__:
+                 args = ' | '.join(stringify(a) for a in annotation.__args__ if a)

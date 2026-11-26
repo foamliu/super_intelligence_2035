@@ -1,0 +1,52 @@
+diff --git a/django/contrib/admin/utils.py b/django/contrib/admin/utils.py
+index e4ddc8f017..184d30a86d 100644
+--- a/django/contrib/admin/utils.py
++++ b/django/contrib/admin/utils.py
+@@ -1,5 +1,6 @@
+ import datetime
+ import decimal
++import json
+ from collections import defaultdict
+ 
+ from django.core.exceptions import FieldDoesNotExist
+@@ -398,6 +399,8 @@ def display_for_field(value, field, empty_value_display):
+         return formats.number_format(value)
+     elif isinstance(field, models.FileField) and value:
+         return format_html('<a href="{}">{}</a>', value.url, value)
++    elif isinstance(field, models.JSONField):
++        return json.dumps(value, cls=field.encoder)
+     else:
+         return display_for_value(value, empty_value_display)
+ 
+diff --git a/tests/admin_utils/tests.py b/tests/admin_utils/tests.py
+index 463ba9556d..1147f1094b 100644
+--- a/tests/admin_utils/tests.py
++++ b/tests/admin_utils/tests.py
+@@ -197,6 +197,27 @@ class UtilsTests(SimpleTestCase):
+         display_value = display_for_field(12345, models.IntegerField(), self.empty_value)
+         self.assertEqual(display_value, '12,345')
+ 
++    def test_json_display_for_field(self):
++        tests = [
++            ({'a': {'b': 'c'}}, '{"a": {"b": "c"}}'),
++            (['a', 'b'], '["a", "b"]'),
++            ('a', '"a"'),
++            ({'a': None}, '{"a": null}'),
++            ({'a': True}, '{"a": true}'),
++            ({'a': False}, '{"a": false}'),
++            (123, '123'),
++        ]
++        for value, display_value in tests:
++            with self.subTest(value=value):
++                self.assertEqual(
++                    display_for_field(value, models.JSONField(), self.empty_value),
++                    display_value,
++                )
++        self.assertEqual(
++            display_for_field(None, models.JSONField(), self.empty_value),
++            self.empty_value,
++        )
++
+     def test_list_display_for_value(self):
+         display_value = display_for_value([1, 2, 3], self.empty_value)
+         self.assertEqual(display_value, '1, 2, 3')

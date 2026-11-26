@@ -1,0 +1,38 @@
+# dc.log 关键摘录 —— flow_pa_cpu_merged_top（kaidi.wang 这一跑，Design Compiler NXT / hplp flow）
+# 以下为用户提供的真实 dc.log 中与「多 bit 寄存器未生成」相关的行（行号为原 log 行号）。
+
+## 1) MB 库已加载（第 478/479 行）
+478| Loading db ...DBCP51H180L6W25T5_MB_SVT_tt_typical_v0p75_85c_ccs.db
+479| Loading db ...DBCP51H180L6W25T5_MB_LVT_tt_typical_v0p75_85c_ccs.db
+    TARGET_LIBRARY_FILES 也包含上述两个 MB 库；并打印 "Loading target library 'DBCP51H180L6W25T5_MB_SVT...'".
+
+## 2) 编译命令（第 10637 行）—— 未带 -spg → WLM（非 topographical）模式
+10637| compile_ultra -gate_clock -scan
+
+## 3) 放置感知多 bit 银行化被「仅 topo 模式」闸门挡掉（第 15306-15315 行）
+15306| if { $OPTIMIZATION_FLOW == "hplp" } {
+15307|   if {[shell_is_in_topographical_mode]} {      ;# 仅 topo 模式
+15308|     identify_register_banks -output ...register_bank.rpt
+15309|     rm_source -file ...register_bank.rpt ...
+15310|   }
+15311| }
+    → 本次没进 topo，整段 identify_register_banks 被跳过 → banking 0%。
+
+## 4) banking 结果
+    最终 banking 报告：15307 个单 bit FF、0 个多 bit FF、banking 0%。
+    全 log 搜不到 MB2SDF / MB4SDF 被例化的痕迹。
+
+## 5) RTL 寄存器推断表统计（elaboration 期，从 dc.log 每个 process 打印的
+       `Register Name | Type | Width | Bus | MB | AR | AS | SR | SS | ST` 表汇总）
+    推断成多 bit (MB=Y): 522        未推断 (MB=N): 663
+    MB=N 且带异步复位 (AR=Y): 417    无控制位: 238    异步置位 (AS=Y): 8
+    MB=N 采样（多为 width=1 的位寄存器）：
+      ijbfef7_reg  width=1  MB=N  AR=Y
+      ij64867_reg  width=1  MB=N  AR=Y
+      ijf2ff8_reg  width=1  MB=N  AR=Y
+      ijca0d0_reg  width=1  MB=N  SR=Y
+      ij589d5_reg  width=1  MB=N  SR=Y
+
+## 6) 多 bit 报告命令（已在 log 中出现）
+10510|   redirect ${REPORTS_DIR}/${DESIGN_NAME}.multibit.components.rpt {report_multibit -hierarchical }
+16928|   redirect ${REPORTS_DIR}/${DESIGN_NAME}.multibit.banking.rpt {report_multibit_banking -nosplit }

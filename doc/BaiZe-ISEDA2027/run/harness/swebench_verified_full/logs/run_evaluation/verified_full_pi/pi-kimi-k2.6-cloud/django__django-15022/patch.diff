@@ -1,0 +1,72 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 66f3396a..d45ae30c 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -1031,6 +1031,10 @@ class ModelAdmin(BaseModelAdmin):
+         if search_fields and search_term:
+             orm_lookups = [construct_search(str(search_field))
+                            for search_field in search_fields]
++            has_duplicates = any(
++                lookup_spawns_duplicates(self.opts, search_spec)
++                for search_spec in orm_lookups
++            )
+             for bit in smart_split(search_term):
+                 if bit.startswith(('"', "'")) and bit[0] == bit[-1]:
+                     bit = unescape_string_literal(bit)
+@@ -1038,11 +1042,17 @@ class ModelAdmin(BaseModelAdmin):
+                     *((orm_lookup, bit) for orm_lookup in orm_lookups),
+                     _connector=models.Q.OR,
+                 )
+-                queryset = queryset.filter(or_queries)
+-            may_have_duplicates |= any(
+-                lookup_spawns_duplicates(self.opts, search_spec)
+-                for search_spec in orm_lookups
+-            )
++                if has_duplicates:
++                    queryset = queryset.filter(
++                        models.Exists(
++                            queryset.model.objects.filter(
++                                pk=models.OuterRef('pk'),
++                            ).filter(or_queries)
++                        )
++                    )
++                else:
++                    queryset = queryset.filter(or_queries)
++            may_have_duplicates |= has_duplicates
+         return queryset, may_have_duplicates
+ 
+     def get_preserved_filters(self, request):
+diff --git a/tests/admin_changelist/tests.py b/tests/admin_changelist/tests.py
+index 92ea0dd7..3eef9e5f 100644
+--- a/tests/admin_changelist/tests.py
++++ b/tests/admin_changelist/tests.py
+@@ -563,6 +563,29 @@ class ChangeListTests(TestCase):
+                 request.user = self.superuser
+                 group_changelist = group_model_admin.get_changelist_instance(request)
+                 self.assertEqual(group_changelist.queryset.count(), result_count)
++    def test_multiword_search_on_reverse_fk_avoids_extra_joins(self):
++        parent = Parent.objects.create(name='Mary')
++        Child.objects.create(parent=parent, name='Danielle')
++        Child.objects.create(parent=parent, name='Daniel')
++
++        m = admin.ModelAdmin(Parent, custom_site)
++        m.search_fields = ['child__name']
++
++        request = self.factory.get('/parent/', data={SEARCH_VAR: 'Danielle Daniel'})
++        request.user = self.superuser
++
++        # Correctness: the parent should be found.
++        cl = m.get_changelist_instance(request)
++        self.assertEqual(cl.queryset.count(), 1)
++
++        # The inner queryset from get_search_results should not contain extra
++        # joins to the child table.
++        qs, _ = m.get_search_results(request, Parent.objects.all(), 'Danielle Daniel')
++        aliases = [
++            alias for alias, join in qs.query.alias_map.items()
++            if getattr(join, 'table_name', None) == 'admin_changelist_child'
++        ]
++        self.assertEqual(len(aliases), 0)
+ 
+     def test_pk_in_search_fields(self):
+         band = Group.objects.create(name='The Hype')

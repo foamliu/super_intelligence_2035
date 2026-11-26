@@ -1,0 +1,120 @@
+diff --git a/repro_741.py b/repro_741.py
+new file mode 100644
+index 00000000..13f2f862
+--- /dev/null
++++ b/repro_741.py
+@@ -0,0 +1,114 @@
++"""Reproduction for issue #741: autodoc inherited-members won't work for
++inherited attributes (data members).
++
++autodoc searches for a cached docstring using (namespace, attrname) as
++search-key, but doesn't check for baseclass-namespace.
++"""
++import os
++import sys
++import tempfile
++from unittest.mock import Mock
++
++from docutils.statemachine import ViewList
++
++from sphinx.ext.autodoc.directive import DocumenterBridge, process_documenter_options
++from sphinx.testing.path import path as testing_path
++from sphinx.testing.util import SphinxTestApp
++from sphinx.util.docutils import LoggingReporter
++
++# --- create a test package -------------------------------------------------
++tmpdir = tempfile.mkdtemp()
++os.makedirs(os.path.join(tmpdir, 'repro741'))
++with open(os.path.join(tmpdir, 'repro741', '__init__.py'), 'w') as f:
++    f.write('')
++
++with open(os.path.join(tmpdir, 'repro741', 'target.py'), 'w') as f:
++    f.write('''\
++class Base:
++    """Base class."""
++
++    attr = 1  #: This is an attribute of Base.
++
++    annotated: int  #: This is an annotated attribute of Base.
++
++    def __init__(self):
++        self.inst_attr = None  #: This is an instance attribute of Base.
++
++
++class Derived(Base):
++    """Derived class."""
++''')
++
++with open(os.path.join(tmpdir, 'conf.py'), 'w') as f:
++    f.write('''\
++import sys
++sys.path.insert(0, %r)
++extensions = ['sphinx.ext.autodoc']
++master_doc = 'index'
++exclude_patterns = ['_build']
++''' % tmpdir)
++
++with open(os.path.join(tmpdir, 'index.rst'), 'w') as f:
++    f.write('''\
++Test
++====
++
++.. autoclass:: repro741.target.Derived
++   :members:
++   :inherited-members:
++''')
++
++sys.path.insert(0, tmpdir)
++
++# --- run autodoc -----------------------------------------------------------
++app = SphinxTestApp('html', srcdir=testing_path(tmpdir))
++app.env.temp_data.setdefault('docname', 'index')
++
++
++def do_autodoc(objtype, name, options=None):
++    if options is None:
++        options = {}
++    doccls = app.registry.documenters[objtype]
++    docoptions = process_documenter_options(doccls, app.config, options)
++    state = Mock()
++    state.document.settings.tab_width = 8
++    bridge = DocumenterBridge(app.env, LoggingReporter(''), docoptions, 1, state)
++    documenter = doccls(bridge, name)
++    documenter.generate()
++    return bridge.result
++
++
++print('=== autoclass Derived with :members: (no inherited-members) ===')
++for line in do_autodoc('class', 'repro741.target.Derived', {'members': None}):
++    print(repr(line))
++
++print()
++print('=== autoclass Derived with :members: :inherited-members: ===')
++for line in do_autodoc('class', 'repro741.target.Derived',
++                       {'members': None, 'inherited-members': None}):
++    print(repr(line))
++
++print()
++print('=== autoclass Derived with :members: :inherited-members: :undoc-members: ===')
++for line in do_autodoc('class', 'repro741.target.Derived',
++                       {'members': None, 'inherited-members': None,
++                        'undoc-members': None}):
++    print(repr(line))
++
++print()
++print('=== DEBUG: get_class_members ===')
++from sphinx.ext.autodoc.importer import get_class_members
++import inspect as _inspect
++import repro741.target as target_mod
++
++sig = _inspect.signature(get_class_members)
++print('signature:', sig)
++if len(sig.parameters) == 4:
++    from sphinx.pycode import ModuleAnalyzer
++    analyzer = ModuleAnalyzer.for_module('repro741.target')
++    members = get_class_members(target_mod.Derived, ['Derived'], getattr, analyzer)
++else:
++    members = get_class_members(target_mod.Derived, ['Derived'], getattr)
++for name, m in members.items():
++    print(name, '->', m)
++

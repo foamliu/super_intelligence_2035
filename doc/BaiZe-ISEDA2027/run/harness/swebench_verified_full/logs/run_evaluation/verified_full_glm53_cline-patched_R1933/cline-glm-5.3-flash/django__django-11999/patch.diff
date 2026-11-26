@@ -1,0 +1,190 @@
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index ee45bb941..f545ae187 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -763,8 +763,12 @@ class Field(RegisterLookupMixin):
+             if not getattr(cls, self.attname, None):
+                 setattr(cls, self.attname, self.descriptor_class(self))
+         if self.choices is not None:
+-            setattr(cls, 'get_%s_display' % self.name,
+-                    partialmethod(cls._get_FIELD_display, field=self))
++            # Don't override a get_FOO_display() method defined explicitly on
++            # this class, but don't check methods derived from inheritance, to
++            # allow overriding inherited choices.
++            if 'get_%s_display' % self.name not in cls.__dict__:
++                setattr(cls, 'get_%s_display' % self.name,
++                        partialmethod(cls._get_FIELD_display, field=self))
+ 
+     def get_filter_kwargs_for_object(self, obj):
+         """
+diff --git a/repro_30931.py b/repro_30931.py
+new file mode 100644
+index 000000000..6f358d2cb
+--- /dev/null
++++ b/repro_30931.py
+@@ -0,0 +1,93 @@
++"""Reproduction script for ticket #30931.
++
++Cannot override get_FOO_display() in Django 2.2+.
++
++A model that explicitly defines get_<field>_display() should keep its own
++implementation; the automatically attached one must not clobber it.
++"""
++import django
++from django.conf import settings
++
++settings.configure(
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DATABASES={},
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models  # noqa: E402
++from django.utils.translation import gettext_lazy as _  # noqa: E402
++
++
++class FooBar(models.Model):
++    foo_bar = models.CharField(_("foo"), choices=[(1, 'foo'), (2, 'bar')], default=1)
++
++    def __str__(self):
++        return self.get_foo_bar_display()
++
++    def get_foo_bar_display(self):
++        return "something"
++
++    class Meta:
++        app_label = 'repro'
++
++
++# Method defined *before* the field in the class body must work too.
++class FooBarReversed(models.Model):
++    def get_foo_bar_display(self):
++        return "something"
++
++    foo_bar = models.CharField(_("foo"), choices=[(1, 'foo'), (2, 'bar')], default=1)
++
++    class Meta:
++        app_label = 'repro'
++
++
++# Without an explicit override the automatic behavior must be preserved.
++class Plain(models.Model):
++    foo_bar = models.CharField(_("foo"), choices=[(1, 'foo'), (2, 'bar')], default=1)
++
++    class Meta:
++        app_label = 'repro'
++
++
++# A child model may redefine the field with new choices (inherited automatic
++# method must be replaced), while an explicit override on the child wins.
++class AbstractParent(models.Model):
++    foo_bar = models.CharField(_("foo"), choices=[(1, 'foo'), (2, 'bar')], default=1)
++
++    class Meta:
++        abstract = True
++
++
++class ChildOverride(AbstractParent):
++    def get_foo_bar_display(self):
++        return "child override"
++
++    class Meta:
++        app_label = 'repro'
++
++
++class ChildNewChoices(AbstractParent):
++    foo_bar = models.CharField(_("foo"), choices=[(3, 'baz')], default=3)
++
++    class Meta:
++        app_label = 'repro'
++
++
++print('Django version:', django.get_version())
++print('FooBar.get_foo_bar_display():', repr(FooBar(foo_bar=1).get_foo_bar_display()))
++print('FooBar.__str__():', repr(str(FooBar(foo_bar=2))))
++print('FooBarReversed.get_foo_bar_display():', repr(FooBarReversed(foo_bar=1).get_foo_bar_display()))
++print('Plain.get_foo_bar_display():', repr(Plain(foo_bar=1).get_foo_bar_display()))
++print('ChildOverride.get_foo_bar_display():', repr(ChildOverride(foo_bar=1).get_foo_bar_display()))
++print('ChildNewChoices.get_foo_bar_display():', repr(ChildNewChoices(foo_bar=3).get_foo_bar_display()))
++
++assert FooBar(foo_bar=1).get_foo_bar_display() == 'something', 'FAIL: override clobbered (method after field)'
++assert str(FooBar(foo_bar=2)) == 'something', 'FAIL: __str__ does not use the override'
++assert FooBarReversed(foo_bar=1).get_foo_bar_display() == 'something', 'FAIL: override clobbered (method before field)'
++assert Plain(foo_bar=1).get_foo_bar_display() == 'foo', 'FAIL: automatic display broken'
++assert Plain(foo_bar=42).get_foo_bar_display() == 42, 'FAIL: invalid choice fallback broken'
++assert ChildOverride(foo_bar=1).get_foo_bar_display() == 'child override', 'FAIL: child override clobbered'
++assert ChildNewChoices(foo_bar=3).get_foo_bar_display() == 'baz', 'FAIL: redefined choices not picked up'
++print('ALL ASSERTIONS PASSED')
+diff --git a/tests/model_fields/test_get_field_display_override.py b/tests/model_fields/test_get_field_display_override.py
+new file mode 100644
+index 000000000..6b814ecce
+--- /dev/null
++++ b/tests/model_fields/test_get_field_display_override.py
+@@ -0,0 +1,66 @@
++"""Tests for overriding automatically attached get_FOO_display() methods."""
++from django.db import models
++from django.test import SimpleTestCase
++from django.test.utils import isolate_apps
++
++
++class GetFieldDisplayOverrideTests(SimpleTestCase):
++
++    @isolate_apps('model_fields')
++    def test_overriding_FIELD_display(self):
++        class FooBar(models.Model):
++            foo_bar = models.CharField(choices=[(1, 'foo'), (2, 'bar')], default=1)
++
++            def __str__(self):
++                return self.get_foo_bar_display()
++
++            def get_foo_bar_display(self):
++                return 'something'
++
++        self.assertEqual(FooBar(foo_bar=1).get_foo_bar_display(), 'something')
++        self.assertEqual(str(FooBar(foo_bar=2)), 'something')
++
++    @isolate_apps('model_fields')
++    def test_overriding_FIELD_display_defined_before_field(self):
++        class FooBar(models.Model):
++            def get_foo_bar_display(self):
++                return 'something'
++
++            foo_bar = models.CharField(choices=[(1, 'foo'), (2, 'bar')], default=1)
++
++        self.assertEqual(FooBar(foo_bar=1).get_foo_bar_display(), 'something')
++
++    @isolate_apps('model_fields')
++    def test_overriding_FIELD_display_of_field_inherited_from_abstract_base(self):
++        class AbstractFooBar(models.Model):
++            foo_bar = models.CharField(choices=[(1, 'foo'), (2, 'bar')], default=1)
++
++            class Meta:
++                abstract = True
++
++        class FooBar(AbstractFooBar):
++            def get_foo_bar_display(self):
++                return 'something'
++
++        self.assertEqual(FooBar(foo_bar=1).get_foo_bar_display(), 'something')
++
++    @isolate_apps('model_fields')
++    def test_get_FIELD_display_attached_when_not_overridden(self):
++        class FooBar(models.Model):
++            foo_bar = models.CharField(choices=[(1, 'foo'), (2, 'bar')], default=1)
++
++        self.assertEqual(FooBar(foo_bar=1).get_foo_bar_display(), 'foo')
++        self.assertEqual(FooBar(foo_bar=42).get_foo_bar_display(), 42)
++
++    @isolate_apps('model_fields')
++    def test_get_FIELD_display_reattached_for_redefined_choices(self):
++        class Parent(models.Model):
++            foo_bar = models.CharField(choices=[(1, 'foo')], default=1)
++
++            class Meta:
++                abstract = True
++
++        class Child(Parent):
++            foo_bar = models.CharField(choices=[(2, 'bar')], default=2)
++
++        self.assertEqual(Child(foo_bar=2).get_foo_bar_display(), 'bar')

@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "/tmp/tb_hermes_gen6_smoke_CLhgcs/fix-git",
+        "source": "tb_hermes_gen6_smoke_CLhgcs"
+    },
+    "trial_name": "fix-git__ZoTirjL",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_hermes_gen6_smoke/2026-10-23__17-27-02",
+    "agent": {
+        "name": "terminalbench.agents.hermes:HermesTB"
+    },
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "f233876c-0345-4afd-9f6d-240c32fac3c8"
+}

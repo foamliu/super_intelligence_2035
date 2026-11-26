@@ -1,0 +1,20 @@
+Implementation complete and verified on the Synopsys WaveView Tcl sandbox.
+
+## Result
+- **REF_CHECK_RC=0**
+- **REF_CHECK_MSG=CHECK_PASS: 3 cases, 41 asserts**
+
+## What I did
+1. Called `open_session` (task_id=`PI-SUT`, eval_id=`20261029-pnr2`, user=`pi_sut`, sample=`0`), obtaining workdir `/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/pi_sut_20261029-pnr2_PI-SUT_0`.
+2. Wrote `pnr2_pi.tcl` (the `pnr_signoff_parse_sta_report` proc + verbatim test procs + driver) via `write_file`.
+3. Ran `source <workdir>/pnr2_pi.tcl` via `run_code` (lang=`tcl`, host=`waveview`) — passed all 41 assertions across cases A (mixed VIOLATED/MET), B (all-MET passing design), and C (partial SPEF coverage).
+4. Cleaned up via `close_session`.
+
+## Key implementation points (the "traps" handled)
+- **Path-slack regex** `^\s*slack\s+\((VIOLATED|MET)\)\s+(-?\d+\.\d+)\s*$` — correctly *skips* the critical-summary `Slack (...): ... ns` line (which has a colon + `ns`).
+- **WNS** = minimum (most negative) over type-2 slack lines; stays positive when all paths MET (Case B → `+0.12`).
+- **TNS** = sum of only negative slacks, `format "%.2f"` → `-0.17` (A), `0.00` (B), `-0.30` (C).
+- **SPEF coverage** = `annotated/total*100`, `format "%.1f"` → `81.9` for partial (C), with total==0 guard.
+- **Slack convention** = `critical_required_ns - critical_arrival_ns` compared to `critical_slack_ns` within 0.001.
+- Endpoint counts taken from the Timing Summary block (authoritative), startpoints counted via `Startpoint:` substring.
+=== pi exit=0 end Thu Oct 29 04:57:23 PM CST 2026 ===

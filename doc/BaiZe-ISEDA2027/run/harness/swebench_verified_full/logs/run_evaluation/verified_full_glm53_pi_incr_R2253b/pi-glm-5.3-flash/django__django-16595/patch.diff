@@ -1,0 +1,44 @@
+diff --git a/django/db/migrations/operations/fields.py b/django/db/migrations/operations/fields.py
+index cd3aab43ad..71e188fbf5 100644
+--- a/django/db/migrations/operations/fields.py
++++ b/django/db/migrations/operations/fields.py
+@@ -247,8 +247,12 @@ class AlterField(FieldOperation):
+         return "alter_%s_%s" % (self.model_name_lower, self.name_lower)
+ 
+     def reduce(self, operation, app_label):
+-        if isinstance(operation, RemoveField) and self.is_same_field_operation(
+-            operation
++        if (
++            isinstance(operation, AlterField)
++            and self.is_same_field_operation(operation)
++        ) or (
++            isinstance(operation, RemoveField)
++            and self.is_same_field_operation(operation)
+         ):
+             return [operation]
+         elif (
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 6485009eb4..15818ba71f 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -1152,3 +1152,20 @@ class OptimizerTests(SimpleTestCase):
+                 ),
+             ]
+         )
++
++    def test_optimize_alter_field(self):
++        self.assertOptimizesTo(
++            [
++                migrations.AlterField(
++                    "Pony", "age", models.IntegerField()
++                ),
++                migrations.AlterField(
++                    "Pony", "age", models.IntegerField(help_text="help")
++                ),
++            ],
++            [
++                migrations.AlterField(
++                    "Pony", "age", models.IntegerField(help_text="help")
++                ),
++            ],
++        )

@@ -1,0 +1,846 @@
+{
+  "audit_time": "2026-11-09T05:45:18.104929",
+  "elapsed_sec": 7.309375,
+  "summary": {
+    "PASS": 118,
+    "FAIL": 0,
+    "WARN": 6,
+    "INFO": 15
+  },
+  "items": [
+    {
+      "category": "Script-Inventory",
+      "name": "Total .sh scripts",
+      "status": "INFO",
+      "detail": "16 found"
+    },
+    {
+      "category": "Script-Inventory",
+      "name": "Total .py scripts",
+      "status": "INFO",
+      "detail": "58 found"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_72h_guardian.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_anneal.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_contamination_gate.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_day1_runbook.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_eval.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_gpu_watcher.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_install_ray_patch.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_launch_11_9.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_loop.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_minicpm5_diag.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_paths.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_post_rl_pipeline.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_preflight_check.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_rl_grpo.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_setup_cu124_venv.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_sft.sh",
+      "status": "PASS",
+      "detail": "bash -n OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_antihack_framework.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_antihack_monitor.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_api_profiler.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_arm_ablation_plan.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_baseline_d1d6_analyzer.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_baseline_gate.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_build_eval_ngrams.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_campaign_projection.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_ckpt_selector.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_contam_check_v2.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_ctx_budget_analyzer.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_data_audit.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_day0_audit.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_day0_readiness_audit.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_day1_diag.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_e2e_audit.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_eda_sandbox_client.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_eda_tool.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_eda_tool_v2.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_eval_analysis.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_f14_parser_resolution.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_gen_sft_corpus.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_gen_sft_corpus_v2.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_gen_synth_v2.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_gpu_budget_analysis.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_gpu_day_audit.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_gpu_schedule_optimizer.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_grpo_dynamics_sim.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_grpo_hyperparam_landscape.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_jsonl_to_parquet.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_mine_deepseek_traces.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_minicpm5_parser.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_minicpm5_parser_patch.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_multiturn_e2e_sim.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_power_analysis.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_power_analysis_fast.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_ray_patch_verify.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_reward_adversarial_test.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_reward_functions.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_reward_validate.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_rl_curriculum_scheduler.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_rl_monitor.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_rl_prompt_prescreen.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_rollout_throughput.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_schedule_optimizer.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_sft_data_mixer.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_sft_dynamics.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_sglang_patch.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_sglang_preflight.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_sglang_throughput_analysis.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_smoke_calibrator.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_stat_power_analysis.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_throughput_reconcile.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_tokenizer_coverage.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_v2_consistency_audit.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_verl_multiturn_audit.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_verl_wrapper.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Script-Syntax",
+      "name": "baize_posttrain_vision_lessons_analyzer.py",
+      "status": "PASS",
+      "detail": "py_compile OK"
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "custom_reward_function top-level",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "adv_estimator: grpo",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "rollout.name: sglang",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "rollout.n: 8",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "multi_turn.enable: False",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "flash_attention_2",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "auto_fallback: true",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "n_gpus_per_node: 4",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "max_prompt_length: 8192",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "max_response_length: 8192",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config-RL-v2",
+      "name": "train_files: rl_pyaether_synth_v2.parquet",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "category": "Config",
+      "name": "tool_config.yaml",
+      "status": "PASS",
+      "detail": "Exists, 1,199B, modified 11-09 02:16"
+    },
+    {
+      "category": "Config",
+      "name": "paths.sh",
+      "status": "PASS",
+      "detail": "Exists, 2,952B, modified 11-07 17:31"
+    },
+    {
+      "category": "Data-Model",
+      "name": "MiniCPM5-2B",
+      "status": "PASS",
+      "detail": "Model dir exists, config.json present"
+    },
+    {
+      "category": "Data-SFT",
+      "name": "sft_pyaether_corpus_v2.jsonl",
+      "status": "PASS",
+      "detail": "Exists, 21,782,225B, modified 11-08 00:14"
+    },
+    {
+      "category": "Data-SFT",
+      "name": "sft_pyaether_corpus_v2.parquet",
+      "status": "PASS",
+      "detail": "Exists, 3,668,677B, modified 11-08 02:47"
+    },
+    {
+      "category": "Data-RL",
+      "name": "rl_pyaether_synth_v2.parquet",
+      "status": "PASS",
+      "detail": "Exists, 953,467B, modified 11-07 15:15"
+    },
+    {
+      "category": "Data-RL",
+      "name": "reward_functions.py",
+      "status": "PASS",
+      "detail": "Exists, 33,427B, modified 11-08 06:05"
+    },
+    {
+      "category": "Data-RL",
+      "name": "rl_monitor.py",
+      "status": "PASS",
+      "detail": "Exists, 18,604B, modified 11-08 07:09"
+    },
+    {
+      "category": "Data-RL",
+      "name": "antihack_framework.py",
+      "status": "PASS",
+      "detail": "Exists, 35,099B, modified 11-09 05:10"
+    },
+    {
+      "category": "Data-RL",
+      "name": "antihack_monitor.py",
+      "status": "PASS",
+      "detail": "Exists, 18,641B, modified 11-09 05:10"
+    },
+    {
+      "category": "Data-RL",
+      "name": "eda_tool_v2.py",
+      "status": "PASS",
+      "detail": "Exists, 4,867B, modified 11-09 02:16"
+    },
+    {
+      "category": "Data-RL",
+      "name": "minicpm5_parser_patch.py",
+      "status": "PASS",
+      "detail": "Exists, 4,260B, modified 11-09 02:55"
+    },
+    {
+      "category": "Data-EDA",
+      "name": "EDA-Eval-PyAether-v20260311.jsonl",
+      "status": "PASS",
+      "detail": "Exists, 689,461B, modified 09-04 14:13"
+    },
+    {
+      "category": "Data-EDA",
+      "name": "API_INFO_MERGED_V3.json",
+      "status": "PASS",
+      "detail": "Exists, 18,132,428B, modified 08-07 08:41"
+    },
+    {
+      "category": "Data-EDA",
+      "name": "run_cline_script.sh",
+      "status": "PASS",
+      "detail": "Exists, 29,415B, modified 09-04 14:13"
+    },
+    {
+      "category": "Data-EDA",
+      "name": "run_eval.py",
+      "status": "PASS",
+      "detail": "Exists, 39,781B, modified 09-04 14:13"
+    },
+    {
+      "category": "Venv",
+      "name": "verl_cu124_venv",
+      "status": "PASS",
+      "detail": "Dir exists at /home/app.e0031982/code/verl_cu124_venv"
+    },
+    {
+      "category": "Venv",
+      "name": "python",
+      "status": "PASS",
+      "detail": "Python exists at /home/app.e0031982/code/verl_cu124_venv/bin/python"
+    },
+    {
+      "category": "Venv-Package",
+      "name": "torch",
+      "status": "PASS",
+      "detail": "Installed at /home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/torch"
+    },
+    {
+      "category": "Venv-Package",
+      "name": "sglang",
+      "status": "PASS",
+      "detail": "Installed at /home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/sglang"
+    },
+    {
+      "category": "Venv-Package",
+      "name": "verl",
+      "status": "PASS",
+      "detail": "Installed at /home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/verl"
+    },
+    {
+      "category": "Venv-Package",
+      "name": "ray",
+      "status": "PASS",
+      "detail": "Installed at /home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/ray"
+    },
+    {
+      "category": "Venv-Package",
+      "name": "flash_attn",
+      "status": "PASS",
+      "detail": "Installed at /home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/flash_attn"
+    },
+    {
+      "category": "Venv-Package",
+      "name": "flashinfer",
+      "status": "PASS",
+      "detail": "Installed at /home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/flashinfer"
+    },
+    {
+      "category": "Venv-Package",
+      "name": "transformers",
+      "status": "PASS",
+      "detail": "Installed at /home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/transformers"
+    },
+    {
+      "category": "Venv-Package",
+      "name": "vllm",
+      "status": "WARN",
+      "detail": "Not found in /home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages"
+    },
+    {
+      "category": "GPU-Watcher",
+      "name": "Process",
+      "status": "PASS",
+      "detail": "Running (1 process(es))"
+    },
+    {
+      "category": "GPU-Watcher",
+      "name": "Ready to launch",
+      "status": "WARN",
+      "detail": "Only 0/8 free, waiting..."
+    },
+    {
+      "category": "GPU-Watcher",
+      "name": "Latest log",
+      "status": "INFO",
+      "detail": "gpu_watcher_11_9.log: ...[2026-11-09 05:45:24]   Details: GPU0:64MiB/46068MiB(0%) GPU1:1085MiB/46068MiB(0%) GPU2:1085MiB/4606"
+    },
+    {
+      "category": "Launch-Chain",
+      "name": "Step 0: setup_cu124_venv.sh",
+      "status": "PASS",
+      "detail": "baize_posttrain_setup_cu124_venv.sh exists (11,828B)"
+    },
+    {
+      "category": "Launch-Chain",
+      "name": "Step 1: preflight_check.sh",
+      "status": "PASS",
+      "detail": "baize_posttrain_preflight_check.sh exists (5,629B)"
+    },
+    {
+      "category": "Launch-Chain",
+      "name": "Step 2: minicpm5_diag.sh (full)",
+      "status": "PASS",
+      "detail": "baize_posttrain_minicpm5_diag.sh exists (8,612B)"
+    },
+    {
+      "category": "Launch-Chain",
+      "name": "Step 3: minicpm5_diag.sh (extract)",
+      "status": "PASS",
+      "detail": "baize_posttrain_minicpm5_diag.sh exists (8,612B)"
+    },
+    {
+      "category": "Launch-Chain",
+      "name": "Step 4: contamination_gate.sh",
+      "status": "PASS",
+      "detail": "baize_posttrain_contamination_gate.sh exists (8,228B)"
+    },
+    {
+      "category": "Launch-Chain",
+      "name": "Step 5: rl_grpo.sh (smoke R0)",
+      "status": "PASS",
+      "detail": "baize_posttrain_rl_grpo.sh exists (10,287B)"
+    },
+    {
+      "category": "Launch-Chain",
+      "name": "Step 6: rl_grpo.sh (full R0)",
+      "status": "PASS",
+      "detail": "baize_posttrain_rl_grpo.sh exists (10,287B)"
+    },
+    {
+      "category": "Risk",
+      "name": "R1: NFS cold-start import >30s",
+      "status": "WARN",
+      "detail": "verl/torch import from NFS >30s (R45). gpu_watcher includes NFS warm-up."
+    },
+    {
+      "category": "Risk",
+      "name": "R2: SGLang holding all 8 GPUs",
+      "status": "WARN",
+      "detail": "SGLang Qwen3.8-27B occupies all 8 A40 (0% util). gpu_watcher polls 120s. DO NOT kill."
+    },
+    {
+      "category": "Risk",
+      "name": "R3: Sandbox TCP filtered (R37)",
+      "status": "INFO",
+      "detail": "EDA sandbox ports filtered. Launch uses R0 (no sandbox). R2 deferred."
+    },
+    {
+      "category": "Risk",
+      "name": "R4: MiniCPM5 XML format mismatch (R70)",
+      "status": "INFO",
+      "detail": "MiniCPM5FunctionDetector + monkey-patch created. Phase1 single-turn unaffected."
+    },
+    {
+      "category": "Risk",
+      "name": "R5: Context window 28K avg (R60)",
+      "status": "WARN",
+      "detail": "Config 16K ctx captures ~82%. 32K infeasible (17.5 days/500 steps)."
+    },
+    {
+      "category": "Risk",
+      "name": "R6: Reward all-zero smoke",
+      "status": "INFO",
+      "detail": "R0 std=0.3718 (non-zero expected). Monitor P2 alert handles."
+    },
+    {
+      "category": "Risk",
+      "name": "R7: OOM on 4xA40",
+      "status": "WARN",
+      "detail": "Fallback: micro_batch 4->2, gpu_mem 0.50->0.35, response 8192->4096."
+    },
+    {
+      "category": "Risk",
+      "name": "R8: Pretrain ckpt not ready",
+      "status": "INFO",
+      "detail": "ETA~2026-12-25. Current RL is SURROGATE (MiniCPM5-2B), NOT BaiZe."
+    },
+    {
+      "category": "Timeline",
+      "name": "Step 0: Venv Setup",
+      "status": "INFO",
+      "detail": "~15-30 min -- Already done, likely skip"
+    },
+    {
+      "category": "Timeline",
+      "name": "Step 1: Preflight Check",
+      "status": "INFO",
+      "detail": "~2-5 min -- NFS warm-up may add 30s"
+    },
+    {
+      "category": "Timeline",
+      "name": "Step 2: Baseline (quick)",
+      "status": "INFO",
+      "detail": "~20-30 min -- 10 tasks x 1 run"
+    },
+    {
+      "category": "Timeline",
+      "name": "Step 2b: Baseline (full)",
+      "status": "INFO",
+      "detail": "~15-25 hours -- 158 tasks x 5 runs, background"
+    },
+    {
+      "category": "Timeline",
+      "name": "Step 3: D1-D6 Extraction",
+      "status": "INFO",
+      "detail": "~5-10 min -- From quick results first"
+    },
+    {
+      "category": "Timeline",
+      "name": "Step 4: Contamination Gate",
+      "status": "INFO",
+      "detail": "~1-2 min -- File hash check"
+    },
+    {
+      "category": "Timeline",
+      "name": "Step 5: RL Smoke (10 iters)",
+      "status": "INFO",
+      "detail": "~20-40 min -- R0, group_size=4, batch=16"
+    },
+    {
+      "category": "Timeline",
+      "name": "Step 6: Full RL (2000 iters)",
+      "status": "INFO",
+      "detail": "~3-5 days -- R0, group_size=8, batch=128"
+    }
+  ]
+}

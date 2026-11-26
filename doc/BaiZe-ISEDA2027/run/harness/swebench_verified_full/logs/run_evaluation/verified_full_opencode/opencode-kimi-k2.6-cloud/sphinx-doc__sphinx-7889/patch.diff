@@ -1,0 +1,41 @@
+diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py
+index 98a3a3a9..cf033db1 100644
+--- a/sphinx/ext/autodoc/mock.py
++++ b/sphinx/ext/autodoc/mock.py
+@@ -52,7 +52,7 @@ class _MockObject:
+     def __mro_entries__(self, bases: Tuple) -> Tuple:
+         return (self.__class__,)
+ 
+-    def __getitem__(self, key: str) -> "_MockObject":
++    def __getitem__(self, key: Any) -> "_MockObject":
+         return _make_subclass(key, self.__display_name__, self.__class__)()
+ 
+     def __getattr__(self, key: str) -> "_MockObject":
+@@ -70,6 +70,8 @@ class _MockObject:
+ 
+ def _make_subclass(name: str, module: str, superclass: Any = _MockObject,
+                    attributes: Any = None) -> Any:
++    if not isinstance(name, str):
++        name = str(name)
+     attrs = {'__module__': module, '__display_name__': module + '.' + name}
+     attrs.update(attributes or {})
+ 
+diff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py
+index 4760493c..eabef056 100644
+--- a/tests/test_ext_autodoc_mock.py
++++ b/tests/test_ext_autodoc_mock.py
+@@ -98,6 +98,14 @@ def test_abc_MockObject():
+     assert isinstance(obj.some_method(), Derived)
+ 
+ 
++def test_MockObject_getitem_with_typevar():
++    from typing import TypeVar
++    mock = _MockObject()
++    T = TypeVar('T')
++    result = mock[T]
++    assert isinstance(result, _MockObject)
++
++
+ def test_mock_decorator():
+     mock = _MockObject()
+ 

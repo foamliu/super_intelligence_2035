@@ -1,0 +1,127 @@
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index d4ca323e..099b074c 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93e..20eddaa1 100644
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -13,6 +13,10 @@
+ from sympy.core.sympify import sympify, converter
+ from sympy.utilities.iterables import iterable
+ 
++try:
++    import collections.abc as collections_abc
++except ImportError:
++    import collections as collections_abc
+ import collections
+ 
+ 
+@@ -268,7 +272,7 @@ def _sorted_args(self):
+         return tuple(sorted(self.args, key=default_sort_key))
+ 
+ 
+-class OrderedSet(collections.MutableSet):
++class OrderedSet(collections_abc.MutableSet):
+     def __init__(self, iterable=None):
+         if iterable:
+             self.map = collections.OrderedDict((item, None) for item in iterable)
+diff --git a/sympy/matrices/common.py b/sympy/matrices/common.py
+index 056d9bc4..57e1c61c 100644
+--- a/sympy/matrices/common.py
++++ b/sympy/matrices/common.py
+@@ -6,6 +6,10 @@
+ 
+ from __future__ import print_function, division
+ 
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ from sympy.core.add import Add
+ from sympy.core.basic import Basic, Atom
+@@ -86,7 +90,7 @@ def entry(i, j):
+                 return self[i, j]
+             elif pos <= j < pos + other.cols:
+                 return other[i, j - pos]
+-            return self[i, j - pos - other.cols]
++            return self[i, j - other.cols]
+ 
+         return self._new(self.rows, self.cols + other.cols,
+                          lambda i, j: entry(i, j))
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index 5e241c68..5595d5bb 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,5 +1,9 @@
+ from __future__ import print_function, division
+ 
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ from sympy.assumptions.refine import refine
+ from sympy.core.add import Add
+@@ -2045,7 +2049,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+                                  "Both dimensions must be positive".format(rows, cols))
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 7701cbc1..f409d58d 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -14,6 +14,10 @@
+ 
+ from .matrices import MatrixBase, ShapeError, a2idx
+ from .dense import Matrix
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ 
+ 
+@@ -53,7 +57,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b3b0237d..70b11b0d 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+ 

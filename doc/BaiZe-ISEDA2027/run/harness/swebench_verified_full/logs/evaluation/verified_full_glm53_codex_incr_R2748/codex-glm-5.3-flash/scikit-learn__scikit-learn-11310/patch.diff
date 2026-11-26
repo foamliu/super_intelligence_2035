@@ -1,0 +1,45 @@
+diff --git a/sklearn/model_selection/_search.py b/sklearn/model_selection/_search.py
+index 99d6096a..077a1673 100644
+--- a/sklearn/model_selection/_search.py
++++ b/sklearn/model_selection/_search.py
+@@ -17,6 +17,7 @@ from collections import Mapping, namedtuple, defaultdict, Sequence, Iterable
+ from functools import partial, reduce
+ from itertools import product
+ import operator
++import time
+ import warnings
+ 
+ import numpy as np
+@@ -766,10 +767,12 @@ class BaseSearchCV(six.with_metaclass(ABCMeta, BaseEstimator,
+         if self.refit:
+             self.best_estimator_ = clone(base_estimator).set_params(
+                 **self.best_params_)
++            start_time = time.time()
+             if y is not None:
+                 self.best_estimator_.fit(X, y, **fit_params)
+             else:
+                 self.best_estimator_.fit(X, **fit_params)
++            self.refit_time_ = time.time() - start_time
+ 
+         # Store the only scorer not as a dict for single metric evaluation
+         self.scorer_ = scorers if self.multimetric_ else scorers['score']
+diff --git a/sklearn/model_selection/tests/test_search.py b/sklearn/model_selection/tests/test_search.py
+index f436c7b5..c381e212 100644
+--- a/sklearn/model_selection/tests/test_search.py
++++ b/sklearn/model_selection/tests/test_search.py
+@@ -455,6 +455,15 @@ def test_no_refit():
+                              X, y)
+ 
+ 
++def test_refit_time():
++    # Test that the refit_time_ attribute is set after fitting
++    clf = MockClassifier()
++    grid_search = GridSearchCV(clf, {'foo_param': [1, 2, 3]})
++    grid_search.fit(X, y)
++    assert_true(hasattr(grid_search, "refit_time_"))
++    assert_true(grid_search.refit_time_ >= 0)
++
++
+ def test_grid_search_error():
+     # Test that grid search will capture errors on data with different length
+     X_, y_ = make_classification(n_samples=200, n_features=100, random_state=0)

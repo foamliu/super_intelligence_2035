@@ -1,0 +1,76 @@
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index 0dc1c77c53..6276013eaa 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -912,9 +912,11 @@ class MigrationAutodetector:
+             old_field_name = self.renamed_fields.get((app_label, model_name, field_name), field_name)
+             old_field = self.old_apps.get_model(app_label, old_model_name)._meta.get_field(old_field_name)
+             new_field = self.new_apps.get_model(app_label, model_name)._meta.get_field(field_name)
++            new_remote_model = None
+             # Implement any model renames on relations; these are handled by RenameModel
+             # so we need to exclude them from the comparison
+             if hasattr(new_field, "remote_field") and getattr(new_field.remote_field, "model", None):
++                new_remote_model = new_field.remote_field.model
+                 rename_key = (
+                     new_field.remote_field.model._meta.app_label,
+                     new_field.remote_field.model._meta.model_name,
+@@ -963,6 +965,14 @@ class MigrationAutodetector:
+                             preserve_default = False
+                     else:
+                         field = new_field
++                    dependencies = []
++                    if new_remote_model is not None:
++                        old_remote_model = getattr(getattr(old_field, 'remote_field', None), 'model', None)
++                        if old_remote_model != new_remote_model:
++                            original_model = new_field.remote_field.model
++                            new_field.remote_field.model = new_remote_model
++                            dependencies.extend(self._get_dependencies_for_foreign_key(new_field))
++                            new_field.remote_field.model = original_model
+                     self.add_operation(
+                         app_label,
+                         operations.AlterField(
+@@ -970,7 +980,8 @@ class MigrationAutodetector:
+                             name=field_name,
+                             field=field,
+                             preserve_default=preserve_default,
+-                        )
++                        ),
++                        dependencies=dependencies,
+                     )
+                 else:
+                     # We cannot alter between m2m and concrete fields
+diff --git a/tests/migrations/test_autodetector.py b/tests/migrations/test_autodetector.py
+index e9926ba3bf..6d1707f3a0 100644
+--- a/tests/migrations/test_autodetector.py
++++ b/tests/migrations/test_autodetector.py
+@@ -2251,6 +2251,30 @@ class AutodetectorTests(TestCase):
+         self.assertOperationAttributes(changes, 'testapp', 0, 0, name="book")
+         self.assertMigrationDependencies(changes, 'testapp', 0, [("otherapp", "__first__")])
+ 
++    def test_alter_field_to_fk_dependency(self):
++        """
++        #30573 - AlterField to ForeignKey adds dependency on the related model's app.
++        """
++        target_book = ModelState("otherapp", "Book", [
++            ("id", models.AutoField(primary_key=True)),
++            ("title", models.CharField(max_length=100)),
++        ])
++        author_with_char = ModelState("testapp", "Author", [
++            ("id", models.AutoField(primary_key=True)),
++            ("name", models.CharField(max_length=200)),
++            ("book", models.CharField(max_length=100, null=True, blank=True)),
++        ])
++        author_with_fk = ModelState("testapp", "Author", [
++            ("id", models.AutoField(primary_key=True)),
++            ("name", models.CharField(max_length=200)),
++            ("book", models.ForeignKey("otherapp.Book", models.CASCADE, null=True, blank=True)),
++        ])
++        changes = self.get_changes([author_with_char, target_book], [author_with_fk, target_book])
++        self.assertNumberMigrations(changes, 'testapp', 1)
++        self.assertOperationTypes(changes, 'testapp', 0, ["AlterField"])
++        self.assertOperationAttributes(changes, 'testapp', 0, 0, name="book")
++        self.assertMigrationDependencies(changes, 'testapp', 0, [("otherapp", "__first__")])
++
+     def test_circular_dependency_mixed_addcreate(self):
+         """
+         #23315 - The dependency resolver knows to put all CreateModel

@@ -1,0 +1,69 @@
+diff --git a/CHANGES b/CHANGES
+index 9c889420f..fc9c70d81 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -50,6 +50,8 @@ Bugs fixed
+ * #8380: html search: Paragraphs in search results are not identified as ``<p>``
+ * #8342: Emit a warning if a unknown domain is given for directive or role (ex.
+   ``:unknown:doc:``)
++* #6193: py domain: Do not create cross-references from ``:ivar:``, ``:var:``
++  and ``:cvar:`` field names to other objects of the same name
+ 
+ Testing
+ --------
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 000e2e8d3..5afe2993a 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -354,7 +354,7 @@ class PyObject(ObjectDescription):
+                             'keyword', 'kwarg', 'kwparam'),
+                      typerolename='class', typenames=('paramtype', 'type'),
+                      can_collapse=True),
+-        PyTypedField('variable', label=_('Variables'), rolename='obj',
++        PyTypedField('variable', label=_('Variables'),
+                      names=('var', 'ivar', 'cvar'),
+                      typerolename='class', typenames=('vartype',),
+                      can_collapse=True),
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index e0c690518..fd276b614 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -838,6 +838,38 @@ def test_info_field_list(app):
+                 **{"py:module": "example", "py:class": "Class"})
+ 
+ 
++def test_info_field_list_with_ivar(app):
++    text = (".. py:module:: example\n"
++            ".. py:class:: Class\n"
++            "\n"
++            "   :ivar int attr: blah blah\n")
++    doctree = restructuredtext.parse(app, text)
++
++    assert_node(doctree, (nodes.target,
++                          addnodes.index,
++                          addnodes.index,
++                          [desc, ([desc_signature, ([desc_annotation, "class "],
++                                                    [desc_addname, "example."],
++                                                    [desc_name, "Class"])],
++                                  [desc_content, nodes.field_list, nodes.field])]))
++    assert_node(doctree[3][1][0][0],
++                ([nodes.field_name, "Variables"],
++                 [nodes.field_body, nodes.paragraph,
++                  ([addnodes.literal_strong, "attr"],
++                   " (",
++                   [pending_xref, addnodes.literal_emphasis, "int"],
++                   ")",
++                   " -- ",
++                   "blah blah")]))
++
++    # :ivar int attr: -- the variable name must not be turned into a
++    # cross-reference, since it would link to an unrelated object of the
++    # same name (e.g. a module-level variable); the type is still xref'd
++    assert_node(doctree[3][1][0][0][1][0][2], pending_xref,
++                refdomain="py", reftype="class", reftarget="int",
++                **{"py:module": "example", "py:class": "Class"})
++
++
+ @pytest.mark.sphinx(freshenv=True)
+ def test_module_index(app):
+     text = (".. py:module:: docutils\n"

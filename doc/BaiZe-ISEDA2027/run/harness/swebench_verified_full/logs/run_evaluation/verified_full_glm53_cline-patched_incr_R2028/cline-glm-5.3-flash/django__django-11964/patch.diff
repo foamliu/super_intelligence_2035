@@ -1,0 +1,58 @@
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index bbe362a6ab..dbc222a743 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -60,7 +60,13 @@ class ChoicesMeta(enum.EnumMeta):
+ 
+ class Choices(enum.Enum, metaclass=ChoicesMeta):
+     """Class for creating enumerated choices."""
+-    pass
++
++    def __str__(self):
++        """
++        Use value when cast to str, instead the default enum.Enum.__str__()
++        which returns the constant name.
++        """
++        return str(self.value)
+ 
+ 
+ class IntegerChoices(int, Choices):
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 70297b5311..1b980162c8 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -314,3 +314,10 @@ to remove usage of these features.
+ 
+ * Support for ``SimpleTestCase.allow_database_queries`` and
+   ``TransactionTestCase.multi_db`` is removed.
++
++Bugfixes
++========
++
++* Fixed a bug in Django 3.1 where casting ``TextChoices`` and
++  ``IntegerChoices`` items to ``str`` returned the constant name, e.g.
++  ``MyChoices.FIRST_CHOICE``, instead of the item's value (:ticket:`31835`).
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index 6b4bd6e7fd..65a8084b42 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -80,6 +80,9 @@ class ChoicesTests(SimpleTestCase):
+         self.assertIn(1, Suit)
+         self.assertNotIn(0, Suit)
+ 
++    def test_integerchoices_str(self):
++        self.assertEqual(str(Suit.DIAMOND), '1')
++
+     def test_textchoices(self):
+         self.assertEqual(YearInSchool.choices, [
+             ('FR', 'Freshman'), ('SO', 'Sophomore'), ('JR', 'Junior'), ('SR', 'Senior'), ('GR', 'Graduate'),
+@@ -121,6 +124,9 @@ class ChoicesTests(SimpleTestCase):
+         self.assertIn('FR', YearInSchool)
+         self.assertNotIn('XX', YearInSchool)
+ 
++    def test_textchoices_str(self):
++        self.assertEqual(str(YearInSchool.FRESHMAN), 'FR')
++
+     def test_textchoices_blank_value(self):
+         class BlankStr(models.TextChoices):
+             EMPTY = '', '(Empty)'

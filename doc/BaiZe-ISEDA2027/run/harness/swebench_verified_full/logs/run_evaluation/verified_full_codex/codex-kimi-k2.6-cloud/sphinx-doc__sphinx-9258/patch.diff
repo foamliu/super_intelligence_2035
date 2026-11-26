@@ -1,0 +1,110 @@
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 7d39d80e..0dbc0275 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -304,7 +304,7 @@ class PyXrefMixin:
+     def make_xrefs(self, rolename: str, domain: str, target: str,
+                    innernode: Type[TextlikeNode] = nodes.emphasis,
+                    contnode: Node = None, env: BuildEnvironment = None) -> List[Node]:
+-        delims = r'(\s*[\[\]\(\),](?:\s*or\s)?\s*|\s+or\s+|\.\.\.)'
++        delims = r'(\s*[\[\]\(\),|](?:\s*or\s)?\s*|\s+or\s+|\.\.\.)'
+         delims_re = re.compile(delims)
+         sub_targets = re.split(delims, target)
+ 
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index af6edcae..912aecc3 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -33,9 +33,9 @@ else:
+             ref = _ForwardRef(self.arg)
+             return ref._eval_type(globalns, localns)
+ 
+-if sys.version_info > (3, 10):
+-    from types import Union as types_Union
+-else:
++try:
++    from types import UnionType as types_Union
++except ImportError:
+     types_Union = None
+ 
+ if False:
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 2614c8ff..f7c9b6f6 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -332,6 +332,24 @@ def test_parse_annotation(app):
+     assert_node(doctree, ([pending_xref, "None"],))
+     assert_node(doctree[0], pending_xref, refdomain="py", reftype="obj", reftarget="None")
+ 
++    # Union type operator (PEP 604)
++    doctree = _parse_annotation("int | str", app.env)
++    assert_node(doctree, ([pending_xref, "int"],
++                          " ",
++                          [desc_sig_punctuation, "|"],
++                          " ",
++                          [pending_xref, "str"]))
++
++    doctree = _parse_annotation("Optional[int | str]", app.env)
++    assert_node(doctree, ([pending_xref, "Optional"],
++                          [desc_sig_punctuation, "["],
++                          [pending_xref, "int"],
++                          " ",
++                          [desc_sig_punctuation, "|"],
++                          " ",
++                          [pending_xref, "str"],
++                          [desc_sig_punctuation, "]"]))
++
+ 
+ def test_pyfunction_signature(app):
+     text = ".. py:function:: hello(name: str) -> str"
+@@ -1009,6 +1027,50 @@ def test_info_field_list(app):
+                 **{"py:module": "example", "py:class": "Class"})
+ 
+ 
++def test_info_field_list_with_union_type_operator(app):
++    text = (".. py:module:: example\n"
++            ".. py:class:: Class\n"
++            "\n"
++            "   :param text: blah blah\n"
++            "   :type text: bytes | str\n"
++            "   :param other: other blah\n")
++    doctree = restructuredtext.parse(app, text)
++
++    assert_node(doctree, (nodes.target,
++                          addnodes.index,
++                          addnodes.index,
++                          [desc, ([desc_signature, ([desc_annotation, "class "],
++                                                    [desc_addname, "example."],
++                                                    [desc_name, "Class"])],
++                                  [desc_content, nodes.field_list, nodes.field])]))
++    assert_node(doctree[3][1][0][0],
++                ([nodes.field_name, "Parameters"],
++                 [nodes.field_body, nodes.bullet_list,
++                  ([nodes.list_item, nodes.paragraph],
++                   [nodes.list_item, nodes.paragraph])]))
++    # first param: text (bytes | str) -- blah blah
++    assert_node(doctree[3][1][0][0][1][0][0][0],
++                ([addnodes.literal_strong, "text"],
++                 " (",
++                 [pending_xref, addnodes.literal_emphasis, "bytes"],
++                 [addnodes.literal_emphasis, " | "],
++                 [pending_xref, addnodes.literal_emphasis, "str"],
++                 ")",
++                 " -- ",
++                 "blah blah"))
++    assert_node(doctree[3][1][0][0][1][0][0][0][2], pending_xref,
++                refdomain="py", reftype="class", reftarget="bytes",
++                **{"py:module": "example", "py:class": "Class"})
++    assert_node(doctree[3][1][0][0][1][0][0][0][4], pending_xref,
++                refdomain="py", reftype="class", reftarget="str",
++                **{"py:module": "example", "py:class": "Class"})
++    # second param
++    assert_node(doctree[3][1][0][0][1][0][1][0],
++                ([addnodes.literal_strong, "other"],
++                 " -- ",
++                 "other blah"))
++
++
+ def test_info_field_list_var(app):
+     text = (".. py:class:: Class\n"
+             "\n"

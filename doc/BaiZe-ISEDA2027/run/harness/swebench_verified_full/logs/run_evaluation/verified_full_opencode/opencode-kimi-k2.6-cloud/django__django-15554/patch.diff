@@ -1,0 +1,155 @@
+diff --git a/django/db/models/sql/datastructures.py b/django/db/models/sql/datastructures.py
+index 1edf040e8..55e7cd354 100644
+--- a/django/db/models/sql/datastructures.py
++++ b/django/db/models/sql/datastructures.py
+@@ -162,7 +162,8 @@ class Join:
+         return hash(self.identity)
+ 
+     def equals(self, other):
+-        # Ignore filtered_relation in equality check.
++        if self.filtered_relation is not None and other.filtered_relation is not None:
++            return self.identity == other.identity
+         return self.identity[:-1] == other.identity[:-1]
+ 
+     def demote(self):
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 54f3258ea..20ef42f0e 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1549,24 +1549,29 @@ class Query(BaseExpression):
+         current_negated ^= q_object.negated
+         branch_negated = branch_negated or q_object.negated
+         target_clause = WhereNode(connector=connector, negated=q_object.negated)
+-        for child in q_object.children:
+-            if isinstance(child, Node):
+-                child_clause = self.build_filtered_relation_q(
+-                    child,
+-                    reuse=reuse,
+-                    branch_negated=branch_negated,
+-                    current_negated=current_negated,
+-                )
+-            else:
+-                child_clause, _ = self.build_filter(
+-                    child,
+-                    can_reuse=reuse,
+-                    branch_negated=branch_negated,
+-                    current_negated=current_negated,
+-                    allow_joins=True,
+-                    split_subq=False,
+-                )
+-            target_clause.add(child_clause, connector)
++        old_restricted_reuse = getattr(self, "_restricted_reuse", False)
++        self._restricted_reuse = True
++        try:
++            for child in q_object.children:
++                if isinstance(child, Node):
++                    child_clause = self.build_filtered_relation_q(
++                        child,
++                        reuse=reuse,
++                        branch_negated=branch_negated,
++                        current_negated=current_negated,
++                    )
++                else:
++                    child_clause, _ = self.build_filter(
++                        child,
++                        can_reuse=reuse,
++                        branch_negated=branch_negated,
++                        current_negated=current_negated,
++                        allow_joins=True,
++                        split_subq=False,
++                    )
++                target_clause.add(child_clause, connector)
++        finally:
++            self._restricted_reuse = old_restricted_reuse
+         return target_clause
+ 
+     def add_filtered_relation(self, filtered_relation, alias):
+@@ -1818,11 +1823,12 @@ class Query(BaseExpression):
+                 nullable,
+                 filtered_relation=filtered_relation,
+             )
+-            reuse = can_reuse if join.m2m else None
++            reuse = can_reuse if join.m2m or getattr(self, "_restricted_reuse", False) else None
+             alias = self.join(connection, reuse=reuse)
+             joins.append(alias)
+             if filtered_relation:
+                 filtered_relation.path = joins[:]
++                join.filtered_relation.path = joins[:]
+         return JoinInfo(final_field, targets, opts, joins, path, final_transformer)
+ 
+     def trim_joins(self, targets, joins, path):
+diff --git a/tests/filtered_relation/tests.py b/tests/filtered_relation/tests.py
+index 790a90d9e..414f4738e 100644
+--- a/tests/filtered_relation/tests.py
++++ b/tests/filtered_relation/tests.py
+@@ -237,6 +237,34 @@ class FilteredRelationTests(TestCase):
+             [self.author1],
+         )
+ 
++    def test_multiple_filtered_relations_same_relation(self):
++        qs = Author.objects.alias(
++            book_title_alice=FilteredRelation(
++                "book", condition=Q(book__title__icontains="alice")
++            ),
++            book_title_jane=FilteredRelation(
++                "book", condition=Q(book__title__icontains="jane")
++            ),
++        ).annotate(
++            alice_title=F("book_title_alice__title"),
++            jane_title=F("book_title_jane__title"),
++        ).order_by("pk", "alice_title", "jane_title")
++        sql = str(qs.query)
++        # Both filtered relation aliases should generate separate joins.
++        self.assertIn("book_title_alice", sql)
++        self.assertIn("\"filtered_relation_book\"", sql)
++        # The query should produce correct results with separate joins.
++        self.assertQuerysetEqual(
++            qs,
++            [
++                (self.author1, "Poem by Alice", None),
++                (self.author1, "The book by Alice", None),
++                (self.author2, None, "The book by Jane A"),
++                (self.author2, None, "The book by Jane B"),
++            ],
++            lambda x: (x, x.alice_title, x.jane_title),
++        )
++
+     def test_exclude_relation_with_join(self):
+         self.assertSequenceEqual(
+             Author.objects.annotate(
+@@ -549,6 +577,35 @@ class FilteredRelationTests(TestCase):
+             lambda x: (x.author, x.book_title, x.preferred_by_author_pk),
+         )
+ 
++    def test_multiple_filtered_relations_nested_relation(self):
++        qs = (
++            Author.objects.alias(
++                book_editor_a=FilteredRelation(
++                    "book__editor",
++                    condition=Q(book__editor__name="a"),
++                ),
++                book_editor_b=FilteredRelation(
++                    "book__editor",
++                    condition=Q(book__editor__name="b"),
++                ),
++            )
++            .annotate(
++                editor_a_name=F("book_editor_a__name"),
++                editor_b_name=F("book_editor_b__name"),
++            )
++            .order_by("pk", "editor_a_name", "editor_b_name")
++        )
++        self.assertQuerysetEqual(
++            qs,
++            [
++                (self.author1, "a", None),
++                (self.author1, "a", None),
++                (self.author2, None, "b"),
++                (self.author2, None, "b"),
++            ],
++            lambda x: (x, x.editor_a_name, x.editor_b_name),
++        )
++
+     def test_deep_nested_foreign_key(self):
+         qs = (
+             Book.objects.annotate(

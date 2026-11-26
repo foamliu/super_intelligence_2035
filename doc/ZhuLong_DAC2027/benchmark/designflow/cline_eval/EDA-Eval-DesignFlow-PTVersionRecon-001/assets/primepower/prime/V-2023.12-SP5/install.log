@@ -1,0 +1,10 @@
+Synopsys Installer: 5.2.0
+Licensed Products communicate with Synopsys servers for the purpose of providing
+software updates, detecting software piracy and verifying that customers are using
+Licensed Products in conformity with the applicable License Key.
+
+STANDALONE : primepower
+ALLOWEDOVERLAY : -
+INSTALLING primepower product, common package, V-2023.12-SP5 version.
+/bin/tar (tar (GNU tar) 1.23)
+x ., 0 bytes

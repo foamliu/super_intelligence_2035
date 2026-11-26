@@ -1,0 +1,85 @@
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 3ca730e30..1adc81c17 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -100,7 +100,8 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             for elem in node.elts:
+                 result.extend(unparse(elem))
+                 result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
++            if node.elts:
++                result.pop()
+             result.append(addnodes.desc_sig_punctuation('', ']'))
+             return result
+         elif isinstance(node, ast.Module):
+@@ -118,7 +119,11 @@ def _parse_annotation(annotation: str) -> List[Node]:
+             for elem in node.elts:
+                 result.extend(unparse(elem))
+                 result.append(addnodes.desc_sig_punctuation('', ', '))
+-            result.pop()
++            if node.elts:
++                result.pop()
++            else:
++                result.append(addnodes.desc_sig_punctuation('', '('))
++                result.append(addnodes.desc_sig_punctuation('', ')'))
+             return result
+         else:
+             raise SyntaxError  # unsupported syntax
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 4d8aa8955..fb2a7152d 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -114,7 +114,10 @@ def unparse(node: ast.AST) -> str:
+     elif isinstance(node, ast.UnaryOp):
+         return "%s %s" % (unparse(node.op), unparse(node.operand))
+     elif isinstance(node, ast.Tuple):
+-        return ", ".join(unparse(e) for e in node.elts)
++        if node.elts:
++            return ", ".join(unparse(e) for e in node.elts)
++        else:
++            return "()"
+     elif sys.version_info > (3, 6) and isinstance(node, ast.Constant):
+         # this branch should be placed at last
+         return repr(node.value)
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index cc3d3cf53..b8b9e25b3 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -255,6 +255,13 @@ def test_parse_annotation():
+                           [pending_xref, "int"],
+                           [desc_sig_punctuation, "]"]))
+ 
++    doctree = _parse_annotation("Tuple[()]")
++    assert_node(doctree, ([pending_xref, "Tuple"],
++                          [desc_sig_punctuation, "["],
++                          [desc_sig_punctuation, "("],
++                          [desc_sig_punctuation, ")"],
++                          [desc_sig_punctuation, "]"]))
++
+     doctree = _parse_annotation("Callable[[int, int], int]")
+     assert_node(doctree, ([pending_xref, "Callable"],
+                           [desc_sig_punctuation, "["],
+@@ -745,9 +752,8 @@ def test_modindex_common_prefix(app):
+                 IndexEntry('sphinx.builders.html', 2, 'index', 'module-sphinx.builders.html', '', '', '')]),  # NOQA
+          ('c', [IndexEntry('sphinx.config', 0, 'index', 'module-sphinx.config', '', '', '')]),
+          ('d', [IndexEntry('docutils', 0, 'index', 'module-docutils', '', '', '')]),
+-         ('s', [IndexEntry('sphinx', 0, 'index', 'module-sphinx', '', '', ''),
+-                IndexEntry('sphinx_intl', 0, 'index', 'module-sphinx_intl', '', '', '')])],
++        ('s', [IndexEntry('sphinx', 0, 'index', 'module-sphinx', '', '', ''),
++               IndexEntry('sphinx_intl', 0, 'index', 'module-sphinx_intl', '', '', '')])],
+         True
+     )
+ 
+-
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index 117feb8f7..85dee50d1 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -50,6 +50,7 @@ from sphinx.pycode import ast
+     ("{1, 2, 3}", "{1, 2, 3}"),                 # Set
+     ("a - b", "a - b"),                         # Sub
+     ("'str'", "'str'"),                         # Str
++    ("Tuple[()]", "Tuple[()]"),                 # Subscript with empty Tuple
+     ("+ a", "+ a"),                             # UAdd
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub

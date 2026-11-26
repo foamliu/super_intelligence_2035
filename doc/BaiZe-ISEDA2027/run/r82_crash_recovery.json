@@ -1,0 +1,702 @@
+{
+  "section": "R82",
+  "title": "Multi-Day RL Training Crash Recovery & Checkpoint Strategy",
+  "date": "2026-11-09",
+  "crash_library": [
+    {
+      "id": "C01",
+      "name": "GPU OOM during rollout",
+      "category": "hardware",
+      "severity": "MEDIUM",
+      "probability_per_hour": 0.008,
+      "detection_delay_min": 0.5,
+      "recovery_cost_min": 15,
+      "progress_loss_pct": 0.0,
+      "description": "A40 46GB exhausted during long context rollout (R60: 28K tok trajectories).",
+      "detection_method": "CUDA error: out of memory in verl worker log",
+      "recovery_steps": [
+        "1. Kill verl workers (ray stop)",
+        "2. Reduce rollout batch_size or max_new_tokens",
+        "3. Clear CUDA cache (torch.cuda.empty_cache)",
+        "4. Restart from last checkpoint (no progress loss if within step)"
+      ],
+      "auto_recoverable": true
+    },
+    {
+      "id": "C02",
+      "name": "NFS stall / cold-start",
+      "category": "network",
+      "severity": "MEDIUM",
+      "probability_per_hour": 0.012,
+      "detection_delay_min": 2.0,
+      "recovery_cost_min": 30,
+      "progress_loss_pct": 0.0,
+      "description": "NFS mount unresponsive. R45 measured torch import >30s on cold NFS.",
+      "detection_method": "I/O timeout in checkpoint save, or ray worker heartbeat miss",
+      "recovery_steps": [
+        "1. Wait 60s for NFS to recover",
+        "2. If persists >5min: checkpoint to /tmp (local SSD)",
+        "3. Ray cluster restart if workers died",
+        "4. Resume from last successful checkpoint"
+      ],
+      "auto_recoverable": true
+    },
+    {
+      "id": "C03",
+      "name": "SGLang server crash",
+      "category": "software",
+      "severity": "HIGH",
+      "probability_per_hour": 0.006,
+      "detection_delay_min": 1.0,
+      "recovery_cost_min": 20,
+      "progress_loss_pct": 0.0,
+      "description": "SGLang inference server dies during rollout generation.",
+      "detection_method": "Health check endpoint timeout, or connection refused",
+      "recovery_steps": [
+        "1. Kill stale SGLang process",
+        "2. Restart SGLang with same config (--port 30000)",
+        "3. Wait for model load (~3min on warm NFS)",
+        "4. Re-run failed rollout batch (no checkpoint needed)"
+      ],
+      "auto_recoverable": false
+    },
+    {
+      "id": "C04",
+      "name": "Ray worker death",
+      "category": "software",
+      "severity": "HIGH",
+      "probability_per_hour": 0.01,
+      "detection_delay_min": 0.5,
+      "recovery_cost_min": 25,
+      "progress_loss_pct": 0.0,
+      "description": "Ray worker process dies (OOM-killer, segfault). R53 fixed patch propagation.",
+      "detection_method": "Ray dashboard shows dead workers, or GCS reports",
+      "recovery_steps": [
+        "1. ray.stop() + ray.start()",
+        "2. Reload checkpoint into new workers",
+        "3. Re-run failed rollout batch",
+        "4. If recurring: reduce num_workers or memory_per_worker"
+      ],
+      "auto_recoverable": false
+    },
+    {
+      "id": "C05",
+      "name": "Checkpoint corruption",
+      "category": "data",
+      "severity": "CRITICAL",
+      "probability_per_hour": 0.002,
+      "detection_delay_min": 5.0,
+      "recovery_cost_min": 45,
+      "progress_loss_pct": 1.0,
+      "description": "Checkpoint file corrupted (NFS write interrupted, disk full, bit rot).",
+      "detection_method": "Checkpoint load fails (torch.load raises exception)",
+      "recovery_steps": [
+        "1. Identify last valid checkpoint (verification step)",
+        "2. Delete corrupted checkpoint",
+        "3. Load previous valid checkpoint",
+        "4. Resume training (lose progress between corrupt and valid ckpt)",
+        "5. Enable dual-write (local + NFS) going forward"
+      ],
+      "auto_recoverable": false
+    },
+    {
+      "id": "C06",
+      "name": "GRPO collapse (R80 modes)",
+      "category": "software",
+      "severity": "HIGH",
+      "probability_per_hour": 0.015,
+      "detection_delay_min": 3.0,
+      "recovery_cost_min": 40,
+      "progress_loss_pct": 0.5,
+      "description": "One of R80 7 collapse modes: C1-C7 (reward hacking, KL explosion, etc.).",
+      "detection_method": "R80 CollapseDetector: policy_entropy drop, cheat_rate spike",
+      "recovery_steps": [
+        "1. R81 DecisionEngine triggers STOP or ROLLBACK",
+        "2. Load pre-collapse checkpoint (R81: rollback P=0.90)",
+        "3. Adjust hyperparameters (R73: KL coef, clip, lr)",
+        "4. Switch reward arm if needed (R81: SWITCH_ARM P=0.85)",
+        "5. Resume with conservative settings"
+      ],
+      "auto_recoverable": false
+    },
+    {
+      "id": "C07",
+      "name": "Disk full (checkpoint storage)",
+      "category": "hardware",
+      "severity": "HIGH",
+      "probability_per_hour": 0.003,
+      "detection_delay_min": 1.0,
+      "recovery_cost_min": 20,
+      "progress_loss_pct": 0.0,
+      "description": "Disk fills up from checkpoints. / has 386GB, /nas_data has 20TB.",
+      "detection_method": "OSError: No space left on device during checkpoint save",
+      "recovery_steps": [
+        "1. Delete old checkpoints (keep last 3)",
+        "2. Move checkpoints to /nas_data (20TB available)",
+        "3. Adjust checkpoint retention policy",
+        "4. Resume from last checkpoint"
+      ],
+      "auto_recoverable": false
+    },
+    {
+      "id": "C08",
+      "name": "Power failure / node reboot",
+      "category": "hardware",
+      "severity": "CRITICAL",
+      "probability_per_hour": 0.001,
+      "detection_delay_min": 10.0,
+      "recovery_cost_min": 60,
+      "progress_loss_pct": 1.0,
+      "description": "Node reboots (power, kernel panic, maintenance). All in-memory state lost.",
+      "detection_method": "SSH connection refused, or monitoring alert",
+      "recovery_steps": [
+        "1. Wait for node to come back up",
+        "2. Verify GPU availability (nvidia-smi)",
+        "3. NFS warm-up (R62: 30min)",
+        "4. Restart SGLang + Ray cluster",
+        "5. Load last valid checkpoint",
+        "6. Resume training"
+      ],
+      "auto_recoverable": false
+    },
+    {
+      "id": "C09",
+      "name": "EDA sandbox timeout",
+      "category": "software",
+      "severity": "LOW",
+      "probability_per_hour": 0.02,
+      "detection_delay_min": 2.5,
+      "recovery_cost_min": 10,
+      "progress_loss_pct": 0.0,
+      "description": "EDA sandbox execution exceeds 2500s timeout. R37 found TCP port filtered.",
+      "detection_method": "Rollout timeout in verl, or sandbox process killed",
+      "recovery_steps": [
+        "1. Mark rollout as failed (reward=0)",
+        "2. Continue with remaining rollouts in batch",
+        "3. If >50% rollouts timeout: switch to R0 (no-sandbox) arm"
+      ],
+      "auto_recoverable": true
+    },
+    {
+      "id": "C10",
+      "name": "Reward hacking detected",
+      "category": "software",
+      "severity": "HIGH",
+      "probability_per_hour": 0.005,
+      "detection_delay_min": 2.0,
+      "recovery_cost_min": 30,
+      "progress_loss_pct": 0.3,
+      "description": "R75/R76 anti-hack framework detects cheating. 6 hack modes.",
+      "detection_method": "R75 AntiHackMonitor: 8-gram overlap >0.25, or format violation >5%",
+      "recovery_steps": [
+        "1. R81 DecisionEngine triggers SWITCH_ARM (P=0.85)",
+        "2. Switch from current arm to R4 (strict API legality)",
+        "3. If severe: ROLLBACK to pre-hack checkpoint",
+        "4. Log cheat rate in experiment tracker"
+      ],
+      "auto_recoverable": false
+    },
+    {
+      "id": "C11",
+      "name": "OOM in training (not rollout)",
+      "category": "hardware",
+      "severity": "MEDIUM",
+      "probability_per_hour": 0.004,
+      "detection_delay_min": 0.5,
+      "recovery_cost_min": 15,
+      "progress_loss_pct": 0.0,
+      "description": "Training step OOM (gradient accumulation, optimizer states).",
+      "detection_method": "CUDA error in training worker log",
+      "recovery_steps": [
+        "1. Reduce micro_batch_size",
+        "2. Enable gradient checkpointing",
+        "3. Restart from last checkpoint"
+      ],
+      "auto_recoverable": true
+    },
+    {
+      "id": "C12",
+      "name": "Human intervention / maintenance",
+      "category": "human",
+      "severity": "LOW",
+      "probability_per_hour": 0.002,
+      "detection_delay_min": 0.0,
+      "recovery_cost_min": 120,
+      "progress_loss_pct": 0.0,
+      "description": "Scheduled maintenance, GPU re-allocation, or operator intervention.",
+      "detection_method": "Operator notification",
+      "recovery_steps": [
+        "1. Save checkpoint before intervention",
+        "2. Stop training cleanly (graceful shutdown)",
+        "3. Perform maintenance",
+        "4. Resume from checkpoint"
+      ],
+      "auto_recoverable": false
+    }
+  ],
+  "checkpoint_strategy": {
+    "all_frequencies": [
+      {
+        "ckpt_every_n_steps": 1,
+        "num_checkpoints": 200,
+        "peak_storage_gb": 62.5,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 426.7,
+        "pct_overhead": 7.11,
+        "avg_time_lost_per_crash_min": 15.0,
+        "expected_crash_loss_min": 132.0,
+        "total_cost_min": 558.7
+      },
+      {
+        "ckpt_every_n_steps": 2,
+        "num_checkpoints": 100,
+        "peak_storage_gb": 62.5,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 213.3,
+        "pct_overhead": 3.56,
+        "avg_time_lost_per_crash_min": 30.0,
+        "expected_crash_loss_min": 264.0,
+        "total_cost_min": 477.3
+      },
+      {
+        "ckpt_every_n_steps": 5,
+        "num_checkpoints": 40,
+        "peak_storage_gb": 62.5,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 85.3,
+        "pct_overhead": 1.42,
+        "avg_time_lost_per_crash_min": 75.0,
+        "expected_crash_loss_min": 660.0,
+        "total_cost_min": 745.3
+      },
+      {
+        "ckpt_every_n_steps": 10,
+        "num_checkpoints": 20,
+        "peak_storage_gb": 62.5,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 42.7,
+        "pct_overhead": 0.71,
+        "avg_time_lost_per_crash_min": 150.0,
+        "expected_crash_loss_min": 1320.0,
+        "total_cost_min": 1362.7
+      },
+      {
+        "ckpt_every_n_steps": 15,
+        "num_checkpoints": 13,
+        "peak_storage_gb": 62.5,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 27.7,
+        "pct_overhead": 0.46,
+        "avg_time_lost_per_crash_min": 225.0,
+        "expected_crash_loss_min": 1980.0,
+        "total_cost_min": 2007.7
+      },
+      {
+        "ckpt_every_n_steps": 20,
+        "num_checkpoints": 10,
+        "peak_storage_gb": 62.5,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 21.3,
+        "pct_overhead": 0.36,
+        "avg_time_lost_per_crash_min": 300.0,
+        "expected_crash_loss_min": 2640.0,
+        "total_cost_min": 2661.3
+      },
+      {
+        "ckpt_every_n_steps": 25,
+        "num_checkpoints": 8,
+        "peak_storage_gb": 62.5,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 17.1,
+        "pct_overhead": 0.28,
+        "avg_time_lost_per_crash_min": 375.0,
+        "expected_crash_loss_min": 3300.0,
+        "total_cost_min": 3317.1
+      },
+      {
+        "ckpt_every_n_steps": 50,
+        "num_checkpoints": 4,
+        "peak_storage_gb": 50.0,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 8.5,
+        "pct_overhead": 0.14,
+        "avg_time_lost_per_crash_min": 750.0,
+        "expected_crash_loss_min": 6600.0,
+        "total_cost_min": 6608.5
+      },
+      {
+        "ckpt_every_n_steps": 100,
+        "num_checkpoints": 2,
+        "peak_storage_gb": 25.0,
+        "fits_budget": true,
+        "total_ckpt_overhead_min": 4.3,
+        "pct_overhead": 0.07,
+        "avg_time_lost_per_crash_min": 1500.0,
+        "expected_crash_loss_min": 13200.0,
+        "total_cost_min": 13204.3
+      }
+    ],
+    "optimal": {
+      "ckpt_every_n_steps": 2,
+      "num_checkpoints": 100,
+      "peak_storage_gb": 62.5,
+      "fits_budget": true,
+      "total_ckpt_overhead_min": 213.3,
+      "pct_overhead": 3.56,
+      "avg_time_lost_per_crash_min": 30.0,
+      "expected_crash_loss_min": 264.0,
+      "total_cost_min": 477.3
+    },
+    "recommendation": "Checkpoint every 2 steps: peak 62.5GB, overhead 3.56%, total cost 477.3min"
+  },
+  "recovery_protocols": [
+    {
+      "crash_id": "C01",
+      "crash_name": "GPU OOM during rollout",
+      "category": "hardware",
+      "severity": "MEDIUM",
+      "detection_delay_min": 0.5,
+      "recovery_cost_min": 15,
+      "lost_progress_time_min": 0.0,
+      "total_recovery_time_min": 15.5,
+      "detection_method": "CUDA error: out of memory in verl worker log",
+      "recovery_steps": [
+        "1. Kill verl workers (ray stop)",
+        "2. Reduce rollout batch_size or max_new_tokens",
+        "3. Clear CUDA cache (torch.cuda.empty_cache)",
+        "4. Restart from last checkpoint (no progress loss if within step)"
+      ],
+      "auto_recoverable": true,
+      "requires_checkpoint_rollback": false
+    },
+    {
+      "crash_id": "C02",
+      "crash_name": "NFS stall / cold-start",
+      "category": "network",
+      "severity": "MEDIUM",
+      "detection_delay_min": 2.0,
+      "recovery_cost_min": 30,
+      "lost_progress_time_min": 0.0,
+      "total_recovery_time_min": 32.0,
+      "detection_method": "I/O timeout in checkpoint save, or ray worker heartbeat miss",
+      "recovery_steps": [
+        "1. Wait 60s for NFS to recover",
+        "2. If persists >5min: checkpoint to /tmp (local SSD)",
+        "3. Ray cluster restart if workers died",
+        "4. Resume from last successful checkpoint"
+      ],
+      "auto_recoverable": true,
+      "requires_checkpoint_rollback": false
+    },
+    {
+      "crash_id": "C03",
+      "crash_name": "SGLang server crash",
+      "category": "software",
+      "severity": "HIGH",
+      "detection_delay_min": 1.0,
+      "recovery_cost_min": 20,
+      "lost_progress_time_min": 0.0,
+      "total_recovery_time_min": 21.0,
+      "detection_method": "Health check endpoint timeout, or connection refused",
+      "recovery_steps": [
+        "1. Kill stale SGLang process",
+        "2. Restart SGLang with same config (--port 30000)",
+        "3. Wait for model load (~3min on warm NFS)",
+        "4. Re-run failed rollout batch (no checkpoint needed)"
+      ],
+      "auto_recoverable": false,
+      "requires_checkpoint_rollback": false
+    },
+    {
+      "crash_id": "C04",
+      "crash_name": "Ray worker death",
+      "category": "software",
+      "severity": "HIGH",
+      "detection_delay_min": 0.5,
+      "recovery_cost_min": 25,
+      "lost_progress_time_min": 0.0,
+      "total_recovery_time_min": 25.5,
+      "detection_method": "Ray dashboard shows dead workers, or GCS reports",
+      "recovery_steps": [
+        "1. ray.stop() + ray.start()",
+        "2. Reload checkpoint into new workers",
+        "3. Re-run failed rollout batch",
+        "4. If recurring: reduce num_workers or memory_per_worker"
+      ],
+      "auto_recoverable": false,
+      "requires_checkpoint_rollback": false
+    },
+    {
+      "crash_id": "C05",
+      "crash_name": "Checkpoint corruption",
+      "category": "data",
+      "severity": "CRITICAL",
+      "detection_delay_min": 5.0,
+      "recovery_cost_min": 45,
+      "lost_progress_time_min": 300.0,
+      "total_recovery_time_min": 350.0,
+      "detection_method": "Checkpoint load fails (torch.load raises exception)",
+      "recovery_steps": [
+        "1. Identify last valid checkpoint (verification step)",
+        "2. Delete corrupted checkpoint",
+        "3. Load previous valid checkpoint",
+        "4. Resume training (lose progress between corrupt and valid ckpt)",
+        "5. Enable dual-write (local + NFS) going forward"
+      ],
+      "auto_recoverable": false,
+      "requires_checkpoint_rollback": true
+    },
+    {
+      "crash_id": "C06",
+      "crash_name": "GRPO collapse (R80 modes)",
+      "category": "software",
+      "severity": "HIGH",
+      "detection_delay_min": 3.0,
+      "recovery_cost_min": 40,
+      "lost_progress_time_min": 150.0,
+      "total_recovery_time_min": 193.0,
+      "detection_method": "R80 CollapseDetector: policy_entropy drop, cheat_rate spike",
+      "recovery_steps": [
+        "1. R81 DecisionEngine triggers STOP or ROLLBACK",
+        "2. Load pre-collapse checkpoint (R81: rollback P=0.90)",
+        "3. Adjust hyperparameters (R73: KL coef, clip, lr)",
+        "4. Switch reward arm if needed (R81: SWITCH_ARM P=0.85)",
+        "5. Resume with conservative settings"
+      ],
+      "auto_recoverable": false,
+      "requires_checkpoint_rollback": true
+    },
+    {
+      "crash_id": "C07",
+      "crash_name": "Disk full (checkpoint storage)",
+      "category": "hardware",
+      "severity": "HIGH",
+      "detection_delay_min": 1.0,
+      "recovery_cost_min": 20,
+      "lost_progress_time_min": 0.0,
+      "total_recovery_time_min": 21.0,
+      "detection_method": "OSError: No space left on device during checkpoint save",
+      "recovery_steps": [
+        "1. Delete old checkpoints (keep last 3)",
+        "2. Move checkpoints to /nas_data (20TB available)",
+        "3. Adjust checkpoint retention policy",
+        "4. Resume from last checkpoint"
+      ],
+      "auto_recoverable": false,
+      "requires_checkpoint_rollback": false
+    },
+    {
+      "crash_id": "C08",
+      "crash_name": "Power failure / node reboot",
+      "category": "hardware",
+      "severity": "CRITICAL",
+      "detection_delay_min": 10.0,
+      "recovery_cost_min": 60,
+      "lost_progress_time_min": 300.0,
+      "total_recovery_time_min": 370.0,
+      "detection_method": "SSH connection refused, or monitoring alert",
+      "recovery_steps": [
+        "1. Wait for node to come back up",
+        "2. Verify GPU availability (nvidia-smi)",
+        "3. NFS warm-up (R62: 30min)",
+        "4. Restart SGLang + Ray cluster",
+        "5. Load last valid checkpoint",
+        "6. Resume training"
+      ],
+      "auto_recoverable": false,
+      "requires_checkpoint_rollback": true
+    },
+    {
+      "crash_id": "C09",
+      "crash_name": "EDA sandbox timeout",
+      "category": "software",
+      "severity": "LOW",
+      "detection_delay_min": 2.5,
+      "recovery_cost_min": 10,
+      "lost_progress_time_min": 0.0,
+      "total_recovery_time_min": 12.5,
+      "detection_method": "Rollout timeout in verl, or sandbox process killed",
+      "recovery_steps": [
+        "1. Mark rollout as failed (reward=0)",
+        "2. Continue with remaining rollouts in batch",
+        "3. If >50% rollouts timeout: switch to R0 (no-sandbox) arm"
+      ],
+      "auto_recoverable": true,
+      "requires_checkpoint_rollback": false
+    },
+    {
+      "crash_id": "C10",
+      "crash_name": "Reward hacking detected",
+      "category": "software",
+      "severity": "HIGH",
+      "detection_delay_min": 2.0,
+      "recovery_cost_min": 30,
+      "lost_progress_time_min": 90.0,
+      "total_recovery_time_min": 122.0,
+      "detection_method": "R75 AntiHackMonitor: 8-gram overlap >0.25, or format violation >5%",
+      "recovery_steps": [
+        "1. R81 DecisionEngine triggers SWITCH_ARM (P=0.85)",
+        "2. Switch from current arm to R4 (strict API legality)",
+        "3. If severe: ROLLBACK to pre-hack checkpoint",
+        "4. Log cheat rate in experiment tracker"
+      ],
+      "auto_recoverable": false,
+      "requires_checkpoint_rollback": true
+    },
+    {
+      "crash_id": "C11",
+      "crash_name": "OOM in training (not rollout)",
+      "category": "hardware",
+      "severity": "MEDIUM",
+      "detection_delay_min": 0.5,
+      "recovery_cost_min": 15,
+      "lost_progress_time_min": 0.0,
+      "total_recovery_time_min": 15.5,
+      "detection_method": "CUDA error in training worker log",
+      "recovery_steps": [
+        "1. Reduce micro_batch_size",
+        "2. Enable gradient checkpointing",
+        "3. Restart from last checkpoint"
+      ],
+      "auto_recoverable": true,
+      "requires_checkpoint_rollback": false
+    },
+    {
+      "crash_id": "C12",
+      "crash_name": "Human intervention / maintenance",
+      "category": "human",
+      "severity": "LOW",
+      "detection_delay_min": 0.0,
+      "recovery_cost_min": 120,
+      "lost_progress_time_min": 0.0,
+      "total_recovery_time_min": 120.0,
+      "detection_method": "Operator notification",
+      "recovery_steps": [
+        "1. Save checkpoint before intervention",
+        "2. Stop training cleanly (graceful shutdown)",
+        "3. Perform maintenance",
+        "4. Resume from checkpoint"
+      ],
+      "auto_recoverable": false,
+      "requires_checkpoint_rollback": false
+    }
+  ],
+  "disk_budget": {
+    "checkpoint_size_gb": 12.5,
+    "num_checkpoints": 20,
+    "max_keep": 5,
+    "peak_checkpoint_storage_gb": 62.5,
+    "total_checkpoint_io_gb": 250.0,
+    "overhead_storage_gb": 9.7,
+    "total_peak_gb": 72.2,
+    "root_available_gb": 386,
+    "nas_data_available_gb": 20000,
+    "fits_on_root": true,
+    "fits_on_nas_data": true,
+    "recommendation": "Store checkpoints on /nas_data (20TB free). Peak 72.2GB. Keep last 5 (62.5GB)."
+  },
+  "monte_carlo": {
+    "num_simulations": 1000,
+    "total_steps": 200,
+    "base_run_time_min": 6000.0,
+    "wall_clock": {
+      "p5": 6119.5,
+      "p50": 6357.5,
+      "p95": 6745.0,
+      "mean": 6383.6,
+      "min": 6015.5,
+      "max": 7146.0
+    },
+    "overhead_pct": {
+      "p5": 1.99,
+      "p50": 5.96,
+      "p95": 12.42,
+      "mean": 6.39
+    },
+    "crash_count": {
+      "p5": 4,
+      "p50": 9,
+      "p95": 14,
+      "mean": 8.75,
+      "max": 18
+    },
+    "lost_steps": {
+      "p50": 4,
+      "p95": 13,
+      "mean": 4.61
+    },
+    "crash_type_frequency": {
+      "C09": 1994,
+      "C06": 1415,
+      "C02": 1220,
+      "C04": 991,
+      "C01": 816,
+      "C03": 605,
+      "C10": 528,
+      "C11": 387,
+      "C07": 310,
+      "C12": 205,
+      "C05": 188,
+      "C08": 92
+    },
+    "interpretation": "Over 1000 runs: P50 wall-clock=6358min (106.0h), P50 overhead=6.0%, P50 crashes=9. P95: 6745min (112.4h), 14 crashes."
+  },
+  "checkpoint_verification": {
+    "protocol_name": "Dual-Write + Verify Checkpoint Protocol",
+    "steps": [
+      "1. BEFORE save: record step, optimizer.step(), RNG state to metadata.json",
+      "2. SAVE: write to /tmp (local SSD) first, then copy to /nas_data",
+      "3. VERIFY: load checkpoint metadata, verify SHA256 of model_state_dict",
+      "4. MARK: if verify passes, rename .tmp to .ckpt (atomic)",
+      "5. CLEANUP: delete checkpoints older than max_keep",
+      "6. ON RESUME: verify latest checkpoint; if corrupt, try previous"
+    ],
+    "verification_checks": [
+      "metadata.json exists with step/RNG/optimizer_step",
+      "model.safetensors file size > 1GB (sanity)",
+      "SHA256 of model weights matches metadata",
+      "optimizer.pt loads without error",
+      "scheduler state matches step count"
+    ],
+    "dual_write_strategy": {
+      "primary": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/ckpts/",
+      "secondary": "/tmp/baize_ckpts/",
+      "sync": "copy from /tmp to /nas_data after verify",
+      "fallback": "if /nas_data unavailable, continue from /tmp"
+    }
+  },
+  "resume_protocol": {
+    "protocol_name": "Graceful Shutdown and Resume Protocol",
+    "shutdown_steps": [
+      "1. Receive SIGTERM or operator interrupt",
+      "2. Finish current rollout batch",
+      "3. Save checkpoint with metadata (step, RNG, optimizer, reward_arm)",
+      "4. Verify checkpoint integrity (SHA256)",
+      "5. Stop SGLang server",
+      "6. Stop Ray cluster (ray stop)",
+      "7. Log shutdown reason + checkpoint path"
+    ],
+    "resume_steps": [
+      "1. Check GPU availability (nvidia-smi, need >=4 A40 free)",
+      "2. NFS warm-up (R62: touch model files, import torch, 30min)",
+      "3. Start SGLang server (--port 30000)",
+      "4. Wait for SGLang health check (max 5min)",
+      "5. Start Ray cluster (ray start --head)",
+      "6. Find latest valid checkpoint (verify SHA256)",
+      "7. Load checkpoint: model + optimizer + scheduler + RNG",
+      "8. Restore reward_arm and curriculum_stage from metadata",
+      "9. Resume training from checkpoint step",
+      "10. Log resume event"
+    ],
+    "time_estimates_min": {
+      "shutdown": 5,
+      "gpu_check": 2,
+      "nfs_warmup": 30,
+      "sglang_start": 5,
+      "ray_start": 3,
+      "ckpt_find_verify": 5,
+      "ckpt_load": 10,
+      "total_resume": 55
+    }
+  }
+}

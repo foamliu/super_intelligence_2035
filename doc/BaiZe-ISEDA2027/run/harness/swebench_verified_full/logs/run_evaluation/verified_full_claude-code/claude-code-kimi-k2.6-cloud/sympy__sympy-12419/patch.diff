@@ -1,0 +1,14 @@
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index b4d7598..b9220aa 100644
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -479,7 +479,8 @@ def _entry(self, i, j):
+         if i == j:
+             return S.One
+         else:
+-            return S.Zero
++            from sympy import KroneckerDelta
++            return KroneckerDelta(i, j)
+ 
+     def _eval_determinant(self):
+         return S.One

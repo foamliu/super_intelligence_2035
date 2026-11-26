@@ -1,0 +1,15 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index c913267476..0d52619c62 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1777,6 +1777,10 @@ class Query(BaseExpression):
+ 
+     def set_empty(self):
+         self.where.add(NothingNode(), AND)
++        # Remove the combinator (e.g. union) if any, because it would ignore
++        # the empty where clause.
++        self.combinator = None
++        self.combinator_all = None
+ 
+     def is_empty(self):
+         return any(isinstance(c, NothingNode) for c in self.where.children)

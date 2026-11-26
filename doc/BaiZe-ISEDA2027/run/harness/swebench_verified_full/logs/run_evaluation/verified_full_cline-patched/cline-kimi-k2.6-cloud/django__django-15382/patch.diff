@@ -1,0 +1,62 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 81f8f79c7..ab6b266f0 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -1211,15 +1211,19 @@ class Exists(Subquery):
+ 
+     def as_sql(self, compiler, connection, template=None, **extra_context):
+         query = self.query.exists(using=connection.alias)
+-        sql, params = super().as_sql(
+-            compiler,
+-            connection,
+-            template=template,
+-            query=query,
+-            **extra_context,
+-        )
+-        if self.negated:
+-            sql = 'NOT {}'.format(sql)
++        try:
++            sql, params = super().as_sql(
++                compiler,
++                connection,
++                template=template,
++                query=query,
++                **extra_context,
++            )
++        except EmptyResultSet:
++            sql, params = '0 = 1' if not self.negated else '1 = 1', []
++        else:
++            if self.negated:
++                sql = 'NOT {}'.format(sql)
+         return sql, params
+ 
+     def select_format(self, compiler, sql, params):
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 5cf9dd1ea..b1a066d09 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1905,6 +1905,24 @@ class ExistsTests(TestCase):
+         )
+         self.assertNotIn('ORDER BY', captured_sql)
+ 
++    def test_empty_result_set(self):
++        qs = Experiment.objects.filter(Exists(Experiment.objects.none()))
++        self.assertIn('0 = 1', str(qs.query))
++        self.assertSequenceEqual(qs, [])
++
++    def test_negated_empty_result_set(self):
++        qs = Experiment.objects.filter(~Exists(Experiment.objects.none()))
++        self.assertIn('1 = 1', str(qs.query))
++        self.assertEqual(qs.count(), Experiment.objects.count())
++
++    def test_negated_empty_result_set_with_other_conds(self):
++        qs = Experiment.objects.filter(
++            ~Exists(Experiment.objects.none()),
++            name='foo',
++        )
++        self.assertIn('1 = 1', str(qs.query))
++        self.assertIn('name', str(qs.query))
++        self.assertSequenceEqual(qs, [])
+ 
+ class FieldTransformTests(TestCase):
+ 

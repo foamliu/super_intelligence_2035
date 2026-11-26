@@ -1,0 +1,43 @@
+diff --git a/django/core/management/__init__.py b/django/core/management/__init__.py
+index 1ba093e5..4e30a28f 100644
+--- a/django/core/management/__init__.py
++++ b/django/core/management/__init__.py
+@@ -344,7 +344,12 @@ class ManagementUtility:
+         # Preprocess options to extract --settings and --pythonpath.
+         # These options could affect the commands that are available, so they
+         # must be processed early.
+-        parser = CommandParser(usage='%(prog)s subcommand [options] [args]', add_help=False, allow_abbrev=False)
++        parser = CommandParser(
++            prog=self.prog_name,
++            usage='%(prog)s subcommand [options] [args]',
++            add_help=False,
++            allow_abbrev=False,
++        )
+         parser.add_argument('--settings')
+         parser.add_argument('--pythonpath')
+         parser.add_argument('args', nargs='*')  # catch-all
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index 9262e271..ada8191b 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -358,6 +358,20 @@ class CommandTests(SimpleTestCase):
+         parser = BaseCommand().create_parser('prog_name', 'subcommand', epilog=epilog)
+         self.assertEqual(parser.epilog, epilog)
+ 
++    def test_management_utility_prog_name(self):
++        """ManagementUtility passes prog_name to CommandParser."""
++        with mock.patch('django.core.management.CommandParser') as mocked_parser:
++            options_mock = mock.Mock(args=[], settings=None, pythonpath=None)
++            mocked_parser.return_value.parse_known_args.return_value = (options_mock, [])
++            utility = management.ManagementUtility(['custom_prog', 'help'])
++            utility.execute()
++            mocked_parser.assert_called_once_with(
++                prog='custom_prog',
++                usage='%(prog)s subcommand [options] [args]',
++                add_help=False,
++                allow_abbrev=False,
++            )
++
+     def test_outputwrapper_flush(self):
+         out = StringIO()
+         with mock.patch.object(out, 'flush') as mocked_flush:

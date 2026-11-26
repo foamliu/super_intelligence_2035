@@ -1,0 +1,40 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 5e3c7cab82..cbf4fd8296 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -533,6 +533,7 @@ _connector_combinations = [
+             Combinable.SUB,
+             Combinable.MUL,
+             Combinable.DIV,
++            Combinable.MOD,
+         )
+     },
+     # Bitwise operators.
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 39e6c18b1a..eb5397fdf1 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1350,6 +1350,23 @@ class ExpressionsNumericTests(TestCase):
+         n.refresh_from_db()
+         self.assertEqual(n.decimal_value, Decimal("0.1"))
+ 
++    def test_modulo_mixed_types(self):
++        Number.objects.create(integer=25, float=25.5, decimal_value=Decimal("25.5"))
++        tests = [
++            (F("decimal_value") % F("integer"), DecimalField),
++            (F("integer") % F("decimal_value"), DecimalField),
++            (F("integer") % F("float"), FloatField),
++            (F("float") % F("integer"), FloatField),
++        ]
++        for expression, output_field_type in tests:
++            with self.subTest(expression=expression):
++                qs = Number.objects.annotate(modulo=expression)
++                self.assertIsInstance(
++                    qs.query.annotations["modulo"].output_field, output_field_type
++                )
++                # The query must be executable without a FieldError.
++                self.assertEqual(len(qs), 4)
++
+ 
+ class ExpressionOperatorTests(TestCase):
+     @classmethod

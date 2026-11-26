@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe MLLM 桥接 — Vision Tower HF Wrapper 设计与 CPU 单测报告</title>
+<style>
+:root{--accent:#2563eb;--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--code-bg:#1e293b;--code-fg:#e2e8f0;--green:#16a34a;--red:#dc2626;--amber:#d97706;--text:#1e293b;--muted:#64748b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Noto Sans SC","Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:2rem}
+h1{font-size:1.6rem;color:var(--accent);margin-bottom:.3rem}
+h2{font-size:1.25rem;margin:2rem 0 .8rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent)}
+h3{font-size:1.05rem;margin:1.2rem 0 .5rem}
+.meta{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:.5rem;padding:1.2rem;margin-bottom:1rem}
+table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.88rem}
+th,td{padding:.4rem .6rem;border:1px solid var(--border);text-align:left}
+th{background:#f1f5f9;font-weight:600}
+tr:nth-child(even){background:#f8fafc}
+code{background:#f1f5f9;padding:.1rem .3rem;border-radius:.2rem;font-family:"JetBrains Mono","Fira Code",monospace;font-size:.85rem}
+pre{background:var(--code-bg);color:var(--code-fg);padding:1rem;border-radius:.4rem;overflow-x:auto;font-size:.82rem;line-height:1.5;margin:.8rem 0}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:.3rem;font-size:.78rem;font-weight:600}
+.badge-green{background:#dcfce7;color:var(--green)}
+.badge-red{background:#fee2e2;color:var(--red)}
+.badge-amber{background:#fef3c7;color:var(--amber)}
+.badge-blue{background:#dbeafe;color:var(--accent)}
+.note{background:#fef9c3;border-left:4px solid var(--amber);padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem}
+.warn{background:#fee2e2;border-left:4px solid var(--red);padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem}
+.ok{background:#dcfce7;border-left:4px solid var(--green);padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem}
+.toc{background:#eff6ff;border:1px solid #bfdbfe;border-radius:.4rem;padding:1rem 1.5rem;margin-bottom:1.5rem}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.toc ul{list-style:none}
+.toc li{padding:.15rem 0}
+</style>
+</head>
+<body>
+<h1>BaiZe MLLM 桥接 — Vision Tower HF Wrapper 设计与 CPU 单测报告</h1>
+<div class="meta">
+生成时间：2026-10-14 · 线：vision · commit 前缀：<code>vision mllm-bridge:</code><br>
+对应运维指令：2026-10-14「🔧【放行并行】ArmC 期间先写 BaiZe ViT → HF wrapper + 自定义 LLaVA modeling」<br>
+前置报告：<code>report_vision_mllm_stage4_feasibility_zh.html</code>（§4.3/§7 判定桥接 = 🔴 R1 最大工程量）
+</div>
+<div class="toc">
+<strong>目录</strong>
+<ul>
+<li>1. <a href="#s1">交付物总览</a></li>
+<li>2. <a href="#s2">Wrapper 架构设计</a></li>
+<li>3. <a href="#s3">参数名映射表</a></li>
+<li>4. <a href="#s4">CPU 单测结果（原始输出）</a></li>
+<li>5. <a href="#s5">与 RICE ViT 的差异处理</a></li>
+<li>6. <a href="#s6">自定义 LLaVA Modeling</a></li>
+<li>7. <a href="#s7">GPU Smoke Test 前置清单</a></li>
+<li>8. <a href="#s8">剩余风险与建议</a></li>
+</ul>
+</div>
+<h2 id="s1">1. 交付物总览</h2>
+<div class="card">
+<table>
+<tr><th>#</th><th>文件</th><th>大小</th><th>状态</th></tr>
+<tr><td>1</td><td><code>mllm_bridge/configuration_baize_vision.py</code></td><td>2.6KB</td><td><span class="badge badge-green">✅ 完成</span></td></tr>
+<tr><td>2</td><td><code>mllm_bridge/modeling_baize_vision.py</code></td><td>10.2KB</td><td><span class="badge badge-green">✅ 完成 + 测试通过</span></td></tr>
+<tr><td>3</td><td><code>mllm_bridge/config.json</code></td><td>401B</td><td><span class="badge badge-green">✅ 完成</span></td></tr>
+<tr><td>4</td><td><code>mllm_bridge/modeling_llava_baize.py</code></td><td>7.6KB</td><td><span class="badge badge-green">✅ 完成</span></td></tr>
+<tr><td>5</td><td><code>mllm_bridge/test_wrapper_cpu.py</code></td><td>4.7KB</td><td><span class="badge badge-green">✅ 5/5 PASSED</span></td></tr>
+<tr><td>6</td><td><code>mllm_bridge/README.md</code></td><td>3.9KB</td><td><span class="badge badge-green">✅ 完成</span></td></tr>
+<tr><td>7</td><td><code>mllm_bridge/__init__.py</code></td><td>716B</td><td><span class="badge badge-green">✅ 完成</span></td></tr>
+<tr><td>8</td><td><code>reports/report_vision_mllm_bridge_zh.html</code></td><td>本文档</td><td><span class="badge badge-green">✅ 完成</span></td></tr>
+</table>
+<div class="ok">
+<strong>关键结论</strong>：Wrapper 与原始 <code>OpenVision2.forward(return_patch=True)</code>
+<strong>逐元素 bit-exact 一致</strong>（max abs diff = 0.00e+00），
+<code>strict=True</code> 载入 277/277 keys 全部匹配。封装无损。
+</div>
+</div>
+
+<h2 id="s2">2. Wrapper 架构设计</h2>
+<div class="card">
+<h3>2.1 设计目标</h3>
+<p>将 <code>run/vision/models.py:OpenVision2</code> 的 from-scratch ViT 封装为 HuggingFace
+<code>PreTrainedModel</code> 子类（<code>model_type: baize_vision</code>），使其可通过
+<code>AutoModel.from_pretrained()</code> 加载，无需依赖训练代码库。</p>
+<h3>2.2 架构参数（④-4ep checkpoint 实测）</h3>
+<table>
+<tr><th>参数</th><th>值</th><th>来源</th><th>备注</th></tr>
+<tr><td><code>image_size</code></td><td>224</td><td>ckpt config</td><td>Stage-1 固定</td></tr>
+<tr><td><code>patch_size</code></td><td>16</td><td>ckpt config</td><td></td></tr>
+<tr><td><code>width</code></td><td><strong>512</strong></td><td>ckpt config</td><td>OpenVision2 类默认 1024，④-4ep 实际用 512</td></tr>
+<tr><td><code>depth</code></td><td>30</td><td>ckpt config</td><td></td></tr>
+<tr><td><code>heads</code></td><td>8</td><td><code>512//64</code></td><td>ckpt config 中 <code>heads=None</code>，自动推导</td></tr>
+<tr><td><code>mlp_dim</code></td><td>2048</td><td><code>4×512</code></td><td>ckpt config 中 <code>mlp_dim=None</code>，自动推导</td></tr>
+<tr><td><code>embed_dim</code></td><td>768</td><td>ckpt config</td><td>ReadoutHead 输出维（对齐 CLIP-L/14-336）</td></tr>
+<tr><td><code>spatial_merge_size</code></td><td>1</td><td>硬编码</td><td>无空间合并（196 tokens 直出）</td></tr>
+<tr><td><code>num_patches</code></td><td>196</td><td><code>(224/16)²</code></td><td></td></tr>
+<tr><td><code>total_params</code></td><td>126.78M</td><td>实测</td><td>含 ReadoutHead ~0.39M</td></tr>
+</table>
+<h3>2.3 Forward 路径</h3>
+<pre>pixel_values [B, 3, 224, 224]
+  → PatchEmbed (Conv2d + learned pos)     → [B, 196, 512]
+  → 30 × AttentionBlock (norm→attn→norm→SwiGLU)
+  → final LayerNorm                        → [B, 196, 512]  ← patch features (默认返回)
+  → [ReadoutHead: mean→norm→proj]          → [B, 768]       ← 仅 return_pooled=True
+
+默认输出: patch_features [B, 196, 512]
+ReadoutHead 权重被加载 (strict=True) 但 forward 中跳过</pre>
+<div class="note">
+<strong>为什么跳过 ReadoutHead？</strong>
+ReadoutHead 是对比学习专用（mean-pool → 768-dim → 与 CLIP 文本塔对齐）。
+MLLM 桥接需要 <strong>patch-level 特征</strong>（每个 patch 一个 token），
+而非 pooled 全局向量。因此 forward 取 <code>self.norm(x)</code> 之后的 patch 特征，跳过 <code>self.head(x)</code>。
+</div>
+</div>
+<h2 id="s3">3. 参数名映射表</h2>
+<div class="card">
+<p>④-4ep checkpoint 的 <code>state_dict</code>（key <code>'vision'</code>）共 277 个键，
+与 wrapper 参数名 <strong>完全一致（identity 映射）</strong>，无需任何重命名。
+这是因为 wrapper 从 <code>models.py</code> 原样复制了所有子模块名
+（<code>embed</code>, <code>blocks</code>, <code>norm</code>, <code>head</code>）。</p>
+<h3>3.1 键模式总览</h3>
+<table>
+<tr><th>Checkpoint 键模式</th><th>Wrapper 对应参数</th><th>数量</th><th>映射</th></tr>
+<tr><td><code>embed.pos</code></td><td><code>self.embed.pos</code></td><td>1</td><td>identity</td></tr>
+<tr><td><code>embed.conv.weight</code></td><td><code>self.embed.conv.weight</code></td><td>1</td><td>identity</td></tr>
+<tr><td><code>blocks.{i}.norm1.{w,b}</code></td><td><code>self.blocks[i].norm1.{w,b}</code></td><td>60</td><td>identity</td></tr>
+<tr><td><code>blocks.{i}.attn.qkv.weight</code></td><td><code>self.blocks[i].attn.qkv.weight</code></td><td>30</td><td>identity</td></tr>
+<tr><td><code>blocks.{i}.attn.proj.weight</code></td><td><code>self.blocks[i].attn.proj.weight</code></td><td>30</td><td>identity</td></tr>
+<tr><td><code>blocks.{i}.norm2.{w,b}</code></td><td><code>self.blocks[i].norm2.{w,b}</code></td><td>60</td><td>identity</td></tr>
+<tr><td><code>blocks.{i}.mlp.{gate,up,down}.weight</code></td><td><code>self.blocks[i].mlp.{gate,up,down}.weight</code></td><td>90</td><td>identity</td></tr>
+<tr><td><code>norm.{w,b}</code></td><td><code>self.norm.{w,b}</code></td><td>2</td><td>identity</td></tr>
+<tr><td><code>head.norm.{w,b}</code></td><td><code>self.head.norm.{w,b}</code></td><td>2</td><td>identity</td></tr>
+<tr><td><code>head.proj.weight</code></td><td><code>self.head.proj.weight</code></td><td>1</td><td>identity</td></tr>
+<tr><th colspan="2">合计</th><th>277</th><td>—</td></tr>
+</table>
+<h3>3.2 前缀剥离逻辑</h3>
+<p>BaiZe 自有 checkpoint <strong>无前缀</strong>。但 <code>from_baize_checkpoint</code> 兼容官方 OV2 的
+<code>visual.</code> 前缀和 DDP 的 <code>module.</code> 前缀（参照 <code>r13_eval_official.py</code> L65-66）：</p>
+<pre>if any(k.startswith("visual.") for k in sd):
+    sd = {k.replace("visual.", "", 1): v for k, v in sd.items() if k.startswith("visual.")}
+if any(k.startswith("module.") for k in sd):
+    sd = {k.replace("module.", "", 1): v for k, v in sd.items()}</pre>
+</div>
+
+<h2 id="s4">4. CPU 单测结果（原始输出）</h2>
+<div class="card">
+<p>运行命令：<code>cd run/vision && python mllm_bridge/test_wrapper_cpu.py</code></p>
+<p>环境：Python 3.10 / torch 2.8.0+cu128 / transformers 4.56.1 · <strong>纯 CPU，不占 GPU</strong></p>
+<pre>$ python mllm_bridge/test_wrapper_cpu.py
+
+============================================================
+BaiZe Vision Tower HF Wrapper -- CPU Unit Tests
+Checkpoint: /nas_train/.../scaling_E4_4ep_ov2_w512_d30_p16_224/vision.pt
+============================================================
+
+Test 1: Checkpoint loading (strict=True)
+[BaizeVision] load_state_dict(strict=True): matched=277/277, missing=[], unexpected=[]
+  Config: w=512 d=30 h=8 m=2048
+  Total params: 126.78M
+  PASSED
+
+Test 2: Forward shape
+  Input:  (1, 3, 224, 224) -> Output: (1, 196, 512)
+  PASSED
+
+Test 3: Equivalence with original OpenVision2
+  Max abs diff: 0.00e+00
+  PASSED (torch.allclose, atol=1e-6)
+
+Test 4: Projector [1,196,512] -> [1,196,2560]
+  Input: (1, 196, 512) -> Output: (1, 196, 2560)
+  Projector params: 7.87M
+  PASSED
+
+Test 5: End-to-end vision + projector
+  Image: (1, 3, 224, 224) -> Patch: (1, 196, 512) -> Embeds: (1, 196, 2560)
+  PASSED
+
+============================================================
+ALL TESTS PASSED
+============================================================</pre>
+<div class="ok">
+<strong>5/5 PASSED</strong> · Test 3 的 max abs diff = 0.00e+00 证明 wrapper 与原始
+<code>OpenVision2.forward(return_patch=True)</code> <strong>bit-exact 等价</strong>，封装零损耗。
+</div>
+<table>
+<tr><th>#</th><th>测试名</th><th>断言</th><th>结果</th></tr>
+<tr><td>1</td><td>Checkpoint loading</td><td><code>strict=True</code> 无 missing/unexpected</td><td><span class="badge badge-green">PASS</span></td></tr>
+<tr><td>2</td><td>Forward shape</td><td><code>[1,3,224,224]→[1,196,512]</code></td><td><span class="badge badge-green">PASS</span></td></tr>
+<tr><td>3</td><td>Equivalence</td><td><code>torch.allclose(atol=1e-6)</code></td><td><span class="badge badge-green">PASS (diff=0)</span></td></tr>
+<tr><td>4</td><td>Projector shape</td><td><code>[1,196,512]→[1,196,2560]</code></td><td><span class="badge badge-green">PASS</span></td></tr>
+<tr><td>5</td><td>End-to-end</td><td><code>[1,3,224,224]→[1,196,2560]</code></td><td><span class="badge badge-green">PASS</span></td></tr>
+</table>
+</div>
+<h2 id="s5">5. 与 RICE ViT 的差异处理</h2>
+<div class="card">
+<table>
+<tr><th>维度</th><th>RICE ViT (LLaVA-OV1.5)</th><th>BaiZe OpenVision2</th><th>处理方式</th></tr>
+<tr><td>架构</td><td>patch14/d24/w1024/h16 · GELU MLP</td><td>patch16/d30/w512/h8 · SwiGLU MLP</td><td>Wrapper 原样复现 SwiGLU 架构</td></tr>
+<tr><td>分辨率</td><td>336px（动态）</td><td>224px（固定 Stage-1）</td><td>Stage-1 固定 224；高分辨率留待 Stage-2+</td></tr>
+<tr><td>Patch tokens</td><td>576 (24²) → merge → 144</td><td>196 (14²) → <strong>无 merge</strong> → 196</td><td><code>spatial_merge_size=1</code>，直出</td></tr>
+<tr><td>Spatial merge</td><td>有（size=2，576/4=144）</td><td><strong>无</strong>（size=1）</td><td>config + modeling 均跳过 merge</td></tr>
+<tr><td>CLS token</td><td>有（prepended）</td><td>无（mean-pool 在 ReadoutHead 内）</td><td>MLLM forward 不用 CLS，直接取 196 patch tokens</td></tr>
+<tr><td>Projector</td><td>RicePatchMerger（vision tower 内）</td><td>独立 2-layer MLP（512→2560→2560）</td><td>见 §6 <code>BaizeMultiModalProjector</code></td></tr>
+<tr><td>ReadoutHead</td><td>不适用</td><td>存在（对比学习用），MLLM forward 跳过</td><td>权重加载（strict=True）但 forward 不调用</td></tr>
+<tr><td>特征维度</td><td>1024 → 2560</td><td>512 → 2560</td><td>Projector 输入维 = 512</td></tr>
+<tr><td>参数量</td><td>~304M (vision)</td><td>126.78M + 7.87M (projector)</td><td>显著更轻量</td></tr>
+</table>
+<div class="note">
+<strong>Spatial merge 跳过的原因</strong>：RICE ViT 在 336px 输出 576 patch tokens，
+经 <code>spatial_merge_size=2</code> 合并为 144。BaiZe 在 224px 仅 196 tokens，
+已足够紧凑（比 RICE 144 多 36%），无需合并。如未来升级到 336px（576 tokens），可考虑启用 merge。
+</div>
+</div>
+
+<h2 id="s6">6. 自定义 LLaVA Modeling</h2>
+<div class="card">
+<h3>6.1 组件</h3>
+<table>
+<tr><th>类名</th><th>功能</th><th>关键参数</th></tr>
+<tr><td><code>BaizeMultiModalProjector</code></td><td>2-layer MLP 投影器</td><td>Linear(512→2560) → GELU → Linear(2560→2560) · 7.87M</td></tr>
+<tr><td><code>LlavaBaizeModel</code></td><td>组合 vision + projector + LLM</td><td><code>get_image_features()</code> → [B, 196, 2560]</td></tr>
+<tr><td><code>LlavaBaizeForConditionalGeneration</code></td><td>HF 兼容 forward</td><td>image_token scatter → LLM forward</td></tr>
+</table>
+<h3>6.2 Forward 流程</h3>
+<pre>input_ids [B, seq_len] (含 image_token_id=151655 标记位)
+  ↓ LLM embed → inputs_embeds [B, seq_len, 2560]
+  ↓ vision_tower(pixel_values) → patch [num_img, 196, 512]
+  ↓ projector(patch) → image_embeds [num_img, 196, 2560]
+  ↓ scatter: inputs_embeds[image_token_pos] = image_embeds
+  ↓ LLM forward(inputs_embeds, attention_mask, labels) → CausalLMOutput</pre>
+<h3>6.3 Image token 占位</h3>
+<p>每图像在 <code>input_ids</code> 中占 <strong>196 个</strong> <code>image_token_id</code>（= patch 数）。
+<code>image_token_id = 151655</code>（与 LLaVA-OV1.5 一致）。
+<code>masked_scatter</code> 将 196×2560 的 image embeddings 填入对应位置。</p>
+<h3>6.4 Projector 设计依据</h3>
+<div class="note">
+采用 LLaVA-1.5 式 2-layer MLP（而非单层 Linear），原因：
+① BaiZe vision 输出 512-dim → Qwen3-4B 需要 2560-dim，维度差 5×，单层 Linear 信息损失大；
+② 2-layer MLP 是 LLaVA-1.5/OV1.5 的标准做法，经验上优于单层；
+③ 7.87M params 相对 126.78M vision + 4B LLM 可忽略。
+</div>
+</div>
+<h2 id="s7">7. GPU Smoke Test 前置清单</h2>
+<div class="card">
+<p>以下前置条件满足后，可在 GPU 空窗期运行 100 步 smoke test。
+<strong>当前 ArmC 训练占用 .12 全部 8×H100，GPU smoke 须等 ArmC + eval chain 完成后进行。</strong></p>
+<table>
+<tr><th>#</th><th>前置项</th><th>状态</th><th>备注</th></tr>
+<tr><td>1</td><td>ArmC 训练完成 (step 154500)</td><td><span class="badge badge-amber">进行中 76.9%</span></td><td>ETA ~23:00 Oct14</td></tr>
+<tr><td>2</td><td>ArmC eval chain 完成 (3-seed ProtB)</td><td><span class="badge badge-amber">等待中</span></td><td>PID 3698490</td></tr>
+<tr><td>3</td><td>.12 GPU 空闲确认</td><td><span class="badge badge-red">待 ArmC 释放</span></td><td>nvidia-smi 确认 0%</td></tr>
+<tr><td>4</td><td>Qwen3-4B 模型在盘</td><td><span class="badge badge-green">✅ 已确认</span></td><td>8GB HF safetensors</td></tr>
+<tr><td>5</td><td>Stage-1 数据在盘</td><td><span class="badge badge-green">✅ 已确认</span></td><td>LLaVA-558K-Webdataset (15GB)</td></tr>
+<tr><td>6</td><td>ms-swift 已装</td><td><span class="badge badge-green">✅ v4.5.3</span></td><td>含 llava_onevision1_5 模板</td></tr>
+<tr><td>7</td><td>Vision wrapper 代码就绪</td><td><span class="badge badge-green">✅ 本轮交付</span></td><td>5/5 CPU 测试通过</td></tr>
+<tr><td>8</td><td>HF model 目录组装</td><td><span class="badge badge-amber">待做</span></td><td>创建 baize_llava/ 目录</td></tr>
+<tr><td>9</td><td>ms-swift template 适配</td><td><span class="badge badge-amber">待做</span></td><td>确认 196-token 占位</td></tr>
+</table>
+<h3>Smoke test 计划（GPU 空窗时执行）</h3>
+<pre># 1. 组装 HF model 目录
+mkdir -p baize_llava
+cp mllm_bridge/config.json baize_llava/vision_config.json
+cp mllm_bridge/modeling_baize_vision.py baize_llava/
+cp mllm_bridge/configuration_baize_vision.py baize_llava/
+# 创建 baize_llava/config.json (合并 vision config + Qwen3 LLM config)
+
+# 2. 100 步 smoke test
+swift sft --model baize_llava --template llava_onevision1_5 \
+  --train_type lora --dataset .../LLaVA-558K-Webdataset \
+  --max_steps 100 --output_dir /tmp/baize_llava_smoke
+
+# 3. 验证：loss 下降、无 OOM、image tokens 正确注入</pre>
+</div>
+
+<h2 id="s8">8. 剩余风险与建议</h2>
+<div class="card">
+<table>
+<tr><th>级别</th><th>风险</th><th>依据</th><th>缓解建议</th></tr>
+<tr><td><span class="badge badge-amber">🟠 需解决</span></td>
+<td>ms-swift <code>llava_onevision1_5</code> 模板硬编码 144 tokens（RICE merge 后），与 BaiZe 196 tokens 不匹配</td><td>可行性报告 §4.3</td><td>自定义 template 或 patch ms-swift image token 计数</td></tr>
+<tr><td><span class="badge badge-amber">🟠 需解决</span></td><td>HF model 目录尚未组装（vision config + LLM config 合并）</td><td>ms-swift 加载机制</td><td>GPU smoke test 前完成</td></tr>
+<tr><td><span class="badge badge-amber">🟠 需解决</span></td><td>Projector 权重未初始化（随机初始化，需 Stage-1 训练）</td><td>Stage-1 = projector 训练</td><td>正常训练即可</td></tr>
+<tr><td><span class="badge badge-amber">🟠 需解决</span></td><td>224px 对文档/版图 VQA 可能不足</td><td>196 tokens vs 144 → 更多但分辨率更低</td><td>Stage-2 可考虑 336px + merge</td></tr>
+<tr><td><span class="badge badge-green">🟢 顺利</span></td><td>Wrapper 与原始模型 bit-exact 等价</td><td>Test 3: diff=0.00e+00</td><td>无额外风险</td></tr>
+<tr><td><span class="badge badge-green">🟢 顺利</span></td><td>strict=True 277/277 全匹配</td><td>Test 1 输出</td><td>无额外风险</td></tr>
+<tr><td><span class="badge badge-green">🟢 顺利</span></td><td>纯 CPU 开发，不干扰 ArmC 训练</td><td>本轮零 GPU 占用</td><td>已验证（ArmC GPU 100% 维持）</td></tr>
+</table>
+<h3>与可行性报告的对应关系</h3>
+<p>可行性报告 <code>report_vision_mllm_stage4_feasibility_zh.html</code> §4.3 判定"视觉编码器桥接" = 🔴 R1 最大工程量（~1-2 天），
+§8.2/§8.3 明确 #3#4 为纯 CPU 工作。本轮 <strong>已完成 #3（wrapper）+ #4（LLaVA modeling）的全部代码编写与 CPU 验证</strong>，
+覆盖报告中"未开始"状态 → 现状为"代码就绪，待 GPU smoke test"。</p>
+<div class="ok">
+<strong>总结</strong>：BaiZe vision tower HF wrapper + 自定义 LLaVA modeling 已完成，
+CPU 单测 5/5 通过（含 bit-exact 等价验证）。剩余工作 = GPU smoke test（需 ArmC 释放 GPU）
++ HF model 目录组装 + ms-swift template 适配。这些均为 GPU 空窗期任务，不阻塞当前 ArmC 训练。
+</div>
+</div>
+</body>
+</html>

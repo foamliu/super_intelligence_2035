@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 工作汇报 · 2026-10-01</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 工作汇报 · 2026-10-01</h1>
+  <div class="sub">论文修复与结构补全 · 三个自动化 agent 的派活 · 数据准备方案与任务书</div>
+  <div class="meta">
+    <span>📅 2026-10-01 09:00</span>
+    <span>📦 仓库 <code>foamliu/super_intelligence_2035</code> @ <code>main</code></span>
+    <span>🎯 ISEDA 2027 投稿截止 ≈ 2027-02-01（余 ≈ 4 个月）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <strong>本次会话完成四件事：</strong>
+  ① 把论文从"<strong>编译不出来</strong>"修到 <strong>0 错误、7 页、0 排版溢出</strong>；
+  ② 把三个空壳章节（(ii)(iv)(v)）<strong>填成完整的设计/协议章节</strong>（不编造任何数字）；
+  ③ 按 4 个月时间线<strong>重排了优先级</strong>，并给 <strong>3 个 agent</strong> 派了活；
+  ④ 新增 <strong>数据准备 agent</strong>（方案 + 任务书 + loop）。
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="v">12</div><div class="l">本次会话 commit 数</div></div>
+  <div class="kpi"><div class="v">0</div><div class="l">论文编译错误（修复前 101）</div></div>
+  <div class="kpi"><div class="v">3</div><div class="l">活跃 agent（2 运行 + 1 待启动）</div></div>
+  <div class="kpi"><div class="v">4 个月</div><div class="l">距 ISEDA 2027 投稿</div></div>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">摘要：本次会话做了什么</a></li>
+    <li><a href="#s2">论文改动（修复 + 补全）</a></li>
+    <li><a href="#s3">三个 agent 的派活</a></li>
+    <li><a href="#s4">发现并修复的问题（含我方引入的错误）</a></li>
+    <li><a href="#s5">时间线校准：三个被推翻的早期判断</a></li>
+    <li><a href="#s6">当前状态与下一步清单</a></li>
+    <li><a href="#s7">附录：commit 清单</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="s1"><span class="no">1</span>摘要：本次会话做了什么</h2>
+
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">🔧 论文</h3>
+    <ul>
+      <li>论文此前<strong>根本编译不出来</strong>（101 个错误 + 致命错误）→ 修到 <strong>0 错误</strong></li>
+      <li>三个空壳章节 → 完整设计/协议章节，<strong>仍为 7 页</strong></li>
+      <li>投稿匿名化（ISEDA 要求无作者信息）</li>
+      <li>两处既有排版溢出（61.5pt / 77.3pt）→ <strong>0</strong></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">🤖 Agent</h3>
+    <ul>
+      <li><strong>vision</strong>：派 R2（修 §6 三处硬伤）</li>
+      <li><strong>pretrain</strong>：派 R2（加固三处软结论）</li>
+      <li><strong>data</strong>：<strong>新建</strong>——方案 + 任务书 + loop</li>
+      <li>统一了三个 agent 的 git 同步规则与 NFS 争用避让</li>
+    </ul>
+  </div>
+</div>
+
+<p><strong>贯穿本次会话的一条主线</strong>：把"看起来完成"的东西逐项验证，把"假设成立"的地方逐条查证——
+结果在论文、脚本、HTML、甚至我自己的改动里都找出了实际问题。</p>
+
+<h2 class="sec" id="s2"><span class="no">2</span>论文改动（修复 + 补全）</h2>
+
+<table>
+  <tr><th>#</th><th>改动</th><th>commit</th><th>具体做了什么</th></tr>
+  <tr>
+    <td>1</td>
+    <td><strong>修复致命编译错误</strong> <span class="badge b-no">最关键</span></td>
+    <td><code>c1fd532</code></td>
+    <td>根因：<code>6_vision_encoder.tex</code> 的 <code>tab:visres</code> 有 <strong>6 行行尾是单个 <code>\</code> 而不是 <code>\\</code></strong>，
+        导致表格行永不结束、每个 <code>&amp;</code> 都变成多余列分隔符，最终 <code>\end{tabular}</code> 处致命失败。
+        修后：101 错误 → <strong>0</strong>，无 PDF → <strong>7 页</strong></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>清除 μP 遗留</td>
+    <td><code>c1fd532</code></td>
+    <td>正文 2 处 + <code>reference.bib</code> 1 条（删后无悬空引用）+ 根目录计划 HTML 1 处</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Nemotron-H 商品名<strong>分层淡化</strong></td>
+    <td><code>e1dab26</code></td>
+    <td>摘要/引言/结论去掉商品名；<b>§3 保留一次来源交代</b> + 新增"BaiZe is not a Nemotron-H model"差异声明；
+        相关工作不动（那是别人的工作）</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>decode 10.3× <strong>加限定</strong></td>
+    <td><code>dc2e59b</code></td>
+    <td>该数字是 Megatron-Core 直驱（无 CUDA graph）下 dense 侧 CPU-launch-bound 的产物，
+        论文原先<strong>一字未提</strong>。已在表格 caption 写清机制与"会收窄"的结论</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>图片归位 <code>figures/</code></td>
+    <td><code>dc2e59b</code></td>
+    <td>原先用 <code>\includegraphics{../s5_01_loss_curve.png}</code> 引用目录外文件 → 打包即断。现已自包含</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>投稿<strong>匿名化</strong></td>
+    <td><code>f7746df</code></td>
+    <td>真实署名（姓名/单位/邮箱）注释掉 + <code>\author{}</code>；出 camera-ready 时取消注释即可恢复。
+        顺带因标题区变矮，页数 6 → 5</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td><strong>填实三个空壳章节</strong> <span class="badge b-info">主线</span></td>
+    <td><code>cb924d0</code></td>
+    <td>(ii) 338B→4.3KB、(iv) 357B→2.5KB、(v) 368B→2.0KB。写成<strong>完整设计/协议</strong>：
+        奖励 4 臂表、MLLM 三任务族、领域适配边界与 on-prem 论证。<strong>不编造任何结果数字</strong></td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>修两处既有 overfull hbox</td>
+    <td><code>cb924d0</code></td>
+    <td>61.5pt / 77.3pt → 0（缩表头 + <code>\small</code> + 收 <code>\tabcolsep</code>，信息移入 caption 不丢失）</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td>修陈旧 <code>[TBD]</code> 表述</td>
+    <td><code>cb924d0</code></td>
+    <td>摘要/引言/结论原写"measurements are reported as [TBD]"——但 §4 早有实测数字，
+        <strong>结论在否认正文</strong>。已改为陈述真实结果；<code>S1--S4</code> → <code>S1--S5</code></td>
+  </tr>
+</table>
+
+<p><b>当前论文状态</b>：<strong>7 页 / 0 错误 / 0 未定义引用 / 0 overfull box</strong>；残留 <code>[TBD]</code> <strong>4 处</strong>，
+全部位于 (ii)(iv)(v) 的"结果待测"位置——<b>按新时间线这是预期状态</b>。</p>
+
+<h2 class="sec" id="s3"><span class="no">3</span>三个 agent 的派活</h2>
+
+<table>
+  <tr><th>Agent</th><th>机器</th><th>派了什么</th><th>为什么做这个</th></tr>
+  <tr>
+    <td><b>vision</b><br><span class="badge b-ok">运行中</span></td>
+    <td>agent @2.29<br>训练 @<code>10.239.2.12</code></td>
+    <td>
+      <b>R2-0</b> 数字核对 · <b>R2-1</b> 分辨率消融重跑（lr=3e-3）·
+      <b>R2-2</b> 目标函数改用检索 R@K · <b>R2-3</b> 架构×分辨率矩阵 ·
+      <b>R2-4</b> 干净吞吐复测 · <b>R2-5</b> MambaEye batch=1 诊断
+    </td>
+    <td>§6 有三处硬伤：① 分辨率表六格<strong>完全相同</strong>（LR 坍缩伪影，零信息量）；
+        ② 目标函数两列 loss <strong>不可跨目标比较</strong>；
+        ③ "loss 与架构无关"的结论只在 196 token 下成立，<strong>结论自证</strong></td>
+  </tr>
+  <tr>
+    <td><b>pretrain</b><br><span class="badge b-ok">运行中</span></td>
+    <td>agent @2.29<br>训练 @<code>10.239.2.29</code></td>
+    <td>
+      <b>P-1</b> LR 网格向上扩展（1.5e-3/2e-3/3e-3）·
+      <b>P-2</b> 补 seed 到 n=5 · <b>P-3</b> 架构对比 1000→5000 步
+    </td>
+    <td>三处软结论：① LR 最优解<strong>落在网格边界上</strong>（从未被框住）；
+        ② "narrowly beats" 的 <strong>Δ≈0.003 比噪声 σ=0.0469 小一个量级</strong>；
+        ③ "hybrid 更优"的架构选型只靠 <strong>24.6M token</strong> 的早期快照</td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><span class="badge b-warn">待启动</span></td>
+    <td>NFS 读写</td>
+    <td>
+      <b>phase0</b> 实测盘点 · <b>phase5</b> 污染隔离（<b>先立闸</b>）· <b>phase1</b> 完整性校验 ·
+      <b>phase2</b> 通用文本 <code>.bin/.idx</code> · <b>phase3</b> EDA 领域语料排查 ·
+      <b>phase4</b> 多模态打包 · <b>phase6</b> 交接
+    </td>
+    <td>它是 <strong>4 个月时间线上唯一的"长周期 + 可并行"项</strong>——
+        训练要等架构锁定，但数据准备现在就能推进，且<strong>必须现在推进</strong>，否则 11 月被连锁压缩</td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s4"><span class="no">4</span>发现并修复的问题（含<strong>我方引入</strong>的错误）</h2>
+
+<div class="note">
+  这一节刻意把<strong>我自己造成的问题</strong>也列出来——它们是真实发生过的，隐瞒没有意义。
+</div>
+
+<table>
+  <tr><th>#</th><th>问题</th><th>谁引入</th><th>怎么发现</th><th>处置</th></tr>
+  <tr>
+    <td>1</td>
+    <td><strong>论文根本编译不出来</strong>（101 错误 + 致命错误）</td>
+    <td>既有（非本次）</td>
+    <td>改完 μP 后例行编译验证，立刻发现；用 <code>-file-line-error</code> + 二分 + hexdump 定位</td>
+    <td>修复 <code>6_vision_encoder.tex</code> 6 行行尾</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>我一度断言 pretrain agent"<strong>会永久卡死</strong>"</td>
+    <td><span class="badge b-no">我方</span></td>
+    <td>你指出"两个 agent 共享同一仓库"</td>
+    <td><strong>错了，已纠正</strong>：共享工作副本 → 一次 pull 双方可见，死锁不存在。
+        并据此改写了两份任务书的 git 规则（<strong>从设计上避免重复 pull 与误清对方文件</strong>）</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>数据准备 loop 的 <code>bash -n</code> 报语法错 <code>unexpected token $'{\r'</code></td>
+    <td><span class="badge b-no">我方</span></td>
+    <td>启动前主动做语法校验</td>
+    <td><strong>误报</strong>：<code>core.autocrlf=true</code> 使工作区为 CRLF、仓库存 LF；
+        改用<strong>暂存后的 LF blob</strong> 复验 → <code>exit=0</code> 通过</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>HTML 分块写时<strong>吃掉 3 组闭合标签</strong>，且 §5 note 正文被整段吞掉</td>
+    <td><span class="badge b-no">我方</span></td>
+    <td>写完自查标签平衡（<code>div 25/24</code>、<code>table 10/9</code>、<code>tr 61/60</code>）</td>
+    <td>全部修复 → <strong>25/25、10/10、61/61、嵌套深度 0</strong></td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>本报告 TOC 的 <code>#s7</code> 条目与闭合标签被吃掉</td>
+    <td><span class="badge b-no">我方</span></td>
+    <td>同上，逐段自查</td>
+    <td>已修复；<strong>后续改用 <code>insert_line</code> 追加</strong>，从方法上杜绝</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>论文 <code>tab:visres</code> 六格 loss <strong>完全相同</strong>（4.9962）</td>
+    <td>既有（实验设计）</td>
+    <td>核对 agent 日志时发现是 LR 坍缩伪影</td>
+    <td>已派 vision R2-1 在 lr=3e-3 重跑（含 lr=1e-3 坍缩对照）</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>论文 §6 未披露"吞吐是在<strong>共享集群争用</strong>下测的"</td>
+    <td>既有</td>
+    <td>读 vision agent 的 <code>EXPERIMENTS_VISION.md</code> 时发现</td>
+    <td>已派 R2-4 干净复测（要求把 GPU 占用核验<strong>原文</strong>记入报告）</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td><code>baize_pretrain_loop.sh</code> 的 <code>WAITING</code> 正则<strong>误匹配正文散文</strong></td>
+    <td>既有</td>
+    <td>逐字核对 loop 与 memory 时发现（<code>MEMORY_PRETRAIN_2B.md:8</code> 的一句叙述被命中）</td>
+    <td>新的 <code>baize_data_loop.sh</code> <strong>从设计上避开</strong>（只认行首）；
+        旧脚本等重启时修</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td><code>baize_pretrain_loop.sh</code> / vision loop 的 <strong>push 从不 pull</strong></td>
+    <td>既有</td>
+    <td>全库检索 <code>pull</code> 零命中</td>
+    <td>已补进任务书；新脚本内置 <code>fetch + pull --rebase --autostash</code></td>
+  </tr>
+</table>
+
+<h2 class="sec" id="s5"><span class="no">5</span>时间线校准：三个被推翻的早期判断</h2>
+
+<p>你提供了关键约束：<strong>现在是 2026-10-01，ISEDA 2027 投稿截止 ≈ 2027-02-01（余 4 个月），
+当前仍处于"架构实验期"</strong>。这条信息推翻了我此前的三个判断：</p>
+
+<table>
+  <tr><th>早期判断</th><th>校准后</th><th>原因</th></tr>
+  <tr>
+    <td>🔴 "论文结构应<strong>收缩到两阶段</strong>"</td>
+    <td><strong>撤销</strong>：五阶段结构本来就是对的</td>
+    <td>4 个月足够补齐 (ii)(iv)(v)。我早前把"<strong>当前完成度</strong>"误当成了"<strong>投稿时完成度</strong>"</td>
+  </tr>
+  <tr>
+    <td>🔴 "尽快补下游评测是<strong>最高优先级</strong>"</td>
+    <td><strong>下调到 2027-01</strong></td>
+    <td>当前 2.2B / 655M-token 的模型是<strong>架构实验用的代理</strong>，正式模型在这 4 个月里训</td>
+  </tr>
+  <tr>
+    <td>🟠 "训练量太小（655M token）是缺陷"</td>
+    <td><strong>暂不算缺陷</strong>，但论文须写明是代理实验</td>
+    <td>正式训练在后续 4 个月内完成；若到定稿仍只有代理规模，才是问题</td>
+  </tr>
+  <tr>
+    <td>—</td>
+    <td>🟢 <strong>反过来上调：架构锁定才是真关键路径</strong></td>
+    <td>架构一旦锁定，后面 3 个月的数据与训练<strong>全压在它上面，改一次代价极大</strong>。
+        正在跑的两轮 R2 正是为它服务的</td>
+  </tr>
+</table>
+
+<div class="note">
+  <b>倒推排期</b>：2026-10 上/中 锁定架构 → <b>2026-10 下 启动数据准备（长周期项，必须先动）</b>
+  → 2026-11 大规模预训练启动 → 2026-12 后训练与对齐 → 2027-01 评测与定稿 → 2027-02-01 投稿。<br>
+  ⚠️ <b>这个排期不宽松</b>：大规模预训练是周级墙钟任务，数据准备是长周期项，<b>10 月底前必须动起来</b>。
+</div>
+
+<h2 class="sec" id="s6"><span class="no">6</span>当前状态与下一步清单</h2>
+
+<h3>6.1 三个 agent 全景（另见 <code>run/AGENTS.md</code>）</h3>
+<table>
+  <tr><th>Agent</th><th>loop</th><th>状态文件</th><th>状态</th></tr>
+  <tr><td><b>vision</b></td><td><code>baize_vision_loop.sh</code></td><td><code>MEMORY_VISION.md</code></td><td><span class="badge b-ok">运行中</span></td></tr>
+  <tr><td><b>pretrain</b></td><td><code>baize_pretrain_loop.sh</code></td><td><code>MEMORY_PRETRAIN_2B.md</code></td><td><span class="badge b-ok">运行中</span></td></tr>
+  <tr><td><b>data</b></td><td><code>baize_data_loop.sh</code></td><td><code>MEMORY_DATA.md</code></td><td><span class="badge b-warn">待启动</span></td></tr>
+  <tr><td colspan="4" style="color:var(--muted)">已收敛、不应再跑：<code>baize_search_loop.sh</code>（1B 轮）、<code>baize_2b_search_loop.sh</code>（2B 架构轮）</td></tr>
+</table>
+
+<div class="danger">
+  ⚠️ <b>关于"归档"</b>：我原本打算把两个已收敛轮次的文件移到 <code>run/archive/</code>，
+  但核查后发现<strong>交叉引用较多</strong>（<code>BAIZE_2B_ARCH_RESULT.html</code>、各 daily 日志、
+  甚至 <code>BAIZE_VISION_TASK.md</code> 都引用了它们），<strong>物理移动会留下断链</strong>，
+  而且<strong>它并不能阻止那些 loop 进程空转</strong>。<br>
+  → 因此改为新增 <code>run/AGENTS.md</code>（状态总表）解决"数不清"的问题。
+  <b>若你确认进程已死、仍想物理归档，我再执行</b>。
+</div>
+
+<h3>6.2 你到公司后的待办</h3>
+<table>
+  <tr><th>#</th><th>做什么</th><th>命令 / 位置</th></tr>
+  <tr><td>1</td><td><b>启动数据准备 agent</b></td><td><code>cd .../run &amp;&amp; git pull --rebase &amp;&amp; setsid bash baize_data_loop.sh &gt; /tmp/baize_data_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></td></tr>
+  <tr><td>2</td><td><b>确认旧 loop 是否还在空转</b></td><td><code>pgrep -af 'baize_.*_loop.sh'</code>（预期只见 vision / pretrain / data）</td></tr>
+  <tr><td>3</td><td><b>顺手修两个旧 loop 的已知缺陷</b></td><td>照抄 <code>baize_data_loop.sh</code> 的 <code>git_sync_and_push</code>；<code>WAITING</code> 正则收紧为 <code>^WAITING:[[:space:]]*1</code></td></tr>
+  <tr><td>4</td><td><b>确认 ISEDA 页数上限</b></td><td>当前 <b>7 页</b>；若上限 6 页需削减（§4 与 §6 的表格有压缩空间）</td></tr>
+  <tr><td>5</td><td><b>决定 EDA 领域语料来源</b> <span class="badge b-no">最关键</span></td><td>它是 Stage (ii)「领域模型」claim 的<strong>唯一支撑</strong>。若 10 月内确认拿不到，须尽早调整 (ii) 的叙事</td></tr>
+</table>
+
+<h2 class="sec" id="s7"><span class="no">7</span>附录：commit 清单</h2>
+
+<table>
+  <tr><th>commit</th><th>说明</th></tr>
+  <tr><td><code>c1fd532</code></td><td>清除 μP 遗留 + <b>修复致命表格 bug</b>（论文从编译不出到 0 错误）</td></tr>
+  <tr><td><code>e1dab26</code></td><td>Nemotron-H 商品名分层淡化 + 修 "pattern halved in width" 范畴错误</td></tr>
+  <tr><td><code>dc2e59b</code></td><td>decode 10.3× 加限定 + 图片归位 <code>figures/</code></td></tr>
+  <tr><td><code>f7746df</code></td><td>投稿匿名化 + 重建 <code>main.pdf</code></td></tr>
+  <tr><td><code>cb924d0</code></td><td><b>填实三个空壳章节</b> + 修 overfull hbox + 修陈旧 <code>[TBD]</code> + 重建 PDF</td></tr>
+  <tr><td><code>cbb2d38</code></td><td>vision agent：派 Round 2</td></tr>
+  <tr><td><code>e4353e6</code></td><td>pretrain agent：补 git 同步规则</td></tr>
+  <tr><td><code>694abf3</code></td><td>pretrain agent：派 Round 2（保守包 P-1/P-2/P-3）</td></tr>
+  <tr><td><code>dc71324</code></td><td>纠正：共享工作副本 + NFS 争用协调规则</td></tr>
+  <tr><td><code>a350ae2</code></td><td>README 按 4 个月时间线校准（新增 §0.5）</td></tr>
+  <tr><td><code>5083330</code></td><td>数据准备 agent：方案 HTML + 任务书 + loop + MEMORY</td></tr>
+</table>
+
+<footer>
+  BaiZe 工作汇报 · 2026-10-01 09:00 · 生成于 <code>doc/BaiZe-ISEDA2027/</code><br>
+  相关文档：<code>README.md</code>（项目总纲 · §0.5 时间线）·
+  <code>run/AGENTS.md</code>（agent 状态总表）·
+  <code>BAIZE_DATA_PREP_PLAN.html</code>（数据准备方案）<br>
+  本报告中的数字均可通过仓库内文件与 <code>git log</code> 复核。
+</footer>
+
+</div>
+</body>
+</html>
+

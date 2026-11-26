@@ -1,0 +1,371 @@
+{
+  "audit_time": "2026-11-08 09:21:34",
+  "categories": {
+    "A1_ShellSyntax": [
+      {
+        "name": "baize_posttrain_anneal.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_contamination_gate.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_day1_runbook.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_eval.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_launch_11_9.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_loop.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_minicpm5_diag.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_paths.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_preflight_check.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_rl_grpo.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_setup_cu124_venv.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      },
+      {
+        "name": "baize_posttrain_sft.sh",
+        "status": "pass",
+        "detail": "bash -n OK"
+      }
+    ],
+    "A2_PythonImports": [
+      {
+        "name": "torch",
+        "status": "fail",
+        "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not ins"
+      },
+      {
+        "name": "verl",
+        "status": "pass",
+        "detail": "0.4.0"
+      },
+      {
+        "name": "sglang",
+        "status": "pass",
+        "detail": "0.4.6.post1"
+      },
+      {
+        "name": "flash_attn",
+        "status": "pass",
+        "detail": "2.7.4.post1"
+      },
+      {
+        "name": "ray",
+        "status": "pass",
+        "detail": "2.60.0"
+      },
+      {
+        "name": "transformers",
+        "status": "pass",
+        "detail": "4.51.1"
+      },
+      {
+        "name": "pyarrow",
+        "status": "pass",
+        "detail": "25.0.1"
+      },
+      {
+        "name": "yaml",
+        "status": "fail",
+        "detail": "/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not ins"
+      }
+    ],
+    "A3_ModelFiles": [
+      {
+        "name": "model safetensors",
+        "status": "pass",
+        "detail": "4800.4 MB"
+      },
+      {
+        "name": "model index",
+        "status": "pass",
+        "detail": "0.0 MB"
+      },
+      {
+        "name": "config.json",
+        "status": "pass",
+        "detail": "0.0 MB"
+      },
+      {
+        "name": "tokenizer.json",
+        "status": "pass",
+        "detail": "9.4 MB"
+      },
+      {
+        "name": "tokenizer_config",
+        "status": "pass",
+        "detail": "0.1 MB"
+      },
+      {
+        "name": "chat_template",
+        "status": "pass",
+        "detail": "0.0 MB"
+      }
+    ],
+    "A4_DataFiles": [
+      {
+        "name": "RL parquet v2",
+        "status": "pass",
+        "detail": "931.1 KB"
+      },
+      {
+        "name": "SFT parquet v1",
+        "status": "pass",
+        "detail": "2808.1 KB"
+      },
+      {
+        "name": "SFT v2 jsonl",
+        "status": "pass",
+        "detail": "21271.7 KB"
+      },
+      {
+        "name": "RL parquet schema",
+        "status": "pass",
+        "detail": "rows=3347 cols=['prompt', 'reward_model', 'agent_name']"
+      },
+      {
+        "name": "SFT parquet schema",
+        "status": "pass",
+        "detail": "rows=19610 cols=['conversation', 'pair_id', 'type', 'api_used', 'contamination_check']"
+      }
+    ],
+    "A5_ConfigFiles": [
+      {
+        "name": "verl config",
+        "status": "pass",
+        "detail": "['data', 'actor_rollout_ref', 'algorithm', 'reward', 'agent', 'trainer', 'runtime', 'smoke']"
+      },
+      {
+        "name": "EDA tools",
+        "status": "pass",
+        "detail": "['tools']"
+      },
+      {
+        "name": "verl critical keys",
+        "status": "pass",
+        "detail": "data.train_files=rl_pyaether_synth_v2.parquet; rollout.name=sglang; algorithm=grpo; reward.path=baize_posttrain_reward_functions.py; max_turns=3; n_gpus=4"
+      }
+    ],
+    "A6_RewardInterface": [
+      {
+        "name": "compute_score signature",
+        "status": "pass",
+        "detail": "compute_score(data_source, solution_str, ground_truth, extra_info)"
+      },
+      {
+        "name": "REWARD_ARMS",
+        "status": "pass",
+        "detail": "['R0', 'R1', 'R2', 'R3', 'R4']"
+      },
+      {
+        "name": "save_cheat_rate_report",
+        "status": "pass",
+        "detail": "Importable"
+      }
+    ],
+    "A7_WrapperParser": [
+      {
+        "name": "verl_wrapper.py",
+        "status": "pass",
+        "detail": "AST OK"
+      },
+      {
+        "name": "minicpm5_parser.py",
+        "status": "pass",
+        "detail": "13.4 KB"
+      },
+      {
+        "name": "parser import",
+        "status": "pass",
+        "detail": "WARNING:2026-11-08 09:24:34,356:verl not installed — using stubs for syntax check / dry-run\nOK"
+      },
+      {
+        "name": "eda_tool.py",
+        "status": "pass",
+        "detail": "6.9 KB"
+      },
+      {
+        "name": "eda_sandbox_client.py",
+        "status": "pass",
+        "detail": "12.1 KB"
+      }
+    ],
+    "A8_PathConsistency": [
+      {
+        "name": "Model path",
+        "status": "pass",
+        "detail": "/tmp/models/MiniCPM5-2B"
+      },
+      {
+        "name": "Model safetensors",
+        "status": "pass",
+        "detail": "/tmp/models/MiniCPM5-2B/model-00000-of-00001.safetensors"
+      },
+      {
+        "name": "EDA base",
+        "status": "pass",
+        "detail": "/home/app.e0031982/code/eda_fastmcp"
+      },
+      {
+        "name": "EDA dataset",
+        "status": "pass",
+        "detail": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl"
+      },
+      {
+        "name": "EDA eval script",
+        "status": "pass",
+        "detail": "/home/app.e0031982/code/eda_fastmcp/scripts/run_eval.py"
+      },
+      {
+        "name": "EDA driver",
+        "status": "pass",
+        "detail": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/run_cline_script.sh"
+      },
+      {
+        "name": "API database",
+        "status": "pass",
+        "detail": "/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json"
+      },
+      {
+        "name": "RL parquet",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_pyaether_synth_v2.parquet"
+      },
+      {
+        "name": "SFT v2 jsonl",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus_v2.jsonl"
+      },
+      {
+        "name": "verl YAML",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_verl_config.yaml"
+      },
+      {
+        "name": "EDA tools YAML",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_eda_tools.yaml"
+      },
+      {
+        "name": "Reward functions",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_reward_functions.py"
+      },
+      {
+        "name": "verl wrapper",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_verl_wrapper.py"
+      },
+      {
+        "name": "cu124 venv",
+        "status": "pass",
+        "detail": "/home/app.e0031982/code/verl_cu124_venv/bin/python"
+      },
+      {
+        "name": "Day-1 runbook",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_day1_runbook.sh"
+      },
+      {
+        "name": "Launch script",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_launch_11_9.sh"
+      },
+      {
+        "name": "Preflight",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_preflight_check.sh"
+      },
+      {
+        "name": "Contamination gate",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_contamination_gate.sh"
+      },
+      {
+        "name": "RL monitor",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_monitor.py"
+      },
+      {
+        "name": "Eval analysis",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_eval_analysis.py"
+      },
+      {
+        "name": "Data audit",
+        "status": "pass",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_data_audit.py"
+      }
+    ],
+    "A9_GPUStatus": [
+      {
+        "name": "GPU availability",
+        "status": "warn",
+        "detail": "8 GPUs, 0 free\n0, NVIDIA A40, 45554 MiB, 46068 MiB, 0 %\n1, NVIDIA A40, 44533 MiB, 46068 MiB, 0 %\n2, NVIDIA A40, 44533 MiB, 46068 MiB, 0 %\n3, NVIDIA A40, 44533 MiB, 46068 MiB, 0 %\n4, NVIDIA A40, 45144 MiB, 46068 MiB, 0 %\n5, NVIDIA A40, 44629 MiB, 46068 MiB, 0 %\n6, NVIDIA A40, 44633 MiB, 46068 MiB, 0 %\n7, NVIDIA A40"
+      },
+      {
+        "name": "CUDA driver",
+        "status": "pass",
+        "detail": "550.54.14"
+      }
+    ],
+    "A10_SandboxConnectivity": [
+      {
+        "name": "ICMP to sandbox",
+        "status": "pass",
+        "detail": "Reachable"
+      },
+      {
+        "name": "TCP 8664-8669",
+        "status": "warn",
+        "detail": "All filtered — R0 fallback"
+      },
+      {
+        "name": "R0 auto-fallback",
+        "status": "pass",
+        "detail": "auto_fallback: true configured"
+      }
+    ]
+  },
+  "summary": {
+    "total": 68,
+    "pass": 64,
+    "fail": 2,
+    "warn": 2
+  }
+}

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-4094",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/xarray/core/dataarray.py b/xarray/core/dataarray.py\nindex b0df874..f4ea105 100644\n--- a/xarray/core/dataarray.py\n+++ b/xarray/core/dataarray.py\n@@ -1961,7 +1961,9 @@ class DataArray(AbstractArray, DataWithCoords):\n         # pull variables out of datarray\n         data_dict = {}\n         for k in variables:\n-            data_dict[k] = self.sel({variable_dim: k}).squeeze(drop=True)\n+            data_dict[k] = (\n+                self.sel({variable_dim: k}).squeeze(drop=True).drop_vars(dim, errors=\"ignore\")\n+            )\n \n         # unstacked dataset\n         return Dataset(data_dict)\ndiff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py\nindex 9c8d407..edb1289 100644\n--- a/xarray/tests/test_dataset.py\n+++ b/xarray/tests/test_dataset.py\n@@ -3055,6 +3055,14 @@ class TestDataset:\n         x = y.to_unstacked_dataset(\"features\")\n         assert_identical(D, x)\n \n+    def test_to_stacked_array_to_unstacked_dataset_single_dim(self):\n+        # regression test for GH4049\n+        arr = xr.DataArray(np.arange(3), coords=[(\"x\", [0, 1, 2])])\n+        data = xr.Dataset({\"a\": arr, \"b\": arr})\n+        stacked = data.to_stacked_array(\"y\", sample_dims=[\"x\"])\n+        unstacked = stacked.to_unstacked_dataset(\"y\")\n+        assert_identical(data, unstacked)\n+\n     def test_update(self):\n         data = create_test_data(seed=0)\n         expected = data.copy()\n"
+  }
+]

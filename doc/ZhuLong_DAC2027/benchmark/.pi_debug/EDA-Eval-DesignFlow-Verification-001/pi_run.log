@@ -1,0 +1,15 @@
+已完成。`outputs/submit.zip` 已生成。
+
+任务执行摘要：
+
+1. **修复 `prepare_new_netlist.py`** — `filter_erc_by_section` 改为精确子 section 匹配：`section_set.add(tok)`（保留完整 token）并 `sec in section_set`（整段精确匹配，且 `.strip()` 防 `\r` 残留）；保留了源文件全部 CRLF 行尾（79 行 CRLF 仍在）。
+
+2. **改写 `step3_aether.il`** — 经 `aetherLE/aetherSE` 进入 aether，`dbOpenCellViewByType(lib cell view nil "r")` 打开 `drcpa_top/ddr5top/schematic`，运行 aether 版 ERC hook；文中不含 `virtuoso`、`cds.lib`、`cds`。
+
+3. **生成 `erc_report_2_1_to_2_8.csv`** — 恰好 8 行，section 为 2.1..2.8，无 2.9/3.1/5.2。
+
+4. **更新 `lib.defs`** — `INCLUDE ./aether/lib.defs` + `SKIP amsLib` + `DEFINE drcpa_top ./drcpa_top`。
+
+5. **打包** — `outputs/submit.zip` 内含 5 个文件：`prepare_new_netlist.py`、`step3_aether.il`、`erc_report_2_1_to_2_8.csv`、`lib.defs`、`run_all.sh`（run_all.sh 的 step3 说明同步更新为 aether flow，step0~2 未动）。
+
+校验已通过：zip 内解包验证内容一致、CRLF 保留、8 行报告正确、无 virtuoso/cds.lib 引用。

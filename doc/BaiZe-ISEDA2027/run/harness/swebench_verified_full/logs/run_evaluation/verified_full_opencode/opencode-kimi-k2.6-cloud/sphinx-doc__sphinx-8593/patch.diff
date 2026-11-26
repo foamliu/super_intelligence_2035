@@ -1,0 +1,90 @@
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 76265f5b..5b714952 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -728,7 +728,14 @@ class Documenter:
+ 
+             has_doc = bool(doc)
+ 
+-            metadata = extract_metadata(doc)
++            # check attribute docs for metadata
++            if (namespace, membername) in attr_docs:
++                attr_doc = '\n'.join(attr_docs[(namespace, membername)])
++                metadata = extract_metadata(attr_doc)
++                has_doc = True
++            else:
++                metadata = extract_metadata(doc)
++
+             if 'private' in metadata:
+                 # consider a member private if docstring has "private" metadata
+                 isprivate = True
+diff --git a/tests/roots/test-ext-autodoc/target/private.py b/tests/roots/test-ext-autodoc/target/private.py
+index a39ce085..add798e2 100644
+--- a/tests/roots/test-ext-autodoc/target/private.py
++++ b/tests/roots/test-ext-autodoc/target/private.py
+@@ -9,3 +9,7 @@ def _public_function(name):
+ 
+     :meta public:
+     """
++
++_public_var = None  #: :meta public:
++
++_private_var = None  #: :meta private:
+diff --git a/tests/test_ext_autodoc_private_members.py b/tests/test_ext_autodoc_private_members.py
+index 6bce5ce7..5dbc5d6c 100644
+--- a/tests/test_ext_autodoc_private_members.py
++++ b/tests/test_ext_autodoc_private_members.py
+@@ -30,6 +30,13 @@ def test_private_field(app):
+         '',
+         '   :meta public:',
+         '',
++        '',
++        '.. py:data:: _public_var',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
+     ]
+ 
+ 
+@@ -44,6 +51,13 @@ def test_private_field_and_private_members(app):
+         '.. py:module:: target.private',
+         '',
+         '',
++        '.. py:data:: _private_var',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta private:',
++        '',
++        '',
+         '.. py:function:: _public_function(name)',
+         '   :module: target.private',
+         '',
+@@ -52,6 +66,13 @@ def test_private_field_and_private_members(app):
+         '   :meta public:',
+         '',
+         '',
++        '.. py:data:: _public_var',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
++        '',
+         '.. py:function:: private_function(name)',
+         '   :module: target.private',
+         '',
+@@ -80,4 +101,11 @@ def test_private_members(app):
+         '',
+         '   :meta public:',
+         '',
++        '',
++        '.. py:data:: _public_var',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
+     ]

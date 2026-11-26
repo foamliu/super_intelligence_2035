@@ -1,0 +1,491 @@
+{
+  "round": "R112",
+  "timestamp": "2026-11-09 21:29:30",
+  "host": "10.252.32.17",
+  "summary": {
+    "files_scanned": 117,
+    "path_issues": 37,
+    "high_nas_train": 31,
+    "high_nas_inference": 4,
+    "missing_data": 8,
+    "ctx_inconsistencies": 0,
+    "gpu_free": 0,
+    "gpu_total": 8,
+    "fixes_applied": [],
+    "mitigations": 4
+  },
+  "path_issues": [
+    {
+      "file": "baize_posttrain_anneal.sh",
+      "line": 10,
+      "issue": "NAS_TRAIN_REF",
+      "content": "#   - pretrain S1 收敛 ckpt（/nas_train/.../BaiZe-ISEDA2027/nemo_experiments/.../step_700000）",
+      "severity": "LOW"
+    },
+    {
+      "file": "baize_posttrain_contamination_gate.sh",
+      "line": 29,
+      "issue": "NAS_TRAIN_REF",
+      "content": "if [ -d \"/nas_data/app.e0031982/code/super_intelligence_2035\" ] && [ ! -d \"/nas_train/app.e0031982/code/super_intelligence_2035\" ]; then",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_contamination_gate.sh",
+      "line": 31,
+      "issue": "NAS_TRAIN_REF",
+      "content": "elif [ -d \"/nas_train/app.e0031982/code/super_intelligence_2035\" ]; then",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_contamination_gate.sh",
+      "line": 32,
+      "issue": "NAS_TRAIN_REF",
+      "content": "RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_day0_readiness_audit.py",
+      "line": 9,
+      "issue": "NAS_TRAIN_REF",
+      "content": "NAS_ROOT = \"/nas_data\" if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() and not Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists() else \"/nas_train\"",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_loop.sh",
+      "line": 8,
+      "issue": "NAS_TRAIN_REF",
+      "content": "#   setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_loop.sh \\",
+      "severity": "LOW"
+    },
+    {
+      "file": "baize_posttrain_loop.sh",
+      "line": 25,
+      "issue": "NAS_TRAIN_REF",
+      "content": "GIT_ROOT=\"$(git -C \"$SCRIPT_DIR\" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intelligence_2035')\"",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r106_launch_day_plan.py",
+      "line": 28,
+      "issue": "NAS_TRAIN_REF",
+      "content": "and not Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists()):",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r106_launch_day_plan.py",
+      "line": 30,
+      "issue": "NAS_TRAIN_REF",
+      "content": "elif Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r106_launch_day_plan.py",
+      "line": 31,
+      "issue": "NAS_TRAIN_REF",
+      "content": "NAS_ROOT = \"/nas_train\"",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r111_launch_consistency_audit.py",
+      "line": 20,
+      "issue": "NAS_TRAIN_REF",
+      "content": "if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() and not Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r111_launch_consistency_audit.py",
+      "line": 22,
+      "issue": "NAS_TRAIN_REF",
+      "content": "elif Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r111_launch_consistency_audit.py",
+      "line": 23,
+      "issue": "NAS_TRAIN_REF",
+      "content": "NAS_ROOT = \"/nas_train\"",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r111_launch_consistency_audit.py",
+      "line": 169,
+      "issue": "NAS_TRAIN_REF",
+      "content": "paths = [(\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609\",\"agent_2609_nas_train\"),",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r111_launch_consistency_audit.py",
+      "line": 170,
+      "issue": "NAS_TRAIN_REF",
+      "content": "(\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605\",\"general_2605_nas_train\"),",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r111_launch_consistency_audit.py",
+      "line": 196,
+      "issue": "NAS_TRAIN_REF",
+      "content": "items.append({\"id\":\"DAT-03\",\"cat\":\"SFT通用数据\",\"check\":\"UltraData在.17可达\",\"status\":\"PASS\" if sg[\"any_available\"] else \"WARN\",\"detail\":\".17不存在(/nas_train不可用)\" if not sg[\"any_available\"] else \"存在\",\"blocking",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r111_launch_consistency_audit.py",
+      "line": 282,
+      "issue": "NAS_TRAIN_REF",
+      "content": "<div class=\"warn\"><strong>⚠️ CFG-04</strong>：blend配置用<code>/nas_train/...</code>路径，.17上NFS为<code>/nas_data</code>。SFT通用数据不在.17。11/9仅RL不影响，正式SFT前需复制或跨挂载。</div>",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 5,
+      "issue": "NAS_TRAIN_REF",
+      "content": "1. Hardcoded /nas_train references (won't work on .17)",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 6,
+      "issue": "NAS_INFERENCE_REF",
+      "content": "2. /nas_inference references (not mounted on .17)",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 59,
+      "issue": "NAS_TRAIN_REF",
+      "content": "if '/nas_train' in line and 'PATHS' not in fname.upper():",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 64,
+      "issue": "NAS_INFERENCE_REF",
+      "content": "if '/nas_inference' in line:",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 132,
+      "issue": "NAS_TRAIN_REF",
+      "content": "for mp in ['/nas_data', '/nas_train', '/nas_inference', '/nas_env']:",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 132,
+      "issue": "NAS_INFERENCE_REF",
+      "content": "for mp in ['/nas_data', '/nas_train', '/nas_inference', '/nas_env']:",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 164,
+      "issue": "NAS_TRAIN_REF",
+      "content": "\"description\": f\"{len(nas_train_hi)} HIGH /nas_train refs in configs\",",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 177,
+      "issue": "NAS_TRAIN_REF",
+      "content": "if \"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/\" in fixed:",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 178,
+      "issue": "NAS_TRAIN_REF",
+      "content": "fixed = fixed.replace(\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/\",",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 180,
+      "issue": "NAS_TRAIN_REF",
+      "content": "fixes.append(\"CFG-04: Fixed /nas_train -> /nas_data in sft_blend_config.yaml data paths\")",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 282,
+      "issue": "NAS_TRAIN_REF",
+      "content": "<p><strong>关键发现</strong>：.17 的 <code>/nas_data</code> NFS（10.251.28.110:/train）与 .29/.12 的共享 NFS（<code>/nas_train</code>）是<strong>两块独立存储</strong>。UltraData SFT 分词数据（.bin/.idx）在 .29/.12 生成，<strong>.17 ",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 286,
+      "issue": "NAS_INFERENCE_REF",
+      "content": "<p><strong>结论</strong>：.17 只有 <code>/nas_data</code>（10.251.28.110:/train）。<code>/nas_inference</code>/<code>/nas_env</code> 未挂载。SFT/退火分词数据需 rsync 传输。</p>",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 289,
+      "issue": "NAS_TRAIN_REF",
+      "content": "<p>共 {len(path_issues)} 处（{len(nas_train_hi)} HIGH /nas_train）。</p>",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 313,
+      "issue": "NAS_TRAIN_REF",
+      "content": "<li><strong>CFG-04 已修复</strong>：sft_blend_config.yaml 中 /nas_train -> /nas_data。但数据目录在 .17 上不存在（仅有 nemo_experiments/），需在 SFT 起跑前创建并传输数据。</li>",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r112_path_audit.py",
+      "line": 330,
+      "issue": "NAS_TRAIN_REF",
+      "content": "print(f\"Path issues:      {len(path_issues)} ({len(nas_train_hi)} HIGH /nas_train)\")",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r91_gpu_readiness_audit.py",
+      "line": 18,
+      "issue": "NAS_TRAIN_REF",
+      "content": "NAS_ROOT = \"/nas_data\" if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() else \"/nas_train\"",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r95_readiness_fix.py",
+      "line": 14,
+      "issue": "NAS_TRAIN_REF",
+      "content": "NAS_ROOT = \"/nas_data\" if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() else \"/nas_train\"",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_r96_launch_validation.py",
+      "line": 24,
+      "issue": "NAS_TRAIN_REF",
+      "content": "NAS_ROOT = \"/nas_data\" if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() else \"/nas_train\"",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_sft_data_mixer.py",
+      "line": 77,
+      "issue": "NAS_TRAIN_REF",
+      "content": "\"nfs_path\": \"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605\",",
+      "severity": "HIGH"
+    },
+    {
+      "file": "baize_posttrain_sft_data_mixer.py",
+      "line": 85,
+      "issue": "NAS_TRAIN_REF",
+      "content": "\"nfs_path\": \"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609\",",
+      "severity": "HIGH"
+    }
+  ],
+  "data_status": [
+    {
+      "path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",
+      "description": "SFT agent data",
+      "category": "SFT",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",
+      "description": "SFT general data",
+      "category": "SFT",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_pyaether_synth",
+      "description": "SFT PyAether synth",
+      "category": "SFT",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_mixed_output.jsonl",
+      "description": "SFT PyAether JSONL",
+      "category": "SFT",
+      "exists": true,
+      "size_human": "26.1MB"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/pyAether_api_anneal",
+      "description": "Anneal domain data",
+      "category": "ANNEAL",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/mix_base",
+      "description": "Anneal web data",
+      "category": "ANNEAL",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/tokenizer_eod",
+      "description": "Tokenizer",
+      "category": "SHARED",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+      "description": "MiniCPM5-2B model (NAS)",
+      "category": "MODEL",
+      "exists": true,
+      "size_human": "4.1KB"
+    },
+    {
+      "path": "/tmp/models/MiniCPM5-2B",
+      "description": "MiniCPM5-2B model (/tmp)",
+      "category": "MODEL",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_pyaether_synth_v2.parquet",
+      "description": "RL parquet",
+      "category": "RL",
+      "exists": true,
+      "size_human": "953.5KB"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_v5.parquet",
+      "description": "SFT v5 parquet",
+      "category": "SFT",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_v4.parquet",
+      "description": "SFT v4 parquet",
+      "category": "SFT",
+      "exists": false,
+      "size_human": "N/A"
+    },
+    {
+      "path": "/home/app.e0031982/code/eda_fastmcp",
+      "description": "eda_fastmcp clone",
+      "category": "EVAL",
+      "exists": true,
+      "size_human": "4.1KB"
+    },
+    {
+      "path": "/home/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh",
+      "description": "Eval driver",
+      "category": "EVAL",
+      "exists": true,
+      "size_human": "29.4KB"
+    },
+    {
+      "path": "/home/app.e0031982/code/eda_fastmcp/scripts/run_eval.py",
+      "description": "Eval scorer",
+      "category": "EVAL",
+      "exists": true,
+      "size_human": "39.8KB"
+    },
+    {
+      "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl",
+      "description": "158-case dataset",
+      "category": "EVAL",
+      "exists": true,
+      "size_human": "689.5KB"
+    },
+    {
+      "path": "/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json",
+      "description": "API database",
+      "category": "EVAL",
+      "exists": true,
+      "size_human": "18.1MB"
+    },
+    {
+      "path": "/home/app.e0031982/code/verl_cu124_venv/bin/python",
+      "description": "verl cu124 venv python",
+      "category": "ENV",
+      "exists": true,
+      "size_human": "17.3MB"
+    }
+  ],
+  "context_length_checks": [
+    {
+      "file": "sft_blend_config.yaml",
+      "context_values": [
+        16384
+      ],
+      "target": 16384,
+      "consistent": true,
+      "status": "OK"
+    },
+    {
+      "file": "baize_posttrain_rl_verl_config_v2.yaml",
+      "context_values": [
+        8192,
+        16384
+      ],
+      "target": 16384,
+      "consistent": true,
+      "status": "OK"
+    },
+    {
+      "file": "baize_posttrain_sft.sh",
+      "context_values": [
+        16384
+      ],
+      "target": 16384,
+      "consistent": true,
+      "status": "OK"
+    }
+  ],
+  "nfs_mounts": {
+    "/nas_data": {
+      "exists": true,
+      "mount_info": "10.251.28.110:/train  127T  108T   20T  85% /nas_data"
+    },
+    "/nas_train": {
+      "exists": true,
+      "mount_info": "/dev/mapper/ubuntu--vg-ubuntu--lv  2.4T  1.9T  367G  85% /"
+    },
+    "/nas_inference": {
+      "exists": false,
+      "mount_info": ""
+    },
+    "/nas_env": {
+      "exists": false,
+      "mount_info": ""
+    }
+  },
+  "gpu_lines": [
+    "0, 45554 MiB, 46068 MiB, 98 %",
+    "1, 44533 MiB, 46068 MiB, 98 %",
+    "2, 44533 MiB, 46068 MiB, 98 %",
+    "3, 44533 MiB, 46068 MiB, 98 %",
+    "4, 45128 MiB, 46068 MiB, 0 %",
+    "5, 44629 MiB, 46068 MiB, 0 %",
+    "6, 44633 MiB, 46068 MiB, 0 %",
+    "7, 44631 MiB, 46068 MiB, 0 %"
+  ],
+  "mitigations": [
+    {
+      "priority": "BLOCKER",
+      "category": "SFT_DATA_TRANSFER",
+      "description": "UltraData SFT .bin/.idx on .29/.12 NFS, NOT accessible from .17",
+      "mitigation": "rsync from .29/.12 OR re-tokenize on .17 OR use SFT parquet (sft_pyaether_v5.parquet, 19610 rows) already on .17"
+    },
+    {
+      "priority": "BLOCKER",
+      "category": "ANNEAL_DATA_TRANSFER",
+      "description": "Anneal data (mix_base/code_l3/math_l3) on .29/.12, not .17",
+      "mitigation": "Transfer during pretrain waiting period (ETA 2026-12-25); skip for surrogate"
+    },
+    {
+      "priority": "BLOCKER",
+      "category": "MODEL_PATH",
+      "description": "MiniCPM5-2B not found at expected paths",
+      "mitigation": "Re-download or rsync from .29/.12"
+    },
+    {
+      "priority": "HIGH",
+      "category": "PATH_FIX",
+      "description": "31 HIGH /nas_train refs in configs",
+      "mitigation": "Replace /nas_train with /nas_data in YAML configs; .sh files already use paths.sh auto-detection"
+    }
+  ],
+  "fixes_applied": []
+}

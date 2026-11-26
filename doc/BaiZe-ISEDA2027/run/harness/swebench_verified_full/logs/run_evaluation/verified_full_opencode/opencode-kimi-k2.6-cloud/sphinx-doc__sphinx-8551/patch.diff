@@ -1,0 +1,105 @@
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 79d7e4f4..76894296 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -1216,6 +1216,10 @@ class PythonDomain(Domain):
+         self.modules[name] = ModuleEntry(self.env.docname, node_id,
+                                          synopsis, platform, deprecated)
+ 
++    def process_field_xref(self, pnode: pending_xref) -> None:
++        pnode['py:module'] = self.env.ref_context.get('py:module')
++        pnode['py:class'] = self.env.ref_context.get('py:class')
++
+     def clear_doc(self, docname: str) -> None:
+         for fullname, obj in list(self.objects.items()):
+             if obj.docname == docname:
+diff --git a/tests/roots/test-domain-py-field-xref/conf.py b/tests/roots/test-domain-py-field-xref/conf.py
+new file mode 100644
+index 00000000..f38db773
+--- /dev/null
++++ b/tests/roots/test-domain-py-field-xref/conf.py
+@@ -0,0 +1,2 @@
++project = 'test-domain-py-field-xref'
++extensions = []
+diff --git a/tests/roots/test-domain-py-field-xref/index.rst b/tests/roots/test-domain-py-field-xref/index.rst
+new file mode 100644
+index 00000000..5715d695
+--- /dev/null
++++ b/tests/roots/test-domain-py-field-xref/index.rst
+@@ -0,0 +1,45 @@
++test-domain-py-field-xref
++=========================
++
++.. py:class:: mod.A
++.. py:class:: mod.submod.A
++
++.. py:function:: f()
++
++   - :py:class:`mod.A`
++   - :py:class:`mod.submod.A`
++
++   :param mod.A a:
++   :param mod.submod.A b:
++   :rtype: mod.A
++   :rtype: mod.submod.A
++
++.. py:currentmodule:: mod
++
++.. py:function:: f()
++
++   - :py:class:`A`
++   - :py:class:`mod.A`
++   - :py:class:`mod.submod.A`
++
++   :param A a:
++   :param mod.A b:
++   :param mod.submod.A c:
++   :rtype: A
++   :rtype: mod.A
++   :rtype: mod.submod.A
++
++.. py:currentmodule:: mod.submod
++
++.. py:function:: f()
++
++   - :py:class:`A`
++   - :py:class:`mod.A`
++   - :py:class:`mod.submod.A`
++
++   :param A a:
++   :param mod.A b:
++   :param mod.submod.A c:
++   :rtype: A
++   :rtype: mod.A
++   :rtype: mod.submod.A
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 2dc97bed..dddc225a 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -865,3 +865,26 @@ def test_warn_missing_reference(app, status, warning):
+     assert 'index.rst:6: WARNING: undefined label: no-label' in warning.getvalue()
+     assert ('index.rst:6: WARNING: Failed to create a cross reference. A title or caption not found: existing-label'
+             in warning.getvalue())
++
++
++@pytest.mark.sphinx('dummy', testroot='domain-py-field-xref')
++def test_domain_py_field_xref(app, status, warning):
++    app.builder.build_all()
++
++    # there should be no ambiguous class lookup warnings
++    assert "more than one target found for cross-reference 'A'" not in warning.getvalue()
++
++    doctree = app.env.get_doctree('index')
++    refnodes = list(doctree.traverse(pending_xref))
++
++    # All unqualified A references inside mod.submod should have py:module set
++    mod_submod_refs = [r for r in refnodes
++                       if r.get('py:module') == 'mod.submod' and r.get('reftarget') == 'A']
++    # 3 refs: :py:class:`A`, :param A a:, and :rtype: A
++    assert len(mod_submod_refs) == 3
++
++    # All unqualified A references inside mod should have py:module set
++    mod_refs = [r for r in refnodes
++                if r.get('py:module') == 'mod' and r.get('reftarget') == 'A']
++    # 3 refs: :py:class:`A`, :param A a:, and :rtype: A
++    assert len(mod_refs) == 3

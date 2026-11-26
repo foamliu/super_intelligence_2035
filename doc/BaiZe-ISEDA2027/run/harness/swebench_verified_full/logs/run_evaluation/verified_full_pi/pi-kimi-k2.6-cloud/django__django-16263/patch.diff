@@ -1,0 +1,106 @@
+diff --git a/test_count_sql.py b/test_count_sql.py
+new file mode 100644
+index 00000000..3dc1cc7b
+--- /dev/null
++++ b/test_count_sql.py
+@@ -0,0 +1,40 @@
++import os
++import sys
++import django
++from django.conf import settings
++
++settings.configure(
++    DATABASES={
++        'default': {
++            'ENGINE': 'django.db.backends.sqlite3',
++            'NAME': ':memory:',
++        }
++    },
++    SECRET_KEY='test',
++    INSTALLED_APPS=[
++        'django.contrib.contenttypes',
++        'django.contrib.auth',
++        'aggregation',
++    ],
++    USE_TZ=False,
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++
++# Need to add the tests dir to path so aggregation app can be found
++sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'tests'))
++
++django.setup()
++
++from django.core.management import call_command
++call_command('migrate', '--run-syncdb', verbosity=0)
++
++from django.db import connection
++from django.test.utils import CaptureQueriesContext
++from aggregation.models import Book
++from django.db import models
++
++with CaptureQueriesContext(connection) as ctx:
++    Book.objects.annotate(authors__count=models.Count('authors')).count()
++
++for q in ctx.captured_queries:
++    print(q['sql'])
+diff --git a/test_count_sql2.py b/test_count_sql2.py
+new file mode 100644
+index 00000000..a688b7be
+--- /dev/null
++++ b/test_count_sql2.py
+@@ -0,0 +1,54 @@
++import os
++import sys
++import django
++from django.conf import settings
++
++settings.configure(
++    DATABASES={
++        'default': {
++            'ENGINE': 'django.db.backends.sqlite3',
++            'NAME': ':memory:',
++        }
++    },
++    SECRET_KEY='test',
++    INSTALLED_APPS=[
++        'django.contrib.contenttypes',
++        'django.contrib.auth',
++        'aggregation',
++    ],
++    USE_TZ=False,
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++
++sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'tests'))
++
++django.setup()
++
++from django.core.management import call_command
++call_command('migrate', '--run-syncdb', verbosity=0)
++
++from django.db import connection
++from django.test.utils import CaptureQueriesContext
++from aggregation.models import Book
++from django.db import models
++
++# Case 1: unused annotation
++print("=== Unused annotation ===")
++with CaptureQueriesContext(connection) as ctx:
++    Book.objects.annotate(authors__count=models.Count('authors')).count()
++for q in ctx.captured_queries:
++    print(q['sql'])
++
++# Case 2: annotation used in filter
++print("\n=== Used in filter ===")
++with CaptureQueriesContext(connection) as ctx:
++    Book.objects.annotate(authors__count=models.Count('authors')).filter(authors__count__gt=1).count()
++for q in ctx.captured_queries:
++    print(q['sql'])
++
++# Case 3: annotation used in order_by
++print("\n=== Used in order_by ===")
++with CaptureQueriesContext(connection) as ctx:
++    Book.objects.annotate(authors__count=models.Count('authors')).order_by('authors__count').count()
++for q in ctx.captured_queries:
++    print(q['sql'])

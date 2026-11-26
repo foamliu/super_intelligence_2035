@@ -1,0 +1,48 @@
+{
+  "phases": [
+    {
+      "name": "基础认知",
+      "ratio": 0.15,
+      "mix": {
+        "L1": 0.7,
+        "L2": 0.3
+      },
+      "objective": "掌握工具格式与search_apis"
+    },
+    {
+      "name": "单工具使用",
+      "ratio": 0.25,
+      "mix": {
+        "L1": 0.2,
+        "L2": 0.6,
+        "L3": 0.2
+      },
+      "objective": "单API调用"
+    },
+    {
+      "name": "多工具协同",
+      "ratio": 0.35,
+      "mix": {
+        "L2": 0.2,
+        "L3": 0.6,
+        "L4": 0.2
+      },
+      "objective": "多API协同+错误修复"
+    },
+    {
+      "name": "复杂任务",
+      "ratio": 0.25,
+      "mix": {
+        "L3": 0.3,
+        "L4": 0.7
+      },
+      "objective": "复杂场景处理"
+    }
+  ],
+  "data_mix": {
+    "通用SFT": 0.3,
+    "通用Agent": 0.2,
+    "PyAether": 0.5
+  },
+  "expected_improvement": "工具合法率>98%，search_apis使用率>95%，Pass@1>50%"
+}

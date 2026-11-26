@@ -1,0 +1,36 @@
+diff --git a/xarray/core/variable.py b/xarray/core/variable.py
+index 5827b90..93576e4 100644
+--- a/xarray/core/variable.py
++++ b/xarray/core/variable.py
+@@ -2879,9 +2879,9 @@ class IndexVariable(Variable):
+     def _data_equals(self, other):
+         return self.to_index().equals(other.to_index())
+ 
+-    def to_index_variable(self):
++    def to_index_variable(self) -> IndexVariable:
+         """Return this variable as an xarray.IndexVariable"""
+-        return self
++        return self.copy()
+ 
+     to_coord = utils.alias(to_index_variable, "to_coord")
+ 
+diff --git a/xarray/tests/test_variable.py b/xarray/tests/test_variable.py
+index 21b8b11..6048ebc 100644
+--- a/xarray/tests/test_variable.py
++++ b/xarray/tests/test_variable.py
+@@ -2422,6 +2422,15 @@ class TestIndexVariable(VariableSubclassobjects):
+     def test_coarsen_2d(self):
+         super().test_coarsen_2d()
+ 
++    def test_to_index_variable_copy(self) -> None:
++        # to_index_variable should return a copy
++        # https://github.com/pydata/xarray/issues/6931
++        a = IndexVariable("x", ["a"])
++        b = a.to_index_variable()
++        assert a is not b
++        b.dims = ("y",)
++        assert a.dims == ("x",)
++
+ 
+ class TestAsCompatibleData:
+     def test_unchanged_types(self):

@@ -1,0 +1,44 @@
+场景（真实 trace：johnl / PrimeTime STA 签核流程 / pnr_signoff / session 1792493511731_624js）
+
+我是 johnl，在 .75 全定制环境下完成了对小型数字模块 `addr_to_rowcol_v7`（纯组合，107 实例 /
+116 网络，DRAM 工艺 cxmtG5_CIP）的 Innovus 布线布线，并已用 StarRC W-2024.09 从布线后 DEF
+提取出寄生 SPEF。现在要用 PrimeTime (U-2022.12-SP5) 做布线后静态时序签核（post-route STA
+signoff），把流程沉淀成可复用的脚本，便于换设计/换角点重跑。
+
+## 你要交付的（outputs/submit.zip，内含 4 个文件）
+1. `tcl/pt_sta.tcl` —— PrimeTime STA 主脚本。须 `source setup/common_setup.tcl` 取设计/路径
+   变量（$DESIGN/$NETLIST/$SPEF/$SDC/$DB/$LIB_NAME/$OUT_DIR），按以下顺序执行：
+   `read_db $DB` 加载预编译时序库 → `set_app_var link_path $LIB_NAME` → `read_verilog $NETLIST`
+   → `current_design $DESIGN` → `link_design` → `read_sdc $SDC` → `read_parasitics -format spef
+   $SPEF` → `report_annotated_parasitics` → `report_global_timing` → `report_timing -max_paths
+   ≥5 -input_pins -path_type full` → `report_design` → `report_constraint -all_violators
+   -max_delay` → `exit`。报告分别重定向到 `$OUT_DIR/pt_global.rpt` / `pt_timing.rpt` /
+   `pt_crit_path.rpt` / `pt_design.rpt` / `pt_viol.rpt`。
+   **脚本必须参数化**：用 `$DESIGN/$NETLIST/$SPEF/$SDC/$DB` 等变量，不得硬编码设计名
+   `addr_to_rowcol_v7` 或绝对路径——我会拿另一个设计（不同设计名/路径/角点）重跑验证。
+2. `setup/common_setup.tcl` —— 变量定义（本设计 A 的值）：DESIGN=addr_to_rowcol_v7，
+   NETLIST=data/postroute.v，SPEF=data/routed.spef，SDC=data/mapped.sdc，DB=data/ss_text.db，
+   LIB_NAME=SS_0p98_m40c，OUT_DIR=data。
+3. `run_pt.csh` —— cshell 启动器：设 license 环境变量（SNPSLMD_LICENSE_FILE /
+   LM_LICENSE_FILE），用 `env -u LD_PRELOAD` 清掉被污染的 LD_PRELOAD 后再启动
+   `pt_shell -file tcl/pt_sta.tcl`。
+4. `README.md` —— 流程说明，并如实披露一个已知问题：提取寄生用的 nxtgrd 是 TYP 98°C 角点，
+   而 Liberty 时序库是 SS_0p98_m40c（-40°C），二者角点不一致。
+
+## 已验证的环境事实（务必在脚本/launcher 中正确编码，否则在我的环境跑不通）
+- **`link_path` 必须设为库名 `SS_0p98_m40c`**，**不得为 `"*"`**——`link_path "*"` 配合
+  `read_db` 在此 PT 会 link 失败（LNK-049/LNK-005）。
+- **用 `read_db` 加载 .db**，**不要用 `read_liberty`**——此 PT 没有 `read_liberty` 命令。
+- **launcher 须 `env -u LD_PRELOAD`** 后再启动 pt_shell。
+- **license**：`SNPSLMD_LICENSE_FILE=27000@hfds4:12000@hfds4`，`LM_LICENSE_FILE` 同值。
+- 网表用 `postroute.v`（无 PG 版本；含 PG 版会 LNK-042 失败）。
+
+## 资产（本目录，真实 trace 附件本地副本）
+- `postroute.v`：布线后网表（module addr_to_rowcol_v7，input N[8:0] / output row[3:0] /
+  col[4:0] / valid，107 个 *LVSx 组合单元实例）。
+- `routed.spef`：StarRC 提取的寄生 SPEF（IEEE 1481-1999，*DESIGN addr_to_rowcol_v7）。
+- `mapped.sdc`：约束（set_max_delay 0.5 ns in→out，set_max_transition 0.1，输出负载 5fF）。
+- `design_context.md`：设计上下文与已验证环境事实清单（同上，备查）。
+- `task_brief.md`：交付接口（≤3 行）。
+时序库 `data/ss_text.db`（库名 SS_0p98_m40c，93 单元）由环境预编译，脚本按路径 `$DB` 引用即可，
+无需你重新编译。

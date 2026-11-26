@@ -1,0 +1,34 @@
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Loading HF float32...
+Loading weights:   0%|          | 0/323 [00:00<?, ?it/s]Loading weights:   0%|          | 1/323 [00:00<00:55,  5.81it/s]Loading weights:  46%|████▌     | 147/323 [00:00<00:00, 637.35it/s]Loading weights:  70%|██████▉   | 226/323 [00:00<00:00, 636.58it/s]Loading weights:  92%|█████████▏| 298/323 [00:00<00:00, 633.00it/s]Loading weights: 100%|██████████| 323/323 [00:00<00:00, 500.95it/s]
+Loaded.
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `mamba_chunk_scan_combined` is falling back to its reference PyTorch implementation because `mamba_ssm` is not installed. This is correct but much slower; install `mamba_ssm` for the optimized kernel.
+
+Prompt: 'Hello' (1 tokens: [19923])
+  HF argmax: id=14 token=',' logprob=-0.7802
+  HF top-5:
+    id=    14 token=         ',' logprob=-0.7802
+    id=   989 token=       ',\n' logprob=-3.4231
+    id=     3 token=         '!' logprob=-3.4920
+    id=  4495 token=    ' World' logprob=-3.7021
+    id=    16 token=         '.' logprob=-4.0942
+
+Prompt: 'The capital' (2 tokens: [671, 6102])
+  HF argmax: id=294 token=' of' logprob=-0.6367
+  HF top-5:
+    id=   294 token=       ' of' logprob=-0.6367
+    id=   344 token=       ' is' logprob=-2.7428
+    id=  4593 token=     ' city' logprob=-2.7878
+    id=   515 token=      ' was' logprob=-2.9374
+    id=    14 token=         ',' logprob=-2.9699
+
+Prompt: 'The capital of France is' (5 tokens: [671, 6102, 294, 8760, 344])
+  HF argmax: id=0 token='<｜begin▁of▁sentence｜>' logprob=nan
+  HF top-5:
+    id= 43127 token=         '蹦' logprob=nan
+    id= 43128 token=      ' EUR' logprob=nan
+    id= 43129 token=        '都说' logprob=nan
+    id= 43130 token=    ' devil' logprob=nan
+    id= 43131 token=  'iterator' logprob=nan

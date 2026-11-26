@@ -1,0 +1,24 @@
+summary_1114.tsv build log
+==========================
+source: /home/t0002965/log/ssh_eda_search_20261114_184938/summary.tsv (.75, scan completed 11-14 18:54)
+raw_sha256: af706178b92a6a43982eaf4553499950a1d62d6f1330ecbbf0e5bbb9bbda2909
+raw_lines (incl header): 39247
+curated_sha256: f321749a90b63946bf185b18d45b213bbb7478864769ecdbbcf7acaf7b8f4714
+curated_rows (data, excl header): 4539
+dedup_sessions (slug-level, max mc): 4539
+mc>=10: 3345
+mc>=15: 3129
+mc>=20: 2950
+mc>=30: 2654
+
+schema: ip host user session_file match_count keywords tools (7 cols, same as summary_1105/1109/1113)
+dedup rule: by slug (session_file minus .messages.json/.messages.archive.json/.archive.json/.json suffix), keep row with max match_count
+filter rule: only keep session rows (same as 1113)
+
+context (r563, 2026-11-14):
+  - 1113 池 B mc>=10 fresh=0 (r531 13/13 完整 peek 闭合). r562 noted new rescan ssh_eda_search_20261114_184938 in progress (no summary.tsv).
+  - r563 复核: summary.tsv now present (6.06MB, mtime 18:54). Built local summary_1114.tsv (B artifact, same as 1109/1113 build pattern).
+  - 1114 vs 1113: unique slugs 4418 -> 4539 (+121); B pool mc>=10 917 -> 942 (+25); B fresh mc>=10 0 -> 18 (UNLOCKED).
+  - **NOT updating summary_stats.json.mc_matrix.src** (per r528 self-correction + 11-11 令: 换池由 shard A 独家执行; B 非配置 owner). 1114 工件留作 B 挖掘 + A 后续官方切换输入.
+  - B 直接目标 (11-12 令): B 域 mc>=10 fresh>0 ⇒ 1114 满足 (fresh=18).
+

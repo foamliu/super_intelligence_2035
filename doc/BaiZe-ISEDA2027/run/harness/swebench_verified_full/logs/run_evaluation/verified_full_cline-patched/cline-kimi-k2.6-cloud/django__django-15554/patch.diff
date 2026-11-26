@@ -1,0 +1,186 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 54f3258ea..70b7590f4 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1032,12 +1032,16 @@ class Query(BaseExpression):
+         if reuse_aliases:
+             if join.table_alias in reuse_aliases:
+                 reuse_alias = join.table_alias
+-            else:
++            elif join.filtered_relation is None:
+                 # Reuse the most recent alias of the joined table
+                 # (a many-to-many relation may be joined multiple times).
+                 reuse_alias = reuse_aliases[-1]
+-            self.ref_alias(reuse_alias)
+-            return reuse_alias
++            else:
++                # Don't reuse a different alias for a FilteredRelation.
++                reuse_alias = None
++            if reuse_alias is not None:
++                self.ref_alias(reuse_alias)
++                return reuse_alias
+ 
+         # No reuse is possible, so we need a new alias.
+         alias, _ = self.table_alias(
+@@ -1321,6 +1325,7 @@ class Query(BaseExpression):
+         branch_negated=False,
+         current_negated=False,
+         can_reuse=None,
++        force_can_reuse=False,
+         allow_joins=True,
+         split_subq=True,
+         check_filterable=True,
+@@ -1358,6 +1363,7 @@ class Query(BaseExpression):
+                 branch_negated=branch_negated,
+                 current_negated=current_negated,
+                 used_aliases=can_reuse,
++                force_can_reuse=force_can_reuse,
+                 allow_joins=allow_joins,
+                 split_subq=split_subq,
+                 check_filterable=check_filterable,
+@@ -1403,6 +1409,7 @@ class Query(BaseExpression):
+                 opts,
+                 alias,
+                 can_reuse=can_reuse,
++                force_can_reuse=force_can_reuse,
+                 allow_many=allow_many,
+             )
+ 
+@@ -1516,6 +1523,7 @@ class Query(BaseExpression):
+         allow_joins=True,
+         split_subq=True,
+         check_filterable=True,
++        force_can_reuse=False,
+     ):
+         """Add a Q-object to the current filter."""
+         connector = q_object.connector
+@@ -1529,6 +1537,7 @@ class Query(BaseExpression):
+             child_clause, needed_inner = self.build_filter(
+                 child,
+                 can_reuse=used_aliases,
++                force_can_reuse=force_can_reuse,
+                 branch_negated=branch_negated,
+                 current_negated=current_negated,
+                 allow_joins=allow_joins,
+@@ -1561,6 +1570,7 @@ class Query(BaseExpression):
+                 child_clause, _ = self.build_filter(
+                     child,
+                     can_reuse=reuse,
++                    force_can_reuse=True,
+                     branch_negated=branch_negated,
+                     current_negated=current_negated,
+                     allow_joins=True,
+@@ -1716,7 +1726,7 @@ class Query(BaseExpression):
+                 break
+         return path, final_field, targets, names[pos + 1 :]
+ 
+-    def setup_joins(self, names, opts, alias, can_reuse=None, allow_many=True):
++    def setup_joins(self, names, opts, alias, can_reuse=None, force_can_reuse=False, allow_many=True):
+         """
+         Compute the necessary table joins for the passage through the fields
+         given in 'names'. 'opts' is the Options class for the current model
+@@ -1818,7 +1828,7 @@ class Query(BaseExpression):
+                 nullable,
+                 filtered_relation=filtered_relation,
+             )
+-            reuse = can_reuse if join.m2m else None
++            reuse = can_reuse if (join.m2m or force_can_reuse) else None
+             alias = self.join(connection, reuse=reuse)
+             joins.append(alias)
+             if filtered_relation:
+diff --git a/repro_test.py b/repro_test.py
+new file mode 100644
+index 000000000..dc8a235fc
+--- /dev/null
++++ b/repro_test.py
+@@ -0,0 +1,52 @@
++import os
++import sys
++
++# Set up Django settings
++os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'test_sqlite')
++sys.path.insert(0, '/dev/shm/harness_verified_full/workdirs/cline-patched/django_django')
++sys.path.insert(0, '/dev/shm/harness_verified_full/workdirs/cline-patched/django_django/tests')
++
++import django
++django.setup()
++
++from django.db.models import FilteredRelation, Q, F, Case, When
++from filtered_relation.models import Author, Book
++
++# Create test data
++Author.objects.all().delete()
++Book.objects.all().delete()
++author1 = Author.objects.create(name="Alice")
++Book.objects.create(title="Poem by Alice", author=author1)
++Book.objects.create(title="The book by Jane A", author=author1)
++
++qs = Author.objects.alias(
++    book_alice=FilteredRelation(
++        "book", condition=Q(book__title__icontains="alice")
++    ),
++    book_jane=FilteredRelation(
++        "book", condition=Q(book__title__icontains="jane")
++    ),
++).annotate(
++    alice_title=F("book_alice__title"),
++    jane_title=F("book_jane__title"),
++)
++
++sql = str(qs.query)
++print("SQL Query:")
++print(sql)
++print()
++
++# Count how many times the book table is joined
++join_count = sql.lower().count('join "filtered_relation_book"')
++print(f"Number of joins to filtered_relation_book: {join_count}")
++
++# We expect 2 joins, but due to the bug, we might get 1
++if join_count == 1:
++    print("BUG CONFIRMED: Only 1 join was generated instead of 2!")
++else:
++    print(f"OK: {join_count} joins were generated")
++
++# Also test the actual results
++print("\nResults:")
++for author in qs:
++    print(f"  {author.name}: alice_title={author.alice_title}, jane_title={author.jane_title}")
+diff --git a/tests/filtered_relation/tests.py b/tests/filtered_relation/tests.py
+index 790a90d9e..a613d025f 100644
+--- a/tests/filtered_relation/tests.py
++++ b/tests/filtered_relation/tests.py
+@@ -657,6 +657,33 @@ class FilteredRelationTests(TestCase):
+             FilteredRelation("book", condition=Q(book__title="b")), mock.ANY
+         )
+ 
++    def test_multiple_filtered_relation_same_relation(self):
++        """
++        Multiple FilteredRelation objects on the same relation with different
++        conditions should create separate joins (#32988).
++        """
++        qs = Author.objects.annotate(
++            book_alice=FilteredRelation(
++                "book", condition=Q(book__title__icontains="alice")
++            ),
++            book_jane=FilteredRelation(
++                "book", condition=Q(book__title__icontains="jane")
++            ),
++        ).annotate(
++            alice_title=F("book_alice__title"),
++            jane_title=F("book_jane__title"),
++        )
++        self.assertQuerysetEqual(
++            qs.order_by("pk", "alice_title", "jane_title"),
++            [
++                (self.author1, "Poem by Alice", None),
++                (self.author1, "The book by Alice", None),
++                (self.author2, None, "The book by Jane A"),
++                (self.author2, None, "The book by Jane B"),
++            ],
++            lambda x: (x, x.alice_title, x.jane_title),
++        )
++
+ 
+ class FilteredRelationAggregationTests(TestCase):
+     @classmethod

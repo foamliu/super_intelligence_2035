@@ -1,0 +1,60 @@
+diff --git a/repro.py b/repro.py
+new file mode 100644
+index 0000000000..40c0bdbaec
+--- /dev/null
++++ b/repro.py
+@@ -0,0 +1,54 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={
++        "default": {
++            "ENGINE": "django.db.backends.sqlite3",
++            "NAME": ":memory:",
++        }
++    },
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++)
++django.setup()
++
++from django.db import connection, models
++from django.db.backends.base.schema import BaseDatabaseSchemaEditor
++
++
++class Tag(models.Model):
++    title = models.CharField(max_length=255)
++
++    class Meta:
++        app_label = "repro"
++        unique_together = (("id",),)
++
++
++with connection.schema_editor() as editor:
++    editor.create_model(Tag)
++
++print("Model created with unique_together =", Tag._meta.unique_together)
++
++# Inspect constraints on the id column
++with connection.cursor() as cursor:
++    constraints = connection.introspection.get_constraints(cursor, Tag._meta.db_table)
++for name, infodict in constraints.items():
++    if infodict["columns"] == ["id"]:
++        print(name, {k: infodict[k] for k in ("unique", "primary_key", "index")})
++
++# Now try to drop the unique_together constraint
++try:
++    with connection.schema_editor() as editor:
++        editor.alter_unique_together(Tag, (("id",),), [])
++    print("SUCCESS: unique_together dropped")
++except ValueError as e:
++    print("FAILED with ValueError:", e)
++
++# Check what remains
++with connection.cursor() as cursor:
++    constraints = connection.introspection.get_constraints(cursor, Tag._meta.db_table)
++print("Remaining constraints on id column:")
++for name, infodict in constraints.items():
++    if infodict["columns"] == ["id"]:
++        print(" ", name, {k: infodict[k] for k in ("unique", "primary_key", "index")})

@@ -1,0 +1,63 @@
+diff --git a/repro_proxy_only.py b/repro_proxy_only.py
+new file mode 100644
+index 0000000000..88ed6a8e27
+--- /dev/null
++++ b/repro_proxy_only.py
+@@ -0,0 +1,57 @@
++"""Repro for: QuerySet.only() after select_related() crash on proxy models."""
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++)
++django.setup()
++
++from django.db import models, connection
++
++
++class CustomModel(models.Model):
++    name = models.CharField(max_length=16)
++
++    class Meta:
++        app_label = "repro"
++
++
++class ProxyCustomModel(CustomModel):
++    class Meta:
++        proxy = True
++        app_label = "repro"
++
++
++class AnotherModel(models.Model):
++    custom = models.ForeignKey(
++        ProxyCustomModel,
++        on_delete=models.SET_NULL,
++        null=True,
++        blank=True,
++    )
++
++    class Meta:
++        app_label = "repro"
++
++
++with connection.schema_editor() as se:
++    se.create_model(CustomModel)
++    se.create_model(AnotherModel)
++
++CustomModel.objects.create(name="test")
++AnotherModel.objects.create(custom=CustomModel.objects.get())
++
++print("--- only('custom__name') after select_related('custom') ---")
++objs = list(AnotherModel.objects.select_related("custom").only("custom__name").all())
++print("OK:", objs)
++
++print("--- defer('custom__name') after select_related('custom') ---")
++objs = list(AnotherModel.objects.select_related("custom").defer("custom__name").all())
++print("OK:", objs)
++
++print("--- plain only('custom__name') without select_related ---")
++objs = list(AnotherModel.objects.only("custom__name").all())
++print("OK:", objs)

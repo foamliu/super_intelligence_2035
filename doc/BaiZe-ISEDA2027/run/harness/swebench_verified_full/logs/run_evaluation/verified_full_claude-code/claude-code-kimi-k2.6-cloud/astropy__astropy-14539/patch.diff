@@ -1,0 +1,21 @@
+diff --git a/astropy/io/fits/diff.py b/astropy/io/fits/diff.py
+index 100cdf1b..7b27f6c4 100644
+--- a/astropy/io/fits/diff.py
++++ b/astropy/io/fits/diff.py
+@@ -31,6 +31,7 @@ from .card import BLANK_CARD, Card
+ 
+ # HDUList is used in one of the doctests
+ from .hdu.hdulist import HDUList, fitsopen  # pylint: disable=W0611
++from .column import _FormatP
+ from .hdu.table import _TableLikeHDU
+ from .header import Header
+ from .util import path_like
+@@ -1449,7 +1450,7 @@ class TableDataDiff(_BaseDiff):
+                 arrb.dtype, np.floating
+             ):
+                 diffs = where_not_allclose(arra, arrb, rtol=self.rtol, atol=self.atol)
+-            elif "P" in col.format:
++            elif isinstance(col.format.recformat, _FormatP):
+                 diffs = (
+                     [
+                         idx

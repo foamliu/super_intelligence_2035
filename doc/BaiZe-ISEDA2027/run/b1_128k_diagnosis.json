@@ -1,0 +1,132 @@
+{
+  "experiment": "B1_128k_diagnosis",
+  "timestamp": "2026-10-06 17:58:36",
+  "server_config": "--context-length 131072 --mem-fraction-static 0.85 --attention-backend flashinfer --mamba-ssm-dtype float32",
+  "env": "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1, CUDA_VISIBLE_DEVICES=1",
+  "model": "p3_hybrid/hf_iter_5000 (max_position_embeddings=4096, rope_theta=default(1e4), rope_scaling=none)",
+  "sglang_version": "0.5.9",
+  "hypothesis": "128K rejection cause = prompt_tokens + max_tokens > context_len(131072)",
+  "results": [
+    {
+      "label": "4K_control",
+      "target_tokens": 4000,
+      "est_tokens": 5557,
+      "max_tokens": 64,
+      "http_status": 200,
+      "elapsed_s": 0.735,
+      "prompt_tokens": 4941,
+      "completion_tokens": 64,
+      "response": {
+        "id": "4d06f70e3ff34984a14423533b83e1c2",
+        "object": "text_completion",
+        "created": 1791280707,
+        "model": "default",
+        "choices": [
+          {
+            "index": 0,
+            "text": " and the most of the over the. the only for the most of the, and the most of the. the most of the, and the most of the. the most of the, and the most of the. the most of the, and the most of the. the most of the, and the most of",
+            "logprobs": null,
+            "finish_reason": "length",
+            "matched_stop": null
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 4941,
+          "total_tokens": 5005,
+          "completion_tokens": 64,
+          "prompt_tokens_details": null,
+          "reasoning_tokens": 0
+        },
+        "metadata": {
+          "weight_version": "default"
+        }
+      }
+    },
+    {
+      "label": "64K_control",
+      "target_tokens": 65000,
+      "est_tokens": 81810,
+      "max_tokens": 64,
+      "http_status": 200,
+      "elapsed_s": 7.201,
+      "prompt_tokens": 72721,
+      "completion_tokens": 64,
+      "response": {
+        "id": "73a234392ca843eeaa7ef1755f57e5e7",
+        "object": "text_completion",
+        "created": 1791280715,
+        "model": "default",
+        "choices": [
+          {
+            "index": 0,
+            "text": " and the over the the. the only for the most, and the most of the. the most of the, and the over the the. the only for the most, and the most of the. the most of the, and the most of the. the most of the, and the is the only for the",
+            "logprobs": null,
+            "finish_reason": "length",
+            "matched_stop": null
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 72721,
+          "total_tokens": 72785,
+          "completion_tokens": 64,
+          "prompt_tokens_details": null,
+          "reasoning_tokens": 0
+        },
+        "metadata": {
+          "weight_version": "default"
+        }
+      }
+    },
+    {
+      "label": "128K_exact",
+      "target_tokens": 131072,
+      "est_tokens": 164396,
+      "max_tokens": 64,
+      "http_status": 400,
+      "elapsed_s": 0.485,
+      "prompt_tokens": -1,
+      "completion_tokens": -1,
+      "response": {
+        "object": "error",
+        "message": "The input (146131 tokens) is longer than the model's context length (131072 tokens).",
+        "type": "BadRequestError",
+        "param": null,
+        "code": 400
+      }
+    },
+    {
+      "label": "128K_minus_gen",
+      "target_tokens": 131000,
+      "est_tokens": 164306,
+      "max_tokens": 64,
+      "http_status": 400,
+      "elapsed_s": 0.383,
+      "prompt_tokens": -1,
+      "completion_tokens": -1,
+      "response": {
+        "object": "error",
+        "message": "The input (146051 tokens) is longer than the model's context length (131072 tokens).",
+        "type": "BadRequestError",
+        "param": null,
+        "code": 400
+      }
+    },
+    {
+      "label": "128K_minus_margin",
+      "target_tokens": 130000,
+      "est_tokens": 163057,
+      "max_tokens": 64,
+      "http_status": 400,
+      "elapsed_s": 0.37,
+      "prompt_tokens": -1,
+      "completion_tokens": -1,
+      "response": {
+        "object": "error",
+        "message": "The input (144941 tokens) is longer than the model's context length (131072 tokens).",
+        "type": "BadRequestError",
+        "param": null,
+        "code": 400
+      }
+    }
+  ]
+}

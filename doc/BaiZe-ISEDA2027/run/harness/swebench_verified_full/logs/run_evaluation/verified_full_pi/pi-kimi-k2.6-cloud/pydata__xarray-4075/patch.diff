@@ -1,0 +1,53 @@
+diff --git a/xarray/core/weighted.py b/xarray/core/weighted.py
+index 996d2e4..6dfe846 100644
+--- a/xarray/core/weighted.py
++++ b/xarray/core/weighted.py
+@@ -142,7 +142,11 @@ class Weighted:
+         # we need to mask data values that are nan; else the weights are wrong
+         mask = da.notnull()
+ 
+-        sum_of_weights = self._reduce(mask, self.weights, dim=dim, skipna=False)
++        if self.weights.dtype == bool:
++            weights = self.weights.astype(int)
++        else:
++            weights = self.weights
++        sum_of_weights = self._reduce(mask, weights, dim=dim, skipna=False)
+ 
+         # 0-weights are not valid
+         valid_weights = sum_of_weights != 0.0
+diff --git a/xarray/tests/test_weighted.py b/xarray/tests/test_weighted.py
+index 2453121..4f1c2f3 100644
+--- a/xarray/tests/test_weighted.py
++++ b/xarray/tests/test_weighted.py
+@@ -158,6 +158,31 @@ def test_weighted_mean_nan(weights, expected, skipna):
+     assert_equal(expected, result)
+ 
+ 
++def test_weighted_bool_weights():
++    # GH ...
++    # boolean weights should be treated as 1/0, not as True/False in dot
++    da = DataArray([1.0, 1.0, 1.0])
++    weights = DataArray(np.array([1, 1, 0], dtype=bool))
++
++    expected_sum = DataArray(2.0)
++    expected_sum_of_weights = DataArray(2)
++    expected_mean = DataArray(1.0)
++
++    assert_equal(expected_sum, da.weighted(weights).sum())
++    assert_equal(expected_sum_of_weights, da.weighted(weights).sum_of_weights())
++    assert_equal(expected_mean, da.weighted(weights).mean())
++
++    # also check with NaN values
++    da_nan = DataArray([np.nan, 1.0, 1.0])
++    expected_sum_nan = DataArray(1.0)
++    expected_sum_of_weights_nan = DataArray(1)
++    expected_mean_nan = DataArray(1.0)
++
++    assert_equal(expected_sum_nan, da_nan.weighted(weights).sum())
++    assert_equal(expected_sum_of_weights_nan, da_nan.weighted(weights).sum_of_weights())
++    assert_equal(expected_mean_nan, da_nan.weighted(weights).mean())
++
++
+ def expected_weighted(da, weights, dim, skipna, operation):
+     """
+     Generate expected result using ``*`` and ``sum``. This is checked against

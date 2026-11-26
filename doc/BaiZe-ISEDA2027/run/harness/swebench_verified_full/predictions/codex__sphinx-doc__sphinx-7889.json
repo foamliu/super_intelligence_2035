@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-7889",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py\nindex 98a3a3a9..56e3a9f2 100644\n--- a/sphinx/ext/autodoc/mock.py\n+++ b/sphinx/ext/autodoc/mock.py\n@@ -70,10 +70,10 @@ class _MockObject:\n \n def _make_subclass(name: str, module: str, superclass: Any = _MockObject,\n                    attributes: Any = None) -> Any:\n-    attrs = {'__module__': module, '__display_name__': module + '.' + name}\n+    attrs = {'__module__': module, '__display_name__': module + '.' + str(name)}\n     attrs.update(attributes or {})\n \n-    return type(name, (superclass,), attrs)\n+    return type(str(name), (superclass,), attrs)\n \n \n class _MockModule(ModuleType):\ndiff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py\nindex 4760493c..68b50aab 100644\n--- a/tests/test_ext_autodoc_mock.py\n+++ b/tests/test_ext_autodoc_mock.py\n@@ -117,3 +117,13 @@ def test_mock_decorator():\n     assert func.__doc__ == \"docstring\"\n     assert Foo.meth.__doc__ == \"docstring\"\n     assert Bar.__doc__ == \"docstring\"\n+\n+\n+@pytest.mark.skipif(sys.version_info < (3, 5), reason='Only for py35 or above')\n+def test_MockObject_typevar():\n+    from typing import TypeVar\n+    mock = _MockObject()\n+    T = TypeVar('T')\n+    result = mock[T]\n+    assert isinstance(result, _MockObject)\n+    assert repr(result) == '_MockObject.~T'\n"
+  }
+]

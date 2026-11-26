@@ -1,0 +1,43 @@
+diff --git a/django/contrib/contenttypes/management/__init__.py b/django/contrib/contenttypes/management/__init__.py
+index 2b5f68813..563cba2fd 100644
+--- a/django/contrib/contenttypes/management/__init__.py
++++ b/django/contrib/contenttypes/management/__init__.py
+@@ -24,7 +24,7 @@ class RenameContentType(migrations.RunPython):
+             content_type.model = new_model
+             try:
+                 with transaction.atomic(using=db):
+-                    content_type.save(update_fields={'model'})
++                    content_type.save(using=db, update_fields={'model'})
+             except IntegrityError:
+                 # Gracefully fallback if a stale content type causes a
+                 # conflict as remove_stale_contenttypes will take care of
+diff --git a/tests/contenttypes_tests/test_operations.py b/tests/contenttypes_tests/test_operations.py
+index bdf492fe2..104a4e928 100644
+--- a/tests/contenttypes_tests/test_operations.py
++++ b/tests/contenttypes_tests/test_operations.py
+@@ -64,3 +64,25 @@ class ContentTypeOperationsTests(TransactionTestCase):
+         call_command('migrate', 'contenttypes_tests', 'zero', database='default', interactive=False, verbosity=0)
+         self.assertTrue(ContentType.objects.filter(app_label='contenttypes_tests', model='foo').exists())
+         self.assertTrue(ContentType.objects.filter(app_label='contenttypes_tests', model='renamedfoo').exists())
++
++    def test_rename_content_type_uses_correct_database(self):
++        from unittest.mock import MagicMock, patch
++        from django.contrib.contenttypes.management import RenameContentType
++
++        rename = RenameContentType('test_app', 'oldmodel', 'newmodel')
++
++        mock_content_type_cls = MagicMock()
++        mock_content_type_instance = MagicMock()
++        mock_content_type_cls.objects.db_manager.return_value.get_by_natural_key.return_value = mock_content_type_instance
++
++        mock_apps = MagicMock()
++        mock_apps.get_model.return_value = mock_content_type_cls
++
++        mock_schema_editor = MagicMock()
++        mock_schema_editor.connection.alias = 'other'
++
++        with patch('django.contrib.contenttypes.management.transaction') as mock_transaction:
++            rename._rename(mock_apps, mock_schema_editor, 'oldmodel', 'newmodel')
++
++        mock_content_type_instance.save.assert_called_once_with(using='other', update_fields={'model'})
++        mock_transaction.atomic.assert_called_once_with(using='other')

@@ -1,0 +1,3 @@
+我放了issure_0810和normal下面放了cxmt10G5_1p9m3x4y1z1rdl_98C_RCMAX , 这里面是一些明文数据，请分析这两个目录里到文件，找到数据差别。
+
+交付接口：submit.zip 内只放一个文件 rcmax_compare.py（Python3）。CLI: python3 rcmax_compare.py <rootA> <rootB> <out_report.txt> —— 递归 walk 两棵 RCMAX 明文树，字节级比对同名文件，逐行统计差异，把结构化报告写入 <out_report.txt> 并 stdout 打印摘要。

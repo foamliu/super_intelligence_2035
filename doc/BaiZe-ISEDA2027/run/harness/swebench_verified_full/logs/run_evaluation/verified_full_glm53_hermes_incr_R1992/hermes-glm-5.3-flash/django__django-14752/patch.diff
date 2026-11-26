@@ -1,0 +1,14 @@
+diff --git a/docs/releases/4.0.txt b/docs/releases/4.0.txt
+index 4bc3fa7678..9801abcf54 100644
+--- a/docs/releases/4.0.txt
++++ b/docs/releases/4.0.txt
+@@ -138,6 +138,9 @@ Minor features
+ * The new :meth:`.ModelAdmin.get_formset_kwargs` method allows customizing the
+   keyword arguments passed to the constructor of a formset.
+ 
++* The new ``AutocompleteJsonView.serialize_result()`` method allows customizing
++  the format of autocomplete results.
++
+ * The navigation sidebar now has a quick filter toolbar.
+ 
+ * The new context variable ``model`` which contains the model class for each

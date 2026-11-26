@@ -1,0 +1,110 @@
+diff --git a/django/db/backends/base/schema.py b/django/db/backends/base/schema.py
+index 696bfd7742..59d87ef966 100644
+--- a/django/db/backends/base/schema.py
++++ b/django/db/backends/base/schema.py
+@@ -829,7 +829,10 @@ class BaseDatabaseSchemaEditor:
+                 (old_field.primary_key and new_field.primary_key)
+                 or (old_field.unique and new_field.unique)
+             )
+-            and old_type != new_type
++            and (
++                old_type != new_type
++                or old_db_params.get("collation") != new_db_params.get("collation")
++            )
+         )
+         if drop_foreign_keys:
+             # '_meta.related_field' also contains M2M reverse fields, these
+@@ -1036,11 +1039,19 @@ class BaseDatabaseSchemaEditor:
+             rels_to_update.extend(_related_non_m2m_objects(old_field, new_field))
+         # Handle our type alters on the other end of rels from the PK stuff above
+         for old_rel, new_rel in rels_to_update:
+-            rel_db_params = new_rel.field.db_parameters(connection=self.connection)
+-            rel_type = rel_db_params["type"]
+-            fragment, other_actions = self._alter_column_type_sql(
+-                new_rel.related_model, old_rel.field, new_rel.field, rel_type
+-            )
++            rel_old_db_params = old_rel.field.db_parameters(connection=self.connection)
++            rel_new_db_params = new_rel.field.db_parameters(connection=self.connection)
++            rel_type = rel_new_db_params["type"]
++            rel_old_collation = rel_old_db_params.get("collation")
++            rel_new_collation = rel_new_db_params.get("collation")
++            if rel_old_collation != rel_new_collation:
++                fragment, other_actions = self._alter_column_collation_sql(
++                    new_rel.related_model, new_rel.field, rel_type, rel_new_collation
++                )
++            else:
++                fragment, other_actions = self._alter_column_type_sql(
++                    new_rel.related_model, old_rel.field, new_rel.field, rel_type
++                )
+             self.execute(
+                 self.sql_alter_column
+                 % {
+diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py
+index fad5560486..34fe6e3a5f 100644
+--- a/django/db/models/fields/related.py
++++ b/django/db/models/fields/related.py
+@@ -1180,8 +1180,13 @@ class ForeignKey(ForeignObject):
+         return self.target_field.rel_db_type(connection=connection)
+ 
+     def db_parameters(self, connection):
+-        return {"type": self.db_type(connection), "check": self.db_check(connection)}
+-
++        db_params = {"type": self.db_type(connection), "check": self.db_check(connection)}
++        target_field = self.target_field
++        while isinstance(target_field, ForeignKey):
++            target_field = target_field.target_field
++        if hasattr(target_field, "db_collation") and target_field.db_collation:
++            db_params["collation"] = target_field.db_collation
++        return db_params
+     def convert_empty_strings(self, value, expression, connection):
+         if (not value) and isinstance(value, str):
+             return None
+diff --git a/tests/migrations/test_operations.py b/tests/migrations/test_operations.py
+index a84321ad3b..d98b8a1ad5 100644
+--- a/tests/migrations/test_operations.py
++++ b/tests/migrations/test_operations.py
+@@ -1923,6 +1923,44 @@ class OperationTests(OperationTestBase):
+                 ("test_alflpkfk_pony", "id"),
+             )
+ 
++    @skipUnlessDBFeature("supports_collation_on_charfield", "supports_foreign_keys")
++    def test_alter_field_pk_fk_db_collation(self):
++        """
++        AlterField on primary keys propagates db_collation to FK columns.
++        """
++        app_label = "test_alflpkfkcollation"
++        project_state = self.set_up_test_model(app_label, related_model=True)
++        collation = connection.features.test_collations.get("non_default")
++        if not collation:
++            self.skipTest("Language collations are not supported.")
++
++        operation = migrations.AlterField(
++            "Pony",
++            "id",
++            models.CharField(max_length=50, primary_key=True, db_collation=collation),
++        )
++        new_state = project_state.clone()
++        operation.state_forwards(app_label, new_state)
++        with connection.schema_editor() as editor:
++            operation.database_forwards(app_label, editor, project_state, new_state)
++
++        def get_collation(table, column):
++            with connection.cursor() as cursor:
++                return next(
++                    f.collation
++                    for f in connection.introspection.get_table_description(cursor, table)
++                    if f.name == column
++                )
++
++        self.assertEqual(get_collation(f"{app_label}_pony", "id"), collation)
++        self.assertEqual(get_collation(f"{app_label}_rider", "pony_id"), collation)
++        if connection.features.supports_foreign_keys:
++            self.assertFKExists(
++                f"{app_label}_rider",
++                ["pony_id"],
++                (f"{app_label}_pony", "id"),
++            )
++
+     def test_alter_field_pk_mti_fk(self):
+         app_label = "test_alflpkmtifk"
+         project_state = self.set_up_test_model(app_label, mti_model=True)

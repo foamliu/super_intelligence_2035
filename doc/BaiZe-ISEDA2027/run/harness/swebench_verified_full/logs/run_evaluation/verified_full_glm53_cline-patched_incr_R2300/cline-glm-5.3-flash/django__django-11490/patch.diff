@@ -1,0 +1,192 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index a44adfc760..7805471152 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -409,8 +409,12 @@ class SQLCompiler:
+ 
+     def get_combinator_sql(self, combinator, all):
+         features = self.connection.features
++        # Clone combined queries to prevent leaking the set_values() call
++        # below to the original queries, so that composed querysets can be
++        # re-evaluated with a different list of columns in
++        # values()/values_list().
+         compilers = [
+-            query.get_compiler(self.using, self.connection)
++            query.clone().get_compiler(self.using, self.connection)
+             for query in self.query.combined_queries if not query.is_empty()
+         ]
+         if not features.supports_slicing_ordering_in_compound:
+diff --git a/repro_34150.py b/repro_34150.py
+new file mode 100644
+index 0000000000..8219b46470
+--- /dev/null
++++ b/repro_34150.py
+@@ -0,0 +1,107 @@
++"""Extended repro for ticket: composed queries cannot change columns on re-evaluation."""
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['queries'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from queries.models import ReservedName, Number  # noqa: E402
++from django.db import connection  # noqa: E402
++
++with connection.schema_editor() as se:
++    se.create_model(ReservedName)
++    se.create_model(Number)
++
++failures = []
++
++
++def check(label, actual, expected):
++    ok = actual == expected
++    print('%-4s %-58s got=%r expected=%r' % ('PASS' if ok else 'FAIL', label, actual, expected))
++    if not ok:
++        failures.append(label)
++
++
++def run(label, func, expected):
++    try:
++        actual = func()
++    except Exception as e:
++        actual = '%s: %s' % (type(e).__name__, e)
++    check(label, actual, expected)
++
++
++ReservedName.objects.create(name='a', order=2)
++Number.objects.create(num=1)
++
++qs1 = ReservedName.objects.all()
++
++# 1. Ticket example: two separate unions from a shared base queryset.
++check('ticket: fresh union values_list (name, order) then (order)',
++      (qs1.union(qs1).values_list('name', 'order').get(),
++       qs1.union(qs1).values_list('order').get()),
++      (('a', 2), (2,)))
++
++# 2. Same union queryset reused with different columns.
++qs2 = qs1.union(qs1)
++check('reuse union qs: values_list (name, order) then (order)',
++      (qs2.values_list('name', 'order').get(), qs2.values_list('order').get()),
++      (('a', 2), (2,)))
++
++# 3. Derived queryset re-evaluated with different columns.
++qs3 = qs1.union(qs1).values_list('name', 'order')
++check('derived qs: get() then values_list(order).get()',
++      (qs3.get(), qs3.values_list('order').get()),
++      (('a', 2), (2,)))
++
++# 4. values() dict variant.
++check('values() dict: (name, order) then (order)',
++      (qs1.union(qs1).values('name', 'order').get(),
++       qs1.union(qs1).values('order').get()),
++      ({'name': 'a', 'order': 2}, {'order': 2}))
++
++# 5. Base queryset must not be polluted by evaluating a composed queryset.
++qs1.union(qs1).values_list('name', 'order').get()
++run('base qs unaffected: list(qs1) after union values_list eval',
++    lambda: [(r.name, r.order, r.pk) for r in qs1.order_by('pk')],
++    [('a', 2, 1)])
++
++# 6. Union queryset itself still usable (no values) after a values() evaluation.
++qs4 = qs1.union(qs1)
++qs4.values_list('name', 'order').get()
++run('union qs usable after values eval: qs4.get().name/.order/.pk',
++    lambda: (qs4.get().name, qs4.get().order, qs4.get().pk),
++    ('a', 2, 1))
++
++# 7. Nested unions with changing columns.
++nested = qs1.union(qs1).union(qs1)
++run('nested union: values_list (name, order) then (order)',
++    lambda: (nested.values_list('name', 'order').get(),
++             qs1.union(qs1).union(qs1).values_list('order').get()),
++    (('a', 2), (2,)))
++
++# 8. Intersection/difference variants.
++run('intersection: values_list (name, order) then (order)',
++    lambda: (qs1.intersection(qs1).values_list('name', 'order').get(),
++             qs1.intersection(qs1).values_list('order').get()),
++    (('a', 2), (2,)))
++run('difference: values_list (name, order) then (order)',
++    lambda: (qs1.difference(qs1.none()).values_list('name', 'order').get(),
++             qs1.difference(qs1.none()).values_list('order').get()),
++    (('a', 2), (2,)))
++
++# 9. Combined querysets keeping their own columns must keep working.
++# (Both parts produce the row (1,), so plain UNION deduplicates it.)
++nqs1 = Number.objects.filter(num=1).values('num')
++nqs2 = Number.objects.filter(num=1).values('id')
++run('own columns preserved: union of values(num) and values(id)',
++    lambda: list(nqs1.union(nqs2)), [{'num': 1}])
++
++print()
++print('FAILURES: %d' % len(failures))
++for f in failures:
++    print(' -', f)
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+index 3902db59e2..da88b96fce 100644
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -40,6 +40,15 @@ class QuerySetSetOperationTests(TestCase):
+         reserved_name = qs1.intersection(qs1).values_list('name', 'order', 'id').get()
+         self.assertEqual(reserved_name[:2], ('a', 2))
+ 
++    @skipUnlessDBFeature('supports_select_intersection')
++    def test_intersection_with_values_multiple_evaluation(self):
++        ReservedName.objects.create(name='a', order=2)
++        qs1 = ReservedName.objects.all()
++        self.assertEqual(
++            qs1.intersection(qs1).values_list('name', 'order').get(), ('a', 2)
++        )
++        self.assertEqual(qs1.intersection(qs1).values_list('order').get(), (2,))
++
+     @skipUnlessDBFeature('supports_select_difference')
+     def test_simple_difference(self):
+         qs1 = Number.objects.filter(num__lte=5)
+@@ -87,6 +96,16 @@ class QuerySetSetOperationTests(TestCase):
+         reserved_name = qs1.difference(qs2).values_list('name', 'order', 'id').get()
+         self.assertEqual(reserved_name[:2], ('a', 2))
+ 
++    @skipUnlessDBFeature('supports_select_difference')
++    def test_difference_with_values_multiple_evaluation(self):
++        ReservedName.objects.create(name='a', order=2)
++        qs1 = ReservedName.objects.all()
++        qs2 = ReservedName.objects.none()
++        self.assertEqual(
++            qs1.difference(qs2).values_list('name', 'order').get(), ('a', 2)
++        )
++        self.assertEqual(qs1.difference(qs2).values_list('order').get(), (2,))
++
+     def test_union_with_empty_qs(self):
+         qs1 = Number.objects.all()
+         qs2 = Number.objects.none()
+@@ -124,6 +143,23 @@ class QuerySetSetOperationTests(TestCase):
+         reserved_name = qs1.union(qs1).values_list('name', 'order', 'id').get()
+         self.assertEqual(reserved_name[:2], ('a', 2))
+ 
++    def test_union_with_values_multiple_evaluation(self):
++        reserved_name = ReservedName.objects.create(name='a', order=2)
++        qs1 = ReservedName.objects.all()
++        self.assertEqual(
++            qs1.union(qs1).values_list('name', 'order').get(), ('a', 2)
++        )
++        self.assertEqual(qs1.union(qs1).values_list('order').get(), (2,))
++        self.assertEqual(qs1.union(qs1).values('order').get(), {'order': 2})
++        # A composed queryset can be re-evaluated with a different list of
++        # columns.
++        qs2 = qs1.union(qs1)
++        self.assertEqual(qs2.values_list('name', 'order').get(), ('a', 2))
++        self.assertEqual(qs2.values_list('order').get(), (2,))
++        # Evaluating a composed queryset doesn't mutate the base queryset.
++        obj = qs1.get()
++        self.assertEqual((obj.name, obj.order, obj.pk), ('a', 2, reserved_name.pk))
++
+     def test_union_with_two_annotated_values_list(self):
+         qs1 = Number.objects.filter(num=1).annotate(
+             count=Value(0, IntegerField()),

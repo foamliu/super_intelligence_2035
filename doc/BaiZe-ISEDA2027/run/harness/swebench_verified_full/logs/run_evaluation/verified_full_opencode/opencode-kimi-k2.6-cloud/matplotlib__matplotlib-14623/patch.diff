@@ -1,0 +1,92 @@
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index 06ff5ac..29782d0 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -266,6 +266,19 @@ def test_inverted_cla():
+     plt.close(fig)
+ 
+ 
++def test_inverted_axis_logscale():
++    # GitHub issue #14452. Inverting an axis using its limits should work
++    # for log scale.
++    fig, ax = plt.subplots()
++    ax.set_yscale('log')
++    ax.set_ylim(100, 1)
++    assert ax.yaxis_inverted()
++    ax.set_xscale('log')
++    ax.set_xlim(100, 1)
++    assert ax.xaxis_inverted()
++    plt.close(fig)
++
++
+ @check_figures_equal(extensions=["png"])
+ def test_minorticks_on_rcParams_both(fig_test, fig_ref):
+     with matplotlib.rc_context({"xtick.minor.visible": True,
+diff --git a/lib/matplotlib/tests/test_ticker.py b/lib/matplotlib/tests/test_ticker.py
+index ed61f9b..1e155ac 100644
+--- a/lib/matplotlib/tests/test_ticker.py
++++ b/lib/matplotlib/tests/test_ticker.py
+@@ -225,6 +225,15 @@ class TestLogLocator(object):
+         assert loc._base == 4
+         assert list(loc._subs) == [2.0]
+ 
++    def test_nonsingular(self):
++        """
++        Test that nonsingular preserves the order of the input.
++        """
++        loc = mticker.LogLocator()
++        loc.axis = mticker._DummyAxis()
++        assert loc.nonsingular(1, 100) == (1, 100)
++        assert loc.nonsingular(100, 1) == (100, 1)
++
+ 
+ class TestNullLocator(object):
+     def test_set_params(self):
+@@ -249,6 +258,15 @@ class TestLogitLocator(object):
+         loc.set_params(minor=True)
+         assert loc.minor
+ 
++    def test_nonsingular(self):
++        """
++        Test that nonsingular preserves the order of the input.
++        """
++        loc = mticker.LogitLocator()
++        loc.axis = mticker._DummyAxis()
++        assert loc.nonsingular(0.1, 0.9) == (0.1, 0.9)
++        assert loc.nonsingular(0.9, 0.1) == (0.9, 0.1)
++
+ 
+ class TestFixedLocator(object):
+     def test_set_params(self):
+diff --git a/lib/matplotlib/ticker.py b/lib/matplotlib/ticker.py
+index 209a3f9..cdf70e1 100644
+--- a/lib/matplotlib/ticker.py
++++ b/lib/matplotlib/ticker.py
+@@ -2379,8 +2379,6 @@ class LogLocator(Locator):
+         if not np.isfinite(vmin) or not np.isfinite(vmax):
+             return 1, 10  # initial range, no data plotted yet
+ 
+-        if vmin > vmax:
+-            vmin, vmax = vmax, vmin
+         if vmax <= 0:
+             cbook._warn_external(
+                 "Data has no positive values, and therefore cannot be "
+@@ -2585,6 +2583,8 @@ class LogitLocator(Locator):
+             raise NotImplementedError('Polar axis cannot be logit scaled yet')
+ 
+         vmin, vmax = self.nonsingular(vmin, vmax)
++        if vmax < vmin:
++            vmin, vmax = vmax, vmin
+         vmin = np.log10(vmin / (1 - vmin))
+         vmax = np.log10(vmax / (1 - vmax))
+ 
+@@ -2624,9 +2624,6 @@ class LogitLocator(Locator):
+         if not np.isfinite(vmin) or not np.isfinite(vmax):
+             return initial_range  # no data plotted yet
+ 
+-        if vmin > vmax:
+-            vmin, vmax = vmax, vmin
+-
+         # what to do if a window beyond ]0, 1[ is chosen
+         if self.axis is not None:
+             minpos = self.axis.get_minpos()

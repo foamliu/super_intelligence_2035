@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-7393",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/xarray/core/indexing.py b/xarray/core/indexing.py\nindex ba937183..e49a072d 100644\n--- a/xarray/core/indexing.py\n+++ b/xarray/core/indexing.py\n@@ -1531,8 +1531,12 @@ class PandasMultiIndexingAdapter(PandasIndexingAdapter):\n         self.level = level\n \n     def __array__(self, dtype: DTypeLike = None) -> np.ndarray:\n+        if dtype is None:\n+            dtype = self.dtype\n         if self.level is not None:\n-            return self.array.get_level_values(self.level).values\n+            return np.asarray(\n+                self.array.get_level_values(self.level).values, dtype=dtype\n+            )\n         else:\n             return super().__array__(dtype)\n \ndiff --git a/xarray/tests/test_indexes.py b/xarray/tests/test_indexes.py\nindex 3ecfa73c..caf0f511 100644\n--- a/xarray/tests/test_indexes.py\n+++ b/xarray/tests/test_indexes.py\n@@ -697,3 +697,10 @@ def test_safe_cast_to_index_datetime_datetime():\n     actual = safe_cast_to_index(np.array(dates))\n     assert_array_equal(expected, actual)\n     assert isinstance(actual, pd.Index)\n+\n+\n+@pytest.mark.parametrize(\"dtype\", [\"int32\", \"float32\"])\n+def test_restore_dtype_on_multiindexes(dtype: str) -> None:\n+    foo = xr.Dataset(coords={\"bar\": (\"bar\", np.array([0, 1], dtype=dtype))})\n+    foo = foo.stack(baz=(\"bar\",))\n+    assert str(foo[\"bar\"].values.dtype) == dtype\n"
+  }
+]

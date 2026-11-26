@@ -1,0 +1,47 @@
+diff --git a/requests/adapters.py b/requests/adapters.py
+index fe22ff4..8cea1c6 100644
+--- a/requests/adapters.py
++++ b/requests/adapters.py
+@@ -28,6 +28,7 @@ from urllib3.exceptions import ReadTimeoutError
+ from urllib3.exceptions import SSLError as _SSLError
+ from urllib3.exceptions import ResponseError
+ from urllib3.exceptions import LocationValueError
++from urllib3.exceptions import LocationParseError
+ 
+ from .models import Response
+ from .compat import urlparse, basestring
+@@ -532,6 +533,17 @@ class HTTPAdapter(BaseAdapter):
+                 raise ReadTimeout(e, request=request)
+             elif isinstance(e, _InvalidHeader):
+                 raise InvalidHeader(e, request=request)
++            elif isinstance(e, LocationParseError):
++                # urllib3 may raise LocationParseError (subclass of
++                # LocationValueError) from inside `create_connection` when the
++                # hostname has labels that fail validation (e.g. an empty
++                # label or one longer than 63 characters). prepare_url catches
++                # this at parse time, but the same exception can also be
++                # raised later from the socket layer where it would otherwise
++                # bubble up to the caller as a urllib3 exception. Wrap it in
++                # InvalidURL so users see a requests-native exception,
++                # matching the behaviour of get_connection above. See GH #5744.
++                raise InvalidURL(e, request=request)
+             else:
+                 raise
+ 
+diff --git a/tests/test_requests.py b/tests/test_requests.py
+index 463e8bf..432e5a9 100644
+--- a/tests/test_requests.py
++++ b/tests/test_requests.py
+@@ -530,7 +530,11 @@ class TestRequests:
+             # Connecting to an invalid port should raise a ConnectionError
+             ('http://localhost:1', ConnectionError),
+             # Inputing a URL that cannot be parsed should raise an InvalidURL error
+-            ('http://fe80::5054:ff:fe5a:fc0', InvalidURL)
++            ('http://fe80::5054:ff:fe5a:fc0', InvalidURL),
++            # A URL with an empty DNS label survives prepare_url but is
++            # rejected by urllib3 inside create_connection. Should surface as
++            # InvalidURL, not as a raw urllib3.LocationParseError. GH #5744.
++            ('http://.example.com', InvalidURL),
+         ))
+     def test_errors(self, url, exception):
+         with pytest.raises(exception):

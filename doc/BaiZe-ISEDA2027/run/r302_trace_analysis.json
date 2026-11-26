@@ -1,0 +1,51 @@
+[
+  {
+    "run_dir": "2026_1110_094456",
+    "session_id": "1794275099049_kbzl9",
+    "msg_count": 5,
+    "assistant_msgs": 2,
+    "tool_use_count": 2,
+    "tool_result_count": 0,
+    "tool_names": {
+      "search_codebase": 1,
+      "run_commands": 1
+    },
+    "finish_reasons": {},
+    "generated_code_snippet": "",
+    "total_tokens_in": 0,
+    "total_tokens_out": 0
+  },
+  {
+    "run_dir": "2026_1110_094902",
+    "session_id": "1794275345094_xj7as",
+    "msg_count": 15,
+    "assistant_msgs": 7,
+    "tool_use_count": 7,
+    "tool_result_count": 0,
+    "tool_names": {
+      "run_commands": 6,
+      "search_codebase": 1
+    },
+    "finish_reasons": {},
+    "generated_code_snippet": "",
+    "total_tokens_in": 0,
+    "total_tokens_out": 0
+  },
+  {
+    "run_dir": "2026_1110_095714",
+    "session_id": "1794275836405_po8ox",
+    "msg_count": 10,
+    "assistant_msgs": 4,
+    "tool_use_count": 5,
+    "tool_result_count": 0,
+    "tool_names": {
+      "run_commands": 1,
+      "search_codebase": 2,
+      "pyAether_MCP_server__search_apis": 2
+    },
+    "finish_reasons": {},
+    "generated_code_snippet": "",
+    "total_tokens_in": 0,
+    "total_tokens_out": 0
+  }
+]

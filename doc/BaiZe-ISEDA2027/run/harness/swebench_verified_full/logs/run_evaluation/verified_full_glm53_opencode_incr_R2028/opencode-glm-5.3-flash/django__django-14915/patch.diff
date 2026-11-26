@@ -1,0 +1,63 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 5dcf923c12..bc7e6959e7 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1171,6 +1171,9 @@ class ModelChoiceIteratorValue:
+             other = other.value
+         return self.value == other
+ 
++    def __hash__(self):
++        return hash(self.value)
++
+ 
+ class ModelChoiceIterator:
+     def __init__(self, field):
+diff --git a/tests/model_forms/test_modelchoicefield.py b/tests/model_forms/test_modelchoicefield.py
+index 2a0c05d803..88d7ad4ba2 100644
+--- a/tests/model_forms/test_modelchoicefield.py
++++ b/tests/model_forms/test_modelchoicefield.py
+@@ -1,4 +1,5 @@
+ import datetime
++import json
+ 
+ from django import forms
+ from django.core.exceptions import ValidationError
+@@ -346,6 +347,38 @@ class ModelChoiceFieldTests(TestCase):
+             field = forms.ModelChoiceField(Category.objects.order_by('-name'))
+             self.assertEqual('Entertainment', field.clean(self.c1.pk).name)
+ 
++    def test_choices_iterator_value_hashability(self):
++        class CustomCheckboxSelectMultiple(CheckboxSelectMultiple):
++            show_fields = {1: ['first_name', 'last_name']}
++
++            def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
++                context = super().create_option(
++                    name, value, label, selected, index, subindex, attrs,
++                )
++                if value:
++                    if value in self.show_fields:
++                        context['attrs']['data-fields'] = json.dumps(
++                            self.show_fields[value],
++                        )
++                return context
++
++        class CustomModelChoiceField(forms.ModelChoiceField):
++            widget = CustomCheckboxSelectMultiple
++
++        field = CustomModelChoiceField(Category.objects.all())
++        self.assertHTMLEqual(
++            field.widget.render('name', []),
++            (
++                '<div>'
++                '<div><label><input type="checkbox" name="name" value="%d" '
++                'data-fields="[&quot;first_name&quot;, &quot;last_name&quot;]">'
++                'Entertainment</label></div>'
++                '<div><label><input type="checkbox" name="name" value="%d">A test</label></div>'
++                '<div><label><input type="checkbox" name="name" value="%d">Third</label></div>'
++                '</div>'
++            ) % (self.c1.pk, self.c2.pk, self.c3.pk),
++        )
++
+     def test_queryset_manager(self):
+         f = forms.ModelChoiceField(Category.objects)
+         self.assertEqual(len(f.choices), 4)

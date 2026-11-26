@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-24562",
+    "model_name_or_path": "cline-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py\nindex 52f7ea45..f160469b 100644\n--- a/sympy/core/numbers.py\n+++ b/sympy/core/numbers.py\n@@ -1627,13 +1627,16 @@ def __new__(cls, p, q=None, gcd=None):\n \n         if not isinstance(p, SYMPY_INTS):\n             p = Rational(p)\n+        if not isinstance(q, SYMPY_INTS):\n+            q = Rational(q)\n+\n+        if isinstance(p, Rational):\n             q *= p.q\n             p = p.p\n         else:\n             p = int(p)\n \n-        if not isinstance(q, SYMPY_INTS):\n-            q = Rational(q)\n+        if isinstance(q, Rational):\n             p *= q.q\n             q = q.p\n         else:\ndiff --git a/sympy/core/tests/test_numbers.py b/sympy/core/tests/test_numbers.py\nindex 8baf4089..c52b698f 100644\n--- a/sympy/core/tests/test_numbers.py\n+++ b/sympy/core/tests/test_numbers.py\n@@ -347,6 +347,10 @@ def test_Rational_new():\n     assert Rational('1e2/1e-2') == Rational(10000)\n     assert Rational('1 234') == Rational(1234)\n     assert Rational('1/1 234') == Rational(1, 1234)\n+    # issue: string args in both p and q\n+    assert Rational('0.5', '100') == Rational(1, 200)\n+    assert Rational('0.5', 100) == Rational(1, 200)\n+    assert Rational(0.5, '100') == Rational(1, 200)\n     assert Rational(-1, 0) is S.ComplexInfinity\n     assert Rational(1, 0) is S.ComplexInfinity\n     # Make sure Rational doesn't lose precision on Floats\n"
+  }
+]

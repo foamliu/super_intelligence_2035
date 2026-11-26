@@ -1,0 +1,79 @@
+diff --git a/astropy/units/quantity.py b/astropy/units/quantity.py
+index b98abfa..05a9e1e 100644
+--- a/astropy/units/quantity.py
++++ b/astropy/units/quantity.py
+@@ -666,9 +666,17 @@ class Quantity(np.ndarray):
+         # Same for inputs, but here also convert if necessary.
+         arrays = []
+         for input_, converter in zip(inputs, converters):
++            original_input = input_
+             input_ = getattr(input_, "value", input_)
+-            arrays.append(converter(input_) if converter else input_)
+-
++            if converter:
++                try:
++                    arrays.append(converter(input_))
++                except (ValueError, TypeError):
++                    if hasattr(original_input, "__array_ufunc__"):
++                        return NotImplemented
++                    raise
++            else:
++                arrays.append(input_)
+         # Call our superclass's __array_ufunc__
+         result = super().__array_ufunc__(function, method, *arrays, **kwargs)
+         # If unit is None, a plain array is expected (e.g., comparisons), which
+diff --git a/astropy/units/tests/test_quantity_ufuncs.py b/astropy/units/tests/test_quantity_ufuncs.py
+index 5f8c3ab..1bf8a04 100644
+--- a/astropy/units/tests/test_quantity_ufuncs.py
++++ b/astropy/units/tests/test_quantity_ufuncs.py
+@@ -1404,3 +1404,50 @@ if HAS_SCIPY:
+                 ),
+             ):
+                 function(1.0 * u.kg, 3.0 * u.m / u.s)
++
++
++
++class TestDuckTyping:
++    """Tests for interoperability with duck types that have __array_ufunc__."""
++
++    def test_quantity_with_duck_type_compatible_units(self):
++        """Test that Quantity.__array_ufunc__ returns NotImplemented
++        when it cannot extract numeric data from a duck type,
++        allowing the duck type to handle the operation.
++
++        Regression test for the issue where Quantity.__array_ufunc__
++        raises ValueError instead of returning NotImplemented when
++        a duck type with compatible units but no .value attribute is passed.
++        """
++        class DuckArray(np.lib.mixins.NDArrayOperatorsMixin):
++            def __init__(self, value, unit):
++                self._value = value
++                self.unit = unit
++
++            def __array_ufunc__(self, function, method, *inputs, **kwargs):
++                # Extract numeric values from any DuckArray inputs
++                new_inputs = [
++                    inp._value if isinstance(inp, DuckArray) else inp
++                    for inp in inputs
++                ]
++                # Delegate to the first ndarray's __array_ufunc__
++                for inp in new_inputs:
++                    if isinstance(inp, np.ndarray):
++                        result = inp.__array_ufunc__(
++                            function, method, *new_inputs, **kwargs
++                        )
++                        if result is not NotImplemented:
++                            return DuckArray(result, self.unit)
++                return NotImplemented
++
++        duck = DuckArray(1.0 * u.mm, u.mm)
++        quantity = 1.0 * u.m
++
++        # Quantity is on the left, DuckArray is on the right
++        # Quantity.__array_ufunc__ should return NotImplemented
++        # so that DuckArray.__array_ufunc__ can handle it.
++        result = quantity + duck
++        assert isinstance(result, DuckArray)
++        assert result.unit == u.mm
++        assert np.isclose(result._value.to(u.mm).value, 1001.0)  # 1 m + 1 mm = 1001 mm
++

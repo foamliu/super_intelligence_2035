@@ -1,0 +1,55 @@
+diff --git a/astropy/io/fits/connect.py b/astropy/io/fits/connect.py
+index 4b6150f4..24da4144 100644
+--- a/astropy/io/fits/connect.py
++++ b/astropy/io/fits/connect.py
+@@ -69,6 +69,7 @@ def is_fits(origin, filepath, fileobj, *args, **kwargs):
+             (".fits", ".fits.gz", ".fit", ".fit.gz", ".fts", ".fts.gz")
+         ):
+             return True
++        return False
+     return isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))
+ 
+ 
+diff --git a/astropy/io/fits/tests/test_connect.py b/astropy/io/fits/tests/test_connect.py
+index c5c31033..ce0d6ade 100644
+--- a/astropy/io/fits/tests/test_connect.py
++++ b/astropy/io/fits/tests/test_connect.py
+@@ -13,6 +13,7 @@ from astropy.io.fits.column import (
+     _parse_tdisp_format,
+     python_to_tdisp,
+ )
++from astropy.io.registry import identify_format
+ from astropy.io.tests.mixin_columns import compare_attrs, mixin_cols, serialized_names
+ from astropy.table import Column, QTable, Table
+ from astropy.table.table_helpers import simple_table
+@@ -1002,3 +1003,20 @@ def test_meta_not_modified(tmp_path):
+     t.write(filename)
+     assert len(t.meta) == 1
+     assert t.meta["comments"] == ["a", "b"]
++
++
++def test_is_fits_gh_14305(tmp_path):
++    """Regression test for https://github.com/astropy/astropy/issues/14305"""
++    # identify_format() should not raise IndexError when the FITS identifier
++    # is called with empty args and a path that has no FITS extension.
++    assert (
++        "fits"
++        not in identify_format(
++            "write", Table, str(tmp_path / "bububu.ecsv"), None, [], {}
++        )
++    )
++
++    # A path with a FITS extension should still be identified as fits.
++    assert "fits" in identify_format(
++        "write", Table, str(tmp_path / "bububu.fits"), None, [], {}
++    )
+diff --git a/docs/changes/io.fits/14325.bugfix.rst b/docs/changes/io.fits/14325.bugfix.rst
+new file mode 100644
+index 00000000..a094af80
+--- /dev/null
++++ b/docs/changes/io.fits/14325.bugfix.rst
+@@ -0,0 +1,4 @@
++Fixed a bug that caused ``astropy.io.registry.identify_format`` to raise an
++``IndexError`` when the given path has no FITS extension and no additional
++arguments are passed, e.g. when looking up the formats available for writing
++a ``astropy.table.Table`` to a non-FITS file. [#14325]

@@ -1,0 +1,31 @@
+diff --git a/sympy/physics/vector/tests/test_vector.py b/sympy/physics/vector/tests/test_vector.py
+index 828a25f3..5b43ad4f 100644
+--- a/sympy/physics/vector/tests/test_vector.py
++++ b/sympy/physics/vector/tests/test_vector.py
+@@ -58,6 +58,13 @@ def test_Vector():
+     v6 = x*A.x + y*A.y + z*A.z
+     assert v6.free_symbols(A) == {x,y,z}
+ 
++    #Test that adding 0 to a Vector works
++    assert A.x + 0 == A.x
++    assert 0 + A.x == A.x
++    assert A.x - 0 == A.x
++    assert 0 - A.x == -A.x
++    assert sum([A.x, 0*A.x]) == A.x
++
+ 
+ def test_Vector_diffs():
+     q1, q2, q3, q4 = dynamicsymbols('q1 q2 q3 q4')
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57..88491192 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,6 +57,8 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
++        if other == 0:
++            return self
+         other = _check_vector(other)
+         return Vector(self.args + other.args)
+ 

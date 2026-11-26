@@ -1,0 +1,65 @@
+\pdfoutput=1
+\documentclass[11pt]{article}
+% \usepackage[review]{acl}
+\usepackage{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{inconsolata}
+\usepackage{amsmath} 
+\usepackage{amssymb}
+\usepackage{booktabs}  % 专业表格线
+\usepackage{xspace}
+\usepackage{tabularx}  % 自适应宽度表格
+\usepackage{geometry}  % 调整页面边距（可选）
+\usepackage{placeins}
+\usepackage{stfloats}
+\usepackage{array} % 用于 \newcolumntype
+\usepackage{textcomp}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{bm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X} % 左对齐+自动换行
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%\setlength\titlebox{<dim>}
+% and set <dim> to something 5cm or larger.
+
+\newcommand{\llm}{Xmodel-2.5\xspace}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\std}{\operatorname{std}}
+
+\title{\llm: 1.3B Data-Efficient Reasoning SLM}
+
+\author{
+Yang Liu
+\hspace{0.8em}Xiaolong Zhong
+\hspace{0.8em}Ling Jiang \\ \\
+Xiaoduo AI Lab \\
+\texttt{foamliu@yeah.net}
+}
+
+
+\begin{document}
+\maketitle
+\input{ACL2026/abstract}
+\input{ACL2026/intro}
+\input{ACL2026/related_work}
+\input{ACL2026/method}
+\input{ACL2026/experiments}
+\input{ACL2026/result}
+% \input{ACL2026/ablation}
+% \input{ACL2026/discussion}
+\input{ACL2026/conclusion}
+\bibliography{reference}
+% \appendix
+% \input{ACL2026/appendix}
+
+\end{document}

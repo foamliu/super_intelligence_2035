@@ -1,0 +1,13 @@
+{
+  "harness": "pi",
+  "run_id": "verified_full_glm53_pi_incr_R2217",
+  "round": "R2217",
+  "n": 2,
+  "resolved": [
+    "django__django-14559"
+  ],
+  "failed": [
+    "django__django-14500"
+  ],
+  "infra_or_quota": []
+}

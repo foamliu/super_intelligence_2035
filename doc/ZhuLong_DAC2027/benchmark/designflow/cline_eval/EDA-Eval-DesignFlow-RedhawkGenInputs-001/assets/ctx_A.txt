@@ -1,0 +1,20 @@
+# Project context A (visible to SUT) — test_chip_v1 power/IR flow
+# All values are the REAL project parameters; gen_inputs.py must read RH_* env
+# vars (see task_brief.md) so the same script works on any project (B is hidden).
+
+TOP             = hl22_porting_test_chip_v1
+PDK_ROOT        = /apps/imctf/extpdk/HL22/LAGAT/Digital/Digital_PDK_Release_0901
+TECH_LEF        = $(PDK_ROOT)/Innovus_tf/Au22_1P7M_4_1X_2_2X_1_8X_withRDL_HVH.tlef
+CELL_LEF        = $(PDK_ROOT)/Au22_basic_lvt/lef/Au22_basic_lvt.lef
+LIBS            = $(PDK_ROOT)/Au22_basic_lvt/lib/Au22_basic_lvt_ssg_0p72v_m40c_ccs.lib
+TECH_FILE       = /apps/imctf/extpdk/HL22/LAGAT/22HK_V0P5_0D10_for_vodka/current/lpe_star/starrc_TYPICAL.nxtgrd
+DEF             = apr/work/hl22_porting_test_chip_v1.def
+SPEF            = pe/work/hl22_porting_test_chip_v1.spef
+FSDB            = sim/hl22_porting_test_chip_v1_pwr.fsdb
+SIM_INSTANCE    = hl22_porting_test_chip_v1_fixture/hl22_porting_test_chip_v1_dut
+POWER_NET       = VDD
+GROUND_NET      = VSS
+VDD_NOMINAL     = 0.72
+FREQ            = 10000000
+TOGGLE_RATE     = 0.1
+FRAME_SIZE      = 1000

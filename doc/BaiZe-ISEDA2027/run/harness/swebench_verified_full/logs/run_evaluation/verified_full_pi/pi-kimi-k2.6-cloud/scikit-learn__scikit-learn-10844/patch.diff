@@ -1,0 +1,40 @@
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778..9bcca75 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+diff --git a/sklearn/metrics/cluster/tests/test_supervised.py b/sklearn/metrics/cluster/tests/test_supervised.py
+index 8da03d1..6d390be 100644
+--- a/sklearn/metrics/cluster/tests/test_supervised.py
++++ b/sklearn/metrics/cluster/tests/test_supervised.py
+@@ -1,4 +1,5 @@
+ import numpy as np
++import warnings
+ 
+ from sklearn.metrics.cluster import adjusted_mutual_info_score
+ from sklearn.metrics.cluster import adjusted_rand_score
+@@ -274,3 +275,16 @@ def test_fowlkes_mallows_score_properties():
+     # symmetric and permutation(both together)
+     score_both = fowlkes_mallows_score(labels_b, (labels_a + 2) % 3)
+     assert_almost_equal(score_both, expected)
++
++
++def test_fowlkes_mallows_score_overflow():
++    # Test that large inputs do not trigger an overflow in the
++    # intermediate integer product pk * qk.
++    n_samples = 100000
++    labels_true = np.zeros(n_samples, dtype=int)
++    labels_pred = np.zeros(n_samples, dtype=int)
++    with warnings.catch_warnings(record=True) as w:
++        warnings.simplefilter("always")
++        score = fowlkes_mallows_score(labels_true, labels_pred)
++    assert_almost_equal(score, 1.0)
++    assert_equal(len(w), 0)

@@ -1,0 +1,72 @@
+diff --git a/django/core/management/commands/inspectdb.py b/django/core/management/commands/inspectdb.py
+index f9b4bfb477..d47e450a31 100644
+--- a/django/core/management/commands/inspectdb.py
++++ b/django/core/management/commands/inspectdb.py
+@@ -128,6 +128,12 @@ class Command(BaseCommand):
+                             field_type = '%s(%s' % (rel_type, rel_to)
+                         else:
+                             field_type = "%s('%s'" % (rel_type, rel_to)
++                        ref_field_name, ref_table_name = relations[column_name]
++                        ref_pk_column = connection.introspection.get_primary_key_column(
++                            cursor, ref_table_name
++                        )
++                        if ref_field_name != ref_pk_column:
++                            extra_params['to_field'] = ref_field_name
+                     else:
+                         # Calling `get_field_type` to get the field type string and any
+                         # additional parameters and notes.
+diff --git a/django/db/backends/sqlite3/introspection.py b/django/db/backends/sqlite3/introspection.py
+index ce097dbd72..cf79223253 100644
+--- a/django/db/backends/sqlite3/introspection.py
++++ b/django/db/backends/sqlite3/introspection.py
+@@ -145,9 +145,10 @@ class DatabaseIntrospection(BaseDatabaseIntrospection):
+                 continue
+             table, column = [s.strip('"') for s in m.groups()]
+ 
+-            if field_desc.startswith("FOREIGN KEY"):
+-                # Find name of the target FK field
+-                m = re.match(r'FOREIGN KEY\s*\(([^\)]*)\).*', field_desc, re.I)
++            # Find name of the target FK field. The FOREIGN KEY clause may be
++            # prefixed with a constraint definition (CONSTRAINT <name> ...).
++            m = re.search(r'FOREIGN KEY\s*\(([^\)]*)\)', field_desc, re.I)
++            if m:
+                 field_name = m[1].strip('"')
+             else:
+                 field_name = field_desc.split()[0].strip('"')
+diff --git a/tests/inspectdb/models.py b/tests/inspectdb/models.py
+index 4d2c224da9..01de696b3d 100644
+--- a/tests/inspectdb/models.py
++++ b/tests/inspectdb/models.py
+@@ -109,3 +109,11 @@ class UniqueTogether(models.Model):
+             ('from_field', 'field1'),
+             ('non_unique', 'non_unique_0'),
+         ]
++
++
++class Foo(models.Model):
++    other_id = models.IntegerField(unique=True)
++
++
++class Bar(models.Model):
++    other = models.ForeignKey(Foo, models.CASCADE, to_field='other_id')
+diff --git a/tests/inspectdb/tests.py b/tests/inspectdb/tests.py
+index 8be1681106..4c163fd74c 100644
+--- a/tests/inspectdb/tests.py
++++ b/tests/inspectdb/tests.py
+@@ -204,6 +204,16 @@ class InspectDBTestCase(TestCase):
+             output,
+         )
+ 
++    @skipUnlessDBFeature('can_introspect_foreign_keys')
++    def test_foreign_key_to_non_pk(self):
++        out = StringIO()
++        call_command('inspectdb', 'inspectdb_bar', stdout=out)
++        output = out.getvalue()
++        self.assertIn(
++            "other = models.ForeignKey('InspectdbFoo', models.DO_NOTHING, to_field='other_id')",
++            output,
++        )
++
+     def test_digits_column_name_introspection(self):
+         """Introspection of column names consist/start with digits (#16536/#17676)"""
+         char_field_type = connection.features.introspected_field_types['CharField']

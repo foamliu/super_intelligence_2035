@@ -1,0 +1,102 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 69a5fbf38..b3c4020f3 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -250,15 +250,16 @@ class BaseModelAdmin(metaclass=forms.MediaDefiningClass):
+         db = kwargs.get('using')
+ 
+         autocomplete_fields = self.get_autocomplete_fields(request)
+-        if db_field.name in autocomplete_fields:
+-            kwargs['widget'] = AutocompleteSelectMultiple(db_field.remote_field, self.admin_site, using=db)
+-        elif db_field.name in self.raw_id_fields:
+-            kwargs['widget'] = widgets.ManyToManyRawIdWidget(db_field.remote_field, self.admin_site, using=db)
+-        elif db_field.name in [*self.filter_vertical, *self.filter_horizontal]:
+-            kwargs['widget'] = widgets.FilteredSelectMultiple(
+-                db_field.verbose_name,
+-                db_field.name in self.filter_vertical
+-            )
++        if 'widget' not in kwargs:
++            if db_field.name in autocomplete_fields:
++                kwargs['widget'] = AutocompleteSelectMultiple(db_field.remote_field, self.admin_site, using=db)
++            elif db_field.name in self.raw_id_fields:
++                kwargs['widget'] = widgets.ManyToManyRawIdWidget(db_field.remote_field, self.admin_site, using=db)
++            elif db_field.name in [*self.filter_vertical, *self.filter_horizontal]:
++                kwargs['widget'] = widgets.FilteredSelectMultiple(
++                    db_field.verbose_name,
++                    db_field.name in self.filter_vertical
++                )
+ 
+         if 'queryset' not in kwargs:
+             queryset = self.get_field_queryset(db, db_field, request)
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index 6934bf2b3..822e1e7c8 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -13,7 +13,7 @@ from django.contrib.admin.widgets import (
+ )
+ from django.contrib.auth.models import User
+ from django.db import models
+-from django.forms.widgets import Select
++from django.forms.widgets import Select, SelectMultiple
+ from django.test import SimpleTestCase, TestCase
+ from django.test.utils import isolate_apps
+ 
+@@ -459,6 +459,58 @@ class ModelAdminTests(TestCase):
+         # Without the override this would be ForeignKeyRawIdWidget.
+         self.assertIsInstance(band_widget, Select)
+ 
++    def test_manytomany_widget_override(self):
++        """
++        The autocomplete_fields, raw_id_fields, and filter_vertical/filter_horizontal
++        widgets may be overridden by specifying a widget in formfield_for_manytomany().
++        """
++        class NameAdmin(ModelAdmin):
++            search_fields = ['name']
++
++        self.site.register(Band, NameAdmin)
++        try:
++            # Override autocomplete_fields widget.
++            class SongAdminAutocomplete(ModelAdmin):
++                autocomplete_fields = ['featuring']
++
++                def formfield_for_manytomany(self, db_field, request, **kwargs):
++                    if db_field.name == 'featuring':
++                        kwargs['widget'] = SelectMultiple()
++                    return super().formfield_for_manytomany(db_field, request, **kwargs)
++
++            ma = SongAdminAutocomplete(Song, self.site)
++            form = ma.get_form(request)()
++            self.assertIsInstance(form.fields['featuring'].widget.widget, SelectMultiple)
++
++            # Override raw_id_fields widget.
++            class SongAdminRawId(ModelAdmin):
++                raw_id_fields = ['featuring']
++
++                def formfield_for_manytomany(self, db_field, request, **kwargs):
++                    if db_field.name == 'featuring':
++                        kwargs['widget'] = SelectMultiple()
++                    return super().formfield_for_manytomany(db_field, request, **kwargs)
++
++            ma = SongAdminRawId(Song, self.site)
++            form = ma.get_form(request)()
++            # raw_id_fields are not wrapped in RelatedFieldWidgetWrapper.
++            self.assertIsInstance(form.fields['featuring'].widget, SelectMultiple)
++
++            # Override filter_vertical widget.
++            class SongAdminFilterVertical(ModelAdmin):
++                filter_vertical = ['featuring']
++
++                def formfield_for_manytomany(self, db_field, request, **kwargs):
++                    if db_field.name == 'featuring':
++                        kwargs['widget'] = SelectMultiple()
++                    return super().formfield_for_manytomany(db_field, request, **kwargs)
++
++            ma = SongAdminFilterVertical(Song, self.site)
++            form = ma.get_form(request)()
++            self.assertIsInstance(form.fields['featuring'].widget.widget, SelectMultiple)
++        finally:
++            self.site.unregister(Band)
++
+     def test_queryset_override(self):
+         # If the queryset of a ModelChoiceField in a custom form is overridden,
+         # RelatedFieldWidgetWrapper doesn't mess that up.

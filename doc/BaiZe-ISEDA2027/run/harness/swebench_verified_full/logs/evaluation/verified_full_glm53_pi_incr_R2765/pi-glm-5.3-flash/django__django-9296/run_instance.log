@@ -1,0 +1,116 @@
+2026-11-19 15:32:41,453 - INFO - Creating container for django__django-9296...
+2026-11-19 15:32:41,480 - INFO - Container for django__django-9296 created: b5ca82fec725b1a5970bdacba43bd56ebca8f1ede6ef60683f75c6d8e4e96221
+2026-11-19 15:32:42,288 - INFO - Container for django__django-9296 started: b5ca82fec725b1a5970bdacba43bd56ebca8f1ede6ef60683f75c6d8e4e96221
+2026-11-19 15:32:42,290 - INFO - Intermediate patch for django__django-9296 written to logs/evaluation/verified_full_glm53_pi_incr_R2765/pi-glm-5.3-flash/django__django-9296/patch.diff, now applying to container...
+2026-11-19 15:32:42,449 - INFO - >>>>> Applied Patch:
+Checking patch django/core/paginator.py...
+Checking patch docs/ref/paginator.txt...
+Checking patch tests/pagination/tests.py...
+Applied patch django/core/paginator.py cleanly.
+Applied patch docs/ref/paginator.txt cleanly.
+Applied patch tests/pagination/tests.py cleanly.
+
+2026-11-19 15:32:43,810 - INFO - Git diff before:
+diff --git a/django/core/paginator.py b/django/core/paginator.py
+index 1f92da5d4f..a091683a3a 100644
+--- a/django/core/paginator.py
++++ b/django/core/paginator.py
+@@ -82,6 +82,10 @@ class Paginator:
+         """
+         return Page(*args, **kwargs)
+ 
++    def __iter__(self):
++        for page_num in self.page_range:
++            yield self.page(page_num)
++
+     @cached_property
+     def count(self):
+         """Return the total number of objects, across all pages."""
+diff --git a/docs/ref/paginator.txt b/docs/ref/paginator.txt
+index 9ee6f0104c..6a738d1183 100644
+--- a/docs/ref/paginator.txt
++++ b/docs/ref/paginator.txt
+@@ -95,6 +95,16 @@ Attributes
+ 
+     A 1-based range iterator of page numbers, e.g. yielding ``[1, 2, 3, 4]``.
+ 
++.. method:: Paginator.__iter__
++
++    .. versionadded:: 3.1
++
++    Iterating over a ``Paginator`` object yields ``Page`` objects, e.g.::
++
++        for page in paginator:
++            print(page.number)
++
++
+ ``Page`` class
+ ==============
+ 
+diff --git a/tests/pagination/tests.py b/tests/pagination/tests.py
+index ef6e355e8d..b586cda491 100644
+--- a/tests/pagination/tests.py
++++ b/tests/pagination/tests.py
+@@ -265,6 +265,15 @@ class PaginationTests(SimpleTestCase):
+         """
+         self.assertIsInstance(Paginator([1, 2, 3], 2).page_range, type(range(0)))
+ 
++    def test_paginator_iteration(self):
++        """
++        A Paginator object can be iterated over to yield Page objects.
++        """
++        paginator = Paginator([1, 2, 3], 2)
++        self.assertEqual([p.number for p in paginator], [1, 2])
++        pages = list(paginator)
++        self.assertEqual([list(p.object_list) for p in pages], [[1, 2], [3]])
++
+     def test_get_page(self):
+         """
+         Paginator.get_page() returns a valid page even with invalid page
+2026-11-19 15:32:43,813 - INFO - Eval script for django__django-9296 written to logs/evaluation/verified_full_glm53_pi_incr_R2765/pi-glm-5.3-flash/django__django-9296/eval.sh; copying to container...
+2026-11-19 15:32:50,283 - INFO - Test runtime: 6.41 seconds
+2026-11-19 15:32:50,286 - INFO - Test output for django__django-9296 written to logs/evaluation/verified_full_glm53_pi_incr_R2765/pi-glm-5.3-flash/django__django-9296/test_output.txt
+2026-11-19 15:32:50,353 - INFO - Git diff after:
+diff --git a/django/core/paginator.py b/django/core/paginator.py
+index 1f92da5d4f..a091683a3a 100644
+--- a/django/core/paginator.py
++++ b/django/core/paginator.py
+@@ -82,6 +82,10 @@ class Paginator:
+         """
+         return Page(*args, **kwargs)
+ 
++    def __iter__(self):
++        for page_num in self.page_range:
++            yield self.page(page_num)
++
+     @cached_property
+     def count(self):
+         """Return the total number of objects, across all pages."""
+diff --git a/docs/ref/paginator.txt b/docs/ref/paginator.txt
+index 9ee6f0104c..6a738d1183 100644
+--- a/docs/ref/paginator.txt
++++ b/docs/ref/paginator.txt
+@@ -95,6 +95,16 @@ Attributes
+ 
+     A 1-based range iterator of page numbers, e.g. yielding ``[1, 2, 3, 4]``.
+ 
++.. method:: Paginator.__iter__
++
++    .. versionadded:: 3.1
++
++    Iterating over a ``Paginator`` object yields ``Page`` objects, e.g.::
++
++        for page in paginator:
++            print(page.number)
++
++
+ ``Page`` class
+ ==============
+2026-11-19 15:32:50,353 - INFO - Git diff changed after running eval script
+2026-11-19 15:32:50,353 - INFO - Grading answer for django__django-9296...
+2026-11-19 15:32:50,354 - INFO - report: {'django__django-9296': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_paginator_iteration (pagination.tests.PaginationTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_count_does_not_silence_attribute_error (pagination.tests.PaginationTests)', 'test_count_does_not_silence_type_error (pagination.tests.PaginationTests)', 'test_float_integer_page (pagination.tests.PaginationTests)', 'test_get_page (pagination.tests.PaginationTests)', 'Paginator.get_page() with an empty object_list.', 'test_get_page_empty_object_list_and_allow_empty_first_page_false (pagination.tests.PaginationTests)', 'test_get_page_hook (pagination.tests.PaginationTests)', 'test_invalid_page_number (pagination.tests.PaginationTests)', 'test_no_content_allow_empty_first_page (pagination.tests.PaginationTests)', 'test_page_indexes (pagination.tests.PaginationTests)', 'test_page_range_iterator (pagination.tests.PaginationTests)', 'test_page_sequence (pagination.tests.PaginationTests)', 'test_paginate_misc_classes (pagination.tests.PaginationTests)', 'test_paginator (pagination.tests.PaginationTests)', 'test_first_page (pagination.tests.ModelPaginationTests)', 'test_last_page (pagination.tests.ModelPaginationTests)', 'test_page_getitem (pagination.tests.ModelPaginationTests)', 'test_paginating_empty_queryset_does_not_warn (pagination.tests.ModelPaginationTests)', 'test_paginating_unordered_object_list_raises_warning (pagination.tests.ModelPaginationTests)', 'test_paginating_unordered_queryset_raises_warning (pagination.tests.ModelPaginationTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-9296: resolved: True
+2026-11-19 15:32:50,356 - INFO - Attempting to stop container sweb.eval.django__django-9296.verified_full_glm53_pi_incr_R2765...
+2026-11-19 15:33:06,463 - INFO - Container sweb.eval.django__django-9296.verified_full_glm53_pi_incr_R2765 stopped successfully.
+2026-11-19 15:33:06,463 - INFO - Attempting to remove container sweb.eval.django__django-9296.verified_full_glm53_pi_incr_R2765...
+2026-11-19 15:33:06,513 - INFO - Container sweb.eval.django__django-9296.verified_full_glm53_pi_incr_R2765 removed successfully.

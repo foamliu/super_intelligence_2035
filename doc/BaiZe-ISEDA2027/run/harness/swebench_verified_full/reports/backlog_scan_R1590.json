@@ -1,0 +1,18 @@
+{
+  "round": "R1590",
+  "total_backlog": 1,
+  "per_harness": {
+    "cline-patched": [
+      {
+        "instance_id": "django__django-15277",
+        "patchlen": 686
+      }
+    ],
+    "codex": [],
+    "deepseek-harness": [],
+    "opencode": [],
+    "pi": [],
+    "claude-code": [],
+    "hermes": []
+  }
+}

@@ -1,0 +1,38 @@
+diff --git a/astropy/coordinates/sky_coordinate.py b/astropy/coordinates/sky_coordinate.py
+index ab475f7..c5d89a0 100644
+--- a/astropy/coordinates/sky_coordinate.py
++++ b/astropy/coordinates/sky_coordinate.py
+@@ -871,6 +871,12 @@ class SkyCoord(ShapedLikeNDArray):
+         Overrides getattr to return coordinates that this can be transformed
+         to, based on the alias attr in the primary transform graph.
+         """
++        # If attr is a property or descriptor on the class whose __get__ raised
++        # AttributeError, call object.__getattribute__ to re-raise the original
++        # error with the correct message.
++        if hasattr(type(self), attr):
++            return object.__getattribute__(self, attr)
++
+         if "_sky_coord_frame" in self.__dict__:
+             if self._is_name(attr):
+                 return self  # Should this be a deepcopy of self?
+diff --git a/astropy/coordinates/tests/test_sky_coord.py b/astropy/coordinates/tests/test_sky_coord.py
+index 4dcfba0..6a4bc6b 100644
+--- a/astropy/coordinates/tests/test_sky_coord.py
++++ b/astropy/coordinates/tests/test_sky_coord.py
+@@ -2165,3 +2165,16 @@ def test_match_to_catalog_3d_and_sky():
+     npt.assert_array_equal(idx, [0, 1, 2, 3])
+     assert_allclose(angle, 0 * u.deg, atol=1e-14 * u.deg, rtol=0)
+     assert_allclose(distance, 0 * u.kpc, atol=1e-14 * u.kpc, rtol=0)
++
++
++def test_subclass_property_attributeerror():
++    # Regression test for issue where a property on a SkyCoord subclass
++    # that raised AttributeError would produce a misleading error message.
++    class CustomCoord(SkyCoord):
++        @property
++        def prop(self):
++            return self.random_attr
++
++    c = CustomCoord("00h42m30s", "+41d12m00s", frame="icrs")
++    with pytest.raises(AttributeError, match="random_attr"):
++        c.prop

@@ -1,0 +1,161 @@
+diff --git a/seaborn/_core/plot.py b/seaborn/_core/plot.py
+index 4f0290a..0f57644 100644
+--- a/seaborn/_core/plot.py
++++ b/seaborn/_core/plot.py
+@@ -25,7 +25,7 @@ from seaborn._marks.base import Mark
+ from seaborn._stats.base import Stat
+ from seaborn._core.data import PlotData
+ from seaborn._core.moves import Move
+-from seaborn._core.scales import Scale
++from seaborn._core.scales import Nominal, Scale
+ from seaborn._core.subplots import Subplots
+ from seaborn._core.groupby import GroupBy
+ from seaborn._core.properties import PROPERTIES, Property
+@@ -1475,7 +1475,7 @@ class Plotter:
+ 
+                 axes_df = self._filter_subplot_data(df, view)
+ 
+-                with pd.option_context("mode.use_inf_as_null", True):
++                with pd.option_context("mode.use_inf_as_na", True):
+                     if keep_na:
+                         # The simpler thing to do would be x.dropna().reindex(x.index).
+                         # But that doesn't work with the way that the subset iteration
+@@ -1631,6 +1631,8 @@ class Plotter:
+             ax = sub["ax"]
+             for axis in "xy":
+                 axis_key = sub[axis]
++                scale = self._scales.get(axis_key)
++                nominal = isinstance(scale, Nominal)
+ 
+                 # Axis limits
+                 if axis_key in p._limits:
+@@ -1644,6 +1646,24 @@ class Plotter:
+                         hi = cast(float, hi) + 0.5
+                     ax.set(**{f"{axis}lim": (lo, hi)})
+ 
++                elif nominal:
++                    # Nominal coordinate axes are drawn like the categorical
++                    # axes in the classic seaborn functions, with limits that
++                    # exactly bound the outermost ticks. When nominal, the y
++                    # axis is also inverted, so that the first category is at
++                    # the top of the plot.
++                    n = len(scale._units_seed)
++                    if n:
++                        if axis == "y":
++                            ax.set_ylim(n - 0.5, -0.5)
++                        else:
++                            ax.set_xlim(-0.5, n - 0.5)
++
++                if nominal:
++                    # Nominal axes do not show a grid, even when the active
++                    # style would otherwise draw one
++                    getattr(ax, f"{axis}axis").grid(False)
++
+         engine_default = None if p._target is not None else "tight"
+         layout_engine = p._layout_spec.get("engine", engine_default)
+         set_layout_engine(self._figure, layout_engine)
+diff --git a/seaborn/_core/scales.py b/seaborn/_core/scales.py
+index bbd71ec..af6ffb5 100644
+--- a/seaborn/_core/scales.py
++++ b/seaborn/_core/scales.py
+@@ -60,6 +60,8 @@ class Scale:
+     _matplotlib_scale: ScaleBase
+     _spacer: staticmethod
+     _legend: tuple[list[str], list[Any]] | None
++    # Ordered category values; only used by Nominal scales
++    _units_seed: list
+ 
+     def __post_init__(self):
+ 
+@@ -160,6 +162,7 @@ class Nominal(Scale):
+         stringify = np.vectorize(format)
+ 
+         units_seed = categorical_order(data, new.order)
++        new._units_seed = units_seed
+ 
+         # TODO move to Nominal._get_scale?
+         # TODO this needs some more complicated rethinking about how to pass
+diff --git a/seaborn/_oldcore.py b/seaborn/_oldcore.py
+index 192af38..9f521a4 100644
+--- a/seaborn/_oldcore.py
++++ b/seaborn/_oldcore.py
+@@ -1116,7 +1116,7 @@ class VectorPlotter:
+                 parts = []
+                 grouped = self.plot_data[var].groupby(self.converters[var], sort=False)
+                 for converter, orig in grouped:
+-                    with pd.option_context('mode.use_inf_as_null', True):
++                    with pd.option_context('mode.use_inf_as_na', True):
+                         orig = orig.dropna()
+                         if var in self.var_levels:
+                             # TODO this should happen in some centralized location
+diff --git a/seaborn/categorical.py b/seaborn/categorical.py
+index 3394c9c..cbdc6fb 100644
+--- a/seaborn/categorical.py
++++ b/seaborn/categorical.py
+@@ -1790,7 +1790,7 @@ class _LVPlotter(_CategoricalPlotter):
+         vals = np.asarray(vals)
+         # Remove infinite values while handling a 'object' dtype
+         # that can come from pd.Float64Dtype() input
+-        with pd.option_context('mode.use_inf_as_null', True):
++        with pd.option_context('mode.use_inf_as_na', True):
+             vals = vals[~pd.isnull(vals)]
+         n = len(vals)
+         p = self.outlier_prop
+diff --git a/tests/_core/test_plot.py b/tests/_core/test_plot.py
+index 03a6491..5c309ba 100644
+--- a/tests/_core/test_plot.py
++++ b/tests/_core/test_plot.py
+@@ -365,6 +365,53 @@ class TestScaling:
+         ax = p._figure.axes[0]
+         assert ax.yaxis.convert_units("3") == 2
+ 
++    def test_nominal_axis_limits(self):
++
++        p = Plot(x=["a", "b", "c"], y=[1, 2, 3]).add(MockMark()).plot()
++        ax = p._figure.axes[0]
++        assert ax.get_xlim() == (-.5, 2.5)
++
++    def test_nominal_axis_limits_with_order(self):
++
++        order = ["c", "a", "b"]
++        p = Plot(x=["a", "b", "c"], y=[1, 2, 3]).add(MockMark())
++        p = p.scale(x=Nominal(order=order)).plot()
++        ax = p._figure.axes[0]
++        assert ax.get_xlim() == (-.5, 2.5)
++        assert [t.get_text() for t in ax.get_xticklabels()] == order
++
++    def test_nominal_axis_limits_on_numeric_data(self):
++
++        p = Plot(x=[1, 2, 3], y=[1, 2, 3]).scale(x=Nominal()).add(MockMark()).plot()
++        ax = p._figure.axes[0]
++        assert ax.get_xlim() == (-.5, 2.5)
++
++    def test_nominal_axis_inversion(self):
++
++        p = Plot(x=[1, 2, 3], y=["a", "b", "c"]).add(MockMark()).plot()
++        ax = p._figure.axes[0]
++        assert ax.yaxis_inverted()
++        assert ax.get_ylim() == (2.5, -.5)
++
++    def test_nominal_axis_no_grid(self):
++
++        p = Plot(x=["a", "b", "c"], y=[1, 2, 3]).add(MockMark()).plot()
++        ax = p._figure.axes[0]
++        assert not any(line.get_visible() for line in ax.xaxis.get_gridlines())
++        assert any(line.get_visible() for line in ax.yaxis.get_gridlines())
++
++        p = Plot(x=[1, 2, 3], y=["a", "b", "c"]).add(MockMark()).plot()
++        ax = p._figure.axes[0]
++        assert not any(line.get_visible() for line in ax.yaxis.get_gridlines())
++        assert any(line.get_visible() for line in ax.xaxis.get_gridlines())
++
++    def test_nominal_axis_limits_with_user_limits(self):
++
++        p = Plot(x=["a", "b", "c", "d"], y=[1, 2, 3, 4]).add(MockMark())
++        p = p.limit(x=("b", "c")).plot()
++        ax = p._figure.axes[0]
++        assert ax.get_xlim() == (0.5, 2.5)
++
+     @pytest.mark.xfail(reason="Temporal auto-conversion not implemented")
+     def test_categorical_as_datetime(self):
+ 

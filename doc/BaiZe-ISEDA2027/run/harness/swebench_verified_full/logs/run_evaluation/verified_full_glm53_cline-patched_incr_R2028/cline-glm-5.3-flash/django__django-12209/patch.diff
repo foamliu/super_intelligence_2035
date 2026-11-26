@@ -1,0 +1,86 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a..893caf001 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -849,10 +849,11 @@ class Model(metaclass=ModelBase):
+         updated = False
+         # Skip an UPDATE when adding an instance and primary key has a default.
+         if (
++            not raw and
+             not force_insert and
+             self._state.adding and
+-            self._meta.pk.default and
+-            self._meta.pk.default is not NOT_PROVIDED
++            meta.pk.default and
++            meta.pk.default is not NOT_PROVIDED
+         ):
+             force_insert = True
+         # If possible, try an UPDATE. If that doesn't update anything, do an INSERT.
+diff --git a/docs/ref/models/instances.txt b/docs/ref/models/instances.txt
+index 9345bc0fe..db2933e90 100644
+--- a/docs/ref/models/instances.txt
++++ b/docs/ref/models/instances.txt
+@@ -465,8 +465,9 @@ How Django knows to UPDATE vs. INSERT
+ 
+ You may have noticed Django database objects use the same ``save()`` method
+ for creating and changing objects. Django abstracts the need to use ``INSERT``
+-or ``UPDATE`` SQL statements. Specifically, when you call ``save()``, Django
+-follows this algorithm:
++or ``UPDATE`` SQL statements. Specifically, when you call ``save()`` and the
++object's primary key attribute does **not** define a
++:attr:`~django.db.models.Field.default`, Django follows this algorithm:
+ 
+ * If the object's primary key attribute is set to a value that evaluates to
+   ``True`` (i.e., a value other than ``None`` or the empty string), Django
+@@ -475,6 +476,11 @@ follows this algorithm:
+   didn't update anything (e.g. if primary key is set to a value that doesn't
+   exist in the database), Django executes an ``INSERT``.
+ 
++If the object's primary key attribute defines a
++:attr:`~django.db.models.Field.default` then Django executes an ``UPDATE`` if
++it is an existing model instance and primary key is set to a value that exists
++in the database. Otherwise, Django executes an ``INSERT``.
++
+ The one gotcha here is that you should be careful not to specify a primary-key
+ value explicitly when saving new objects, if you cannot guarantee the
+ primary-key value is unused. For more on this nuance, see `Explicitly specifying
+diff --git a/tests/basic/models.py b/tests/basic/models.py
+index 7b2b1aee5..6dcdfa90c 100644
+--- a/tests/basic/models.py
++++ b/tests/basic/models.py
+@@ -46,3 +46,7 @@ class SelfRef(models.Model):
+ 
+ class PrimaryKeyWithDefault(models.Model):
+     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
++
++
++class ChildPrimaryKeyWithDefault(PrimaryKeyWithDefault):
++    pass
+diff --git a/tests/basic/tests.py b/tests/basic/tests.py
+index 5eada343e..3add466f8 100644
+--- a/tests/basic/tests.py
++++ b/tests/basic/tests.py
+@@ -12,8 +12,8 @@ from django.test import (
+ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+-    Article, ArticleSelectOnSave, FeaturedArticle, PrimaryKeyWithDefault,
+-    SelfRef,
++    Article, ArticleSelectOnSave, ChildPrimaryKeyWithDefault, FeaturedArticle,
++    PrimaryKeyWithDefault, SelfRef,
+ )
+ 
+ 
+@@ -139,6 +139,12 @@ class ModelInstanceCreationTests(TestCase):
+         with self.assertNumQueries(1):
+             PrimaryKeyWithDefault().save()
+ 
++    def test_save_parent_primary_with_default(self):
++        # An UPDATE attempt is skipped when an inherited primary key has
++        # default.
++        with self.assertNumQueries(2):
++            ChildPrimaryKeyWithDefault().save()
++
+ 
+ class ModelTest(TestCase):
+     def test_objects_attribute_is_only_available_on_the_class_itself(self):

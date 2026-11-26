@@ -1,0 +1,89 @@
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d0..6723e56 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/concrete/products.py b/sympy/concrete/products.py
+index 66aafde..983e026 100644
+--- a/sympy/concrete/products.py
++++ b/sympy/concrete/products.py
+@@ -277,16 +277,16 @@ def _eval_product(self, term, limits):
+         elif term.is_Add:
+             p, q = term.as_numer_denom()
+             q = self._eval_product(q, (k, a, n))
++            if q is None:
++                return None
+             if q.is_Number:
+-
+-                # There is expression, which couldn't change by
+-                # as_numer_denom(). E.g. n**(2/3) + 1 --> (n**(2/3) + 1, 1).
+-                # We have to catch this case.
+-
+-                p = sum([self._eval_product(i, (k, a, n)) for i in p.as_coeff_Add()])
++                if k not in p.free_symbols:
++                    return p**(n - a + 1) / q
++                return None
+             else:
+                 p = self._eval_product(p, (k, a, n))
+-            return p / q
++                if p is not None:
++                    return p / q
+ 
+         elif term.is_Mul:
+             exclude, include = [], []
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index afcdd46..fbf82f9 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93..cbb9f78 100644
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -14,6 +14,11 @@
+ from sympy.utilities.iterables import iterable
+ 
+ import collections
++try:
++    from collections.abc import MutableSet
++except ImportError:
++    from collections import MutableSet
++collections.MutableSet = MutableSet
+ 
+ 
+ class Tuple(Basic):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b3b0237..0b959a4 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 

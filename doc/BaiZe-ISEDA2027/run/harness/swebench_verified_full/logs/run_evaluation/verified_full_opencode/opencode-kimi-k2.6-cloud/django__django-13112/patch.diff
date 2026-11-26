@@ -1,0 +1,85 @@
+diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py
+index c2aea9c73..397146a35 100644
+--- a/django/db/models/fields/related.py
++++ b/django/db/models/fields/related.py
+@@ -582,7 +582,11 @@ class ForeignObject(RelatedField):
+         if self.remote_field.parent_link:
+             kwargs['parent_link'] = self.remote_field.parent_link
+         if isinstance(self.remote_field.model, str):
+-            kwargs['to'] = self.remote_field.model.lower()
++            if '.' in self.remote_field.model:
++                app_label, model_name = self.remote_field.model.split('.')
++                kwargs['to'] = '%s.%s' % (app_label, model_name.lower())
++            else:
++                kwargs['to'] = self.remote_field.model.lower()
+         else:
+             kwargs['to'] = self.remote_field.model._meta.label_lower
+         # If swappable is True, then see if we're actually pointing to the target
+diff --git a/tests/migrations/test_state.py b/tests/migrations/test_state.py
+index 40277bf50..fceea9e7b 100644
+--- a/tests/migrations/test_state.py
++++ b/tests/migrations/test_state.py
+@@ -896,6 +896,36 @@ class StateTests(SimpleTestCase):
+             1,
+         )
+ 
++    def test_mixed_case_app_label(self):
++        """
++        Models with mixed-case app labels and FK/M2M within the same app
++        should render correctly (#31755).
++        """
++        new_apps = Apps()
++
++        class Category(models.Model):
++            name = models.TextField()
++
++            class Meta:
++                app_label = "DJ_RegLogin"
++                apps = new_apps
++
++        class Content(models.Model):
++            title = models.TextField()
++            category = models.ForeignKey(Category, models.CASCADE)
++            tags = models.ManyToManyField(Category)
++
++            class Meta:
++                app_label = "DJ_RegLogin"
++                apps = new_apps
++
++        project_state = ProjectState()
++        project_state.add_model(ModelState.from_model(Category))
++        project_state.add_model(ModelState.from_model(Content))
++        # Should not raise ValueError about lazy references.
++        self.assertEqual(len(project_state.apps.get_models()), 2)
++        self.assertEqual(len(project_state.apps.get_models(include_auto_created=True)), 3)
++
+     def test_ignore_order_wrt(self):
+         """
+         Makes sure ProjectState doesn't include OrderWrt fields when
+diff --git a/tests/model_fields/test_foreignkey.py b/tests/model_fields/test_foreignkey.py
+index d30cca9b5..031dc8150 100644
+--- a/tests/model_fields/test_foreignkey.py
++++ b/tests/model_fields/test_foreignkey.py
+@@ -147,3 +147,22 @@ class ForeignKeyTests(TestCase):
+         )
+         with self.assertRaisesMessage(FieldError, msg):
+             Related._meta.get_field('child').related_fields
++
++    @isolate_apps('model_fields')
++    def test_deconstruct_preserves_app_label_case(self):
++        class Category(models.Model):
++            class Meta:
++                app_label = 'DJ_RegLogin'
++
++        class Content(models.Model):
++            category = models.ForeignKey(Category, on_delete=models.CASCADE)
++
++            class Meta:
++                app_label = 'DJ_RegLogin'
++
++        field = Content._meta.get_field('category')
++        *_, kwargs = field.deconstruct()
++        self.assertEqual(kwargs['to'], 'DJ_RegLogin.category')
++        # Deconstructing a cloned field should preserve the app label case.
++        *_, kwargs = field.clone().deconstruct()
++        self.assertEqual(kwargs['to'], 'DJ_RegLogin.category')

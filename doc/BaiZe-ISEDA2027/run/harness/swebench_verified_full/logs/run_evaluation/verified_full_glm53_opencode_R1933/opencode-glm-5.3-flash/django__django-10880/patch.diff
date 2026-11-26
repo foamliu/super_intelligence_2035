@@ -1,0 +1,50 @@
+diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py
+index ac0b62d0..ea88c54b 100644
+--- a/django/db/models/aggregates.py
++++ b/django/db/models/aggregates.py
+@@ -68,7 +68,7 @@ class Aggregate(Func):
+         return []
+ 
+     def as_sql(self, compiler, connection, **extra_context):
+-        extra_context['distinct'] = 'DISTINCT' if self.distinct else ''
++        extra_context['distinct'] = 'DISTINCT ' if self.distinct else ''
+         if self.filter:
+             if connection.features.supports_aggregate_filter_clause:
+                 filter_sql, filter_params = self.filter.as_sql(compiler, connection)
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index 8cac90f0..c145110a 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -5,8 +5,8 @@ from decimal import Decimal
+ from django.core.exceptions import FieldError
+ from django.db import connection
+ from django.db.models import (
+-    Avg, Count, DecimalField, DurationField, F, FloatField, Func, IntegerField,
+-    Max, Min, Sum, Value,
++    Avg, Case, Count, DecimalField, DurationField, F, FloatField, Func,
++    IntegerField, Max, Min, Sum, Value, When,
+ )
+ from django.test import TestCase
+ from django.test.utils import Approximate, CaptureQueriesContext
+@@ -395,6 +395,21 @@ class AggregateTestCase(TestCase):
+         sql = ctx.captured_queries[0]['sql']
+         self.assertIn('SELECT COUNT(*) ', sql)
+ 
++    def test_distinct_on_with_case(self):
++        # The DISTINCT and CASE expressions must be separated by a space.
++        Book.objects.create(
++            isbn='159059725x', name='Korean Book', pages=1, rating=4.0,
++            price=Decimal('1.00'), contact=self.a1,
++            publisher=self.p1, pubdate=datetime.date(2020, 1, 1),
++        )
++        qs = Book.objects.annotate(
++            count=Count(Case(When(pages=1, then=1)), distinct=True),
++        ).order_by('pk')
++        self.assertCountEqual(
++            [book.count for book in qs],
++            [1, 0, 0, 0, 0, 0, 0],
++        )
++
+     def test_non_grouped_annotation_not_in_group_by(self):
+         """
+         An annotation not included in values() before an aggregate should be

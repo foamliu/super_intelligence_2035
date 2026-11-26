@@ -1,0 +1,90 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 90d90119d0..bf5ed49719 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -1253,7 +1253,7 @@ class OrderBy(BaseExpression):
+         self.descending = True
+ 
+ 
+-class Window(Expression):
++class Window(SQLiteNumericMixin, Expression):
+     template = '%(expression)s OVER (%(window)s)'
+     # Although the main expression may either be an aggregate or an
+     # expression with an aggregate function, the GROUP BY that will
+@@ -1332,6 +1332,16 @@ class Window(Expression):
+             'window': ''.join(window_sql).strip()
+         }, params
+ 
++    def as_sqlite(self, compiler, connection):
++        if isinstance(self.output_field, fields.DecimalField):
++            # Casting to numeric must be outside of the window expression.
++            copy = self.copy()
++            source_expressions = copy.get_source_expressions()
++            source_expressions[0].output_field = fields.FloatField()
++            copy.set_source_expressions(source_expressions)
++            return super(Window, copy).as_sqlite(compiler, connection)
++        return self.as_sql(compiler, connection)
++
+     def __str__(self):
+         return '{} OVER ({}{}{})'.format(
+             str(self.source_expression),
+diff --git a/tests/expressions_window/models.py b/tests/expressions_window/models.py
+index ce6f6621e9..e9a0414053 100644
+--- a/tests/expressions_window/models.py
++++ b/tests/expressions_window/models.py
+@@ -11,4 +11,5 @@ class Employee(models.Model):
+     department = models.CharField(max_length=40, blank=False, null=False)
+     hire_date = models.DateField(blank=False, null=False)
+     age = models.IntegerField(blank=False, null=False)
++    bonus = models.DecimalField(decimal_places=2, max_digits=15, null=True)
+     classification = models.ForeignKey('Classification', on_delete=models.CASCADE, null=True)
+diff --git a/tests/expressions_window/tests.py b/tests/expressions_window/tests.py
+index 30ed64f529..b83c88a2ec 100644
+--- a/tests/expressions_window/tests.py
++++ b/tests/expressions_window/tests.py
+@@ -1,4 +1,5 @@
+ import datetime
++from decimal import Decimal
+ from unittest import mock, skipIf
+ 
+ from django.core.exceptions import FieldError
+@@ -21,7 +22,10 @@ class WindowFunctionTests(TestCase):
+     @classmethod
+     def setUpTestData(cls):
+         Employee.objects.bulk_create([
+-            Employee(name=e[0], salary=e[1], department=e[2], hire_date=e[3], age=e[4])
++            Employee(
++                name=e[0], salary=e[1], department=e[2], hire_date=e[3], age=e[4],
++                bonus=Decimal(e[1]) / 400,
++            )
+             for e in [
+                 ('Jones', 45000, 'Accounting', datetime.datetime(2005, 11, 1), 20),
+                 ('Williams', 37000, 'Accounting', datetime.datetime(2009, 6, 1), 20),
+@@ -202,6 +206,27 @@ class WindowFunctionTests(TestCase):
+             ('Smith', 55000, 'Sales', 53000),
+         ], transform=lambda row: (row.name, row.salary, row.department, row.lag))
+ 
++    def test_lag_decimalfield(self):
++        qs = Employee.objects.annotate(lag=Window(
++            expression=Lag(expression='bonus', offset=1),
++            partition_by=F('department'),
++            order_by=[F('bonus').asc(), F('name').asc()],
++        )).order_by('department', F('bonus').asc(), F('name').asc())
++        self.assertQuerysetEqual(qs, [
++            ('Williams', Decimal('92.50'), 'Accounting', None),
++            ('Jenson', Decimal('112.50'), 'Accounting', Decimal('92.50')),
++            ('Jones', Decimal('112.50'), 'Accounting', Decimal('112.50')),
++            ('Adams', Decimal('125.00'), 'Accounting', Decimal('112.50')),
++            ('Moore', Decimal('85.00'), 'IT', None),
++            ('Wilkinson', Decimal('150.00'), 'IT', Decimal('85.00')),
++            ('Johnson', Decimal('200.00'), 'Management', None),
++            ('Miller', Decimal('250.00'), 'Management', Decimal('200.00')),
++            ('Smith', Decimal('95.00'), 'Marketing', None),
++            ('Johnson', Decimal('100.00'), 'Marketing', Decimal('95.00')),
++            ('Brown', Decimal('132.50'), 'Sales', None),
++            ('Smith', Decimal('137.50'), 'Sales', Decimal('132.50')),
++        ], transform=lambda row: (row.name, row.bonus, row.department, row.lag))
++
+     def test_first_value(self):
+         qs = Employee.objects.annotate(first_value=Window(
+             expression=FirstValue('salary'),

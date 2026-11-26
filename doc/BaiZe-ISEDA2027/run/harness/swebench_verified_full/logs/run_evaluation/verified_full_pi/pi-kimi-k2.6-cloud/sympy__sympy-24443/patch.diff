@@ -1,0 +1,75 @@
+diff --git a/sympy/combinatorics/homomorphisms.py b/sympy/combinatorics/homomorphisms.py
+index bb7bdf32b..32f6d975f 100644
+--- a/sympy/combinatorics/homomorphisms.py
++++ b/sympy/combinatorics/homomorphisms.py
+@@ -310,40 +310,20 @@ def homomorphism(domain, codomain, gens, images=(), check=True):
+ def _check_homomorphism(domain, codomain, images):
+     if hasattr(domain, 'relators'):
+         rels = domain.relators
++        gen_map = {g.array_form[0][0]: g for g in domain.generators}
+     else:
+-        gens = domain.presentation().generators
+-        rels = domain.presentation().relators
++        pres = domain.presentation()
++        rels = pres.relators
++        gen_map = {g.array_form[0][0]: domain.generators[i] for i, g in enumerate(pres.generators)}
+     identity = codomain.identity
+ 
+     def _image(r):
+         if r.is_identity:
+             return identity
+-        else:
+-            w = identity
+-            r_arr = r.array_form
+-            i = 0
+-            j = 0
+-            # i is the index for r and j is for
+-            # r_arr. r_arr[j] is the tuple (sym, p)
+-            # where sym is the generator symbol
+-            # and p is the power to which it is
+-            # raised while r[i] is a generator
+-            # (not just its symbol) or the inverse of
+-            # a generator - hence the need for
+-            # both indices
+-            while i < len(r):
+-                power = r_arr[j][1]
+-                if isinstance(domain, PermutationGroup) and r[i] in gens:
+-                    s = domain.generators[gens.index(r[i])]
+-                else:
+-                    s = r[i]
+-                if s in images:
+-                    w = w*images[s]**power
+-                elif s**-1 in images:
+-                    w = w*images[s**-1]**power
+-                i += abs(power)
+-                j += 1
+-            return w
++        w = identity
++        for sym, power in r.array_form:
++            w = w*images[gen_map[sym]]**power
++        return w
+ 
+     for r in rels:
+         if isinstance(codomain, FpGroup):
+@@ -366,7 +346,6 @@ def _image(r):
+         if not s:
+             return False
+     return True
+-
+ def orbit_homomorphism(group, omega):
+     '''
+     Return the homomorphism induced by the action of the permutation
+diff --git a/sympy/combinatorics/tests/test_homomorphisms.py b/sympy/combinatorics/tests/test_homomorphisms.py
+index 800dfeeb1..e375ac93c 100644
+--- a/sympy/combinatorics/tests/test_homomorphisms.py
++++ b/sympy/combinatorics/tests/test_homomorphisms.py
+@@ -107,3 +107,9 @@ def test_check_homomorphism():
+     b = Permutation(1,3)
+     G = PermutationGroup([a, b])
+     raises(ValueError, lambda: homomorphism(G, G, [a], [a]))
++
++    # Regression test: _check_homomorphism used to fail on PermutationGroups
++    # when a relator contained an inverted generator.
++    D3 = DihedralGroup(3)
++    T = homomorphism(D3, D3, D3.generators, D3.generators)
++    assert T.is_isomorphism()

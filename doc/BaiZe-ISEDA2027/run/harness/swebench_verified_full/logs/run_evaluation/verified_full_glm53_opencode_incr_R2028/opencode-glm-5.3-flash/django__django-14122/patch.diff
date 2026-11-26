@@ -1,0 +1,68 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 850734709..781c2ea1a 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -100,6 +100,8 @@ class SQLCompiler:
+         if self.query.group_by is None:
+             return []
+         expressions = []
++        if self._meta_ordering:
++            order_by = None
+         if self.query.group_by is not True:
+             # If the group by is set to a list (by .values() call most likely),
+             # then we need to add everything in it to the GROUP BY clause.
+@@ -125,11 +127,12 @@ class SQLCompiler:
+             cols = expr.get_group_by_cols()
+             for col in cols:
+                 expressions.append(col)
+-        for expr, (sql, params, is_ref) in order_by:
+-            # Skip References to the select clause, as all expressions in the
+-            # select clause are already part of the group by.
+-            if not is_ref:
+-                expressions.extend(expr.get_group_by_cols())
++        if order_by:
++            for expr, (sql, params, is_ref) in order_by:
++                # Skip References to the select clause, as all expressions in
++                # the select clause are already part of the group by.
++                if not is_ref:
++                    expressions.extend(expr.get_group_by_cols())
+         having_group_by = self.having.get_group_by_cols() if self.having else ()
+         for expr in having_group_by:
+             expressions.append(expr)
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index b9b0a7268..5d20eacb4 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -1977,6 +1977,32 @@ class QuerysetOrderedTests(unittest.TestCase):
+         self.assertIs(qs.order_by('name').ordered, True)
+ 
+ 
++class MetaOrderingGroupByTests(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        cls.extra1 = ExtraInfo.objects.create(info='extra1')
++        cls.extra2 = ExtraInfo.objects.create(info='extra2')
++        Author.objects.create(name='a1', num=1, extra=cls.extra1)
++        Author.objects.create(name='a2', num=2, extra=cls.extra1)
++        Author.objects.create(name='a3', num=3, extra=cls.extra2)
++
++    def test_meta_ordering_not_in_group_by(self):
++        """
++        Meta.ordering fields are not included in the GROUP BY clause (#32577).
++        """
++        qs = Author.objects.values('extra__info').annotate(cnt=Count('id'))
++        self.assertCountEqual(
++            qs,
++            [{'extra__info': 'extra1', 'cnt': 2}, {'extra__info': 'extra2', 'cnt': 1}],
++        )
++
++    def test_meta_ordering_fields_not_in_group_by_sql(self):
++        qs = Author.objects.values('extra__info').annotate(cnt=Count('id'))
++        sql = str(qs.query)
++        group_by = sql[sql.upper().index('GROUP BY'):]
++        self.assertNotIn(connection.ops.quote_name('name'), group_by)
++
++
+ @skipUnlessDBFeature('allow_sliced_subqueries_with_in')
+ class SubqueryTests(TestCase):
+     @classmethod

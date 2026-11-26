@@ -1,0 +1,19 @@
+{
+  "scene_weights": {
+    "design_mgmt": 0.94,
+    "layout": 1.0,
+    "others": 0.8563,
+    "schematic": 0.7859
+  },
+  "scene_weight_raw": {
+    "design_mgmt": 1.603,
+    "layout": 1.7053,
+    "others": 1.4603,
+    "schematic": 1.3402
+  },
+  "both_missed_count": 30,
+  "anti_forget_count": 50,
+  "formula": "weight = (1.0 + max(0,-delta)*2.0 + (1-recall)*0.5) / max_raw, capped 1.5",
+  "bonus": 0.03,
+  "penalty": 0.02
+}

@@ -1,0 +1,113 @@
+diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py
+index d6f0da4..fae086e 100644
+--- a/xarray/core/dataset.py
++++ b/xarray/core/dataset.py
+@@ -4768,7 +4768,10 @@ class Dataset(Mapping, ImplementsDatasetReduce, DataWithCoords):
+                             # the former is often more efficient
+                             reduce_dims = None
+                         variables[name] = var.quantile(
+-                            q, dim=reduce_dims, interpolation=interpolation
++                            q,
++                            dim=reduce_dims,
++                            interpolation=interpolation,
++                            keep_attrs=keep_attrs,
+                         )
+ 
+             else:
+diff --git a/xarray/core/variable.py b/xarray/core/variable.py
+index 2e9906c..4e54adc 100644
+--- a/xarray/core/variable.py
++++ b/xarray/core/variable.py
+@@ -1592,7 +1592,7 @@ class Variable(
+         """
+         return self.broadcast_equals(other, equiv=duck_array_ops.array_notnull_equiv)
+ 
+-    def quantile(self, q, dim=None, interpolation="linear"):
++    def quantile(self, q, dim=None, interpolation="linear", keep_attrs=None):
+         """Compute the qth quantile of the data along the specified dimension.
+ 
+         Returns the qth quantiles(s) of the array elements.
+@@ -1629,6 +1629,11 @@ class Variable(
+         --------
+         numpy.nanpercentile, pandas.Series.quantile, Dataset.quantile,
+         DataArray.quantile
++
++        keep_attrs : bool, optional
++            If True, the variable's attributes (`attrs`) will be copied from
++            the original object to the new one.  If False (default), the new
++            object will be returned without attributes.
+         """
+         if isinstance(self.data, dask_array_type):
+             raise TypeError(
+@@ -1658,7 +1663,11 @@ class Variable(
+         qs = np.nanpercentile(
+             self.data, q * 100.0, axis=axis, interpolation=interpolation
+         )
+-        return Variable(new_dims, qs)
++        if keep_attrs is None:
++            keep_attrs = _get_keep_attrs(default=False)
++        attrs = self._attrs if keep_attrs else None
++
++        return Variable(new_dims, qs, attrs=attrs)
+ 
+     def rank(self, dim, pct=False):
+         """Ranks the data.
+diff --git a/xarray/tests/test_dataarray.py b/xarray/tests/test_dataarray.py
+index 8c01ef9..290122e 100644
+--- a/xarray/tests/test_dataarray.py
++++ b/xarray/tests/test_dataarray.py
+@@ -2310,6 +2310,15 @@ class TestDataArray:
+                 )
+                 np.testing.assert_allclose(actual.values, expected)
+ 
++    def test_quantile_keep_attrs(self):
++        da = DataArray([0, 0], dims="x", attrs={"units": "K"})
++
++        actual = da.quantile(0.9, dim="x", keep_attrs=True)
++        assert actual.attrs == {"units": "K"}
++
++        actual = da.quantile(0.9, dim="x")
++        assert len(actual.attrs) == 0
++
+     def test_reduce_keep_attrs(self):
+         # Test dropped attrs
+         vm = self.va.mean()
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 814fc31..834fbc7 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -4456,6 +4456,16 @@ class TestDataset:
+             assert "dim3" in ds_quantile.dims
+             assert all(d not in ds_quantile.dims for d in dim)
+ 
++    def test_quantile_keep_attrs(self):
++        ds = create_test_data(seed=123)
++        ds.attrs = {"units": "K"}
++
++        ds_quantile = ds.quantile(0.25, dim="dim1", keep_attrs=True)
++        assert ds_quantile.attrs == {"units": "K"}
++
++        ds_quantile = ds.quantile(0.25, dim="dim1")
++        assert len(ds_quantile.attrs) == 0
++
+     @requires_bottleneck
+     def test_rank(self):
+         ds = create_test_data(seed=1234)
+diff --git a/xarray/tests/test_variable.py b/xarray/tests/test_variable.py
+index 43551d6..9531691 100644
+--- a/xarray/tests/test_variable.py
++++ b/xarray/tests/test_variable.py
+@@ -1488,6 +1488,13 @@ class TestVariable(VariableSubclassobjects):
+                 expected = np.nanpercentile(self.d, np.array(q) * 100, axis=axis)
+                 np.testing.assert_allclose(actual.values, expected)
+ 
++        v = Variable(["x", "y"], self.d, attrs={"units": "K"})
++        actual = v.quantile(0.5, dim="x", keep_attrs=True)
++        assert actual.attrs == {"units": "K"}
++
++        actual = v.quantile(0.5, dim="x")
++        assert len(actual.attrs) == 0
++
+     @requires_dask
+     def test_quantile_dask_raises(self):
+         # regression for GH1524

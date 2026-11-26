@@ -1,0 +1,241 @@
+diff --git a/sklearn/linear_model/least_angle.py b/sklearn/linear_model/least_angle.py
+index d6b9609e..1edef667 100644
+--- a/sklearn/linear_model/least_angle.py
++++ b/sklearn/linear_model/least_angle.py
+@@ -27,7 +27,7 @@ SOLVE_TRIANGULAR_ARGS = {'check_finite': False}
+ 
+ 
+ def lars_path(X, y, Xy=None, Gram=None, max_iter=500, alpha_min=0,
+-              method='lar', copy_X=True, eps=np.finfo(np.float).eps,
++              method='lar', copy_X=True, eps=np.finfo(float).eps,
+               copy_Gram=True, verbose=0, return_path=True,
+               return_n_iter=False, positive=False):
+     """Compute Least Angle Regression or Lasso path using LARS algorithm [1]
+@@ -89,7 +89,7 @@ def lars_path(X, y, Xy=None, Gram=None, max_iter=500, alpha_min=0,
+     eps : float, optional
+         The machine-precision regularization in the computation of the
+         Cholesky diagonal factors. Increase this for very ill-conditioned
+-        systems. By default, ``np.finfo(np.float).eps`` is used.
++        systems. By default, ``np.finfo(float).eps`` is used.
+ 
+     copy_Gram : bool, default=True
+         If ``False``, ``Gram`` is overwritten.
+@@ -166,7 +166,7 @@ def lars_path(X, y, Xy=None, Gram=None, max_iter=500, alpha_min=0,
+ 
+ 
+ def lars_path_gram(Xy, Gram, n_samples, max_iter=500, alpha_min=0,
+-                   method='lar', copy_X=True, eps=np.finfo(np.float).eps,
++                   method='lar', copy_X=True, eps=np.finfo(float).eps,
+                    copy_Gram=True, verbose=0, return_path=True,
+                    return_n_iter=False, positive=False):
+     """lars_path in the sufficient stats mode [1]
+@@ -208,7 +208,7 @@ def lars_path_gram(Xy, Gram, n_samples, max_iter=500, alpha_min=0,
+     eps : float, optional
+         The machine-precision regularization in the computation of the
+         Cholesky diagonal factors. Increase this for very ill-conditioned
+-        systems. By default, ``np.finfo(np.float).eps`` is used.
++        systems. By default, ``np.finfo(float).eps`` is used.
+ 
+     copy_Gram : bool, default=True
+         If ``False``, ``Gram`` is overwritten.
+@@ -283,7 +283,7 @@ def lars_path_gram(Xy, Gram, n_samples, max_iter=500, alpha_min=0,
+ 
+ def _lars_path_solver(X, y, Xy=None, Gram=None, n_samples=None, max_iter=500,
+                       alpha_min=0, method='lar', copy_X=True,
+-                      eps=np.finfo(np.float).eps, copy_Gram=True, verbose=0,
++                      eps=np.finfo(float).eps, copy_Gram=True, verbose=0,
+                       return_path=True, return_n_iter=False, positive=False):
+     """Compute Least Angle Regression or Lasso path using LARS algorithm [1]
+ 
+@@ -336,7 +336,7 @@ def _lars_path_solver(X, y, Xy=None, Gram=None, n_samples=None, max_iter=500,
+     eps : float, optional
+         The machine-precision regularization in the computation of the
+         Cholesky diagonal factors. Increase this for very ill-conditioned
+-        systems. By default, ``np.finfo(np.float).eps`` is used
++        systems. By default, ``np.finfo(float).eps`` is used
+ 
+     copy_Gram : bool, default=True
+         If ``False``, ``Gram`` is overwritten.
+@@ -798,7 +798,7 @@ class Lars(MultiOutputMixin, RegressorMixin, LinearModel):
+         systems. Unlike the ``tol`` parameter in some iterative
+         optimization-based algorithms, this parameter does not control
+         the tolerance of the optimization.
+-        By default, ``np.finfo(np.float).eps`` is used.
++        By default, ``np.finfo(float).eps`` is used.
+ 
+     copy_X : bool, default=True
+         If ``True``, X will be copied; else, it may be overwritten.
+@@ -855,7 +855,7 @@ class Lars(MultiOutputMixin, RegressorMixin, LinearModel):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, normalize=True,
+                  precompute='auto', n_nonzero_coefs=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, fit_path=True):
++                 eps=np.finfo(float).eps, copy_X=True, fit_path=True):
+         self.fit_intercept = fit_intercept
+         self.verbose = verbose
+         self.normalize = normalize
+@@ -1019,7 +1019,7 @@ class LassoLars(Lars):
+         systems. Unlike the ``tol`` parameter in some iterative
+         optimization-based algorithms, this parameter does not control
+         the tolerance of the optimization.
+-        By default, ``np.finfo(np.float).eps`` is used.
++        By default, ``np.finfo(float).eps`` is used.
+ 
+     copy_X : bool, default=True
+         If True, X will be copied; else, it may be overwritten.
+@@ -1091,7 +1091,7 @@ class LassoLars(Lars):
+ 
+     def __init__(self, alpha=1.0, fit_intercept=True, verbose=False,
+                  normalize=True, precompute='auto', max_iter=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
++                 eps=np.finfo(float).eps, copy_X=True, fit_path=True,
+                  positive=False):
+         self.alpha = alpha
+         self.fit_intercept = fit_intercept
+@@ -1117,7 +1117,7 @@ def _check_copy_and_writeable(array, copy=False):
+ def _lars_path_residues(X_train, y_train, X_test, y_test, Gram=None,
+                         copy=True, method='lars', verbose=False,
+                         fit_intercept=True, normalize=True, max_iter=500,
+-                        eps=np.finfo(np.float).eps, positive=False):
++                        eps=np.finfo(float).eps, positive=False):
+     """Compute the residues on left-out data for a full LARS path
+ 
+     Parameters
+@@ -1180,7 +1180,7 @@ def _lars_path_residues(X_train, y_train, X_test, y_test, Gram=None,
+         systems. Unlike the ``tol`` parameter in some iterative
+         optimization-based algorithms, this parameter does not control
+         the tolerance of the optimization.
+-        By default, ``np.finfo(np.float).eps`` is used
++        By default, ``np.finfo(float).eps`` is used
+ 
+ 
+     Returns
+@@ -1292,7 +1292,7 @@ class LarsCV(Lars):
+     eps : float, optional
+         The machine-precision regularization in the computation of the
+         Cholesky diagonal factors. Increase this for very ill-conditioned
+-        systems. By default, ``np.finfo(np.float).eps`` is used.
++        systems. By default, ``np.finfo(float).eps`` is used.
+ 
+     copy_X : bool, default=True
+         If ``True``, X will be copied; else, it may be overwritten.
+@@ -1346,7 +1346,7 @@ class LarsCV(Lars):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, max_iter=500,
+                  normalize=True, precompute='auto', cv=None,
+-                 max_n_alphas=1000, n_jobs=None, eps=np.finfo(np.float).eps,
++                 max_n_alphas=1000, n_jobs=None, eps=np.finfo(float).eps,
+                  copy_X=True):
+         self.max_iter = max_iter
+         self.cv = cv
+@@ -1509,7 +1509,7 @@ class LassoLarsCV(LarsCV):
+     eps : float, optional
+         The machine-precision regularization in the computation of the
+         Cholesky diagonal factors. Increase this for very ill-conditioned
+-        systems. By default, ``np.finfo(np.float).eps`` is used.
++        systems. By default, ``np.finfo(float).eps`` is used.
+ 
+     copy_X : bool, default=True
+         If True, X will be copied; else, it may be overwritten.
+@@ -1587,7 +1587,7 @@ class LassoLarsCV(LarsCV):
+ 
+     def __init__(self, fit_intercept=True, verbose=False, max_iter=500,
+                  normalize=True, precompute='auto', cv=None,
+-                 max_n_alphas=1000, n_jobs=None, eps=np.finfo(np.float).eps,
++                 max_n_alphas=1000, n_jobs=None, eps=np.finfo(float).eps,
+                  copy_X=True, positive=False):
+         self.fit_intercept = fit_intercept
+         self.verbose = verbose
+@@ -1655,7 +1655,7 @@ class LassoLarsIC(LassoLars):
+         systems. Unlike the ``tol`` parameter in some iterative
+         optimization-based algorithms, this parameter does not control
+         the tolerance of the optimization.
+-        By default, ``np.finfo(np.float).eps`` is used
++        By default, ``np.finfo(float).eps`` is used
+ 
+     copy_X : bool, default=True
+         If True, X will be copied; else, it may be overwritten.
+@@ -1720,7 +1720,7 @@ class LassoLarsIC(LassoLars):
+     """
+     def __init__(self, criterion='aic', fit_intercept=True, verbose=False,
+                  normalize=True, precompute='auto', max_iter=500,
+-                 eps=np.finfo(np.float).eps, copy_X=True, positive=False):
++                 eps=np.finfo(float).eps, copy_X=True, positive=False):
+         self.criterion = criterion
+         self.fit_intercept = fit_intercept
+         self.positive = positive
+diff --git a/sklearn/svm/base.py b/sklearn/svm/base.py
+index 64cebe83..232eda81 100644
+--- a/sklearn/svm/base.py
++++ b/sklearn/svm/base.py
+@@ -286,12 +286,15 @@ class BaseLibSVM(BaseEstimator, metaclass=ABCMeta):
+             n_class = 1
+         n_SV = self.support_vectors_.shape[0]
+ 
+-        dual_coef_indices = np.tile(np.arange(n_SV), n_class)
+-        dual_coef_indptr = np.arange(0, dual_coef_indices.size + 1,
+-                                     dual_coef_indices.size / n_class)
+-        self.dual_coef_ = sp.csr_matrix(
+-            (dual_coef_data, dual_coef_indices, dual_coef_indptr),
+-            (n_class, n_SV))
++        if n_SV > 0:
++            dual_coef_indices = np.tile(np.arange(n_SV), n_class)
++            dual_coef_indptr = np.arange(0, dual_coef_indices.size + 1,
++                                         dual_coef_indices.size / n_class)
++            self.dual_coef_ = sp.csr_matrix(
++                (dual_coef_data, dual_coef_indices, dual_coef_indptr),
++                (n_class, n_SV))
++        else:
++            self.dual_coef_ = sp.csr_matrix((n_class, n_SV))
+ 
+     def predict(self, X):
+         """Perform regression on samples in X.
+diff --git a/sklearn/svm/tests/test_sparse.py b/sklearn/svm/tests/test_sparse.py
+index 7cf6e8af..723f391c 100644
+--- a/sklearn/svm/tests/test_sparse.py
++++ b/sklearn/svm/tests/test_sparse.py
+@@ -360,3 +360,28 @@ def test_consistent_proba():
+     with ignore_warnings(category=ConvergenceWarning):
+         proba_2 = a.fit(X, Y).predict_proba(X)
+     assert_array_almost_equal(proba_1, proba_2)
++
++
++def test_sparse_fit_empty_support_vectors():
++    # Regression test for ZeroDivisionError in _sparse_fit when
++    # support_vectors_ is empty (n_SV = 0)
++    x_train = np.array([[0, 1, 0, 0],
++                        [0, 0, 0, 1],
++                        [0, 0, 1, 0],
++                        [0, 0, 0, 1]])
++    y_train = np.array([0.04, 0.04, 0.10, 0.16])
++    model = svm.SVR(C=316.227766017, coef0=0.0, degree=3, epsilon=0.1,
++                    gamma=1.0, kernel='linear', max_iter=15000,
++                    shrinking=True, tol=0.001)
++
++    # dense fit has no error
++    model.fit(x_train, y_train)
++    assert model.support_vectors_.shape[0] == 0
++
++    # sparse fit should also have no error
++    x_sparse = sparse.csr_matrix(x_train)
++    model.fit(x_sparse, y_train)
++    assert model.support_vectors_.shape[0] == 0
++    assert model.dual_coef_.shape == (1, 0)
++    # predict should work
++    model.predict(x_sparse)
+diff --git a/sklearn/utils/optimize.py b/sklearn/utils/optimize.py
+index f83d2ffc..4fa250c0 100644
+--- a/sklearn/utils/optimize.py
++++ b/sklearn/utils/optimize.py
+@@ -15,7 +15,10 @@ significant speedups.
+ 
+ import numpy as np
+ import warnings
+-from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
++try:
++    from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
++except ImportError:
++    from scipy.optimize._linesearch import line_search_wolfe2, line_search_wolfe1
+ 
+ from ..exceptions import ConvergenceWarning
+ from . import deprecated

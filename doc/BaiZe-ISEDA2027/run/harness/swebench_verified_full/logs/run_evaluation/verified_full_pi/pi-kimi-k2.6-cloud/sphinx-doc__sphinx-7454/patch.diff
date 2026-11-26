@@ -1,0 +1,46 @@
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 893bb0a2..8b971ecb 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -71,8 +71,9 @@ pairindextypes = {
+ def _parse_annotation(annotation: str) -> List[Node]:
+     """Parse type annotation."""
+     def make_xref(text: str) -> addnodes.pending_xref:
++        reftype = 'obj' if text == 'None' else 'class'
+         return pending_xref('', nodes.Text(text),
+-                            refdomain='py', reftype='class', reftarget=text)
++                            refdomain='py', reftype=reftype, reftarget=text)
+ 
+     def unparse(node: ast.AST) -> List[Node]:
+         if isinstance(node, ast.Attribute):
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index dc3d51d0..1e73fdea 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -240,6 +240,10 @@ def test_parse_annotation():
+     doctree = _parse_annotation("int")
+     assert_node(doctree, ([pending_xref, "int"],))
+ 
++    doctree = _parse_annotation("None")
++    assert_node(doctree, ([pending_xref, "None"],))
++    assert_node(doctree[0], pending_xref, reftype='obj')
++
+     doctree = _parse_annotation("List[int]")
+     assert_node(doctree, ([pending_xref, "List"],
+                           [desc_sig_punctuation, "["],
+@@ -283,6 +287,15 @@ def test_pyfunction_signature(app):
+                                                       " ",
+                                                       [nodes.inline, pending_xref, "str"])])
+ 
++def test_pyfunction_signature_none(app):
++    text = ".. py:function:: hello() -> None"
++    doctree = restructuredtext.parse(app, text)
++    assert_node(doctree, (addnodes.index,
++                          [desc, ([desc_signature, ([desc_name, "hello"],
++                                                    desc_parameterlist,
++                                                    [desc_returns, pending_xref, "None"])],
++                                  desc_content)]))
++    assert_node(doctree[1][0][2][0], pending_xref, reftype='obj')
+ 
+ def test_pyfunction_signature_full(app):
+     text = (".. py:function:: hello(a: str, b = 1, *args: str, "

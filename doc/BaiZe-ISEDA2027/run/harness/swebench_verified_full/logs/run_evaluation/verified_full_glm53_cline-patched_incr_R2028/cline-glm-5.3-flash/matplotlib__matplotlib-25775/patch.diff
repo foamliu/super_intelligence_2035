@@ -1,0 +1,160 @@
+diff --git a/doc/users/next_whats_new/text_antialiased.rst b/doc/users/next_whats_new/text_antialiased.rst
+new file mode 100644
+index 000000000..b7df766d9
+--- /dev/null
++++ b/doc/users/next_whats_new/text_antialiased.rst
+@@ -0,0 +1,9 @@
++Per-Text antialiasing control
++-----------------------------
++
++The `.Text` artist (and thus also `.Annotation`) now supports controlling
++antialiasing on a per-artist basis via ``Text.set_antialiased`` and
++``Text.get_antialiased``, as well as through the ``antialiased`` keyword
++argument, e.g. ``plt.text(0.5, 0.5, "hello", antialiased=False)``.
++By default, the antialiasing state is initialized from
++:rc:`text.antialiased`.
+diff --git a/lib/matplotlib/backends/backend_agg.py b/lib/matplotlib/backends/backend_agg.py
+index 7d038a998..22907b00d 100644
+--- a/lib/matplotlib/backends/backend_agg.py
++++ b/lib/matplotlib/backends/backend_agg.py
+@@ -206,7 +206,7 @@ class RendererAgg(RendererBase):
+         # space) in the following call to draw_text_image).
+         font.set_text(s, 0, flags=get_hinting_flag())
+         font.draw_glyphs_to_bitmap(
+-            antialiased=mpl.rcParams['text.antialiased'])
++            antialiased=gc.get_antialiased())
+         d = font.get_descent() / 64.0
+         # The descent needs to be adjusted for the angle.
+         xo, yo = font.get_bitmap_offset()
+diff --git a/lib/matplotlib/backends/backend_cairo.py b/lib/matplotlib/backends/backend_cairo.py
+index 9ccadcdf1..196e41478 100644
+--- a/lib/matplotlib/backends/backend_cairo.py
++++ b/lib/matplotlib/backends/backend_cairo.py
+@@ -25,7 +25,6 @@ except ImportError:
+             "cairo backend requires that pycairo>=1.14.0 or cairocffi "
+             "is installed") from err
+ 
+-import matplotlib as mpl
+ from .. import _api, cbook, font_manager
+ from matplotlib.backend_bases import (
+     _Backend, FigureCanvasBase, FigureManagerBase, GraphicsContextBase,
+@@ -205,7 +204,7 @@ class RendererCairo(RendererBase):
+             ctx.set_font_size(self.points_to_pixels(prop.get_size_in_points()))
+             opts = cairo.FontOptions()
+             opts.set_antialias(
+-                cairo.ANTIALIAS_DEFAULT if mpl.rcParams["text.antialiased"]
++                cairo.ANTIALIAS_DEFAULT if gc.get_antialiased()
+                 else cairo.ANTIALIAS_NONE)
+             ctx.set_font_options(opts)
+             if angle:
+diff --git a/lib/matplotlib/tests/test_text.py b/lib/matplotlib/tests/test_text.py
+index f86b9f111..6d0909326 100644
+--- a/lib/matplotlib/tests/test_text.py
++++ b/lib/matplotlib/tests/test_text.py
+@@ -197,6 +197,35 @@ def test_antialiasing():
+     # rendered.
+ 
+ 
++def test_text_antialiased():
++    fig = plt.figure()
++    ax = fig.add_subplot()
++    for rc_bool in (True, False):
++        with mpl.rc_context({'text.antialiased': rc_bool}):
++            text = ax.text(.5, .5, 'foo')
++            assert text.get_antialiased() == mpl.rcParams['text.antialiased']
++            text.set_antialiased(not mpl.rcParams['text.antialiased'])
++            assert text.get_antialiased() != mpl.rcParams['text.antialiased']
++            fig.canvas.draw()
++
++
++def test_text_antialiased_rendering():
++    # Check that the per-artist antialiasing state is honored when drawing
++    # text with the Agg backend.
++    from matplotlib.backends.backend_agg import FigureCanvasAgg
++    from matplotlib.figure import Figure
++
++    def draw(antialiased):
++        fig = Figure(figsize=(1, 1))
++        FigureCanvasAgg(fig)
++        fig.text(.5, .5, 'foo', ha='center', va='center',
++                 antialiased=antialiased)
++        fig.canvas.draw()
++        return np.asarray(fig.canvas.buffer_rgba())
++
++    assert (draw(True) != draw(False)).any()
++
++
+ def test_afm_kerning():
+     fn = mpl.font_manager.findfont("Helvetica", fontext="afm")
+     with open(fn, 'rb') as fh:
+diff --git a/lib/matplotlib/text.py b/lib/matplotlib/text.py
+index 4591316cf..18c884f85 100644
+--- a/lib/matplotlib/text.py
++++ b/lib/matplotlib/text.py
+@@ -115,6 +115,7 @@ class Text(Artist):
+                  wrap=False,
+                  transform_rotates_text=False,
+                  parse_math=None,    # defaults to rcParams['text.parse_math']
++                 antialiased=None,    # defaults to rcParams['text.antialiased']
+                  **kwargs
+                  ):
+         """
+@@ -141,6 +142,7 @@ class Text(Artist):
+             fontproperties=fontproperties,
+             usetex=usetex,
+             parse_math=parse_math,
++            antialiased=antialiased,
+             wrap=wrap,
+             verticalalignment=verticalalignment,
+             horizontalalignment=horizontalalignment,
+@@ -159,6 +161,7 @@ class Text(Artist):
+         fontproperties=None,
+         usetex=None,
+         parse_math=None,
++        antialiased=None,
+         wrap=False,
+         verticalalignment='baseline',
+         horizontalalignment='left',
+@@ -175,6 +178,7 @@ class Text(Artist):
+         self.set_usetex(usetex)
+         self.set_parse_math(parse_math if parse_math is not None else
+                             mpl.rcParams['text.parse_math'])
++        self.set_antialiased(antialiased)
+         self.set_wrap(wrap)
+         self.set_verticalalignment(verticalalignment)
+         self.set_horizontalalignment(horizontalalignment)
+@@ -738,6 +742,7 @@ class Text(Artist):
+             gc.set_alpha(self.get_alpha())
+             gc.set_url(self._url)
+             self._set_gc_clip(gc)
++            gc.set_antialiased(self._antialiased)
+ 
+             angle = self.get_rotation()
+ 
+@@ -1317,6 +1322,26 @@ class Text(Artist):
+         """Return whether mathtext parsing is considered for this `Text`."""
+         return self._parse_math
+ 
++    def set_antialiased(self, b):
++        """
++        Set whether to use antialiased rendering.
++
++        Parameters
++        ----------
++        b : bool or None
++            Whether to use antialiased rendering; ``None`` means to use
++            :rc:`text.antialiased`.
++        """
++        if b is None:
++            self._antialiased = mpl.rcParams['text.antialiased']
++        else:
++            self._antialiased = bool(b)
++        self.stale = True
++
++    def get_antialiased(self):
++        """Return whether antialiased rendering is used."""
++        return self._antialiased
++
+     def set_fontname(self, fontname):
+         """
+         Alias for `set_family`.

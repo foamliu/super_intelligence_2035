@@ -1,0 +1,66 @@
+diff --git a/classes.dot b/classes.dot
+new file mode 100644
+index 0000000..6b2ccf8
+--- /dev/null
++++ b/classes.dot
+@@ -0,0 +1,4 @@
++digraph "classes" {
++charset="utf-8"
++rankdir=BT
++}
+diff --git a/pylint/pyreverse/inspector.py b/pylint/pyreverse/inspector.py
+index 8fa1220..c3e138e 100644
+--- a/pylint/pyreverse/inspector.py
++++ b/pylint/pyreverse/inspector.py
+@@ -229,8 +229,51 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+ 
+         handle instance_attrs_type
+         """
++
++        def _get_annotation(assignattr):
++            """Return the annotation for `assignattr` if any, else None."""
++            assign = assignattr.parent
++            if isinstance(assign, astroid.AnnAssign):
++                return assign.annotation
++            if isinstance(assign, astroid.Assign):
++                rhs = assign.value
++                if isinstance(rhs, astroid.Name):
++                    func = assignattr.scope()
++                    if isinstance(func, astroid.FunctionDef):
++                        for idx, arg in enumerate(func.args.args):
++                            if arg.name == rhs.name:
++                                return func.args.annotations[idx]
++                        for idx, arg in enumerate(func.args.kwonlyargs):
++                            if arg.name == rhs.name:
++                                annotations = func.args.kwonlyargs_annotations
++                                if annotations:
++                                    return annotations[idx]
++                        if func.args.vararg == rhs.name:
++                            return func.args.varargannotation
++                        if func.args.kwarg == rhs.name:
++                            return func.args.kwargannotation
++            return None
++
+         try:
+             values = set(node.infer())
++            # if the inference result is only None and/or Uninferable, try
++            # to use the type annotation
++            if all(
++                isinstance(v, astroid.Const) and v.value is None
++                or v is astroid.Uninferable
++                for v in values
++            ):
++                annotation = _get_annotation(node)
++                if annotation is not None:
++                    try:
++                        annotated = set(annotation.infer())
++                        if all(
++                            not isinstance(a, astroid.Const) or a.value is not None
++                            for a in annotated
++                        ):
++                            values = annotated
++                    except astroid.InferenceError:
++                        pass
+             current = set(parent.instance_attrs_type[node.attrname])
+             parent.instance_attrs_type[node.attrname] = list(current | values)
+         except astroid.InferenceError:

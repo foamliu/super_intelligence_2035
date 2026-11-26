@@ -1,0 +1,63 @@
+2026-11-19 15:25:46,363 - INFO - Creating container for scikit-learn__scikit-learn-25747...
+2026-11-19 15:25:46,384 - INFO - Container for scikit-learn__scikit-learn-25747 created: f2bd421822d89e63fd458b2ac433258a4043e3d45ed911d677d2f3cea876a812
+2026-11-19 15:25:47,230 - INFO - Container for scikit-learn__scikit-learn-25747 started: f2bd421822d89e63fd458b2ac433258a4043e3d45ed911d677d2f3cea876a812
+2026-11-19 15:25:47,233 - INFO - Intermediate patch for scikit-learn__scikit-learn-25747 written to logs/evaluation/verified_full_glm53_codex_incr_R2765/codex-glm-5.3-flash/scikit-learn__scikit-learn-25747/patch.diff, now applying to container...
+2026-11-19 15:25:47,406 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/utils/_set_output.py...
+warning: sklearn/utils/_set_output.py has type 100755, expected 100644
+Applied patch sklearn/utils/_set_output.py cleanly.
+
+2026-11-19 15:25:47,966 - INFO - Git diff before:
+diff --git a/sklearn/utils/_set_output.py b/sklearn/utils/_set_output.py
+index 335773c6a..c6c3a07b8 100755
+--- a/sklearn/utils/_set_output.py
++++ b/sklearn/utils/_set_output.py
+@@ -52,11 +52,13 @@ def _wrap_in_pandas_container(
+ 
+     pd = check_pandas_support("Setting output container to 'pandas'")
+ 
+-    if isinstance(data_to_wrap, pd.DataFrame):
++    if isinstance(data_to_wrap, (pd.DataFrame, pd.Series)):
+         if columns is not None:
+-            data_to_wrap.columns = columns
++            if isinstance(data_to_wrap, pd.DataFrame):
++                data_to_wrap.columns = columns
+         if index is not None:
+-            data_to_wrap.index = index
++            if len(index) == len(data_to_wrap):
++                data_to_wrap.index = index
+         return data_to_wrap
+ 
+     return pd.DataFrame(data_to_wrap, index=index, columns=columns)
+2026-11-19 15:25:47,969 - INFO - Eval script for scikit-learn__scikit-learn-25747 written to logs/evaluation/verified_full_glm53_codex_incr_R2765/codex-glm-5.3-flash/scikit-learn__scikit-learn-25747/eval.sh; copying to container...
+2026-11-19 15:25:55,039 - INFO - Test runtime: 6.98 seconds
+2026-11-19 15:25:55,042 - INFO - Test output for scikit-learn__scikit-learn-25747 written to logs/evaluation/verified_full_glm53_codex_incr_R2765/codex-glm-5.3-flash/scikit-learn__scikit-learn-25747/test_output.txt
+2026-11-19 15:25:55,110 - INFO - Git diff after:
+diff --git a/sklearn/utils/_set_output.py b/sklearn/utils/_set_output.py
+index 335773c6a..c6c3a07b8 100755
+--- a/sklearn/utils/_set_output.py
++++ b/sklearn/utils/_set_output.py
+@@ -52,11 +52,13 @@ def _wrap_in_pandas_container(
+ 
+     pd = check_pandas_support("Setting output container to 'pandas'")
+ 
+-    if isinstance(data_to_wrap, pd.DataFrame):
++    if isinstance(data_to_wrap, (pd.DataFrame, pd.Series)):
+         if columns is not None:
+-            data_to_wrap.columns = columns
++            if isinstance(data_to_wrap, pd.DataFrame):
++                data_to_wrap.columns = columns
+         if index is not None:
+-            data_to_wrap.index = index
++            if len(index) == len(data_to_wrap):
++                data_to_wrap.index = index
+         return data_to_wrap
+ 
+     return pd.DataFrame(data_to_wrap, index=index, columns=columns)
+2026-11-19 15:25:55,111 - INFO - Grading answer for scikit-learn__scikit-learn-25747...
+2026-11-19 15:25:55,114 - INFO - report: {'scikit-learn__scikit-learn-25747': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['sklearn/utils/tests/test_set_output.py::test_set_output_pandas_keep_index']}, 'PASS_TO_PASS': {'success': ['sklearn/utils/tests/test_set_output.py::test__wrap_in_pandas_container_dense', 'sklearn/utils/tests/test_set_output.py::test__wrap_in_pandas_container_dense_update_columns_and_index', 'sklearn/utils/tests/test_set_output.py::test__wrap_in_pandas_container_error_validation', 'sklearn/utils/tests/test_set_output.py::test__safe_set_output', 'sklearn/utils/tests/test_set_output.py::test_set_output_mixin', 'sklearn/utils/tests/test_set_output.py::test__safe_set_output_error', 'sklearn/utils/tests/test_set_output.py::test_set_output_method', 'sklearn/utils/tests/test_set_output.py::test_set_output_method_error', 'sklearn/utils/tests/test_set_output.py::test__get_output_config', 'sklearn/utils/tests/test_set_output.py::test_get_output_auto_wrap_false', 'sklearn/utils/tests/test_set_output.py::test_auto_wrap_output_keys_errors_with_incorrect_input', 'sklearn/utils/tests/test_set_output.py::test_set_output_mixin_custom_mixin', 'sklearn/utils/tests/test_set_output.py::test__wrap_in_pandas_container_column_errors', 'sklearn/utils/tests/test_set_output.py::test_set_output_mro'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-25747: resolved: False
+2026-11-19 15:25:55,116 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-25747.verified_full_glm53_codex_incr_R2765...
+2026-11-19 15:26:11,353 - INFO - Container sweb.eval.scikit-learn__scikit-learn-25747.verified_full_glm53_codex_incr_R2765 stopped successfully.
+2026-11-19 15:26:11,353 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-25747.verified_full_glm53_codex_incr_R2765...
+2026-11-19 15:26:11,388 - INFO - Container sweb.eval.scikit-learn__scikit-learn-25747.verified_full_glm53_codex_incr_R2765 removed successfully.

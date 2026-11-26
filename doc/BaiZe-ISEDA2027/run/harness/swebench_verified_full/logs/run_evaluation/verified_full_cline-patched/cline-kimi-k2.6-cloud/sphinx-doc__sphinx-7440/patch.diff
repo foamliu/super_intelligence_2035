@@ -1,0 +1,171 @@
+diff --git a/sphinx/domains/std.py b/sphinx/domains/std.py
+index d820cfe..6ecc9c8 100644
+--- a/sphinx/domains/std.py
++++ b/sphinx/domains/std.py
+@@ -305,7 +305,7 @@ def make_glossary_term(env: "BuildEnvironment", textnodes: Iterable[Node], index
+         term['ids'].append(node_id)
+ 
+     std = cast(StandardDomain, env.get_domain('std'))
+-    std.note_object('term', termtext.lower(), node_id, location=term)
++    std.note_object('term', termtext, node_id, location=term)
+ 
+     # add an index entry too
+     indexnode = addnodes.index()
+@@ -784,6 +784,8 @@ class StandardDomain(Domain):
+             resolver = self._resolve_doc_xref
+         elif typ == 'option':
+             resolver = self._resolve_option_xref
++        elif typ == 'term':
++            resolver = self._resolve_term_xref
+         elif typ == 'citation':
+             warnings.warn('pending_xref(domain=std, type=citation) is deprecated: %r' % node,
+                           RemovedInSphinx40Warning)
+@@ -794,6 +796,31 @@ class StandardDomain(Domain):
+ 
+         return resolver(env, fromdocname, builder, typ, target, node, contnode)
+ 
++    def _resolve_term_xref(self, env: "BuildEnvironment", fromdocname: str,
++                           builder: "Builder", typ: str, target: str,
++                           node: pending_xref, contnode: Element) -> Element:
++        objtypes = self.objtypes_for_role(typ) or []
++        original_target = node.get('reftargetoriginal', target)
++
++        # Try exact case match first
++        for objtype in objtypes:
++            if (objtype, original_target) in self.objects:
++                docname, labelid = self.objects[objtype, original_target]
++                break
++        else:
++            # Fallback to lowercase match
++            for objtype in objtypes:
++                if (objtype, target) in self.objects:
++                    docname, labelid = self.objects[objtype, target]
++                    break
++            else:
++                docname, labelid = '', ''
++
++        if not docname:
++            return None
++        return make_refnode(builder, fromdocname, docname,
++                            labelid, contnode)
++
+     def _resolve_ref_xref(self, env: "BuildEnvironment", fromdocname: str,
+                           builder: "Builder", typ: str, target: str, node: pending_xref,
+                           contnode: Element) -> Element:
+@@ -951,14 +978,18 @@ class StandardDomain(Domain):
+                 results.append(('std:' + role, res))
+         # all others
+         for objtype in self.object_types:
+-            key = (objtype, target)
+             if objtype == 'term':
+-                key = (objtype, ltarget)
+-            if key in self.objects:
+-                docname, labelid = self.objects[key]
+-                results.append(('std:' + self.role_for_objtype(objtype),
+-                                make_refnode(builder, fromdocname, docname,
+-                                             labelid, contnode)))
++                res = self.resolve_xref(env, fromdocname, builder, 'term',
++                                        target, node, contnode)
++                if res:
++                    results.append(('std:' + self.role_for_objtype(objtype), res))
++            else:
++                key = (objtype, target)
++                if key in self.objects:
++                    docname, labelid = self.objects[key]
++                    results.append(('std:' + self.role_for_objtype(objtype),
++                                    make_refnode(builder, fromdocname, docname,
++                                                 labelid, contnode)))
+         return results
+ 
+     def get_objects(self) -> Iterator[Tuple[str, str, str, str, str, int]]:
+diff --git a/sphinx/roles.py b/sphinx/roles.py
+index 8621918..2265c9f 100644
+--- a/sphinx/roles.py
++++ b/sphinx/roles.py
+@@ -141,6 +141,7 @@ class XRefRole(ReferenceRole):
+         return self.result_nodes(self.inliner.document, self.env, node, is_ref=False)
+ 
+     def create_xref_node(self) -> Tuple[List[Node], List[system_message]]:
++        original_target = self.target
+         target = self.target
+         title = self.title
+         if self.lowercase:
+@@ -161,6 +162,8 @@ class XRefRole(ReferenceRole):
+         title, target = self.process_link(self.env, refnode, self.has_explicit_title,
+                                           title, target)
+         refnode['reftarget'] = target
++        if self.lowercase:
++            refnode['reftargetoriginal'] = original_target
+         refnode += self.innernodeclass(self.rawtext, title, classes=self.classes)
+ 
+         return self.result_nodes(self.inliner.document, self.env, refnode, is_ref=True)
+diff --git a/tests/test_domain_std.py b/tests/test_domain_std.py
+index aa1d29e..0260e7b 100644
+--- a/tests/test_domain_std.py
++++ b/tests/test_domain_std.py
+@@ -23,6 +23,7 @@ from sphinx.addnodes import (
+     pending_xref
+ )
+ from sphinx.domains.std import StandardDomain
++from sphinx.roles import XRefRole
+ from sphinx.testing import restructuredtext
+ from sphinx.testing.util import assert_node
+ from sphinx.util import docutils
+@@ -188,6 +189,44 @@ def test_glossary_warning(app, status, warning):
+             "other instance in case4" in warning.getvalue())
+ 
+ 
++def test_glossary_case_sensitive(app, status, warning):
++    # case-sensitive terms (refs: #6558)
++    text = (".. glossary::\n"
++            "\n"
++            "   MySQL\n"
++            "       The database system\n"
++            "\n"
++            "   mysql\n"
++            "       The command line client\n")
++    doctree = restructuredtext.parse(app, text, "case-sensitive")
++    assert ("case-sensitive.rst:3: WARNING: duplicate term description" not in
++            warning.getvalue())
++
++    # check both terms are registered
++    domain = app.env.get_domain('std')
++    assert ('term', 'MySQL') in domain.objects
++    assert ('term', 'mysql') in domain.objects
++
++    # check :term:`MySQL` resolves to MySQL
++    role = XRefRole(lowercase=True)
++    inliner = mock.Mock(document=mock.Mock(settings=mock.Mock()))
++    role.get_source_info = mock.Mock(return_value=('test.rst', 5))
++    doctrees, errors = role('term', 'rawtext', 'MySQL', 5, inliner, {}, [])
++    refnode = doctrees[0]
++    resolved = domain.resolve_xref(app.env, 'index', app.builder, 'term',
++                                   refnode['reftarget'], refnode, refnode[0])
++    assert resolved is not None
++    assert 'term-MySQL' in resolved['refuri']
++
++    # check :term:`mysql` resolves to mysql
++    doctrees, errors = role('term', 'rawtext', 'mysql', 5, inliner, {}, [])
++    refnode = doctrees[0]
++    resolved = domain.resolve_xref(app.env, 'index', app.builder, 'term',
++                                   refnode['reftarget'], refnode, refnode[0])
++    assert resolved is not None
++    assert 'term-mysql' in resolved['refuri']
++
++
+ def test_glossary_comment(app):
+     text = (".. glossary::\n"
+             "\n"
+diff --git a/tests/test_markup.py b/tests/test_markup.py
+index b6d99db..065e525 100644
+--- a/tests/test_markup.py
++++ b/tests/test_markup.py
+@@ -426,7 +426,7 @@ def test_XRefRole(inliner):
+     doctrees, errors = role('ref', 'rawtext', 'TEXT', 5, inliner, {}, [])
+     assert_node(doctrees[0], [addnodes.pending_xref, nodes.literal, 'TEXT'])
+     assert_node(doctrees[0], refdoc='dummy', refdomain='', reftype='ref', reftarget='text',
+-                refexplicit=False, refwarn=False)
++                reftargetoriginal='TEXT', refexplicit=False, refwarn=False)
+ 
+ 
+ @pytest.mark.sphinx('dummy', testroot='prolog')

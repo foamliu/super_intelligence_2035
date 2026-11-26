@@ -1,0 +1,54 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index c1440ec..a7ef5d8 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -116,6 +116,7 @@ New Features
+ 
+ Bug fixes
+ ~~~~~~~~~
++- Fix ``to_unstacked_dataset`` for single-dim variables. (:issue:`3949`)
+ - Fix errors combining attrs in :py:func:`open_mfdataset` (:issue:`4009`, :pull:`4173`)
+   By `John Omotani <https://github.com/johnomotani>`_
+ - If groupby receives a ``DataArray`` with name=None, assign a default name (:issue:`158`)
+diff --git a/xarray/core/dataarray.py b/xarray/core/dataarray.py
+index b0df874..53c8c56 100644
+--- a/xarray/core/dataarray.py
++++ b/xarray/core/dataarray.py
+@@ -1936,7 +1936,7 @@ class DataArray(AbstractArray, DataWithCoords):
+         Data variables:
+             a        (x, y) int64 0 1 2 3 4 5
+             b        (x) int64 0 3
+-        >>> stacked = data.to_stacked_array("z", ["y"])
++        >>> stacked = data.to_stacked_array("z", sample_dims=["x"])
+         >>> stacked.indexes["z"]
+         MultiIndex(levels=[['a', 'b'], [0, 1, 2]],
+                 labels=[[0, 0, 0, 1], [0, 1, 2, -1]],
+@@ -1961,7 +1961,7 @@ class DataArray(AbstractArray, DataWithCoords):
+         # pull variables out of datarray
+         data_dict = {}
+         for k in variables:
+-            data_dict[k] = self.sel({variable_dim: k}).squeeze(drop=True)
++            data_dict[k] = self.sel({variable_dim: k}, drop=True).squeeze(drop=True)
+ 
+         # unstacked dataset
+         return Dataset(data_dict)
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 9c8d407..31263ab 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3055,6 +3055,15 @@ class TestDataset:
+         x = y.to_unstacked_dataset("features")
+         assert_identical(D, x)
+ 
++    def test_to_stacked_array_to_unstacked_dataset_single_dimension(self):
++        # regression test for GH3949: single-dimension variables
++        arr = xr.DataArray(np.arange(3), coords=[("x", [0, 1, 2])])
++        D = xr.Dataset({"a": arr, "b": arr})
++
++        y = D.to_stacked_array("features", sample_dims=["x"])
++        x = y.to_unstacked_dataset("features")
++        assert_identical(D, x)
++
+     def test_update(self):
+         data = create_test_data(seed=0)
+         expected = data.copy()

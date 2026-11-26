@@ -1,0 +1,106 @@
+diff --git a/django/db/models/sql/where.py b/django/db/models/sql/where.py
+index aaab1730b7..31c53f94d1 100644
+--- a/django/db/models/sql/where.py
++++ b/django/db/models/sql/where.py
+@@ -129,13 +129,13 @@ class WhereNode(tree.Node):
+             # Convert if the database doesn't support XOR:
+             #   a XOR b XOR c XOR ...
+             # to:
+-            #   (a OR b OR c OR ...) AND (a + b + c + ...) == 1
++            #   (a OR b OR c OR ...) AND (a + b + c + ...) % 2 = 1
+             lhs = self.__class__(self.children, OR)
+             rhs_sum = reduce(
+                 operator.add,
+                 (Case(When(c, then=1), default=0) for c in self.children),
+             )
+-            rhs = Exact(1, rhs_sum)
++            rhs = Exact(1, rhs_sum % 2)
+             return self.__class__([lhs, rhs], AND, self.negated).as_sql(
+                 compiler, connection
+             )
+diff --git a/docs/ref/models/querysets.txt b/docs/ref/models/querysets.txt
+index 1d684607f1..00569971cd 100644
+--- a/docs/ref/models/querysets.txt
++++ b/docs/ref/models/querysets.txt
+@@ -2048,8 +2048,8 @@ SQL equivalent:
+             (CASE WHEN x THEN 1 ELSE 0 END) +
+             (CASE WHEN y THEN 1 ELSE 0 END) +
+             ...
+-            (CASE WHEN z THEN 1 ELSE 0 END) +
+-        )
++            (CASE WHEN z THEN 1 ELSE 0 END)
++        ) % 2
+ 
+ Methods that do not return ``QuerySet``\s
+ -----------------------------------------
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index 9578777b11..76af6a5010 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -2532,6 +2532,66 @@ class QuerySetBitwiseOperationTests(TestCase):
+         qs2 = Classroom.objects.filter(has_blackboard=True).order_by("-name")[:1]
+         self.assertCountEqual(qs1 ^ qs2, [self.room_3, self.room_4])
+ 
++    def test_xor_multiple_conditions(self):
++        tests = [
++            (Q(pk=self.room_1.pk), [self.room_1]),
++            (Q(pk=self.room_1.pk) ^ Q(pk=self.room_1.pk), []),
++            (Q(pk=self.room_1.pk) ^ Q(pk=self.room_1.pk) ^ Q(pk=self.room_1.pk), [
++                self.room_1,
++            ]),
++            (
++                Q(pk=self.room_1.pk)
++                ^ Q(pk=self.room_1.pk)
++                ^ Q(pk=self.room_1.pk)
++                ^ Q(pk=self.room_1.pk),
++                [],
++            ),
++            (
++                Q(pk=self.room_1.pk)
++                ^ Q(pk=self.room_1.pk)
++                ^ Q(pk=self.room_1.pk)
++                ^ Q(pk=self.room_1.pk)
++                ^ Q(pk=self.room_1.pk),
++                [self.room_1],
++            ),
++            # room_2 matches both conditions, an even number of them.
++            (Q(has_blackboard=True) ^ Q(pk=self.room_2.pk), [self.room_3]),
++            # room_2 and room_3 match two conditions each, an even number.
++            (
++                Q(has_blackboard=True)
++                ^ Q(pk=self.room_2.pk)
++                ^ Q(pk=self.room_3.pk),
++                [],
++            ),
++            # room_1 matches one condition, an odd number of them.
++            (
++                Q(has_blackboard=True)
++                ^ Q(pk=self.room_2.pk)
++                ^ Q(pk=self.room_3.pk)
++                ^ Q(pk=self.room_1.pk),
++                [self.room_1],
++            ),
++            # room_1 matches one condition, while room_2 and room_3 match two.
++            (
++                Q(has_blackboard=True)
++                ^ Q(has_blackboard=True)
++                ^ Q(pk=self.room_1.pk),
++                [self.room_1],
++            ),
++            # room_1 matches two conditions, while room_2 and room_4 match one.
++            (
++                Q(has_blackboard=False)
++                ^ Q(pk=self.room_1.pk)
++                ^ Q(pk=self.room_2.pk),
++                [self.room_2, self.room_4],
++            ),
++        ]
++        for query, expected_result in tests:
++            with self.subTest(query=query):
++                self.assertCountEqual(
++                    Classroom.objects.filter(query), expected_result
++                )
++
+     def test_subquery_aliases(self):
+         combined = School.objects.filter(pk__isnull=False) & School.objects.filter(
+             Exists(

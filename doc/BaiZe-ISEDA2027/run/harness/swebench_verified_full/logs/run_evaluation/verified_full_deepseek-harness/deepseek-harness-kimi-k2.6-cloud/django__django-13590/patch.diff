@@ -1,0 +1,41 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 4648daf395..0e62ba9037 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1077,10 +1077,15 @@ class Query(BaseExpression):
+         elif isinstance(value, (list, tuple)):
+             # The items of the iterable may be expressions and therefore need
+             # to be resolved independently.
+-            return type(value)(
++            resolved = [
+                 self.resolve_lookup_value(sub_value, can_reuse, allow_joins)
+                 for sub_value in value
+-            )
++            ]
++            # Named tuples require their constructor arguments to be passed
++            # as positional arguments.
++            if isinstance(value, tuple) and hasattr(type(value), '_fields'):
++                return type(value)(*resolved)
++            return type(value)(resolved)
+         return value
+ 
+     def solve_lookup_type(self, lookup):
+diff --git a/tests/queries/test_query.py b/tests/queries/test_query.py
+index 523fa607f0..1a771dacf2 100644
+--- a/tests/queries/test_query.py
++++ b/tests/queries/test_query.py
+@@ -150,3 +150,14 @@ class TestQuery(SimpleTestCase):
+         msg = 'Cannot filter against a non-conditional expression.'
+         with self.assertRaisesMessage(TypeError, msg):
+             query.build_where(Func(output_field=CharField()))
++
++    def test_named_tuple_lookup_value(self):
++        query = Query(Item)
++        from collections import namedtuple
++        RangeTuple = namedtuple('RangeTuple', ['near', 'far'])
++        # The resolve_lookup_value method should not error when processing
++        # named tuples, which don't accept a single iterable as an argument.
++        range_value = RangeTuple('a', 'b')
++        result = query.resolve_lookup_value(range_value, set(), True)
++        self.assertEqual(result, RangeTuple('a', 'b'))
++        self.assertIs(type(result), RangeTuple)

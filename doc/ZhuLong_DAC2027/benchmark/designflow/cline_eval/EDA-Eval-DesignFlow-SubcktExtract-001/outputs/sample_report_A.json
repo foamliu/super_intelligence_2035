@@ -1,0 +1,141 @@
+{
+  "subckt": "SpineTop_A",
+  "found": true,
+  "ports": [
+    "clk",
+    "rst_n",
+    "ec",
+    "bl0",
+    "br0",
+    "bl1",
+    "br1",
+    "wl",
+    "rd0",
+    "rd1",
+    "rd2",
+    "rd3",
+    "sa_en",
+    "bg_en",
+    "vdd",
+    "vss"
+  ],
+  "subcells": [
+    {
+      "inst": "xECC0",
+      "cell": "ECC_LbusDrv_A",
+      "pins": [
+        "ec",
+        "rd0",
+        "rd1",
+        "vdd",
+        "vss"
+      ]
+    },
+    {
+      "inst": "xBK0",
+      "cell": "BankTopX2_A",
+      "pins": [
+        "bl0",
+        "br0",
+        "bl1",
+        "br1",
+        "wl",
+        "vdd",
+        "vss"
+      ]
+    },
+    {
+      "inst": "xBK1",
+      "cell": "BankTopX2_A",
+      "pins": [
+        "bl0",
+        "br0",
+        "bl1",
+        "br1",
+        "wl",
+        "vdd",
+        "vss"
+      ]
+    },
+    {
+      "inst": "xRP0",
+      "cell": "SpineRpt_A",
+      "pins": [
+        "rd0",
+        "rd1",
+        "rd2",
+        "rd3",
+        "sa0",
+        "sa1",
+        "sa2",
+        "sa3",
+        "vdd",
+        "vss"
+      ]
+    },
+    {
+      "inst": "xBG0",
+      "cell": "invLx4",
+      "pins": [
+        "bg_en",
+        "bgp",
+        "vdd",
+        "vss"
+      ]
+    },
+    {
+      "inst": "xRP1",
+      "cell": "SpineRpt_A",
+      "pins": [
+        "rd0",
+        "rd1",
+        "rd2",
+        "rd3",
+        "sa4",
+        "sa5",
+        "sa6",
+        "sa7",
+        "vdd",
+        "vss"
+      ]
+    }
+  ],
+  "subcell_types": [
+    "BankTopX2_A",
+    "ECC_LbusDrv_A",
+    "SpineRpt_A",
+    "invLx4"
+  ],
+  "nets": [
+    "bg_en",
+    "bgp",
+    "bl0",
+    "bl1",
+    "br0",
+    "br1",
+    "clk",
+    "ec",
+    "rd0",
+    "rd1",
+    "rd2",
+    "rd3",
+    "rst_n",
+    "sa0",
+    "sa1",
+    "sa2",
+    "sa3",
+    "sa4",
+    "sa5",
+    "sa6",
+    "sa7",
+    "sa_en",
+    "vdd",
+    "vss",
+    "wl"
+  ],
+  "line_range": [
+    76,
+    95
+  ],
+  "line_count": 20
+}

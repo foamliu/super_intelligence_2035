@@ -1,0 +1,148 @@
+diff --git a/lib/matplotlib/offsetbox.py b/lib/matplotlib/offsetbox.py
+index 3a506543a..059a6c8ae 100644
+--- a/lib/matplotlib/offsetbox.py
++++ b/lib/matplotlib/offsetbox.py
+@@ -166,10 +166,10 @@ def _get_aligned_offsets(hd_list, height, align="baseline"):
+         descent = max(d for h, d in hd_list)
+         height = height_descent + descent
+         offsets = [0. for h, d in hd_list]
+-    elif align in ["left", "top"]:
++    elif align in ["left", "bottom"]:
+         descent = 0.
+         offsets = [d for h, d in hd_list]
+-    elif align in ["right", "bottom"]:
++    elif align in ["right", "top"]:
+         descent = 0.
+         offsets = [height - h + d for h, d in hd_list]
+     elif align == "center":
+diff --git a/lib/matplotlib/tests/test_offsetbox.py b/lib/matplotlib/tests/test_offsetbox.py
+index 02756ff55..6ae9fe961 100644
+--- a/lib/matplotlib/tests/test_offsetbox.py
++++ b/lib/matplotlib/tests/test_offsetbox.py
+@@ -12,8 +12,8 @@ import matplotlib.lines as mlines
+ from matplotlib.backend_bases import MouseButton, MouseEvent
+ 
+ from matplotlib.offsetbox import (
+-    AnchoredOffsetbox, AnnotationBbox, AnchoredText, DrawingArea, OffsetBox,
+-    OffsetImage, TextArea, _get_packed_offsets)
++    AnchoredOffsetbox, AnnotationBbox, AnchoredText, DrawingArea, HPacker,
++    OffsetBox, OffsetImage, TextArea, VPacker, _get_packed_offsets)
+ 
+ 
+ @image_comparison(['offsetbox_clipping'], remove_text=True)
+@@ -187,6 +187,54 @@ def test_get_packed_offsets_equal_total_none_sep_none():
+         _get_packed_offsets([1, 1, 1], total=None, sep=None, mode='equal')
+ 
+ 
++@pytest.mark.parametrize('align', ['top', 'bottom', 'center'])
++def test_hpacker_align(align):
++    # Check that HPacker aligns its children on the vertical axis as
++    # documented (issue #24168): "top" aligns the tops of the children with
++    # the top of the box, "bottom" aligns the bottoms with the bottom of the
++    # box, and "center" centers the children within the box.
++    fig, ax = plt.subplots(figsize=(4, 3), dpi=100)
++    renderer = fig.canvas.get_renderer()
++    da1 = DrawingArea(10, 20)
++    da2 = DrawingArea(10, 30)
++    packer = HPacker(children=[da1, da2], pad=0, sep=0, align=align)
++    width, height, xdescent, ydescent, offsets = \
++        packer.get_extent_offsets(renderer)
++    heights = [da.get_extent(renderer)[1] for da in (da1, da2)]
++    bottoms = [oy for _, oy in offsets]
++    tops = [bottom + h for bottom, h in zip(bottoms, heights)]
++    if align == 'top':
++        assert_allclose(tops, height)
++    elif align == 'bottom':
++        assert_allclose(bottoms, 0)
++    else:  # 'center'
++        assert_allclose(bottoms, [(height - h) / 2 for h in heights])
++
++
++@pytest.mark.parametrize('align', ['left', 'right', 'center'])
++def test_vpacker_align(align):
++    # Check that VPacker aligns its children on the horizontal axis as
++    # documented: "left" aligns the left edges of the children with the left
++    # of the box, "right" aligns the right edges with the right of the box,
++    # and "center" centers the children within the box.
++    fig, ax = plt.subplots(figsize=(4, 3), dpi=100)
++    renderer = fig.canvas.get_renderer()
++    da1 = DrawingArea(20, 10)
++    da2 = DrawingArea(30, 10)
++    packer = VPacker(children=[da1, da2], pad=0, sep=0, align=align)
++    width, height, xdescent, ydescent, offsets = \
++        packer.get_extent_offsets(renderer)
++    widths = [da.get_extent(renderer)[0] for da in (da1, da2)]
++    lefts = [ox for ox, _ in offsets]
++    rights = [left + w for left, w in zip(lefts, widths)]
++    if align == 'left':
++        assert_allclose(lefts, 0)
++    elif align == 'right':
++        assert_allclose(rights, width)
++    else:  # 'center'
++        assert_allclose(lefts, [(width - w) / 2 for w in widths])
++
++
+ @pytest.mark.parametrize('child_type', ['draw', 'image', 'text'])
+ @pytest.mark.parametrize('boxcoords',
+                          ['axes fraction', 'axes pixels', 'axes points',
+diff --git a/verify_align_bug.py b/verify_align_bug.py
+new file mode 100644
+index 000000000..d078baf4e
+--- /dev/null
++++ b/verify_align_bug.py
+@@ -0,0 +1,55 @@
++"""Verify HPacker/VPacker align behavior: are 'top'/'bottom' reversed?"""
++import sys
++sys.path.insert(0, "/dev/shm/harness_verified_full_glm53/workdirs/cline-patched/matplotlib_matplotlib/lib")
++
++import matplotlib
++matplotlib.use("Agg")
++import matplotlib.pyplot as plt
++from matplotlib.offsetbox import DrawingArea, HPacker, VPacker
++from matplotlib.patches import Rectangle
++
++fig, ax = plt.subplots()
++renderer = fig.canvas.get_renderer()
++
++da1 = DrawingArea(10, 20)
++da1.add_artist(Rectangle((0, 0), 10, 20))
++da2 = DrawingArea(10, 30)
++da2.add_artist(Rectangle((0, 0), 10, 30))
++
++def report(pack, label):
++    w, h, xd, yd, offsets = pack.get_extent_offsets(renderer)
++    # children are DrawingAreas with ydescent=0 -> box bottom = oy, top = oy + child height
++    heights = [c.get_extent(renderer)[1] for c in pack.get_visible_children()]
++    bottoms = [oy for (xo, oy) in offsets]
++    tops = [oy + hh for (xo, oy), hh in zip(offsets, heights)]
++    print(f"{label}: total height={h:.1f}  bottoms={[f'{b:.1f}' for b in bottoms]}"
++          f"  tops={[f'{t:.1f}' for t in tops]}")
++    return h, bottoms, tops
++
++for align in ["top", "bottom", "center", "baseline"]:
++    pack = HPacker(children=[da1, da2], pad=0, sep=0, align=align)
++    total_h, bottoms, tops = report(pack, f"HPacker align={align!r:11}")
++    tops_aligned = abs(tops[0] - tops[1]) < 1e-9 and abs(tops[0] - total_h) < 1e-6
++    bottoms_aligned = abs(bottoms[0] - bottoms[1]) < 1e-9 and abs(bottoms[0]) < 1e-6
++    expect = "tops flush with container top" if align == "top" else \
++             "bottoms flush with container bottom" if align == "bottom" else "-"
++    got = "tops aligned" if tops_aligned else "bottoms aligned" if bottoms_aligned else "neither"
++    ok = ((align == "top" and tops_aligned) or
++          (align == "bottom" and bottoms_aligned) or
++          align in ("center", "baseline"))
++    print(f"   expected: {expect}; got: {got}  ->  {'OK' if ok else '*** REVERSED ***'}")
++
++# VPacker horizontal alignment sanity check (left/right must keep working)
++da3 = DrawingArea(20, 10)
++da4 = DrawingArea(30, 10)
++for align in ["left", "right", "center"]:
++    pack = VPacker(children=[da3, da4], pad=0, sep=0, align=align)
++    w, h, xd, yd, offsets = pack.get_extent_offsets(renderer)
++    widths = [c.get_extent(renderer)[0] for c in pack.get_visible_children()]
++    lefts = [xo for (xo, oy) in offsets]
++    rights = [xo + ww for (xo, oy), ww in zip(offsets, widths)]
++    left_ok = abs(lefts[0] - lefts[1]) < 1e-9 and abs(lefts[0]) < 1e-6
++    right_ok = abs(rights[0] - rights[1]) < 1e-9 and abs(rights[0] - w) < 1e-6
++    got = "lefts aligned" if left_ok else "rights aligned" if right_ok else "neither"
++    ok = ((align == "left" and left_ok) or (align == "right" and right_ok) or align == "center")
++    print(f"VPacker align={align!r:8}: lefts={lefts} rights={rights} -> {got}  {'OK' if ok else '*** BROKEN ***'}")

@@ -1,0 +1,42 @@
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 118bfced..1e24e8e3 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -1299,6 +1299,17 @@ def _format_value(value):
+ 
+ def _format_float(value):
+     """Format a floating number to make sure it gets the decimal point."""
++    # Try str(value) first, as it may produce a shorter string that is
++    # still sufficient to round-trip the value.
++    value_str = str(value)
++    if "e" in value_str:
++        value_str = value_str.replace("e", "E")
++    if "." not in value_str and "E" not in value_str:
++        value_str += ".0"
++
++    if len(value_str) <= 20:
++        return value_str
++
+     value_str = f"{value:.16G}"
+     if "." not in value_str and "E" not in value_str:
+         value_str += ".0"
+diff --git a/astropy/io/fits/tests/test_header.py b/astropy/io/fits/tests/test_header.py
+index a8f4e116..e36606e7 100644
+--- a/astropy/io/fits/tests/test_header.py
++++ b/astropy/io/fits/tests/test_header.py
+@@ -137,6 +137,15 @@ class TestHeaderFunctions(FitsTestCase):
+         ):
+             assert str(c) == _pad("FLOATNUM= -4.6737463674763E+32")
+ 
++    def test_floating_point_value_short_str(self):
++        """Test that Card uses the shortest possible string for floats."""
++        # Regression test for https://github.com/astropy/astropy/issues/14508
++        # 0.009125 should not be expanded to 0.009124999999999999
++        c = fits.Card("HIERARCH ESO IFM CL RADIUS", 0.009125, "[m] radius arround actuator to avoid")
++        assert str(c) == _pad(
++            "HIERARCH ESO IFM CL RADIUS = 0.009125 / [m] radius arround actuator to avoid"
++        )
++
+     def test_complex_value_card(self):
+         """Test Card constructor with complex value"""
+ 

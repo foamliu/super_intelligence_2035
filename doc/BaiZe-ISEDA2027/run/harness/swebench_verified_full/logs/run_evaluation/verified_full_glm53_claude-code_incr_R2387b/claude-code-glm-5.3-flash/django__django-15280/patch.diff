@@ -1,0 +1,31 @@
+diff --git a/django/db/models/fields/related_descriptors.py b/django/db/models/fields/related_descriptors.py
+index d5aa968400..5c40e52953 100644
+--- a/django/db/models/fields/related_descriptors.py
++++ b/django/db/models/fields/related_descriptors.py
+@@ -377,6 +377,9 @@ class ReverseOneToOneDescriptor:
+         # we must manage the reverse relation cache manually.
+         for rel_obj in queryset:
+             instance = instances_dict[rel_obj_attr(rel_obj)]
++            import os
++            if os.environ.get('DJANGO_TRACE'):
++                print(f"[TRACE] ReverseOneToOne.get_prefetch_queryset: setting profile.user cache on rel_obj {id(rel_obj):#x} -> instance {id(instance):#x}")
+             self.related.field.set_cached_value(rel_obj, instance)
+         return queryset, rel_obj_attr, instance_attr, True, self.related.get_cache_name(), False
+ 
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index fb6639793a..b6ea8a2a00 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -1937,6 +1937,12 @@ def prefetch_one_level(instances, prefetcher, lookup, level):
+ 
+         if single:
+             val = vals[0] if vals else None
++            import os
++            if os.environ.get('DJANGO_TRACE'):
++                val_id = hex(id(val)) if val is not None else 'None'
++                print(f"[TRACE] prefetch_one_level: obj={obj.__class__.__name__}#{id(obj):#x} "
++                      f"cache_name={cache_name!r} to_attr={to_attr!r} as_attr={as_attr} "
++                      f"is_descriptor={is_descriptor} val={val.__class__.__name__}#{val_id}")
+             if as_attr:
+                 # A to_attr has been given for the prefetch.
+                 setattr(obj, to_attr, val)

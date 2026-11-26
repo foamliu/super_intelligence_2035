@@ -1,0 +1,76 @@
+{
+  "run": "minicpm5_grpo_loop_R0_200step",
+  "ckpt": "global_step_200",
+  "reward_arm": "R0 (static string-match, no sandbox)",
+  "base_ckpt": "minicpm5-2b-sft-v39-final (global_step_105)",
+  "config": {
+    "group_size": 8,
+    "batch_prompts": 2,
+    "total_steps": 200,
+    "lr": 3e-06,
+    "kl_coef": 0.02,
+    "clip_ratio": 0.2,
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "max_prompt_len": 512,
+    "max_response_len": 384,
+    "ppo_epochs": 1,
+    "save_freq": 50
+  },
+  "total_rollouts": 3200,
+  "wall_min": 61.7,
+  "cheat": {
+    "total_rollouts": 3200,
+    "cheat_detected": 0,
+    "cheat_rate": 0.0,
+    "ngram_size": 8,
+    "cheat_examples": []
+  },
+  "reward_first": 0.3625,
+  "reward_last": 0.8992,
+  "segments": {
+    "s1-20": {
+      "reward": 0.6731,
+      "frac_positive_adv": 0.5625,
+      "frac_nonzero_reward": 0.9688,
+      "kl": 0.0149,
+      "mean_ratio": 1.0
+    },
+    "s21-50": {
+      "reward": 0.8874,
+      "frac_positive_adv": 0.4125,
+      "frac_nonzero_reward": 0.9917,
+      "kl": 0.0486,
+      "mean_ratio": 1.0
+    },
+    "s51-100": {
+      "reward": 0.9201,
+      "frac_positive_adv": 0.3038,
+      "frac_nonzero_reward": 1.0,
+      "kl": 0.0717,
+      "mean_ratio": 1.0
+    },
+    "s101-150": {
+      "reward": 0.9153,
+      "frac_positive_adv": 0.26,
+      "frac_nonzero_reward": 0.9938,
+      "kl": 0.0829,
+      "mean_ratio": 1.0
+    },
+    "s151-200": {
+      "reward": 0.911,
+      "frac_positive_adv": 0.2637,
+      "frac_nonzero_reward": 0.9962,
+      "kl": 0.0715,
+      "mean_ratio": 1.0
+    }
+  },
+  "grad_norm_max": 11.31,
+  "interpretation": "reward rises 0.36->0.92 then plateaus (s51-100 peak 0.9201, s151-200 0.911 decline); frac_positive_adv decays 0.56->0.26 (learning signal fades); frac_nonzero_reward saturates ~1.0 (discrimination collapse); mean_ratio==1.0 constant (policy barely moves from reference). => reward increase is proxy fitting/saturation, NOT capability growth. Training-side evidence negative/neutral, consistent with vision v10 lesson (discrete reward + capability-gap RL often no net gain).",
+  "redline": {
+    "contam_5_1": "0/3347",
+    "cheat_5_2": "0/3200",
+    "protocol_frozen": true
+  },
+  "eval_status": "PENDING - autonomous eval chain PID2028723 will serve global_step_200 on GPU7:8095 + 5-run 158-task eval + McNemar/paired-bootstrap vs step105 0.0304+/-0.0083 -> /tmp/posttrain_5run_eval/5run_rl_analysis.json"
+}

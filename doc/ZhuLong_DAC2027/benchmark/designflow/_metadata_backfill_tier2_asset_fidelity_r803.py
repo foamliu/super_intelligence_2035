@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""_metadata_backfill_tier2_asset_fidelity_r803.py — r803 档2 asset_fidelity backfill batch3.
+
+背景: r771 bounded queue spec 档1→档3→档2. r772 档1 (level→layer 160 cases) done.
+      r773-r800 档3 (reframe_note backfill, 32→235) done. r801 档2 batch1 (+12, 106→118) done.
+      r802 档2 batch2 (+12, 118→130) done. 本轮 r803 推进 档2 batch3 — 12 cases
+      (alphabetical next 12 missing after CbrForceMechanismExplain: CdlBulk..CmlMirrorSweepAnalysis).
+
+档2 asset_fidelity 字段语义: 记录输入 A 的来源 (trace-verbatim/真实 scp vs 合成 fixture),
+                              hidden B 一律 synthesized (§4.1, 字段不重复记)。
+canonical vocabulary (r801 确立):
+  - A-faithful   : A = 真实文件 trace-verbatim (含 verbatim excerpt with 原行号标注 / 现场抽取真实产物 / 真实 scp 自内网 / 真实用户 paste)
+  - synth_deck   : A = 合成 SPICE deck/stim/cell 样本 (portability, 真实 deck 在 /proj 内网不可达)
+  - synth_script : A = 合成 Perl/Python/Tcl 脚本 fixture
+  - synth_data   : A = 合成 JSON/state/log/config/data/source-file fixture
+  - synth_log    : A = 合成仿真器错误日志 fixture
+  - synth_doc    : A = 合成 doc/manual/knowledge 摘录 fixture
+  - synth_tree   : A = 合成样本目录树 fixture
+  - no-asset     : 0 attachment (Q&A; workdir docs 由 SUT 从 RAG + trace verbatim user turns 生成)
+
+判据: 逐题读 case prompt 的资产/附件描述 + attachments 文件内容头 + track 字段 + reframe_note driver。
+      A-faithful 强信号 = prompt 显式 "真实"/"verbatim"/"逐字摘录"/"现场抽取的真实产物"/"真实 scp 自" 或
+                          asset 文件 header 明记 verbatim from trace (含真实内网路径) 或
+                          asset 内容 = 真实用户 paste 的 verbatim 文本 (track=faithful + 内容与 prompt 引用一致)。
+      synth 信号 = track=synthesized / portability reframe / "样本"/"合成"/"self-contained sample" / 通用名文件 /
+                   asset header 明记 "BROKEN VERSION (shipped to SUT as asset)" / "sample" / "fixture" / "synthesized SPICE"。
+
+apply: cases/B/<case>.json metadata 新增 asset_fidelity (末位 key, 保留键序),
+       indent=2 ensure_ascii=False, round-trip identical 验过;
+       B.jsonl 双存储同步 (scripts/build_jsonl.py --shard B rebuild)。
+post-verify: asset_fidelity present count before→after; 395/395 valid JSON; 字段值分布; test_rationale 未动。
+"""
+import json, os, sys
+
+BENCH = "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow"
+CASES_B = os.path.join(BENCH, "cases", "B")
+
+# case_id -> (asset_fidelity, rationale)
+BATCH = {
+    "EDA-Eval-DesignFlow-CdlBulkSanitize-001": (
+        "synth_deck",
+        "cdl_a.cdl 合成 CDL 网表 fixture (header 'CDL netlist with 3-port MOS instances (test1-style, no explicit bulk "
+        "terminal)', 保留 trace 3-port M 行省略 bulk 触发 HSPICE 默认衬底接地的 bug-结构, 单元名重构 INVD1A/ND2D1A); "
+        "models_a.sp 合成 demo MOS 模型 (header 显式 'Synthetic demo MOS models for HSPICE (LEVEL=1, not a real PDK)', "
+        "psvt_dbc/nsvt_dbc LEVEL=1); track=derived; reframe=sub-skill 提取三方交叉验证->bulk 显式化 reframe, check 真跑 hspice 加牙; "
+        "真实库 CDL 在 e0029495 /proj 内网不可达, asset 为重构 bug-结构 fixture (单元/模型名重命名, 真实 trace 用 test1 库名)",
+    ),
+    "EDA-Eval-DesignFlow-CellLeakageIvPlot-001": (
+        "synth_data",
+        "cell_leak_A.sw 合成 HSPICE .sw 波形样本 (header 显式 'cell leakage iv - sample (format example)', 日期 11/06/2026, "
+        "含 v(d1a..d4a)/v(gwl)/i(vd1a..vd4a)/i(vwl) 8 列样本模拟 HSPICE ASCII .sw 私有格式); track=faithful (prompt 为 mingyu1l 原话 verbatim "
+        "含真实 cell_leakage .sw 路径, 但 asset 文件为合成 sample); reframe=portability produce-tool parse private .sw->portable hspice deck+parse; "
+        "真实 .sw0~.sw5 在 mingyu1l /proj 内网不可达, asset 为格式 example 合成样本供解析器开发",
+    ),
+    "EDA-Eval-DesignFlow-CgMeetExactlyMissWalk-001": (
+        "A-faithful",
+        "A/ 目录 31 文件 = 真实 DDR5 drcpa aicov 覆盖率 dump verbatim 自 ericw @ hfhds201(.75) /rundata/drcpa_sim/V0/simdir/finesim/workdir/ericw/"
+        "verilog.ddr5.drcpa.aicov/cov_work/scope/html_18-09-2026_10~26~40/ (table1.json 23KB + table2/item100-113.json + table2/table3/item200-213.json, "
+        "含真实 coverage_model::cg_t_* covergroup 标题与真实 'All Cov' 覆盖率值); track=faithful; prompt.txt = ericw 原话 verbatim 含真实 /rundata 路径; "
+        ".75 = hfhds201 即 ericw 工作机, eda_flow 可达 ⇒ 真实 scp 自内网; reframe=portability+analysis/Q&A->produce-tool 查找器",
+    ),
+    "EDA-Eval-DesignFlow-CgtMeetExactlyFilter-001": (
+        "A-faithful",
+        "A/cov_work/ 104 文件 = 真实 DDR5 drcpa aicov 覆盖率 dump verbatim 自 ericw @ hfhds201(.75) /rundata/drcpa_sim/.../ericw/verilog.ddr5.drcpa.aicov/"
+        "cov_work/scope/html_18-09-2026_10~26~40/ (table1.json 23KB + table2/table3 item*.json, 真实 coverage_model::cg_t_* 标题与 'All Cov' 覆盖率值); "
+        "A/filter_config_A.json 合成 5 关键词配置 (VrefCA/VrefCS/SRX/REF/RFM); track=faithful; prompt.txt = ericw 原话 verbatim '给我做一个表格 并且把VrefCA VrefCS SRX REF RFM 相关得去除'; "
+        "承 CgMeetExactlyMissWalk 同源 trace (ericw 同会话不同 turn), .75 可达 ⇒ 真实 scp 自内网; reframe=Q&A-filter->produce-tool 过滤器",
+    ),
+    "EDA-Eval-DesignFlow-CharRemovalAbort-001": (
+        "A-faithful",
+        "deck.cir = 真实 SiliconSmart V-2023.12-SP5 生成的 removal-arc HSPICE deck verbatim 自 ronghu@hfeg0pkn005 trace "
+        "(header 'Deck file generated by SiliconSmart V-2023.12-SP5 build date: Jul 16, 2024 19:26:21. (SMSC-2)', 含真实 Host Name hfpdcnd022/PID 126824/"
+        "/var/tmp/siliconsmart.hfpdcnd022.15315.126824/ffrqN_Rfreshtokenx2/removal_hbm__RN__lh__Ck__lh__ACQ_1.sif_0 路径 + 真实 .lib '/proj/ddgoa/V0/model/current/V1_HK_Model_L5_v0d9_Rev02_t02.sp' tt); "
+        "deck.lis = 真实 HSPICE (PrimeSim HSPICE V-2023.12-SP1-1) 输出日志; ffrqN_Rfreshtokenx2.cdl.spf = 真实单元 CDL netlist (AETHER-SE 导出); "
+        "track=None; attachment desc 显式 '真实 trace 的 SiliconSmart removal-arc HSPICE deck'/'真实 trace 的 HSPICE 输出日志'/'真实 trace 的单元 CDL netlist'; "
+        "reframe=Q&A diag-Q&A->produce-tool diagnose+JSON",
+    ),
+    "EDA-Eval-DesignFlow-CioLeakageExtract-001": (
+        "synth_data",
+        "cio.ma0 合成 FineSim .ma0 测量样本 (header '$DATA1 SOURCE=FineSimPro VERSION=V-2023.12-1', 5 alter 行 cdq_10g/temper/alter#, 值 1.94e-13 量级合理); "
+        "leakage.mt0 合成 FineSim .mt0 测量样本 (i_leak_pu/i_leak_pd/temper/alter#, 5 alter 行序打乱模拟真实 trace); "
+        "output_format_spec.txt 合成 $DATA1 格式说明; track=synthesized; reframe_note 空; "
+        "真实 FineSim .ma0/.mt0 在 clarawu /proj 内网不可达, asset 为合成样本保留关联键 alter# 与行序打乱特征",
+    ),
+    "EDA-Eval-DesignFlow-CircuitIdentPromptGuide-001": (
+        "synth_doc",
+        "doc/ 4 文件合成 how-to Q&A 任务说明 fixture: task_spec.json (case_id/mode/entry_point/deliverable_script) + scenario.txt (重构 e0022089 @ hfeg0pkn002 "
+        "电路识别 prompt 写法 Q&A 场景, 含真实用户/host 但 narrative 重构) + env_profile.txt (重构策略引擎状态+可读根目录+python-runner/shell-runner+AVAILABLE APIS 列表) + "
+        "task_meta.txt (case_id/trace_source/real_task_summary 摘要); track=None; reframe=how-to-Q&A->produce-tool guide+JSON; "
+        "真实 trace 是纯 Q&A 无文件产物, asset 为重构 doc fixture 供提示词指南生成器解析",
+    ),
+    "EDA-Eval-DesignFlow-ClampPwrStateExtract-001": (
+        "synth_deck",
+        "netlist 合成 DecEn_PwrUpLock 电源钳位块 SPICE 网表 (header 显式 '* DecEn_PwrUpLock power-clamp circuit (asset A, synthesized SPICE)', 含 invLx1/invGSx2/invLVx8 subckt + "
+        "ptn_lv/ntn_lv 模型, 重构 PwrOn3->PwrOn3F 上电反相器 + SecEn->DecEnN->DecEn 反相链 + 钳位 PMOS XMMP4/NMOS XMMN4 拓扑); "
+        "track=faithful (prompt.txt = harrywu 原话 verbatim 含真实 /proj/dscqa/V0/agentdir/harrywu/simulation/pwrup_issue/psf/ 路径, 但 asset netlist 显式 synthesized); "
+        "reframe=portability+produce clamp_pwr_state_extract.py; 真实 psf 在 harrywu /proj 内网不可达, asset 为合成 SPICE 重构钳位块拓扑",
+    ),
+    "EDA-Eval-DesignFlow-CmdEdgeMeasGen-001": (
+        "synth_deck",
+        "sim_A.sp 合成 FineSim/HSPICE 网表 (header 'sim_A - DUT + stimulus for command-gated Nth-edge measurement', .param pvdd/tclk/tcmd/tdata + VCK/VCMD/VDATA pulse/pwl + "
+        "反相器 DUT invx + nch/pch LEVEL=1 模型, 无 .measure 语句供候选附加); spec_A.json 合成参数规格 (clk_sig=ck/cmd_sig=cmd_b/data_sig=data_a/vdd=1.2/vth=0.6/N=4/cmd_start=10ns); "
+        "track=synthesized; reframe_note 空; 真实 DDR6 DSCQA sim_setup 在 wenwenl /proj 内网不可达, asset 为合成 deck+spec 供 meas_gen.py 开发",
+    ),
+    "EDA-Eval-DesignFlow-CmlBwExtensionHandbook-001": (
+        "synth_doc",
+        "5 文件合成 CML 带宽扩展 handbook 任务说明 fixture: circuit_context.json (含真实 trace 测得参数 gm=1.15e-3/RL=2900/ro_in=7000/ro_tail=10000/CL=26e-15/I_side=100e-6/measured_A0=2.34/"
+        "measured_f3dB_hz=3.0e9, 但 JSON wrapper 合成) + scenario.txt (重构 lvyy @ hfeg0pkn005 CML 设计场景 narrative) + task_brief.md + requirements.json + task_spec.json; "
+        "track=None; prompt = lvyy msg#318 原话 verbatim; scenario.txt 自标 '[场景 · 真实 trace · A 档 trace-faithful]' 指 prompt 忠实非 asset; "
+        "reframe=Q&A how-to/design-Q&A->produce-tool handbook generator; 真实 FineSim/HSPICE 仿真产物在 lvyy /proj/m2701 内网不可达, asset 为重构 context doc (含真实测得值但非原始 trace 文件)",
+    ),
+    "EDA-Eval-DesignFlow-CmlDividerSweepTbGen-001": (
+        "A-faithful",
+        "tb_res0_b.sp = 真实 HSPICE testbench verbatim 自 joeyl @ hfeg0pkn004 trace (header 'SP Function: DQSIB_path_spf_check', 含真实 .inc '/proj/drjpa/V0/workdir/joewu/simulation/001_data_bk/"
+        "1_sim_option/other_option' 路径, DR=35.2E9/VREF=0.6/SWING=0.05 胜出配置); nl_tail8.sp = 真实 AETHER-SE 导出 CML ÷2 divider 网表 (header 'Library name: intDEV / Cell name: switch / View name: schematic', "
+        "switch_close/switch_open/CML_divider subckt); m2701_5corner.sp = 真实 5-corner .alter 文件 (含真实 .lib '/proj/m2701/V0_DDR4/model/current/model.sp' top_tt/top_ff/top_ss 路径); "
+        "track=None; reframe=portability+produce SWING×Vref 扫描 testbench 生成器; 真实 .sp 在 joeyl /proj/drjpa+/proj/m2701 内网但 asset 为 trace verbatim 自 trace",
+    ),
+    "EDA-Eval-DesignFlow-CmlMirrorSweepAnalysis-001": (
+        "synth_data",
+        "sweep/ 5 文件 (tran_5.tsv..tran_9.tsv) 合成 W/L/multi 扫描数据 fixture (reframe_note 显式 'asset_fidelity=synth_', 用自包含合成 sweep 数据保留真实任务结构); "
+        "circuit_context.json 合成 CML 电流镜偏置 context (含真实 stimulus_path '/proj/m2701/V0_DDR4/workdir/lvyy/simulation/LP6/small_schematic/cml_tran.sp' 但 JSON wrapper 合成); "
+        "task_spec.json 合成任务说明; track=None; reframe=portability+Q&A->produce; "
+        "真实 sweep 仿真数据在 lvyy /proj/m2701 内网不可达, asset 为合成 sweep 数据保留 tran_5~tran_9 W/L/multi 扫描结构与 multi 比(3/2=1.5)分析点",
+    ),
+}
+
+
+def main():
+    before = 0
+    after = 0
+    applied = []
+    skipped = []
+    for cid, (val, why) in BATCH.items():
+        fpath = os.path.join(CASES_B, cid + ".json")
+        if not os.path.exists(fpath):
+            skipped.append((cid, "file not found"))
+            continue
+        with open(fpath, encoding="utf-8") as f:
+            d = json.load(f)
+        md = d.get("metadata", {})
+        if "asset_fidelity" in md:
+            skipped.append((cid, "already has asset_fidelity=%r" % md["asset_fidelity"]))
+            continue
+        before += 1
+        # append as 末位 key (preserve existing key order)
+        md["asset_fidelity"] = val
+        d["metadata"] = md
+        with open(fpath, "w", encoding="utf-8") as f:
+            json.dump(d, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+        after += 1
+        applied.append((cid, val))
+
+    print("=== 档2 asset_fidelity backfill r803 batch3 ===")
+    print("to apply:", len(BATCH), "| applied:", after, "| skipped:", len(skipped))
+    print("\n--- applied ---")
+    for cid, val in applied:
+        print("  APPLIED  %-58s -> %s" % (cid, val))
+    if skipped:
+        print("\n--- skipped ---")
+        for cid, reason in skipped:
+            print("  SKIP     %-58s : %s" % (cid, reason))
+
+    # post-verify: full cases/B asset_fidelity coverage
+    print("\n--- post-verify: cases/B full coverage ---")
+    have = 0
+    miss = 0
+    dist = {}
+    for fname in sorted(os.listdir(CASES_B)):
+        if not fname.endswith(".json"):
+            continue
+        with open(os.path.join(CASES_B, fname), encoding="utf-8") as f:
+            dd = json.load(f)
+        af = dd.get("metadata", {}).get("asset_fidelity")
+        if af is None:
+            miss += 1
+        else:
+            have += 1
+            dist[af] = dist.get(af, 0) + 1
+    print("have asset_fidelity: %d / 395 | miss: %d" % (have, miss))
+    print("value distribution (canonical short values only):")
+    for k, v in sorted(dist.items(), key=lambda x: -x[1]):
+        if len(k) <= 40:
+            print("  %-40s : %d" % (k, v))
+    long_form = sum(v for k, v in dist.items() if len(k) > 40)
+    print("  (long-form legacy values total)            : %d" % long_form)
+
+    # post-verify: all 395 valid JSON + test_rationale spotcheck
+    print("\n--- post-verify: 395 valid JSON + test_rationale spotcheck ---")
+    n_valid = 0
+    n_rationale = 0
+    for fname in sorted(os.listdir(CASES_B)):
+        if not fname.endswith(".json"):
+            continue
+        with open(os.path.join(CASES_B, fname), encoding="utf-8") as f:
+            dd = json.load(f)
+        n_valid += 1
+        rat = dd.get("metadata", {}).get("test_rationale", "")
+        if rat:
+            n_rationale += 1
+    print("valid JSON: %d / 395 | has test_rationale: %d" % (n_valid, n_rationale))
+
+
+if __name__ == "__main__":
+    main()

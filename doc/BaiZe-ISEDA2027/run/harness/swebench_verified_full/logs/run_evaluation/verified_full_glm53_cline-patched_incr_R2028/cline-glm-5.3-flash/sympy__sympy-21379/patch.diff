@@ -1,0 +1,47 @@
+diff --git a/sympy/core/mod.py b/sympy/core/mod.py
+index b4f3de25..1d54735c 100644
+--- a/sympy/core/mod.py
++++ b/sympy/core/mod.py
+@@ -41,6 +41,7 @@ def eval(cls, p, q):
+         from sympy.core.singleton import S
+         from sympy.core.exprtools import gcd_terms
+         from sympy.polys.polytools import gcd
++        from sympy.polys.polyerrors import PolynomialError
+ 
+         def doit(p, q):
+             """Try to return p % q if both are numbers or +/-p is known
+@@ -166,7 +167,10 @@ def doit(p, q):
+         # XXX other possibilities?
+ 
+         # extract gcd; any further simplification should be done by the user
+-        G = gcd(p, q)
++        try:
++            G = gcd(p, q)
++        except PolynomialError:
++            G = S.One
+         if G != 1:
+             p, q = [
+                 gcd_terms(i/G, clear=False, fraction=False) for i in (p, q)]
+diff --git a/sympy/core/tests/test_arit.py b/sympy/core/tests/test_arit.py
+index 2dc6589f..eb33c9e4 100644
+--- a/sympy/core/tests/test_arit.py
++++ b/sympy/core/tests/test_arit.py
+@@ -1986,6 +1986,18 @@ def test_Mod_is_nonposneg():
+     assert Mod(n, -k).is_nonpositive
+     assert Mod(k, n).is_nonnegative is None
+ 
++def test_Mod_PolynomialError():
++    # https://github.com/sympy/sympy/issues/21074
++    # Mod must not raise PolynomialError when the gcd of its arguments
++    # cannot be computed (e.g. when a Piecewise appears as a generator)
++    from sympy import Piecewise, sinh
++    x, y, z = symbols('x y z', real=True)
++    p = Piecewise((x, y > x), (y, True))
++    assert (p*im(z**(-1.0)) % pi).has(Mod)
++    expr = exp(sinh(p/z))
++    assert expr.subs({1: 1.0}) == \
++        exp(sinh(z**(-1.0)*Piecewise((x, x < y), (y, True))))
++
+ 
+ def test_issue_6001():
+     A = Symbol("A", commutative=False)

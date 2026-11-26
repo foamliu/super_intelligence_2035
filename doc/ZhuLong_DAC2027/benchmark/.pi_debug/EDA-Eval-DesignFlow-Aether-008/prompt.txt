@@ -1,0 +1,104 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a
+pyAether-emitted textual via-enclosure compliance report for a layout
+cellview. This is a pure text-analysis task (no EDA tool calls needed to
+produce the answer); you will verify your implementation on the Empyrean
+WaveView Tcl sandbox.
+
+TASK
+Implement the Tcl proc `layout_via_enclosure_audit` that takes ONE string
+argument `report_text` (the full via-enclosure report text) and returns a flat
+Tcl dict with EXACTLY these 10 keys, in this exact order:
+
+    total_via_types  total_lines  pass_count  warn_count  fail_count
+    skip_count  worst_via  min_enclosure  mismatched_summary  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments
+and are ignored; blank lines are ignored; a leading "# Via enclosure check ..."
+header may appear and is ignored):
+
+    VIA <name> cut=<L> bottom=<L> top=<L> enc_bot=<float> enc_top=<float> req=<float> count=<N> status=<S>
+    SUMMARY vias_checked=<N> violations=<N> warns=<N> skipped=<N> min_enclosure=<float> worst_via=<name>
+
+    - <name>    : a bare token (the via type name), e.g. vddvia, via2, M1VIA.
+    - <L>       : a bare token (a layer name), e.g. M1, M2, VIA1.
+    - cut=      : the cut layer of the via. Used together with <name> as the
+                  dedup key (a via type on a given cut).
+    - bottom=   : the bottom metal layer. Field may be ABSENT (kept for record
+                  only; NOT used in any output key).
+    - top=      : the top metal layer. Field may be ABSENT (kept for record
+                  only; NOT used in any output key).
+    - enc_bot=  : a non-negative float (the bottom enclosure). May be ABSENT.
+    - enc_top=  : a non-negative float (the top enclosure). May be ABSENT.
+    - req=      : a non-negative float (the required minimum enclosure). May be
+                  ABSENT.
+    - count=    : a non-negative integer (instance count). Field may be ABSENT
+                  (kept for record only; NOT used in any output key).
+    - status=   : one of PASS | WARN | FAIL | SKIP (case-insensitive). May be
+                  ABSENT.
+    - SUMMARY carries 6 fields (each may be present or absent).
+
+NOTE: bottom, top and count appear in real reports but are NOT used in any
+output key (red herrings). Do not let them affect any computed value. Only
+<name> and cut= form the dedup identity of a line.
+
+SEMANTICS (read carefully -- a naive implementation fails several of these):
+
+ 1. total_via_types = number of DISTINCT via names across all VIA lines
+    (after dedup).
+ 2. total_lines = number of DISTINCT (name, cut) pairs across all VIA lines.
+    DUPLICATE (name, cut) pair: LAST occurrence WINS (replace ALL fields --
+    enc_bot/enc_top/req/status -- not sum, not first-wins). The pair counts
+    ONCE in total_lines.
+ 3. status is CASE-INSENSITIVE ("fail", "FAIL", "Fail" all match FAIL). When
+    status is ABSENT, infer it from the enclosures vs req: FAIL if
+    (enc_bot < req) OR (enc_top < req), else PASS (status absent NEVER becomes
+    WARN or SKIP).
+ 4. pass_count / warn_count / fail_count / skip_count = number of dedup'd
+    (name, cut) lines whose EFFECTIVE status is PASS / WARN / FAIL / SKIP.
+    warn_count counts ONLY explicit status=WARN (never inferred).
+ 5. A line FAILs the enclosure check when enc_bot < req OR enc_top < req
+    (strict less-than). enc == req -> PASS (inclusive). (Applies to both
+    inferred status and reconciliation.)
+ 6. missing req= -> default 0.0 (always PASS since 0 < 0 is false). missing
+    enc_bot= -> default 0.0. missing enc_top= -> default 0.0 (a missing
+    enclosure of 0.0 can FAIL if req > 0, and is included in min_enclosure
+    as 0.0).
+ 7. worst_via / min_enclosure: computed over NON-SKIP lines ONLY. SKIP lines
+    are EXCLUDED from min_enclosure/worst_via even if their enclosure is the
+    smallest in the file. For each non-SKIP line, the line's enclosure is
+    min(enc_bot, enc_top). min_enclosure = the minimum of those line
+    enclosures (default 0.0 if a non-SKIP line has all-defaulted zero
+    enclosures). If there are NO non-SKIP lines, min_enclosure = -1.0 and
+    worst_via = "" (empty string).
+ 8. worst_via tie at min_enclosure: among non-SKIP lines whose line enclosure
+    equals min_enclosure, pick the LEXICOGRAPHICALLY SMALLEST via name
+    (lsort -dictionary -- numeric-aware, so "via2" < "via10"). (Same via name
+    on two cuts tying -> that via.)
+ 9. mismatched_summary: list of SUMMARY field names whose provided value
+    mismatches the computed value. Compared:
+       - vias_checked, violations, warns, skipped : INTEGER equality
+       - min_enclosure : NUMERIC equality (expr ==), so "0.080" matches 0.08
+       - worst_via : STRING equality
+    ABSENT SUMMARY fields are NOT reported (do not appear in the list).
+    Empty list if there is no SUMMARY line.
+    Computed values: vias_checked=total_lines, violations=fail_count,
+    warns=warn_count, skipped=skip_count, min_enclosure and worst_via as above.
+10. verdict priority (top first):
+       fail_count > 0                              -> "FAIL"
+       mismatched_summary non-empty OR no SUMMARY  -> "INCOMPLETE"
+       otherwise                                   -> "PASS"
+
+RETURN a flat Tcl dict created with `dict create` in EXACTLY the order above.
+The only list-valued key is mismatched_summary; it is lex-sorted with
+`lsort -dictionary`. All other keys are scalars (integers, floats, or strings).
+
+CONSTRAINTS
+- Empyrean WaveView Tcl: NO Perl classes (\b \s \d \w). Use POSIX classes
+  ([[:space:]], [^[:space:]]) in regexp if needed. Use `split` on newline,
+  `string trim`, `string match` globs (e.g. "enc_bot=*"), `lsort -dictionary`
+  for lexicographic sort + tie-breaks, `array`/`info exists` for sets,
+  `dict create` for the returned dict in exact key order. Compare floats
+  NUMERICALLY (expr ==), NOT with `string equal` (so "0.080" equals 0.08).
+  Avoid `lassign` if unsure; use `lindex`.
+- The checker builds all fixtures inline (no external files). Pure text +
+  float/integer math. No EDA tool calls.

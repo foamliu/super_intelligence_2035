@@ -1,0 +1,15 @@
+{
+    "task": {
+        "path": "/tmp/tb_pilot_dataset_G6SwkJ/chess-best-move",
+        "source": "tb_pilot_dataset_G6SwkJ"
+    },
+    "trial_name": "chess-best-move__REnRDwh",
+    "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/oracle_check/2026-10-19__07-47-19",
+    "environment": {
+        "type": "docker",
+        "extra_docker_compose": [
+            "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+        ]
+    },
+    "job_id": "db4d3bf7-deb0-4803-a312-731da32d5893"
+}

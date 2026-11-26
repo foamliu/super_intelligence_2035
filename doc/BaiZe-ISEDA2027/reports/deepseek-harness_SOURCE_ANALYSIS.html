@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DeepSeek Harness 源码分析 — 以上下文压缩为切入点的五条主线</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#3fb950;--a2:#58a6ff;--warn:#d2991d;--code:#1f2937}
+*{box-sizing:border-box}body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;max-width:1080px;margin:0 auto;padding:2rem}
+h1{font-size:2rem;color:#fff;text-align:center}h2{font-size:1.4rem;margin:2.5rem 0 1rem;color:#fff;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+h3{font-size:1.1rem;margin:1.6rem 0 .6rem;color:var(--a2)}h4{color:#e6edf3;margin:1rem 0 .4rem}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:2rem;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin:1rem 0}
+code,.code{font-family:'SF Mono',Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px;font-size:.9em}
+pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:.9rem;overflow-x:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.86rem}th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top}th{background:#21262d}
+.tag{display:inline-block;padding:.1em .6em;border-radius:12px;font-size:.75rem;font-weight:600}
+.t1{background:#1b3826;color:#3fb950}.t2{background:#1a2b3a;color:#58a6ff}.t3{background:#3a2f1a;color:#d2991d}.t4{background:#2a1f3a;color:#bc8cff}.t5{background:#3a1f1f;color:#f85149}
+.diagram{background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:.8rem;overflow-x:auto}
+.footnote{color:var(--muted);font-size:.82rem}
+a{color:var(--a2)}
+.toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.4rem}
+.toc ol{padding-left:1.5rem}
+li{margin:.25rem 0}
+.quote{border-left:3px solid var(--accent);padding:.2rem .8rem;color:var(--muted);margin:.5rem 0;font-size:.88rem}
+</style>
+</head>
+<body>
+
+<h1>DeepSeek Harness 源码分析</h1>
+<p class="subtitle">以 <b>上下文压缩（Compaction）</b> 为切入点，沿「上下文生命周期」展开五条主线<br>
+源码根：<code>/nas_train/app.e0031982/harness/deepseek-harness/</code> · 报告日期：2026-10-02 · 铁律：每条结论贴 <code>路径:行号</code> 原文</p>
+
+<div class="toc"><b>目录</b>
+<ol>
+<li><a href="#overview">0. 概况与术语体系</a></li>
+<li><a href="#panorama">1. 上下文生命周期全景图（总图）</a></li>
+<li><a href="#l1">2. 线1 — 上下文注入与「投影」管线</a></li>
+<li><a href="#l2">3. 线2 — 检查点与「影子替换」式回滚</a></li>
+<li><a href="#l3">4. 线3 — 全插件架构与 Hook 桥（扩展边界）</a></li>
+<li><a href="#l4">5. 线4 — Goal/Todo 任务状态跨压缩存活</a></li>
+<li><a href="#l5">6. 线5 — 模型适配与 token 计数策略</a></li>
+<li><a href="#tradeoff">7. 与 cline / opencode 的对照 / 设计取舍</a></li>
+</ol>
+</div>
+
+<h2 id="overview">0. 概况与术语体系</h2>
+<div class="card">
+<p><b>DeepSeek Harness</b>（<code>dsh</code>，<code>@deepseek-ai/dsh-*</code>）由 DeepSeek AI 开源，构建在 <b>Cordis</b> 框架之上，采用「<b>everything-is-a-plugin</b>」架构（<code>README.md:5-7</code>）：连 <b>模型适配器、工具注册表、会话日志、agent loop 本身都是插件</b>，每一环都可从配置替换。</p>
+<p>它给自己建立的术语体系，本质是一条「上下文生命周期」设计主张 —— <b>把「持久的事件日志」与「投影出来的模型可见视图」严格分离</b>。核心术语：</p>
+<table>
+<tr><th>术语</th><th>含义</th><th>证据</th></tr>
+<tr><td><b>Session Log</b>（事件日志）</td><td>append-only 事件流，是「唯一事实源」（the source of truth）。任何到达模型请求的东西都必须能从日志重建。</td><td><code>surface.ts:3-4</code>；<code>docs/architecture.md</code>「Model-visible means logged」</td></tr>
+<tr><td><b>Surface</b>（表面）</td><td>日志之上「能产生 LLM 消息」的事件的有序投影视图，只有 3 类事件可上表面：<code>user/message</code> / <code>assistant/message</code> / <code>tool/result</code>。</td><td><code>surface.ts:22-26</code></td></tr>
+<tr><td><b>deriveMessages()</b></td><td>把日志「投影」成模型可见历史的逐节点折叠规则。</td><td><code>surface.ts:81</code>；<code>index.ts:790</code></td></tr>
+<tr><td><b>surfaceOp: append/replace</b></td><td>每个上表面事件携带一个表面操作标记；<code>replace</code> 即「影子替换」—— 新摘要节点覆盖一段旧范围，但<b>原事件永不删除</b>。</td><td><code>surface.ts:42-75</code></td></tr>
+<tr><td><b>log-only 事件</b></td><td>带 <code>surfaceOp</code> 之外、不进表面的记录（<code>compaction/*</code>、<code>hook/*</code>、<code>goal/change</code>、<code>todo/write</code>）。</td><td><code>types.ts:26</code> 等多处</td></tr>
+</table>
+<p class="footnote">⚠️ 任务书 5 条线用的是 <b>cline 旧 vscode 架构名</b>（<code>ContextPipelinePrepareTurn</code> / <code>EditType</code>·<code>ContextUpdate</code> / 时间戳截断 / Focus Chain / <code>context-window-utils.ts</code>）。deepseek-harness 的内核<b>同构但形态迁移</b>：预处理 = <code>agent/pre-step</code> waterfall + surface 投影；无损编辑 = append-only log + <code>surfaceOp</code> 影子替换；Focus Chain = <code>goal</code>/<code>todo</code> 包。本报告逐线给「旧→新」对照。</p>
+</div>
+
+<h2 id="panorama">1. 上下文生命周期全景图（总图）</h2>
+<div class="diagram"><pre><code>
+                          ┌─────────────────────────────────────────────────────────┐
+                          │               Session Log（append-only，唯一事实源）        │
+                          │  turn/* · step/* · user/message · assistant/* · tool/*    │
+                          │  compaction/* · hook/* · goal/change · todo/write（log-only）│
+                          └─────────────────────────────────────────────────────────┘
+                                ▲ append（永不删除）                    │ 折叠投影 foldSurface
+        ┌───────────────────────┴──────────────┐                       ▼
+        │  线2 检查点：session.append(user/message,  │         deriveMessages()/deriveEventMessage
+        │  {surfaceOp:{op:'replace'}}) 影子替换      │         └─ 线1 surface 投影（3 类消息）
+        │  + session-checkpoint-policy flush 落盘    │              └─ 线3 拦截点：agent/pre-step（waterfall）
+        └───────────────────────┬──────────────┘                       ▼
+                                │                          agent-loop 组装 canonicalHeader + request
+            user 输入 → inbox → │ ─（线3 Hook 桥：PreToolUse/Stop/… 外部进程）─→  llm/stream
+                                │                                              │
+              线4 goal/todo 写入 log-only 事件（不进 surface，压缩抹不掉）      │
+                                │                                              ▼
+                     tool/execute（线2 再 flush）  ←──  assistant 工具调用 ── 模型回复
+                                │                                              │
+                                └── 线5 token-meter(CHARS_PER_TOKEN=4) + modelPolicies
+                                    触发压力/溢出 → compaction（线2 的「收」）
+</code></pre></div>
+<div class="card">
+<p><b>一句话主线</b>：五条线都挂在「append-only 日志 → surface 投影」这条脊椎上。线1 管「投影怎么算」（哪些事件、按什么规则进模型视野）；线2 管「压缩如何<b>不破坏</b>原日志地收掉一段历史」（影子替换 + 落盘检查点）；线3 管「历史之外的<b>拦截点</b>开放给谁」（外部 Hook 进程 vs 进程内插件）；线4 管「任务目标为何<b>不在</b>被压缩的对话里」；线5 管「压缩/截断的<b>阈值与预算</b>从哪来、怎么按模型适配」。</p>
+</div>
+
+<h2 id="l1">2. 线1 — 上下文注入与「投影」管线</h2>
+<div class="card">
+<p><span class="tag t1">线1</span> <b>① 解决什么问题</b>：模型看到什么、看不到什么，必须是一条<b>可回放、可审计</b>的确定性规则，而不是「散落在各处的拼装字符串」。deepseek 的答案是：<b>模型可见 = 已落日志</b>。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>投影层定义</b> —— <code>packages/core/session/src/surface.ts:1-9</code>：</p>
+<pre><code>/** Surface layer on top of the session event log: an ordered view of events
+ * that produce LLM messages. The append-only log remains the source of truth. */</code></pre>
+<p><b>只有 3 类事件能上表面</b> —— <code>surface.ts:22-26</code>：</p>
+<pre><code>const SURFACE_EVENT_TYPES = new Set&lt;string&gt;([
+  'user/message',
+  'assistant/message',
+  'tool/result',
+])</code></pre>
+<p><b>逐节点投影规则（「无损投影」的核心）</b> —— <code>surface.ts:81-90</code>：</p>
+<pre><code>/** THE per-node projection rule: `Session.deriveMessages` folds it over the
+ * live surface, external reconstructors and pure projections fold the same
+ * function over a log prefix's surface to rebuild the exact messages any
+ * request was built from. */</code></pre>
+<p><b>请求前拦截点</b>（对应 cline 的 <code>ContextPipelinePrepareTurn</code>）—— <code>agent/pre-step</code> 是 waterfall，可改写/拒绝要进入模型的 claimed messages（<code>docs/architecture.md</code>）：</p>
+<pre><code>`agent/pre-step` decides what the model sees. Listeners may rewrite the claimed
+messages or reject them outright; a rejected or empty first claim still closes a
+durable turn that spent no step.</code></pre>
+<p><b>请求组装（投影的终点）</b> —— <code>packages/core/agent-loop/src/agent.ts:535-542</code>：把 <code>boundaryMessages</code>（surface 投影结果）<code>deepFreeze</code> 后封成 request：</p>
+<pre><code>messages: boundaryMessages,
+...header.system !== undefined ? { system: header.system } : {},
+...header.tools !== undefined ? { tools: header.tools } : {},</code></pre>
+</div>
+<div class="card">
+<h4>③ 数据流图</h4>
+<div class="diagram"><pre><code>
+  Session Log（append-only）
+       │  foldSurface / deriveEventMessage（逐节点 → Message | null）
+       ▼
+  Surface 视图（仅 user/message · assistant/message · tool/result）
+       │  agent/pre-step waterfall：可改写 / 拒绝 / startsRequestSeries
+       ▼
+  boundaryMessages ─┐
+  system（system-prompt 装配）  ├─ deepFreeze ─→ canonicalHeader ─→ llm/stream
+  tools（tool schema）         ┘
+</code></pre></div>
+</div>
+<div class="card">
+<h4>④ 代价与边界</h4>
+<ul>
+<li><b>代价</b>：所有「模型可见」都要先变成日志事件（<code>docs/architecture.md</code>「This is why a new model-visible input requires a new session event」）—— 加一种新输入就得扩 <code>SessionEventMap</code> 并写 render。</li>
+<li><b>代价</b>：投影是<b>运行时重放</b>；<code>SurfaceManager</code> 做增量 <code>_processDelta</code>（<code>surface.ts:460-475</code>）减轻。</li>
+<li><b>边界</b>：<code>SurfaceManager</code>「replacement history is not retained」（<code>surface.ts:415</code>）——「原始 vs 投影」对照靠 <code>isAppendSurfaceEvent</code>，而非 cline 的持久化编辑 map。</li>
+</ul>
+</div>
+<div class="card">
+<h4>⑤ 我的判断</h4>
+<p>deepseek 用比 cline「更纯粹」的<b>事件溯源</b>答同一条线：cline 是「原始消息 + 编辑 map，读取时应用」；deepseek 是「原始事件流 + 表面 fold，读取时重放」。前者把「怎么改」持久化，后者把「完整事实」持久化 —— <b>后者回放更完备，但每步付 fold 成本</b>。<span class="tag t1">线1</span></p>
+</div>
+
+<h2 id="l2">3. 线2 — 检查点与「影子替换」式回滚</h2>
+<div class="card">
+<p><span class="tag t2">线2</span> <b>① 解决什么问题</b>：压缩<b>绝不能破坏</b>已发生的对话（用户已看到的），压缩动作本身要<b>可靠持久化</b>（否则重启后重复压缩 / 阈值错乱）。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>压缩 = 一串 log-only 事件 + 一次影子替换</b>。压缩事件本身<b>不进表面</b>；真正的替代是紧跟着的一条 <code>user/message</code>（<code>packages/compaction/compaction/src/types.ts:34-40</code>）：</p>
+<pre><code>'compaction/summary': {
+  summary: ContentBlock[]
+  shadowedRange: { start: SessionSeq; end: SessionSeq }
+  shadowedSeqs: SessionSeq[]
+  shadowedTokenCount: number
+}</code></pre>
+<p><b>影子替换的落点</b> —— <code>packages/compaction/compaction-basic/src/region.ts:472-475</code>：摘要以 <code>user/message</code> 追加，携带 <code>surfaceOp:{op:'replace',start,end}</code> —— <b>原事件不删，只是被「遮蔽」</b>：</p>
+<pre><code>session.append('user/message', checkpointMessage, {
+  surfaceOp: { op: 'replace', start, end },
+  sourceEventSeqs: [startEvent.seq, summaryEvent.seq, ...shadowedSeqs],
+})</code></pre>
+<p><b>检查点 provenance 标记</b> —— <code>packages/compaction/compaction/src/checkpoint.ts:19-51</code>（每条压缩 checkpoint 带稳定 <code>compactionId</code>，供持久化后识别）：</p>
+<pre><code>export function isCompactCheckpointSource(source: MessageSource): boolean {
+  return source.kind === 'plugin' &amp;&amp; source.plugin === COMPACT_CHECKPOINT_MARKER.plugin
+}</code></pre>
+<p><b>落盘检查点策略（fail-closed）</b> —— <code>packages/session/session-checkpoint-policy/src/index.ts:29-37 / 63-82</code>：模型请求、工具副作用前必须 flush，否则「不派发下游」：</p>
+<pre><code>async function* afterCheckpoint(...) {
+  await ctx.sessions.flush(session)
+  yield* next()
+}
+// Checkpoint failures are fail-closed at the model and tool side-effect boundaries</code></pre>
+</div>
+<div class="card">
+<h4>③ 数据流图</h4>
+<div class="diagram"><pre><code>
+  token-meter 判定需要压缩
+       ├─ append compaction/start（log-only，持锁）
+       ├─ 异步 summarize（复用 provider KV-cache 前缀，region.ts:498-523）
+       ├─ append compaction/summary（log-only，记 shadowedRange + shadowedTokenCount）
+       ├─ append user/message { surfaceOp:{op:'replace'} }  ← 影子替换，遮蔽旧范围
+       ├─ append compaction/end（log-only，放锁）
+       └─ flush（session-checkpoint-policy 在下一请求/工具前强制）
+  折回 surface：被遮蔽的旧事件仍存在，只是不在模型可见视图（人类转录走 isAppendSurfaceEvent）
+</code></pre></div>
+</div>
+<div class="card">
+<h4>④ 代价与边界</h4>
+<ul>
+<li><b>代价</b>：事件日志只增不减，<b>磁盘随压缩持续增长</b>（被遮蔽事件仍在日志里）。</li>
+<li><b>边界（诚实声明）</b>：我<b>未找到</b> cline 那种「按时间戳截断 ContextUpdate 精确回退到压缩前」的显式 rollback API。deepseek 的回滚是<b>隐式、靠事件溯源</b>的：<code>foldSurface</code>（<code>surface.ts:397</code>）对<b>任意日志前缀</b>重放即可重建「压缩前」视图 —— 影子替换只是投影层一个 <code>replace</code> 节点，取消它即「回到压缩前」。「重放即回滚」，非「截断即回滚」。</li>
+<li><b>代价</b>：影子「价格」靠 <code>shadowedTokenCount</code>（启发式，<code>types.ts:82-89</code>）事后扣减 —— 是<i>事后定价</i>而非逐节点存价。</li>
+</ul>
+</div>
+<div class="card">
+<h4>⑤ 我的判断</h4>
+<p>deepseek 把 cline 的两件事<b>拆清楚</b>了：cline 的「compaction sidecar 持久化（PR #12747 修的点）」在 deepseek 是<b>第一公民的 <code>session-checkpoint-policy</code></b>（flush fail-closed）；cline 的「非破坏性编辑」在 deepseek 是<b>事件溯源 + surfaceOp 影子</b>。可靠持久化不是事后补丁，而是从「模型可见=已落日志」这条不变量里长出来的。<span class="tag t2">线2</span></p>
+</div>
+
+<h2 id="l3">4. 线3 — 全插件架构与 Hook 桥（扩展边界）</h2>
+<div class="card">
+<p><span class="tag t3">线3</span> <b>① 解决什么问题</b>：把调控能力开放给外部时，deepseek 走了两极：<b>进程内全插件</b>（Cordis，连 kernel 都可换）与<b>外部 Hook 桥</b>（兼容 Claude Code / Codex 的 wire protocol）。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>没有特权核心</b> —— <code>docs/architecture.md</code>：</p>
+<pre><code>There is no privileged core to patch: you extend dsh by mounting a plugin beside
+the others. Every part of the product is a plugin, including the model adapter,
+the tool registry, the session log, and the agent loop itself.</code></pre>
+<p><b>Hook 桥的方言中立词表</b> —— <code>packages/hooks/hook-protocol/src/types.ts:8-48</code>：</p>
+<pre><code>/** ... shared by the Claude Code and Codex hook bridges ... `point`
+ * the hook point (`PreToolUse`, `Stop`, …) ...*/
+export type HookDialect = 'claude-code' | 'codex'</code></pre>
+<p><b>只有 command 型 hook 进 runner</b> —— <code>types.ts:50-61</code>（CC 的 <code>prompt</code>/<code>agent</code>/<code>http</code> 被 parse-and-skip）：</p>
+<pre><code>export interface CommandHook { command: string; timeoutSec?: number }</code></pre>
+<p><b>Hook 输出（被解析但不全被采用的字段）</b> —— <code>types.ts:89-137</code>：</p>
+<pre><code>decision?: 'approve' | 'allow' | 'block' | 'deny' | 'ask'
+additionalContext?: string   // CC additionalContext，注入下次请求
+updatedInput?: ...           // parsed but NOT honored（input rewrite 已 deferred）
+systemMessage?: string       // CC systemMessage</code></pre>
+<p><b>Hook 只写 log-only 事件</b> —— <code>packages/hooks/hook-protocol/src/events.ts:75-104</code>（<code>hook/invoked</code> 与 <code>hook/result</code> 成对）：</p>
+<pre><code>session.append('hook/result', {
+  decision: output.decision ?? (output.continue === false ? 'stop' : 'pass'),
+  ...stderrSummary !== undefined ? { stderrSummary } : {},  durationMs })
+</code></pre>
+<p><b>进程内插件拦截点 ≠ 桥</b> —— <code>types.ts:43-46</code>：</p>
+<pre><code>A native plugin at the interception points is not a bridge
+and writes no `hook/*` invocation/result records</code></pre>
+</div>
+<div class="card">
+<h4>③ 数据流图</h4>
+<div class="diagram"><pre><code>
+  拦截点（agent/pre-step · PreToolUse · Stop · SessionStart · UserPromptSubmit …）
+        ├─ 进程内：Cordis 插件直接挂 listener（waterfall/serial/emit）→ 不写 hook/*
+        └─ 外部：Hook 桥（claude-code / codex dumb）→ 起子进程跑 command
+                → 解析 exit code + stdout JSON + stderr → decision
+                → append hook/invoked + hook/result（log-only）
+</code></pre></div>
+</div>
+<div class="card">
+<h4>④ 代价与边界</h4>
+<ul>
+<li><b>代价</b>：两条扩展路径<b>语义不同源</b> —— 进程内插件幂等、有类型、可 veto（waterfall）；外部 hook 是<b>带超时的子进程 + 字符串协议</b>，需 dialect 归一。</li>
+<li><b>边界</b>：<code>updatedInput</code>（工具输入改写）被解析但<b>未采用</b>（deferred）—— 兼容是「faithful-but-degraded」（<code>types.ts:84-87</code>）。</li>
+<li><b>核心问题结论</b>：Auto Compact（等价物）<b>可以用插件实现</b> —— <code>compaction-basic</code> 本身就是 <code>dsh-compaction</code> 这个 Service Definition 的一个 Provider，挂 <code>agent/pre-step</code> + <code>agent/request-error</code> listener。<b>Hook 桥拦不到 <code>agent/pre-step</code></b> 这种底层管线节点 —— hook 是外部进程制的「观察/审批」旁路，不是进程内「改写管线」。所以 deepseek 的扩展边界是：<b>「核心能力 = 可替换的 Cordis Service/Plugin；外部生态 = 审批与观察的 hook 桥」</b>。</li>
+</ul>
+</div>
+<div class="card">
+<h4>⑤ 我的判断</h4>
+<p>三者对比：cline 是「插件 manifest + 有限 hook 点」；opencode 是「细粒度字符串键 hook」。deepseek 最激进 —— <b>连 agent loop、模型 adapter、会话日志本身都非核心</b>，唯一不可替换的是 Cordis 的「插件树 + 类型化事件 + 可逆 effect」元架构。hook 桥退化为「兼容别人 wire protocol 的进程隔离旁路」。<span class="tag t3">线3</span></p>
+</div>
+
+<h2 id="l4">5. 线4 — Goal/Todo 任务状态跨压缩存活</h2>
+<div class="card">
+<p><span class="tag t4">线4</span> <b>① 解决什么问题</b>：压缩掉的是「对话说了什么」；「接下来要做什么」不能跟着被压缩。deepseek 用<b>两个独立 log-only 事件域</b>（<code>goal</code> 与 <code>todo</code>）把它从对话 surface 解耦出来。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>Goal：全快照 + 墓碑的可持久变化</b> —— <code>packages/goal/goal/src/domain.ts:14-22 / 61-68</code>：</p>
+<pre><code>export type GoalOperation =
+  | 'create' | 'edit' | 'pause' | 'resume' | 'complete' | 'block' | 'clear'
+// 声明进 SessionEventMap：
+'goal/change': GoalChangeMeta   // 全快照变更或 clear 墓碑</code></pre>
+<p><b>Goal 是可重放的纯 fold</b> —— <code>domain.ts:70-82</code>（<code>FoldedGoal</code> 由 <code>goal/change</code> 序列重放，含 <code>roundsStarted</code>）：</p>
+<pre><code>export interface FoldedGoal {
+  goal?: GoalSnapshot;  roundsStarted: number
+  createdAt?: number;   updatedAt?: number;  lastRef?: GoalRef
+}</code></pre>
+<p><b>Todo：整表快照、last-write-wins、永不进历史</b> —— <code>packages/todo/tool-todo/src/types.ts:21-33</code>：</p>
+<pre><code>export interface TodoItem {
+  content: string
+  status: 'pending' | 'in_progress' | 'completed'
+}
+'todo/write': { todos: TodoItem[] }   // Whole-list snapshot; latest write wins on replay.
+// Log-only UI state; never derived history.</code></pre>
+</div>
+<div class="card">
+<h4>③ 数据流图</h4>
+<div class="diagram"><pre><code>
+  模型调用 todo/write 或 goal 工具
+       │  append log-only 事件（goal/change、todo/write）—— 不进 surface
+       ▼
+  SessionProjectionStateMap（独立投影键：todos / goal 由 fold 重放）
+       │  压缩只 shadow surface 节点，碰不到 log-only 域
+       ▼
+  下一次 pre-step 从投影键读取「当前待办 / 当前目标」，与对话长度无关
+</code></pre></div>
+</div>
+<div class="card">
+<h4>④ 代价与边界</h4>
+<ul>
+<li><b>代价</b>：任务状态与对话<b>分属不同投影域</b>，一致性靠「都从同一 append-only 日志重放」保证。goal 用「全快照 + 墓碑」、todo 用「整表 last-write-wins」，牺牲细粒度增量换「重放简单」。</li>
+<li><b>边界</b>：<code>todo/write</code> 明确「never derived history」（<code>types.ts:30</code>）—— 是「Log-only UI state」，本身<b>不进模型对话</b>；模型通过 tool 读写，而非靠对话历史记住进度。</li>
+<li><b>与 cline Focus Chain 差异</b>：cline 的 Focus Chain 当前多为 stub；deepseek 的 <code>goal</code> 是<b>完整领域模型</b>（带 <code>roundsStarted</code>/<code>maxRounds</code> 的续会话目标生命周期），todo 是独立工具。二者都靠「独立于 surface 的持久域」实现跨压缩存活。</li>
+</ul>
+</div>
+<div class="card">
+<h4>⑤ 我的判断</h4>
+<p>这是「短期记忆（对话）与长期目标（任务列表）解耦」的<b>事件溯源版本</b>：两者都写同一日志，但<b>只有对话进 surface（可压缩），goal/todo 走独立投影键（压缩不碰）</b>。干净之处在于「能/不能被压缩」由<b>事件类型是否 surface-eligible</b> 一刀切决定，而非代码特判混杂。<span class="tag t4">线4</span></p>
+</div>
+
+<h2 id="l5">6. 线5 — 模型适配与 token 计数策略</h2>
+<div class="card">
+<p><span class="tag t5">线5</span> <b>① 解决什么问题</b>：压缩/截断的阈值与预算必须<b>按每个 provider/model 的真实容量</b>算出，同时 token 估算在「无需精确分词」时要有统一启发式。</p>
+<h4>② 怎么实现（贴原文）</h4>
+<p><b>固定密度启发式</b> —— <code>packages/llm/token-meter/src/estimate.ts:12-19</code>：</p>
+<pre><code>/** Fixed text-density estimate used until exact tokenization is needed. */
+const CHARS_PER_TOKEN = 4
+/** Per-block structural overhead for JSON framing and type tags. */
+const BLOCK_OVERHEAD = 4
+/** Role-field framing overhead added to every priced message. */
+export const ROLE_OVERHEAD = 4</code></pre>
+<p><b>模型级策略（数据驱动，非硬编码白名单）</b> —— <code>packages/compaction/compaction-basic/src/config.ts:18-22</code>：</p>
+<pre><code>/** Default request-pressure fraction for every routed model. */
+const DEFAULT_THRESHOLD_RATIO = 0.8
+/** Default verbatim-tail fraction for every routed model. */
+const DEFAULT_RETAIN_RATIO = 0.16</code></pre>
+<p><b>按真实 capacity 缩放预算</b> —— <code>config.ts</code>（<code>resolveCompactSpec</code>）：</p>
+<pre><code>/**
+ * Scale one routed policy into concrete token budgets for its model capacity.
+ * @param contextWindow - positive adapter-owned capacity for that target. */</code></pre>
+<p><b>两条触发路径</b> —— <code>packages/compaction/compaction-basic/src/index.ts:148-166 / 180-195</code>（<code>agent/pre-step</code> 的「pressure」，与 <code>agent/request-error</code> 的「context-overflow」）：</p>
+<pre><code>ctx.on('agent/pre-step', ... this.compactIfNeeded(agent, 'pressure', signal) ...)
+ctx.on('agent/request-error', ...
+  if (failure.code !== CONTEXT_WINDOW_EXCEEDED_CODE || signal.aborted) return next()
+  ... this.compactIfNeeded(agent, 'context-overflow', signal) ...)</code></pre>
+<p><b>provider 抽象下的 adapter 职责</b> —— <code>packages/llm/llm/src/types.ts:1-5</code>：</p>
+<pre><code>/** Canonical provider-neutral message and streaming vocabulary for the loop,
+ * session log, and plugins. Adapters alone translate provider wire messages; */</code></pre>
+</div>
+<div class="card">
+<h4>③ 数据流图</h4>
+<div class="diagram"><pre><code>
+  token-meter.measure(session)  ── CHARS_PER_TOKEN=4 固定启发式
+        │ totalTokens
+        ├─ pressure：resolveCompactSpec(policy, contextWindow) → threshold/retain 预算
+        │     若 total ≥ threshold → model-free prune → 再 summarize
+        └─ context-overflow：CONTEXT_WINDOW_EXCEEDED → prune → 重选范围 → compact
+  modelPolicies（provider/model 精确覆盖）→ 覆盖默认 0.8 / 0.16 / maxTokens=8192
+</code></pre></div>
+</div>
+<div class="card">
+<h4>④ 代价与边界</h4>
+<ul>
+<li><b>代价</b>：4 字符/token 是<b>乐观</b>估算（同 opencode），对 token 密集文本（代码/表格）会低估，压缩触发偏晚，靠 <code>context-overflow</code> 事后兜底。</li>
+<li><b>代价</b>：<code>contextWindow</code> 是 adapter 提供的「authoritative capacity」，若某 adapter 不报 capacity 则甩 <code>TargetPressureConfigError</code>（<code>index.ts:297-303</code>）—— 即「适配模型必须显式声明容量」，否则压力压缩直接失败。</li>
+<li><b>边界</b>：不是硬编码白名单，而是 <code>modelPolicies</code> 数据表（provider+model → 覆盖项）。cline 的「只对 Claude 4/GPT-5/Gemini/Grok 启 Auto Compact」是<b>核心硬编码</b>；deepseek 是<b>配置数据</b>。</li>
+<li><b>诚实声明</b>：未发现 cline Issue #7772 那种「本地 llama-server 上下文无法自动检测、默认按 128K 处理」的对应问题 —— 因为 deepseek 把 capacity 交给 adapter 显式声明，缺省即报 <code>TargetPressureConfigError</code>（不放行、不猜 128K），这是更保守的 fail-closed。</li>
+</ul>
+</div>
+<div class="card">
+<h4>⑤ 我的判断</h4>
+<p>token 估算方向三者一致（启发式），但<b>适配哲学不同</b>：cline 硬编码白名单（pro/con 各半）；opencode 走 Provider 抽象 + 全局开关；deepseek 走<b>「per-provider/model 配置数据表 + adapter 显式声明容量 + 缺失即报错」</b>。三者的适配「妥协」本质是同一件事 —— 把「模型真实上下文窗口」这个 runtime 事实，替换成「代码里写死的假设」。deepseek 用「fail-closed 报错」暴露假设，而非静默降级。<span class="tag t5">线5</span></p>
+</div>
+
+<h2 id="tradeoff">7. 与 cline / opencode 的对照 / 设计取舍小结</h2>
+<div class="card">
+<table>
+<tr><th>维度</th><th>cline</th><th>opencode</th><th>deepseek-harness</th></tr>
+<tr><td><b>投影抽象</b></td><td>EditType/ContextUpdate map（逐块编辑）</td><td>seq 阈值 + baselineSeq（SQL 截断）</td><td>事件溯源 + surfaceOp({append/replace}) 影子（append-only log）</td></tr>
+<tr><td><b>检查点回滚</b></td><td>非破坏编辑 + 时间戳截断</td><td>Context Epoch + git snapshot</td><td>flush fail-closed + 前缀重放（重放即回滚）</td></tr>
+<tr><td><b>Hook 粒度</b></td><td>beforeRun/afterRun/beforeTool</td><td>chat.*/tool.*/permission.* 字符串键</td><td>双层：进程内 Cordis 插件（含 kernel）+ 外部 hook 桥（CC/Codex wire）</td></tr>
+<tr><td><b>任务状态解耦</b></td><td>Focus Chain todo（多 stub）</td><td>TodoTable 独立 SQL 表</td><td>goal/change + todo/write 独立投影键（同一事件流）</td></tr>
+<tr><td><b>token 估算</b></td><td>3 字符/token（保守）</td><td>4 字符/token（乐观）</td><td>4 字符/token（乐观，含 block/role 开销项）</td></tr>
+<tr><td><b>provider 适配</b></td><td>硬编码白名单</td><td>Provider 抽象 + config 开关</td><td>modelPolicies 数据表 + adapter 显式声明 capacity（缺失报错）</td></tr>
+</table>
+<p class="footnote">共同结论：<b>三者都把「上下文压缩」做成核心内置机制（虽然 deepseek 用插件形态实现，但它仍是被 bundle 挂进每个 profile 的默认层），把「观察/外围改写」开放给 hook/插件 —— 压缩策略本身不留给第三方生态。</b> 最深的分野在<b>状态建模</b>：cline 存「编辑动作」、opencode 存「SQL 截断基线」、deepseek 存「完整事件流 + 表面投影」—— 由左到右，回放完备性递增，持久化与重放成本也递增。</p>
+</div>
+
+<footer style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border)">
+<p>报告根：<code>/nas_train/app.e0031982/harness/deepseek-harness/</code> · 关键证据全部贴 <code>路径:行号</code> · 2026-10-02</p>
+<p>下一步（同格式）：codex / claude-code</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index fd1e6d97..220cdbc8 100644
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -627,7 +627,10 @@ def _postprocessor(expr):
+                 # manipulate them like non-commutative scalars.
+                 return cls._from_args(nonmatrices + [mat_class(*matrices).doit(deep=False)])
+ 
+-        return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
++        if nonmatrices:
++            return mat_class(cls._from_args(nonmatrices), *matrices).doit(deep=False)
++        else:
++            return mat_class(*matrices).doit(deep=False)
+     return _postprocessor
+ 
+ 
+diff --git a/sympy/matrices/expressions/tests/test_blockmatrix.py b/sympy/matrices/expressions/tests/test_blockmatrix.py
+index 1e1033af..fd6ddf00 100644
+--- a/sympy/matrices/expressions/tests/test_blockmatrix.py
++++ b/sympy/matrices/expressions/tests/test_blockmatrix.py
+@@ -3,7 +3,7 @@
+     BlockMatrix, bc_dist, bc_matadd, bc_transpose, bc_inverse,
+     blockcut, reblock_2x2, deblock)
+ from sympy.matrices.expressions import (MatrixSymbol, Identity,
+-        Inverse, trace, Transpose, det)
++        Inverse, trace, Transpose, det, ZeroMatrix)
+ from sympy.matrices import (
+     Matrix, ImmutableMatrix, ImmutableSparseMatrix)
+ from sympy.core import Tuple, symbols, Expr
+@@ -222,3 +222,26 @@ def test_block_collapse_type():
+     assert block_collapse(Transpose(bm1)).__class__ == BlockDiagMatrix
+     assert bc_transpose(Transpose(bm1)).__class__ == BlockDiagMatrix
+     assert bc_inverse(Inverse(bm1)).__class__ == BlockDiagMatrix
++
++
++def test_issue_17624():
++    # block_collapse with ZeroMatrix blocks
++    a = MatrixSymbol("a", 2, 2)
++    z = ZeroMatrix(2, 2)
++    b = BlockMatrix([[a, z], [z, z]])
++
++    result = b._blockmul(b)
++    assert isinstance(result.blocks[0, 1], ZeroMatrix)
++    assert isinstance(result.blocks[1, 1], ZeroMatrix)
++
++    result = b._blockmul(b)._blockmul(b)
++    assert isinstance(result.blocks[0, 1], ZeroMatrix)
++    assert isinstance(result.blocks[1, 1], ZeroMatrix)
++
++    result = block_collapse(b * b)
++    assert isinstance(result.blocks[0, 1], ZeroMatrix)
++    assert isinstance(result.blocks[1, 1], ZeroMatrix)
++
++    result = block_collapse(b * b * b)
++    assert isinstance(result.blocks[0, 1], ZeroMatrix)
++    assert isinstance(result.blocks[1, 1], ZeroMatrix)

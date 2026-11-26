@@ -1,0 +1,40 @@
+diff --git a/xarray/core/merge.py b/xarray/core/merge.py
+index ca4e29b..dff0080 100644
+--- a/xarray/core/merge.py
++++ b/xarray/core/merge.py
+@@ -501,7 +501,7 @@ def merge_attrs(variable_attrs, combine_attrs):
+     if combine_attrs == "drop":
+         return {}
+     elif combine_attrs == "override":
+-        return variable_attrs[0]
++        return dict(variable_attrs[0])
+     elif combine_attrs == "no_conflicts":
+         result = dict(variable_attrs[0])
+         for attrs in variable_attrs[1:]:
+diff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py
+index 0994ed9..e5c9f7c 100644
+--- a/xarray/tests/test_merge.py
++++ b/xarray/tests/test_merge.py
+@@ -109,6 +109,22 @@ class TestMergeFunction:
+             expected.attrs = expected_attrs
+             assert actual.identical(expected)
+ 
++    def test_merge_datasets_attrs_originals_untouched(self):
++        # regression test for GH4624: combine_attrs='override' returned a
++        # reference to the first object's attrs instead of a copy
++        ds1 = xr.Dataset(attrs={"a": 1, "b": 2})
++        ds2 = xr.Dataset(attrs={"a": 4, "b": 5, "c": 3})
++
++        merged = xr.merge([ds1, ds2], combine_attrs="override")
++        assert merged.attrs == {"a": 1, "b": 2}
++        assert merged.attrs is not ds1.attrs
++
++        # modifying the merged attrs must not affect the sources
++        merged.attrs["a"] = 10
++        merged.attrs["new"] = 11
++        assert ds1.attrs == {"a": 1, "b": 2}
++        assert ds2.attrs == {"a": 4, "b": 5, "c": 3}
++
+     def test_merge_dicts_simple(self):
+         actual = xr.merge([{"foo": 0}, {"bar": "one"}, {"baz": 3.5}])
+         expected = xr.Dataset({"foo": 0, "bar": "one", "baz": 3.5})

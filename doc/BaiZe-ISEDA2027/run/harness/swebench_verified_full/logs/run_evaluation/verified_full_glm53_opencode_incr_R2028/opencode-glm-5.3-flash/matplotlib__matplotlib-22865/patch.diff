@@ -1,0 +1,50 @@
+diff --git a/lib/matplotlib/colorbar.py b/lib/matplotlib/colorbar.py
+index c59b0ac8..751987fa 100644
+--- a/lib/matplotlib/colorbar.py
++++ b/lib/matplotlib/colorbar.py
+@@ -651,8 +651,12 @@ class Colorbar:
+             if not self.drawedges:
+                 if len(self._y) >= self.n_rasterize:
+                     self.solids.set_rasterized(True)
+-        self.dividers.set_segments(
+-            np.dstack([X, Y])[1:-1] if self.drawedges else [])
++        if self.drawedges:
++            self.dividers.set_segments(
++                np.dstack([X, Y])[1 - self._extend_lower():
++                                  len(self._y) - 1 + self._extend_upper()])
++        else:
++            self.dividers.set_segments([])
+ 
+     def _add_solids_patches(self, X, Y, C, mappable):
+         hatches = mappable.hatches * len(C)  # Have enough hatches.
+diff --git a/lib/matplotlib/tests/test_colorbar.py b/lib/matplotlib/tests/test_colorbar.py
+index ae3ab92c..7f81a175 100644
+--- a/lib/matplotlib/tests/test_colorbar.py
++++ b/lib/matplotlib/tests/test_colorbar.py
+@@ -148,6 +148,26 @@ def test_colorbar_extension_inverted_axis(orientation, extend, expected):
+         assert len(cbar._extend_patches) == 1
+ 
+ 
++@pytest.mark.parametrize("extend,expected", [('neither', (False, False)),
++                                             ('min', (True, False)),
++                                             ('max', (False, True)),
++                                             ('both', (True, True))])
++def test_colorbar_drawedges_with_extend(extend, expected):
++    """Test that edges are drawn at the extremities of extended colorbars."""
++    cmap, norms = _get_cmap_norms()
++    norm = norms[extend]
++    boundaries = values = norm.boundaries
++    values = values[:-1]
++    fig, ax = plt.subplots()
++    cbar = Colorbar(ax, cmap=cmap, norm=norm, boundaries=boundaries,
++                    values=values, extend=extend, drawedges=True)
++    segments = cbar.dividers.get_segments()
++    lower, upper = ax.get_ylim()
++    has_lower = any(np.isclose(seg[0][1], lower) for seg in segments)
++    has_upper = any(np.isclose(seg[0][1], upper) for seg in segments)
++    assert (has_lower, has_upper) == expected
++
++
+ @pytest.mark.parametrize('use_gridspec', [True, False])
+ @image_comparison(['cbar_with_orientation',
+                    'cbar_locationing',

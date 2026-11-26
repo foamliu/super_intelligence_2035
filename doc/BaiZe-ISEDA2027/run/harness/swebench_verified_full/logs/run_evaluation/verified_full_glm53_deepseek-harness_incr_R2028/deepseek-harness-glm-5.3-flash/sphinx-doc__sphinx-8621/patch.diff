@@ -1,0 +1,130 @@
+diff --git a/sphinx/builders/html/transforms.py b/sphinx/builders/html/transforms.py
+index c91da57e..85473ebc 100644
+--- a/sphinx/builders/html/transforms.py
++++ b/sphinx/builders/html/transforms.py
+@@ -9,7 +9,7 @@
+ """
+ 
+ import re
+-from typing import Any, Dict
++from typing import Any, Dict, List, Tuple
+ 
+ from docutils import nodes
+ 
+@@ -34,6 +34,11 @@ class KeyboardTransform(SphinxPostTransform):
+             -
+             <literal class="kbd">
+                 x
++
++    The characters ``-``, ``+`` and ``^`` are only treated as separators
++    when they are placed between two keystrokes.  If they are placed at
++    a keystroke position (ex. ``-``, ``+``, ``^`` or ``Shift-+``), they
++    are considered a part of the keystroke.
+     """
+     default_priority = 400
+     builders = ('html',)
+@@ -42,21 +47,50 @@ class KeyboardTransform(SphinxPostTransform):
+     def run(self, **kwargs: Any) -> None:
+         matcher = NodeMatcher(nodes.literal, classes=["kbd"])
+         for node in self.document.traverse(matcher):  # type: nodes.literal
+-            parts = self.pattern.split(node[-1].astext())
+-            if len(parts) == 1:
++            parts = self._split_keystroke(node[-1].astext())
++            if len(parts) == 1 and parts[0][0] == 'key':
++                # a single keystroke (ex. '-', '+', '^'); no separators
+                 continue
+ 
+             node.pop()
+-            while parts:
+-                key = parts.pop(0)
+-                node += nodes.literal('', key, classes=["kbd"])
+-
+-                try:
++            for kind, value in parts:
++                if kind == 'key':
++                    node += nodes.literal('', value, classes=["kbd"])
++                else:
+                     # key separator (ex. -, +, ^)
+-                    sep = parts.pop(0)
+-                    node += nodes.Text(sep)
+-                except IndexError:
+-                    pass
++                    node += nodes.Text(value)
++
++    def _split_keystroke(self, text: str) -> List[Tuple[str, str]]:
++        """Split the keystroke into keys and separators.
++
++        It returns a list of tuples like ``[('key', 'Control'),
++        ('sep', '-'), ('key', 'x')]``.  The separators are whitespace
++        or one of ``-``, ``+`` and ``^`` characters placed between
++        keystrokes.  If they are placed at a keystroke position, they
++        are treated as a part of a keystroke.
++        """
++        parts = self.pattern.split(text)
++        items: List[Tuple[str, str]] = []
++        pending = parts[0]  # a keystroke under construction
++
++        for i in range(1, len(parts), 2):
++            sep, following = parts[i], parts[i + 1]
++            if sep in ('-', '+', '^') and not pending:
++                # This separator is placed at a keystroke position
++                # (ex. the '+' in 'Shift-+').  So it is a part of the
++                # following keystroke.
++                pending += sep + following
++            else:
++                # a separator between keystrokes (ex. the '-' in 'Control-x')
++                if pending:
++                    items.append(('key', pending))
++                items.append(('sep', sep))
++                pending = following
++
++        if pending:
++            items.append(('key', pending))
++
++        return items
+ 
+ 
+ def setup(app: Sphinx) -> Dict[str, Any]:
+diff --git a/tests/test_markup.py b/tests/test_markup.py
+index a2bcb2dc..b8f1a673 100644
+--- a/tests/test_markup.py
++++ b/tests/test_markup.py
+@@ -251,6 +251,38 @@ def get_verifier(verify, verify_re):
+          '</kbd></p>'),
+         '\\sphinxkeyboard{\\sphinxupquote{Control+X}}',
+     ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`-`',
++        '<p><kbd class="kbd docutils literal notranslate">-</kbd></p>',
++        r'\\sphinxkeyboard{\\sphinxupquote{-}}',
++    ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`+`',
++        '<p><kbd class="kbd docutils literal notranslate">+</kbd></p>',
++        r'\\sphinxkeyboard{\\sphinxupquote{\+}}',
++    ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`^`',
++        '<p><kbd class="kbd docutils literal notranslate">^</kbd></p>',
++        r'\\sphinxkeyboard{\\sphinxupquote{\^}}',
++    ),
++    (
++        # kbd role; separator and keystroke characters
++        'verify',
++        ':kbd:`Shift-+`',
++        ('<p><kbd class="kbd docutils literal notranslate">'
++         '<kbd class="kbd docutils literal notranslate">Shift</kbd>'
++         '-'
++         '<kbd class="kbd docutils literal notranslate">+</kbd>'
++         '</kbd></p>'),
++        r'\\sphinxkeyboard{\\sphinxupquote{Shift-\+}}',
++    ),
+     (
+         # kbd role
+         'verify',

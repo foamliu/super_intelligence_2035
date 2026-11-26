@@ -1,0 +1,183 @@
+diff --git a/astropy/coordinates/builtin_frames/__init__.py b/astropy/coordinates/builtin_frames/__init__.py
+index 6fd688c..17b5244 100644
+--- a/astropy/coordinates/builtin_frames/__init__.py
++++ b/astropy/coordinates/builtin_frames/__init__.py
+@@ -48,6 +48,7 @@ from . import supergalactic_transforms
+ from . import icrs_cirs_transforms
+ from . import cirs_observed_transforms
+ from . import icrs_observed_transforms
++from . import itrs_observed_transforms
+ from . import intermediate_rotation_transforms
+ from . import ecliptic_transforms
+ 
+diff --git a/astropy/coordinates/builtin_frames/itrs_observed_transforms.py b/astropy/coordinates/builtin_frames/itrs_observed_transforms.py
+new file mode 100644
+index 0000000..60d5e7f
+--- /dev/null
++++ b/astropy/coordinates/builtin_frames/itrs_observed_transforms.py
+@@ -0,0 +1,84 @@
++# Licensed under a 3-clause BSD style license - see LICENSE.rst
++"""
++Contains the transformation functions for getting to/from ITRS and AltAz/HADec.
++
++These transformations stay entirely within the ITRS, treating ITRS positions as
++time-invariant. They are useful for nearby objects (e.g., satellites, aircraft)
++where going through CIRS/ICRS introduces spurious geocentric aberration.
++"""
++
++import numpy as np
++
++from astropy import units as u
++from astropy.coordinates.baseframe import frame_transform_graph
++from astropy.coordinates.transformations import FunctionTransformWithFiniteDifference
++from astropy.coordinates.matrix_utilities import rotation_matrix, matrix_transpose
++
++from .itrs import ITRS
++from .altaz import AltAz
++from .hadec import HADec
++from .utils import PIOVER2
++
++
++def itrs_to_observed_mat(observed_frame):
++    """Build the rotation matrix from ITRS to the observed frame (AltAz or HADec).
++
++    Parameters
++    ----------
++    observed_frame : `~astropy.coordinates.AltAz` or `~astropy.coordinates.HADec`
++        The target observed frame (used for location).
++
++    Returns
++    -------
++    mat : `~numpy.ndarray`
++        3x3 rotation matrix.
++    """
++    lon, lat, height = observed_frame.location.to_geodetic('WGS84')
++    elong = lon.to_value(u.radian)
++
++    if isinstance(observed_frame, AltAz):
++        elat = lat.to_value(u.radian)
++        # AltAz frame is left-handed; flip x axis after rotation
++        minus_x = np.eye(3)
++        minus_x[0, 0] = -1.0
++        mat = (minus_x
++               @ rotation_matrix(PIOVER2 - elat, 'y', unit=u.radian)
++               @ rotation_matrix(elong, 'z', unit=u.radian))
++    else:
++        # HADec frame is left-handed; flip y axis after rotation
++        minus_y = np.eye(3)
++        minus_y[1, 1] = -1.0
++        mat = (minus_y
++               @ rotation_matrix(elong, 'z', unit=u.radian))
++
++    return mat
++
++
++@frame_transform_graph.transform(FunctionTransformWithFiniteDifference, ITRS, AltAz)
++@frame_transform_graph.transform(FunctionTransformWithFiniteDifference, ITRS, HADec)
++def itrs_to_observed(itrs_coo, observed_frame):
++    # Trying to synchronize the obstimes here makes no sense. In fact,
++    # it's a real gotcha as doing an ITRS->ITRS transform references
++    # ITRS coordinates, which should be tied to the Earth, to the SSB.
++    # Instead, we treat ITRS coordinates as time invariant here.
++
++    # form the topocentric ITRS position
++    topocentric_itrs_repr = (
++        itrs_coo.cartesian
++        - observed_frame.location.get_itrs().cartesian)
++    rep = topocentric_itrs_repr.transform(itrs_to_observed_mat(observed_frame))
++    return observed_frame.realize_frame(rep)
++
++
++@frame_transform_graph.transform(FunctionTransformWithFiniteDifference, AltAz, ITRS)
++@frame_transform_graph.transform(FunctionTransformWithFiniteDifference, HADec, ITRS)
++def observed_to_itrs(observed_coo, itrs_frame):
++    # form the topocentric ITRS position
++    topocentric_itrs_repr = observed_coo.cartesian.transform(
++        matrix_transpose(itrs_to_observed_mat(observed_coo)))
++    # form the geocentric ITRS position
++    rep = topocentric_itrs_repr + observed_coo.location.get_itrs().cartesian
++    return itrs_frame.realize_frame(rep)
++
++
++
+diff --git a/astropy/coordinates/tests/test_itrs_observed_transforms.py b/astropy/coordinates/tests/test_itrs_observed_transforms.py
+new file mode 100644
+index 0000000..904b9f3
+--- /dev/null
++++ b/astropy/coordinates/tests/test_itrs_observed_transforms.py
+@@ -0,0 +1,75 @@
++# Licensed under a 3-clause BSD style license - see LICENSE.rst
++"""Tests for direct ITRS <-> AltAz/HADec transforms."""
++
++import numpy as np
++from astropy import units as u
++from astropy.coordinates import EarthLocation, ITRS, AltAz, HADec
++from astropy.coordinates import CartesianRepresentation
++from astropy.time import Time
++from astropy.tests.helper import assert_quantity_allclose as assert_allclose
++
++
++def test_itrs_to_altaz_overhead():
++    t = Time('J2010')
++    loc = EarthLocation(lat=52*u.deg, lon=-1*u.deg, height=0*u.m)
++    # A point directly overhead (same lat/lon, 1 km higher)
++    target = EarthLocation(lat=52*u.deg, lon=-1*u.deg, height=1*u.km).get_itrs(t)
++    aa = target.transform_to(AltAz(obstime=t, location=loc))
++    assert_allclose(aa.alt, 90*u.deg, atol=1*u.uas, rtol=0)
++
++
++def test_itrs_to_hadec_overhead():
++    t = Time('J2010')
++    loc = EarthLocation(lat=52*u.deg, lon=-1*u.deg, height=0*u.m)
++    target = EarthLocation(lat=52*u.deg, lon=-1*u.deg, height=1*u.km).get_itrs(t)
++    hd = target.transform_to(HADec(obstime=t, location=loc))
++    assert_allclose(hd.dec, 52*u.deg, atol=1*u.uas, rtol=0)
++    assert_allclose(hd.ha, 0*u.hourangle, atol=1*u.uas, rtol=0)
++
++
++def test_itrs_altaz_roundtrip():
++    t = Time('J2010')
++    loc = EarthLocation(lat=52*u.deg, lon=-1*u.deg, height=0*u.m)
++    x = np.array([1, 2, 3, 4]) * 1e6 * u.m
++    y = np.array([0, 1, 0, -1]) * 1e6 * u.m
++    z = np.array([5, 4, 3, 2]) * 1e6 * u.m
++    target = ITRS(x=x, y=y, z=z, obstime=t)
++    back = target.transform_to(AltAz(obstime=t, location=loc)).transform_to(ITRS(obstime=t))
++    assert np.allclose(target.cartesian.xyz.value, back.cartesian.xyz.value)
++
++
++def test_itrs_hadec_roundtrip():
++    t = Time('J2010')
++    loc = EarthLocation(lat=52*u.deg, lon=-1*u.deg, height=0*u.m)
++    x = np.array([1, 2, 3, 4]) * 1e6 * u.m
++    y = np.array([0, 1, 0, -1]) * 1e6 * u.m
++    z = np.array([5, 4, 3, 2]) * 1e6 * u.m
++    target = ITRS(x=x, y=y, z=z, obstime=t)
++    back = target.transform_to(HADec(obstime=t, location=loc)).transform_to(ITRS(obstime=t))
++    assert np.allclose(target.cartesian.xyz.value, back.cartesian.xyz.value)
++
++
++def test_itrs_altaz_north():
++    t = Time('J2010')
++    loc = EarthLocation(lat=0*u.deg, lon=0*u.deg, height=0*u.m)
++    # point due north along local tangent, 1 km away
++    target = EarthLocation(lat=0*u.deg, lon=0*u.deg, height=0*u.m).get_itrs(t).cartesian
++    # add north displacement in ITRS (north is +z direction in ITRS at equator)
++    target = CartesianRepresentation(
++        target.x, target.y, target.z + 1e3*u.m)
++    itrs = ITRS(target, obstime=t)
++    aa = itrs.transform_to(AltAz(obstime=t, location=loc))
++    assert_allclose(aa.alt, 0*u.deg, atol=1*u.uas, rtol=0)
++    assert_allclose(aa.az, 0*u.deg, atol=1*u.uas, rtol=0)
++
++
++def test_itrs_hadec_east():
++    t = Time('J2010')
++    loc = EarthLocation(lat=0*u.deg, lon=0*u.deg, height=0*u.m)
++    target = EarthLocation(lat=0*u.deg, lon=0*u.deg, height=0*u.m).get_itrs(t).cartesian
++    target = CartesianRepresentation(
++        target.x, target.y + 1e3*u.m, target.z)
++    itrs = ITRS(target, obstime=t)
++    hd = itrs.transform_to(HADec(obstime=t, location=loc))
++    assert_allclose(hd.dec, 0*u.deg, atol=1*u.uas, rtol=0)
++    assert_allclose(hd.ha, -6*u.hourangle, atol=1*u.uas, rtol=0)

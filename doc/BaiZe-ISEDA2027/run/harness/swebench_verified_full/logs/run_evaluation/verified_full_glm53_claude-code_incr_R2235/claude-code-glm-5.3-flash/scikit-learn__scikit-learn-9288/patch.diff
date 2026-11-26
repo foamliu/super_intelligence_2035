@@ -1,0 +1,95 @@
+diff --git a/doc/whats_new/v0.22.rst b/doc/whats_new/v0.22.rst
+index 7be27894..c4fd1564 100644
+--- a/doc/whats_new/v0.22.rst
++++ b/doc/whats_new/v0.22.rst
+@@ -24,6 +24,10 @@ random sampling procedures.
+ - :class:`decomposition.SparsePCA` where `normalize_components` has no effect
+   due to deprecation.
+ 
++- :class:`cluster.KMeans` where the random number generator is now consumed
++  consistently for any value of `n_jobs`, fixing slightly different results
++  between `n_jobs=1` and `n_jobs > 1`. |Fix|
++
+ - :class:`linear_model.Ridge` when `X` is sparse. |Fix|
+ 
+ Details are listed in the changelog below.
+@@ -278,6 +282,11 @@ Changelog
+ :mod:`sklearn.cluster`
+ ......................
+ 
++- |Fix| Fixed a bug in :class:`cluster.KMeans` where results would differ
++  depending on the value of `n_jobs`, due to the random state being consumed
++  differently in the sequential and parallel code paths. KMeans now gives the
++  same result for any value of `n_jobs`. :pr:`11139` by :user:`Kernc <kernc>`.
++
+ - |Enhancement| :class:`cluster.SpectralClustering` now accepts a ``n_components``
+   parameter. This parameter extends `SpectralClustering` class functionality to
+   match `spectral_clustering`.
+diff --git a/sklearn/cluster/k_means_.py b/sklearn/cluster/k_means_.py
+index b7fbdf7d..58559026 100644
+--- a/sklearn/cluster/k_means_.py
++++ b/sklearn/cluster/k_means_.py
+@@ -360,16 +360,21 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+     else:
+         raise ValueError("Algorithm must be 'auto', 'full' or 'elkan', got"
+                          " %s" % str(algorithm))
++    # The random state is initialized once per run to ensure that the
++    # results are the same whether n_jobs is 1 or > 1. Note that the
++    # random_state is used to draw the seeds of the k-means++ init and
++    # therefore needs to be different for each run.
++    seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+     if effective_n_jobs(n_jobs) == 1:
+         # For a single thread, less memory is needed if we just store one set
+         # of the best results (as opposed to one set per run per thread).
+-        for it in range(n_init):
++        for i in range(n_init):
+             # run a k-means once
+             labels, inertia, centers, n_iter_ = kmeans_single(
+                 X, sample_weight, n_clusters, max_iter=max_iter, init=init,
+                 verbose=verbose, precompute_distances=precompute_distances,
+                 tol=tol, x_squared_norms=x_squared_norms,
+-                random_state=random_state)
++                random_state=seeds[i])
+             # determine if these results are the best so far
+             if best_inertia is None or inertia < best_inertia:
+                 best_labels = labels.copy()
+@@ -378,7 +383,6 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+                 best_n_iter = n_iter_
+     else:
+         # parallelisation of k-means runs
+-        seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+         results = Parallel(n_jobs=n_jobs, verbose=0)(
+             delayed(kmeans_single)(X, sample_weight, n_clusters,
+                                    max_iter=max_iter, init=init,
+diff --git a/sklearn/cluster/tests/test_k_means.py b/sklearn/cluster/tests/test_k_means.py
+index 362b0a91..7c8e3832 100644
+--- a/sklearn/cluster/tests/test_k_means.py
++++ b/sklearn/cluster/tests/test_k_means.py
+@@ -239,6 +239,27 @@ def test_k_means_plus_plus_init_2_jobs():
+     _check_fitted_model(km)
+ 
+ 
++@if_safe_multiprocessing_with_blas
++def test_k_means_n_jobs_consistency():
++    # Non-regression test for #10865: KMeans should give the same results
++    # whether n_jobs is 1 or > 1.
++    rng = np.random.RandomState(0)
++    X = rng.normal(size=(50, 3))
++
++    kmeans = KMeans(n_clusters=3, random_state=0)
++    result_1_job = kmeans.fit(X)
++    inertia_1_job = result_1_job.inertia_
++    labels_1_job = result_1_job.labels_.copy()
++    centers_1_job = result_1_job.cluster_centers_.copy()
++
++    for n_jobs in [2, 3]:
++        kmeans = KMeans(n_clusters=3, random_state=0, n_jobs=n_jobs)
++        kmeans.fit(X)
++        assert_almost_equal(inertia_1_job, kmeans.inertia_)
++        assert_array_equal(labels_1_job, kmeans.labels_)
++        assert_array_almost_equal(centers_1_job, kmeans.cluster_centers_)
++
++
+ def test_k_means_precompute_distances_flag():
+     # check that a warning is raised if the precompute_distances flag is not
+     # supported

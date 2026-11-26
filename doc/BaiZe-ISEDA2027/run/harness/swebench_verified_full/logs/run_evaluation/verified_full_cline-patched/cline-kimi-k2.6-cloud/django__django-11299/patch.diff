@@ -1,0 +1,55 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index b99f03cd8..d69c24419 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1338,7 +1338,7 @@ class Query(BaseExpression):
+             if isinstance(child, Node):
+                 child_clause, needed_inner = self._add_q(
+                     child, used_aliases, branch_negated,
+-                    current_negated, allow_joins, split_subq)
++                    current_negated, allow_joins, split_subq, simple_col)
+                 joinpromoter.add_votes(needed_inner)
+             else:
+                 child_clause, needed_inner = self.build_filter(
+diff --git a/tests/constraints/tests.py b/tests/constraints/tests.py
+index b7aeb1e7f..2da626912 100644
+--- a/tests/constraints/tests.py
++++ b/tests/constraints/tests.py
+@@ -73,6 +73,14 @@ class CheckConstraintTests(TestCase):
+         with self.assertRaises(IntegrityError):
+             Product.objects.create(name='Invalid', price=10, discounted_price=20)
+ 
++    def test_check_constraint_sql(self):
++        check = models.Q(price__gt=5, discounted_price__gt=2) | models.Q(price__lt=5)
++        constraint = models.CheckConstraint(check=check, name='price_check')
++        editor = connection.schema_editor()
++        # Check only the condition part, not the full ALTER TABLE statement.
++        check_sql = constraint._get_check_sql(Product, editor)
++        self.assertNotIn(Product._meta.db_table, check_sql)
++
+     @skipUnlessDBFeature('supports_table_check_constraints')
+     def test_name(self):
+         constraints = get_constraints(Product._meta.db_table)
+diff --git a/tests/queries/test_query.py b/tests/queries/test_query.py
+index bef79c992..a1a28e172 100644
+--- a/tests/queries/test_query.py
++++ b/tests/queries/test_query.py
+@@ -91,3 +91,18 @@ class TestQuery(SimpleTestCase):
+         self.assertIsInstance(b_isnull, RelatedIsNull)
+         self.assertIsInstance(b_isnull.lhs, SimpleCol)
+         self.assertEqual(b_isnull.lhs.target, ObjectC._meta.get_field('objectb'))
++
++    def test_build_where_with_q_and_connector(self):
++        query = Query(Author)
++        where = query.build_where(Q(num__gt=1, name='foo') | Q(num__lt=5))
++        self.assertEqual(where.connector, OR)
++        # The AND conditions are nested inside a WhereNode.
++        and_node = where.children[0]
++        self.assertEqual(and_node.connector, 'AND')
++        self.assertIsInstance(and_node.children[0], Exact)
++        self.assertIsInstance(and_node.children[0].lhs, SimpleCol)
++        self.assertIsInstance(and_node.children[1], GreaterThan)
++        self.assertIsInstance(and_node.children[1].lhs, SimpleCol)
++        # The OR side condition uses SimpleCol.
++        self.assertIsInstance(where.children[1], LessThan)
++        self.assertIsInstance(where.children[1].lhs, SimpleCol)

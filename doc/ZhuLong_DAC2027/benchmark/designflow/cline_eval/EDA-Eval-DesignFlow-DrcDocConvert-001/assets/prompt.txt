@@ -1,0 +1,1 @@
+帮我把connectivity/doc/run_logic_notes.md 转成中文，用html格式呈现。对人类阅读更加友好的格式。

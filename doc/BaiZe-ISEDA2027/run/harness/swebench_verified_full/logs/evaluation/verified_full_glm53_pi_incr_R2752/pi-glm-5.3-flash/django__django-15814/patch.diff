@@ -1,0 +1,108 @@
+diff --git a/debug1.py b/debug1.py
+new file mode 100644
+index 0000000000..0202f1005b
+--- /dev/null
++++ b/debug1.py
+@@ -0,0 +1,51 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++)
++django.setup()
++
++from django.db import models, connection
++
++
++class CustomModel(models.Model):
++    name = models.CharField(max_length=16)
++
++    class Meta:
++        app_label = "repro"
++
++
++class ProxyCustomModel(CustomModel):
++    class Meta:
++        proxy = True
++        app_label = "repro"
++
++
++class AnotherModel(models.Model):
++    custom = models.ForeignKey(
++        ProxyCustomModel,
++        on_delete=models.SET_NULL,
++        null=True,
++        blank=True,
++    )
++
++    class Meta:
++        app_label = "repro"
++
++
++qs = AnotherModel.objects.select_related("custom").only("custom__name")
++query = qs.query
++target = {}
++query.deferred_to_data(target)
++print("only_load (deferred_to_data target):")
++for k, v in target.items():
++    print("  ", k, "->", v)
++
++f = AnotherModel._meta.get_field("custom")
++print("FK remote_field.model:", f.remote_field.model)
++print("proxy concrete_fields:", [(fl.model, fl.attname) for fl in ProxyCustomModel._meta.concrete_fields])
++print("proxy pk:", ProxyCustomModel._meta.pk, "pk.model:", ProxyCustomModel._meta.pk.model)
++print("concrete pk:", CustomModel._meta.pk, "pk.model:", CustomModel._meta.pk.model)
+diff --git a/repro.py b/repro.py
+new file mode 100644
+index 0000000000..c4dc259c3b
+--- /dev/null
++++ b/repro.py
+@@ -0,0 +1,45 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
++    INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
++)
++django.setup()
++
++from django.db import models, connection
++
++
++class CustomModel(models.Model):
++    name = models.CharField(max_length=16)
++
++    class Meta:
++        app_label = "repro"
++
++
++class ProxyCustomModel(CustomModel):
++    class Meta:
++        proxy = True
++        app_label = "repro"
++
++
++class AnotherModel(models.Model):
++    custom = models.ForeignKey(
++        ProxyCustomModel,
++        on_delete=models.SET_NULL,
++        null=True,
++        blank=True,
++    )
++
++    class Meta:
++        app_label = "repro"
++
++
++with connection.schema_editor() as editor:
++    editor.create_model(CustomModel)
++    editor.create_model(AnotherModel)
++
++CustomModel.objects.create(name="test")
++objs = list(AnotherModel.objects.select_related("custom").only("custom__name").all())
++print("OK:", objs)

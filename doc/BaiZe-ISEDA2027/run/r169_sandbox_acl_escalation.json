@@ -1,0 +1,134 @@
+{
+  "r169": true,
+  "timestamp": "2026-11-11T07:17:05.718196",
+  "local_ip": "10.252.32.17",
+  "sandbox_host": "10.129.32.75",
+  "wake_count_blocked": "43+ (since wake195, ~2026-11-10)",
+  "diagnostics": {
+    "local_network": {
+      "bond0": "14: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000\n    link/ether ee:c5:a8:69:4f:50 brd ff:ff:ff:ff:ff:ff\n    inet 10.252.32.17/22 brd 10.252.35.255 scope global bond0\n       valid_lft forever preferred_lft forever\n    inet6 fe80::ecc5:a8ff:fe69:4f50/64 scope link \n       valid_lft forever preferred_lft forever",
+      "route_to_sandbox": "10.129.32.75 via 10.252.32.1 dev bond0 src 10.252.32.17 uid 9269 \n    cache",
+      "routing_table": "default via 10.252.32.1 dev bond0 proto static \n10.252.32.0/22 dev bond0 proto kernel scope link src 10.252.32.17 \n172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 \n172.18.0.0/16 dev br-a6694f9b9da1 proto kernel scope link src 172.18.0.1 linkdown \n172.21.0.0/16 dev br-067a4c2d913c proto kernel scope link src 172.21.0.1 linkdown \n172.28.0.0/16 dev br-71f0f2750d00 proto kernel scope link src 172.28.8.254 linkdown",
+      "arp_table": "Address                  HWtype  HWaddress           Flags Mask            Iface\n172.17.0.22              ether   02:42:ac:11:00:16   C                     docker0\n172.17.0.3               ether   02:42:ac:11:00:03   C                     docker0\n172.17.0.31              ether   02:42:ac:11:00:1f   C                     docker0\n172.17.0.12              ether   02:42:ac:11:00:0c   C                     docker0\n172.17.0.2               ether   02:42:ac:11:00:02   C                     docker0\n172.17.0.21              ether   02:42:ac:11:00:15   C                     docker0\n172.17.0.30              ether   02:42:ac:11:00:1e   C                     docker0\n172.17.0.20              ether   02:42:ac:11:00:14   C                     docker0\n172.17.0.29              ether   02:42:ac:11:00:1d   C                     docker0\n172.17.0.19              ether   02:42:ac:11:00:13   C                     docker0\n172.17.0.28              ether   02:42:ac:11:00:1c   C                     docker0\n10.252.32.1              ether   00:00:5e:00:01:10   C                     bond0\n172.17.0.18              ether   02:42:ac:11:00:12   C                     docker0\n10.252.32.118                    (incomplete)                              bond0\n172.17.0.27              ether   02:42:ac:11:00:1b   C                     docker0\n172.18.212.255                   (incomplete)                              br-a6694f9b9da1\n172.17.0.17              ether   02:42:ac:11:00:11   C                     docker0\n172.17.0.26              ether   02:42:ac:11:00:1a   C                     docker0\n172.17.0.7               ether   02:42:ac:11:00:07   C                     docker0\n10.252.32.16             ether   06:37:e5:28:b9:d2   C                     bond0\n172.17.0.16              ether   02:42:ac:11:00:10   C                     docker0\n172.18.212.147                   (incomplete)                              br-a6694f9b9da1\n172.17.0.25              ether   02:42:ac:11:00:19   C                     docker0\n172.17.0.6               ether   02:42:ac:11:00:06   C                     docker0\n172.17.0.15              ether   02:42:ac:11:00:0f   C                     docker0\n172.18.212.202                   (incomplete)                              br-a6694f9b9da1\n10.252.32.15             ether   3e:28:6a:43:b2:7f   C                     bond0\n172.17.0.24              ether   02:42:ac:11:00:18   C                     docker0\n172.17.0.5               ether   02:42:ac:11:00:05   C                     docker0\n172.17.0.33              ether   02:42:ac:11:00:21   C                     docker0\n172.17.0.14              ether   02:42:ac:11:00:0e   C                     docker0\n172.18.213.161                   (incomplete)                              br-a6694f9b9da1\n172.17.0.23              ether   02:42:ac:11:00:17   C                     docker0\n172.17.0.4               ether   02:42:ac:11:00:04   C                     docker0\n172.17.0.32              ether   02:42:ac:11:00:20   C                     docker0\n172.17.0.13              ether   02:42:ac:11:00:0d   C                     docker0\n10.252.32.13             ether   5e:74:52:99:41:0f   C                     bond0",
+      "local_ips": "10.252.32.17 172.28.8.254 172.18.0.1 172.17.0.1 172.21.0.1"
+    },
+    "icmp_sandbox": {
+      "reachable": true,
+      "avg_ms": 0.54,
+      "loss_pct": 0.0
+    },
+    "tcp_scan_sandbox": {
+      "22": {
+        "open": false,
+        "latency_ms": 3000.8,
+        "role": "SSH (administrative access to sandbox host)"
+      },
+      "8664": {
+        "open": false,
+        "latency_ms": 3002.8,
+        "role": "pyAether code execution (multi-sandbox endpoint 1, workdir t0002596_bak_1)"
+      },
+      "8665": {
+        "open": false,
+        "latency_ms": 3003.1,
+        "role": "pyAether code execution (multi-sandbox endpoint 2, workdir t0002596_bak)"
+      },
+      "8667": {
+        "open": false,
+        "latency_ms": 3003.1,
+        "role": "pyAether code execution HTTP API (primary, /v1/run_code)"
+      },
+      "8668": {
+        "open": false,
+        "latency_ms": 3003.1,
+        "role": "pyAether code execution TCP socket (binary protocol)"
+      },
+      "8669": {
+        "open": false,
+        "latency_ms": 3003.1,
+        "role": "pyAether code execution (multi-sandbox endpoint 4, workdir t0002596)"
+      },
+      "8653": {
+        "open": false,
+        "latency_ms": 3003.1,
+        "role": "SKILL/pyAether dual-mode (endpoint 3, workdir t0002596_skill)"
+      }
+    },
+    "control_samesubnet": {
+      "host": "10.252.32.15",
+      "port": 9001,
+      "tcp_open": true,
+      "tcp_latency_ms": 0.2,
+      "icmp_reachable": true,
+      "icmp_avg_ms": 0.116,
+      "icmp_loss_pct": 0.0
+    },
+    "gateway": {
+      "host": "10.252.32.1",
+      "tcp_80_open": false,
+      "icmp_reachable": true,
+      "icmp_avg_ms": 0.755
+    },
+    "diagnosis": "BLANKET_CROSS_SUBNET_TCP_FILTER: ICMP passes (L3 reachable) but ALL TCP ports to 10.129.32.75 are filtered. Same-subnet TCP works (control .15:9001 OPEN). Firewall/ACL between 10.252.32.0/22 and 10.129.32.0/24 permits ICMP but blocks TCP. NOT routing (route resolves via gateway, ARP OK, ICMP 0.4ms). NOT host-down (ICMP responds). NOT .17-local (same-subnet TCP works)."
+  },
+  "escalation": {
+    "title": "Network ACL Escalation Request - BaiZe Post-Train EDA Sandbox Access",
+    "priority": "HIGH - blocks ISEDA 2027 paper deadline (2027-02-01)",
+    "blocked_since": "2026-11-10 (43+ agent wakes, ~14 days)",
+    "source": {
+      "host": "10.252.32.17",
+      "subnet": "10.252.32.0/22",
+      "gateway": "10.252.32.1"
+    },
+    "destination": {
+      "host": "10.129.32.75",
+      "service": "PyAether EDA code execution sandbox"
+    },
+    "current_state": {
+      "icmp": "REACHABLE (avg 0.54 ms)",
+      "tcp_all_ports": "FILTERED (all 7 timeout)",
+      "ssh_22": "FILTERED"
+    },
+    "required_acl_rules": [
+      {
+        "port": 8667,
+        "role": "HTTP API /v1/run_code (primary code exec)",
+        "required": true
+      },
+      {
+        "port": 8668,
+        "role": "TCP socket code exec (binary protocol)",
+        "required": true
+      },
+      {
+        "port": 8664,
+        "role": "Multi-sandbox endpoint 1 (parallel exec)",
+        "required": true
+      },
+      {
+        "port": 8665,
+        "role": "Multi-sandbox endpoint 2 (parallel exec)",
+        "required": true
+      },
+      {
+        "port": 8653,
+        "role": "Multi-sandbox endpoint 3 (SKILL+pyAether dual)",
+        "required": true
+      },
+      {
+        "port": 8669,
+        "role": "Multi-sandbox endpoint 4 (parallel exec)",
+        "required": true
+      },
+      {
+        "port": 22,
+        "role": "SSH (administrative, optional)",
+        "required": false
+      }
+    ],
+    "acl_rule_summary": "Allow TCP from 10.252.32.0/22 to 10.129.32.75 ports 8664,8665,8667,8668,8669,8653 (optionally 22).",
+    "business_justification": "EDA sandbox runs Empyrean Aether/PyAether executing generated EDA code. BaiZe post-training needs it for Phase1 baseline eval (158 tasks) and Phase3 RL rewards. ISEDA 2027 deadline 2027-02-01; training window 2026-12 to 2027-01.",
+    "verification_command": "timeout 5 bash -c 'echo > /dev/tcp/10.129.32.75/8667' && echo OPEN || echo CLOSED",
+    "alternative_if_acl_denied": "1. Deploy local PyAether on .17 (needs Aether license)\n2. SSH tunnel through intermediate host reaching 10.129.32.75\n3. Run eval from a host in 10.129.32.0/24\n4. Start Phase2 SFT now (no sandbox needed for training, only eval)\nNote: Phase2 SFT does NOT need sandbox - only eval does."
+  }
+}

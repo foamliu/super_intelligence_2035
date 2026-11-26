@@ -1,0 +1,54 @@
+```tcl
+proc logicsynth_dc_to_genus_port {dc_cmd} {
+    set line [string trim $dc_cmd]
+
+    if {[regexp {^set_dont_use\s+\[get_lib_cells\s+([^\]]+)\]$} $line -> pat]} {
+        set pattern [string trim $pat]
+        return [dict create genus_cmd "set_db lib_cell:${pattern}.dont_use true" port_type "dontuse_set_db" removed 0]
+    }
+
+    if {[regexp {^set_multibit_options\s+-min_bit_width\s+(-?[0-9]+)$} $line -> N]} {
+        return [dict create genus_cmd "set_db design:\${DESIGN}.multibit_threshold $N" port_type "attr_set_db" removed 0]
+    }
+
+    if {[regexp {^set_app_var\s+(\S+)\s+(.+)$} $line -> name val]} {
+        set value [string trim $val]
+        if {[string index $value 0] eq "{" && [string index $value end] eq "}"} {
+            set value [string range $value 1 end-1]
+        }
+        set value [string trim $value]
+
+        switch -- $name {
+            target_library {
+                return [dict create genus_cmd [string trim "read_lib $value"] port_type "library_read" removed 1]
+            }
+            link_library {
+                set libs [string trim $value]
+                if {[regexp {^\*(.*)$} $libs -> rest]} {
+                    set libs [string trim $rest]
+                }
+                return [dict create genus_cmd [string trim "read_lib $libs"] port_type "library_read" removed 1]
+            }
+            hdlin_infer_multibit {
+                return [dict create genus_cmd {set_db design:${DESIGN}.multibit true} port_type "attr_set_db" removed 0]
+            }
+            default {
+                return [dict create genus_cmd "NO_EQUIVALENT" port_type "no_equiv" removed 0]
+            }
+        }
+    }
+
+    if {[regexp {^compile_ultra(\s+.*)?$} $line]} {
+        if {[regexp {(^|\s)-spg($|\s)} $line]} {
+            return [dict create genus_cmd "NO_EQUIVALENT" port_type "no_equiv" removed 1]
+        }
+        return [dict create genus_cmd "syn_generic\nsyn_map\nopt -pre_cts" port_type "stages" removed 1]
+    }
+
+    if {[regexp {^report_multibit_banking$} $line]} {
+        return [dict create genus_cmd "report_qor -summary" port_type "report_qor" removed 1]
+    }
+
+    return [dict create genus_cmd "NO_EQUIVALENT" port_type "no_equiv" removed 0]
+}
+```

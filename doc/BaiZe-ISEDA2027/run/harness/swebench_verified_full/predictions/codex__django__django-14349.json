@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-14349",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/core/validators.py b/django/core/validators.py\nindex a3858195..d476f6c6 100644\n--- a/django/core/validators.py\n+++ b/django/core/validators.py\n@@ -106,6 +106,10 @@ class URLValidator(RegexValidator):\n         if scheme not in self.schemes:\n             raise ValidationError(self.message, code=self.code, params={'value': value})\n \n+        # Reject URLs with control characters, as urlsplit on newer Pythons\n+        # strips them silently (bpo-43882), preventing the regex from rejecting.\n+        if \"\\n\" in value or \"\\r\" in value or \"\\t\" in value:\n+            raise ValidationError(self.message, code=self.code, params={'value': value})\n         # Then check full URL\n         try:\n             super().__call__(value)\n"
+  }
+]

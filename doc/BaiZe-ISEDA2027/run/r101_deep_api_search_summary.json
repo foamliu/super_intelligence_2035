@@ -1,0 +1,399 @@
+{
+  "timestamp": "2026-11-09T15:31:50.644950",
+  "stats": {
+    "total_apis": 60,
+    "found_count": 26,
+    "type_mapped_count": 10,
+    "still_missing": 34,
+    "s6_pairs_generated": 42,
+    "v5_total_pairs": 1193,
+    "v5_size_kb": 1708.1259765625,
+    "s0_replaced": 26,
+    "s0_remaining": 34,
+    "contamination_rejected": 0,
+    "source_hits": {
+      "swig_skill": 22,
+      "api_patch.json": 6,
+      "API_INFO_MERGED_V2.json": 3,
+      "skill_data_md": 5,
+      "skill_data_json": 5,
+      "api_inheritances.json": 7
+    },
+    "category_distribution": {
+      "cpp_wrapper": {
+        "total": 5,
+        "found": 5,
+        "type_mapped": 3,
+        "not_found": 0
+      },
+      "gu_method": {
+        "total": 5,
+        "found": 0,
+        "type_mapped": 0,
+        "not_found": 5
+      },
+      "mde_enum": {
+        "total": 14,
+        "found": 3,
+        "type_mapped": 0,
+        "not_found": 11
+      },
+      "ntl_pvm_sle_enum": {
+        "total": 9,
+        "found": 0,
+        "type_mapped": 0,
+        "not_found": 9
+      },
+      "ui_gui": {
+        "total": 2,
+        "found": 0,
+        "type_mapped": 0,
+        "not_found": 2
+      },
+      "infrastructure": {
+        "total": 5,
+        "found": 1,
+        "type_mapped": 0,
+        "not_found": 4
+      },
+      "swig_container": {
+        "total": 2,
+        "found": 2,
+        "type_mapped": 2,
+        "not_found": 0
+      },
+      "init_function": {
+        "total": 5,
+        "found": 5,
+        "type_mapped": 0,
+        "not_found": 0
+      },
+      "emy_object_method": {
+        "total": 7,
+        "found": 7,
+        "type_mapped": 2,
+        "not_found": 0
+      },
+      "smash_option": {
+        "total": 3,
+        "found": 0,
+        "type_mapped": 0,
+        "not_found": 3
+      },
+      "c_struct_field": {
+        "total": 3,
+        "found": 3,
+        "type_mapped": 3,
+        "not_found": 0
+      }
+    }
+  },
+  "found_apis": [
+    {
+      "api": "CColor",
+      "category": "cpp_wrapper",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "CString",
+      "category": "cpp_wrapper",
+      "source": "api_patch.json",
+      "match_type": "direct_key"
+    },
+    {
+      "api": "CString.value",
+      "category": "cpp_wrapper",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "CStringList",
+      "category": "cpp_wrapper",
+      "source": "api_patch.json",
+      "match_type": "direct_key"
+    },
+    {
+      "api": "CStringList.at",
+      "category": "cpp_wrapper",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "MdeSweepRange",
+      "category": "mde_enum",
+      "source": "API_INFO_MERGED_V2.json",
+      "match_type": "direct_key"
+    },
+    {
+      "api": "MdeSweepType",
+      "category": "mde_enum",
+      "source": "API_INFO_MERGED_V2.json",
+      "match_type": "direct_key"
+    },
+    {
+      "api": "MdeSweepVariable",
+      "category": "mde_enum",
+      "source": "API_INFO_MERGED_V2.json",
+      "match_type": "direct_key"
+    },
+    {
+      "api": "dbObject",
+      "category": "infrastructure",
+      "source": "skill_data/skdfref.md",
+      "match_type": "text_mention"
+    },
+    {
+      "api": "emyArray_p_emyVia",
+      "category": "swig_container",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "emyGetLayerNumByName",
+      "category": "init_function",
+      "source": "swig_skill_analysis",
+      "match_type": "init_function_inference"
+    },
+    {
+      "api": "emyGetPurposeNumByName",
+      "category": "init_function",
+      "source": "swig_skill_analysis",
+      "match_type": "init_function_inference"
+    },
+    {
+      "api": "emyInitDb",
+      "category": "init_function",
+      "source": "api_patch.json",
+      "match_type": "direct_key"
+    },
+    {
+      "api": "emyInitQuery",
+      "category": "init_function",
+      "source": "swig_skill_analysis",
+      "match_type": "init_function_inference"
+    },
+    {
+      "api": "emyInitTcl",
+      "category": "init_function",
+      "source": "swig_skill_analysis",
+      "match_type": "init_function_inference"
+    },
+    {
+      "api": "emyLine.addToNet",
+      "category": "emy_object_method",
+      "source": "swig_skill_analysis",
+      "match_type": "emy_method_inference"
+    },
+    {
+      "api": "emyLine.addToPin",
+      "category": "emy_object_method",
+      "source": "swig_skill_analysis",
+      "match_type": "emy_method_inference"
+    },
+    {
+      "api": "emyPin.addToPin",
+      "category": "emy_object_method",
+      "source": "swig_skill_analysis",
+      "match_type": "emy_method_inference"
+    },
+    {
+      "api": "emyPointArray.append",
+      "category": "emy_object_method",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "emyRect.addToPin",
+      "category": "emy_object_method",
+      "source": "swig_skill_analysis",
+      "match_type": "emy_method_inference"
+    },
+    {
+      "api": "emyScalarInst.addToPin",
+      "category": "emy_object_method",
+      "source": "swig_skill_analysis",
+      "match_type": "emy_method_inference"
+    },
+    {
+      "api": "emyStringArray.append",
+      "category": "emy_object_method",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "tm_mday",
+      "category": "c_struct_field",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "tm_mon",
+      "category": "c_struct_field",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "tm_year",
+      "category": "c_struct_field",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    },
+    {
+      "api": "vector2D_emyPointF",
+      "category": "swig_container",
+      "source": "swig_skill_analysis",
+      "match_type": "type_mapping_table"
+    }
+  ],
+  "type_mapped_apis": [
+    "CString.value",
+    "tm_mday",
+    "emyPointArray.append",
+    "emyStringArray.append",
+    "tm_year",
+    "vector2D_emyPointF",
+    "tm_mon",
+    "CColor",
+    "emyArray_p_emyVia",
+    "CStringList.at"
+  ],
+  "still_missing_apis": [
+    {
+      "api": "GuCartPolyLine.getLinePattern",
+      "category": "gu_method"
+    },
+    {
+      "api": "GuCartPolyLine.getLineWidth",
+      "category": "gu_method"
+    },
+    {
+      "api": "GuCartPolyLine.setLineColor",
+      "category": "gu_method"
+    },
+    {
+      "api": "GuCartPolyLine.setLinePattern",
+      "category": "gu_method"
+    },
+    {
+      "api": "GuCartPolyLine.setLineWidth",
+      "category": "gu_method"
+    },
+    {
+      "api": "MDE_SWEEP_RANGE_CENTER_SPAN",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_SWEEP_RANGE_START_STOP",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_SWEEP_TYPE_LINEAR",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_SWEEP_TYPE_LINEAR_STEP_SIZE",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_SWEEP_TYPE_LOG",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_SWEEP_TYPE_LOG_NUM_STEP",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_SWEEP_VARIABLE_DESIGN_VARIABLE",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_TRAN_ACC_LEVEL_CONSERVATIVE",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MDE_TRAN_ACC_LEVEL_LIBERAL",
+      "category": "mde_enum"
+    },
+    {
+      "api": "MdeSweepType.stepMode",
+      "category": "mde_enum"
+    },
+    {
+      "api": "NTL_INDEX_FORMAT_ORIGIN",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "NTL_INDEX_FORMAT_USE_BRACKET",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "NTL_INDEX_FORMAT_USE_UNDERLINE",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "PVM_EXPAND_ALL",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "PVM_UPDATE_DESTLIB_MODE",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "SLE_GOA_AND",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "SLE_LE_WIRE_EXTEND",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "SLE_LE_WIRE_VARIABLE",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "SleLeWireTypeEnum",
+      "category": "ntl_pvm_sle_enum"
+    },
+    {
+      "api": "aeBaseAppFormCallBack",
+      "category": "ui_gui"
+    },
+    {
+      "api": "aeCrtHBoxLayout",
+      "category": "ui_gui"
+    },
+    {
+      "api": "dbTraverseTriggerFunc.__init__",
+      "category": "infrastructure"
+    },
+    {
+      "api": "dbTraverseTriggerFunc.funcCb",
+      "category": "infrastructure"
+    },
+    {
+      "api": "dmGetObj.files",
+      "category": "infrastructure"
+    },
+    {
+      "api": "emvPurposeNumberDrawing",
+      "category": "infrastructure"
+    },
+    {
+      "api": "smash_option",
+      "category": "smash_option"
+    },
+    {
+      "api": "smash_option.m_smashPyCell",
+      "category": "smash_option"
+    },
+    {
+      "api": "smash_option.m_smashVia",
+      "category": "smash_option"
+    }
+  ]
+}

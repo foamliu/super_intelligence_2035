@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-9320",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py\nindex a40a2107..95a535c7 100644\n--- a/sphinx/cmd/quickstart.py\n+++ b/sphinx/cmd/quickstart.py\n@@ -223,7 +223,7 @@ def ask_user(d: Dict) -> None:\n         print(__('sphinx-quickstart will not overwrite existing Sphinx projects.'))\n         print()\n         d['path'] = do_prompt(__('Please enter a new root path (or just Enter to exit)'),\n-                              '', is_path)\n+                              '', lambda x: is_path(x) if x else x)\n         if not d['path']:\n             sys.exit(1)\n \ndiff --git a/tests/test_quickstart.py b/tests/test_quickstart.py\nindex 94144ef2..e56b2b06 100644\n--- a/tests/test_quickstart.py\n+++ b/tests/test_quickstart.py\n@@ -250,3 +250,16 @@ def test_extensions(tempdir):\n     ns = {}\n     exec(conffile.read_text(), ns)\n     assert ns['extensions'] == ['foo', 'bar', 'baz']\n+\n+\n+def test_quickstart_existing_confpy(tempdir):\n+    (tempdir / 'conf.py').write_text('# existing conf.py')\n+    answers = {\n+        'Root path': tempdir,\n+        'Please enter a new root path (or just Enter to exit)': '',\n+    }\n+    qs.term_input = mock_input(answers)\n+    d = {}\n+    with pytest.raises(SystemExit) as excinfo:\n+        qs.ask_user(d)\n+    assert excinfo.value.code == 1\n"
+  }
+]

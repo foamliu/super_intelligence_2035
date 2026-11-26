@@ -1,0 +1,8 @@
+# cell control: invYx2_CoM (2.75V vwlp supply inverter)
+# fixed: A/Y pin pintype 'default' (0.94V threshold, too low to toggle on vwlp 2.75V supply)
+#        replaced with vwlp_type (VDD/2 ~1.375V reference)
+add_pin A vwlp_type
+add_pin Y vwlp_type
+
+add_function Y { !A }
+set_config_opt -param VDD 2.75

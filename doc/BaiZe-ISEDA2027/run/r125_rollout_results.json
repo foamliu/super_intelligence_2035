@@ -1,0 +1,308 @@
+{
+  "timestamp": "2026-11-10 01:59:22",
+  "n_tasks": 20,
+  "seed": 42,
+  "tasks_loaded": 20,
+  "reward_distribution": {
+    "excellent": {
+      "count": 20,
+      "mean": 0.7772,
+      "min": 0.6029,
+      "max": 0.92,
+      "std": 0.1046
+    },
+    "good": {
+      "count": 20,
+      "mean": 0.7172,
+      "min": 0.5429,
+      "max": 0.86,
+      "std": 0.1046
+    },
+    "mediocre": {
+      "count": 20,
+      "mean": 0.6385,
+      "min": 0.4908,
+      "max": 0.92,
+      "std": 0.0817
+    },
+    "bad": {
+      "count": 20,
+      "mean": 0.19,
+      "min": 0.1,
+      "max": 0.2,
+      "std": 0.03
+    },
+    "cheating": {
+      "count": 20,
+      "mean": 0.7772,
+      "min": 0.6029,
+      "max": 0.92,
+      "std": 0.1046
+    },
+    "grpo_learnability": {
+      "n_groups_simulated": 20,
+      "groups_with_signal": 15,
+      "signal_rate": 0.75,
+      "mean_group_variance": 0.043389,
+      "min_group_variance": 0.004699,
+      "max_group_variance": 0.08672,
+      "verdict": "LEARNABLE"
+    },
+    "quality_separation": {
+      "monotonic_decreasing": false,
+      "ordered_means": [
+        [
+          "excellent",
+          0.7772
+        ],
+        [
+          "good",
+          0.7172
+        ],
+        [
+          "mediocre",
+          0.6385
+        ],
+        [
+          "bad",
+          0.19
+        ],
+        [
+          "cheating",
+          0.7772
+        ]
+      ]
+    }
+  },
+  "validation": {
+    "pass": 100,
+    "fail": 0,
+    "details": []
+  },
+  "cheat_resistance": [
+    {
+      "task_id": "EDA-Eval-PyAether-007",
+      "scenario": "Design Management",
+      "results": {
+        "embedded_test": 0.22,
+        "api_stuffing": 0.28,
+        "canonical_copy": 0.66,
+        "empty_code": 0.2,
+        "gibberish": 0.12000000000000001,
+        "format_only": 0.1,
+        "legitimate_good": 0.66,
+        "syntax_err_cap": 0.2,
+        "verdict": {
+          "max_cheat_score": 0.28,
+          "legitimate_good_score": 0.66,
+          "cheat_below_good": true,
+          "anti_gaming_cap_works": true,
+          "overall": "RESISTANT"
+        }
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-008",
+      "scenario": "Design Management",
+      "results": {
+        "embedded_test": 0.22,
+        "api_stuffing": 0.28,
+        "canonical_copy": 0.8600000000000001,
+        "empty_code": 0.2,
+        "gibberish": 0.12000000000000001,
+        "format_only": 0.1,
+        "legitimate_good": 0.8600000000000001,
+        "syntax_err_cap": 0.2,
+        "verdict": {
+          "max_cheat_score": 0.28,
+          "legitimate_good_score": 0.86,
+          "cheat_below_good": true,
+          "anti_gaming_cap_works": true,
+          "overall": "RESISTANT"
+        }
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-009",
+      "scenario": "Design Management",
+      "results": {
+        "embedded_test": 0.22,
+        "api_stuffing": 0.28,
+        "canonical_copy": 0.6028571428571429,
+        "empty_code": 0.2,
+        "gibberish": 0.12000000000000001,
+        "format_only": 0.1,
+        "legitimate_good": 0.6028571428571429,
+        "syntax_err_cap": 0.2,
+        "verdict": {
+          "max_cheat_score": 0.28,
+          "legitimate_good_score": 0.6029,
+          "cheat_below_good": true,
+          "anti_gaming_cap_works": true,
+          "overall": "RESISTANT"
+        }
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-023",
+      "scenario": "Layout",
+      "results": {
+        "embedded_test": 0.22,
+        "api_stuffing": 0.28,
+        "canonical_copy": 0.92,
+        "empty_code": 0.2,
+        "gibberish": 0.12000000000000001,
+        "format_only": 0.1,
+        "legitimate_good": 0.92,
+        "syntax_err_cap": 0.2,
+        "verdict": {
+          "max_cheat_score": 0.28,
+          "legitimate_good_score": 0.92,
+          "cheat_below_good": true,
+          "anti_gaming_cap_works": true,
+          "overall": "RESISTANT"
+        }
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-024",
+      "scenario": "Layout",
+      "results": {
+        "embedded_test": 0.22,
+        "api_stuffing": 0.28,
+        "canonical_copy": 0.92,
+        "empty_code": 0.2,
+        "gibberish": 0.12000000000000001,
+        "format_only": 0.1,
+        "legitimate_good": 0.92,
+        "syntax_err_cap": 0.2,
+        "verdict": {
+          "max_cheat_score": 0.28,
+          "legitimate_good_score": 0.92,
+          "cheat_below_good": true,
+          "anti_gaming_cap_works": true,
+          "overall": "RESISTANT"
+        }
+      }
+    }
+  ],
+  "per_scenario": {
+    "Design Management": {
+      "excellent": {
+        "mean": 0.7071,
+        "count": 4
+      },
+      "good": {
+        "mean": 0.6471,
+        "count": 4
+      },
+      "mediocre": {
+        "mean": 0.6589,
+        "count": 4
+      },
+      "bad": {
+        "mean": 0.2,
+        "count": 4
+      },
+      "cheating": {
+        "mean": 0.7071,
+        "count": 4
+      }
+    },
+    "Layout": {
+      "excellent": {
+        "mean": 0.8223,
+        "count": 8
+      },
+      "good": {
+        "mean": 0.7623,
+        "count": 8
+      },
+      "mediocre": {
+        "mean": 0.626,
+        "count": 8
+      },
+      "bad": {
+        "mean": 0.2,
+        "count": 8
+      },
+      "cheating": {
+        "mean": 0.8223,
+        "count": 8
+      }
+    },
+    "Schematic": {
+      "excellent": {
+        "mean": 0.7531,
+        "count": 4
+      },
+      "good": {
+        "mean": 0.6931,
+        "count": 4
+      },
+      "mediocre": {
+        "mean": 0.5678,
+        "count": 4
+      },
+      "bad": {
+        "mean": 0.15,
+        "count": 4
+      },
+      "cheating": {
+        "mean": 0.7531,
+        "count": 4
+      }
+    },
+    "Others": {
+      "excellent": {
+        "mean": 0.7812,
+        "count": 4
+      },
+      "good": {
+        "mean": 0.7212,
+        "count": 4
+      },
+      "mediocre": {
+        "mean": 0.7137,
+        "count": 4
+      },
+      "bad": {
+        "mean": 0.2,
+        "count": 4
+      },
+      "cheating": {
+        "mean": 0.7812,
+        "count": 4
+      }
+    }
+  },
+  "tool_execution": {
+    "search_apis": {
+      "query": "dbCreateLib",
+      "n_results": 5,
+      "elapsed_ms": 19.97,
+      "first_result": "dbCreateLib"
+    },
+    "error": "'list' object has no attribute 'get'",
+    "all_tools_valid": true
+  },
+  "elapsed_seconds": 1.17,
+  "summary": {
+    "tasks_tested": 20,
+    "quality_levels": [
+      "excellent",
+      "good",
+      "mediocre",
+      "bad",
+      "cheating"
+    ],
+    "grpo_learnable": "LEARNABLE",
+    "grpo_signal_rate": 0.75,
+    "quality_separation_monotonic": false,
+    "validation_pass_rate": 1.0,
+    "cheat_resistance_rate": 1.0,
+    "tool_execution_valid": true,
+    "elapsed_seconds": 1.17,
+    "overall_verdict": "MOSTLY_READY"
+  }
+}

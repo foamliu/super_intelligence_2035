@@ -1,0 +1,91 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 90d90119d0..b22a237310 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -1326,7 +1326,15 @@ class Window(Expression):
+ 
+         params.extend(window_params)
+         template = template or self.template
+-
++        # On SQLite, DecimalField output requires a CAST to NUMERIC. If the
++        # source expression added this cast, it must wrap the whole window
++        # expression instead.
++        if connection.vendor == 'sqlite':
++            cast_start = 'CAST('
++            cast_end = ' AS NUMERIC)'
++            if expr_sql.startswith(cast_start) and expr_sql.endswith(cast_end):
++                expr_sql = expr_sql[len(cast_start):-len(cast_end)]
++                template = 'CAST(' + template + ' AS NUMERIC)'
+         return template % {
+             'expression': expr_sql,
+             'window': ''.join(window_sql).strip()
+diff --git a/tests/expressions_window/models.py b/tests/expressions_window/models.py
+index ce6f6621e9..930f2d15da 100644
+--- a/tests/expressions_window/models.py
++++ b/tests/expressions_window/models.py
+@@ -12,3 +12,9 @@ class Employee(models.Model):
+     hire_date = models.DateField(blank=False, null=False)
+     age = models.IntegerField(blank=False, null=False)
+     classification = models.ForeignKey('Classification', on_delete=models.CASCADE, null=True)
++
++
++class DecimalTest(models.Model):
++    modified = models.DateField()
++    data = models.FloatField()
++    amount = models.DecimalField(decimal_places=4, max_digits=7)
+diff --git a/tests/expressions_window/tests.py b/tests/expressions_window/tests.py
+index 30ed64f529..968457ca19 100644
+--- a/tests/expressions_window/tests.py
++++ b/tests/expressions_window/tests.py
+@@ -1,4 +1,5 @@
+ import datetime
++from decimal import Decimal
+ from unittest import mock, skipIf
+ 
+ from django.core.exceptions import FieldError
+@@ -13,7 +14,7 @@ from django.db.models.functions import (
+ )
+ from django.test import SimpleTestCase, TestCase, skipUnlessDBFeature
+ 
+-from .models import Employee
++from .models import DecimalTest, Employee
+ 
+ 
+ @skipUnlessDBFeature('supports_over_clause')
+@@ -878,3 +879,36 @@ class NonQueryWindowTests(SimpleTestCase):
+         msg = "Expression 'Upper' isn't compatible with OVER clauses."
+         with self.assertRaisesMessage(ValueError, msg):
+             Window(expression=Upper('name'))
++
++
++@skipUnlessDBFeature('supports_over_clause')
++class WindowDecimalFieldTests(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        DecimalTest.objects.bulk_create([
++            DecimalTest(modified=datetime.date(2020, 1, 1), data=1.0, amount='10.0000'),
++            DecimalTest(modified=datetime.date(2020, 1, 1), data=2.0, amount='20.0000'),
++            DecimalTest(modified=datetime.date(2020, 1, 1), data=3.0, amount='30.0000'),
++        ])
++
++    def test_lag_decimal_field(self):
++        qs = DecimalTest.objects.annotate(lag=Window(
++            expression=Lag('amount', 1),
++            partition_by=[F('modified')],
++            order_by=F('modified').asc(),
++        )).order_by('id')
++        self.assertSequenceEqual(
++            [(row.amount, row.lag) for row in qs],
++            [(Decimal('10.0000'), None), (Decimal('20.0000'), Decimal('10.0000')), (Decimal('30.0000'), Decimal('20.0000'))],
++        )
++
++    def test_sum_decimal_field(self):
++        qs = DecimalTest.objects.annotate(sum=Window(
++            expression=Sum('amount'),
++            partition_by=[F('modified')],
++            order_by=F('id').asc(),
++        )).order_by('id')
++        self.assertSequenceEqual(
++            [(row.amount, row.sum) for row in qs],
++            [(Decimal('10.0000'), Decimal('10.0000')), (Decimal('20.0000'), Decimal('30.0000')), (Decimal('30.0000'), Decimal('60.0000'))],
++        )

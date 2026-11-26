@@ -1,0 +1,87 @@
+{
+  "process": "planar",
+  "design_name": "invx1",
+  "device_sizing": "channel_width",
+  "gds_mapping": {
+    "poly":       {"layer": 1,  "datatype": 0},
+    "active":     {"layer": 2,  "datatype": 0},
+    "nwell":      {"layer": 3,  "datatype": 0},
+    "contact":    {"layer": 4,  "datatype": 0},
+    "metal1":     {"layer": 10, "datatype": 0},
+    "via1":       {"layer": 11, "datatype": 0},
+    "metal2":     {"layer": 12, "datatype": 0},
+    "via2":       {"layer": 13, "datatype": 0},
+    "metal3":     {"layer": 14, "datatype": 0}
+  },
+  "layer_functions": {
+    "poly":    "gate",
+    "active":  "diffusion",
+    "nwell":   "well",
+    "contact": "cut",
+    "metal1":  "routing",
+    "via1":    "cut",
+    "metal2":  "routing",
+    "via2":    "cut",
+    "metal3":  "routing"
+  },
+  "via_definitions": [
+    {"name": "via_cnt_sd_m1", "cut": "contact", "lower": "active",  "upper": "metal1", "cut_size": [0.08, 0.08], "spacing": [0.10, 0.10], "enclosure": [0.02, 0.02]},
+    {"name": "via1_m1_m2",    "cut": "via1",    "lower": "metal1",  "upper": "metal2", "cut_size": [0.10, 0.10], "spacing": [0.10, 0.10], "enclosure": [0.05, 0.05]},
+    {"name": "via2_m2_m3",    "cut": "via2",    "lower": "metal2",  "upper": "metal3", "cut_size": [0.10, 0.10], "spacing": [0.12, 0.12], "enclosure": [0.05, 0.05]}
+  ],
+  "global_nets": {
+    "VDD":  ["vdd", "VDD", "vcc"],
+    "VSS":  ["vss", "VSS", "gnd"],
+    "BODY": ["body", "VNW", "vpw"]
+  },
+  "design_rules": {
+    "min_width_poly":      0.05,
+    "min_spacing_poly":    0.07,
+    "min_width_m1":        0.06,
+    "min_spacing_m1":      0.07,
+    "min_width_m2":        0.08,
+    "min_spacing_m2":      0.08,
+    "min_enclosure_cnt":   0.02,
+    "min_area_active":     0.04
+  },
+  "device_models": {
+    "nmos": "nmos_planar_lvt",
+    "pmos": "pmos_planar_lvt"
+  },
+  "placement": {
+    "mode": "auto",
+    "template": "stdcell_planar_tmpl",
+    "boundary": {"width": 0.6, "height": 1.2},
+    "dummy_template": "dummy_planar_tmpl"
+  },
+  "routing": {
+    "grids": {
+      "m1_grid": {"layer": "metal1", "direction": "horizontal", "pitch": 0.20},
+      "m2_grid": {"layer": "metal2", "direction": "vertical",   "pitch": 0.20},
+      "m3_grid": {"layer": "metal3", "direction": "horizontal", "pitch": 0.30}
+    },
+    "grid_map": {
+      "metal1": "m1_grid",
+      "metal2": "m2_grid",
+      "metal3": "m3_grid"
+    },
+    "pin_template": "pin_tmpl_planar",
+    "pin_grid": "m1_grid",
+    "vdd_connector": "vdd_conn_planar",
+    "vss_connector": "vss_conn_planar"
+  },
+  "netlist": {
+    "mode": "verilog",
+    "files": ["netlist/invx1.v"]
+  },
+  "cell_list": ["invx1"],
+  "gds_output": "output/invx1.gds",
+  "parameter_source": {
+    "gds_mapping": "pdk",
+    "rules": "pdk",
+    "via_geometry": "pdk",
+    "device_geometry": "pdk",
+    "placement_geometry": "user",
+    "routing_grid": "pdk"
+  }
+}

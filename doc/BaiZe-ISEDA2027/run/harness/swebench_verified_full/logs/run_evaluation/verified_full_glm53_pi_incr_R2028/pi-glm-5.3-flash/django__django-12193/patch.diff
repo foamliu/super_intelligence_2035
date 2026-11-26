@@ -1,0 +1,40 @@
+diff --git a/django/forms/widgets.py b/django/forms/widgets.py
+index 6fe220be..d83d63c1 100644
+--- a/django/forms/widgets.py
++++ b/django/forms/widgets.py
+@@ -522,9 +522,7 @@ class CheckboxInput(Input):
+ 
+     def get_context(self, name, value, attrs):
+         if self.check_test(value):
+-            if attrs is None:
+-                attrs = {}
+-            attrs['checked'] = True
++            attrs = {**(attrs or {}), 'checked': True}
+         return super().get_context(name, value, attrs)
+ 
+     def value_from_datadict(self, data, files, name):
+diff --git a/tests/postgres_tests/test_array.py b/tests/postgres_tests/test_array.py
+index 481d93f8..6343f487 100644
+--- a/tests/postgres_tests/test_array.py
++++ b/tests/postgres_tests/test_array.py
+@@ -1001,6 +1001,20 @@ class TestSplitFormField(PostgreSQLSimpleTestCase):
+             </tr>
+         ''')
+ 
++    def test_checkbox_checked(self):
++        class SplitForm(forms.Form):
++            array = SplitArrayField(forms.BooleanField(required=False), size=2, initial=[True, False])
++
++        self.assertHTMLEqual(str(SplitForm()), '''
++            <tr>
++                <th><label for="id_array_0">Array:</label></th>
++                <td>
++                    <input id="id_array_0" name="array_0" type="checkbox" required checked>
++                    <input id="id_array_1" name="array_1" type="checkbox" required>
++                </td>
++            </tr>
++        ''')
++
+     def test_invalid_char_length(self):
+         field = SplitArrayField(forms.CharField(max_length=2), size=3)
+         with self.assertRaises(exceptions.ValidationError) as cm:

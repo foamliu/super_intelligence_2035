@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 项目日报 · 2026-10-10</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdebd0;border-left:4px solid #e67e22;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>BaiZe 项目日报 · 2026-10-10</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-10 16:50 · 覆盖五线：pretrain / data / vision / harness / zhulong</p>
+
+<div class='info'><strong>TL;DR</strong>：<strong>P-8 正式预训练今日 16:03 启动</strong>（Mamba2-hybrid 2.22B · 44B · dist_muon · 248K tok/s，ETA ≈2 天）——这是 BaiZe 从「准备」进入「正式训练」的里程碑。数据层全就绪（R3 分词 110/110 + 污染 0 命中 + GPIC 全完成），唯一在途的是 en_v1_4 大件下载（ETA ~5.5 天，44B 档非阻塞）。vision 的 scaling 公平性重做已经翻案——E1fair ProtB 从 29.35% → <strong>62.34%（+33pp）</strong>，E2fair 训练至 80.8%。harness 7×300 跑到 69.7%，workdir 隔离已连续 26 轮零阻塞。</div>
+
+<h2>1. 各线状态总览</h2>
+<table><tr><th>线</th><th>阶段</th><th>最新进展</th><th>状态</th></tr>
+<tr><td class='blue'>pretrain</td><td>P-8 正式预训练</td><td>44B 已启动，step 40/10490，loss 8.38↓，248K tok/s</td><td class='green'>🚀 运行中</td></tr>
+<tr><td class='blue'>data</td><td>投料准备收尾</td><td>en_v1_4 918/56461（74GB）；R3/污染/GPIC 全就绪</td><td class='amber'>🟠 下载中</td></tr>
+<tr><td class='blue'>vision</td><td>Scaling fair rerun</td><td>E1fair DONE（ProtB 62.34%），E2fair 80.8%</td><td class='green'>✅ 训练中</td></tr>
+<tr><td class='blue'>harness</td><td>7×300 评测</td><td>1463/2100（69.7%），workdir block=0 连 26 轮</td><td class='green'>✅ 运行中</td></tr>
+<tr><td class='blue'>zhulong</td><td>C1.full r2_new</td><td>沙盒 host 修复 4/4 过，r2_new 启动</td><td class='green'>✅ 运行中</td></tr>
+</table>
+
+<h2>2. Pretrain —— P-8 正式预训练启动 ✅</h2>
+<div class='ok'><strong>里程碑</strong>：P-8 于 <strong>16:03:26</strong> 正式启动（撤销了此前的暂缓令），从零训练 Mamba2-hybrid <strong>2.22B</strong>，目标 <strong>44B token</strong>（Chinchilla 下限）。</div>
+<table><tr><th>项</th><th>值</th></tr>
+<tr><td>模型 / 数据</td><td>Mamba2-hybrid 2.22B（3.00B 总参 = 2.47B transformer + 0.53B embedding）· 真实语料从零开始</td></tr>
+<tr><td>优化器 / 调度</td><td><code>dist_muon</code>（默认）· LR 1e-3 · WSD（warmup 5% / stable 85% / decay 10%）</td></tr>
+<tr><td>并行 / 精度</td><td>TP1·DP8 · GBS1024 · MBS2 · seq4096 · bf16</td></tr>
+<tr><td>首 40 步</td><td>loss：step10=11.73 → step40=8.38（单调↓）；grad_norm 12.85→6.23；0 NaN / 0 skip</td></tr>
+<tr><td>吞吐 / 显存</td><td>248K tok/s（符合 249K 预期）· 52-53GB/card（80GB 内安全）</td></tr>
+<tr><td>ETA</td><td>≈2.05 天</td></tr>
+</table>
+<div class='note'><strong>今日新增优化机会（MBS 2→3）</strong>：实测显存 51/79GB 有 28GB 余量，已下发「MBS 2→3 A/B 验证」指令（候选 <code>GBS=1032</code>）。<strong>三判据</strong>：吞吐 ≥1.12×（279K）· 峰值显存 ≤76GB · loss 一致，三全过才切（切换后重算 44B = 10,409 步）。当前 P-8 已创建 <code>baize_p8_decay.sh</code>（step-9441 起切 SFT 64% 退火）。</div>
+
+<h2>3. Data —— 投料准备收尾，en_v1_4 大件下载中</h2>
+<table><tr><th>项</th><th>状态</th></tr>
+<tr><td>R3 全量分词</td><td class='green'>✅ 110/110（1483.91B tok / 5.94TB）</td></tr>
+<tr><td>污染扫描</td><td class='green'>✅ 累计 220K docs 全部 0 命中（评集不同源 + 跨集去重）</td></tr>
+<tr><td>GPIC 视觉数据</td><td class='green'>✅ train 8000 + val 32 + test 128 全完成</td></tr>
+<tr><td>base 主体（en/l1_en_hq/zh/ultrax 分词）</td><td class='green'>✅ 存量 web ≈502B token（远覆盖 44B 档 31.7B 需求）</td></tr>
+<tr><td>en_v1_4（CC-MAIN 110 快照 6.75TB）</td><td class='amber'>🟠 918/56461 parquet（74GB），snapshot 2/110</td></tr>
+</table>
+<div class='note'><strong>en_v1_4 下载提速</strong>：今日从 sequential 改 <strong>parallel（8 workers + hf_transfer）</strong>，~4× 加速至 ~7 files/min，ETA ≈5.5 天。已清理 orphan + stale .lock。⚠️ <strong>注意</strong>：data 线仍自标「en_v1_4 阻塞 P-8 投料」，但运维口径已明确 <strong>44B 档无需等 en_v1_4</strong>（存量 web 502B 已覆盖），en_v1_4 完成后并入后续 100B 档。</div>
+
+<h2>4. Vision —— Scaling 公平性重做翻案 ✅</h2>
+<div class='known' style='background:#f5eef8;border-left:4px solid #8e44ad;padding:10px 15px;margin:15px 0;border-radius:4px'><strong>今日最大反转</strong>：旧「Bigger is WORSE（Δlp=−5.59pp）」被证实是 <strong>schedule 公平性缺陷</strong>（warmup 仅 0.01%），已作废重做。<u>新结论彻底翻案</u>：更大模型（E1fair ProtB 512 → 768 hidden）从 29.35% 跃升至 <strong>62.34±0.01%（+33.0pp）</strong>。</div>
+<table><tr><th>项</th><th>值</th></tr>
+<tr><td>E1fair（187,101 步）</td><td class='green'>✅ TRAIN+EVAL DONE：ProtB lp=62.34±0.01%（+33.0pp vs old 29.35%）· ProtA lp=49.70%（+30.0pp vs old 19.70%）· final_loss 0.2545 无 collapse</td></tr>
+<tr><td>E2fair</td><td>🟠 TRAINING（step ~151,150/187,101 ≈80.8%），503 PROBE all OK，lr=9.06e-05 cosine，C1~0.44-0.65</td></tr>
+<tr><td>ETA</td><td>E2fair train done ~18:00 → eval ~3.5h → 全部完成 ~21:30</td></tr>
+</table>
+<p><small>新配方：warmup=2000 / lr=5e-4 / cosine / min_lr=5e-5 / 两臂同冻结数据快照；已修复 r9_train.py 的 cosine 支持 + sympy 1.14.0 兼容。</small></p>
+
+<h2>5. Harness —— 7×300 评测推进（69.7%）</h2>
+<table><tr><th>题集</th><th>进度</th><th>备注</th></tr>
+<tr><td>整体</td><td class='blue'><strong>1463/2100（69.7%）</strong></td><td>+22 since R255（37min，~0.59/min）</td></tr>
+<tr><td>codex</td><td class='green'>300/300 ✅ DONE</td><td>re-running 69 blocked</td></tr>
+<tr><td>opencode</td><td>212（48 done）</td><td>ETA 10.3h</td></tr>
+<tr><td>pi</td><td>201（48 done）</td><td>ETA 11.7h</td></tr>
+<tr><td>cline</td><td>205（47 done）</td><td>ETA 12.4h</td></tr>
+<tr><td>deepseek</td><td>191（35 done）</td><td>ETA 14.2h</td></tr>
+<tr><td>claude</td><td>186（43 done）</td><td>ETA 18.5h</td></tr>
+<tr><td>hermes</td><td class='amber'>168（46 done）← 瓶颈</td><td>ETA 26.8h</td></tr>
+</table>
+<div class='ok'><strong>关键效果验证</strong>：workdir per-harness 隔离 + rootfs flock 锁已连续 <strong>26 轮（R231→R256）零 workdir 阻塞</strong>。当前 104 blocked 的根因是 <strong>rootfs git-fetch HTTP 503</strong>（代理），非 workdir 冲突——隔离修复持续有效。分档并发（N=1→2→3）监控中，GPU 98-100%（被 pretrain 占用，harness 无 GPU 冲突）。</div>
+<p><small>整体 ETA：hermes 瓶颈 ~26.8h（约 Oct 11 19:00 全完成）。323 resolved / 1029 pbf / 104 blocked + 6 quota + 1 no-patch。</small></p>
+
+<h2>6. Zhulong —— C1.full r2_new 启动 ✅</h2>
+<div class='ok'>修复 <code>exec_code.py</code> + <code>run_on_sandbox.py</code> 缺失 host 字段 → 新沙盒实测 <strong>4/4 全过</strong> → r2_new 启动（PID 2953852，canary PASS，0 Forbidden）。巡检确认 r2_new 运行中、code-gen 推进中。</div>
+
+<h2>7. 今日关键指令 / 事件</h2>
+<table><tr><th>时间</th><th>事件</th></tr>
+<tr><td>16:44</td><td><strong>指令</strong>：MBS 2→3 A/B 验证（候选 GBS=1032 + 三判据达标才切）下发 pretrain 线</td></tr>
+<tr><td>16:03</td><td>P-8 正式预训练启动（撤销暂缓令，44B，dist_muon，WSD）</td></tr>
+<tr><td>15:00 前</td><td><strong>指令</strong>：撤 P-8 暂缓令 + 按计划书启动（两段配比，勘误 86:10:4→88:8:4）</td></tr>
+<tr><td>——</td><td>data#296：en_v1_4 sequential→parallel 提速（4×）</td></tr>
+<tr><td>——</td><td>vision：scaling 公平性 push（旧 Bigger-as-Worse 翻案）</td></tr>
+<tr><td>——</td><td>zhulong：C1.full 沙盒 host 修复 + r2_new 启动</td></tr>
+</table>
+
+<h2>8. 明日关注 / 风险</h2>
+<ul>
+<li>🟠 <strong>P-8 MBS A/B 验证</strong>：需在下一个 save-interval（1049 步）点优雅暂停 ~2.5h 跑 A/B → 按三判据决定是否切 MBS3/GBS1032。这是当前最需盯的一环。</li>
+<li>🟠 <strong>vision E2fair</strong>：~21:30 应出 eval lp 结果，填 §8.2 Δlp，写 scaling fair 报告；若 E2 也翻案则进一步坐实「Bigger is BETTER」。</li>
+<li>🟠 <strong>harness hermes（瓶颈）</strong>：ETA ~Oct 11 19:00；结束后需 re-run 104 blocked 到零，再生成 7×300 HTML 报告。</li>
+<li>🟢 <strong>data en_v1_4</strong>：ETA ~5.5 天，非 44B 档阻塞；下载完成须过 check_contamination.py 再报完成。</li>
+<li>🟢 <strong>zhulong C1.full r2_new</strong>：巡检确认 code-gen 无卡点。</li>
+</ul>
+
+<footer>BaiZe-ISEDA2027 · 日报 report_10_10.html · 数据来源：各线 MEMORY / daily-memories / git log（截至 2026-10-10 16:50）· 生成：Cline（not 训练线 agent）</footer>
+</body></html>

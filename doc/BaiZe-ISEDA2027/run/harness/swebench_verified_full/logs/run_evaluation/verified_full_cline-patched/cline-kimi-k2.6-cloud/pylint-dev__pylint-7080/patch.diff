@@ -1,0 +1,68 @@
+diff --git a/pylint/lint/expand_modules.py b/pylint/lint/expand_modules.py
+index 5cacc037..130aaf42 100644
+--- a/pylint/lint/expand_modules.py
++++ b/pylint/lint/expand_modules.py
+@@ -5,6 +5,7 @@
+ from __future__ import annotations
+ 
+ import os
++import pathlib
+ import sys
+ from collections.abc import Sequence
+ from re import Pattern
+@@ -56,7 +57,9 @@ def _is_ignored_file(
+     return (
+         basename in ignore_list
+         or _is_in_ignore_list_re(basename, ignore_list_re)
+-        or _is_in_ignore_list_re(element, ignore_list_paths_re)
++        or _is_in_ignore_list_re(
++            pathlib.PureWindowsPath(element).as_posix(), ignore_list_paths_re
++        )
+     )
+ 
+ 
+@@ -140,9 +143,9 @@ def expand_modules(
+             ):
+                 if filepath == subfilepath:
+                     continue
+-                if _is_in_ignore_list_re(
+-                    os.path.basename(subfilepath), ignore_list_re
+-                ) or _is_in_ignore_list_re(subfilepath, ignore_list_paths_re):
++                if _is_ignored_file(
++                    subfilepath, ignore_list, ignore_list_re, ignore_list_paths_re
++                ):
+                     continue
+ 
+                 modpath = _modpath_from_file(
+diff --git a/tests/lint/unittest_expand_modules.py b/tests/lint/unittest_expand_modules.py
+index 15f72d0c..6bdbdfdd 100644
+--- a/tests/lint/unittest_expand_modules.py
++++ b/tests/lint/unittest_expand_modules.py
+@@ -10,7 +10,11 @@ from pathlib import Path
+ import pytest
+ 
+ from pylint.checkers import BaseChecker
+-from pylint.lint.expand_modules import _is_in_ignore_list_re, expand_modules
++from pylint.lint.expand_modules import (
++    _is_ignored_file,
++    _is_in_ignore_list_re,
++    expand_modules,
++)
+ from pylint.testutils import CheckerTestCase, set_config
+ from pylint.typing import MessageDefinitionTuple
+ 
+@@ -26,6 +30,14 @@ def test__is_in_ignore_list_re_match() -> None:
+     assert _is_in_ignore_list_re("src/tests/whatever.xml", patterns)
+ 
+ 
++def test__is_ignored_file_with_backslash_paths() -> None:
++    """Test that ignore-paths patterns with forward slashes match backslash paths."""
++    patterns = [re.compile(r"^src/gen/.*$")]
++    assert _is_ignored_file(r"src\gen\about.py", [], [], patterns)
++    assert not _is_ignored_file(r"src\other.py", [], [], patterns)
++    assert _is_ignored_file("src/gen/about.py", [], [], patterns)
++
++
+ TEST_DIRECTORY = Path(__file__).parent.parent
+ INIT_PATH = str(TEST_DIRECTORY / "lint/__init__.py")
+ EXPAND_MODULES = str(TEST_DIRECTORY / "lint/unittest_expand_modules.py")

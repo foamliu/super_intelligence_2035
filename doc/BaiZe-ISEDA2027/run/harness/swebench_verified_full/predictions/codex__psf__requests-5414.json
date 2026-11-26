@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "psf__requests-5414",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/requests/adapters.py b/requests/adapters.py\nindex fe22ff4..a1e4700 100644\n--- a/requests/adapters.py\n+++ b/requests/adapters.py\n@@ -20,6 +20,7 @@ from urllib3.exceptions import ClosedPoolError\n from urllib3.exceptions import ConnectTimeoutError\n from urllib3.exceptions import HTTPError as _HTTPError\n from urllib3.exceptions import InvalidHeader as _InvalidHeader\n+from urllib3.exceptions import LocationParseError\n from urllib3.exceptions import MaxRetryError\n from urllib3.exceptions import NewConnectionError\n from urllib3.exceptions import ProxyError as _ProxyError\n@@ -518,6 +519,9 @@ class HTTPAdapter(BaseAdapter):\n \n             raise ConnectionError(e, request=request)\n \n+        except LocationParseError as e:\n+            raise InvalidURL(e, request=request)\n+\n         except ClosedPoolError as e:\n             raise ConnectionError(e, request=request)\n \n"
+  }
+]

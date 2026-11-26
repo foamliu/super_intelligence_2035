@@ -1,0 +1,12 @@
+{
+  "harness": "opencode",
+  "run_id": "verified_full_glm53_opencode_incr_R2185",
+  "round": "R2185",
+  "n": 2,
+  "resolved": [
+    "sphinx-doc__sphinx-7440",
+    "sphinx-doc__sphinx-7454"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

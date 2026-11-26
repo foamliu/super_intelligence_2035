@@ -1,0 +1,98 @@
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d7..89a074ff 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,7 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, translate, _words_group, decode_ascii
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -547,12 +547,14 @@ class Card(_Verify):
+     @classmethod
+     def fromstring(cls, image):
+         """
+-        Construct a `Card` object from a (raw) string. It will pad the string
+-        if it is not the length of a card image (80 columns).  If the card
+-        image is longer than 80 columns, assume it contains ``CONTINUE``
+-        card(s).
++        Construct a `Card` object from a (raw) string or byte string. It will
++        pad the string if it is not the length of a card image (80 columns).
++        If the card image is longer than 80 columns, assume it contains
++        ``CONTINUE`` card(s).
+         """
+ 
++        if isinstance(image, bytes):
++            image = decode_ascii(image)
+         card = cls()
+         card._image = _pad(image)
+         card._verified = False
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d5..22102e91 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,8 +334,8 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
+-           String containing the entire header.
++        data : str or bytes
++           String or byte string containing the entire header.
+ 
+         sep : str, optional
+             The string separating cards from each other, such as a newline.  By
+@@ -348,6 +348,8 @@ class Header:
+             A new `Header` instance.
+         """
+ 
++        if isinstance(data, bytes):
++            data = decode_ascii(data)
+         cards = []
+ 
+         # If the card separator contains characters that may validly appear in
+diff --git a/astropy/io/fits/tests/test_bytes_fromstring.py b/astropy/io/fits/tests/test_bytes_fromstring.py
+new file mode 100644
+index 00000000..ed80d09b
+--- /dev/null
++++ b/astropy/io/fits/tests/test_bytes_fromstring.py
+@@ -0,0 +1,36 @@
++import astropy.io.fits as fits
++
++
++class TestBytesFromstring:
++    def test_card_fromstring_bytes(self):
++        c = fits.Card.fromstring(b'ABC     = F')
++        assert c.value is False
++
++        c = fits.Card.fromstring(b'ABC     =                    T')
++        assert c.value is True
++
++    def test_header_fromstring_bytes(self):
++        # Build cards padded to 80 characters each
++        cards = [
++            'SIMPLE  =                    T / Standard FITS'.ljust(80),
++            'BITPIX  =                    8 / Number of bits per pixel'.ljust(80),
++            'NAXIS   =                    0 / Number of axes'.ljust(80),
++            'END' + ' ' * 77,
++        ]
++        hstr = ''.join(cards)
++        header = fits.Header.fromstring(hstr.encode('ascii'))
++        assert header['SIMPLE'] is True
++        assert header['BITPIX'] == 8
++        assert header['NAXIS'] == 0
++
++    def test_header_fromstring_bytes_with_sep(self):
++        hstr = (
++            b'SIMPLE  =                    T / Standard FITS\n'
++            b'BITPIX  =                    8 / Number of bits per pixel\n'
++            b'NAXIS   =                    0 / Number of axes\n'
++            b'END'
++        )
++        header = fits.Header.fromstring(hstr, sep='\n')
++        assert header['SIMPLE'] is True
++        assert header['BITPIX'] == 8
++        assert header['NAXIS'] == 0

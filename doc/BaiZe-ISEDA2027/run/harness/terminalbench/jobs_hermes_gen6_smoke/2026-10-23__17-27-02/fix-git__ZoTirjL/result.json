@@ -1,0 +1,122 @@
+{
+    "id": "5eef2c3c-f38a-4d6d-881b-190b81e310bd",
+    "task_name": "fix-git",
+    "trial_name": "fix-git__ZoTirjL",
+    "trial_uri": "file:///nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_hermes_gen6_smoke/2026-10-23__17-27-02/fix-git__ZoTirjL",
+    "task_id": {
+        "path": "/tmp/tb_hermes_gen6_smoke_CLhgcs/fix-git"
+    },
+    "source": "tb_hermes_gen6_smoke_CLhgcs",
+    "task_checksum": "7fa0a681f751d73f290d862522a82a5e448fa529834987ee1b80e5665c51aa7e",
+    "config": {
+        "task": {
+            "path": "/tmp/tb_hermes_gen6_smoke_CLhgcs/fix-git",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "tb_hermes_gen6_smoke_CLhgcs"
+        },
+        "trial_name": "fix-git__ZoTirjL",
+        "trials_dir": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/jobs_hermes_gen6_smoke/2026-10-23__17-27-02",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "terminalbench.agents.hermes:HermesTB",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "stream": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [
+                "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml"
+            ],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "f233876c-0345-4afd-9f6d-240c32fac3c8",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "hermes",
+        "version": "Hermes Agent v0.19.0 (2026.7.20)\nInstall directory: /usr/local/lib/python3.13/site-packages\nInstall method: pip\nPython: 3.13.7\nOpenAI SDK: 2.24.0\nUp to date",
+        "model_info": null
+    },
+    "agent_result": {
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null,
+        "model_usage": null,
+        "rollout_details": null,
+        "metadata": {
+            "stdout": "API call failed after 3 retries: HTTP 503 — ERROR: The requested URL could not be retrieved\n",
+            "stderr": "",
+            "exit_code": 0
+        }
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 0.0
+        }
+    },
+    "verifier_environment_mode": "shared",
+    "exception_info": null,
+    "started_at": "2026-10-23T09:27:02.806569Z",
+    "finished_at": "2026-10-23T09:35:35.980943Z",
+    "environment_setup": {
+        "started_at": "2026-10-23T09:27:02.846411Z",
+        "finished_at": "2026-10-23T09:27:04.309577Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-10-23T09:27:04.309699Z",
+        "finished_at": "2026-10-23T09:34:20.203324Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-10-23T09:34:20.203525Z",
+        "finished_at": "2026-10-23T09:35:15.525072Z"
+    },
+    "verifier": {
+        "started_at": "2026-10-23T09:35:16.242560Z",
+        "finished_at": "2026-10-23T09:35:24.996898Z"
+    },
+    "step_results": null
+}

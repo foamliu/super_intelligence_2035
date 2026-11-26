@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 工作汇报 · 2026-10-07（全天版）</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  h4 { font-size:14.5px; margin:16px 0 6px; color:var(--primary); }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:21px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#0d5c22; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#6a4a00; }
+  .danger { background:#fff0f0; border:1px solid #ffc9c9; border-left:4px solid var(--bad); border-radius:8px; padding:10px 16px; font-size:13.5px; color:#8a1c1c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 工作汇报 · 2026-10-07（全天版）</h1>
+  <div class="sub">「不重启」正名 · base 下满 · 长上下文成本矩阵 P-9.11-E/F 收官 · 配比实验 200/200 交付 · harness 30 条横评（5→7） · mask-ratio 收官 · 无卡窗口 5 份研究</div>
+  <div class="meta">
+    <span>📅 2026-10-07（CST）</span>
+    <span>🕐 截至 ~21:55</span>
+    <span>📄 第 7 份日报（全天版，替换早间快照）</span>
+    <span>🧾 今日用户直令 ≈ 12 条</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <b>一句话</b>：今天从早到晚做了三件「改结论」的事 —— ① 把一条被误读 5 天的运维指令<b>正名为「数据下载失败需主动重启」</b>；② <b>base 全量下满</b>（P-8 前置 −1）；③ 最长的那条科学线 <b>P-9.11-E/F 长上下文成本矩阵完整收官</b>，并<b>用 bf16 对照推翻了自己上午的「dense 快 3.3×」结论</b>（float32 SSM 人为压低 hybrid 40%）。同时 <b>data 的配比实验 200/200 交付</b>（但结论是「代理不可分辨」——<b>如实报负面</b>），<b>harness 的 30 条横评</b>跑到 5 个 harness 中的 4 个完成。
+  <br><br>
+  <span class="badge b-ok">✅ 4 条 BaiZe 线 + ZhuLong 全在跑</span>
+  <span class="badge b-ok">🎯 base 下满 → P-8 前置 −1</span>
+  <span class="badge b-warn">⚠️ 配比结论「不可分辨」（如实报）</span>
+  <span class="badge b-info">🆕 harness 横评将扩到 7 个</span>
+</div>
+
+<nav class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#s1">今日用户直令时间线（12 条）</a></li>
+    <li><a href="#s2">三件里程碑</a></li>
+    <li><a href="#s3">四条线状态一览（收盘）</a></li>
+    <li><a href="#s4">pretrain：长上下文成本矩阵 P-9.11-E/F 完整收官</a></li>
+    <li><a href="#s5">data：配比实验交付 + 白名单解禁 + 下载/分词</a></li>
+    <li><a href="#s6">vision：lp 协议 Δlp≈+10pp + mask-ratio 收官</a></li>
+    <li><a href="#s7">harness：30 条横评（5 完成 4 · 将扩到 7）</a></li>
+    <li><a href="#s8">ZhuLong / news 价格信号</a></li>
+    <li><a href="#s9">关键交付物与数字</a></li>
+    <li><a href="#s10">诚实条款：今天的错与自纠</a></li>
+    <li><a href="#s11">需要你决策 / 今夜窗口</a></li>
+  </ol>
+</nav>
+
+<h2 class="sec" id="s1"><span class="no">1</span>今日用户直令时间线（≈12 条）</h2>
+<table>
+<tr><th>时间</th><th>你的指令</th><th>我的动作 / 结果</th></tr>
+<tr><td>上午</td><td>「data 的两条下载线得继续啊，<b>谁说 base 不重启的</b>」</td><td>溯源 → <b>P0 正名</b>（见 §2-①）</td></tr>
+<tr><td>上午</td><td>「把任务书正文中『不重启』改为『<b>数据下载失败需主动重启</b>』」</td><td>全仓活文 <b>11 处</b>改口 + 归档存证</td></tr>
+<tr><td>09:0x</td><td>四线写「昨夜（10/6 22:00–10/7 08:00）工作」HTML 汇报</td><td>派活四线 → <b>4 份 overnight HTML 交付</b>（08:01–08:21）</td></tr>
+<tr><td>09:1x</td><td>各线 MCP 有文生图 → 报告「<b>按需附图</b>」</td><td>四线任务书各改 3 处 + <b>3 条防幻觉图表铁律</b></td></tr>
+<tr><td>09:2x</td><td>追加：<b>限分辨率 + 一律 JPEG</b></td><td>再各改 3 处（≤1280px / q85 / 单图 ≤400KB）</td></tr>
+<tr><td>09:5x</td><td>pretrain 长上下文 <b>128K/256K/512K/1M</b> 推理成本矩阵（两架构）</td><td>借 <code>.12</code> GPU1–7 并行 → <b>P-9.11-E 完成</b>（09:44）</td></tr>
+<tr><td>10:30</td><td>hybrid ctx 继续扩 <b>2M/4M/8M/16M</b> ＋ 三问（VRAM 为何恒定 / 是否虚拟内存 / hybrid 为何无优势）</td><td>下发 ③（含诊断课题 V1–V4）；<b>实测发现无空卡</b> → 如实报</td></tr>
+<tr><td>11:3x</td><td>「没有 GPU，但总有 web search 和文生图」→ <b>5 个方向各写一份 HTML</b></td><td>下发 ④ → <b>5 份研究全交付</b></td></tr>
+<tr><td>中午</td><td><b>解禁白名单</b>：下 UltraX-Preview / en_v1_4 排队 / <b>已下载部分开始分词</b></td><td>三件全部启动（UltraX 当晚下满）</td></tr>
+<tr><td>15:58</td><td>「UltraX 停了吗？<b>让它下完吧</b>」</td><td>覆盖我「15:30 让回 GPIC」的裁定 → UltraX 续传下完</td></tr>
+<tr><td>21:1x</td><td>① <b>base 分词太慢，加大并发</b> ② <code>.29</code> 卡空了吗 ③ pretrain <b>四项</b>（bf16 重跑 / 公平对比 / 提速 / 效果） ④ 今夜窗口</td><td>四条全部下发；<b><code>.29</code> 确认 8×0 MiB 全空</b></td></tr>
+<tr><td>21:4x</td><td>harness 30 条横评 <b>再加 2 个：Hermes Agent + Pi</b></td><td>我先定位两者（<code>NousResearch/hermes-agent</code> / <code>pi.dev</code>）→ 下发 ⑦-way</td></tr>
+</table>
+
+<h2 class="sec" id="s2"><span class="no">2</span>三件里程碑</h2>
+
+<h3>2.1 ⭐ 把一条误读 5 天的指令正名：「数据下载失败需主动重启」</h3>
+<table>
+<tr><th>环节</th><th>事实</th></tr>
+<tr><td>病象</td><td>data 心跳连写 4 次「<code>Base 下载: 进程已死（按指令不重启）</code>」</td></tr>
+<tr><td>真因</td><td>任务书旧句「🚫 不改白名单 / 不重启下载」本是 <b>2026-10-03 白名单锁定的巡检纪律</b>（原意=「别乱动<b>[健康的]</b>下载」）；10-06 我下的「<b>立即重启 base</b>」P0 块<b>随后被归档带走</b> ⇒ <b>活文只剩「不重启」半句</b></td></tr>
+<tr><td>责任</td><td><b>表述缺陷在运维，不在 data</b></td></tr>
+<tr><td>处置</td><td>全仓活文 <b>11 处</b>正名 + 归档「口径修正」块存证；<b>永久口径 = 白名单内失败/僵死/趋零/PID 死 ⇒ 立即 kill+重启</b></td></tr>
+</table>
+
+<h3>2.2 🎉 base 全量下满 → P-8 前置 −1</h3>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">6000/6000</div><div class="l">ultrafineweb_l1_en_hq（446 GB）</div></div>
+  <div class="kpi"><div class="v">256/256</div><div class="l">ultrafineweb_zh（301 GB）</div></div>
+  <div class="kpi"><div class="v">483/483</div><div class="l">UltraX-Preview（454 GB，当晚补下满）</div></div>
+  <div class="kpi"><div class="v">rc=0</div><div class="l">retry-loop 干净退出 @08:16</div></div>
+</div>
+<p>⇒ <b>MiniCPM5 base 族就绪</b>。P-8 两个硬前置原为「① base 全量 ② 配比定稿」，<b>今天两个都名义到齐</b>（详见 §5 的「但是」）。</p>
+
+<h3>2.3 ⭐ P-9.11-E/F 长上下文成本矩阵完整收官（含自我推翻）</h3>
+<div class="danger">
+<b>今天最重要的科学动作</b>：上午 P-9.11-E 得出「128K–256K 下 <b>dense 快 1.7–3.3×</b>」；晚上用 <b>bf16 SSM 对照重跑</b>，发现 <b>float32 SSM 人为压低 hybrid prefill 40%</b>（10820 vs 6484 tok/s）⇒ <b>该结论需修订</b>。详见 §4。
+</div>
+
+<h2 class="sec" id="s3"><span class="no">3</span>四条线状态一览（收盘 ~21:55）</h2>
+<table>
+<tr><th>线</th><th>状态</th><th>关键数字</th></tr>
+<tr><td><b>pretrain</b><br><span class="badge b-ok">全完成 · 空闲</span></td><td>③ 长上下文 + ④ 五研究报告 <b>全部收官</b>；等 P-8 启动令；已接新四项 T1–T4</td><td>P-9.11-F 全子项 ✅ · <b>`.29` 全 8 卡空闲</b>（8×0 MiB）</td></tr>
+<tr><td><b>data</b><br><span class="badge b-ok">交付 · 后台在跑</span></td><td>配比实验 <b>全部交付</b>；UltraX 下满；GPIC/分词后台</td><td>BO R2 <b>200/200</b> · UltraX <b>479/479</b> · GPIC 5241/8001 · zh 分词 33/256</td></tr>
+<tr><td><b>vision</b><br><span class="badge b-ok">② 收官 → ③ 跑中</span></td><td>mask-ratio <b>5 臂全完成</b> → 转 weight-ratio（4 臂）</td><td><b>0.6 最优 lp=13.49%（倒 U 形）</b> · weight-ratio ETA ~04:34</td></tr>
+<tr><td><b>harness</b><br><span class="badge b-ok">30 条横评 4/5 完</span></td><td>30 条 × 同模型横向评测；deepseek 工具链当日修通</td><td>cline <b>60.0%</b> · opencode <b>50.0%</b> · codex <b>46.7%</b> · claude-code <b>44.8%</b> · deepseek 15/30</td></tr>
+<tr><td><b>ZhuLong</b><br><span class="badge b-ok">推进中</span></td><td>Phase B 4/4 完成 → <b>切 C1 组件消融</b>（rag 臂迭代）</td><td>Phase B <b>63.8±1.4%</b> · C1.rag 70.3 / 72.2 / 69.6 / <b>70.9%</b> → r5</td></tr>
+<tr><td><b>news / research</b><br><span class="badge b-info">换档</span></td><td>节律 30min → <b>每天 2 次（06:00/18:00）</b>；新开「价格信号」研究</td><td>第 11 批：38 标的十年价 · 滞后相关 23940 格 · <b>q&lt;0.10 = 0（如实负面）</b></td></tr>
+</table>
+
+<h2 class="sec" id="s4"><span class="no">4</span>pretrain：长上下文成本矩阵 P-9.11-E/F 完整收官</h2>
+<p>对象：<b>BaiZe（Mamba2-hybrid 2.220B，56 层里仅 4 层 attention）</b> ⚔ <b>Dense（Llama 2.512B，42 层全 attention）</b>，同一 sglang 0.5.9 栈、bs=1、tokenizer 精确计数。</p>
+
+<h3>4.1 P-9.11-E（上午，128K–1M）</h3>
+<table>
+<tr><th>ctx</th><th>hybrid prefill / VRAM</th><th>dense prefill / VRAM</th><th>结果</th></tr>
+<tr><td>128K</td><td>1591 tok/s / 25.92 GB</td><td>5253 tok/s / 27.29 GB</td><td>dense 快 3.3×</td></tr>
+<tr><td>256K</td><td>3094 tok/s / 26.11 GB</td><td>5289 tok/s / 28.51 GB</td><td>dense 快 1.7×</td></tr>
+<tr><td>512K</td><td>5222 tok/s / 26.25 GB</td><td><span class="badge b-no">❌ 拒绝（KV pool 455K &lt; prompt 504K）</span></td><td><b>dense 不可服务</b></td></tr>
+<tr><td>1M</td><td>6484 tok/s / 26.53 GB</td><td><span class="badge b-no">❌ 同上</span></td><td><b>hybrid 独有</b></td></tr>
+</table>
+<p>⇒ 当时结论：<b>「hybrid 只赢在容量（能服务到 1M），速度上中长 ctx 反而 dense 更快」</b>。</p>
+
+<h3>4.2 P-9.11-F（下午–晚，诊断四问 + 扩到 2M/4M）</h3>
+<table>
+<tr><th>mem-frac</th><th>pool（tokens）</th><th>峰值 VRAM</th><th>2M 能否服务</th></tr>
+<tr><td>0.3</td><td>1,241,742</td><td>~23 GB</td><td><span class="badge b-no">❌ prompt 2.02M &gt; pool</span></td></tr>
+<tr><td><b>0.6</b></td><td><b>2.75M</b></td><td><b>75.91 GB</b></td><td><span class="badge b-ok">✅ SERVED（TTFT 427.8s / prefill 4714 tok/s）</span></td></tr>
+<tr><td>0.85</td><td>4.30M</td><td>~73 GB</td><td><span class="badge b-ok">✅</span></td></tr>
+</table>
+<div class="ok-box">
+⭐ <b>新发现：Mamba SSM cache 随 mem-fraction 线性增长</b>（8.34 → 18.56 → 29.02 GB；`max_mamba_cache` 177→395→618）—— 即「显存恒定」的错觉来源于 mem-fraction 预分配洞（0.3 时 = weights 3.94 + SSM 8.49 + KV 9.48 + CUDA graph 0.87 = <b>22.78 ≈ 0.3×80</b>）。
+</div>
+<table>
+<tr><th>诊断</th><th>实测</th><th>结论</th></tr>
+<tr><td><b>V3</b> host swap</td><td>host <b>RSS 1.08 GB</b>、`VmPeak 37.1GB`、`enable_weights_cpu_backup=False`、kvcache offload=False</td><td><b>排除「虚拟内存/换页」</b>（PagedAttention 只是显存内分页）</td></tr>
+<tr><td><b>V4②</b> SSM dtype</td><td><b>bf16 10820</b> vs float32 6484 tok/s ⇒ <b>1.67× faster</b>；TTFT 155.47→<b>93.17 s</b></td><td>🔴 <b>float32 人为压低 hybrid prefill 40%</b></td></tr>
+<tr><td><b>4M@0.85</b></td><td>pool 4.34M &gt; prompt 4.03M ✅ · 峰值 <b>76.93 GB</b>（未 OOM）· 但 prefill 600s 仅 56%</td><td><b>4M 可服务但 ~33 min prefill，不实用</b></td></tr>
+<tr><td><b>8M / 16M</b></td><td>pool 上限 ~4.3M（0.85 口径）</td><td><b>单卡 80GB 不可服务</b></td></tr>
+</table>
+
+<h3>4.3 你三问的最终答案</h3>
+<table>
+<tr><th>#</th><th>你的问题</th><th>实测答案</th></tr>
+<tr><td>1</td><td>VRAM 为何不随 ctx 增长？（O(n)/O(n²) 都不该恒定）</td><td><b>问得对</b> —— 是 <code>--mem-fraction-static 0.3</code> 的<b>预分配洞</b>（≈24 GB 常量），nvidia-smi 读数与 ctx 无关；<b>「恒定」口径已被证伪</b>（V2 三档）</td></tr>
+<tr><td>2</td><td>是否用了「虚拟内存」之类方案？</td><td><b>否</b> —— host RSS 仅 1.08 GB、无任何 offload 开关；<b>PagedAttention = 显存内分页</b>，不换出到 host</td></tr>
+<tr><td>3</td><td>这么长的上下文里 hybrid 为何相对 dense 无优势？</td><td><b>两因叠加</b>：① <b>float32 SSM 压低 hybrid 40%</b>（bf16 对照 1.67×）；② <b>4 层 attention 的 O(n²)</b> 在 ≥512K 占 prefill ~77% ⇒ hybrid 退化为准 O(n²)</td></tr>
+</table>
+<div class="danger">
+<b>⇒ 修订后的结论</b>：P-9.11-E 的「dense 快 1.7–3.3×」是 <b>float32 口径 artifact</b>；<b>hybrid 的优势应在「容量（服务到 1M+）」而非「速度」</b>；bf16 口径下的速度对比正在重跑（今晚 T1/T2）。
+</div>
+
+<h2 class="sec" id="s5"><span class="no">5</span>data：配比实验交付 + 白名单解禁 + 下载/分词</h2>
+
+<h3>5.1 Round2 配比实验全部交付</h3>
+<table>
+<tr><th>项</th><th>结果</th></tr>
+<tr><td>BO R2</td><td><b>200/200 完成</b>（166 ✅ + 34 ❌，失败全在早期 batch）· best = <b>t23（web 0.941 / code 0.109 / math 0.010）= 0.4155</b></td></tr>
+<tr><td>top-K 收尾</td><td>top-5 用同参数重训 → HF 转换 → <b>全量 lm_eval（不设 limit）</b> → <code>topk_lmeval_results_r2.json</code></td></tr>
+<tr><td>交付物</td><td><code>report_data_mix_eval_r2.html</code>（18 KB）</td></tr>
+<tr><td>推荐配比</td><td>web 0.93 / code 0.10 / math 0.01 —— <b>≈ 先验 88:8:4</b></td></tr>
+</table>
+
+<h3>5.2 ⚠️ 核心发现：代理指标与真实能力「负相关」（如实报负面）</h3>
+<table>
+<tr><th>Trial</th><th>BO score（limit 500）</th><th>全量 lm_eval</th><th>ΔRank</th></tr>
+<tr><td>t23</td><td>0.4155（<b>第 1</b>）</td><td>0.3846（第 4）</td><td><span class="badge b-no">↓3</span></td></tr>
+<tr><td>t38</td><td>0.4138（第 2）</td><td>0.3835（第 5）</td><td><span class="badge b-no">↓3</span></td></tr>
+<tr><td>t118</td><td>0.4130（第 3）</td><td>0.3877（第 3）</td><td>0</td></tr>
+<tr><td>t199</td><td>0.4123（第 4）</td><td><b>0.3899（第 1）</b></td><td><span class="badge b-ok">↑3</span></td></tr>
+<tr><td>t33</td><td>0.4090（第 5）</td><td><b>0.3897（第 2）</b></td><td><span class="badge b-ok">↑3</span></td></tr>
+</table>
+<div class="danger">
+<b>BO score 排名与全量 lm_eval 排名几乎完全反转</b> —— <b>Spearman ρ = −0.80（n=5, p≈0.10）</b>。<br>
+🔍 <b>运维口径（更诚实的说法）</b>：全量分差只有 <b>0.3835–0.3899 ≈ 0.6 pp</b>，而 <b>n 只有 5（p≈0.10 不显著）</b> ⇒ 应表述为「<b>这个规模下配比排序根本不可分辨</b>」，而不是「反相关」。<br>
+✅ <b>唯一可靠的收获</b>：最优区域稳定聚在 <b>web 0.87–0.94 / code 0.06–0.12 / math≈0.01</b>（math 贴下界），与先验 88:8:4 一致 ⇒ <b>可直接沿用</b>。<br>
+⚠️ <b>对 P-8 的含义</b>：pretrain 报「配比方案已交付」是<b>名义上的</b>；实质是「<b>沿用 88:8:4</b>」而非「搜出来的最优」。
+</div>
+
+<h3>5.3 白名单解禁（你的直令）+ 下载/分词</h3>
+<table>
+<tr><th>项</th><th>状态</th></tr>
+<tr><td><b>UltraX-Preview</b>（新解禁，487 GB/479 parquet）</td><td><span class="badge b-ok">✅ 479/479 下满（454 GB，5 config）</span> —— 中途曾按我「15:30 让回 GPIC」被停，你 15:58 令其续传后下完</td></tr>
+<tr><td><b>ultrafineweb_en_v1_4</b>（新解禁，6.75 TB）</td><td><span class="badge b-warn">⏸ 排队中（未启动）</span></td></tr>
+<tr><td><b>GPIC</b></td><td>5241/8001（~2.7 天）</td></tr>
+<tr><td><b>zh 分词</b></td><td>file 33/256，单进程 99% CPU，ETA ~2.5 天 ⇒ <b>已令「加大并发」</b>（目标 ≤12h）</td></tr>
+</table>
+
+<h2 class="sec" id="s6"><span class="no">6</span>vision：lp 协议 Δlp≈+10pp + mask-ratio 收官</h2>
+
+<h3>6.1 ⭐ lp 协议 A/B 桥接（3 ckpt 极稳定）</h3>
+<table>
+<tr><th>ckpt</th><th>协议 A（BaiZe）</th><th>协议 B（SGD+cosine 90ep 全量）</th><th>Δlp</th></tr>
+<tr><td>ckpt1（R12b final）</td><td>18.79%</td><td><b>28.84 ± 0.03%</b></td><td><b>+10.05 pp</b></td></tr>
+<tr><td>ckpt2（R12 1ep）</td><td>20.22%</td><td><b>30.27 ± 0.03%</b></td><td><b>+10.05 pp</b></td></tr>
+<tr><td>ckpt3（R11G AIMv2）</td><td>19.77%</td><td><b>29.94 ± 0.04%</b></td><td><b>+10.17 pp</b></td></tr>
+</table>
+<div class="ok-box">⇒ <b>BaiZe 协议系统性低估 lp ~10 pp</b>，是 gap vs 公开值的主要贡献者之一。报告 <code>report_vision_lp_protocol.html</code>（21 KB）已交付。</div>
+
+<h3>6.2 ✅ mask-ratio 消融 ALL DONE（倒 U 形，0.6 最优）</h3>
+<table>
+<tr><th>ratio</th><th>0.3</th><th>0.5</th><th><b>0.6</b></th><th>0.75</th><th>0.9</th></tr>
+<tr><td>lp@30k</td><td>12.69%</td><td>11.91%</td><td><b>13.49%（最优）</b></td><td>12.49%</td><td>11.53%</td></tr>
+<tr><td>Δ vs 最优</td><td>−0.80</td><td>−1.58</td><td>—</td><td>−1.00</td><td>−1.96</td></tr>
+</table>
+<p>0.3 / 0.75 落在 ±1.5 pp 噪声带内；0.5 / 0.9 显著更差 ⇒ <b>mask-ratio 存在最优值 ≈0.6</b>。</p>
+
+<h3>6.3 🚀 ③ weight-ratio 消融已开跑</h3>
+<p>PID 187262，4 臂（1:2 → 1:0.5 → 0.5:1 → 2:1），arm 1 已到 ~60%（C1=0.324 健康），<b>ETA all+eval ~04:34</b>（占 <code>.12</code> 8 卡）。之后接 <b>④ 官方 AIMv2 AR 范式</b>。</p>
+
+<h2 class="sec" id="s7"><span class="no">7</span>harness：30 条横评（5 完成 4 · 将扩到 7）</h2>
+<p>口径：<b>SWE-bench Lite 里固定的同一批 30 条</b>（15 django + 15 sympy）× 各 harness × <b>同一模型 <code>kimi-k2.6-cloud</code></b> × <b>并发=1 严格串行</b>；评分走同一 unshare 沙箱 <code>r1_eval.py</code>。</p>
+
+<h3>7.1 当前 5-way（收盘）</h3>
+<table>
+<tr><th>harness</th><th>scored</th><th>resolved</th><th>patch-but-failed</th><th>quota-blocked</th><th>resolve rate</th></tr>
+<tr><td><b>cline</b></td><td>30/30</td><td>18</td><td>12</td><td>0</td><td><b>60.0%</b></td></tr>
+<tr><td><b>opencode</b></td><td>30/30</td><td>15</td><td>15</td><td>0</td><td><b>50.0%</b></td></tr>
+<tr><td><b>codex</b></td><td>30/30</td><td>14</td><td>16</td><td>0</td><td><b>46.7%</b></td></tr>
+<tr><td><b>claude-code</b></td><td>30/30</td><td>—</td><td>—</td><td>—</td><td><b>44.8%</b></td></tr>
+<tr><td><b>deepseek-harness</b></td><td>15/30</td><td>7</td><td>8</td><td>0</td><td>46.7%（进行中）</td></tr>
+</table>
+<p>报告：<code>run/harness/SWEBENCH_COMPARE.html</code>（135 entries / 67 resolved）。</p>
+
+<h3>7.2 🔧 deepseek-harness 工具链当日修通</h3>
+<p>此前卡在「装不上/装了跑不动」。今日定位并修好：新建 <code>gw_proxy_dsh.py</code>（端口 <b>9091</b>），<b>剥掉网关不认的 <code>reasoning_effort / thinking / dsh_plugin_packages / stream_options</code>、修 auth header、锁 <code>max_tokens=8192</code></b> ⇒ SDK 冒烟测试 9.2s 通过。⇒ <b>第 5 个 harness 正式并入</b>。</p>
+
+<h3>7.3 🆕 你的新令：再加 2 个 ⇒ 7-way</h3>
+<table>
+<tr><th>新 harness</th><th>定位（我先查证）</th><th>接网关 / 非交互</th></tr>
+<tr><td><b>Hermes Agent</b></td><td><code>NousResearch/hermes-agent</code>（MIT，251.8k★，Python，含 <code>hermes_cli</code>/<code>providers</code>/<code>evals</code>/<code>docker</code>）</td><td>✅ Providers/Env 可配兼容 endpoint；<b>有 Docker 镜像</b></td></tr>
+<tr><td><b>Pi</b></td><td><code>pi.dev</code>（GitHub <code>fleetagent/pi</code>，Earendil Inc.，已发 1.0）</td><td>✅ <b>自带 print mode（脚本化）</b> + JSON event stream + RPC + TS SDK</td></tr>
+</table>
+<p>已下发：<b>不动口径</b>（同一 30 条 / 同模型 / 并发=1）· <b>写 driver</b> · <b>先 smoke 1 条</b> · 🚫 <b>不许打断</b> deepseek chain · <b>「不许猜」</b>（非交互 flag 必须附来源 URL）· 交付 <b>7 行终表</b>。<b>时间盒 ≈ 1 天</b>（不含装机）。</p>
+
+<h2 class="sec" id="s8"><span class="no">8</span>ZhuLong / news 价格信号</h2>
+
+<h3>8.1 ZhuLong（DAC2027 · 36.15）—— Phase B 收官 → C1 组件消融</h3>
+<table>
+<tr><th>阶段</th><th>结果</th></tr>
+<tr><td>Phase B（大模型消融）</td><td><span class="badge b-ok">✅ 4/4 完成</span>：B.doubao <b>63.9%</b>，5 次均值 <b>63.8 ± 1.4%</b>；pro-fp4 曾 403，已恢复 HTTP 200</td></tr>
+<tr><td>C1（组件消融 · <code>rag</code> 臂）</td><td>r1 <b>70.3%</b> · r2 <b>72.2%</b> · r3 <b>69.6%</b> · r4 <b>70.9%</b> → <b>r5 跑中</b>（base <code>deepseek-v4-pro-fp4</code>，0 Forbidden，反作弊 canary PASS）</td></tr>
+</table>
+
+<h3>8.2 news / research（personal-watch）</h3>
+<ul>
+  <li>节律 <b>30 min → 每天 2 次（06:00 / 18:00）</b>；ops 中继加固（根治 <code>pipe_read</code> 冻死）。</li>
+  <li><b>新开「新闻→价格」信号研究（第 11 批）</b>：十年多资产价格落盘（<b>38 标的 / 6 类</b>）；<b>先写 <code>PREREG.md</code> 再跑</b>（预注册先于结果）；滞后相关 <b>23940 格</b> ⇒ <b>FDR q&lt;0.10 = 0 / stable = 0</b> —— <b>如实报负面</b>，没有为好看而挑数据。</li>
+</ul>
+
+<h2 class="sec" id="s9"><span class="no">9</span>关键交付物与数字</h2>
+
+<h3>9.1 今日新增交付（HTML / 数据）</h3>
+<table>
+<tr><th>类别</th><th>交付物</th></tr>
+<tr><td>日报</td><td><code>report_10_07.html</code>（本文件，全天版）</td></tr>
+<tr><td>四线昨夜汇报</td><td><code>report_10_07_{pretrain,vision,data,harness}_overnight.html</code></td></tr>
+<tr><td>pretrain 研究（5 篇）</td><td><code>report_pretrain_research{1_fair_eval,2_train_speed,3_train_quality,4_longctx_1m_p8,5_arch_nas}.html</code></td></tr>
+<tr><td>pretrain 实验</td><td><code>report_pretrain_longctx_infer_cost.html</code>（P-9.11-E/F，含 §6 诊断）</td></tr>
+<tr><td>data</td><td><code>report_data_mix_eval_r2.html</code> · <code>report_data_mix_sstep.html</code> · <code>run/query_bo_r2.py</code></td></tr>
+<tr><td>vision</td><td><code>report_vision_lp_protocol.html</code>（21 KB）</td></tr>
+<tr><td>harness</td><td><code>run/harness/SWEBENCH_COMPARE.html</code>（135 entries / 67 resolved）</td></tr>
+</table>
+
+<h3>9.2 一天的关键数字</h3>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">22.78 GB</div><div class="l">hybrid 0.3 口径显存拆解（≈24GB 预分配洞）</div></div>
+  <div class="kpi"><div class="v">1.67×</div><div class="l">bf16 vs float32 SSM prefill 加速</div></div>
+  <div class="kpi"><div class="v">4.30 M</div><div class="l">hybrid KV pool 上限 tokens（0.85 口径）</div></div>
+  <div class="kpi"><div class="v">200/200</div><div class="l">BO Round2 trials</div></div>
+  <div class="kpi"><div class="v">ρ = −0.80</div><div class="l">BO score vs 全量 lm_eval（n=5，不显著）</div></div>
+  <div class="kpi"><div class="v">+10.05 pp</div><div class="l">lp 协议 A→B（3 ckpt 极稳定）</div></div>
+  <div class="kpi"><div class="v">60.0%</div><div class="l">harness 30 条最高 resolve（cline）</div></div>
+  <div class="kpi"><div class="v">63.8±1.4%</div><div class="l">ZhuLong Phase B（B.doubao）</div></div>
+</div>
+
+<h2 class="sec" id="s10"><span class="no">10</span>诚实条款：今天的错与自纠</h2>
+<table>
+<tr><th>#</th><th>问题</th><th>性质 / 处置</th></tr>
+<tr><td>1</td><td><b>「不重启下载」指令歧义</b>（源头在我）</td><td>任务书巡检纪律被误读为「失败也不重启」，且<b>重启授权块被归档带走</b> ⇒ 全仓 11 处正名 + 归档存证（见 §2.1）</td></tr>
+<tr><td>2</td><td>派活块写了<b>精确字节</b></td><td>该行自身增删即失真，<b>违反「数字必须真」</b> ⇒ 改为 <code>≈NN.NKB</code> + 以实测为准</td></tr>
+<tr><td>3</td><td>加「附图」节后四线任务书 <b>全 &gt;32KB</b></td><td>已在块内写明「agent 自滚归档到 ≤32KB」；今日各线均已陆续归档回 ≤32KB</td></tr>
+<tr><td>4</td><td>我推测 BO 变慢 = <b>I/O 争用</b></td><td>🔴 <b>被 data 用 <code>vmstat wa=0 / iowait=0</code> 证伪</b> —— <b>实测赢过推测</b>；正确解释是「8 卡波派发的锯齿」（我猜对的一半）</td></tr>
+<tr><td>5</td><td>BO「best」口径突变（0.4155 → 0.373）</td><td>我提出核对 → data 查明：<b>BO 代码正确</b>，是<b>巡检查询 SQL 方向用反了</b>（ASC 当 DESC）；<b>不影响搜索与 R1 结论</b>，已建 <code>query_bo_r2.py</code> 规范查询</td></tr>
+<tr><td>6</td><td>UltraX/GPIC 优先序来回一次</td><td>我按「15:30 让回 GPIC」裁定停了 UltraX（44%），你 15:58 令其续传 —— 净效果与原意一致，但<b>多绕一圈</b>；教训：<b>「定时兜底」条款易被机械执行</b></td></tr>
+</table>
+<div class="note"><b>今天最该记住的一条</b>：<b>活文只放现行口径、历史进归档</b> —— 否则「授权被归档带走、只剩禁忌半句」会制造出<b>语义相反的指令</b>（这正是 §2.1 事故的根因）。</div>
+
+<h2 class="sec" id="s11"><span class="no">11</span>需要你决策 / 今夜窗口</h2>
+
+<h3>11.1 需要你拍板的</h3>
+<table>
+<tr><th>#</th><th>事项</th><th>状态</th></tr>
+<tr><td>1</td><td><b>P-8 是否启动？</b></td><td class="b-warn">名义前置已齐（base 下载 100% + 配比方案交付），<b>但</b>：①「P-8 暂缓」令未撤；② <b>base 分词仅 22.05B（需 ~100B）</b>；③ 配比实质是「<b>沿用 88:8:4</b>」而非搜出来的最优</td></tr>
+<tr><td>2</td><td><b>`en_v1_4`（6.75 TB）是否放行？</b></td><td class="b-warn">现排队未启动（等 GPIC 下完或你放行）</td></tr>
+<tr><td>3</td><td><b>P-9.11-E 报告是否需重写口径声明？</b></td><td class="b-info">T1 已令用 bf16 重跑；原报告需标注「float32 口径 artifact」</td></tr>
+</table>
+
+<h3>11.2 今夜执行窗口</h3>
+<table>
+<tr><th>线</th><th>进行中 / 排队</th><th>预计结束</th></tr>
+<tr><td><b>harness</b></td><td>deepseek-harness×30 → 再上 Hermes Agent + Pi</td><td>deepseek <b>~22:35</b> → 5-way 终表；7-way <b>明日</b></td></tr>
+<tr><td><b>vision</b></td><td>③ weight-ratio 消融 4 臂（<code>.12</code> 8 卡）</td><td><b>~04:34</b>（之后接 ④ AIMv2 AR）</td></tr>
+<tr><td><b>data</b></td><td>GPIC 5241/8001 · zh 分词（并发化后）</td><td>GPIC <b>~2.7 天</b> · 分词目标 <b>≤12h</b></td></tr>
+<tr><td><b>pretrain</b></td><td>T1（bf16 重跑矩阵）+ T2（公平协议）· T3/T4 分析（<code>.29</code> 8 卡）</td><td><b>今晚启动</b></td></tr>
+<tr><td><b>ZhuLong</b></td><td>C1.rag r5</td><td>迭代中</td></tr>
+<tr><td><b>news/research</b></td><td>每天 2 次（06:00 / 18:00）</td><td>—</td></tr>
+</table>
+<div class="ok-box">
+🟢 <b><code>.29</code> 8 卡：从现在起全程空闲</b>（今夜最宝贵）→ 已指派 pretrain T1/T2。<br>
+🟡 <b><code>.12</code> 8 卡：被 vision 的 weight-ratio 占到 ~04:34</b>。<br>
+🟢 <b>04:34 之后，两机共 16 卡全部空闲。</b>
+</div>
+
+<footer>
+  <b>BaiZe 工作汇报 · 2026-10-07（全天版）</b> · 生成于 2026-10-07 ~21:55（CST）· <b>已替换早间快照（截至 09:55 的那版）</b><br>
+  数据来源：四线 <code>run/MEMORY_*.md</code> 顶部状态 ＋ <code>run/daily-memories*/</code> ＋ 各线产物 HTML ＋ <code>git log</code> ＋ <code>run/ops/</code><br>
+  运维口径与决策留痕：<code>MEMORY.md</code>（运维层）· <code>daily-memories/2026-10-07.md</code> · <code>run/ARCHIVE_OPERATOR_*.md</code><br>
+  ⚠️ 本报告为<b>快照</b>；各线状态以仓库最新 commit 为准。所有数字均取自入库记录，<b>未做估算冒充实测</b>；口径不同处已分别标注。
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+diff --git a/django/core/serializers/python.py b/django/core/serializers/python.py
+index 36048601af..4ad563ba43 100644
+--- a/django/core/serializers/python.py
++++ b/django/core/serializers/python.py
+@@ -79,7 +79,7 @@ class Serializer(base.Serializer):
+                     return self._value_from_field(value, value._meta.pk)
+ 
+                 def queryset_iterator(obj, field):
+-                    return getattr(obj, field.name).only("pk").iterator()
++                    return getattr(obj, field.name).select_related(None).only("pk").iterator()
+ 
+             m2m_iter = getattr(obj, "_prefetched_objects_cache", {}).get(
+                 field.name,
+diff --git a/django/core/serializers/xml_serializer.py b/django/core/serializers/xml_serializer.py
+index 1d3269c41a..44458be22c 100644
+--- a/django/core/serializers/xml_serializer.py
++++ b/django/core/serializers/xml_serializer.py
+@@ -155,7 +155,7 @@ class Serializer(base.Serializer):
+                     self.xml.addQuickElement("object", attrs={"pk": str(value.pk)})
+ 
+                 def queryset_iterator(obj, field):
+-                    return getattr(obj, field.name).only("pk").iterator()
++                    return getattr(obj, field.name).select_related(None).only("pk").iterator()
+ 
+             m2m_iter = getattr(obj, "_prefetched_objects_cache", {}).get(
+                 field.name,
+diff --git a/tests/serializers/models/base.py b/tests/serializers/models/base.py
+index af9ca2b20a..2baad2be84 100644
+--- a/tests/serializers/models/base.py
++++ b/tests/serializers/models/base.py
+@@ -163,3 +163,31 @@ class ComplexModel(models.Model):
+     field1 = models.CharField(max_length=10)
+     field2 = models.CharField(max_length=10)
+     field3 = models.CharField(max_length=10)
++
++class TestTagManager(models.Manager):
++    def get_queryset(self):
++        return super().get_queryset().select_related("master")
++
++
++class TestTagMaster(models.Model):
++    name = models.CharField(max_length=120)
++
++    class Meta:
++        ordering = ("name",)
++
++
++class TestTag(models.Model):
++    objects = TestTagManager()
++    name = models.CharField(max_length=120)
++    master = models.ForeignKey(TestTagMaster, on_delete=models.SET_NULL, null=True)
++
++    class Meta:
++        ordering = ("name",)
++
++
++class TestModel(models.Model):
++    name = models.CharField(max_length=120)
++    tags = models.ManyToManyField(TestTag, blank=True)
++
++    class Meta:
++        ordering = ("name",)
+diff --git a/tests/serializers/tests.py b/tests/serializers/tests.py
+index 67ae8f43de..5e3248f286 100644
+--- a/tests/serializers/tests.py
++++ b/tests/serializers/tests.py
+@@ -12,6 +12,9 @@ from django.test import SimpleTestCase, override_settings, skipUnlessDBFeature
+ from django.test.utils import Approximate
+ 
+ from .models import (
++    TestModel,
++    TestTag,
++    TestTagMaster,
+     Actor,
+     Article,
+     Author,
+@@ -436,7 +439,16 @@ class SerializersTestBase:
+         self.assertIn(connection.ops.quote_name("kind"), meta_data_sql)
+ 
+ 
++    def test_serialize_m2m_with_select_related(self):
++        tag_master = TestTagMaster.objects.create(name="master")
++        tag = TestTag.objects.create(name="tag", master=tag_master)
++        test = TestModel.objects.create(name="test")
++        test.tags.add(tag)
++        serializers.serialize(self.serializer_name, TestModel.objects.all())
++
++
+ class SerializerAPITests(SimpleTestCase):
++
+     def test_stream_class(self):
+         class File:
+             def __init__(self):

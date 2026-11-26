@@ -1,0 +1,33 @@
+diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py
+index a40a2107..69b42edc 100644
+--- a/sphinx/cmd/quickstart.py
++++ b/sphinx/cmd/quickstart.py
+@@ -90,6 +90,8 @@ class ValidationError(Exception):
+ 
+ def is_path(x: str) -> str:
+     x = path.expanduser(x)
++    if not x:
++        return x
+     if not path.isdir(x):
+         raise ValidationError(__("Please enter a valid path name."))
+     return x
+diff --git a/tests/test_quickstart.py b/tests/test_quickstart.py
+index 94144ef2..f1f42544 100644
+--- a/tests/test_quickstart.py
++++ b/tests/test_quickstart.py
+@@ -250,3 +250,15 @@ def test_extensions(tempdir):
+     ns = {}
+     exec(conffile.read_text(), ns)
+     assert ns['extensions'] == ['foo', 'bar', 'baz']
++
++
++def test_enter_to_exit_when_conf_py_exists(tempdir):
++    (tempdir / 'conf.py').write_text('')
++    answers = {
++        'Root path': tempdir,
++        'Please enter a new root path': '',
++    }
++    qs.term_input = mock_input(answers, needanswer=True)
++    d = {}
++    with pytest.raises(SystemExit):
++        qs.ask_user(d)

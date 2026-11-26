@@ -1,0 +1,97 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 5edbbd376..90e86dd66 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -8,7 +8,7 @@ from itertools import chain
+ from django.core.exceptions import (
+     NON_FIELD_ERRORS, FieldError, ImproperlyConfigured, ValidationError,
+ )
+-from django.forms.fields import ChoiceField, Field
++from django.forms.fields import ChoiceField, Field, FileField
+ from django.forms.forms import BaseForm, DeclarativeFieldsMetaclass
+ from django.forms.formsets import BaseFormSet, formset_factory
+ from django.forms.utils import ErrorList
+@@ -48,9 +48,23 @@ def construct_instance(form, instance, fields=None, exclude=None):
+             continue
+         # Leave defaults for fields that aren't in POST data, except for
+         # checkbox inputs because they don't appear in POST data if not checked.
+-        if (f.has_default() and
+-                form[f.name].field.widget.value_omitted_from_data(form.data, form.files, form.add_prefix(f.name))):
+-            continue
++        if (f.has_default() and f.name in form.fields and
++                form[f.name].field.widget.value_omitted_from_data(
++                    form.data, form.files, form.add_prefix(f.name),
++                )):
++            field = form[f.name].field
++            raw_value = field.widget.value_from_datadict(
++                form.data, form.files, form.add_prefix(f.name),
++            )
++            try:
++                if isinstance(field, FileField):
++                    omitted_cleaned = field.clean(raw_value, form[f.name].initial)
++                else:
++                    omitted_cleaned = field.clean(raw_value)
++            except ValidationError:
++                omitted_cleaned = object()
++            if cleaned_data[f.name] == omitted_cleaned:
++                continue
+         # Defer saving file-type fields until after the other fields, so a
+         # callable upload_to can use the values from other fields.
+         if isinstance(f, models.FileField):
+diff --git a/docs/releases/3.0.txt b/docs/releases/3.0.txt
+index 14156af45..4b4431745 100644
+--- a/docs/releases/3.0.txt
++++ b/docs/releases/3.0.txt
+@@ -383,6 +383,10 @@ Miscellaneous
+ * ``ContentType.__str__()`` now includes the model's ``app_label`` to
+   disambiguate model's with the same name in different apps.
+ 
++* :class:`~django.forms.ModelForm` now allows values in ``cleaned_data`` to
++  override a model field's default when the field is omitted from the form
++  data.
++
+ * Because accessing the language in the session rather than in the cookie is
+   deprecated, ``LocaleMiddleware`` no longer looks for the user's language in
+   the session and :func:`django.contrib.auth.logout` no longer preserves the
+diff --git a/tests/model_forms/tests.py b/tests/model_forms/tests.py
+index 3893eb334..02f282a22 100644
+--- a/tests/model_forms/tests.py
++++ b/tests/model_forms/tests.py
+@@ -704,6 +704,37 @@ class ModelFormBaseTest(TestCase):
+         m2 = mf2.save(commit=False)
+         self.assertEqual(m2.date_published, datetime.date(2010, 1, 1))
+ 
++    def test_cleaned_data_overrides_default_for_omitted_field(self):
++        class PubForm(forms.ModelForm):
++            mode = forms.CharField(required=False)
++
++            class Meta:
++                model = PublicationDefaults
++                fields = ('title', 'mode')
++
++            def clean(self):
++                cleaned_data = super().clean()
++                cleaned_data['mode'] = 'de'
++                return cleaned_data
++
++        mf = PubForm({'title': 'Test'})
++        self.assertEqual(mf.errors, {})
++        m = mf.save(commit=False)
++        self.assertEqual(m.mode, 'de')
++
++    def test_default_preserved_when_field_omitted_and_not_overridden(self):
++        class PubForm(forms.ModelForm):
++            mode = forms.CharField(required=False)
++
++            class Meta:
++                model = PublicationDefaults
++                fields = ('title', 'mode')
++
++        mf = PubForm({'title': 'Test'})
++        self.assertEqual(mf.errors, {})
++        m = mf.save(commit=False)
++        self.assertEqual(m.mode, 'di')
++
+ 
+ class FieldOverridesByFormMetaForm(forms.ModelForm):
+     class Meta:

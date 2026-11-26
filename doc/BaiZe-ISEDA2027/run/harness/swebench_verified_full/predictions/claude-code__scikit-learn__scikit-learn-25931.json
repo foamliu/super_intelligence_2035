@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "scikit-learn__scikit-learn-25931",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sklearn/ensemble/_iforest.py b/sklearn/ensemble/_iforest.py\nindex 4d6c1c3f..ad3fa3a2 100644\n--- a/sklearn/ensemble/_iforest.py\n+++ b/sklearn/ensemble/_iforest.py\n@@ -345,7 +345,15 @@ class IsolationForest(OutlierMixin, BaseBagging):\n             return self\n \n         # else, define offset_ wrt contamination parameter\n-        self.offset_ = np.percentile(self.score_samples(X), 100.0 * self.contamination)\n+        # X is already validated, so we avoid calling score_samples which\n+        # would re-validate the data and check feature names unnecessarily.\n+        # We still need to ensure sparse matrices are in CSR format as\n+        # expected by _compute_chunked_score_samples.\n+        if issparse(X):\n+            X = X.tocsr()\n+        self.offset_ = np.percentile(\n+            -self._compute_chunked_score_samples(X), 100.0 * self.contamination\n+        )\n \n         return self\n \n"
+  }
+]

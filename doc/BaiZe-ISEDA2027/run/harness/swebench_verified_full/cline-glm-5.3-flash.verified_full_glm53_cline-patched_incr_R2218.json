@@ -1,0 +1,11 @@
+{
+  "harness": "cline",
+  "run_id": "verified_full_glm53_cline-patched_incr_R2218",
+  "round": "R2218",
+  "n": 1,
+  "resolved": [
+    "scikit-learn__scikit-learn-14983"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

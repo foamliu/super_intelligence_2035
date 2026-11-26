@@ -1,0 +1,432 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Build script for EDA-Eval-DesignFlow-LayerSoloBindkeyGen-001 (shard C, layout_aether, A-faithful)."""
+import os, sys, json, zipfile, shutil, subprocess, tempfile
+
+CASE = "EDA-Eval-DesignFlow-LayerSoloBindkeyGen-001"
+ROOT = "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow"
+AST = os.path.join(ROOT, "assets", CASE)
+REF = os.path.join(ROOT, "reference", CASE)
+HID = os.path.join(AST, "hidden")
+for d in (AST, REF, HID):
+    os.makedirs(d, exist_ok=True)
+
+# ---------- configs ----------
+config_A = {"purpose":"drawing",
+            "layers":[{"name":"M1","key":"1"},{"name":"M2","key":"2"},
+                      {"name":"M3","key":"3"},{"name":"M4","key":"4"},
+                      {"name":"M5","key":"5"},{"name":"M6","key":"6"}],
+            "restore_key":"0"}
+config_B = {"purpose":"drawing",
+            "layers":[{"name":"Metal1","key":"a"},{"name":"Metal2","key":"b"},{"name":"Metal3","key":"c"}],
+            "restore_key":"r"}
+config_B2 = {"purpose":"pin",
+             "layers":[{"name":"M1","key":"1"},{"name":"M2","key":"2"}],
+             "restore_key":"0"}
+config_B3 = {"purpose":"drawing",
+             "layers":[{"name":"AA","key":"1"},{"name":"PP","key":"2"},{"name":"CT","key":"3"}],
+             "restore_key":None}
+
+with open(os.path.join(AST,"config_A.json"),"w") as f: json.dump(config_A,f,indent=2,ensure_ascii=False)
+with open(os.path.join(HID,"config_B.json"),"w") as f: json.dump(config_B,f,indent=2,ensure_ascii=False)
+with open(os.path.join(HID,"config_B2.json"),"w") as f: json.dump(config_B2,f,indent=2,ensure_ascii=False)
+with open(os.path.join(HID,"config_B3.json"),"w") as f: json.dump(config_B3,f,indent=2,ensure_ascii=False)
+hidden_manifest = {"hidden_inputs":["config_B.json","config_B2.json","config_B3.json"],
+                   "note":"B/B2/B3 differ structurally from A: different layer names, keys, purpose, restore_key null. Not in SUT sandbox; check() runs candidate generator on these."}
+with open(os.path.join(HID,"hidden_manifest.json"),"w") as f: json.dump(hidden_manifest,f,indent=2,ensure_ascii=False)
+
+# ---------- prompt.txt (A-faithful: U#0 verbatim) ----------
+PROMPT = """# 任务：Aether 版图层次切换快捷键脚本（通用生成器）
+
+用户原始需求（逐字原文，来自真实 cline trace `1793795067989_0pfvw`，user `hybeaml` @ host `hfeg0plg88`，mc=76，44 msgs，status=completed）：
+
+> "给我一个aether平台的脚本，版图中切换显示层次，快捷键1，显示M1层，快捷键2显示M2层"
+
+真实 assistant 查阅 Aether Reference Manual 后写出 `layer_solo.tcl`：核心 `proc showOnlyLayer` 先 `aeSetAllLayerVisible -isvisible 0`（隐藏全部层）→ `aeSetLayerVisible -layer <name> -isvisible 1`（目标层可见）→ `aeSetLayerSelectable -issel 1`（目标层可选）→ `aeSetActiveLayer -layerName <name>`（设为当前激活层），再用 `aeSetBindKey -action <proc> -key <key>` 把数字键绑定到各层的 solo 显示过程，并用 `showAllLayers`（`aeSetAllLayerVisible -isvisible 1`）恢复全部层。
+
+本任务把它改造成**通用生成器**：写一个 Python 脚本，读取一份 JSON 配置（层名/快捷键/purpose/恢复键），生成对应的 Aether Tcl 快捷键脚本。
+
+## 交付接口（详见 task_brief.md）
+- deliverable = `outputs/submit.zip`，内含且仅含 `gen_layer_solo.py`
+- 命令行：`python3 gen_layer_solo.py <config.json> <out.tcl>`
+- 配置 schema（见附件 `config_A.json` 样例）：
+  - `purpose`: 字符串，层的 purpose（如 `"drawing"` / `"pin"`）
+  - `layers`: 列表，每项 `{name, key}` —— 层名与要绑定的快捷键
+  - `restore_key`: 字符串或 null —— 恢复全部层的快捷键；为 null 时不生成恢复绑定
+- check(submit.zip, workdir) 双参判分：在隐藏配置 B/B2/B3 上运行候选生成器，解析生成的 Tcl，验证 `aeSetBindKey` / `aeSetLayerVisible` / `aeSetAllLayerVisible` / `aeSetActiveLayer` / `aeSetLayerSelectable` 调用与配置一致（跨输入守卫，反硬编码）。
+"""
+with open(os.path.join(AST,"prompt.txt"),"w") as f: f.write(PROMPT)
+
+TASK_BRIEF = """# task_brief.md — EDA-Eval-DesignFlow-LayerSoloBindkeyGen-001
+
+## 交付契约
+- deliverable = `outputs/submit.zip`，内含且仅含 `gen_layer_solo.py`
+- 入口：`python3 gen_layer_solo.py <config.json> <out.tcl>`，读 config 生成 Aether Tcl 快捷键脚本并写到 out.tcl
+- check(submit.zip, workdir) 双参，在隐藏 config B/B2/B3 上跑候选生成器并解析生成的 Tcl（subprocess + 正则，不启动 Aether）
+
+## 生成 Tcl 必须包含的 Aether API
+- `aeSetAllLayerVisible -isvisible 0`（solo 前隐藏全部层）+ `aeSetAllLayerVisible -isvisible 1`（恢复全部层，仅当 restore_key 非 null）
+- `aeSetLayerVisible -layer <name> -purpose <purpose> -isvisible 1`（目标层可见）
+- `aeSetLayerSelectable -layer <name> -purpose <purpose> -issel 1`（目标层可选）
+- `aeSetActiveLayer -layerName <name> -purpose <purpose>`（设为当前激活层）
+- `aeSetBindKey -action "<proc>" -key "<key>"`（每个层一个 solo proc + 绑定；restore_key 非 null 时绑定 showAllLayers）
+"""
+with open(os.path.join(AST,"task_brief.md"),"w") as f: f.write(TASK_BRIEF)
+
+# ---------- reference generator ----------
+REF_GEN = r'''#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""gen_layer_solo_ref.py - reference generator for Aether layer-solo bindkey Tcl script."""
+import sys, json
+
+def gen(conf):
+    purpose = conf.get("purpose", "drawing")
+    layers = conf.get("layers", [])
+    restore_key = conf.get("restore_key", None)
+    L = []
+    L.append("###############################################################################")
+    L.append("# layer_solo.tcl (generated by gen_layer_solo.py)")
+    L.append("# Aether layout editor - hotkey layer-solo display script")
+    L.append("###############################################################################")
+    L.append("")
+    L.append("#==============================================================================")
+    L.append("# core proc: solo-display a single layer (hide all -> show target -> set active)")
+    L.append("#==============================================================================")
+    L.append('proc showOnlyLayer {layerName purpose} {')
+    L.append("    # hide all layers")
+    L.append("    aeSetAllLayerVisible -isvisible 0")
+    L.append("    # make target layer visible")
+    L.append("    aeSetLayerVisible -layer $layerName -purpose $purpose -isvisible 1")
+    L.append("    # make target layer selectable")
+    L.append("    aeSetLayerSelectable -layer $layerName -purpose $purpose -issel 1")
+    L.append("    # set as current active layer")
+    L.append("    aeSetActiveLayer -layerName $layerName -purpose $purpose")
+    L.append('    puts ">>> layer solo: $layerName ($purpose)"')
+    L.append("}")
+    L.append("")
+    if restore_key is not None:
+        L.append("#==============================================================================")
+        L.append("# helper proc: restore all layers visible")
+        L.append("#==============================================================================")
+        L.append("proc showAllLayers {} {")
+        L.append("    aeSetAllLayerVisible -isvisible 1")
+        L.append('    puts ">>> restore all layers visible"')
+        L.append("}")
+        L.append("")
+    L.append("#==============================================================================")
+    L.append("# per-layer solo procs + bindkeys")
+    L.append("#==============================================================================")
+    for i, ly in enumerate(layers):
+        nm = ly["name"]; ky = ly["key"]
+        pn = "showLayer%d" % (i+1)
+        L.append('proc %s {} {' % pn)
+        L.append('    showOnlyLayer "%s" "%s"' % (nm, purpose))
+        L.append("}")
+        L.append("")
+        L.append('aeSetBindKey -action "%s" -key "%s"' % (pn, ky))
+        L.append("")
+    if restore_key is not None:
+        L.append('aeSetBindKey -action "showAllLayers" -key "%s"' % restore_key)
+        L.append("")
+    L.append('puts "layer_solo.tcl loaded."')
+    return "\n".join(L) + "\n"
+
+def main():
+    if len(sys.argv) != 3:
+        print("usage: gen_layer_solo.py <config.json> <out.tcl>", file=sys.stderr)
+        sys.exit(2)
+    with open(sys.argv[1]) as f:
+        conf = json.load(f)
+    out = gen(conf)
+    with open(sys.argv[2], "w") as f:
+        f.write(out)
+
+if __name__ == "__main__":
+    main()
+'''
+with open(os.path.join(REF,"gen_layer_solo_ref.py"),"w") as f: f.write(REF_GEN)
+# pack reference_submit.zip with gen_layer_solo.py (the name the candidate uses)
+ref_submit = os.path.join(REF,"reference_submit.zip")
+if os.path.exists(ref_submit): os.remove(ref_submit)
+with zipfile.ZipFile(ref_submit,"w",zipfile.ZIP_DEFLATED) as z:
+    z.writestr("gen_layer_solo.py", REF_GEN)
+
+# ---------- check.py ----------
+CHECK = r'''#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""check.py for EDA-Eval-DesignFlow-LayerSoloBindkeyGen-001
+Verifies candidate gen_layer_solo.py on hidden configs B/B2/B3.
+14 conditions a-n, each independently failable.
+Usage: check.py <deliverable> <workdir>
+"""
+import sys, os, json, zipfile, subprocess, tempfile, re, shutil
+
+def _unzip(deliverable, workdir):
+    if os.path.isdir(deliverable):
+        return deliverable
+    d = os.path.join(workdir, "__cand_extract")
+    if os.path.exists(d): shutil.rmtree(d)
+    os.makedirs(d, exist_ok=True)
+    with zipfile.ZipFile(deliverable) as z:
+        z.extractall(d)
+    return d
+
+def _find_gen(d):
+    for root,_,files in os.walk(d):
+        for fn in files:
+            if fn == "gen_layer_solo.py":
+                return os.path.join(root, fn)
+    return None
+
+def _run(gen, cfg, outdir):
+    out_tcl = os.path.join(outdir, "out.tcl")
+    if os.path.exists(out_tcl): os.remove(out_tcl)
+    try:
+        p = subprocess.run([sys.executable, gen, cfg, out_tcl],
+                           capture_output=True, text=True, timeout=30)
+        return p.returncode, out_tcl, p.stdout, p.stderr
+    except Exception as e:
+        return -999, out_tcl, "", str(e)
+
+def _read(p):
+    try:
+        with open(p) as f: return f.read()
+    except Exception:
+        return ""
+
+def check(deliverable, workdir):
+    CONDITIONS = []
+    tmp = tempfile.mkdtemp(prefix="chk_laysolo_", dir=workdir if os.path.exists(workdir) else None)
+    try:
+        # hidden configs are in workdir/assets hidden OR shipped with check; here we write them from literals
+        # to be self-contained (workdir is the judge dir; hidden configs are NOT in SUT sandbox).
+        B = {"purpose":"drawing",
+             "layers":[{"name":"Metal1","key":"a"},{"name":"Metal2","key":"b"},{"name":"Metal3","key":"c"}],
+             "restore_key":"r"}
+        B2 = {"purpose":"pin",
+              "layers":[{"name":"M1","key":"1"},{"name":"M2","key":"2"}],
+              "restore_key":"0"}
+        B3 = {"purpose":"drawing",
+              "layers":[{"name":"AA","key":"1"},{"name":"PP","key":"2"},{"name":"CT","key":"3"}],
+              "restore_key":None}
+        cfgB = os.path.join(tmp,"config_B.json"); json.dump(B,open(cfgB,"w"))
+        cfgB2 = os.path.join(tmp,"config_B2.json"); json.dump(B2,open(cfgB2,"w"))
+        cfgB3 = os.path.join(tmp,"config_B3.json"); json.dump(B3,open(cfgB3,"w"))
+
+        d = _unzip(deliverable, tmp)
+        # (a) zip contains gen_layer_solo.py (exactly one .py)
+        py_files = []
+        for root,_,files in os.walk(d):
+            for fn in files:
+                if fn.endswith(".py"): py_files.append(fn)
+        CONDITIONS.append(("a", "submit contains exactly one gen_layer_solo.py",
+                           len(py_files)==1 and py_files[0]=="gen_layer_solo.py"))
+        gen = _find_gen(d)
+        CONDITIONS.append(("b", "gen_layer_solo.py found", gen is not None))
+        if gen is None:
+            for lbl,desc,_ in list(CONDITIONS):
+                pass
+            # fail remaining
+            for lbl,desc in [("c",""),("d",""),("e",""),("f",""),("g",""),("h",""),("i",""),("j",""),("k",""),("l",""),("m",""),("n","")]:
+                CONDITIONS.append((lbl,desc,False))
+            return _finalize(CONDITIONS)
+        # (b2) py_compile passes
+        try:
+            subprocess.run([sys.executable,"-m","py_compile",gen],check=True,capture_output=True,timeout=30)
+            compile_ok = True
+        except Exception:
+            compile_ok = False
+        # rewrite (b) as compile
+        CONDITIONS = [CONDITIONS[0]] + [("b","gen_layer_solo.py compiles",compile_ok)]
+
+        rcB, outB, soB, seB = _run(gen, cfgB, tmp)
+        tclB = _read(outB)
+        rcB2, outB2, soB2, seB2 = _run(gen, cfgB2, tmp)
+        tclB2 = _read(outB2)
+        rcB3, outB3, soB3, seB3 = _run(gen, cfgB3, tmp)
+        tclB3 = _read(outB3)
+
+        # (c) B run exits 0 and out.tcl non-empty
+        CONDITIONS.append(("c","gen on config_B exits 0 and out.tcl non-empty", rcB==0 and len(tclB)>50))
+
+        # (d) B: aeSetBindKey for each layer key (a/b/c)
+        def has_bindkey(tcl, key):
+            return re.search(r'aeSetBindKey\s+-action\s+"[^"]*"\s+-key\s+"%s"' % re.escape(key), tcl) is not None
+        CONDITIONS.append(("d","B bindkeys a/b/c present", all(has_bindkey(tclB,k) for k in ["a","b","c"])))
+
+        # (e) B: aeSetLayerVisible -layer Metal1/Metal2/Metal3 -isvisible 1
+        def has_vis(tcl, name):
+            return re.search(r'aeSetLayerVisible\s+-layer\s+%s\s+-isvisible\s+1' % re.escape(name), tcl) is not None or \
+                   re.search(r'aeSetLayerVisible\s+-layer\s+\$\w+\s+-isvisible\s+1', tcl) is not None and \
+                   re.search(r'showOnlyLayer\s+"%s"' % re.escape(name), tcl) is not None
+        # require literal layer names appear in the generated tcl (in showOnlyLayer "<name>" calls)
+        def has_layer_name(tcl, name):
+            return re.search(r'"%s"' % re.escape(name), tcl) is not None
+        CONDITIONS.append(("e","B layer names Metal1/Metal2/Metal3 present in out.tcl",
+                           all(has_layer_name(tclB,n) for n in ["Metal1","Metal2","Metal3"])))
+
+        # (f) B: aeSetAllLayerVisible -isvisible 0 (hide-all) present
+        CONDITIONS.append(("f","B has aeSetAllLayerVisible -isvisible 0 (hide-all)",
+                           re.search(r'aeSetAllLayerVisible\s+-isvisible\s+0', tclB) is not None))
+
+        # (g) B: aeSetActiveLayer -layerName ... present (with purpose)
+        CONDITIONS.append(("g","B has aeSetActiveLayer -layerName with purpose",
+                           re.search(r'aeSetActiveLayer\s+-layerName', tclB) is not None and \
+                           re.search(r'-purpose\s', tclB) is not None))
+
+        # (h) B: restore bindkey r + showAllLayers + aeSetAllLayerVisible -isvisible 1
+        CONDITIONS.append(("h","B restore: bindkey r -> showAllLayers + all-visible 1",
+                           has_bindkey(tclB,"r") and re.search(r'showAllLayers', tclB) is not None and \
+                           re.search(r'aeSetAllLayerVisible\s+-isvisible\s+1', tclB) is not None))
+
+        # (i) B2: purpose pin appears (-purpose pin in aeSetLayerVisible or showOnlyLayer "..." "pin")
+        CONDITIONS.append(("i","B2 purpose pin present (cross-input purpose guard)",
+                           re.search(r'"pin"', tclB2) is not None or re.search(r'-purpose\s+pin', tclB2) is not None))
+
+        # (j) B3: NO showAllLayers bindkey (restore_key null) AND AA/PP/CT bindkeys 1/2/3 present
+        b3_keys = all(has_bindkey(tclB3,k) for k in ["1","2","3"]) and \
+                  all(has_layer_name(tclB3,n) for n in ["AA","PP","CT"])
+        # restore_key is null -> no showAllLayers proc/bindkey for key (B3 has key 1/2/3 as layer keys, none for restore)
+        # check there is no extra showAllLayers bindkey beyond layer keys
+        no_restore_proc = "showAllLayers" not in tclB3
+        CONDITIONS.append(("j","B3: AA/PP/CT bindkeys 1/2/3 + NO restore (restore_key null)",
+                           b3_keys and no_restore_proc))
+
+        # (k) structural: in showOnlyLayer, aeSetAllLayerVisible -isvisible 0 comes BEFORE aeSetLayerVisible -isvisible 1
+        def hide_before_show(tcl):
+            m_hide = re.search(r'aeSetAllLayerVisible\s+-isvisible\s+0', tcl)
+            m_show = re.search(r'aeSetLayerVisible\s+-isvisible\s+1', tcl)
+            if not (m_hide and m_show): return False
+            return m_hide.start() < m_show.start()
+        CONDITIONS.append(("k","structural: hide-all before show-target in solo proc", hide_before_show(tclB)))
+
+        # (l) cross-input guard: B bindkeys are a/b/c (NOT 1/2/3); B layer names Metal1/2/3 (NOT M1/2/3)
+        # defeats fake that hardcodes M1->1,M2->2,...
+        CONDITIONS.append(("l","cross-input guard: B uses a/b/c + Metal1-3 (not hardcoded M1/1)",
+                           has_bindkey(tclB,"a") and not re.search(r'showM1\b', tclB) is not None and \
+                           "Metal1" in tclB and not (re.search(r'aeSetBindKey[^"]*"M1"', tclB) is not None)))
+        # simpler: ensure Metal1 present and bindkey a present, and no hardcoded showM1 proc name
+        has_showM1 = re.search(r'showM1\b', tclB) is not None
+        CONDITIONS[-1] = ("l","cross-input guard: B has Metal1/a and NO hardcoded showM1 proc",
+                          ("Metal1" in tclB) and has_bindkey(tclB,"a") and (not has_showM1))
+
+        # (m) B: aeSetLayerSelectable present for solo (selectable)
+        CONDITIONS.append(("m","B has aeSetLayerSelectable -issel 1 (selectable)",
+                           re.search(r'aeSetLayerSelectable\s+-issel\s+1', tclB) is not None))
+
+        # (n) B2: runs exit 0 and produces non-empty tcl with M1/M2 layer names
+        CONDITIONS.append(("n","B2 runs exit 0 + M1/M2 names present",
+                           rcB2==0 and len(tclB2)>50 and has_layer_name(tclB2,"M1") and has_layer_name(tclB2,"M2")))
+
+        return _finalize(CONDITIONS)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+def _finalize(CONDITIONS):
+    failed = [(l,d) for (l,d,ok) in CONDITIONS if not ok]
+    report = "LayerSoloBindkeyGen: %d/%d conditions PASS" % (len(CONDITIONS)-len(failed), len(CONDITIONS))
+    if failed:
+        report += "\nFAILED: " + ", ".join("%s(%s)"%(l,d) for l,d in failed)
+        raise AssertionError(report)
+    return report
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("usage: check.py <deliverable> <workdir>"); sys.exit(2)
+    try:
+        print(check(sys.argv[1], sys.argv[2]))
+    except AssertionError as e:
+        print("FAIL:", e); sys.exit(1)
+'''
+with open(os.path.join(REF,"check.py"),"w") as f: f.write(CHECK)
+
+# ---------- negatives ----------
+NEG = os.path.join(REF,"negative"); os.makedirs(NEG, exist_ok=True)
+# neg1: naive_hardcode - ignores config, always emits M1->1..M6->6
+NAIVE = r'''#!/usr/bin/env python3
+import sys, json
+def main():
+    # ignore config, hardcode M1-M6
+    L=[]
+    L.append("proc showM1 {} { aeSetAllLayerVisible -isvisible 0; aeSetLayerVisible -layer M1 -isvisible 1; aeSetActiveLayer -layerName M1 }")
+    L.append("proc showM2 {} { aeSetAllLayerVisible -isvisible 0; aeSetLayerVisible -layer M2 -isvisible 1; aeSetActiveLayer -layerName M2 }")
+    L.append("proc showM3 {} { aeSetAllLayerVisible -isvisible 0; aeSetLayerVisible -layer M3 -isvisible 1; aeSetActiveLayer -layerName M3 }")
+    L.append("aeSetBindKey -action showM1 -key 1")
+    L.append("aeSetBindKey -action showM2 -key 2")
+    L.append("aeSetBindKey -action showM3 -key 3")
+    L.append("proc showAllLayers {} { aeSetAllLayerVisible -isvisible 1 }")
+    L.append("aeSetBindKey -action showAllLayers -key 0")
+    with open(sys.argv[2],"w") as f: f.write("\n".join(L)+"\n")
+main()
+'''
+with open(os.path.join(NEG,"naive_hardcode.py"),"w") as f: f.write(NAIVE)
+# neg2: print_only - just prints, no file written
+PRINT_ONLY = r'''#!/usr/bin/env python3
+import sys
+def main():
+    print("generated layer_solo.tcl with aeSetBindKey and aeSetLayerVisible")
+main()
+'''
+with open(os.path.join(NEG,"print_only.py"),"w") as f: f.write(PRINT_ONLY)
+# neg3: deleted_core - emits bindkeys with layer names from config but NO aeSetAllLayerVisible/aeSetActiveLayer
+DELETED = r'''#!/usr/bin/env python3
+import sys, json
+def main():
+    with open(sys.argv[1]) as f: conf=json.load(f)
+    L=[]
+    for i,ly in enumerate(conf["layers"]):
+        pn="showLayer%d"%(i+1)
+        L.append('proc %s {} {'%pn)
+        L.append('    aeSetLayerVisible -layer %s -isvisible 1'%ly["name"])  # no hide-all, no active
+        L.append('}')
+        L.append('aeSetBindKey -action "%s" -key "%s"'%(pn,ly["key"]))
+    if conf.get("restore_key"):
+        L.append('aeSetBindKey -action "showAllLayers" -key "%s"'%conf["restore_key"])
+    with open(sys.argv[2],"w") as f: f.write("\n".join(L)+"\n")
+main()
+'''
+with open(os.path.join(NEG,"deleted_core.py"),"w") as f: f.write(DELETED)
+
+# §4.9 three fakes
+with open(os.path.join(NEG,"empty_shell.py"),"w") as f: f.write("# empty stub\n")
+with open(os.path.join(NEG,"print_expected.py"),"w") as f: f.write(
+    'import sys\nprint("proc showOnlyLayer {l p} { aeSetAllLayerVisible -isvisible 0; aeSetLayerVisible -layer $l -isvisible 1; aeSetActiveLayer -layerName $l }\naeSetBindKey -action showM1 -key 1")\n')
+with open(os.path.join(NEG,"name_only.py"),"w") as f: f.write('# gen_layer_solo.py\n')
+
+# ---------- negative_selftest.py ----------
+NEGSELF = r'''#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""negative_selftest.py - run check() against each negative; expect ALL FAIL (exit 1)."""
+import os, sys, zipfile, tempfile, shutil
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from check import check
+
+NEG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "negative")
+negs = ["naive_hardcode.py","print_only.py","deleted_core.py",
+        "empty_shell.py","print_expected.py","name_only.py"]
+results = {}
+for n in negs:
+    src = os.path.join(NEG_DIR, n)
+    tmp = tempfile.mkdtemp(prefix="negchk_")
+    zp = os.path.join(tmp, "submit.zip")
+    with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:
+        z.write(src, "gen_layer_solo.py")
+    try:
+        check(zp, tmp)
+        results[n] = "PASS-UNEXPECTED"
+    except AssertionError as e:
+        results[n] = "FAIL-OK"
+    except Exception as e:
+        results[n] = "FAIL-OK(err)"
+    shutil.rmtree(tmp, ignore_errors=True)
+fails_ok = sum(1 for v in results.values() if v.startswith("FAIL-OK"))
+print("negative_selftest: %d/%d FAIL-OK" % (fails_ok, len(negs)))
+for n,v in results.items(): print("  %s: %s"%(n,v))
+if fails_ok != len(negs):
+    print("NEG_RC=1 (some negative unexpectedly PASSED)"); sys.exit(1)
+print("NEG_RC=0 (all negatives FAIL as expected)")
+'''
+with open(os.path.join(REF,"negative_selftest.py"),"w") as f: f.write(NEGSELF)
+
+print("built case artifacts at:", AST)
+print("built reference at:", REF)

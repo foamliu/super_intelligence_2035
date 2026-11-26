@@ -1,0 +1,762 @@
+diff --git a/scratch_repro/after.txt b/scratch_repro/after.txt
+new file mode 100644
+index 0000000000..458dc69930
+--- /dev/null
++++ b/scratch_repro/after.txt
+@@ -0,0 +1,15 @@
++ERROR: test_clearsessions_unsupported (sessions_tests.tests.ClearSessionsCommandTests)
++ERROR: test_i18n_app_dirs (i18n.tests.WatchForTranslationChangesTests)
++ERROR: test_request_lifecycle_signals_dispatched_with_thread_sensitive (asgi.tests.ASGITest)
++ERROR: test_response_resolver_match_middleware_urlconf (test_client.tests.AsyncClientTest)
++ERROR: test_response_resolver_match_middleware_urlconf (test_client.tests.ClientTest)
++ERROR: test_validators (validators.tests.TestValidators) [URLValidator] (value='http://[::1:2::3]:8080/')
++ERROR: test_value_placeholder_with_char_field (forms_tests.tests.test_validators.ValidatorCustomMessageTests) [URLValidator] (value='http://[::1:2::3]/')
++FAIL: test_custom_fields (inspectdb.tests.InspectDBTestCase)
++FAIL: test_integerchoices (model_enums.tests.ChoicesTests)
++FAIL: test_pickle_errors_detection (test_runner.test_parallel.RemoteTestResultTest)
++FAIL: test_repr_with_deferrable (constraints.tests.UniqueConstraintTests)
++FAIL: test_subparser_invalid_option (user_commands.tests.CommandTests)
++FAIL: test_textchoices (model_enums.tests.ChoicesTests)
++FAIL: test_validators (validators.tests.TestValidators) [URLValidator] (value='http://[::ffff:192.9.5.5]\n')
++FAIL: test_validators (validators.tests.TestValidators) [URLValidator] (value='http://www.djangoproject.com/\n')
+diff --git a/scratch_repro/before.txt b/scratch_repro/before.txt
+new file mode 100644
+index 0000000000..e69de29bb2
+diff --git a/scratch_repro/debug1.py b/scratch_repro/debug1.py
+new file mode 100644
+index 0000000000..9600b0d2ef
+--- /dev/null
++++ b/scratch_repro/debug1.py
+@@ -0,0 +1,89 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q
++import django.db.models.fields.related_lookups as rl
++import django.db.models.lookups as lk
++
++orig_related_in_as_sql = rl.RelatedIn.as_sql
++def patched_related_in_as_sql(self, compiler, connection):
++    print('RelatedIn.as_sql: lhs=%r rhs=%r' % (self.lhs, self.rhs))
++    print('  rhs has_select_fields=%r' % getattr(self.rhs, 'has_select_fields', 'N/A'))
++    if hasattr(self.lhs, 'field'):
++        tf = getattr(self.lhs.field, 'target_field', None)
++        print('  lhs.field=%r target_field=%r pk=%r' % (self.lhs.field, tf, getattr(tf, 'primary_key', None)))
++    result = orig_related_in_as_sql(self, compiler, connection)
++    print('  after: rhs.select=%r default_cols=%r' % (getattr(self.rhs, 'select', None), getattr(self.rhs, 'default_cols', None)))
++    return result
++rl.RelatedIn.as_sql = patched_related_in_as_sql
++
++orig_in_process_rhs = lk.In.process_rhs
++def patched_in_process_rhs(self, compiler, connection):
++    print('In.process_rhs: rhs=%r has_select_fields=%r' % (self.rhs, getattr(self.rhs, 'has_select_fields', 'N/A')))
++    return orig_in_process_rhs(self, compiler, connection)
++lk.In.process_rhs = patched_in_process_rhs
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++pg2 = PropertyGroup.objects.create(name='pg2')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++agent2 = Agent.objects.create()
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++Ticket.objects.create(agent=agent2, date='2021-01-02', average=2.0)
++
++property_groups = PropertyGroup.objects.filter(name='pg1')
++
++print('=== id__in case ===')
++qs1 = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(agent__property_groups__id__in=property_groups.values_list('id', flat=True)) |
++    Q(agent__property_groups__count=0)
++).distinct()
++try:
++    print('id__in count:', qs1.count())
++except Exception as e:
++    print('id__in FAILED:', e)
++
++print('=== __in case ===')
++qs2 = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(agent__property_groups__in=property_groups) |
++    Q(agent__property_groups__count=0)
++).distinct()
++try:
++    print('__in count:', qs2.count())
++except Exception as e:
++    print('__in FAILED:', e)
+diff --git a/scratch_repro/debug2.py b/scratch_repro/debug2.py
+new file mode 100644
+index 0000000000..1bb390b4ca
+--- /dev/null
++++ b/scratch_repro/debug2.py
+@@ -0,0 +1,75 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++pg2 = PropertyGroup.objects.create(name='pg2')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++agent2 = Agent.objects.create()
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++Ticket.objects.create(agent=agent2, date='2021-01-02', average=2.0)
++
++property_groups = PropertyGroup.objects.filter(name='pg1')
++
++print('=== id__in SQL ===')
++qs1 = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(agent__property_groups__id__in=property_groups.values_list('id', flat=True)) |
++    Q(agent__property_groups__count=0)
++).distinct()
++print(qs1.values('id').query)
++
++print()
++print('=== __in SQL (broken) ===')
++qs2 = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(agent__property_groups__in=property_groups) |
++    Q(agent__property_groups__count=0)
++).distinct()
++print(qs2.values('id').query)
++
++print()
++print('=== __in without OR (sanity) ===')
++qs3 = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(agent__property_groups__in=property_groups)
++).distinct()
++print(qs3.values('id').query)
++try:
++    print('count:', qs3.count())
++except Exception as e:
++    print('FAILED:', e)
+diff --git a/scratch_repro/debug3.py b/scratch_repro/debug3.py
+new file mode 100644
+index 0000000000..9c232e4627
+--- /dev/null
++++ b/scratch_repro/debug3.py
+@@ -0,0 +1,57 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q, Subquery, OuterRef
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++agent2 = Agent.objects.create()
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++Ticket.objects.create(agent=agent2, date='2021-01-02', average=2.0)
++
++print('=== explicit Subquery in OR with aggregate ===')
++qs = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(pk__in=Subquery(Ticket.objects.filter(agent=OuterRef('agent')))) |
++    Q(agent__property_groups__count=0)
++)
++print(qs.values('id').query)
++try:
++    print('count:', qs.count())
++except Exception as e:
++    print('FAILED:', type(e).__name__, e)
+diff --git a/scratch_repro/debug4.py b/scratch_repro/debug4.py
+new file mode 100644
+index 0000000000..f276581325
+--- /dev/null
++++ b/scratch_repro/debug4.py
+@@ -0,0 +1,70 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q, Subquery, OuterRef
++import django.db.models.sql.compiler as comp
++
++orig = comp.SQLCompiler.get_group_by
++def traced(self, select, order_by):
++    result = orig(self, select, order_by)
++    print('GROUP BY result:', result)
++    return result
++comp.SQLCompiler.get_group_by = traced
++
++orig_cgb = comp.SQLCompiler.collapse_group_by
++def traced2(self, expressions, having):
++    print('expressions before collapse:', expressions)
++    r = orig_cgb(self, expressions, having)
++    print('expressions after collapse:', r)
++    return r
++comp.SQLCompiler.collapse_group_by = traced2
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++
++print('=== explicit Subquery case ===')
++qs = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(pk__in=Subquery(Ticket.objects.filter(agent=OuterRef('agent')))) |
++    Q(agent__property_groups__count=0)
++)
++try:
++    qs.count()
++except Exception as e:
++    print('FAILED:', type(e).__name__, e)
+diff --git a/scratch_repro/debug5.py b/scratch_repro/debug5.py
+new file mode 100644
+index 0000000000..a7b50c6d62
+--- /dev/null
++++ b/scratch_repro/debug5.py
+@@ -0,0 +1,70 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q, Subquery, OuterRef
++import django.db.models.lookups as lk
++import django.db.models.expressions as ex
++
++orig_lookup = lk.Lookup.get_group_by_cols
++def traced(self, alias=None):
++    r = orig_lookup(self, alias)
++    print('Lookup.get_group_by_cols on %r -> %r' % (self, r))
++    return r
++lk.Lookup.get_group_by_cols = traced
++
++orig_expr = ex.BaseExpression.get_group_by_cols
++def traced2(self, alias=None):
++    r = orig_expr(self, alias)
++    print('BaseExpression.get_group_by_cols on %r (contains_aggregate=%r) -> %r' % (self, self.contains_aggregate, r))
++    return r
++ex.BaseExpression.get_group_by_cols = traced2
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++
++print('=== explicit Subquery case ===')
++qs = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(pk__in=Subquery(Ticket.objects.filter(agent=OuterRef('agent')))) |
++    Q(agent__property_groups__count=0)
++)
++try:
++    qs.count()
++except Exception as e:
++    print('FAILED:', type(e).__name__, e)
+diff --git a/scratch_repro/debug6.py b/scratch_repro/debug6.py
+new file mode 100644
+index 0000000000..54fa978dd4
+--- /dev/null
++++ b/scratch_repro/debug6.py
+@@ -0,0 +1,66 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q, Subquery, OuterRef
++import django.db.models.lookups as lk
++
++orig_lookup = lk.Lookup.get_group_by_cols
++def traced(self, alias=None):
++    print('Lookup %r: rhs type=%r, rhs=%r' % (type(self).__name__, type(self.rhs), self.rhs))
++    print('  rhs has get_group_by_cols:', hasattr(self.rhs, 'get_group_by_cols'))
++    if hasattr(self.rhs, 'get_group_by_cols'):
++        print('  rhs.get_group_by_cols() ->', self.rhs.get_group_by_cols())
++    r = orig_lookup(self, alias)
++    print('  full result ->', r)
++    return r
++lk.Lookup.get_group_by_cols = traced
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++
++print('=== explicit Subquery case ===')
++qs = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(pk__in=Subquery(Ticket.objects.filter(agent=OuterRef('agent')))) |
++    Q(agent__property_groups__count=0)
++)
++try:
++    qs.count()
++except Exception as e:
++    print('FAILED:', type(e).__name__, e)
+diff --git a/scratch_repro/debug7.py b/scratch_repro/debug7.py
+new file mode 100644
+index 0000000000..264d04e2f8
+--- /dev/null
++++ b/scratch_repro/debug7.py
+@@ -0,0 +1,67 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q, Subquery, OuterRef
++import django.db.models.lookups as lk
++
++orig_lookup = lk.Lookup.get_group_by_cols
++def traced(self, alias=None):
++    if type(self.rhs).__name__ == 'Subquery':
++        print('rhs Subquery dict:', self.rhs.__dict__.keys())
++        print('rhs contains_aggregate:', self.rhs.contains_aggregate)
++        print('type(rhs).contains_aggregate:', type(self.rhs).contains_aggregate)
++        import django.db.models.expressions as ex
++        print('is ex.Subquery:', type(self.rhs) is ex.Subquery)
++        print('mro:', [c.__name__ for c in type(self.rhs).__mro__])
++    r = orig_lookup(self, alias)
++    return r
++lk.Lookup.get_group_by_cols = traced
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++
++qs = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(pk__in=Subquery(Ticket.objects.filter(agent=OuterRef('agent')))) |
++    Q(agent__property_groups__count=0)
++)
++try:
++    qs.count()
++except Exception as e:
++    print('FAILED:', type(e).__name__, e)
+diff --git a/scratch_repro/debug8.py b/scratch_repro/debug8.py
+new file mode 100644
+index 0000000000..4493562549
+--- /dev/null
++++ b/scratch_repro/debug8.py
+@@ -0,0 +1,52 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q, Subquery, OuterRef
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++
++print('=== plain Subquery __in (no OR) ===')
++qs = Ticket.objects.filter(pk__in=Subquery(Ticket.objects.filter(agent=OuterRef('agent'))))
++print(qs.query)
++try:
++    print('count:', qs.count())
++except Exception as e:
++    print('FAILED:', type(e).__name__, e)
+diff --git a/scratch_repro/debug9.py b/scratch_repro/debug9.py
+new file mode 100644
+index 0000000000..c83ab588c2
+--- /dev/null
++++ b/scratch_repro/debug9.py
+@@ -0,0 +1,68 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q, OuterRef
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++agent2 = Agent.objects.create()
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++Ticket.objects.create(agent=agent2, date='2021-01-02', average=2.0)
++
++print('=== correlated __in queryset (OuterRef) OR aggregate ===')
++qs = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(agent__in=Agent.objects.filter(pk=OuterRef('agent'))) |
++    Q(agent__property_groups__count=0)
++)
++print(qs.values('id').query)
++try:
++    print('count:', qs.count())
++except Exception as e:
++    print('FAILED:', type(e).__name__, e)
++
++print('=== correlated __in with multivalued outer ref ===')
++qs2 = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(pk__in=Ticket.objects.filter(agent__property_groups=OuterRef('agent__property_groups'))) |
++    Q(agent__property_groups__count=0)
++)
++print(qs2.values('id').query)
++try:
++    print('count:', qs2.count())
++except Exception as e:
++    print('FAILED:', type(e).__name__, e)
+diff --git a/scratch_repro/repro.py b/scratch_repro/repro.py
+new file mode 100644
+index 0000000000..b7a1b1d85f
+--- /dev/null
++++ b/scratch_repro/repro.py
+@@ -0,0 +1,64 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import models, connection
++
++class PropertyGroup(models.Model):
++    name = models.CharField(max_length=10)
++
++    class Meta:
++        app_label = 'repro'
++
++class Agent(models.Model):
++    property_groups = models.ManyToManyField(PropertyGroup, blank=True)
++
++    class Meta:
++        app_label = 'repro'
++
++class Ticket(models.Model):
++    agent = models.ForeignKey(Agent, models.CASCADE)
++    date = models.DateField()
++    average = models.FloatField()
++
++    class Meta:
++        app_label = 'repro'
++
++with connection.schema_editor() as se:
++    se.create_model(PropertyGroup)
++    se.create_model(Agent)
++    se.create_model(Ticket)
++
++from django.db.models import Count, Q
++
++pg1 = PropertyGroup.objects.create(name='pg1')
++pg2 = PropertyGroup.objects.create(name='pg2')
++agent1 = Agent.objects.create()
++agent1.property_groups.add(pg1)
++agent2 = Agent.objects.create()
++Ticket.objects.create(agent=agent1, date='2021-01-01', average=1.0)
++Ticket.objects.create(agent=agent2, date='2021-01-02', average=2.0)
++
++property_groups = PropertyGroup.objects.filter(name='pg1')
++
++# Working case: id__in
++qs1 = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(agent__property_groups__id__in=property_groups.values_list('id', flat=True)) |
++    Q(agent__property_groups__count=0)
++).distinct()
++print('id__in count:', qs1.count())
++
++# Failing case: __in
++qs2 = Ticket.objects.annotate(Count('agent__property_groups')).filter(
++    Q(agent__property_groups__in=property_groups) |
++    Q(agent__property_groups__count=0)
++).distinct()
++print('__in count:', qs2.count())
++print(qs2.query)

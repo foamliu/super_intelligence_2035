@@ -1,0 +1,81 @@
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index a255c069..6cd2ff3f 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1661,6 +1661,10 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type:
+             else:
+                 bases = []
+ 
++            # replace mocked objects with their actual class to get correct names
++            bases = [type(base) if ismock(base) and not isinstance(base, ModuleType)
++                     else base for base in bases]
++
+             self.env.events.emit('autodoc-process-bases',
+                                  self.fullname, self.object, self.options, bases)
+ 
+diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py
+index b562f47f..06224dfb 100644
+--- a/sphinx/ext/autodoc/mock.py
++++ b/sphinx/ext/autodoc/mock.py
+@@ -168,7 +168,7 @@ def ismock(subject: Any) -> bool:
+     try:
+         # check the object is mocked object
+         __mro__ = safe_getattr(type(subject), '__mro__', [])
+-        if len(__mro__) > 2 and __mro__[1] is _MockObject:
++        if len(__mro__) > 2 and _MockObject in __mro__[1:]:
+             return True
+     except AttributeError:
+         pass
+diff --git a/tests/roots/test-ext-autodoc/target/mocked_inheritance.py b/tests/roots/test-ext-autodoc/target/mocked_inheritance.py
+new file mode 100644
+index 00000000..e58b9a4a
+--- /dev/null
++++ b/tests/roots/test-ext-autodoc/target/mocked_inheritance.py
+@@ -0,0 +1,6 @@
++import missing_module.sub  # NOQA
++
++
++class DeepKernel(missing_module.sub.Class):
++    """A deep kernel."""
++    pass
+diff --git a/tests/test_ext_autodoc_autoclass.py b/tests/test_ext_autodoc_autoclass.py
+index 402a1b0c..de329a3b 100644
+--- a/tests/test_ext_autodoc_autoclass.py
++++ b/tests/test_ext_autodoc_autoclass.py
+@@ -431,3 +431,24 @@ def test_coroutine(app):
+         '      A documented coroutine staticmethod',
+         '',
+     ]
++
++
++@pytest.mark.skipif(sys.version_info < (3, 7), reason='python 3.7+ is required.')
++@pytest.mark.sphinx('html', testroot='ext-autodoc',
++                    confoverrides={'autodoc_mock_imports': ['missing_module']})
++@pytest.mark.usefixtures("rollback_sysmodules")
++def test_show_inheritance_for_mocked_object(app):
++    sys.modules.pop('target', None)  # unload target module to clear the module cache
++
++    options = {'show-inheritance': None}
++    actual = do_autodoc(app, 'class', 'target.mocked_inheritance.DeepKernel', options)
++    assert list(actual) == [
++        '',
++        '.. py:class:: DeepKernel(*args: Any, **kwargs: Any)',
++        '   :module: target.mocked_inheritance',
++        '',
++        '   Bases: :py:class:`missing_module.sub.Class`',
++        '',
++        '   A deep kernel.',
++        '',
++    ]
+diff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py
+index 497bd8a6..7abffee1 100644
+--- a/tests/test_ext_autodoc_mock.py
++++ b/tests/test_ext_autodoc_mock.py
+@@ -146,6 +146,7 @@ def test_ismock():
+ 
+         assert ismock(mod1) is True
+         assert ismock(mod1.Class) is True
++        assert ismock(mod1.Class.Nested) is True
+         assert ismock(Inherited) is False
+ 
+         assert ismock(mod2) is False

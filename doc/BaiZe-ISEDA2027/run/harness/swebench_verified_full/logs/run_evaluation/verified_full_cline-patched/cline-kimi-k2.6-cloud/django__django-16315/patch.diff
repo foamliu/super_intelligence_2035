@@ -1,0 +1,87 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 0562a71d..eb15062c 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -1722,11 +1722,17 @@ class SQLInsertCompiler(SQLCompiler):
+ 
+         placeholder_rows, param_rows = self.assemble_as_sql(fields, value_rows)
+ 
++        update_fields = [
++            opts.get_field(name).column for name in self.query.update_fields
++        ]
++        unique_fields = [
++            opts.get_field(name).column for name in self.query.unique_fields
++        ]
+         on_conflict_suffix_sql = self.connection.ops.on_conflict_suffix_sql(
+             fields,
+             self.query.on_conflict,
+-            self.query.update_fields,
+-            self.query.unique_fields,
++            update_fields,
++            unique_fields,
+         )
+         if (
+             self.returning_fields
+diff --git a/tests/bulk_create/models.py b/tests/bulk_create/models.py
+index 27abc416..011752fd 100644
+--- a/tests/bulk_create/models.py
++++ b/tests/bulk_create/models.py
+@@ -75,6 +75,12 @@ class UpsertConflict(models.Model):
+     name = models.CharField(max_length=15)
+ 
+ 
++class UpsertConflictWithDbColumn(models.Model):
++    number = models.IntegerField(unique=True, db_column="number_col")
++    rank = models.IntegerField(db_column="rank_col")
++    name = models.CharField(max_length=15, db_column="name_col")
++
++
+ class NoFields(models.Model):
+     pass
+ 
+diff --git a/tests/bulk_create/tests.py b/tests/bulk_create/tests.py
+index 6c490d12..8e65471a 100644
+--- a/tests/bulk_create/tests.py
++++ b/tests/bulk_create/tests.py
+@@ -34,6 +34,7 @@ from .models import (
+     State,
+     TwoFields,
+     UpsertConflict,
++    UpsertConflictWithDbColumn,
+ )
+ 
+ 
+@@ -772,3 +773,33 @@ class BulkCreateTests(TestCase):
+     @skipIfDBFeature("supports_update_conflicts_with_target")
+     def test_update_conflicts_no_unique_fields(self):
+         self._test_update_conflicts([])
++
++    @skipUnlessDBFeature(
++        "supports_update_conflicts", "supports_update_conflicts_with_target"
++    )
++    def test_update_conflicts_with_db_column(self):
++        UpsertConflictWithDbColumn.objects.bulk_create(
++            [
++                UpsertConflictWithDbColumn(number=1, rank=1, name="John"),
++                UpsertConflictWithDbColumn(number=2, rank=2, name="Mary"),
++            ]
++        )
++        self.assertEqual(UpsertConflictWithDbColumn.objects.count(), 2)
++
++        UpsertConflictWithDbColumn.objects.bulk_create(
++            [
++                UpsertConflictWithDbColumn(number=1, rank=4, name="Steve"),
++                UpsertConflictWithDbColumn(number=2, rank=2, name="Olivia"),
++            ],
++            update_conflicts=True,
++            update_fields=["rank", "name"],
++            unique_fields=["number"],
++        )
++        self.assertEqual(UpsertConflictWithDbColumn.objects.count(), 2)
++        self.assertCountEqual(
++            UpsertConflictWithDbColumn.objects.values("number", "rank", "name"),
++            [
++                {"number": 1, "rank": 4, "name": "Steve"},
++                {"number": 2, "rank": 2, "name": "Olivia"},
++            ],
++        )

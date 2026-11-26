@@ -1,0 +1,14 @@
+// gate-level sim testbench for top_a
+`timescale 1ns/1ps
+module top_a_tb;
+  reg clk, rst_n;
+  wire [31:0] acc;
+  top_a u_dut(.clk(clk), .rst_n(rst_n), .acc0(acc));
+  initial begin
+    $sdf_annotate("synth/results/dc_2026-10-29-19.16.52/top_a.mapped.sdf", u_dut);
+    clk=0; rst_n=0;
+    #10 rst_n=1;
+    #1000 $finish;
+  end
+  always #5 clk = ~clk;
+endmodule

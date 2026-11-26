@@ -1,0 +1,38 @@
+{
+  "R320": "MCP validation of R319 wrong/missing APIs",
+  "date": "2026-11-12",
+  "method": "pyAether MCP search_apis_by_keyword for each candidate API",
+  "validated_apis": {
+    "emyDesign": {"r319_status": "wrong_all3", "mcp_result": "exact_match", "true_status": "VALID_WRONG_CONTEXT", "description": "class emyDesign"},
+    "emyPoint": {"r319_status": "wrong_sft_hallucination", "mcp_result": "exact_match", "true_status": "VALID", "description": "type alias List[Tuple[int,int]]"},
+    "emyPointF": {"r319_status": "wrong_sft_hallucination", "mcp_result": "keyword_0.94", "true_status": "VALID", "description": "type alias List[Tuple[float,float]]"},
+    "emyPointArrayF": {"r319_status": "wrong_sft_hallucination", "mcp_result": "exact_match", "true_status": "VALID", "description": "class emyPointArrayF"},
+    "emyPointArray": {"r319_status": "confusion_target", "mcp_result": "keyword_0.95", "true_status": "VALID", "description": "class emyPointArray"},
+    "emyInitAether": {"r319_status": "wrong_sft_hallucination", "mcp_result": "exact_match", "true_status": "VALID", "description": "GUI init function"},
+    "emyTermType": {"r319_status": "confusion_target", "mcp_result": "exact_match", "true_status": "VALID", "description": "class emyTermType"},
+    "emyString": {"r319_status": "missing_all3", "mcp_result": "exact_match", "true_status": "VALID_KNOWLEDGE_GAP", "description": "type alias str"},
+    "emyRect": {"r319_status": "not_checked", "mcp_result": "exact_match", "true_status": "VALID", "description": "class emyRect"},
+    "emyRectF": {"r319_status": "wrong_sft_hallucination", "mcp_result": "NOT_FOUND", "true_status": "HALLUCINATION", "note": "only emyRect exists, no F variant"},
+    "emyCreateLibrary": {"r319_status": "wrong", "mcp_result": "NOT_FOUND", "true_status": "HALLUCINATION", "note": "emyLib.create / dbCreateLib exist"},
+    "CellView": {"r319_status": "wrong_all3", "mcp_result": "NOT_FOUND", "true_status": "HALLUCINATION", "note": "dbNewCV is the real API"},
+    "dbCreateLib": {"r319_status": "missing_all3", "mcp_result": "exact_match", "true_status": "VALID_KNOWLEDGE_GAP", "description": "create new library"},
+    "dbGetAllLibs": {"r319_status": "missing_all3", "mcp_result": "exact_match", "true_status": "VALID_KNOWLEDGE_GAP", "description": "get all library names"},
+    "dbDelLib": {"r319_status": "missing_all3", "mcp_result": "exact_match", "true_status": "VALID_KNOWLEDGE_GAP", "description": "delete library"},
+    "dbCloseCV": {"r319_status": "missing_all3", "mcp_result": "exact_match", "true_status": "VALID_KNOWLEDGE_GAP", "description": "close cellview"},
+    "dbNewCV": {"r319_status": "missing_all3", "mcp_result": "exact_match", "true_status": "VALID_KNOWLEDGE_GAP", "description": "create new cellview"},
+    "EmyLPPHeader": {"r319_status": "missing_all3", "mcp_result": "exact_match", "true_status": "VALID_KNOWLEDGE_GAP", "description": "class EmyLPPHeader"},
+    "CString": {"r319_status": "missing_all3", "mcp_result": "NOT_FOUND_directly", "true_status": "UNCLEAR", "note": "closest: QStringList, buildString"},
+    "emyLib": {"r319_status": "not_checked", "mcp_result": "keyword_0.87", "true_status": "VALID", "description": "class emyLib"},
+    "emyLib.create": {"r319_status": "not_checked", "mcp_result": "keyword_0.93", "true_status": "VALID", "description": "create library with name+attributes"}
+  },
+  "summary": {
+    "n_validated": 21,
+    "r319_wrong_validated": 9,
+    "of_which_actually_valid": 6,
+    "of_which_true_hallucination": 3,
+    "r319_missing_validated": 8,
+    "of_which_valid_knowledge_gap": 7,
+    "of_which_unclear": 1,
+    "correction_rate": "6/9 (67%) of R319 'wrong' APIs were actually valid pyAether APIs (wrong context, not hallucination)"
+  }
+}

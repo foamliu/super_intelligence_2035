@@ -1,0 +1,162 @@
+diff --git a/pylint/pyreverse/inspector.py b/pylint/pyreverse/inspector.py
+index 8fa1220..e0563e6 100644
+--- a/pylint/pyreverse/inspector.py
++++ b/pylint/pyreverse/inspector.py
+@@ -189,6 +189,35 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+     link_class = visit_classdef
+     link_function = visit_functiondef
+ 
++    def leave_functiondef(self, node):
++        """leave an astroid.Function node
++
++        propagate annotated argument types to instance attributes
++        """
++        if not isinstance(node.parent, astroid.ClassDef):
++            return
++        parent = node.parent
++        if not hasattr(parent, 'instance_attrs_type'):
++            return
++        for stmt in node.body:
++            if isinstance(stmt, astroid.Assign):
++                for target in stmt.targets:
++                    if (
++                        isinstance(target, astroid.AssignAttr)
++                        and isinstance(target.expr, astroid.Name)
++                        and target.expr.name == 'self'
++                    ):
++                        if (
++                            isinstance(stmt.value, astroid.Name)
++                            and stmt.value.name in node.locals_type
++                        ):
++                            current = set(
++                                parent.instance_attrs_type.get(target.attrname, [])
++                            )
++                            parent.instance_attrs_type[target.attrname] = list(
++                                current | set(node.locals_type[stmt.value.name])
++                            )
++
+     def visit_assignname(self, node):
+         """visit an astroid.AssignName node
+ 
+@@ -223,6 +252,30 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+         except astroid.InferenceError:
+             pass
+ 
++        # handle function argument annotations
++        if isinstance(node.parent, astroid.Arguments):
++            try:
++                idx = node.parent.args.index(node)
++                ann = node.parent.annotations[idx]
++                if ann is not None:
++                    try:
++                        ann_values = set(ann.infer())
++                        current = set(frame.locals_type[node.name])
++                        frame.locals_type[node.name] = list(current | ann_values)
++                    except astroid.InferenceError:
++                        pass
++            except (ValueError, IndexError):
++                pass
++
++        # handle class-level annotated assignments (a: Type = value)
++        if isinstance(node.parent, astroid.AnnAssign):
++            try:
++                inferred = set(node.parent.annotation.infer())
++                current = set(frame.locals_type[node.name])
++                frame.locals_type[node.name] = list(current | inferred)
++            except astroid.InferenceError:
++                pass
++
+     @staticmethod
+     def handle_assignattr_type(node, parent):
+         """handle an astroid.assignattr node
+@@ -235,6 +288,14 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+             parent.instance_attrs_type[node.attrname] = list(current | values)
+         except astroid.InferenceError:
+             pass
++        # handle annotated assignments (self.attr: Type = value)
++        if isinstance(node.parent, astroid.AnnAssign) and node.parent.annotation is not None:
++            try:
++                ann_values = set(node.parent.annotation.infer())
++                current = set(parent.instance_attrs_type[node.attrname])
++                parent.instance_attrs_type[node.attrname] = list(current | ann_values)
++            except astroid.InferenceError:
++                pass
+ 
+     def visit_import(self, node):
+         """visit an astroid.Import node
+diff --git a/tests/test_pyreverse_type_hints.py b/tests/test_pyreverse_type_hints.py
+new file mode 100644
+index 0000000..68cc333
+--- /dev/null
++++ b/tests/test_pyreverse_type_hints.py
+@@ -0,0 +1,70 @@
++"""Unit tests for type hint support in pyreverse inspector."""
++import astroid
++import pytest
++from pylint.pyreverse import inspector
++
++
++def test_function_argument_annotations():
++    code = '''
++class C:
++    def __init__(self, a: str = None):
++        self.a = a
++'''
++    module = astroid.parse(code)
++    project = inspector.Project('test')
++    project.add_module(module)
++    linker = inspector.Linker(project)
++    linker.visit(project)
++
++    cls = module.body[0]
++    func = cls.body[0]
++    
++    # The local 'a' should have both NoneType and str
++    assert any(hasattr(n, 'name') and n.name == 'str' for n in func.locals_type['a'])
++
++
++def test_class_level_annotated_assignment():
++    code = '''
++class C:
++    a: str = None
++'''
++    module = astroid.parse(code)
++    project = inspector.Project('test')
++    project.add_module(module)
++    linker = inspector.Linker(project)
++    linker.visit(project)
++
++    cls = module.body[0]
++    assert any(hasattr(n, 'name') and n.name == 'str' for n in cls.locals_type['a'])
++
++
++def test_instance_annotated_assignment():
++    code = '''
++class C:
++    def __init__(self):
++        self.a: float = None
++'''
++    module = astroid.parse(code)
++    project = inspector.Project('test')
++    project.add_module(module)
++    linker = inspector.Linker(project)
++    linker.visit(project)
++
++    cls = module.body[0]
++    assert any(hasattr(n, 'name') and n.name == 'float' for n in cls.instance_attrs_type['a'])
++
++
++def test_propagation_of_annotated_arg_to_instance_attr():
++    code = '''
++class C:
++    def __init__(self, a: str = None):
++        self.a = a
++'''
++    module = astroid.parse(code)
++    project = inspector.Project('test')
++    project.add_module(module)
++    linker = inspector.Linker(project)
++    linker.visit(project)
++
++    cls = module.body[0]
++    assert any(hasattr(n, 'name') and n.name == 'str' for n in cls.instance_attrs_type['a'])

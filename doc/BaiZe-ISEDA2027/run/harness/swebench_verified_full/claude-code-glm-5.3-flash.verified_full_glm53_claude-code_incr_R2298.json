@@ -1,0 +1,14 @@
+{
+  "harness": "claude-code",
+  "run_id": "verified_full_glm53_claude-code_incr_R2298",
+  "round": "R2298",
+  "n": 4,
+  "resolved": [
+    "django__django-12708",
+    "django__django-12754",
+    "django__django-12965",
+    "django__django-13112"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

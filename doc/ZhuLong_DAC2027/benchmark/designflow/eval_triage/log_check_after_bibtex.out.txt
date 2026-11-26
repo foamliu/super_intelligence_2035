@@ -1,0 +1,22 @@
+log: D:\TEMP\audit_lfb_compile\main.log   size=32874 bytes   lines=896
+Output written: Output written on main.pdf (11 pages, 258205 bytes)
+
+'!' hard errors: 0
+
+Overfull \hbox total: 5   >20pt: 3
+    45.9pt  Overfull \hbox (45.92218pt too wide) in paragraph at lines 35--35
+    29.8pt  Overfull \hbox (29.83337pt too wide) in paragraph at lines 37--47
+    26.9pt  Overfull \hbox (26.88324pt too wide) in paragraph at lines 54--54
+    11.6pt  Overfull \hbox (11.57347pt too wide) in paragraph at lines 54--54
+     6.0pt  Overfull \hbox (5.96777pt too wide) in paragraph at lines 21--42
+
+Underfull \hbox: 70
+Underfull \vbox: 3
+
+Undefined citations: 0 unique=[]
+Undefined references: 0 unique=[]
+  'There were undefined citations' present: False
+  'There were undefined references' present: False
+
+Total warning lines: 1; first 10:
+  L444: Package hyperref Warning: Ignoring empty anchor on input line 66.

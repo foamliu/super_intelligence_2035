@@ -1,0 +1,71 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 850734709..f6cd8d305 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -125,11 +125,12 @@ class SQLCompiler:
+             cols = expr.get_group_by_cols()
+             for col in cols:
+                 expressions.append(col)
+-        for expr, (sql, params, is_ref) in order_by:
+-            # Skip References to the select clause, as all expressions in the
+-            # select clause are already part of the group by.
+-            if not is_ref:
+-                expressions.extend(expr.get_group_by_cols())
++        if not self._meta_ordering:
++            for expr, (sql, params, is_ref) in order_by:
++                # Skip References to the select clause, as all expressions in the
++                # select clause are already part of the group by.
++                if not is_ref:
++                    expressions.extend(expr.get_group_by_cols())
+         having_group_by = self.having.get_group_by_cols() if self.having else ()
+         for expr in having_group_by:
+             expressions.append(expr)
+diff --git a/tests/aggregation/models.py b/tests/aggregation/models.py
+index cfc261abc..a9377f06e 100644
+--- a/tests/aggregation/models.py
++++ b/tests/aggregation/models.py
+@@ -43,3 +43,14 @@ class Store(models.Model):
+ 
+     def __str__(self):
+         return self.name
++
++
++class Category(models.Model):
++    name = models.CharField(max_length=100)
++    age = models.IntegerField()
++
++    class Meta:
++        ordering = ['name']
++
++    def __str__(self):
++        return self.name
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index 49123396d..dc712698c 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -14,7 +14,7 @@ from django.test.testcases import skipUnlessDBFeature
+ from django.test.utils import Approximate, CaptureQueriesContext
+ from django.utils import timezone
+ 
+-from .models import Author, Book, Publisher, Store
++from .models import Author, Book, Category, Publisher, Store
+ 
+ 
+ class AggregateTestCase(TestCase):
+@@ -1340,3 +1340,16 @@ class AggregateTestCase(TestCase):
+             ('Stuart Russell', 1),
+             ('Peter Norvig', 2),
+         ], lambda a: (a.name, a.contact_count), ordered=False)
++
++    def test_aggregation_default_ordering_not_in_group_by(self):
++        """Meta.ordering is not included in GROUP BY when aggregating."""
++        Category.objects.bulk_create([
++            Category(name='Alice', age=30),
++            Category(name='Bob', age=30),
++            Category(name='Charlie', age=25),
++        ])
++        result = Category.objects.values('age').annotate(count=Count('id'))
++        self.assertCountEqual(result, [
++            {'age': 25, 'count': 1},
++            {'age': 30, 'count': 2},
++        ])

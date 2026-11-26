@@ -1,0 +1,107 @@
+# vision VQA SSH bridge — connectivity proof (落盘证据)
+# 任务书 §2026-11-15 07:2x 任务①「基于 SSH 自建评测机(36.15)→VQA 后端(.17)通道」
+# 生成: 2026-11-15 08:3x (vision 线, .17 = 10.252.32.17)
+# 所有输出为本轮实测原样; 命令在 .17(10.252.32.17) 与 36.15(hfeg0tedaap02) 上执行。
+
+================================================================================
+## 0. 环境与拓扑
+================================================================================
+- VQA 后端跑在 .17 (10.252.32.17):
+    :30001 = Qwen3.5-2B 基模 VQA HTTP  (qwen35_vqa_server.py, pid 3213592)
+    :30002 = Qwen3.5-2B VQA MCP streamableHttp (qwen35_vqa_mcp_server.py, pid 3216569)
+    :30003 = Qwen3.5-2B + rft2_adapter_seed11 VQA HTTP (pid 3354855)
+- 评测机 = 36.15 (hfeg0tedaap02). 36.15 -> .17 的 TCP(22/30001/30002/30003) 全不通;
+  仅 SSH 隧道 .17:3333 <-> 36.15 有保障。
+- 拓扑(本通道):
+    .17 上 `ssh -p 3333 -R 127.0.0.1:1300x:127.0.0.1:3000x app.e0031982@localhost`
+      => 在 36.15 loopback 开 13001/13002/13003, 反向转发到 .17 的 30001/30002/30003
+    36.15 上 /tmp/vqa_fwd2.py (pid 2438907): 0.0.0.0:3000x -> 127.0.0.1:1300x
+      => 暴露给评测容器经 docker0 网关 10.247.64.1:3000x 访问
+- 判据不变: 题目 / designflow check 判分 / 防作弊(禁 PIL·OCR·base64·搜答案) 全不变, 换的只是传输层。
+
+$ ss -ltnp (.17) | grep -E ':30001|:30002|:30003'
+LISTEN 0 5 0.0.0.0:30001 users:(("python",pid=3213592,fd=62))
+LISTEN 0 2048 0.0.0.0:30002 users:(("python",pid=3216569,fd=6))
+LISTEN 0 5 0.0.0.0:30003 users:(("python",pid=3354855,fd=66))
+
+================================================================================
+## 1. SSH 隧道握手方向核实 (.17:3333 -> 36.15)
+================================================================================
+$ ssh -p 3333 ... app.e0031982@localhost 'hostname; whoami; uname -n'
+hfeg0tedaap02
+app.e0031982
+hfeg0tedaap02
+=> .17:3333 是 SSH 客户端入口, 连到的是 36.15。直连 36.15:22 超时:
+$ ssh ... 10.251.36.15 'hostname'
+ssh: connect to host 10.251.36.15 port 22: Connection timed out
+
+================================================================================
+## 2. 36.15 宿主视角: 三端口 (raw tunnel 127.0.0.1:1300x)
+================================================================================
+[HOST 127.0.0.1:1300x raw tunnel]
+  13001: {"ok": true, "model": "Qwen3.5-2B", "ready": true, "load_s": 2.8}
+  13002: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2024-11-05","capabilities":{...,"tools":{"listChanged":false}},...}}  (MCP initialize 握手成功)
+  13003: {"ok": true, "model": "Qwen3.5-2B+rft2_adapter_seed11", "ready": true, "load_s": 50.9}
+
+================================================================================
+## 3. 评测容器视角(经 docker0 网关 10.247.64.1:3000x —— bridge 容器实际走的路径)
+================================================================================
+[GATEWAY 10.247.64.1:3000x container-bridge path]
+  30001: {"ok": true, "model": "Qwen3.5-2B", "ready": true, "load_s": 2.8}
+  30002: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2024-11-05","capabilities":{...,"tools":{"listChanged":false}},...}}  (MCP initialize 成功)
+  30003: {"ok": true, "model": "Qwen3.5-2B+rft2_adapter_seed11", "ready": true, "load_s": 50.9}
+=> 0.0.0.0:3000x 监听在 36.15 所有接口(含 docker0 网关 10.247.64.1), bridge 模式容器用 10.247.64.1:3000x 即可达; --network host 容器用 127.0.0.1:3000x 亦可。
+
+================================================================================
+## 4. 容器内 curl 的诚实限制
+================================================================================
+$ docker run --rm --network host alpine ... (36.15)
+docker: permission denied ... dial unix /var/run/docker.sock: connect: permission denied
+$ sudo -n true  => sudo: a password is required
+$ id  => uid=9013(app.e0031982) gid=6002(app.adm) groups=6002(app.adm)
+=> app.e0031982 在 36.15 不在 docker 组, sudo 需密码 => 无法 `docker run/exec` 进真实容器。
+   替代验证: 容器(bridge 模式)经 docker0 网关 10.247.64.1 访问宿主 0.0.0.0:3000x —— 这正是容器实际走的地址; §3 已用该地址 curl 三端口全 ok。
+   (designflow 评测 harness run_one_D.sh 实为 36.15 宿主上 headless 跑 cline + PreToolUse hook, 非容器隔离; 故宿主/网关视角即评测视角。)
+
+================================================================================
+## 5. 断线自愈 (watchdog 重连实验)
+================================================================================
+watchdog: .17 上 setsid 启动 vision/vqa_tool/vqa_ssh_bridge_watchdog.sh
+  (while true; do ssh -p 3333 -N -R 1300x ... -o ExitOnForwardFailure=yes; sleep 5; done)
+  日志: /tmp/vqa_ssh_bridge_watchdog.log
+
+--- 杀掉 ssh -R 子进程模拟断线 (08:31:05) ---
+$ ssh 36.15 'ss -ltn | grep :1300'  => 1300x down (expected)
+
+--- watchdog 日志 (自动重连) ---
+2026-11-15 08:30:18 watchdog START pid=3961251
+2026-11-15 08:30:18 [launch] ssh -R 13001/13002/13003
+2026-11-15 08:31:05 [exited] rc=0, restart in 5s        <- 检测到断线
+2026-11-15 08:31:11 [launch] ssh -R 13001/13002/13003    <- 6 秒后自动重连
+=> 断线后 ~6 秒自动重连, 重连后 1300x 重新 LISTEN, curl /health 恢复 ok。
+
+--- 重连后复验 (36.15) ---
+LISTEN 127.0.0.1:13001 / 13002 / 13003
+13001: {"ok": true, "model": "Qwen3.5-2B", "ready": true, "load_s": 2.8}
+gw 30001: {"ok": true, "model": "Qwen3.5-2B", "ready": true, "load_s": 2.8}
+
+================================================================================
+## 6. 桥接后 VQA tool 真实可用证明 (从 36.15 经桥调 VQA, 答对真实 WaveView PNG)
+================================================================================
+图: WaveView-002 wv_sigs_A.png (5 路堆叠信号, 真题; sha256 c06fbd14...)
+image_path 传 .17 服务端可读的 NFS 绝对路径; 请求经 36.15 -> 桥 -> .17。
+$ ssh 36.15 'python3 urllib POST /vqa {"image_path":...,"question":"How many signal traces are stacked?..."}'
+[http://10.247.64.1:30001/vqa] {"ok": true, "answer": "5", "elapsed_s": 0.473, "image": "...wv_sigs_A.png"}
+[http://127.0.0.1:13001/vqa]   {"ok": true, "answer": "5", "elapsed_s": 0.465, "image": "...wv_sigs_A.png"}
+=> 两条桥路径(网关 / 原始隧道)均返回 "5" (= 真题正确值), VQA tool 在评测环境里真的可用。
+
+================================================================================
+## 7. 运行态快照
+================================================================================
+.17 watchdog + ssh -R:
+  3961251 bash vision/vqa_ssh_bridge_watchdog.sh
+  3961842 ssh -p 3333 -N -R 127.0.0.1:13001:127.0.0.1:30001 -R 13002:...30002 -R 13003:...30003 app.e0031982@localhost
+36.15 forwarder:
+  2438907 /usr/bin/python3 /tmp/vqa_fwd2.py  (0.0.0.0:3000x -> 127.0.0.1:1300x, elapsed 2072s)
+36.15 listeners: 0.0.0.0:30001/30002/30003 + 127.0.0.1:13001/13002/13003
+.17 listeners: 0.0.0.0:30001/30002/30003 (VQA servers)

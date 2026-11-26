@@ -1,0 +1,696 @@
+{
+  "EDA-Eval-PyAether-069": {
+    "metadata": {
+      "task_name": "Create a Polyline Cartoon Object from Points, Layer, and Purpose",
+      "source": "pyAether.GuCartPolyLine",
+      "scenario": "Layout",
+      "category": "Design Content Creation",
+      "apis_used": [
+        "pyAether.emyPointArrayF",
+        "pyAether.emvPurposeNumberDrawing",
+        "pyAether.GuCartPolyLine",
+        "pyAether.GuCartPolyLine.getPointArray"
+      ],
+      "num_unique_apis": 4,
+      "techlib_dependency": false,
+      "lines_of_code": 9
+    },
+    "entry_point": "create_poly_line_cartoon",
+    "apis_expected": [
+      "pyAether.emyPointArrayF",
+      "pyAether.emvPurposeNumberDrawing",
+      "pyAether.GuCartPolyLine",
+      "pyAether.GuCartPolyLine.getPointArray"
+    ],
+    "canonical_solution": "    # Convert Python list to emyPointArrayF\n    pa = pyScript.emyPointArrayF()\n    for pt in points:\n        pa.append(pt)\n    \n    # Determine purpose number default\n    if purpose_num is None:\n        # Assuming EMY_DRAWING_PURPOSE or emvPurposeNumberDrawing is available as per doc context\n        # Using a safe fallback or the API constant if known. \n        # Based on doc: default is EMY_DRAWING_PURPOSE. \n        # We pass it explicitly if user didn't provide it, or let the API handle default if we omit it.\n        # To be safe and follow the prompt requirements strictly:\n        p_num = pyScript.emvPurposeNumberDrawing\n    else:\n        p_num = purpose_num\n        \n    # Create the object\n    poly = pyScript.GuCartPolyLine(pa, layNum=layer_num, purNum=p_num)\n    return poly",
+    "base": {
+      "code": "<think>\nWe need to write the function body for create_poly_line_cartoon. The function should use pyAether API. We need to import pyAether as pyScript. The function signature is given. We need to implement the function body only, no docstring, no test code. We need to output only the function body code. The function should convert points list of tuples to format suitable for pyAether API. Then initialize a polyline cartoon object using these points and layer number. If purpose_num is provided, use it; otherwise, use default drawing purpose.\n\nWe need to know the pyAether API. The user says \"pyAether EDA library\". We need to write code that uses pyAether. The function returns pyScript.GuCartPolyLine. We need to see how to create a GuCartPolyLine. Possibly using pyScript.GuCartPolyLine? Or maybe there is a class GuCartPolyLine. The function should create a polyline cartoon object. The points are a list of (x, y) coordinates. We need to convert to something like a list of points. The pyAether API might have a method to create a polyline. We need to guess the API. Since we don't have the actual library, we need to write code that would be typical. The function should be robust. We can assume that pyScript has a class GuCartPolyLine that can be instantiated with points and layer_num. Possibly the points need to be a list of tuples or a list of lists. The purpose_num might be used to set a purpose. The default drawing purpose might be something like 0 or None. We need to check the pyAether documentation. But we don't have it. We need to write code that uses the library. The user expects us to write the function body. We can write something like:\n",
+      "finish_reason": "stop",
+      "time_sec": 4.3,
+      "code_len": 1666,
+      "apis_found": [
+        "pyScript.GuCartPolyLine",
+        "pyScript.GuCartPolyLine."
+      ],
+      "apis_correct": [
+        "GuCartPolyLine"
+      ],
+      "apis_missing": [
+        "GuCartPolyLine.getPointArray",
+        "emvPurposeNumberDrawing",
+        "emyPointArrayF"
+      ],
+      "apis_extra": [
+        "GuCartPolyLine."
+      ],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.25
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n\nimport pyAether as pyScript\n",
+      "finish_reason": "stop",
+      "time_sec": 0.2,
+      "code_len": 47,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "GuCartPolyLine",
+        "GuCartPolyLine.getPointArray",
+        "emvPurposeNumberDrawing",
+        "emyPointArrayF"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-062": {
+    "metadata": {
+      "task_name": "Compare Via Enclosure Configurations Between Two Versions",
+      "source": "pyAether.emyViaExtEncParam",
+      "scenario": "Layout",
+      "category": "Design Content Query & Edit",
+      "apis_used": [
+        "pyAether.emyViaExtEncParam"
+      ],
+      "num_unique_apis": 1,
+      "techlib_dependency": false,
+      "lines_of_code": 11
+    },
+    "entry_point": "compare_via_enc_versions",
+    "apis_expected": [
+      "pyAether.emyViaExtEncParam"
+    ],
+    "canonical_solution": "    # Convert raw tuples to emyViaExtEncParam objects\n    old_objects = [pyScript.emyViaExtEncParam(*cfg) for cfg in old_configs]\n    new_objects = [pyScript.emyViaExtEncParam(*cfg) for cfg in new_configs]\n    \n    added_rules = []\n    removed_rules = []\n\n    # Identify Added Rules: In new but not in old\n    for new_obj in new_objects:\n        # The 'in' operator relies on the __eq__ method of the object\n        if new_obj not in old_objects:\n            added_rules.append(new_obj)\n            \n    # Identify Removed Rules: In old but not in new\n    for old_obj in old_objects:\n        if old_obj not in new_objects:\n            removed_rules.append(old_obj)\n            \n    return added_rules, removed_rules",
+    "base": {
+      "code": "<think>\nWe need to write the function body. The function takes two lists of tuples (left, bottom, right, top) representing via enclosure configurations. It should convert them into objects representing via enclosure parameters and determine which rules have been added in the new version and which have been removed from the old version.\n\nWe need to use pyAether library. The function returns a tuple of two lists of pyScript.emyViaExtEncParam objects.\n\nWe need to understand what pyScript.emyViaExtEncParam is. It's likely a class representing via extension enclosure parameters. The function should create instances of that class from the tuples.\n\nWe need to compare the two lists. The old_configs and new_configs are lists of tuples. We need to identify which tuples are in new_configs but not in old_configs (added) and which are in old_configs but not in new_configs (removed). However, we need to consider that the tuples might be identical but in different order? The problem says \"determines which rules have been added in the new version and which have been removed from the old version.\" So we need to treat each tuple as a rule. If a tuple appears in both, it's unchanged. So we need to find the symmetric difference? But we need to separate added and removed. So we can create sets of tuples for old and new, then compute added = new_set - old_set, removed = old_set - new_set. Then convert each tuple to an emyViaExtEncParam object.\n\nBut we need to be careful: the function signature returns List['pyScript.emyViaExtEncParam'] for both lists. So we need to import pyScript.emyViaExtEncParam? Actually, we can use pyScript.emyViaExtEncParam. The function body should create these objects.\n\nWe need to know how to instantiate emyViaExtEncParam. The docstring says \"converts raw configuration tuples into objects representing via enclosure parameters\". So likely there is a constructor that takes the four integers. We need to check the pyAether API. Since we don't have the actual library, we need to assume that pyScript.emyViaExtEncParam can be instantiated with the four values. Possibly it's a dataclass or a simple class. We can do: pyScript.emyViaExtEncParam(left, bottom, right, top). But we need to ensure the order matches. The tuple is (left, bottom, right, top). So we can pass them in that order.\n\nThus, the function body could be:\n",
+      "finish_reason": "stop",
+      "time_sec": 6.0,
+      "code_len": 2355,
+      "apis_found": [
+        "pyScript.emyViaExtEncParam",
+        "pyScript.emyViaExtEncParam."
+      ],
+      "apis_correct": [
+        "emyViaExtEncParam"
+      ],
+      "apis_missing": [],
+      "apis_extra": [
+        "emyViaExtEncParam."
+      ],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 1.0
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n\nimport pyAether as pyScript\nfrom typing import List, Tuple\n",
+      "finish_reason": "stop",
+      "time_sec": 0.3,
+      "code_len": 78,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "emyViaExtEncParam"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-032": {
+    "metadata": {
+      "task_name": "Filter Box Candidates and Compute Intersection Areas with Query Box",
+      "source": "pyAether.emyBoxF",
+      "scenario": "Layout",
+      "category": "Geometry Operation & Analysis",
+      "apis_used": [
+        "pyAether.emyBoxF",
+        "pyAether.emyBoxF.overlaps",
+        "pyAether.emyBoxF.intersection",
+        "pyAether.emyBoxF.left",
+        "pyAether.emyBoxF.right",
+        "pyAether.emyBoxF.top"
+      ],
+      "num_unique_apis": 6,
+      "techlib_dependency": false,
+      "lines_of_code": 7
+    },
+    "entry_point": "get_clipped_intersections",
+    "apis_expected": [
+      "pyAether.emyBoxF",
+      "pyAether.emyBoxF.overlaps",
+      "pyAether.emyBoxF.intersection",
+      "pyAether.emyBoxF.left",
+      "pyAether.emyBoxF.right",
+      "pyAether.emyBoxF.top"
+    ],
+    "canonical_solution": "    result_list = []\n    \n    for candidate in candidates:\n        # Check if they overlap first. \n        # According to API docs, intersection() assumes overlap, so we must guard it.\n        # incEdges=True includes touching edges as overlap.\n        if query_box.overlaps(candidate, True):\n            # Create a new box object to hold the result (Output Parameter pattern)\n            intersection_result = pyScript.emyBoxF()\n            \n            # Calculate intersection. The result is stored in 'intersection_result'\n            query_box.intersection(candidate, intersection_result)\n            \n            result_list.append(intersection_result)\n            \n    return result_list",
+    "base": {
+      "code": "<think>\nWe need to write the function body for get_clipped_intersections. The function should filter candidates that overlap with query box, compute intersection boxes, and return list of intersection boxes. The function signature: query_box: 'pyScript.emyBoxF', candidates: List['pyScript.emyBoxF'] -> List['pyScript.emyBoxF'].\n\nWe need to use pyAether library. We need to know the API for boxes. The function name suggests \"clipped intersections\". The docstring: \"Filters a list of candidate boxes, returning the intersection areas for those that overlap with the query box.\" Actually returns intersection boxes, not areas. The docstring says \"returning the intersection areas\" but then returns List[pyScript.emyBoxF]. So we need to compute intersection boxes.\n\nWe need to implement overlap detection and intersection box creation. The pyAether library likely has methods like .intersection(query_box) or .overlap? We need to check typical pyAether API. Since we don't have the library, we need to infer from typical EDA box operations. The function name \"get_clipped_intersections\" suggests clipping operation: find which candidates touch the query area and compute exact rectangular region shared by both. So we need to compute intersection of each candidate with query box. If they overlap, compute intersection box. Return list of intersection boxes.\n\nWe need to write only the function body. We need to import pyAether as pyScript. The function signature is given. We need to implement.\n\nWe need to be careful: The function should return a list of intersection boxes. The intersection box should be a pyScript.emyBoxF object. We need to know how to create an intersection box. Possibly there is a method like .intersection(other_box) that returns an intersection box. Or we need to compute coordinates manually. Since we don't have the library, we need to assume typical behavior. The function name \"get_clipped_intersections\" might be from a known library. Let's search memory: pyAether is a Python library for EDA? I'm not sure. But we can assume that boxes have attributes like .x, .y, .width, .height, or .left, .top, .right, .bottom. Or maybe they have methods like .intersection(other). The docstring says \"returning the intersection areas\" but returns boxes. So we need to compute intersection boxes.\n\nWe need to write code that iterates over candidates, checks if they overlap with query_box, and if so, computes intersection. We need to return list of intersection boxes.\n\nWe need to be careful about the return type: List[pyScript.emyBoxF]. So we need to create intersection boxes.\n\nWe need to write only the function body. We need to not include the signature or docstring.\n\nWe need to output the code.\n\nWe need to think about the implementation details. We need to know the API of pyAether.emyBoxF. Since we don't have it, we need to make reasonable assumptions. The function name \"get_clipped_intersections\" suggests that we are clipping candidates to the query box. So we need to compute the intersection of each candidate with the query box. If they don't overlap, we ignore.\n\nWe need to return a list of intersection boxes. So we need to create a new box for each intersection.\n\nWe need to write code that uses pyScript.emyBoxF methods. Possibly there is a method like .intersection(other) that returns an intersection box. Or we need to compute manually.\n\nGiven the lack of information, we can assume that the box has attributes .x, .y, .width, .height, or .left, .top, .right, .bottom. But we need to be consistent with the library. The function name \"get_clipped_intersections\" might be from a known library. Let's search memory: I recall a library called \"pyAether\" maybe from \"Aether\" something. Not sure.\n\nAlternatively, we can write code that uses the box's intersection method if it exists. But we need to be safe. We can check if the box has an intersection method. But we cannot call methods that don't exist. We need to write code that works with the library.\n\nGiven the instruction: \"Complete the following Python function that uses the pyAether EDA library.\" So we need to use the library. We need to write code that uses pyScript.emyBoxF. We need to assume that the box has methods like .intersection(other) or .overlap(other). But we need to be careful.\n\nWe can write code that checks for overlap using a method like .overlap(other) that returns a boolean, and then if overlap, compute intersection using .intersection(other). But we don't know the exact method names.\n\nWe can look at typical",
+      "finish_reason": "length",
+      "time_sec": 11.4,
+      "code_len": 4530,
+      "apis_found": [
+        "pyAether.emyBoxF.",
+        "pyScript.emyBoxF",
+        "pyScript.emyBoxF."
+      ],
+      "apis_correct": [
+        "emyBoxF"
+      ],
+      "apis_missing": [
+        "emyBoxF.intersection",
+        "emyBoxF.left",
+        "emyBoxF.overlaps",
+        "emyBoxF.right",
+        "emyBoxF.top"
+      ],
+      "apis_extra": [
+        "emyBoxF."
+      ],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.167
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n\nimport pyAether as pyScript\n",
+      "finish_reason": "stop",
+      "time_sec": 0.2,
+      "code_len": 47,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "emyBoxF",
+        "emyBoxF.intersection",
+        "emyBoxF.left",
+        "emyBoxF.overlaps",
+        "emyBoxF.right",
+        "emyBoxF.top"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-080": {
+    "metadata": {
+      "task_name": "Perform Polygon Boolean Operation (AND/OR/XOR/NOT) on Two Polygon Sets",
+      "source": "pyAether.dbPointArrayGen",
+      "scenario": "Layout",
+      "category": "Geometry Operation & Analysis",
+      "apis_used": [
+        "pyAether.emyString",
+        "pyAether.vector2D_emyPointF",
+        "pyAether.vector1D_emyPointF",
+        "pyAether.emyPointF",
+        "pyAether.dbPointArrayGen"
+      ],
+      "num_unique_apis": 5,
+      "techlib_dependency": false,
+      "lines_of_code": 14
+    },
+    "entry_point": "compute_polygon_boolean_op",
+    "apis_expected": [
+      "pyAether.emyString",
+      "pyAether.vector2D_emyPointF",
+      "pyAether.vector1D_emyPointF",
+      "pyAether.emyPointF",
+      "pyAether.dbPointArrayGen"
+    ],
+    "canonical_solution": "    # Convert operation string to emyString\n    op_str = pyScript.emyString(op)\n\n    # Helper to convert python list of lists to vector2D_emyPointF\n    def _to_aether_vec(py_polys):\n        vec2d = pyScript.vector2D_emyPointF()\n        if not py_polys:\n            return vec2d\n        for poly in py_polys:\n            vec1d = pyScript.vector1D_emyPointF()\n            for x, y in poly:\n                vec1d.append(pyScript.emyPointF(float(x), float(y)))\n            vec2d.append(vec1d)\n        return vec2d\n\n    # Convert inputs\n    l1 = _to_aether_vec(polys_a)\n    l2 = _to_aether_vec(polys_b)\n\n    # Execute API\n    return pyScript.dbPointArrayGen(op_str, cv, l1, l2)",
+    "base": {
+      "code": "<think>\nWe need to write the function body for compute_polygon_boolean_op. The function uses pyAether library. We need to convert Python coordinate lists into C++ bound vector types required by pyAether. The function signature: cv: 'pyScript.emyDesign', op: str, polys_a: List[List[Tuple[float, float]]], polys_b: List[List[Tuple[float, float]]] -> Any.\n\nWe need to implement the boolean operation on two sets of polygons using pyAether engine. The function must handle conversion of standard Python coordinate lists into specific C++ bound vector types (vector2D_emyPointF, vector1D_emyPointF, emyPointF) required by pyAether.\n\nWe need to write only the function body, no docstring, no test code. We need to import pyAether as pyScript, from typing import List, Tuple, Any. The function signature is given. We need to implement the body.\n\nWe need to understand pyAether API. The user says \"pyAether EDA library\". We need to use pyAether to perform boolean operation on polygons. The function is a wrapper around low-level polygon boolean API. It must handle conversion of standard Python coordinate lists into specific C++ bound vector types (vector2D_emyPointF, vector1D_emyPointF, emyPointF) required by pyAether.\n\nWe need to write code that uses pyAether to convert polygons. The function likely uses pyAether's emyDesign to get some API. The function signature includes cv: 'pyScript.emyDesign'. So cv is a cellview context. The function should use cv to get the polygon boolean API. The function should convert polys_a and polys_b from Python lists of tuples to pyAether's vector types. Then call the boolean operation API.\n\nWe need to know the pyAether API. Since we don't have the actual library, we need to guess based on typical pyAether usage. The user says \"pyAether EDA library\". The function is a wrapper around low-level polygon boolean API. It must handle conversion of standard Python coordinate lists into specific C++ bound vector types (vector2D_emyPointF, vector1D_emyPointF, emyPointF) required by pyAether.\n\nWe need to write code that uses pyAether's emyDesign to get the API. The function likely uses cv.get_api() or something. But we need to be careful. The function signature is given, and we need to implement the body. We need to output only the function body, no docstring, no test code.\n\nWe need to think about what the function should do. It should perform a boolean operation on two sets of polygons. The operation type is op: \"AND\", \"OR\", \"XOR\", \"NOT\". The function should return the result object returned by the polygon boolean API (typically a tuple or list of result shapes).\n\nWe need to convert polys_a and polys_b from Python lists of tuples to pyAether's vector types. The function must handle conversion of standard Python coordinate lists into specific C++ bound vector types (vector2D_emyPointF, vector1D_emyPointF, emyPointF) required by pyAether.\n\nWe need to write code that uses pyAether's emyDesign to get the API. The function likely uses cv.get_api() or something. But we need to be careful. The function signature is given, and we need to implement the body. We need to output only the function body, no docstring, no test code.\n\nWe need to think about what the function should do. It should perform a boolean operation on two sets of polygons. The operation type is op: \"AND\", \"OR\", \"XOR\", \"NOT\". The function should return the result object returned by the polygon boolean API (typically a tuple or list of result shapes).\n\nWe need to convert polys_a and polys_b from Python lists of tuples to pyAether's vector types. The function must handle conversion of standard Python coordinate lists into specific C++ bound vector types (vector2D_emyPointF, vector1D_emyPointF, emyPointF) required by pyAether.\n\nWe need to write code that uses pyAether's emyDesign to get the API. The function likely uses cv.get_api() or something. But we need to be careful. The function signature is given, and we need to implement the body. We need to output only the function body, no docstring, no test code.\n\nWe need to think about what the function should do. It should perform a boolean operation on two sets of polygons. The operation type is op: \"AND\", \"OR\", \"XOR\", \"NOT\". The function should return the result object returned by the polygon boolean API (typically",
+      "finish_reason": "length",
+      "time_sec": 11.4,
+      "code_len": 4301,
+      "apis_found": [
+        "pyScript.emyDesign"
+      ],
+      "apis_correct": [],
+      "apis_missing": [
+        "dbPointArrayGen",
+        "emyPointF",
+        "emyString",
+        "vector1D_emyPointF",
+        "vector2D_emyPointF"
+      ],
+      "apis_extra": [
+        "emyDesign"
+      ],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n\nimport pyAether as pyScript\nfrom pyAether import vector2D_emyPointF, vector1D_emyPointF, emyPointF\n",
+      "finish_reason": "stop",
+      "time_sec": 0.5,
+      "code_len": 118,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "dbPointArrayGen",
+        "emyPointF",
+        "emyString",
+        "vector1D_emyPointF",
+        "vector2D_emyPointF"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-149": {
+    "metadata": {
+      "task_name": "Retrieve All Figure Objects Within a Rectangular Region in a Cellview",
+      "source": "8-Application/auto_connect_net.md",
+      "scenario": "Layout",
+      "category": "Design Content Query & Edit",
+      "apis_used": [
+        "pyAether.emyBoxF",
+        "pyAether.dbGetTrueOverlaps",
+        "pyAether.emyDesign",
+        "pyAether.emyFig"
+      ],
+      "num_unique_apis": 4,
+      "techlib_dependency": false,
+      "lines_of_code": 10
+    },
+    "entry_point": "get_figures_in_rectangular_region",
+    "apis_expected": [
+      "pyAether.emyBoxF",
+      "pyAether.dbGetTrueOverlaps",
+      "pyAether.emyDesign",
+      "pyAether.emyFig"
+    ],
+    "canonical_solution": "    # Calculate the bounding box coordinates\n    l = min(point1[0], point2[0])\n    r = max(point1[0], point2[0])\n    b = min(point1[1], point2[1])\n    t = max(point1[1], point2[1])\n    \n    # Create the bounding box object\n    bbox = pyScript.emyBoxF(l, b, r, t)\n    \n    # Query the database\n    query_data = pyScript.dbGetTrueOverlaps(cv, bbox)\n    \n    # Extract the figures from the query result\n    figs = []\n    for data in query_data:\n        figs.append(data.fig)\n        \n    return figs",
+    "base": {
+      "code": "<think>\nWe need to write the function body. The function uses pyAether library. We need to retrieve all figure objects within a rectangular region defined by two diagonal points. The function calculates the bounding box from the two points (handling any order of coordinates), queries the cellview for overlapping objects, and extracts the figure objects from the query result.\n\nWe need to output only the function body code, no explanations. The function signature and docstring are given. We need to implement the body.\n\nWe need to understand pyAether API. The function takes cv (cellview), point1, point2. It should calculate the bounding box from the two points. The bounding box is the rectangle defined by the min and max of x and y coordinates. So we need to compute min_x = min(point1[0], point2[0]), max_x = max(point1[0], point2[0]), similarly for y. Then we need to query the cellview for overlapping objects. The cellview has a method to query objects within a region. In pyAether, the cellview has a method like `query` or `find`? I need to recall pyAether API. The library is for EDA (Electronic Design Automation) maybe for CAD? The function name \"get_figures_in_rectangular_region\" suggests it's for a cellview that contains figures (maybe schematic elements). The cellview has a method to query objects within a rectangle. I think the method is `query` with a bounding box. The pyAether API might have a method `query` that takes a bounding box and returns a list of objects. Or maybe `find`? I need to check typical pyAether usage. Since I don't have the exact API, I need to infer from the function description: \"queries the cellview for overlapping objects, and extracts the figure objects from the query result.\" So the cellview has a method to query objects overlapping a rectangle. The method might be `query` or `find`. I think in pyAether, the cellview has a method `query` that takes a bounding box and returns a list of objects. Or maybe `find`? I recall that in some CAD libraries, there is a method `find` that takes a bounding box. But the description says \"queries the cellview for overlapping objects\". I think the method is `query` with a bounding box. The pyAether API might have a method `query` that takes a bounding box and returns a list of objects. I need to be careful.\n\nAlternatively, the function might use the cellview's `find` method. I need to look up pyAether documentation. Since I'm an expert, I might know that pyAether is a library for EDA, maybe for Cadence Innovus? Not sure. But the function name \"get_figures_in_rectangular_region\" suggests it's for a cellview that contains figures. The cellview might have a method `query` that returns objects within a rectangle. I think the method is `query` with a bounding box. The pyAether API might have a method `query` that takes a bounding box and returns a list of objects. I need to implement the function accordingly.\n\nI'll assume the cellview has a method `query` that takes a bounding box (min_x, min_y, max_x, max_y) and returns a list of objects. Or maybe it has a method `find` that takes a bounding box. I need to check typical pyAether usage. Since I don't have the exact API, I need to make a reasonable guess. The function description says \"queries the cellview for overlapping objects\". So I'll use a method like `query` or `find`. I think the pyAether library has a method `query` that takes a bounding box. I'll use `cv.query` with a bounding box. But I need to know the exact signature. I could also use `cv.find` if that's the method. I need to be careful.\n\nAlternatively, the function might use the cellview's `get_objects` method? Not sure.\n\nGiven the context, I think the function should:\n\n1. Calculate min_x, max_x, min_y, max_y from point1 and point2.\n2. Call cv.query with the bounding box. The method might be `query` with arguments (min_x, min_y, max_x, max_y) or a bounding box object. I need to check pyAether API. I recall that in pyAether, the cellview has a method `query` that takes a bounding box and returns a list of objects. The bounding box might be a tuple (min_x, min_y, max_x, max_y). Or it might be a rectangle object. I think it's a tuple.\n\nI'll assume the method is `query` and it takes a bounding",
+      "finish_reason": "length",
+      "time_sec": 11.4,
+      "code_len": 4237,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "dbGetTrueOverlaps",
+        "emyBoxF",
+        "emyDesign",
+        "emyFig"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n\nimport pyAether as pyScript\n",
+      "finish_reason": "stop",
+      "time_sec": 0.2,
+      "code_len": 47,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "dbGetTrueOverlaps",
+        "emyBoxF",
+        "emyDesign",
+        "emyFig"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-073": {
+    "metadata": {
+      "task_name": "Create a Corner Analysis Output Object with Fixed Configuration",
+      "source": "pyAether.MdeSpeOutput",
+      "scenario": "Schematic",
+      "category": "Simulation & Analysis Configuration",
+      "apis_used": [
+        "pyAether.MdeSpeOutput",
+        "pyAether.MdeSpeOutput.exprType",
+        "pyAether.MdeSpeOutput.evalType"
+      ],
+      "num_unique_apis": 3,
+      "techlib_dependency": false,
+      "lines_of_code": 9
+    },
+    "entry_point": "create_corner_expression",
+    "apis_expected": [
+      "pyAether.MdeSpeOutput",
+      "pyAether.MdeSpeOutput.exprType",
+      "pyAether.MdeSpeOutput.evalType"
+    ],
+    "canonical_solution": "    output = pyScript.MdeSpeOutput(\n        name=name,\n        expr=expression,\n        exprType=\"Expression\",\n        evalType=\"Corners\",\n        save=False,\n        plot=True\n    )\n    return output",
+    "base": {
+      "code": "<think>\nWe need to write the function body for create_corner_expression. The function should create a pyAether.MdeSpeOutput object with specific settings: exprType \"Expression\", evalType \"Corners\", save False, plot True. The function takes name and expression. The docstring says returns pyAether.MdeSpeOutput. We need to import pyAether as pyScript, but that's already at top. We need to create the object. Likely something like:\n\noutput = pyScript.MdeSpeOutput()\noutput.exprType = \"Expression\"\noutput.evalType = \"Corners\"\noutput.save = False\noutput.plot = True\n\nBut we need to ensure that the object is created with those settings. The function signature returns 'pyScript.MdeSpeOutput'. So we need to return the object.\n\nWe need to be careful: The function should not modify the object in a way that might break something. But the docstring says \"The returned object must be initialized with the following fixed settings\". So we can set attributes after creation. Or maybe the constructor accepts parameters? The docstring doesn't mention constructor parameters. So we assume we create an instance and set attributes.\n\nThus the function body:\n\noutput = pyScript.MdeSpeOutput()\noutput.exprType = \"Expression\"\noutput.evalType = \"Corners\"\noutput.save = False\noutput.plot = True\nreturn output\n\nBut we need to consider that the name and expression arguments are not used in the settings. The docstring says name is the name of the output measurement, expression is the calculation expression. But the settings are fixed. So we ignore them? Or maybe we need to set something like output.name = name? The docstring doesn't mention setting name. It only mentions the fixed settings. So we just set those. The name and expression might be used elsewhere, but the function only returns the configured output. So we can ignore them.\n\nThus the implementation is straightforward.\n\nWe need to output only the function body, no docstring or signature. So we write:\n\noutput = pyScript.MdeSpeOutput()\noutput.exprType = \"Expression\"\noutput.evalType = \"Corners\"\noutput.save = False\noutput.plot = True\nreturn output\n\nBut we need to ensure that the function is named create_corner_expression and uses the correct import. The import is already at top. So we can use pyScript.\n\nThus final answer.\n</think>\n\noutput = pyScript.MdeSpeOutput()\noutput.exprType = \"Expression\"\noutput.evalType = \"Corners\"\noutput.save = False\noutput.plot = True\nreturn output",
+      "finish_reason": "stop",
+      "time_sec": 6.1,
+      "code_len": 2431,
+      "apis_found": [
+        "pyAether.MdeSpeOutput",
+        "pyAether.MdeSpeOutput.",
+        "pyScript.MdeSpeOutput"
+      ],
+      "apis_correct": [
+        "MdeSpeOutput"
+      ],
+      "apis_missing": [
+        "MdeSpeOutput.evalType",
+        "MdeSpeOutput.exprType"
+      ],
+      "apis_extra": [
+        "MdeSpeOutput."
+      ],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.333
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n",
+      "finish_reason": "stop",
+      "time_sec": 0.1,
+      "code_len": 18,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "MdeSpeOutput",
+        "MdeSpeOutput.evalType",
+        "MdeSpeOutput.exprType"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-021": {
+    "metadata": {
+      "task_name": "Batch Place Components from List of Dictionaries in Target Cellview",
+      "source": "pyAether.dbCrtInst",
+      "scenario": "Schematic",
+      "category": "Design Content Creation",
+      "apis_used": [
+        "pyAether.dbCV",
+        "pyAether.dbInst",
+        "pyAether.dbCrtInst"
+      ],
+      "num_unique_apis": 3,
+      "techlib_dependency": false,
+      "lines_of_code": 18
+    },
+    "entry_point": "batch_place_components",
+    "apis_expected": [
+      "pyAether.dbCV",
+      "pyAether.dbInst",
+      "pyAether.dbCrtInst"
+    ],
+    "canonical_solution": "    created_instances = []\n    \n    for item in placement_data:\n        # Extract data from the dictionary\n        lib_name = item.get('lib')\n        cell_name = item.get('cell')\n        view_name = item.get('view')\n        inst_name = item.get('name')\n        location = item.get('loc')\n        \n        # Use the direct method of dbCrtInst which handles master loading internally.\n        # This is more efficient and cleaner for batch processing than manually opening/closing masters.\n        inst = ae.dbCrtInst(\n            cv=target_cv,\n            point=location,\n            lib=lib_name,\n            cell=cell_name,\n            view=view_name,\n            inst=inst_name\n        )\n        \n        if inst:\n            created_instances.append(inst)\n            \n    return created_instances",
+    "base": {
+      "code": "<think>\nWe need to write the function body for batch_place_components. The function should iterate through placement_data, and for each dict, use direct instantiation method to create an instance in target_cv. The function returns a list of dbInst objects.\n\nWe need to use pyAether API. The function signature: def batch_place_components(target_cv: 'ae.dbCV', placement_data: List[Dict[str, Any]]) -> List['ae.dbInst']:\n\nWe need to implement the body. The docstring says: \"This function iterates through a list of component dictionaries. Each dictionary contains the necessary information to place one instance (library name, cell name, view name, instance name, and location). It uses the direct instantiation method to create them.\"\n\nWe need to use the direct instantiation method. In pyAether, there is a method to create instances: target_cv.create_instance? Or maybe target_cv.create? Let's recall pyAether API. pyAether is a library for EDA design automation. It has classes like dbCV, dbInst, etc. The function likely uses target_cv.create_instance? Actually, I'm not sure. Let's think: In pyAether, you can create instances by calling target_cv.create_instance? Or maybe target_cv.create? The docstring says \"direct instantiation method\". In pyAether, there is a method called create_instance? Let's search memory: pyAether has a class dbCV with methods like create_instance? I'm not certain. Alternatively, maybe the function should use target_cv.create? But the docstring says \"direct instantiation method\". Could be target_cv.create_instance? Or maybe target_cv.create? Let's think about typical EDA libraries: In Cadence's EDA, you have a cellview object that can create instances via create_instance? Actually, in pyAether, the API might be: target_cv.create_instance(library, cell, view, name, loc). Or maybe target_cv.create? I need to recall the pyAether documentation. Since I don't have direct access, I'll infer from the function name and docstring. The function is batch_place_components, and it uses direct instantiation method. The docstring says \"It uses the direct instantiation method to create them.\" So there is a method to directly instantiate a component. In pyAether, there is a method called create_instance? Or maybe it's target_cv.create? Let's think: In pyAether, you have a dbCV object that represents a cellview. You can create instances by calling dbCV.create_instance? I'm not sure. Alternatively, maybe the method is target_cv.create? But the docstring says \"direct instantiation method\". Could be target_cv.create_instance? Let's search my memory: I've used pyAether before. I think there is a method called create_instance that takes library, cell, view, name, loc. Or maybe it's target_cv.create? Actually, in pyAether, you can create instances by calling target_cv.create_instance? I'm not certain. Let's think about the return type: List[ae.dbInst]. So the method should return a dbInst object. The function should iterate through placement_data, and for each dict, call some method on target_cv to create an instance, and collect the result. The method likely returns a dbInst object. So we need to call something like target_cv.create_instance(lib, cell, view, name, loc). But we need to be careful about the parameters. The docstring says: \"Each dictionary contains the necessary information to place one instance (library name, cell name, view name, instance name, and location).\" So the keys are 'lib', 'cell', 'view', 'name', 'loc'. So we can extract these from the dict. Then we need to call the method. The method name might be create_instance. Let's assume it's target_cv.create_instance. But we need to confirm. In pyAether, the API might be: target_cv.create_instance(library, cell, view, name, loc). Or maybe it's target_cv.create? I'm not sure. Let's think about the function name: batch_place_components. It's a batch function. The docstring says \"direct instantiation method\". So maybe the method is called create? Actually, in pyAether, there is a method called create? I'm not sure. Let's search my memory: I've seen pyAether code. I think there is a method called create_instance? Or maybe it's target_cv.create? I'm not certain. However, the function is supposed to be completed by the user. The user expects the assistant to write the function body. The assistant should use the pyAether API correctly. Since I don't have the exact API, I need to make an educated guess. But the instruction says \"You are an expert EDA code generation assistant. You write Python code using the pyAether API library.\" So",
+      "finish_reason": "length",
+      "time_sec": 11.4,
+      "code_len": 4567,
+      "apis_found": [
+        "ae.dbCV",
+        "ae.dbInst"
+      ],
+      "apis_correct": [
+        "dbCV",
+        "dbInst"
+      ],
+      "apis_missing": [
+        "dbCrtInst"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.667
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n\nimport pyAether as ae\nfrom typing import List, Dict, Any\n",
+      "finish_reason": "stop",
+      "time_sec": 0.3,
+      "code_len": 76,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "dbCV",
+        "dbCrtInst",
+        "dbInst"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-067": {
+    "metadata": {
+      "task_name": "Create a Parameter Sweep Configuration Object with Specific Inclusion and Exclusion Points",
+      "source": "pyAether.MdePlatParamSweepAddSpecificPoints",
+      "scenario": "Schematic",
+      "category": "Simulation & Analysis Configuration",
+      "apis_used": [
+        "pyAether.MdePlatParamSweepAddSpecificPoints",
+        "pyAether.MdePlatParamSweepAddSpecificPoints.getInclusionList",
+        "pyAether.MdePlatParamSweepAddSpecificPoints.getExclusionList"
+      ],
+      "num_unique_apis": 3,
+      "techlib_dependency": false,
+      "lines_of_code": 2
+    },
+    "entry_point": "create_sweep_config",
+    "apis_expected": [
+      "pyAether.MdePlatParamSweepAddSpecificPoints",
+      "pyAether.MdePlatParamSweepAddSpecificPoints.getInclusionList",
+      "pyAether.MdePlatParamSweepAddSpecificPoints.getExclusionList"
+    ],
+    "canonical_solution": "    # The constructor takes (inclusion_list, exclusion_list)\n    config = pyScript.MdePlatParamSweepAddSpecificPoints(inclusion_points, exclusion_points)\n    return config",
+    "base": {
+      "code": "<think>\nWe need to write the function body for create_sweep_config. The function should create a configuration object for adding specific points to a parameter sweep in the MDE platform. It should initialize the configuration with inclusion_points and exclusion_points. The return type is pyScript.MdePlatParamSweepAddSpecificPoints. We need to use pyAether API. We need to know the correct way to create such an object. Since we don't have the actual library documentation, we need to infer from typical pyAether usage. The function likely creates an instance of MdePlatParamSweepAddSpecificPoints and sets its inclusion_points and exclusion_points attributes. The function signature suggests that the object is of type pyScript.MdePlatParamSweepAddSpecificPoints. We need to import pyAether as pyScript. The function should probably do something like:\n\n    sweep_config = pyScript.MdePlatParamSweepAddSpecificPoints()\n    sweep_config.inclusion_points = inclusion_points\n    sweep_config.exclusion_points = exclusion_points\n    return sweep_config\n\nBut we need to be careful: the function might require setting these as properties or attributes. The docstring says \"initializes the configuration with a list of points to include and a list of points to exclude.\" So we need to set those. The return type is the object itself. So we can create the object and assign the lists. However, we need to ensure that the object is of the correct type. The function might also need to handle the case where the lists are empty. But the function just needs to create the object and set the attributes. We'll write the body accordingly.\n\nWe need to output only the function body, no docstring or signature. So we start with the implementation.\n\nWe'll write:\n\n    sweep_config = pyScript.MdePlatParamSweepAddSpecificPoints()\n    sweep_config.inclusion_points = inclusion_points\n    sweep_config.exclusion_points = exclusion_points\n    return sweep_config\n\nBut we need to consider if the library uses property setters or if we need to use a different method. Since we don't have the library, we assume the object has attributes inclusion_points and exclusion_points. The function should be straightforward.\n\nWe'll output that.\n</think>\n\nsweep_config = pyScript.MdePlatParamSweepAddSpecificPoints()\nsweep_config.inclusion_points = inclusion_points\nsweep_config.exclusion_points = exclusion_points\nreturn sweep_config",
+      "finish_reason": "stop",
+      "time_sec": 5.7,
+      "code_len": 2403,
+      "apis_found": [
+        "pyScript.MdePlatParamSweepAddSpecificPoints",
+        "pyScript.MdePlatParamSweepAddSpecificPoints."
+      ],
+      "apis_correct": [
+        "MdePlatParamSweepAddSpecificPoints"
+      ],
+      "apis_missing": [
+        "MdePlatParamSweepAddSpecificPoints.getExclusionList",
+        "MdePlatParamSweepAddSpecificPoints.getInclusionList"
+      ],
+      "apis_extra": [
+        "MdePlatParamSweepAddSpecificPoints."
+      ],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.333
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n",
+      "finish_reason": "stop",
+      "time_sec": 0.1,
+      "code_len": 18,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "MdePlatParamSweepAddSpecificPoints",
+        "MdePlatParamSweepAddSpecificPoints.getExclusionList",
+        "MdePlatParamSweepAddSpecificPoints.getInclusionList"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-060": {
+    "metadata": {
+      "task_name": "Configure AC Analysis for Model Parameter Sweep with Center/Span and Logarithmic Settings",
+      "source": "pyAether.MdeAcAnalysis",
+      "scenario": "Schematic",
+      "category": "Simulation & Analysis Configuration",
+      "apis_used": [
+        "pyAether.MdeAcAnalysis",
+        "pyAether.MdeSweepVariable",
+        "pyAether.MdeSweepVariable.mode",
+        "pyAether.MdeSweepVariable.modelName",
+        "pyAether.MdeSweepVariable.modelParameterName",
+        "pyAether.MdeSweepVariable.freForMod",
+        "pyAether.MdeAcAnalysis.setSweepVariable",
+        "pyAether.MdeSweepRange",
+        "pyAether.MdeSweepRange.mode",
+        "pyAether.MdeSweepRange.center",
+        "pyAether.MdeSweepRange.span",
+        "pyAether.MdeAcAnalysis.setSweepRange",
+        "pyAether.MdeSweepType",
+        "pyAether.MdeSweepType.mode",
+        "pyAether.MdeSweepType.logMode",
+        "pyAether.MdeSweepType.numberOfStepsForLog",
+        "pyAether.MdeAcAnalysis.setSweepType",
+        "pyAether.MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
+        "pyAether.MDE_SWEEP_RANGE_CENTER_SPAN",
+        "pyAether.MDE_SWEEP_TYPE_LOG",
+        "pyAether.MDE_SWEEP_TYPE_LOG_NUM_STEP"
+      ],
+      "num_unique_apis": 21,
+      "techlib_dependency": false,
+      "lines_of_code": 18
+    },
+    "entry_point": "config_ac_model_sweep",
+    "apis_expected": [
+      "pyAether.MdeAcAnalysis",
+      "pyAether.MdeSweepVariable",
+      "pyAether.MdeSweepVariable.mode",
+      "pyAether.MdeSweepVariable.modelName",
+      "pyAether.MdeSweepVariable.modelParameterName",
+      "pyAether.MdeSweepVariable.freForMod",
+      "pyAether.MdeAcAnalysis.setSweepVariable",
+      "pyAether.MdeSweepRange",
+      "pyAether.MdeSweepRange.mode",
+      "pyAether.MdeSweepRange.center",
+      "pyAether.MdeSweepRange.span",
+      "pyAether.MdeAcAnalysis.setSweepRange",
+      "pyAether.MdeSweepType",
+      "pyAether.MdeSweepType.mode",
+      "pyAether.MdeSweepType.logMode",
+      "pyAether.MdeSweepType.numberOfStepsForLog",
+      "pyAether.MdeAcAnalysis.setSweepType",
+      "pyAether.MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
+      "pyAether.MDE_SWEEP_RANGE_CENTER_SPAN",
+      "pyAether.MDE_SWEEP_TYPE_LOG",
+      "pyAether.MDE_SWEEP_TYPE_LOG_NUM_STEP"
+    ],
+    "canonical_solution": "    # 1. Create Main Object\n    ac = pyScript.MdeAcAnalysis()\n\n    # 2. Configure Sweep Variable\n    sweepVar = pyScript.MdeSweepVariable()\n    sweepVar.mode = pyScript.MDE_SWEEP_VARIABLE_MODEL_PARAMETER\n    sweepVar.modelName = model_name\n    sweepVar.modelParameterName = param_name\n    sweepVar.freForMod = \"1000\"\n    ac.setSweepVariable(sweepVar)\n\n    # 3. Configure Sweep Range\n    sr = pyScript.MdeSweepRange()\n    sr.mode = pyScript.MDE_SWEEP_RANGE_CENTER_SPAN\n    sr.center = center\n    sr.span = span\n    ac.setSweepRange(sr)\n\n    # 4. Configure Sweep Type\n    st = pyScript.MdeSweepType()\n    st.mode = pyScript.MDE_SWEEP_TYPE_LOG\n    st.logMode = pyScript.MDE_SWEEP_TYPE_LOG_NUM_STEP\n    st.numberOfStepsForLog = steps\n    ac.setSweepType(st)\n\n    return ac",
+    "base": {
+      "code": "<think>\nWe need to write the function body. The function uses pyAether library. We need to create an AC analysis object, configure sweep variable, mode, model name, parameter name, frequency, center/span, log mode, number of steps. We need to know the constants from pyAether. The user didn't provide them, but we can assume typical constants: maybe from pyAether.MdeAcAnalysis? We need to look up typical pyAether API. Since we can't search internet, we need to infer from typical pyAether usage. The function signature: config_ac_model_sweep(model_name: str, param_name: str, center: str, span: str, steps: str) -> 'pyScript.MdeAcAnalysis'. The docstring says: \"Create an AC analysis object.\" \"Configure the sweep variable to target a specific model parameter.\" \"Set the appropriate mode constant for model parameter sweep.\" \"Set the model name and parameter name to the input arguments.\" \"Set the frequency for model parameter evaluation to '1000' (fixed value).\" \"Configure the sweep range: Mode: Center/Span (use the appropriate constant). Set center and span to the input arguments.\" \"Configure the sweep type: Mode: Logarithmic (use the appropriate constant). Log Mode: Number of Steps (use the appropriate constant). Set the number of steps to the input argument steps.\" \"Apply these configurations to the AC object and return it.\"\n\nWe need to know the constants. In pyAether, there are constants like MdeAcAnalysis, maybe MdeAcAnalysis.SweepVariable, etc. We need to write code that uses pyScript.MdeAcAnalysis. The function returns a pyScript.MdeAcAnalysis object. We need to create an instance: ac = pyScript.MdeAcAnalysis()? Or maybe there is a factory function? The docstring says \"Create an AC analysis object.\" So likely ac = pyScript.MdeAcAnalysis(). Then configure. We need to know the attributes. The function likely uses methods like ac.SetSweepVariable? Or properties? The docstring says \"Configure the sweep variable to target a specific model parameter.\" So maybe there is a method like ac.SetSweepVariable(model_name, param_name)? Or maybe there is a property sweepVariable? We need to guess. Since we can't search, we need to write plausible code. But the user expects us to use pyAether API. We need to be careful. The function is part of a larger codebase? The user didn't provide any other context. We need to write only the function body. We need to use pyScript.MdeAcAnalysis. We need to know the constants. Perhaps the constants are defined in pyAether module. We can import pyAether as pyScript, and then use pyScript.MdeAcAnalysis. But we need to know the constants for mode, etc. The docstring says \"use the appropriate constant\". So we need to find the constants. In pyAether, there might be constants like MdeAcAnalysis.SweepMode, etc. But we don't know. We could try to use getattr? But the user expects a specific implementation. Since this is a coding task, we need to write code that would work with pyAether. We need to assume the API. Perhaps the function is from a known pyAether library. I recall pyAether is a library for Simulink EDA. There is a class MdeAcAnalysis. It might have methods like SetSweepVariable, SetSweepMode, etc. But we need to be precise. The user might have provided the constants in the docstring? No. The docstring says \"use the appropriate constant\". So we need to know the constant names. Without knowing, we can't write the code. But maybe the constants are defined in the pyAether module as attributes of MdeAcAnalysis? For example, MdeAcAnalysis.SweepMode.CENTER_SPAN? Or maybe there is a constant like MdeAcAnalysis.CENTER_SPAN? We need to guess. Alternatively, the function might be from a known example. I can search my memory: pyAether is a Python library for Simulink EDA. There is a class MdeAcAnalysis. It has methods like SetSweepVariable, SetSweepMode, SetSweepRange, etc. But I'm not sure. The user might have provided the constants in the docstring? No. The docstring says \"use the appropriate constant\". So we need to know the constant names. Perhaps the constants are defined in the pyAether module as module-level constants. For example, pyScript.MdeAcAnalysis.SweepMode.CENTER_SPAN? Or maybe there is a constant like MdeAcAnalysis.CENTER_SPAN? We need to write code that uses those constants. Since we can't know, we might need to make reasonable assumptions. But the user expects a",
+      "finish_reason": "length",
+      "time_sec": 11.4,
+      "code_len": 4369,
+      "apis_found": [
+        "pyAether.MdeAcAnalysis",
+        "pyScript.MdeAcAnalysis",
+        "pyScript.MdeAcAnalysis.",
+        "pyScript.MdeAcAnalysis.SweepMode.CENTER_SPAN"
+      ],
+      "apis_correct": [
+        "MdeAcAnalysis"
+      ],
+      "apis_missing": [
+        "MDE_SWEEP_RANGE_CENTER_SPAN",
+        "MDE_SWEEP_TYPE_LOG",
+        "MDE_SWEEP_TYPE_LOG_NUM_STEP",
+        "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
+        "MdeAcAnalysis.setSweepRange",
+        "MdeAcAnalysis.setSweepType",
+        "MdeAcAnalysis.setSweepVariable",
+        "MdeSweepRange",
+        "MdeSweepRange.center",
+        "MdeSweepRange.mode",
+        "MdeSweepRange.span",
+        "MdeSweepType",
+        "MdeSweepType.logMode",
+        "MdeSweepType.mode",
+        "MdeSweepType.numberOfStepsForLog",
+        "MdeSweepVariable",
+        "MdeSweepVariable.freForMod",
+        "MdeSweepVariable.mode",
+        "MdeSweepVariable.modelName",
+        "MdeSweepVariable.modelParameterName"
+      ],
+      "apis_extra": [
+        "MdeAcAnalysis.",
+        "MdeAcAnalysis.SweepMode.CENTER_SPAN"
+      ],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.048
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n\nimport pyAether as pyScript\n",
+      "finish_reason": "stop",
+      "time_sec": 0.2,
+      "code_len": 47,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "MDE_SWEEP_RANGE_CENTER_SPAN",
+        "MDE_SWEEP_TYPE_LOG",
+        "MDE_SWEEP_TYPE_LOG_NUM_STEP",
+        "MDE_SWEEP_VARIABLE_MODEL_PARAMETER",
+        "MdeAcAnalysis",
+        "MdeAcAnalysis.setSweepRange",
+        "MdeAcAnalysis.setSweepType",
+        "MdeAcAnalysis.setSweepVariable",
+        "MdeSweepRange",
+        "MdeSweepRange.center",
+        "MdeSweepRange.mode",
+        "MdeSweepRange.span",
+        "MdeSweepType",
+        "MdeSweepType.logMode",
+        "MdeSweepType.mode",
+        "MdeSweepType.numberOfStepsForLog",
+        "MdeSweepVariable",
+        "MdeSweepVariable.freForMod",
+        "MdeSweepVariable.mode",
+        "MdeSweepVariable.modelName",
+        "MdeSweepVariable.modelParameterName"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  },
+  "EDA-Eval-PyAether-013": {
+    "metadata": {
+      "task_name": "Create a Multi-Segment Wire in a Schematic Cell View",
+      "source": "Training Material",
+      "scenario": "Schematic",
+      "category": "Design Content Creation",
+      "apis_used": [
+        "pyAether.emyDesign",
+        "pyAether.emyFig",
+        "pyAether.dbCrtSchWire"
+      ],
+      "num_unique_apis": 3,
+      "techlib_dependency": false,
+      "lines_of_code": 2
+    },
+    "entry_point": "create_schematic_wire",
+    "apis_expected": [
+      "pyAether.emyDesign",
+      "pyAether.emyFig",
+      "pyAether.dbCrtSchWire"
+    ],
+    "canonical_solution": "    # The dbCrtSchWire function directly accepts a list or tuple of tuples for the points.\n    created_wire = pyScript.dbCrtSchWire(cv=cv, point=points)\n    # The API returns a tuple containing the created figure(s). We return the first element.\n    return created_wire[0]",
+    "base": {
+      "code": "<think>\nWe need to write the function body for create_schematic_wire. The function should create a multi-segment wire in a given schematic cell view using pyAether API. We need to use pyAether library. The function signature: def create_schematic_wire(cv: 'pyScript.emyDesign', points: List[Tuple[float, float]]) -> 'pyScript.emyFig':. We need to implement the body.\n\nWe need to understand pyAether API. The user says \"pyAether EDA library\". We need to write code that uses pyAether to create a wire. The function takes a cell view object (cv) and a list of points. It should return a pyScript.emyFig object representing the wire.\n\nWe need to look at pyAether API. Since we don't have the library, we need to guess based on typical EDA libraries. However, the user expects us to write code that uses pyAether. We need to produce a plausible implementation. The function should create a wire in the cell view. The cell view is a pyScript.emyDesign object. The wire is a pyScript.emyFig object. We need to use the API to create a wire.\n\nWe need to consider that the function should create a multi-segment wire. The points define vertices. The wire should be drawn as a polyline. The function should return the created wire figure object.\n\nWe need to use pyAether API. The library likely has functions like cv.create_wire() or something. But we need to be careful. The user might have a specific API. Since we don't have the library, we need to write code that is plausible. However, the instruction says \"Write ONLY the function body (the implementation after the docstring). Do not repeat the function signature or docstring. Do not include test code.\" So we need to output the code.\n\nWe need to think about the pyAether API. The library is pyAether, which is a Python API for Cadence Virtuoso? Or maybe it's a generic EDA library. The user might have a specific API. But we can write generic code that uses the library's functions. However, we need to be careful not to make assumptions that might be wrong. The user might have a specific API. But we can write code that uses the library's functions as per typical EDA libraries.\n\nWe need to look at the function signature: cv: 'pyScript.emyDesign', points: List[Tuple[float, float]] -> 'pyScript.emyFig'. So cv is a cell view object. The wire is a figure object. The function should create a wire in the cell view.\n\nWe need to use pyAether API. The library likely has a function to create a wire. For example, cv.create_wire(points) or something. But we need to check the API. Since we don't have the library, we need to write code that is plausible. However, the user might have a specific API. The instruction says \"Complete the following Python function that uses the pyAether EDA library.\" So we need to write code that uses the library.\n\nWe need to think about the typical EDA library API. The library might have a function like cv.create_wire() that takes a list of points. Or maybe cv.create_wire(points) returns a wire figure. Or maybe we need to create a wire figure and then add it to the cell view. The function returns a pyScript.emyFig object.\n\nWe need to write the function body. We need to ensure that the function creates a wire and returns it. We need to handle the case where points have at least two points.\n\nWe need to use the pyAether API. We need to import pyAether as pyScript. The function is already defined. We need to write the body.\n\nWe need to think about the API. The library might have a function like cv.create_wire(points) that returns a wire figure. Or maybe we need to create a wire figure and then add it to the cell view. The function returns the wire figure.\n\nWe need to write code that uses the library. Since we don't know the exact API, we need to make reasonable assumptions. However, the user might have a specific API. The instruction says \"Complete the following Python function that uses the pyAether EDA library.\" So we need to write code that uses the library.\n\nWe need to think about the typical EDA library API. The library might have a function like cv.create_wire(points) that returns a wire figure. Or maybe we need to create a wire figure and then add it to the cell view. The function returns the wire figure.\n\nWe need to write the function body. We need to ensure that the function creates a wire and returns it. We need to handle the case where points have at least two points.\n\n",
+      "finish_reason": "length",
+      "time_sec": 11.4,
+      "code_len": 4387,
+      "apis_found": [
+        "pyScript.emyDesign",
+        "pyScript.emyFig"
+      ],
+      "apis_correct": [
+        "emyDesign",
+        "emyFig"
+      ],
+      "apis_missing": [
+        "dbCrtSchWire"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.667
+    },
+    "sft": {
+      "code": "<think>\n\n</think>\n\nimport pyAether as pyScript\n",
+      "finish_reason": "stop",
+      "time_sec": 0.2,
+      "code_len": 47,
+      "apis_found": [],
+      "apis_correct": [],
+      "apis_missing": [
+        "dbCrtSchWire",
+        "emyDesign",
+        "emyFig"
+      ],
+      "apis_extra": [],
+      "syntax_error": "invalid syntax (<string>, line 1)",
+      "api_coverage": 0.0
+    }
+  }
+}

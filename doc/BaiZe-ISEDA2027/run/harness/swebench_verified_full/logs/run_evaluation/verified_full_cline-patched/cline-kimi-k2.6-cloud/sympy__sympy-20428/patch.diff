@@ -1,0 +1,74 @@
+diff --git a/sympy/polys/densearith.py b/sympy/polys/densearith.py
+index bce08bb..7f7a88b 100644
+--- a/sympy/polys/densearith.py
++++ b/sympy/polys/densearith.py
+@@ -269,7 +269,7 @@ def dup_mul_ground(f, c, K):
+     if not c or not f:
+         return []
+     else:
+-        return [ cf * c for cf in f ]
++        return dup_strip([ cf * c for cf in f ])
+ 
+ 
+ def dmp_mul_ground(f, c, u, K):
+@@ -291,7 +291,7 @@ def dmp_mul_ground(f, c, u, K):
+ 
+     v = u - 1
+ 
+-    return [ dmp_mul_ground(cf, c, v, K) for cf in f ]
++    return dmp_strip([ dmp_mul_ground(cf, c, v, K) for cf in f ], u)
+ 
+ 
+ def dup_quo_ground(f, c, K):
+diff --git a/sympy/polys/tests/test_densearith.py b/sympy/polys/tests/test_densearith.py
+index 55b2f47..1974901 100644
+--- a/sympy/polys/tests/test_densearith.py
++++ b/sympy/polys/tests/test_densearith.py
+@@ -39,10 +39,12 @@
+ )
+ 
+ from sympy.polys.specialpolys import f_polys
+-from sympy.polys.domains import FF, ZZ, QQ
++from sympy.polys.domains import FF, ZZ, QQ, EX
+ 
+ from sympy.testing.pytest import raises
+ 
++from sympy.abc import x
++
+ f_0, f_1, f_2, f_3, f_4, f_5, f_6 = [ f.to_dense() for f in f_polys() ]
+ F_0 = dmp_mul_ground(dmp_normal(f_0, 2, QQ), QQ(1, 7), 2, QQ)
+ 
+@@ -180,6 +182,9 @@ def test_dup_mul_ground():
+     assert dup_mul_ground(f, ZZ(0), ZZ) == dup_normal([], ZZ)
+     assert dup_mul_ground(f, ZZ(2), ZZ) == dup_normal([2, 4, 6], ZZ)
+ 
++    # Test that leading zeros are stripped when coefficients become zero
++    assert dup_mul_ground([EX((x + 1)**2 - x**2 - 2*x - 1)], EX(1), EX) == []
++
+ 
+ def test_dmp_mul_ground():
+     assert dmp_mul_ground(f_0, ZZ(2), 2, ZZ) == [
+@@ -195,6 +200,9 @@ def test_dmp_mul_ground():
+              QQ(1, 14)], [QQ(1, 14)]]
+     ]
+ 
++    # Test that leading zeros are stripped when coefficients become zero
++    assert dmp_mul_ground([[EX((x + 1)**2 - x**2 - 2*x - 1)]], 1, 1, EX) == [[]]
++
+ 
+ def test_dup_quo_ground():
+     raises(ZeroDivisionError, lambda: dup_quo_ground(dup_normal([1, 2,
+diff --git a/sympy/polys/tests/test_densetools.py b/sympy/polys/tests/test_densetools.py
+index ca78e1b..a3bc92c 100644
+--- a/sympy/polys/tests/test_densetools.py
++++ b/sympy/polys/tests/test_densetools.py
+@@ -635,6 +635,9 @@ def test_dup_clear_denoms():
+     assert dup_clear_denoms([EX(7)], EX) == (EX(1), [EX(7)])
+     assert dup_clear_denoms([EX(sin(x)/x), EX(0)], EX) == (EX(x), [EX(sin(x)), EX(0)])
+ 
++    # Test that result is stripped when coefficients become zero
++    assert dup_clear_denoms([EX((x + 1)**2/x - (x**2 + 2*x + 1)/x)], EX) == (EX(x), [])
++
+ 
+ def test_dmp_clear_denoms():
+     assert dmp_clear_denoms([[]], 1, QQ, ZZ) == (ZZ(1), [[]])

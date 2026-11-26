@@ -1,0 +1,177 @@
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index fb6639793..f13f8cc20 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -1763,6 +1763,22 @@ def prefetch_related_objects(model_instances, *related_lookups):
+             obj_to_fetch = None
+             if prefetcher is not None:
+                 obj_to_fetch = [obj for obj in obj_list if not is_fetched(obj)]
++                # If a custom queryset is specified, check if cached objects
++                # need re-fetching because they have deferred fields that the
++                # queryset would load.
++                if lookup.queryset is not None and len(obj_list) != len(obj_to_fetch):
++                    queryset = lookup.get_current_queryset(level)
++                    if queryset is not None and hasattr(queryset, 'query'):
++                        field_names, defer = queryset.query.deferred_loading
++                        # defer=False means only() was used.
++                        if not defer and field_names:
++                            for obj in obj_list:
++                                if is_fetched(obj) and obj not in obj_to_fetch:
++                                    cached = getattr(obj, through_attr)
++                                    if cached is not None:
++                                        cached_deferred = cached.get_deferred_fields()
++                                        if field_names & cached_deferred:
++                                            obj_to_fetch.append(obj)
+ 
+             if obj_to_fetch:
+                 obj_list, additional_lookups = prefetch_one_level(
+@@ -1889,23 +1905,33 @@ def prefetch_one_level(instances, prefetcher, lookup, level):
+     # The 'values to be matched' must be hashable as they will be used
+     # in a dictionary.
+ 
++    queryset = lookup.get_current_queryset(level)
++    # Capture and clear any user-specified prefetch_related lookups from the
++    # custom queryset before get_prefetch_queryset evaluates it. This prevents
++    # nested prefetches from running during queryset evaluation (which would
++    # cause them to run twice: once during evaluation and once via all_lookups).
++    additional_lookups = []
++    if queryset is not None:
++        additional_lookups = [
++            copy.copy(additional_lookup) for additional_lookup
++            in getattr(queryset, '_prefetch_related_lookups', ())
++        ]
++        if additional_lookups:
++            queryset._prefetch_related_lookups = ()
++
+     rel_qs, rel_obj_attr, instance_attr, single, cache_name, is_descriptor = (
+-        prefetcher.get_prefetch_queryset(instances, lookup.get_current_queryset(level)))
+-    # We have to handle the possibility that the QuerySet we just got back
+-    # contains some prefetch_related lookups. We don't want to trigger the
+-    # prefetch_related functionality by evaluating the query. Rather, we need
+-    # to merge in the prefetch_related lookups.
+-    # Copy the lookups in case it is a Prefetch object which could be reused
+-    # later (happens in nested prefetch_related).
+-    additional_lookups = [
+-        copy.copy(additional_lookup) for additional_lookup
+-        in getattr(rel_qs, '_prefetch_related_lookups', ())
+-    ]
+-    if additional_lookups:
+-        # Don't need to clone because the manager should have given us a fresh
+-        # instance, so we access an internal instead of using public interface
+-        # for performance reasons.
+-        rel_qs._prefetch_related_lookups = ()
++        prefetcher.get_prefetch_queryset(instances, queryset))
++    # If get_prefetch_queryset returned a different queryset (e.g., when
++    # queryset was None and the manager's default queryset was used), also
++    # extract any prefetches from it (e.g., from a default manager).
++    if rel_qs is not queryset:
++        extra_lookups = [
++            copy.copy(additional_lookup) for additional_lookup
++            in getattr(rel_qs, '_prefetch_related_lookups', ())
++        ]
++        if extra_lookups:
++            rel_qs._prefetch_related_lookups = ()
++        additional_lookups.extend(extra_lookups)
+ 
+     all_related_objects = list(rel_qs)
+ 
+@@ -1948,7 +1974,19 @@ def prefetch_one_level(instances, prefetcher, lookup, level):
+                 # No to_attr has been given for this prefetch operation and the
+                 # cache_name does not point to a descriptor. Store the value of
+                 # the field in the object's field cache.
+-                obj._state.fields_cache[cache_name] = val
++                # If the cache already has an instance with the same PK, merge
++                # loaded fields to preserve identity and avoid losing deferred
++                # field data from nested prefetches.
++                existing = obj._state.fields_cache.get(cache_name)
++                if (existing is not None and val is not None and
++                        existing._meta.concrete_model == val._meta.concrete_model and
++                        existing.pk == val.pk):
++                    for attr in val.__dict__:
++                        if attr not in ('_state', '_prefetched_objects_cache'):
++                            if attr not in existing.__dict__:
++                                existing.__dict__[attr] = val.__dict__[attr]
++                else:
++                    obj._state.fields_cache[cache_name] = val
+         else:
+             if as_attr:
+                 setattr(obj, to_attr, vals)
+diff --git a/tests/prefetch_related/models.py b/tests/prefetch_related/models.py
+index 0ded7e8b4..81a6e0ba9 100644
+--- a/tests/prefetch_related/models.py
++++ b/tests/prefetch_related/models.py
+@@ -282,3 +282,17 @@ class Flea(models.Model):
+     current_room = models.ForeignKey(Room, models.SET_NULL, related_name='fleas', null=True)
+     pets_visited = models.ManyToManyField(Pet, related_name='fleas_hosted')
+     people_visited = models.ManyToManyField(Person, related_name='fleas_hosted')
++
++
++# Models for deferred fields + prefetch_related tests
++
++class User(models.Model):
++    email = models.EmailField()
++    kind = models.CharField(
++        max_length=10, choices=[("ADMIN", "Admin"), ("REGULAR", "Regular")]
++    )
++
++
++class Profile(models.Model):
++    full_name = models.CharField(max_length=255)
++    user = models.OneToOneField(User, on_delete=models.CASCADE)
+diff --git a/tests/prefetch_related/tests.py b/tests/prefetch_related/tests.py
+index 4ea7fccd5..3c9acd79c 100644
+--- a/tests/prefetch_related/tests.py
++++ b/tests/prefetch_related/tests.py
+@@ -13,7 +13,8 @@ from .models import (
+     Article, Author, Author2, AuthorAddress, AuthorWithAge, Bio, Book,
+     Bookmark, BookReview, BookWithYear, Comment, Department, Employee,
+     FavoriteAuthors, House, LessonEntry, ModelIterableSubclass, Person,
+-    Qualification, Reader, Room, TaggedItem, Teacher, WordEntry,
++    Profile, Qualification, Reader, Room, TaggedItem, Teacher, User,
++    WordEntry,
+ )
+ 
+ 
+@@ -1614,3 +1615,42 @@ class ReadPrefetchedObjectsCacheTests(TestCase):
+         with self.assertNumQueries(4):
+             # AuthorWithAge -> Author -> FavoriteAuthors, Book
+             self.assertSequenceEqual(authors, [self.author1, self.author2])
++
++
++class DeferredFieldsPrefetchTests(TestCase):
++    @classmethod
++    def setUpTestData(cls):
++        cls.user = User.objects.create(
++            email="test@example.com",
++            kind="ADMIN",
++        )
++        cls.profile = Profile.objects.create(user=cls.user, full_name="Test Tester")
++
++    def test_only_related_queryset(self):
++        queryset = User.objects.only("email").prefetch_related(
++            Prefetch(
++                "profile",
++                queryset=Profile.objects.prefetch_related(
++                    Prefetch("user", queryset=User.objects.only("kind"))
++                ),
++            )
++        )
++        with self.assertNumQueries(3):
++            user = queryset.first()
++        with self.assertNumQueries(0):
++            self.assertEqual(user.profile.user.kind, "ADMIN")
++
++    def test_only_related_queryset_foreign_key(self):
++        queryset = User.objects.only("email").prefetch_related(
++            Prefetch(
++                "profile",
++                queryset=Profile.objects.prefetch_related(
++                    Prefetch("user", queryset=User.objects.only("kind"))
++                ),
++            )
++        )
++        with self.assertNumQueries(3):
++            user = queryset.first()
++        with self.assertNumQueries(0):
++            self.assertEqual(user.profile.user.kind, "ADMIN")
++        self.assertEqual(user.profile.user.email, "test@example.com")

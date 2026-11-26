@@ -1,0 +1,139 @@
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..881a5f9ba 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/concrete/summations.py b/sympy/concrete/summations.py
+index 372487664..cb6cf2093 100644
+--- a/sympy/concrete/summations.py
++++ b/sympy/concrete/summations.py
+@@ -846,6 +846,7 @@ def telescopic(L, R, limits):
+ def eval_sum(f, limits):
+     from sympy.concrete.delta import deltasummation, _has_simple_delta
+     from sympy.functions import KroneckerDelta
++    from sympy import simplify
+ 
+     (i, a, b) = limits
+     if f is S.Zero:
+@@ -876,6 +877,11 @@ def eval_sum(f, limits):
+     if definite and (dif < 100):
+         return eval_sum_direct(f, (i, a, b))
+     if isinstance(f, Piecewise):
++        from sympy.sets import Interval
++        from sympy.logic.boolalg import Equivalent
++        interval_cond = Interval(a, b).as_relational(i)
++        if f.args and simplify(Equivalent(f.args[0].cond, interval_cond)) is S.true:
++            return eval_sum(f.args[0].expr, limits)
+         return None
+     # Try to do it symbolically. Even when the number of terms is known,
+     # this can save time when b-a is big.
+diff --git a/sympy/concrete/tests/test_sums_products.py b/sympy/concrete/tests/test_sums_products.py
+index 1e3a81141..e1d3c6d2d 100644
+--- a/sympy/concrete/tests/test_sums_products.py
++++ b/sympy/concrete/tests/test_sums_products.py
+@@ -570,7 +570,7 @@ def test_Sum_doit():
+     # issue 2597
+     nmax = symbols('N', integer=True, positive=True)
+     pw = Piecewise((1, And(S(1) <= n, n <= nmax)), (0, True))
+-    assert Sum(pw, (n, 1, nmax)).doit() == Sum(pw, (n, 1, nmax))
++    assert Sum(pw, (n, 1, nmax)).doit() == nmax
+ 
+     q, s = symbols('q, s')
+     assert summation(1/n**(2*s), (n, 1, oo)) == Piecewise((zeta(2*s), 2*s > 1),
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..fe91845ca 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index b4d759836..374f75597 100644
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -6,7 +6,7 @@
+ from sympy.core.decorators import call_highest_priority
+ from sympy.core.compatibility import range
+ from sympy.core.sympify import SympifyError, sympify
+-from sympy.functions import conjugate, adjoint
++from sympy.functions import conjugate, adjoint, KroneckerDelta
+ from sympy.matrices import ShapeError
+ from sympy.simplify import simplify
+ 
+@@ -476,10 +476,7 @@ def conjugate(self):
+         return self
+ 
+     def _entry(self, i, j):
+-        if i == j:
+-            return S.One
+-        else:
+-            return S.Zero
++        return KroneckerDelta(i, j)
+ 
+     def _eval_determinant(self):
+         return S.One
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index b6808b58d..027a17ef7 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1903,7 +1903,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 24df97b01..bf00de7a8 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -52,7 +52,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..6268b99c0 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/tensor/indexed.py b/sympy/tensor/indexed.py
+index c8b958ea5..910393ca8 100644
+--- a/sympy/tensor/indexed.py
++++ b/sympy/tensor/indexed.py
+@@ -153,7 +153,7 @@ def __new__(cls, base, *args, **kw_args):
+             raise TypeError(filldedent("""
+                 Indexed expects string, Symbol, or IndexedBase as base."""))
+         args = list(map(sympify, args))
+-        if isinstance(base, (NDimArray, collections.Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
++        if isinstance(base, (NDimArray, collections.abc.Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
+             return base[args]
+         return Expr.__new__(cls, base, *args, **kw_args)
+ 

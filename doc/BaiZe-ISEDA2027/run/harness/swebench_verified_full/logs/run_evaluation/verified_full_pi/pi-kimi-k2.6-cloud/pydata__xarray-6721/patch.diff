@@ -1,0 +1,60 @@
+diff --git a/xarray/core/common.py b/xarray/core/common.py
+index 3c328f4..facc7a8 100644
+--- a/xarray/core/common.py
++++ b/xarray/core/common.py
+@@ -2023,14 +2023,13 @@ def get_chunksizes(
+ 
+     chunks: dict[Any, tuple[int, ...]] = {}
+     for v in variables:
+-        if hasattr(v.data, "chunks"):
+-            for dim, c in v.chunksizes.items():
+-                if dim in chunks and c != chunks[dim]:
+-                    raise ValueError(
+-                        f"Object has inconsistent chunks along dimension {dim}. "
+-                        "This can be fixed by calling unify_chunks()."
+-                    )
+-                chunks[dim] = c
++        for dim, c in v.chunksizes.items():
++            if dim in chunks and c != chunks[dim]:
++                raise ValueError(
++                    f"Object has inconsistent chunks along dimension {dim}. "
++                    "This can be fixed by calling unify_chunks()."
++                )
++            chunks[dim] = c
+     return Frozen(chunks)
+ 
+ 
+diff --git a/xarray/tests/test_backends.py b/xarray/tests/test_backends.py
+index bbfae73..b97a114 100644
+--- a/xarray/tests/test_backends.py
++++ b/xarray/tests/test_backends.py
+@@ -5404,6 +5404,29 @@ def test_chunking_consintency(chunks, tmp_path):
+         with xr.open_dataset(tmp_path / "test.nc", chunks=chunks) as actual:
+             xr.testing.assert_chunks_equal(actual, expected)
+ 
++@requires_zarr
++def test_zarr_chunks_no_dask(tmp_path: Path) -> None:
++    """Test that accessing .chunks on a zarr-backed Dataset without dask does not
++    trigger loading the entire array into memory (GH issue).
++    """
++    ds = xr.Dataset({"a": (["x", "y"], np.ones((10, 10)))})
++    ds.to_zarr(tmp_path / "test.zarr")
++
++    with xr.open_dataset(tmp_path / "test.zarr", engine="zarr") as actual:
++        # Access chunks and chunksizes without dask
++        assert actual.chunks == {}
++        assert actual.chunksizes == {}
++
++        # Verify that the underlying data was not loaded into memory
++        for var in actual.variables.values():
++            data = var._data
++            if isinstance(data, indexing.MemoryCachedArray):
++                assert not isinstance(
++                    data.array, indexing.NumpyIndexingAdapter
++                )
++            else:
++                assert not isinstance(data, np.ndarray)
++
+ 
+ def _check_guess_can_open_and_open(entrypoint, obj, engine, expected):
+     assert entrypoint.guess_can_open(obj)

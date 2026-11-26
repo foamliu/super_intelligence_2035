@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 项目日报 · 2026-10-14</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdebd0;border-left:4px solid #e67e22;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>BaiZe 项目日报 · 2026-10-14</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-14 ~16:12 · 覆盖六线：pretrain / vision / harness / data / zhulong / news</p>
+
+<div class='info'><strong>TL;DR</strong>：今日主线是<strong>三篇论文「审视 → 改稿 → 编译」全面闭环</strong>（pretrain/vision/zhulong 均 11–12 页 0 error，zhulong 进一步并入 SKILL/Tcl 跨语言结果）。<strong>pretrain P-8 进入 decay 段时发现 LR 未衰减（卡 1e-3）</strong>，已定位根因（resume 只加载权重不加载 scheduler 导致 step 计数错乱）并修复（<code>--finetune</code> 只加载权重 + warmup + decay 1e-3→1e-5），正重跑 decay。另：纠正了 seq 口径（正确 = 4096，P-8 脚本的 4094 是历史错误）；vision 交付 ArmC 报告 + Stage(iv) MLLM 可行性报告（2🔴 障碍但可行）；harness glm-5.3-flash 7×300 已启动（403 解决后）。</div>
+
+<h2>1. 各线状态总览</h2>
+<table><tr><th>线</th><th>阶段</th><th>最新进展</th><th>状态</th></tr>
+<tr><td class='blue'>pretrain</td><td>P-8 decay FIX</td><td>decay 段 LR 卡 1e-3 已定位修复，重跑 step10/1149 warmup 正常，ETA ~21:22</td><td class='amber'>🟠 重跑中</td></tr>
+<tr><td class='blue'>vision</td><td>ArmC 训练 + 规划</td><td>ArmC 60.7%（312 PROBEs 全绿）；MLLM Stage(iv) 可行性报告交付</td><td class='green'>🟢 健康推进</td></tr>
+<tr><td class='blue'>harness</td><td>glm53 7×300</td><td>298/2100（14.2%），77 resolved，7 路全活 no 403</td><td class='amber'>🟠 评测中</td></tr>
+<tr><td class='blue'>data</td><td>下载暂停</td><td>4 路下载暂停态维持（第 7 次复核）；新增 /nas_env 落盘位</td><td class='green'>⏸ 暂停待命</td></tr>
+<tr><td class='blue'>zhulong</td><td>phi_k1 r5 + 论文</td><td>论文 SKILL/Tcl 并入 + 编译 12 页 0 err；phi_k1 r4=64.6%，r5 跑中</td><td class='green'>✅ 论文闭环</td></tr>
+<tr><td class='blue'>news</td><td>常态化采集</td><td>微头条 + 舆论监测照常</td><td class='green'>✅ 运行中</td></tr>
+</table>
+
+<h2>2. 论文：三篇「审视→改稿→编译」全面闭环 🏆</h2>
+<div class='ok'><strong>今日最大成果</strong>：三条线各自主审视自己的论文侧、出报告、放行改稿、编译验证，现已全部 0 error 闭环。</div>
+<table><tr><th>线</th><th>审视发现</th><th>改稿</th><th>编译</th></tr>
+<tr><td class='blue'>pretrain</td><td>4🔴+10🟠+3🟢（FP8 声明矛盾 / 20B-token 笔误 / 24→52 层 / seq 4094↔4096）</td><td class='green'>H1-H4 + S1-S10 全修</td><td class='green'>11 页 0 err</td></tr>
+<tr><td class='blue'>vision</td><td>2🔴+6🟠+5🟢（Protocol B 67.05% 缺失 / 58.8M 旧值）</td><td class='green'>P0+P1 修</td><td class='green'>12 页 0 err</td></tr>
+<tr><td class='blue'>zhulong</td><td>6🔴+15🟠+11🟢（84.8%→82.1 锚点 / 重算 Δ / gen-fail 缺列）</td><td class='green'>P0+P1+P2 修 + SKILL/Tcl 并入</td><td class='green'>12 页 0 err</td></tr>
+</table>
+<div class='note'><strong>zhulong 额外</strong>：按运维令十八把 SKILL/Tcl 跨语言结果并入论文（<code>RQ3 tab:cross-language</code>，来自 <code>zhulong_results.md</code>）；评测集全貌升级为 EDA-Scripting-Bench <strong>449 case（PyAether 158 + SKILL 158 + Tcl 133）</strong>。</div>
+<div class='warn'><strong>seq 口径纠偏</strong>：发现并纠正——正确口径 = <strong>4096</strong>（2¹²），P-8 脚本与台账里的 <code>SEQ=4094</code> 系历史错误；论文 3 处 4094 已改 4096。P-8 按 4094 跑完（用户定），脚本改 4096 待 P-8 结束后统一。</div>
+
+<h2>3. Pretrain —— P-8 decay 段 LR 未衰减：定位 + 修复 🟠</h2>
+<div class='warn'><strong>故障</strong>：P-8 stable 段正确完成后（step9441，loss 2.456），decay 段（SFT blend SFT64%+L3 24%+code8%+math4%）LR <strong>全程卡在 1e-3 未衰减</strong>（27 个 log 点确认），未按预期 1e-3→1e-5 下降。</div>
+<div class='ok'><strong>根因（贴源码定位）</strong>：<code>checkpointing.py:1358</code> 在 <code>not finetune</code> 时加载 <code>latest_train_state.pt</code> 恢复 step=9441，但 <code>load_optim=False</code> 导致 scheduler 内部计数器不恢复（仍从 0 起）→ WSD 认为 stable 段 0→9441、decay 段 9441→10490，而 decay run 只有 1049 步永远到不了 decay 区 → LR 恒定 1e-3。</div>
+<div class='ok'><strong>修复（用户直令）</strong>：decay 只加载权重、不加载 optimizer —— 新增 <code>--finetune</code> flag（wire up 到 <code>pretrain_launcher.py:62</code> + <code>recipe.py:185</code>），step=0、fresh scheduler、warmup=100 → decay=1049（1e-3→1e-5）。新脚本 <code>baize_p8_decay_fix.sh</code>，从 ckpt@9441 只加载权重重跑 decay。</div>
+<div class='note'><strong>当前</strong>：decay FIX 运行中 step10/1149，LR=1e-4 ✅ warmup 正常（旧 run 全程 1e-3 已纠正）；旧 decay 进程已 SIGTERM（step~9870，无 final ckpt）；ETA ~21:22。stable 段不重跑（ckpt@9441 有效）。</div>
+
+<h2>4. Vision —— ArmC 过半 + Stage(iv) MLLM 可行性 🔬</h2>
+<div class='ok'><strong>ArmC（merge3ds 合并三数据集实验）</strong>：step 93750/154500（<strong>60.7%</strong>），C1=0.63 稳定、<strong>312 PROBEs 全绿</strong>、无坍缩，吞吐恢复稳态 ~210-230ms，ETA ~19:00。中文状态报告持续刷新至 step93750。</div>
+<div class='ok'><strong>Stage(iv) MLLM 对齐可行性报告已交付</strong>（<code>report_vision_mllm_stage4_feasibility_zh.html</code>，9 节，2🔴+6🟠+7🟢）：</div>
+<table><tr><th>结论</th><th>详情</th></tr>
+<tr><td class='green'>方案可行</td><td>数据 265GB / Qwen3-4B / ms-swift 4.5.3 / lmms-eval 0.7.1 / ④-4ep ckpt <strong>全部在盘就绪</strong></td></tr>
+<tr><td class='red'>🔴 障碍 1</td><td>视觉编码器桥接：BaiZe 自定义 ViT（非 HF/ope_clip），需写 HF wrapper + 改 modeling（~1-2 天纯 CPU）</td></tr>
+<tr><td class='red'>🔴 障碍 2</td><td>框架不匹配：<code>train_4b.sh</code> 用 AIAK Megatron，需改 ms-swift（有 <code>swift sft --template llava_onevision1_5</code> 现成方案）</td></tr>
+<tr><td class='blue'>利好</td><td>两个障碍是纯 CPU 工作，可<strong>在 ArmC 训练期间并行完成</strong>，无算力空窗；~234-380 GPU·h、~2-3 天</td></tr>
+</table>
+
+<h2>5. Harness —— glm-5.3-flash 7×300 已启动 🟠</h2>
+<div class='ok'><strong>403 已解决</strong>：glm53 key 只在 <code>/v1</code> 有效、<code>/cloud/v1</code> 返回 403（非 key 问题，是 base url 路径错）。修 base url → <code>/v1</code> 后 7×300 启动（11:10 CST）。</div>
+<table><tr><th>项</th><th>值</th></tr>
+<tr><td>进度</td><td>298/2100（14.2%），77 resolved（25.8%）</td></tr>
+<tr><td>状态</td><td>7 harness 全活，no 403 / no quota / no timeout</td></tr>
+<tr><td>早期观察</td><td>样本小（~43/harness，多 astropy+django），django resolve rate 初显高于 kimi，待样本扩大后对比</td></tr>
+<tr><td>P1-2 rerun</td><td>已完成（累计 574→621 resolved）</td></tr>
+</table>
+
+<h2>6. Data —— 4 路下载暂停待命 ⏸</h2>
+<div class='note'><strong>暂停 4 路下载</strong>（用户令 10-14）：en_v1_4（58.4%）+ WebMix-38M（~57G）+ wit_base（~68G）+ InternVL-SA1B（~211G），已 kill 全部进程、保留已下内容 + <code>.incomplete</code>（待续传），暂停态维持第 7 次复核稳定。</div>
+<div class='info'><strong>新增落盘位置</strong>：<code>/nas_env/app.e0031982/datasets/</code>（与 /nas_inference、/nas_user 并列；/nas_env 已挂载 1%/9.9T）。</div>
+
+<h2>7. Zhulong —— phi_k1 推进 + 论文 SKILL/Tcl 扩展 🟢</h2>
+<div class='ok'><strong>Φ 预算单调趋势更完整</strong>：k10=77.7±2.2% > k3=69.1±2.5% > k1（r1 65.2 / r2 66.5 / r3 58.2 / r4 64.6 / r5 跑中）；gen-fail 随 k↓ 递增（个位数→25→30-39），机制可观测。</div>
+<div class='ok'><strong>论文</strong>：改稿 P0+P1+P2（锚点 84.8→82.1 + 重算 Δ + Error Analysis 重声明 + Limiations 独立）+ SKILL/Tcl 跨语言并入，pdflatex 编译 <strong>12 页 0 error</strong>。</div>
+
+<h2>8. 今日关键事件回看</h2>
+<table><tr><th>时间</th><th>事件</th></tr>
+<tr><td>~09:00</td><td>三线论文审视报告齐（pretrain/vision/zhulong）</td></tr>
+<tr><td>~10:05</td><td>pretrain + vision 论文改稿完成（0 err）；pretrain 纠正 seq 口径 4096</td></tr>
+<tr><td>~11:10</td><td class='blue'>harness glm-5.3-flash 7×300 启动（403 解决）</td></tr>
+<tr><td>~13:20</td><td>pretrain P-8 stable 完成 → decay 切换（发现 LR 未衰减）</td></tr>
+<tr><td>~14:30</td><td>vision MLLM 可行性报告交付；用户令暂停 data 4 路下载</td></tr>
+<tr><td>~15:47</td><td class='red'>pretrain 定位 decay LR 未衰减根因 + 修复（--finetune）+ 重跑</td></tr>
+<tr><td>~15:50</td><td>zhulong SKILL/Tcl 并入论文 + 编译闭环（12 页 0 err）</td></tr>
+</table>
+
+<h2>9. 关注 / 风险</h2>
+<ul>
+<li>🟠 <strong>pretrain decay FIX</strong>：重跑中（step10/1149，ETA ~21:22），需持续确认 LR 走完 warmup(100)→decay(1e-3→1e-5)，最终 ckpt@1149 落盘才代表 P-8 完成。</li>
+<li>🔴 <strong>vision MLLM 桥接</strong>（2 个🔴 障碍）：确定是否按方案 A（写 wrapper）推进、是否现在就在 ArmC 期间并行写 wrapper。</li>
+<li>🟠 <strong>harness glm53</strong>：样本仍小，最终 7×300（ETA ~42h）出结果后与 kimi 对比，验证「能力是主因」。</li>
+<li>🟢 <strong>vision ArmC</strong>：~3h 完成 → 接 eval chain（3-seed ProtB）→ merge3ds 结果报告。</li>
+<li>🟢 <strong>data</strong>：4 路暂停等运维指示恢复（<code>.incomplete</code> 已保留可续传）。</li>
+</ul>
+
+<footer>BaiZe-ISEDA2027 · 日报 report_10_14.html · 数据来源：各线 MEMORY / git log（截至 2026-10-14 ~16:12）· 生成：Cline</footer>
+</body></html>

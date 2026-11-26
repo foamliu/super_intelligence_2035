@@ -1,0 +1,22 @@
+这是一个 PDK QA System 的 DRC 测试环境建立任务（真实 trace 来源：pdkQaSystem Windows→Linux 迁移 Phase 2，主机 hfeg0pkn004 / RHEL 8 / Calibre 2020.1_36）。
+
+附件是迁移包的关键文件：
+- DrcQa.py：DRC 主入口，定义了 17 个已注册 checker（supportFuncnames），并按 text（不依赖 Calibre 运行）/ pattern（依赖 calibre/calibredrv 运行）分类；
+- calibre_env_excerpt.sh：Calibre 自带 calibre_env 脚本的节选，含 VCO autoswitch 的 grep 逻辑；
+- env_symptoms.txt：在非交互进程里跑 DRC 测试时观察到的环境故障（libpython3.7m.so.1.0 缺失、VCO=aok 报错、非交互不加载 .bashrc、只设 CALIBRE_HOME 仍报错）；
+- known_issues.md：已知问题记录（K10 占位）；
+- tests_skeleton/run_all_tests.py：17 checker 冒烟测试运行器骨架。
+
+任务（多步，须在一次会话里完成并交付）：
+为这 17 个 checker 建立可在非交互进程中跑通冒烟测试的环境，产出三份交付件打包成 outputs/submit.zip：
+1. test_env.py —— 共享测试环境建立模块。必须解决两个环境问题：
+   (1) Python libpython3.7m.so.1.0 缺失：把 /apps/local/python/python-3.7.1/x86_64/lib 加到 LD_LIBRARY_PATH；
+   (2) Calibre VCO aok/aoi autoswitch 失败：先读 calibre_env_excerpt.sh 和 env_symptoms.txt 定位根因。注意：**只设 CALIBRE_HOME 是无效的**（calibre_env 会无条件运行 calibre_vco，autoswitch 的 grep bug 仍会触发）。必须实现绕过方案：在 /tmp 建一个假的 MGC_HOME，其 bin/calibre_vco 桩脚本返回 'aoi'（让 autoswitch 认到已安装的 aoi 树）+ 一个桩 libXss.so.1（机器缺这个依赖）+ LD_LIBRARY_PATH 指向真实 aoi lib。该绕过桩要在导入时**自动重建**（检查 /tmp/calibre_fake_home 与 /tmp/libXss.so.1 是否存在，缺失则重建，因为 /tmp 可能被清理）。模块还要提供 check_calibre_env()->(ok,msg)、get_real_path、chdir_to_data_dir、print_result 等辅助函数。
+2. smoke_report.md —— 17 个 checker 的冒烟结果。text checker（11 个）应 PASS；drcSyntax 应 PASS（rules_syntax_checker 能完成）；其余 5 个 pattern QA checker 在本环境下只能验证"能启动"（calibre/calibredrv 启动后 kill+清理，VCO 已被绕过解决），结果记 CAN_START，不要记 PASS（未跑完整流程）也不要记 SKIP/FAIL（环境已解决）。
+3. PHASE2_REPORT.md —— 环境问题分析。必须定位 Calibre VCO 根因（calibre_env 里 $SW_WKSTN_ / $MGC_VCO_ 这类带下划线的 shell 变量名解析 bug），并明确记录"只设 CALIBRE_HOME 的正规方案已尝试且无效（calibre_env 无条件运行 calibre_vco）"，以及最终恢复的假 MGC_HOME + 桩 libXss 绕过方案。
+
+约束：
+- 不改 DrcQa.py 的 supportFuncnames（17 个已注册 checker 清单不变）；
+- 沙盒里没有真实 Calibre 安装，方案要能被静态校验（test 只读 zip 内文件内容判分，不实跑 Calibre）；
+- 真实用户名/路径脱敏（附件已脱敏，交付件里不要出现真实用户名）。
+- 交付件打包成 outputs/submit.zip，内含 test_env.py / smoke_report.md / PHASE2_REPORT.md。

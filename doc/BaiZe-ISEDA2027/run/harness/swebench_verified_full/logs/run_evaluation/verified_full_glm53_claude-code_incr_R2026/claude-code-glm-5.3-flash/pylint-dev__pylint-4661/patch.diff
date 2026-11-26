@@ -1,0 +1,334 @@
+diff --git a/ChangeLog b/ChangeLog
+index 047ee3709..e5027965f 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -21,6 +21,15 @@ Release date: TBA
+ 
+   Close #4120
+ 
++* Persistent data (the cache of the previous run used for comparisons) is now
++  stored in an XDG Base Directory Specification compliant location, i.e.
++  ``$HOME/.cache/pylint`` on Linux (via ``platformdirs.user_cache_dir``),
++  instead of ``$HOME/.pylint.d``. The ``PYLINTHOME`` environment variable
++  still takes precedence, and pylint will warn you that the obsolescent
++  ``$HOME/.pylint.d`` can be safely removed if it is found.
++
++  Closes #4771
++
+ 
+ What's New in Pylint 2.9.6?
+ ===========================
+diff --git a/classes.dot b/classes.dot
+new file mode 100644
+index 000000000..6b2ccf84c
+--- /dev/null
++++ b/classes.dot
+@@ -0,0 +1,4 @@
++digraph "classes" {
++charset="utf-8"
++rankdir=BT
++}
+diff --git a/doc/faq.rst b/doc/faq.rst
+index c817855f8..f8f84d484 100644
+--- a/doc/faq.rst
++++ b/doc/faq.rst
+@@ -93,10 +93,12 @@ localized using the following rules:
+ 
+ * value of the PYLINTHOME environment variable if set
+ 
+-* ".pylint.d" subdirectory of the user's home directory if it is found
+-	(not always findable on Windows platforms)
++* XDG-compatible platform-specific cache directory, e.g.
++  "$HOME/.cache/pylint" on Linux, "~/Library/Caches/pylint" on macOS
++  (via the platformdirs module)
+ 
+-* ".pylint.d" directory in the current directory
++* the obsolescent ".pylint.d" subdirectory of the user's home directory
++  if it is found (deprecated, you can safely remove it)
+ 
+ 3.3 How do I find the option name (for pylintrc) corresponding to a specific command line option?
+ --------------------------------------------------------------------------------------------------------
+diff --git a/doc/whatsnew/2.10.rst b/doc/whatsnew/2.10.rst
+index e94530bf1..6146944ca 100644
+--- a/doc/whatsnew/2.10.rst
++++ b/doc/whatsnew/2.10.rst
+@@ -24,3 +24,11 @@ Other Changes
+ * Performance of the Similarity checker has been improved.
+ 
+ * Added ``time.clock`` to deprecated functions/methods for python 3.3
++
++* Persistent data is now stored in an XDG Base Directory Specification
++  compliant location (``$HOME/.cache/pylint`` on Linux) instead of
++  ``$HOME/.pylint.d``. The ``PYLINTHOME`` environment variable still takes
++  precedence, and pylint will warn you that the obsolescent
++  ``$HOME/.pylint.d`` can be safely removed if it is found.
++
++  Closes #4771
+diff --git a/pylint/config/__init__.py b/pylint/config/__init__.py
+index 84774d0e3..9b288c95a 100644
+--- a/pylint/config/__init__.py
++++ b/pylint/config/__init__.py
+@@ -43,6 +43,7 @@ from pylint.config.option import Option
+ from pylint.config.option_manager_mixin import OptionsManagerMixIn
+ from pylint.config.option_parser import OptionParser
+ from pylint.config.options_provider_mixin import OptionsProviderMixIn, UnsupportedAction
++from pylint.constants import PYLINT_HOME, USER_HOME
+ 
+ __all__ = [
+     "ConfigurationMixIn",
+@@ -53,18 +54,10 @@ __all__ = [
+     "OptionParser",
+     "OptionsProviderMixIn",
+     "UnsupportedAction",
++    "USER_HOME",
++    "PYLINT_HOME",
+ ]
+ 
+-USER_HOME = os.path.expanduser("~")
+-if "PYLINTHOME" in os.environ:
+-    PYLINT_HOME = os.environ["PYLINTHOME"]
+-    if USER_HOME == "~":
+-        USER_HOME = os.path.dirname(PYLINT_HOME)
+-elif USER_HOME == "~":
+-    PYLINT_HOME = ".pylint.d"
+-else:
+-    PYLINT_HOME = os.path.join(USER_HOME, ".pylint.d")
+-
+ 
+ def _get_pdata_path(base_name, recurs):
+     base_name = base_name.replace(os.sep, "_")
+@@ -83,7 +76,7 @@ def load_results(base):
+ def save_results(results, base):
+     if not os.path.exists(PYLINT_HOME):
+         try:
+-            os.mkdir(PYLINT_HOME)
++            os.makedirs(PYLINT_HOME, exist_ok=True)
+         except OSError:
+             print("Unable to create directory %s" % PYLINT_HOME, file=sys.stderr)
+     data_file = _get_pdata_path(base, 1)
+@@ -109,9 +102,10 @@ ENV_HELP = (
+     """
+ The following environment variables are used:
+     * PYLINTHOME
+-    Path to the directory where persistent data for the run will be stored. If
+-not found, it defaults to ~/.pylint.d/ or .pylint.d (in the current working
+-directory).
++    Path to the directory where the persistent data for the run will be stored. If
++not found, it defaults to an XDG-compatible platform-specific cache location
++(e.g. ~/.cache/pylint on Linux, ~/Library/Caches/pylint on macOS). The
++obsolescent ~/.pylint.d directory is still read but deprecated.
+     * PYLINTRC
+     Path to the configuration file. See the documentation for the method used
+ to search for configuration file.
+diff --git a/pylint/constants.py b/pylint/constants.py
+index 628e2001d..dd24e36f0 100644
+--- a/pylint/constants.py
++++ b/pylint/constants.py
+@@ -1,10 +1,14 @@
+ # Licensed under the GPL: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ # For details: https://github.com/PyCQA/pylint/blob/main/LICENSE
+ import builtins
++import os
++import pathlib
+ import platform
+ import sys
++from datetime import datetime
+ 
+ import astroid
++import platformdirs
+ 
+ from pylint.__pkginfo__ import __version__
+ 
+@@ -42,6 +46,11 @@ MSG_TYPES_STATUS = {"I": 0, "C": 16, "R": 8, "W": 4, "E": 2, "F": 1}
+ # on all project using [MASTER] in their rcfile.
+ MAIN_CHECKER_NAME = "master"
+ 
++USER_HOME = os.path.expanduser("~")
++# TODO: 3.0: Remove in 3.0 with all the surrounding code
++OLD_DEFAULT_PYLINT_HOME = ".pylint.d"
++DEFAULT_PYLINT_HOME = platformdirs.user_cache_dir("pylint")
++
+ 
+ class WarningScope:
+     LINE = "line-based-msg"
+@@ -51,3 +60,58 @@ class WarningScope:
+ full_version = f"""pylint {__version__}
+ astroid {astroid.__version__}
+ Python {sys.version}"""
++
++
++def _warn_about_old_home(pylint_home: pathlib.Path) -> None:
++    """Warn users about the old pylint home being deprecated.
++
++    The spam prevention mechanism is due to pylint being used in parallel by
++    pre-commit, and the message being spammy in this context
++    Also if you work with an old version of pylint that recreates the
++    old pylint home, you can get the old message for a long time.
++    """
++    prefix_spam_prevention = "pylint_warned_about_old_cache_already"
++    spam_prevention_file = pathlib.Path(pylint_home) / datetime.now().strftime(
++        prefix_spam_prevention + "_%Y-%m-%d.temp"
++    )
++    old_home = pathlib.Path(USER_HOME) / OLD_DEFAULT_PYLINT_HOME
++
++    if old_home.exists() and not spam_prevention_file.exists():
++        print(
++            f"PYLINTHOME is now '{pylint_home}' but obsolescent '{old_home}' is found; "
++            "you can safely remove the latter",
++            file=sys.stderr,
++        )
++
++        # Remove old spam prevention file
++        if pylint_home.exists():
++            for filename in pylint_home.iterdir():
++                if prefix_spam_prevention in str(filename):
++                    try:
++                        os.remove(pylint_home / filename)
++                    except OSError:  # pragma: no cover
++                        pass
++
++        # Create spam prevention file for today
++        try:
++            pylint_home.mkdir(parents=True, exist_ok=True)
++            with open(spam_prevention_file, "w", encoding="utf8") as f:
++                f.write("")
++        except Exception as exc:  # pragma: no cover  # pylint: disable=broad-except
++            print(
++                "Can't write the file that was supposed to "
++                f"prevent 'pylint.d' deprecation spam in {pylint_home} because of {exc}."
++            )
++
++
++def _get_pylint_home() -> str:
++    """Return the pylint home."""
++    if "PYLINTHOME" in os.environ:
++        return os.environ["PYLINTHOME"]
++
++    _warn_about_old_home(pathlib.Path(DEFAULT_PYLINT_HOME))
++
++    return DEFAULT_PYLINT_HOME
++
++
++PYLINT_HOME = _get_pylint_home()
+diff --git a/requirements_test_min.txt b/requirements_test_min.txt
+index c2109ed75..684f147a3 100644
+--- a/requirements_test_min.txt
++++ b/requirements_test_min.txt
+@@ -1,4 +1,5 @@
+ -e .
+ astroid==2.6.5  # Pinned to a specific version for tests
++platformdirs>=2.2.0
+ pytest~=6.2
+ pytest-benchmark~=3.4
+diff --git a/setup.cfg b/setup.cfg
+index 62a3fd7a5..9ff77aa85 100644
+--- a/setup.cfg
++++ b/setup.cfg
+@@ -46,6 +46,7 @@ install_requires =
+     isort>=4.2.5,<6
+     mccabe>=0.6,<0.7
+     toml>=0.7.1
++    platformdirs>=2.2.0
+     colorama;sys_platform=="win32"
+ python_requires = ~=3.6
+ 
+diff --git a/tests/lint/unittest_lint.py b/tests/lint/unittest_lint.py
+index 004c29281..b980daf9d 100644
+--- a/tests/lint/unittest_lint.py
++++ b/tests/lint/unittest_lint.py
+@@ -35,6 +35,7 @@
+ # For details: https://github.com/PyCQA/pylint/blob/main/LICENSE
+ # pylint: disable=redefined-outer-name
+ 
++import datetime
+ import os
+ import re
+ import sys
+@@ -44,8 +45,10 @@ from importlib import reload
+ from io import StringIO
+ from os import chdir, getcwd
+ from os.path import abspath, basename, dirname, isdir, join, sep
++from pathlib import Path
+ from shutil import rmtree
+ 
++import platformdirs
+ import pytest
+ 
+ from pylint import checkers, config, exceptions, interfaces, lint, testutils
+@@ -54,6 +57,11 @@ from pylint.constants import (
+     MSG_STATE_CONFIDENCE,
+     MSG_STATE_SCOPE_CONFIG,
+     MSG_STATE_SCOPE_MODULE,
++    OLD_DEFAULT_PYLINT_HOME,
++    PYLINT_HOME,
++    USER_HOME,
++    _get_pylint_home,
++    _warn_about_old_home,
+ )
+ from pylint.exceptions import InvalidMessageError
+ from pylint.lint import ArgumentPreprocessingError, PyLinter, Run, preprocess_options
+@@ -629,26 +637,58 @@ def pop_pylintrc():
+ def test_pylint_home():
+     uhome = os.path.expanduser("~")
+     if uhome == "~":
+-        expected = ".pylint.d"
++        expected = OLD_DEFAULT_PYLINT_HOME
+     else:
+-        expected = os.path.join(uhome, ".pylint.d")
++        expected = platformdirs.user_cache_dir("pylint")
+     assert config.PYLINT_HOME == expected
++    assert PYLINT_HOME == expected
+ 
++
++def test_pylint_home_from_environ():
+     try:
+-        pylintd = join(tempfile.gettempdir(), ".pylint.d")
++        pylintd = join(tempfile.gettempdir(), OLD_DEFAULT_PYLINT_HOME)
+         os.environ["PYLINTHOME"] = pylintd
+         try:
+-            reload(config)
+-            assert config.PYLINT_HOME == pylintd
++            assert _get_pylint_home() == pylintd
+         finally:
+             try:
+-                os.remove(pylintd)
++                rmtree(pylintd)
+             except FileNotFoundError:
+                 pass
+     finally:
+         del os.environ["PYLINTHOME"]
+ 
+ 
++def test_warn_about_old_home(capsys):
++    """Test that we correctly warn about old_home."""
++    # Create old home
++    old_home = Path(USER_HOME) / OLD_DEFAULT_PYLINT_HOME
++    old_home.mkdir(parents=True, exist_ok=True)
++
++    # Create spam prevention file
++    ten_years_ago = datetime.datetime.now() - datetime.timedelta(weeks=520)
++    new_prevention_file = Path(PYLINT_HOME) / ten_years_ago.strftime(
++        "pylint_warned_about_old_cache_already_%Y-%m-%d.temp"
++    )
++    with open(new_prevention_file, "w", encoding="utf8") as f:
++        f.write("")
++
++    # Remove current prevention file
++    cur_prevention_file = Path(PYLINT_HOME) / datetime.datetime.now().strftime(
++        "pylint_warned_about_old_cache_already_%Y-%m-%d.temp"
++    )
++    if cur_prevention_file.exists():
++        os.remove(cur_prevention_file)
++
++    _warn_about_old_home(Path(PYLINT_HOME))
++
++    assert not new_prevention_file.exists()
++    assert cur_prevention_file.exists()
++
++    out = capsys.readouterr()
++    assert "PYLINTHOME is now" in out.err
++
++
+ @pytest.mark.usefixtures("pop_pylintrc")
+ def test_pylintrc():
+     with fake_home():

@@ -1,0 +1,71 @@
+# Scenario: you are on an analog IC design team characterizing a two-stage
+# Miller-compensated operational amplifier (OP AMP) for a 19nm thick-oxide
+# I/O process. The team's spec for this opamp is:
+#     * DC gain  >= 60 dB   (i.e. voltage gain >= 1000x)
+#     * GBW      >= 1 MHz   (unity-gain frequency, ugf)
+#     * PM       >= 60 deg  (phase margin)
+# The designer iterates on device sizing / bias and, for each iteration, runs
+# a Synopsys HSPICE AC simulation (.ac) and reads the .lis listing HSPICE
+# emits. Each .lis contains one .measure result block per design iteration,
+# reporting five metrics:
+#     dc_gain = <dB>      low-frequency gain in dB
+#     ugf     = <Hz>      unity-gain frequency (== GBW)
+#     ph_ugf  = <deg>     phase at the unity-gain frequency
+#     pm      = <deg>     phase margin
+#     bw3     = <Hz>      3-dB bandwidth
+# A metric that HSPICE could not evaluate is reported as the literal token
+# `failed` (e.g. when there is no unity-gain crossing). Numeric values carry
+# HSPICE scale suffixes: x = 1e6, k = 1e3, m = 1e-3, u = 1e-6, n = 1e-9,
+# p = 1e-12, f = 1e-15, a = 1e-18, t = 1e12, g = 1e9, meg = 1e6.
+#
+# You are given one such .lis (attached: opamp_ac.lis) that holds several
+# design iterations back-to-back. Your job is to parse every .measure result
+# block, normalize each numeric value to a plain float (applying the scale
+# suffix), keep `failed` as the literal string "failed", and judge each design
+# against the spec. A design MEETS the spec only if all three of:
+#     dc_gain (dB) >= 60   AND   ugf (Hz) >= 1e6   AND   pm (deg) >= 60
+# hold (any `failed` among dc_gain/ugf/pm means it does NOT meet spec).
+#
+# Task: implement analog_judge_opamp_ac_lis, which reads the .lis file and
+# RETURNS a flat Tcl dict string (key value pairs, space-separated) with:
+#
+#     num_designs = number of .measure result blocks parsed
+#     and, for each design i = 1 .. num_designs, exactly these six keys:
+#         d<i>_dc_gain_db  = <float | "failed">
+#         d<i>_ugf_hz      = <float | "failed">
+#         d<i>_ph_ugf_deg  = <float | "failed">
+#         d<i>_pm_deg      = <float | "failed">
+#         d<i>_bw3_hz      = <float | "failed">
+#         d<i>_meets_spec  = 0 | 1   (1 iff the design meets the spec above)
+#
+# Rules:
+#   * A .measure result line has the form  ` <name>= <value>`  with a leading
+#     space; <name> is one of dc_gain|ugf|ph_ugf|pm|bw3. The five names always
+#     appear together, in that order, once per design. Ignore everything else
+#     in the file (comments `*`, `******` banners, the `y` plot terminator,
+#     frequency-sweep tables, job statistics, blank lines).
+#   * Group every five consecutive result lines into one design block, in the
+#     order they appear.
+#   * Normalize HSPICE scale suffixes to plain floats (see suffix table above).
+#     A value with no suffix stays a float. `failed` stays the literal string
+#     "failed" (do NOT turn it into 0 or NaN).
+#   * meets_spec is 1 only when dc_gain_db, ugf_hz and pm_deg are all numeric
+#     (not "failed") and satisfy the three inequalities; otherwise 0.
+#   * Do NOT write any file -- just return the dict string.
+#   * Floats may be emitted in any standard numeric format; the checker parses
+#     them with a tolerance.
+#
+# Runtime note: the runtime is Synopsys WaveView ACE Tcl. It supports POSIX
+# regex classes ([[:space:]], [[:alpha:]], [0-9]) but does NOT support the
+# \s and \w shortcuts -- use the POSIX forms in your regexp.
+#
+# Args:
+#   path - path to the opamp_ac.lis file
+# Returns:
+#   A string: "num_designs <N> d1_dc_gain_db <F|failed> d1_ugf_hz <F|failed>
+#   d1_ph_ugf_deg <F|failed> d1_pm_deg <F|failed> d1_bw3_hz <F|failed>
+#   d1_meets_spec <0|1> d2_dc_gain_db ... d<N>_meets_spec <0|1>"
+#
+# proc analog_judge_opamp_ac_lis {path} {
+#     # your code here
+# }

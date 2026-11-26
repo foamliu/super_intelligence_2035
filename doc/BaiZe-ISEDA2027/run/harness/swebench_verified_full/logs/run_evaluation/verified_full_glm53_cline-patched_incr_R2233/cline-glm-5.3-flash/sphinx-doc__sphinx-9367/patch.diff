@@ -1,0 +1,57 @@
+diff --git a/CHANGES b/CHANGES
+index a0f1bab26..7fc51f525 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -77,6 +77,7 @@ Bugs fixed
+   whitespace (ex. ``Dict[str, str]``)
+ * #8945: when transforming typed fields, call the specified role instead of
+   making an single xref. For C and C++, use the ``expr`` role for typed fields.
++* #9340: pycode: 1-element tuple is rendered as ``(1)`` instead of ``(1,)``
+ 
+ Testing
+ --------
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index f541ec0a9..66559be6b 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -213,8 +213,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "%s %s" % (self.visit(node.op), self.visit(node.operand))
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+-        if node.elts:
++        if len(node.elts) > 1:
+             return "(" + ", ".join(self.visit(e) for e in node.elts) + ")"
++        elif node.elts:
++            return "(" + self.visit(node.elts[0]) + ",)"
+         else:
+             return "()"
+ 
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index 279268aee..db67f1e88 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,11 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    try:
++        from types import Union as types_Union  # type: ignore
++    except ImportError:
++        # types.Union was named types.UnionType before Python 3.14
++        from types import UnionType as types_Union  # type: ignore
+ else:
+     types_Union = None
+ 
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index e80062351..81f8f66a2 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -55,6 +55,7 @@ from sphinx.pycode import ast
+     ("- a", "- a"),                             # USub
+     ("(1, 2, 3)", "(1, 2, 3)"),                   # Tuple
+     ("()", "()"),                               # Tuple (empty)
++    ("(1,)", "(1,)"),                           # Tuple (single element)
+ ])
+ def test_unparse(source, expected):
+     module = ast.parse(source)

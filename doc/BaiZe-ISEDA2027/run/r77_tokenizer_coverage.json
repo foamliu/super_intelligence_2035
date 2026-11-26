@@ -1,0 +1,799 @@
+{
+  "section": "R77",
+  "title": "MiniCPM5-2B Tokenizer Coverage Analysis",
+  "date": "2026-11-09",
+  "wake": 125,
+  "model": "MiniCPM5-2B",
+  "model_dir": "/tmp/models/MiniCPM5-2B",
+  "vocab_size": 130560,
+  "api_stats": {
+    "total_apis": 8463,
+    "vocab_size": 130560,
+    "mean_tokens_per_api": 5.46,
+    "median_tokens_per_api": 5,
+    "stdev_tokens_per_api": 1.81,
+    "min_tokens": 1,
+    "max_tokens": 14,
+    "single_token_apis": 10,
+    "two_token_apis": 180,
+    "three_token_apis": 861,
+    "four_plus_token_apis": 7412,
+    "single_token_pct": 0.1,
+    "two_token_pct": 2.1,
+    "three_token_pct": 10.2,
+    "four_plus_pct": 87.6,
+    "distribution": {
+      "4": 1626,
+      "5-6": 3687,
+      "3": 861,
+      "2": 180,
+      "7-10": 2019,
+      "11+": 80,
+      "1": 10
+    }
+  },
+  "english_baseline": {
+    "total_words": 152,
+    "mean_tokens": 1.05,
+    "median_tokens": 1.0,
+    "single_token_pct": 95.4
+  },
+  "eda_jargon": {
+    "total_terms": 117,
+    "mean_tokens": 1.81,
+    "median_tokens": 2,
+    "single_token_pct": 26.5
+  },
+  "fragmentation_ratio": 5.2,
+  "annealing_verdict": "SEVERE fragmentation — annealing needs significantly more data",
+  "annealing_data_multiplier": 3.0,
+  "worst_20_apis": [
+    {
+      "name": "MdePlatParamSweepAddSpecificPoints.getInclusionList",
+      "token_count": 14,
+      "decomposition": [
+        "M",
+        "de",
+        "Pl",
+        "at",
+        "Param",
+        "S",
+        "weep",
+        "Add",
+        "Specific",
+        "Points",
+        ".get",
+        "In",
+        "clusion",
+        "List"
+      ]
+    },
+    {
+      "name": "MdePlatParamSweepCenterSpanPercentage.getExclusionList",
+      "token_count": 14,
+      "decomposition": [
+        "M",
+        "de",
+        "Pl",
+        "at",
+        "Param",
+        "S",
+        "weep",
+        "Center",
+        "Span",
+        "Percentage",
+        ".get",
+        "Ex",
+        "clusion",
+        "List"
+      ]
+    },
+    {
+      "name": "MdePlatParamSweepCenterSpanPercentage.getInclusionList",
+      "token_count": 14,
+      "decomposition": [
+        "M",
+        "de",
+        "Pl",
+        "at",
+        "Param",
+        "S",
+        "weep",
+        "Center",
+        "Span",
+        "Percentage",
+        ".get",
+        "In",
+        "clusion",
+        "List"
+      ]
+    },
+    {
+      "name": "MdePlatParamSweepCenterSpanPercentage.getSpanPercentageValue",
+      "token_count": 14,
+      "decomposition": [
+        "M",
+        "de",
+        "Pl",
+        "at",
+        "Param",
+        "S",
+        "weep",
+        "Center",
+        "Span",
+        "Percentage",
+        ".get",
+        "Span",
+        "Percentage",
+        "Value"
+      ]
+    },
+    {
+      "name": "MdePlatParamSweepCenterSpan.getExclusionList",
+      "token_count": 13,
+      "decomposition": [
+        "M",
+        "de",
+        "Pl",
+        "at",
+        "Param",
+        "S",
+        "weep",
+        "Center",
+        "Span",
+        ".get",
+        "Ex",
+        "clusion",
+        "List"
+      ]
+    },
+    {
+      "name": "MdePlatParamSweepCenterSpan.getInclusionList",
+      "token_count": 13,
+      "decomposition": [
+        "M",
+        "de",
+        "Pl",
+        "at",
+        "Param",
+        "S",
+        "weep",
+        "Center",
+        "Span",
+        ".get",
+        "In",
+        "clusion",
+        "List"
+      ]
+    },
+    {
+      "name": "MdePlatParamSweepCenterSpanPercentage.getStepMode",
+      "token_count": 13,
+      "decomposition": [
+        "M",
+        "de",
+        "Pl",
+        "at",
+        "Param",
+        "S",
+        "weep",
+        "Center",
+        "Span",
+        "Percentage",
+        ".get",
+        "Step",
+        "Mode"
+      ]
+    },
+    {
+      "name": "MdePlatParamSweepStartStop.getInclusionList",
+      "token_count": 13,
+      "decomposition": [
+        "M",
+        "de",
+        "Pl",
+        "at",
+        "Param",
+        "S",
+        "weep",
+        "Start",
+        "Stop",
+        ".get",
+        "In",
+        "clusion",
+        "List"
+      ]
+    },
+    {
+      "name": "emyPointArrayGetConvexHullFurthestPoints",
+      "token_count": 12,
+      "decomposition": [
+        "emy",
+        "Point",
+        "Array",
+        "Get",
+        "Con",
+        "vex",
+        "H",
+        "ull",
+        "Fur",
+        "the",
+        "st",
+        "Points"
+      ]
+    },
+    {
+      "name": "sleEMYEndStyleEnumToLeWireTypeEnum",
+      "token_count": 12,
+      "decomposition": [
+        "s",
+        "le",
+        "EM",
+        "Y",
+        "End",
+        "Style",
+        "Enum",
+        "To",
+        "Le",
+        "Wire",
+        "Type",
+        "Enum"
+      ]
+    },
+    {
+      "name": "sleEMYSegStyleEnumToLeWireTypeEnum",
+      "token_count": 12,
+      "decomposition": [
+        "s",
+        "le",
+        "EM",
+        "YS",
+        "eg",
+        "Style",
+        "Enum",
+        "To",
+        "Le",
+        "Wire",
+        "Type",
+        "Enum"
+      ]
+    },
+    {
+      "name": "sleLeWireTypeEnumToEMYEndStyleEnum",
+      "token_count": 12,
+      "decomposition": [
+        "s",
+        "le",
+        "Le",
+        "Wire",
+        "Type",
+        "Enum",
+        "To",
+        "EM",
+        "Y",
+        "End",
+        "Style",
+        "Enum"
+      ]
+    },
+    {
+      "name": "sleLeWireTypeEnumToEMYSegStyleEnum",
+      "token_count": 12,
+      "decomposition": [
+        "s",
+        "le",
+        "Le",
+        "Wire",
+        "Type",
+        "Enum",
+        "To",
+        "EM",
+        "YS",
+        "eg",
+        "Style",
+        "Enum"
+      ]
+    },
+    {
+      "name": "pyaecb.anpGetSimHspiceDInfo",
+      "token_count": 12,
+      "decomposition": [
+        "py",
+        "aec",
+        "b",
+        ".an",
+        "p",
+        "Get",
+        "Sim",
+        "H",
+        "sp",
+        "ice",
+        "D",
+        "Info"
+      ]
+    },
+    {
+      "name": "pyaecb.cbGetSimHspiceDInfo",
+      "token_count": 12,
+      "decomposition": [
+        "py",
+        "aec",
+        "b",
+        ".c",
+        "bG",
+        "et",
+        "Sim",
+        "H",
+        "sp",
+        "ice",
+        "D",
+        "Info"
+      ]
+    },
+    {
+      "name": "aeEnableUndo.setCrtFigsOutSideFigGroup",
+      "token_count": 12,
+      "decomposition": [
+        "ae",
+        "Enable",
+        "Und",
+        "o",
+        ".set",
+        "C",
+        "rt",
+        "Figs",
+        "Out",
+        "Side",
+        "Fig",
+        "Group"
+      ]
+    },
+    {
+      "name": "EmyCdfProp.evalAllCdfParamsByOrder",
+      "token_count": 12,
+      "decomposition": [
+        "E",
+        "my",
+        "C",
+        "df",
+        "Prop",
+        ".eval",
+        "All",
+        "C",
+        "df",
+        "Params",
+        "By",
+        "Order"
+      ]
+    },
+    {
+      "name": "EmyCdfProp.updateCdfTextsBBox",
+      "token_count": 12,
+      "decomposition": [
+        "E",
+        "my",
+        "C",
+        "df",
+        "Prop",
+        ".update",
+        "C",
+        "df",
+        "Text",
+        "s",
+        "BB",
+        "ox"
+      ]
+    },
+    {
+      "name": "EmyLPPHeader.getMPTMaskColorFlg",
+      "token_count": 12,
+      "decomposition": [
+        "E",
+        "my",
+        "L",
+        "PP",
+        "Header",
+        ".get",
+        "MP",
+        "TM",
+        "ask",
+        "Color",
+        "Fl",
+        "g"
+      ]
+    },
+    {
+      "name": "SleBaseQueryData.checkSelObjIsInEditGroup",
+      "token_count": 12,
+      "decomposition": [
+        "S",
+        "le",
+        "Base",
+        "Query",
+        "Data",
+        ".check",
+        "Sel",
+        "Obj",
+        "Is",
+        "In",
+        "Edit",
+        "Group"
+      ]
+    }
+  ],
+  "single_token_examples": [
+    "isNaN",
+    "Copy",
+    "apply",
+    "car",
+    "cons",
+    "fix",
+    "index",
+    "load",
+    "member",
+    "reverse"
+  ],
+  "top_prefixes": [
+    {
+      "prefix": "emy",
+      "api_count": 4240,
+      "avg_tokens_per_api": 5.24
+    },
+    {
+      "prefix": "ae",
+      "api_count": 950,
+      "avg_tokens_per_api": 4.9
+    },
+    {
+      "prefix": "db",
+      "api_count": 394,
+      "avg_tokens_per_api": 4.96
+    },
+    {
+      "prefix": "ge",
+      "api_count": 242,
+      "avg_tokens_per_api": 4.67
+    },
+    {
+      "prefix": "le",
+      "api_count": 185,
+      "avg_tokens_per_api": 6.22
+    },
+    {
+      "prefix": "dm",
+      "api_count": 158,
+      "avg_tokens_per_api": 4.8
+    },
+    {
+      "prefix": "sle",
+      "api_count": 144,
+      "avg_tokens_per_api": 6.35
+    },
+    {
+      "prefix": "et",
+      "api_count": 137,
+      "avg_tokens_per_api": 3.49
+    },
+    {
+      "prefix": "set",
+      "api_count": 70,
+      "avg_tokens_per_api": 5.04
+    },
+    {
+      "prefix": "gu",
+      "api_count": 63,
+      "avg_tokens_per_api": 3.51
+    },
+    {
+      "prefix": "tech",
+      "api_count": 58,
+      "avg_tokens_per_api": 5.21
+    },
+    {
+      "prefix": "pyaecb",
+      "api_count": 47,
+      "avg_tokens_per_api": 8.06
+    },
+    {
+      "prefix": "get",
+      "api_count": 41,
+      "avg_tokens_per_api": 4.02
+    },
+    {
+      "prefix": "goa",
+      "api_count": 37,
+      "avg_tokens_per_api": 4.92
+    },
+    {
+      "prefix": "cdf",
+      "api_count": 35,
+      "avg_tokens_per_api": 4.11
+    },
+    {
+      "prefix": "se",
+      "api_count": 27,
+      "avg_tokens_per_api": 6.56
+    },
+    {
+      "prefix": "ael",
+      "api_count": 24,
+      "avg_tokens_per_api": 4.79
+    },
+    {
+      "prefix": "lsw",
+      "api_count": 24,
+      "avg_tokens_per_api": 6.0
+    },
+    {
+      "prefix": "lib",
+      "api_count": 16,
+      "avg_tokens_per_api": 3.38
+    },
+    {
+      "prefix": "mde",
+      "api_count": 16,
+      "avg_tokens_per_api": 6.69
+    },
+    {
+      "prefix": "dre",
+      "api_count": 13,
+      "avg_tokens_per_api": 4.54
+    },
+    {
+      "prefix": "vector",
+      "api_count": 13,
+      "avg_tokens_per_api": 7.31
+    },
+    {
+      "prefix": "sym",
+      "api_count": 12,
+      "avg_tokens_per_api": 6.17
+    },
+    {
+      "prefix": "is",
+      "api_count": 10,
+      "avg_tokens_per_api": 4.0
+    },
+    {
+      "prefix": "tm",
+      "api_count": 10,
+      "avg_tokens_per_api": 3.8
+    },
+    {
+      "prefix": "cst",
+      "api_count": 9,
+      "avg_tokens_per_api": 6.0
+    },
+    {
+      "prefix": "mouse",
+      "api_count": 9,
+      "avg_tokens_per_api": 3.22
+    },
+    {
+      "prefix": "pvm",
+      "api_count": 9,
+      "avg_tokens_per_api": 5.11
+    },
+    {
+      "prefix": "agr",
+      "api_count": 9,
+      "avg_tokens_per_api": 4.44
+    },
+    {
+      "prefix": "pnl",
+      "api_count": 8,
+      "avg_tokens_per_api": 5.25
+    }
+  ],
+  "top_subwords": [
+    {
+      "token": "emy",
+      "count": 4270
+    },
+    {
+      "token": ".get",
+      "count": 1242
+    },
+    {
+      "token": "ae",
+      "count": 950
+    },
+    {
+      "token": "le",
+      "count": 667
+    },
+    {
+      "token": "S",
+      "count": 656
+    },
+    {
+      "token": "Get",
+      "count": 579
+    },
+    {
+      "token": ".set",
+      "count": 572
+    },
+    {
+      "token": "M",
+      "count": 491
+    },
+    {
+      "token": "de",
+      "count": 481
+    },
+    {
+      "token": "Def",
+      "count": 472
+    },
+    {
+      "token": "Inst",
+      "count": 458
+    },
+    {
+      "token": "Name",
+      "count": 443
+    },
+    {
+      "token": "E",
+      "count": 422
+    },
+    {
+      "token": "Layer",
+      "count": 421
+    },
+    {
+      "token": "my",
+      "count": 391
+    },
+    {
+      "token": "G",
+      "count": 385
+    },
+    {
+      "token": "ui",
+      "count": 367
+    },
+    {
+      "token": "Via",
+      "count": 351
+    },
+    {
+      "token": ".is",
+      "count": 343
+    },
+    {
+      "token": "Array",
+      "count": 341
+    },
+    {
+      "token": "db",
+      "count": 326
+    },
+    {
+      "token": "Param",
+      "count": 319
+    },
+    {
+      "token": "Net",
+      "count": 316
+    },
+    {
+      "token": "Group",
+      "count": 303
+    },
+    {
+      "token": "Set",
+      "count": 300
+    },
+    {
+      "token": "C",
+      "count": 291
+    },
+    {
+      "token": "Design",
+      "count": 289
+    },
+    {
+      "token": "Type",
+      "count": 277
+    },
+    {
+      "token": "Path",
+      "count": 271
+    },
+    {
+      "token": "ge",
+      "count": 247
+    },
+    {
+      "token": "et",
+      "count": 246
+    },
+    {
+      "token": "Tech",
+      "count": 237
+    },
+    {
+      "token": "Lib",
+      "count": 229
+    },
+    {
+      "token": "F",
+      "count": 229
+    },
+    {
+      "token": "at",
+      "count": 223
+    },
+    {
+      "token": "Pl",
+      "count": 223
+    },
+    {
+      "token": "Box",
+      "count": 222
+    },
+    {
+      "token": "s",
+      "count": 222
+    },
+    {
+      "token": "Term",
+      "count": 221
+    },
+    {
+      "token": "Text",
+      "count": 216
+    },
+    {
+      "token": "Object",
+      "count": 216
+    },
+    {
+      "token": "Value",
+      "count": 216
+    },
+    {
+      "token": "Setting",
+      "count": 210
+    },
+    {
+      "token": "Point",
+      "count": 208
+    },
+    {
+      "token": "D",
+      "count": 208
+    },
+    {
+      "token": "Is",
+      "count": 203
+    },
+    {
+      "token": "View",
+      "count": 201
+    },
+    {
+      "token": "Area",
+      "count": 197
+    },
+    {
+      "token": "Create",
+      "count": 195
+    },
+    {
+      "token": "Constraint",
+      "count": 190
+    }
+  ],
+  "distribution": {
+    "4": 1626,
+    "5-6": 3687,
+    "3": 861,
+    "2": 180,
+    "7-10": 2019,
+    "11+": 80,
+    "1": 10
+  }
+}

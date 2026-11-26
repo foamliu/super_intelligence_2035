@@ -1,0 +1,98 @@
+2026-11-19 22:49:29,000 - INFO - Creating container for pydata__xarray-7393...
+2026-11-19 22:49:29,029 - INFO - Container for pydata__xarray-7393 created: e6c34abd9ee7cdf36726927d33e75d4ffbfb8241d2b06b5b3c6afd163e6baef7
+2026-11-19 22:49:29,790 - INFO - Container for pydata__xarray-7393 started: e6c34abd9ee7cdf36726927d33e75d4ffbfb8241d2b06b5b3c6afd163e6baef7
+2026-11-19 22:49:29,792 - INFO - Intermediate patch for pydata__xarray-7393 written to logs/evaluation/verified_full_glm53_pi_incr_R2792/pi-glm-5.3-flash/pydata__xarray-7393/patch.diff, now applying to container...
+2026-11-19 22:49:29,946 - INFO - >>>>> Applied Patch:
+Checking patch doc/whats-new.rst...
+Checking patch xarray/core/indexing.py...
+Checking patch xarray/tests/test_indexes.py...
+Applied patch doc/whats-new.rst cleanly.
+Applied patch xarray/core/indexing.py cleanly.
+Applied patch xarray/tests/test_indexes.py cleanly.
+
+2026-11-19 22:49:30,157 - INFO - Git diff before:
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index cd5ecd83..0b7fc872 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -45,6 +45,8 @@ Bug fixes
+ - add a ``keep_attrs`` parameter to :py:meth:`Dataset.pad`, :py:meth:`DataArray.pad`,
+   and :py:meth:`Variable.pad` (:pull:`7267`).
+   By `Justus Magin <https://github.com/keewis>`_.
++- Preserve original dtype on accessing MultiIndex levels (:issue:`7250`,
++  :pull:`7393`). By `Ian Carroll <https://github.com/itcarroll>`_.
+ 
+ Documentation
+ ~~~~~~~~~~~~~
+diff --git a/xarray/core/indexing.py b/xarray/core/indexing.py
+index ba937183..e49a072d 100644
+--- a/xarray/core/indexing.py
++++ b/xarray/core/indexing.py
+@@ -1531,8 +1531,12 @@ class PandasMultiIndexingAdapter(PandasIndexingAdapter):
+         self.level = level
+ 
+     def __array__(self, dtype: DTypeLike = None) -> np.ndarray:
++        if dtype is None:
++            dtype = self.dtype
+         if self.level is not None:
+-            return self.array.get_level_values(self.level).values
++            return np.asarray(
++                self.array.get_level_values(self.level).values, dtype=dtype
++            )
+         else:
+             return super().__array__(dtype)
+ 
+diff --git a/xarray/tests/test_indexes.py b/xarray/tests/test_indexes.py
+index 3ecfa73c..caf0f511 100644
+--- a/xarray/tests/test_indexes.py
++++ b/xarray/tests/test_indexes.py
+@@ -697,3 +697,10 @@ def test_safe_cast_to_index_datetime_datetime():
+     actual = safe_cast_to_index(np.array(dates))
+     assert_array_equal(expected, actual)
+     assert isinstance(actual, pd.Index)
++
++
++@pytest.mark.parametrize("dtype", ["int32", "float32"])
++def test_restore_dtype_on_multiindexes(dtype: str) -> None:
++    foo = xr.Dataset(coords={"bar": ("bar", np.array([0, 1], dtype=dtype))})
++    foo = foo.stack(baz=("bar",))
++    assert str(foo["bar"].values.dtype) == dtype
+2026-11-19 22:49:30,160 - INFO - Eval script for pydata__xarray-7393 written to logs/evaluation/verified_full_glm53_pi_incr_R2792/pi-glm-5.3-flash/pydata__xarray-7393/eval.sh; copying to container...
+2026-11-19 22:49:44,362 - INFO - Test runtime: 14.13 seconds
+2026-11-19 22:49:44,364 - INFO - Test output for pydata__xarray-7393 written to logs/evaluation/verified_full_glm53_pi_incr_R2792/pi-glm-5.3-flash/pydata__xarray-7393/test_output.txt
+2026-11-19 22:49:44,425 - INFO - Git diff after:
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index cd5ecd83..0b7fc872 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -45,6 +45,8 @@ Bug fixes
+ - add a ``keep_attrs`` parameter to :py:meth:`Dataset.pad`, :py:meth:`DataArray.pad`,
+   and :py:meth:`Variable.pad` (:pull:`7267`).
+   By `Justus Magin <https://github.com/keewis>`_.
++- Preserve original dtype on accessing MultiIndex levels (:issue:`7250`,
++  :pull:`7393`). By `Ian Carroll <https://github.com/itcarroll>`_.
+ 
+ Documentation
+ ~~~~~~~~~~~~~
+diff --git a/xarray/core/indexing.py b/xarray/core/indexing.py
+index ba937183..e49a072d 100644
+--- a/xarray/core/indexing.py
++++ b/xarray/core/indexing.py
+@@ -1531,8 +1531,12 @@ class PandasMultiIndexingAdapter(PandasIndexingAdapter):
+         self.level = level
+ 
+     def __array__(self, dtype: DTypeLike = None) -> np.ndarray:
++        if dtype is None:
++            dtype = self.dtype
+         if self.level is not None:
+-            return self.array.get_level_values(self.level).values
++            return np.asarray(
++                self.array.get_level_values(self.level).values, dtype=dtype
++            )
+         else:
+             return super().__array__(dtype)
+2026-11-19 22:49:44,425 - INFO - Git diff changed after running eval script
+2026-11-19 22:49:44,425 - INFO - Grading answer for pydata__xarray-7393...
+2026-11-19 22:49:44,426 - INFO - report: {'pydata__xarray-7393': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['xarray/tests/test_indexes.py::test_restore_dtype_on_multiindexes[int32]', 'xarray/tests/test_indexes.py::test_restore_dtype_on_multiindexes[float32]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['xarray/tests/test_indexes.py::test_asarray_tuplesafe', 'xarray/tests/test_indexes.py::TestIndex::test_from_variables', 'xarray/tests/test_indexes.py::TestIndex::test_concat', 'xarray/tests/test_indexes.py::TestIndex::test_stack', 'xarray/tests/test_indexes.py::TestIndex::test_unstack', 'xarray/tests/test_indexes.py::TestIndex::test_create_variables', 'xarray/tests/test_indexes.py::TestIndex::test_to_pandas_index', 'xarray/tests/test_indexes.py::TestIndex::test_isel', 'xarray/tests/test_indexes.py::TestIndex::test_sel', 'xarray/tests/test_indexes.py::TestIndex::test_join', 'xarray/tests/test_indexes.py::TestIndex::test_reindex_like', 'xarray/tests/test_indexes.py::TestIndex::test_equals', 'xarray/tests/test_indexes.py::TestIndex::test_roll', 'xarray/tests/test_indexes.py::TestIndex::test_rename', 'xarray/tests/test_indexes.py::TestIndex::test_copy[True]', 'xarray/tests/test_indexes.py::TestIndex::test_copy[False]', 'xarray/tests/test_indexes.py::TestIndex::test_getitem', 'xarray/tests/test_indexes.py::TestPandasIndex::test_constructor', 'xarray/tests/test_indexes.py::TestPandasIndex::test_from_variables', 'xarray/tests/test_indexes.py::TestPandasIndex::test_from_variables_index_adapter', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_periods', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_str_dtype[str]', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_str_dtype[bytes]', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_empty', 'xarray/tests/test_indexes.py::TestPandasIndex::test_concat_dim_error', 'xarray/tests/test_indexes.py::TestPandasIndex::test_create_variables', 'xarray/tests/test_indexes.py::TestPandasIndex::test_to_pandas_index', 'xarray/tests/test_indexes.py::TestPandasIndex::test_sel', 'xarray/tests/test_indexes.py::TestPandasIndex::test_sel_boolean', 'xarray/tests/test_indexes.py::TestPandasIndex::test_sel_datetime', 'xarray/tests/test_indexes.py::TestPandasIndex::test_sel_unsorted_datetime_index_raises', 'xarray/tests/test_indexes.py::TestPandasIndex::test_equals', 'xarray/tests/test_indexes.py::TestPandasIndex::test_join', 'xarray/tests/test_indexes.py::TestPandasIndex::test_reindex_like', 'xarray/tests/test_indexes.py::TestPandasIndex::test_rename', 'xarray/tests/test_indexes.py::TestPandasIndex::test_copy', 'xarray/tests/test_indexes.py::TestPandasIndex::test_getitem', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_constructor', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_from_variables', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_concat', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_stack', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_stack_non_unique', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_unstack', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_create_variables', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_sel', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_join', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_rename', 'xarray/tests/test_indexes.py::TestPandasMultiIndex::test_copy', 'xarray/tests/test_indexes.py::TestIndexes::test_interface[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_interface[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_variables[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_variables[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_dims[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_dims[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_unique[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_unique[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_is_multi[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_is_multi[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_all_coords[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_all_coords[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_all_dims[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_get_all_dims[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_group_by_index[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_group_by_index[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_to_pandas_indexes[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_to_pandas_indexes[xr_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_copy_indexes[pd_index]', 'xarray/tests/test_indexes.py::TestIndexes::test_copy_indexes[xr_index]', 'xarray/tests/test_indexes.py::test_safe_cast_to_index', 'xarray/tests/test_indexes.py::test_safe_cast_to_index_cftimeindex', 'xarray/tests/test_indexes.py::test_safe_cast_to_index_datetime_datetime'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pydata__xarray-7393: resolved: True
+2026-11-19 22:49:44,427 - INFO - Attempting to stop container sweb.eval.pydata__xarray-7393.verified_full_glm53_pi_incr_R2792...

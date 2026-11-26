@@ -1,0 +1,98 @@
+SWE-bench Verified 镜像去重体积估算报告
+========================================
+生成时间: 2026-10-24 19:2x
+数据集: princeton-nlp/SWE-bench_Verified (500 instances)
+镜像源: Docker Hub namespace=swebench
+镜像命名: swebench/sweb.eval.x86_64.<instance_id, __->_1776_>:latest
+代理: http://172.19.92.25:13128 (dockerd daemon.json proxies, 已验证可用)
+
+------------------------------------------------------------
+1. 总镜像数
+------------------------------------------------------------
+总实例数            : 500
+已存在本地镜像      : 0   (此前未拉过任何 swebench/* 镜像)
+缺失需下载          : 500
+
+------------------------------------------------------------
+2. 体积估算 (基于 75/500 manifest 实测 + 外推)
+------------------------------------------------------------
+说明: 因 Docker Hub 匿名限速(见第4节), 仅成功抓取 75/500 manifest
+      (astropy 22 + django 53, 同族共享度高)。以下为实测值与外推。
+
+[实测 75 张]
+  总 layer 数(未去重) : 750
+  去重后 unique layer : 110
+  共享 layer 比例     : 85.3%   ← 同族镜像大量共享 base+conda 层
+  sum(size) 未去重    : 86.1 GB   (avg 1.15 GB/张)
+  去重后实际下载量    : 12.0 GB   (节省 86.0%)
+  单张平均            : 1.15 GB (raw) / 0.16 GB (dedup)
+
+[外推至 500 张]
+  sum(size) 未去重    : ~575 GB   (500 × 1.15 GB)
+  去重后实际下载量    : ~30-60 GB (保守区间)
+    - 75 张(2 族) 已 12 GB unique
+    - 全量 ~12 个 repo 族(astropy/django/flask/sklearn/sympy/
+      matplotlib/sphinx/requests/pydata/seaborn/psf/scikit…)
+    - 跨族共享 ubuntu base 层; 每族新增 ~8-10 个 conda 环境层(~300MB/层)
+    - 逐题小层(repo checkout+test setup, ~几 MB)边际增加少
+  → 实际下载量远小于 "500 倍单张"
+
+------------------------------------------------------------
+3. 磁盘
+------------------------------------------------------------
+Docker Root Dir      : /data/docker
+/data 挂载           : 7.0T total, 723G used, 6.3T free (11%)
+结论                 : ✅ 空间充足 (需 ~30-60GB dedup, 剩余 6.3TB)
+                       即使按未去重 575GB 计也绰绰有余
+
+------------------------------------------------------------
+4. 🔴 真正瓶颈: Docker Hub 匿名限速 (不是磁盘/带宽)
+------------------------------------------------------------
+实测 rate-limit 响应头 (2026-10-24 19:1x):
+  Ratelimit-Limit     : 100;w=3600        ← 100 次请求 / 1 小时滑动窗口
+  Ratelimit-Remaining : 0;w=3600          ← 当前已耗尽
+  Docker-Ratelimit-Source : 203.127.181.131  ← 92.25 代理的出口 IP (共享!)
+
+关键事实:
+  - 限速对象 = manifest 请求(GET /v2/.../manifests/...); layer(blob)下载不计入
+  - docker pull 每张需 2 次 manifest 请求(index + amd64) → 100/小时 ≈ 50 张/小时
+  - docker pull 遇 429 立即失败(daemon 不自动重试) → 下载脚本须自行退避重试
+  - 出口 IP 203.127.181.131 为共享 IP: TB 的 89 张镜像 pull + 本线 manifest 抓取
+    + 其他用户流量 共用同一 100/小时配额
+  - 此前 TB 89 张能在 ~2.5h 拉完 = 与 "仅 manifest 计入限速、layer 免费" 吻合
+
+------------------------------------------------------------
+5. 可行性结论
+------------------------------------------------------------
+✅ 磁盘充足, 可容纳全部 500 张镜像 (dedup ~30-60GB << 6.3TB free)
+⚠️ 受 Docker Hub 匿名限速 (100 manifest 请求/小时/共享IP):
+   - 500 张 × 2 manifest = 1000 请求
+   - 理论下限 ~10 小时 (50 张/小时, 假设独占配额)
+   - 实际 ETA ~12-18 小时 (共享 IP 配额被其他流量分摊)
+   - layer 下载本身不受限, manifest 一旦拿到, 层全速下载
+✅ 已启动后台串行下载脚本 (swebench_verified_pull.sh):
+   - 429 → 退避 300s 重试 (最多 15 次/张, 可熬过完整 1h 窗口)
+   - 串行 pull, TB 在跑时 pause 5s, TB 结束后 pause 1s
+   - 批间查磁盘(<50GB 暂停), 进度实时写 pull_progress.txt
+   - 幂等: 已存在跳过, 失败重试
+
+------------------------------------------------------------
+6. 替代方案 (若需加速)
+------------------------------------------------------------
+A. Docker Hub 登录: 认证用户 200/小时(2x), 需账号凭据(当前无)
+B. 国内镜像加速器: 如 docker.m.daocloud.io 等镜像 Docker Hub, 无匿名限速
+   → 可在 daemon.json 加 registry-mirrors, 但需运维确认合规
+C. 本地 build: swebench image_builder 可从 Dockerfile 本地构建(只拉 base 层),
+   但 500 张 build 吃 CPU/IO, 与 TB 竞争资源, 不宜在 TB 运行时做
+D. 分批跨天: 每天拉 ~200 张(受配额), 3 天完成 —— 当前脚本已支持断点续跑
+
+------------------------------------------------------------
+7. 交付物
+------------------------------------------------------------
+harness/swebench_verified_estimate.py        估算脚本(可复用, 带manifest缓存)
+harness/swebench_verified_manifests.json     75/500 manifest 缓存(可续抓)
+harness/swebench_verified_image_list.txt     500 条 instance_id->镜像名清单
+harness/swebench_verified_pull.sh            限速批量下载脚本(断点续跑)
+harness/swebench_verified_pull_progress.txt  下载进度(实时更新)
+/tmp/swebench_verified_pull.log              下载主日志
+/tmp/swebench_verified_pull_detail.log       下载详细日志

@@ -1,0 +1,59 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index 36c84e2..686614f 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -63,6 +63,9 @@ Bug fixes
+   By `Stephan Hoyer <https://github.com/shoyer>`_.
+ - Raise a TypeError when trying to plot empty data (:issue:`7156`, :pull:`7228`).
+   By `Michael Niklas <https://github.com/headtr1ck>`_.
++- ``Coarsen.construct`` no longer demotes non-dimensional coordinates to
++  data variables (:issue:`6722`, :pull:`7223`).
++  By `Deepak Cherian <https://github.com/dcherian>`_.
+ 
+ Documentation
+ ~~~~~~~~~~~~~
+diff --git a/xarray/core/rolling.py b/xarray/core/rolling.py
+index c194ec0..42d8138 100644
+--- a/xarray/core/rolling.py
++++ b/xarray/core/rolling.py
+@@ -973,7 +973,7 @@ class Coarsen(CoarsenArithmetic, Generic[T_Xarray]):
+             else:
+                 reshaped[key] = var
+ 
+-        should_be_coords = set(window_dim) & set(self.obj.coords)
++        should_be_coords = set(self.obj.coords)
+         result = reshaped.set_coords(should_be_coords)
+         if isinstance(self.obj, DataArray):
+             return self.obj._from_temp_dataset(result)
+diff --git a/xarray/tests/test_coarsen.py b/xarray/tests/test_coarsen.py
+index d444998..e764e82 100644
+--- a/xarray/tests/test_coarsen.py
++++ b/xarray/tests/test_coarsen.py
+@@ -318,3 +318,27 @@ def test_coarsen_construct(dask: bool) -> None:
+ 
+     with pytest.raises(ValueError):
+         ds.coarsen(time=12).construct(time=("bar",))
++
++
++def test_coarsen_construct_keeps_non_dim_coords() -> None:
++    # all variables that are coordinates before coarsen.construct should still
++    # be coordinates afterwards, including non-dimensional coordinates
++    # https://github.com/pydata/xarray/issues/6722
++    da = DataArray(np.arange(24), dims=["time"])
++    da = da.assign_coords(day=365 * da)
++    ds = da.to_dataset(name="T")
++
++    expected = Dataset(
++        {"T": (("year", "month"), np.arange(24).reshape(2, 12))},
++        coords={"day": (("year", "month"), (365 * np.arange(24)).reshape(2, 12))},
++    )
++    actual = ds.coarsen(time=12).construct(time=("year", "month"))
++    assert_identical(actual, expected)
++
++    expected_da = DataArray(
++        np.arange(24).reshape(2, 12),
++        dims=("year", "month"),
++        coords={"day": (("year", "month"), (365 * np.arange(24)).reshape(2, 12))},
++    )
++    actual = da.coarsen(time=12).construct(time=("year", "month"))
++    assert_identical(actual, expected_da)

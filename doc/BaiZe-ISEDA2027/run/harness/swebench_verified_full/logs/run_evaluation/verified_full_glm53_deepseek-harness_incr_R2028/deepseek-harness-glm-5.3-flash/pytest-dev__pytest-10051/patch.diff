@@ -1,0 +1,81 @@
+diff --git a/changelog/9989.bugfix.rst b/changelog/9989.bugfix.rst
+new file mode 100644
+index 0000000..b2bf990
+--- /dev/null
++++ b/changelog/9989.bugfix.rst
+@@ -0,0 +1,5 @@
++:fixture:`caplog`'s :meth:`get_records <pytest.LogCaptureFixture.get_records>` output was
++frozen after :meth:`clear <pytest.LogCaptureFixture.clear>` was called, and no longer
++reflected records logged afterwards. Now :meth:`clear <pytest.LogCaptureFixture.clear>`
++also clears the records returned by :meth:`get_records <pytest.LogCaptureFixture.get_records>`,
++and subsequent records are captured as usual.
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index a4f4214..79441ef 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -342,7 +342,7 @@ class LogCaptureHandler(logging_StreamHandler):
+         super().emit(record)
+ 
+     def reset(self) -> None:
+-        self.records = []
++        self.records.clear()
+         self.stream = StringIO()
+ 
+     def handleError(self, record: logging.LogRecord) -> None:
+@@ -547,10 +547,6 @@ class LoggingPlugin:
+             get_option_ini(config, "log_auto_indent"),
+         )
+         self.log_level = get_log_level_for_setting(config, "log_level")
+-        self.caplog_handler = LogCaptureHandler()
+-        self.caplog_handler.setFormatter(self.formatter)
+-        self.report_handler = LogCaptureHandler()
+-        self.report_handler.setFormatter(self.formatter)
+ 
+         # File logging.
+         self.log_file_level = get_log_level_for_setting(config, "log_file_level")
+@@ -687,15 +683,17 @@ class LoggingPlugin:
+ 
+     def _runtest_for(self, item: nodes.Item, when: str) -> Generator[None, None, None]:
+         """Implement the internals of the pytest_runtest_xxx() hooks."""
++        caplog_handler = LogCaptureHandler()
++        caplog_handler.setFormatter(self.formatter)
++        report_handler = LogCaptureHandler()
++        report_handler.setFormatter(self.formatter)
+         with catching_logs(
+-            self.caplog_handler,
++            caplog_handler,
+             level=self.log_level,
+         ) as caplog_handler, catching_logs(
+-            self.report_handler,
++            report_handler,
+             level=self.log_level,
+         ) as report_handler:
+-            caplog_handler.reset()
+-            report_handler.reset()
+             item.stash[caplog_records_key][when] = caplog_handler.records
+             item.stash[caplog_handler_key] = caplog_handler
+ 
+diff --git a/testing/logging/test_fixture.py b/testing/logging/test_fixture.py
+index bcb20de..9bc14d3 100644
+--- a/testing/logging/test_fixture.py
++++ b/testing/logging/test_fixture.py
+@@ -151,6 +151,19 @@ def test_clear(caplog):
+     assert not caplog.text
+ 
+ 
++def test_clear_restores_caplog_get_records_consistency(caplog) -> None:
++    def verify_consistency() -> None:
++        assert caplog.get_records("call") == caplog.records
++
++    verify_consistency()
++    logging.warning("test")
++    verify_consistency()
++    caplog.clear()
++    verify_consistency()
++    logging.warning("test2")
++    verify_consistency()
++
++
+ @pytest.fixture
+ def logging_during_setup_and_teardown(caplog):
+     caplog.set_level("INFO")

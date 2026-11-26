@@ -1,0 +1,110 @@
+diff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py
+index fa7fa2ad..a343f435 100644
+--- a/sklearn/tests/test_pipeline.py
++++ b/sklearn/tests/test_pipeline.py
+@@ -1620,6 +1620,41 @@ def test_feature_union_set_output():
+     assert_array_equal(X_trans.index, X_test.index)
+ 
+ 
++class AggTransformer(BaseEstimator, TransformerMixin):
++    """Transformer that aggregates data and changes the number of rows."""
++
++    def fit(self, X, y=None):
++        return self
++
++    def transform(self, X):
++        return X.iloc[::2].reset_index(drop=True)
++
++    def get_feature_names_out(self, input_features=None):
++        return input_features
++
++
++def test_feature_union_set_output_change_n_rows():
++    """Test feature union with set_output API when transformers change n_rows.
++
++    Non-regression test for gh-25730.
++    """
++    pd = pytest.importorskip("pandas")
++
++    X = pd.DataFrame(
++        {"a": [1, 2, 3, 4], "b": [5, 6, 7, 8]}, index=[10, 11, 12, 13]
++    )
++    union = FeatureUnion([("agg1", AggTransformer()), ("agg2", AggTransformer())])
++    union.set_output(transform="pandas")
++    union.fit(X)
++
++    X_trans = union.transform(X)
++    assert isinstance(X_trans, pd.DataFrame)
++    assert X_trans.shape[0] == 2
++    assert_array_equal(
++        X_trans.columns, union.get_feature_names_out()
++    )
++
++
+ def test_feature_union_getitem():
+     """Check FeatureUnion.__getitem__ returns expected results."""
+     scalar = StandardScaler()
+diff --git a/sklearn/utils/_set_output.py b/sklearn/utils/_set_output.py
+index 335773c6..8a56c6df 100644
+--- a/sklearn/utils/_set_output.py
++++ b/sklearn/utils/_set_output.py
+@@ -127,9 +127,17 @@ def _wrap_data_with_container(method, data_to_wrap, original_input, estimator):
+         return data_to_wrap
+ 
+     # dense_config == "pandas"
++    index = getattr(original_input, "index", None)
++    if index is not None:
++        try:
++            if len(index) != len(data_to_wrap):
++                index = None
++        except TypeError:
++            index = None
++
+     return _wrap_in_pandas_container(
+         data_to_wrap=data_to_wrap,
+-        index=getattr(original_input, "index", None),
++        index=index,
+         columns=estimator.get_feature_names_out,
+     )
+ 
+diff --git a/sklearn/utils/tests/test_set_output.py b/sklearn/utils/tests/test_set_output.py
+index ac73ca09..66233bbc 100644
+--- a/sklearn/utils/tests/test_set_output.py
++++ b/sklearn/utils/tests/test_set_output.py
+@@ -239,6 +239,36 @@ def test__wrap_in_pandas_container_column_errors():
+     assert_array_equal(X_wrapped.columns, range(X_np.shape[1]))
+ 
+ 
++class EstimatorWithSetOutputChangeNRows(_SetOutputMixin):
++    def fit(self, X, y=None):
++        self.n_features_in_ = X.shape[1]
++        return self
++
++    def transform(self, X, y=None):
++        # Reduce the number of rows by half
++        return X[::2]
++
++    def get_feature_names_out(self, input_features=None):
++        return np.asarray([f"X{i}" for i in range(self.n_features_in_)], dtype=object)
++
++
++def test_set_output_method_change_n_rows():
++    """Check that set_output works when transform changes the number of rows.
++
++    Non-regression test for gh-25730.
++    """
++    pd = pytest.importorskip("pandas")
++
++    X = np.asarray([[1, 0, 3], [0, 0, 1], [2, 2, 2], [3, 3, 3]])
++    est = EstimatorWithSetOutputChangeNRows().fit(X)
++    est.set_output(transform="pandas")
++
++    X_trans_pd = est.transform(X)
++    assert isinstance(X_trans_pd, pd.DataFrame)
++    assert_array_equal(X_trans_pd.columns, est.get_feature_names_out())
++    assert X_trans_pd.shape[0] == 2
++
++
+ def test_set_output_mro():
+     """Check that multi-inheritance resolves to the correct class method.
+ 

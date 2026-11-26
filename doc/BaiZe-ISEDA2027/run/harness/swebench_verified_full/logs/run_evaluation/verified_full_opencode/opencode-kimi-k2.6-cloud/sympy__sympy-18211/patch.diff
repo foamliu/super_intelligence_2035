@@ -1,0 +1,51 @@
+diff --git a/sympy/core/relational.py b/sympy/core/relational.py
+index f581bfa3c..8dee4bfd7 100644
+--- a/sympy/core/relational.py
++++ b/sympy/core/relational.py
+@@ -389,10 +389,19 @@ def __nonzero__(self):
+     def _eval_as_set(self):
+         # self is univariate and periodicity(self, x) in (0, None)
+         from sympy.solvers.inequalities import solve_univariate_inequality
++        from sympy.solvers.solveset import solveset
++        from sympy.sets.conditionset import ConditionSet
++        from sympy import S
+         syms = self.free_symbols
+         assert len(syms) == 1
+         x = syms.pop()
+-        return solve_univariate_inequality(self, x, relational=False)
++        try:
++            return solve_univariate_inequality(self, x, relational=False)
++        except NotImplementedError:
++            try:
++                return solveset(self, x, domain=S.Reals)
++            except NotImplementedError:
++                return ConditionSet(x, self, S.Reals)
+ 
+     @property
+     def binary_symbols(self):
+diff --git a/sympy/core/tests/test_relational.py b/sympy/core/tests/test_relational.py
+index 63a8705c6..514335093 100644
+--- a/sympy/core/tests/test_relational.py
++++ b/sympy/core/tests/test_relational.py
+@@ -1,7 +1,8 @@
+ from sympy.utilities.pytest import XFAIL, raises, warns_deprecated_sympy
+ from sympy import (S, Symbol, symbols, nan, oo, I, pi, Float, And, Or,
+     Not, Implies, Xor, zoo, sqrt, Rational, simplify, Function,
+-    log, cos, sin, Add, Mul, Pow, floor, ceiling, trigsimp)
++    log, cos, sin, Add, Mul, Pow, floor, ceiling, trigsimp,
++    ConditionSet)
+ from sympy.core.compatibility import range, PY3
+ from sympy.core.relational import (Relational, Equality, Unequality,
+                                    GreaterThan, LessThan, StrictGreaterThan,
+@@ -426,6 +427,11 @@ def test_univariate_relational_as_set():
+ 
+     assert (x**2 >= 4).as_set() == Interval(-oo, -2) + Interval(2, oo)
+ 
++    # issue 17771
++    n = Symbol('n')
++    assert Eq(n*cos(n) - 3*sin(n), 0).as_set() == \
++        ConditionSet(n, Eq(n*cos(n) - 3*sin(n), 0), S.Reals)
++
+ 
+ @XFAIL
+ def test_multivariate_relational_as_set():

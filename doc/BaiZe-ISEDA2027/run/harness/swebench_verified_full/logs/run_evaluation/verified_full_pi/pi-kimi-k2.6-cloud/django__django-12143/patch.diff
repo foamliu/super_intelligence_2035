@@ -1,0 +1,53 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 137e6fa..effc5e9 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -1631,7 +1631,7 @@ class ModelAdmin(BaseModelAdmin):
+ 
+     def _get_edited_object_pks(self, request, prefix):
+         """Return POST data values of list_editable primary keys."""
+-        pk_pattern = re.compile(r'{}-\d+-{}$'.format(prefix, self.model._meta.pk.name))
++        pk_pattern = re.compile(r'{}-\d+-{}$'.format(re.escape(prefix), re.escape(self.model._meta.pk.name)))
+         return [value for key, value in request.POST.items() if pk_pattern.match(key)]
+ 
+     def _get_list_editable_queryset(self, request, prefix):
+diff --git a/tests/admin_changelist/tests.py b/tests/admin_changelist/tests.py
+index 05490b0..aa0df49 100644
+--- a/tests/admin_changelist/tests.py
++++ b/tests/admin_changelist/tests.py
+@@ -819,6 +819,35 @@ class ChangeListTests(TestCase):
+         pks = m._get_edited_object_pks(request, prefix='form')
+         self.assertEqual(sorted(pks), sorted([str(a.pk), str(b.pk), str(c.pk)]))
+ 
++    def test_get_edited_object_ids_with_special_prefix(self):
++        a = Swallow.objects.create(origin='Swallow A', load=4, speed=1)
++        b = Swallow.objects.create(origin='Swallow B', load=2, speed=2)
++        c = Swallow.objects.create(origin='Swallow C', load=5, speed=5)
++        superuser = self._create_superuser('superuser')
++        self.client.force_login(superuser)
++        changelist_url = reverse('admin:admin_changelist_swallow_changelist')
++        m = SwallowAdmin(Swallow, custom_site)
++        prefix = 'form[1]'
++        data = {
++            '%s-TOTAL_FORMS' % prefix: '3',
++            '%s-INITIAL_FORMS' % prefix: '3',
++            '%s-MIN_NUM_FORMS' % prefix: '0',
++            '%s-MAX_NUM_FORMS' % prefix: '1000',
++            '%s-0-uuid' % prefix: str(a.pk),
++            '%s-1-uuid' % prefix: str(b.pk),
++            '%s-2-uuid' % prefix: str(c.pk),
++            '%s-0-load' % prefix: '9.0',
++            '%s-0-speed' % prefix: '9.0',
++            '%s-1-load' % prefix: '5.0',
++            '%s-1-speed' % prefix: '5.0',
++            '%s-2-load' % prefix: '5.0',
++            '%s-2-speed' % prefix: '4.0',
++            '_save': 'Save',
++        }
++        request = self.factory.post(changelist_url, data=data)
++        pks = m._get_edited_object_pks(request, prefix=prefix)
++        self.assertEqual(sorted(pks), sorted([str(a.pk), str(b.pk), str(c.pk)]))
++
+     def test_get_list_editable_queryset(self):
+         a = Swallow.objects.create(origin='Swallow A', load=4, speed=1)
+         Swallow.objects.create(origin='Swallow B', load=2, speed=2)

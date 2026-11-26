@@ -1,0 +1,81 @@
+diff --git a/sphinx/domains/python.py b/sphinx/domains/python.py
+index 9875a9f4b..56e588338 100644
+--- a/sphinx/domains/python.py
++++ b/sphinx/domains/python.py
+@@ -178,9 +178,20 @@ def _parse_annotation(annotation: str, env: BuildEnvironment = None) -> List[Nod
+     try:
+         tree = ast_parse(annotation)
+         result = unparse(tree)
++        in_literal = 0
+         for i, node in enumerate(result):
+             if isinstance(node, nodes.Text) and node.strip():
++                if in_literal > 0:
++                    continue  # don't convert literal values to xref
+                 result[i] = type_to_xref(str(node), env)
++            elif isinstance(node, addnodes.desc_sig_punctuation):
++                if node.astext() == '[':
++                    if i > 0 and isinstance(result[i - 1], (nodes.Text, addnodes.pending_xref)):
++                        text = result[i - 1].astext()
++                        if text == 'Literal' or text.endswith('.Literal'):
++                            in_literal += 1
++                elif node.astext() == ']' and in_literal > 0:
++                    in_literal -= 1
+         return result
+     except SyntaxError:
+         return [type_to_xref(annotation, env)]
+diff --git a/tests/test_domain_py.py b/tests/test_domain_py.py
+index 067febcf4..b7fc20b7a 100644
+--- a/tests/test_domain_py.py
++++ b/tests/test_domain_py.py
+@@ -342,6 +342,51 @@ def test_parse_annotation(app):
+     assert_node(doctree[0], pending_xref, refdomain="py", reftype="obj", reftarget="None")
+ 
+ 
++def test_parse_annotation_Literal(app):
++    # Literal values should not be converted to cross-references (refs: #9195)
++    doctree = _parse_annotation("Literal[True]", app.env)
++    assert_node(doctree, ([pending_xref, "Literal"],
++                          [desc_sig_punctuation, "["],
++                          "True",
++                          [desc_sig_punctuation, "]"]))
++    assert_node(doctree[0], pending_xref, refdomain="py", reftype="class", reftarget="Literal")
++
++    doctree = _parse_annotation("typing.Literal[True]", app.env)
++    assert_node(doctree, ([pending_xref, "typing.Literal"],
++                          [desc_sig_punctuation, "["],
++                          "True",
++                          [desc_sig_punctuation, "]"]))
++
++    doctree = _parse_annotation("Literal[False]", app.env)
++    assert_node(doctree, ([pending_xref, "Literal"],
++                          [desc_sig_punctuation, "["],
++                          "False",
++                          [desc_sig_punctuation, "]"]))
++
++    doctree = _parse_annotation("Literal[1]", app.env)
++    assert_node(doctree, ([pending_xref, "Literal"],
++                          [desc_sig_punctuation, "["],
++                          "1",
++                          [desc_sig_punctuation, "]"]))
++
++    doctree = _parse_annotation("List[Literal[True]]", app.env)
++    assert_node(doctree, ([pending_xref, "List"],
++                          [desc_sig_punctuation, "["],
++                          [pending_xref, "Literal"],
++                          [desc_sig_punctuation, "["],
++                          "True",
++                          [desc_sig_punctuation, "]"],
++                          [desc_sig_punctuation, "]"]))
++
++    doctree = _parse_annotation("Literal[True, False]", app.env)
++    assert_node(doctree, ([pending_xref, "Literal"],
++                          [desc_sig_punctuation, "["],
++                          "True",
++                          [desc_sig_punctuation, ", "],
++                          "False",
++                          [desc_sig_punctuation, "]"]))
++
++
+ def test_pyfunction_signature(app):
+     text = ".. py:function:: hello(name: str) -> str"
+     doctree = restructuredtext.parse(app, text)

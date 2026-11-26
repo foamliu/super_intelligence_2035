@@ -1,0 +1,46 @@
+diff --git a/sklearn/ensemble/_iforest.py b/sklearn/ensemble/_iforest.py
+index 4d6c1c3f..e787516e 100644
+--- a/sklearn/ensemble/_iforest.py
++++ b/sklearn/ensemble/_iforest.py
+@@ -345,7 +345,11 @@ class IsolationForest(OutlierMixin, BaseBagging):
+             return self
+ 
+         # else, define offset_ wrt contamination parameter
+-        self.offset_ = np.percentile(self.score_samples(X), 100.0 * self.contamination)
++        # X is already validated, we compute scores without re-validating it
++        # to avoid raising a warning about missing feature names.
++        self.offset_ = np.percentile(
++            -self._compute_chunked_score_samples(X), 100.0 * self.contamination
++        )
+ 
+         return self
+ 
+diff --git a/sklearn/ensemble/tests/test_iforest.py b/sklearn/ensemble/tests/test_iforest.py
+index 5f046540..428e0345 100644
+--- a/sklearn/ensemble/tests/test_iforest.py
++++ b/sklearn/ensemble/tests/test_iforest.py
+@@ -234,6 +234,24 @@ def test_score_samples():
+     )
+ 
+ 
++def test_iforest_with_feature_names():
++    """Check that IsolationForest does not warn when fitting with feature names.
++
++    Non-regression test for #25642: fitting with a dataframe and
++    `contamination != "auto"` used to raise a warning about feature names
++    because `score_samples` was called on the already validated data.
++    """
++    pd = pytest.importorskip("pandas")
++    X = pd.DataFrame({"a": [-1.1, 0.3, 0.5, 100]})
++    clf = IsolationForest(random_state=0, contamination=0.05)
++
++    with warnings.catch_warnings():
++        warnings.simplefilter("error", UserWarning)
++        clf.fit(X)
++
++    assert_array_equal(clf.feature_names_in_, ["a"])
++
++
+ def test_iforest_warm_start():
+     """Test iterative addition of iTrees to an iForest"""
+ 

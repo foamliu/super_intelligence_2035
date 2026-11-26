@@ -1,0 +1,6 @@
+# lib.defs -- aether flow library definitions for the ERC_AI_CHECK project.
+# Include the aether tools library definitions, skip amsLib (not usable in
+# this project and breaks aether load), and define the drcpa_top library.
+INCLUDE ./aether/lib.defs
+SKIP amsLib
+DEFINE drcpa_top ./drcpa_top

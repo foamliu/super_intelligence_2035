@@ -1,0 +1,135 @@
+diff --git a/django/db/models/fields/json.py b/django/db/models/fields/json.py
+index fdca700c9..4c4a2b610 100644
+--- a/django/db/models/fields/json.py
++++ b/django/db/models/fields/json.py
+@@ -126,7 +126,7 @@ class JSONField(CheckFieldDefaultMixin, Field):
+         )
+ 
+ 
+-def compile_json_path(key_transforms, include_root=True):
++def compile_json_path(key_transforms, include_root=True, allow_int_index=True):
+     path = ["$"] if include_root else []
+     for key_transform in key_transforms:
+         try:
+@@ -135,7 +135,11 @@ def compile_json_path(key_transforms, include_root=True):
+             path.append(".")
+             path.append(json.dumps(key_transform))
+         else:
+-            path.append("[%s]" % num)
++            if allow_int_index:
++                path.append("[%s]" % num)
++            else:
++                path.append(".")
++                path.append(json.dumps(str(key_transform)))
+     return "".join(path)
+ 
+ 
+@@ -193,11 +197,23 @@ class HasKeyLookup(PostgresOperatorLookup):
+                 *_, rhs_key_transforms = key.preprocess_lhs(compiler, connection)
+             else:
+                 rhs_key_transforms = [key]
++            # All but the last key_transform are traversals (allow array indices).
++            # The last key_transform is the key name being checked (object key).
++            if len(rhs_key_transforms) > 1:
++                rhs_path = compile_json_path(
++                    rhs_key_transforms[:-1], include_root=False
++                ) + compile_json_path(
++                    rhs_key_transforms[-1:], include_root=False, allow_int_index=False
++                )
++            else:
++                rhs_path = compile_json_path(
++                    rhs_key_transforms, include_root=False, allow_int_index=False
++                )
+             rhs_params.append(
+                 "%s%s"
+                 % (
+                     lhs_json_path,
+-                    compile_json_path(rhs_key_transforms, include_root=False),
++                    rhs_path,
+                 )
+             )
+         # Add condition for each key.
+@@ -387,25 +403,23 @@ class KeyTransformTextLookupMixin:
+ class KeyTransformIsNull(lookups.IsNull):
+     # key__isnull=False is the same as has_key='key'
+     def as_oracle(self, compiler, connection):
+-        sql, params = HasKey(
+-            self.lhs.lhs,
+-            self.lhs.key_name,
+-        ).as_oracle(compiler, connection)
++        lhs, lhs_params, key_transforms = self.lhs.preprocess_lhs(compiler, connection)
++        json_path = compile_json_path(key_transforms)
++        sql = "JSON_EXISTS(%s, '%s')" % (lhs, json_path)
+         if not self.rhs:
+-            return sql, params
++            return sql, tuple(lhs_params)
+         # Column doesn't have a key or IS NULL.
+-        lhs, lhs_params, _ = self.lhs.preprocess_lhs(compiler, connection)
+-        return "(NOT %s OR %s IS NULL)" % (sql, lhs), tuple(params) + tuple(lhs_params)
++        return "(NOT %s OR %s IS NULL)" % (sql, lhs), tuple(lhs_params) + tuple(
++            lhs_params
++        )
+ 
+     def as_sqlite(self, compiler, connection):
++        lhs, lhs_params, key_transforms = self.lhs.preprocess_lhs(compiler, connection)
++        json_path = compile_json_path(key_transforms)
+         template = "JSON_TYPE(%s, %%s) IS NULL"
+         if not self.rhs:
+             template = "JSON_TYPE(%s, %%s) IS NOT NULL"
+-        return HasKey(self.lhs.lhs, self.lhs.key_name).as_sql(
+-            compiler,
+-            connection,
+-            template=template,
+-        )
++        return template % lhs, tuple(lhs_params) + (json_path,)
+ 
+ 
+ class KeyTransformIn(lookups.In):
+diff --git a/tests/model_fields/test_jsonfield.py b/tests/model_fields/test_jsonfield.py
+index dfd00f474..4312703b3 100644
+--- a/tests/model_fields/test_jsonfield.py
++++ b/tests/model_fields/test_jsonfield.py
+@@ -576,6 +576,43 @@ class TestQuerying(TestCase):
+             [self.objs[3], self.objs[4], self.objs[6]],
+         )
+ 
++    def test_has_key_numeric(self):
++        obj = NullableJSONModel.objects.create(value={"1111": "bar", "1": "one"})
++        self.assertSequenceEqual(
++            NullableJSONModel.objects.filter(value__has_key="1111"),
++            [obj],
++        )
++        self.assertSequenceEqual(
++            NullableJSONModel.objects.filter(value__has_key="1"),
++            [obj],
++        )
++        self.assertSequenceEqual(
++            NullableJSONModel.objects.filter(value__has_key=1111),
++            [obj],
++        )
++
++    def test_has_keys_numeric(self):
++        obj = NullableJSONModel.objects.create(value={"1111": "bar", "2222": "baz"})
++        self.assertSequenceEqual(
++            NullableJSONModel.objects.filter(value__has_keys=["1111", "2222"]),
++            [obj],
++        )
++
++    def test_has_any_keys_numeric(self):
++        obj1 = NullableJSONModel.objects.create(value={"1111": "bar"})
++        obj2 = NullableJSONModel.objects.create(value={"2222": "baz"})
++        self.assertCountEqual(
++            NullableJSONModel.objects.filter(value__has_any_keys=["1111", "2222"]),
++            [obj1, obj2],
++        )
++
++    def test_has_key_deep_numeric(self):
++        obj = NullableJSONModel.objects.create(value={"nested": {"1111": "bar"}})
++        self.assertSequenceEqual(
++            NullableJSONModel.objects.filter(value__nested__has_key="1111"),
++            [obj],
++        )
++
+     @skipUnlessDBFeature("supports_json_field_contains")
+     def test_contains(self):
+         tests = [

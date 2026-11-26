@@ -1,0 +1,102 @@
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 76265f5be..4eabbe576 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -728,7 +728,10 @@ class Documenter:
+ 
+             has_doc = bool(doc)
+ 
+-            metadata = extract_metadata(doc)
++            if (namespace, membername) in attr_docs:
++                metadata = extract_metadata('\n'.join(attr_docs[(namespace, membername)]))
++            else:
++                metadata = extract_metadata(doc)
+             if 'private' in metadata:
+                 # consider a member private if docstring has "private" metadata
+                 isprivate = True
+diff --git a/tests/roots/test-ext-autodoc/target/private.py b/tests/roots/test-ext-autodoc/target/private.py
+index a39ce085e..021cf9c90 100644
+--- a/tests/roots/test-ext-autodoc/target/private.py
++++ b/tests/roots/test-ext-autodoc/target/private.py
+@@ -4,6 +4,8 @@ def private_function(name):
+     :meta private:
+     """
+ 
++_meta_public = None  #: :meta public:
++
+ def _public_function(name):
+     """public_function is a docstring().
+ 
+diff --git a/tests/test_ext_autodoc_private_members.py b/tests/test_ext_autodoc_private_members.py
+index 6bce5ce78..248124821 100644
+--- a/tests/test_ext_autodoc_private_members.py
++++ b/tests/test_ext_autodoc_private_members.py
+@@ -23,6 +23,40 @@ def test_private_field(app):
+         '.. py:module:: target.private',
+         '',
+         '',
++        '.. py:data:: _meta_public',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
++        '',
++        '.. py:function:: _public_function(name)',
++        '   :module: target.private',
++        '',
++        '   public_function is a docstring().',
++        '',
++        '   :meta public:',
++        '',
++    ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_private_field_for_attribute(app):
++    app.config.autoclass_content = 'class'
++    options = {"members": None}
++    actual = do_autodoc(app, 'module', 'target.private', options)
++    assert list(actual) == [
++        '',
++        '.. py:module:: target.private',
++        '',
++        '',
++        '.. py:data:: _meta_public',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
++        '',
+         '.. py:function:: _public_function(name)',
+         '   :module: target.private',
+         '',
+@@ -44,6 +78,13 @@ def test_private_field_and_private_members(app):
+         '.. py:module:: target.private',
+         '',
+         '',
++        '.. py:data:: _meta_public',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
++        '',
+         '.. py:function:: _public_function(name)',
+         '   :module: target.private',
+         '',
+@@ -73,6 +114,13 @@ def test_private_members(app):
+         '.. py:module:: target.private',
+         '',
+         '',
++        '.. py:data:: _meta_public',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
++        '',
+         '.. py:function:: _public_function(name)',
+         '   :module: target.private',
+         '',

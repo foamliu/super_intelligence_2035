@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "round": "R358",
+    "date": "2026-11-13",
+    "purpose": "Rebuild SFT corpus in agentic tool-call format (MiniCPM5 XML)",
+    "root_cause": "v11v38 doc-to-code format caused 36%→0% regression (R357 diagnosis)",
+    "fix": "Convert to search→get_api_details→run_code agentic conversations",
+    "format": "MiniCPM5 native XML: <function name=...><param>...</param></function>",
+    "surrogate_disclaimer": "MiniCPM5-2B is BaiZe surrogate; gains not transferable to BaiZe"
+  },
+  "inputs": {
+    "v11v38_pairs": 1344,
+    "r127_pairs": 200
+  },
+  "conversion": {
+    "v38_agentic": 1344,
+    "r127_xml": 200
+  },
+  "mix": {
+    "pyaether_toolcall": 1344,
+    "agentic_r127": 400,
+    "general": 804,
+    "total": 2548,
+    "pct_pyaether": 52.7,
+    "pct_agentic": 15.7,
+    "pct_general": 31.6
+  },
+  "stats": {
+    "total": 2548,
+    "type_distribution": {
+      "S1_doc_to_code_agentic": 10,
+      "S2_api_lookup_agentic": 10,
+      "S3_multi_api_chain_agentic": 3,
+      "S7_corrected_prompt_agentic": 2,
+      "S1_agentic": 258,
+      "S4_agentic": 217,
+      "S5_agentic": 212,
+      "S3_agentic": 179,
+      "S6_agentic": 188,
+      "S2_agentic": 7,
+      "R323_datagap_doc_agentic": 166,
+      "R323_datagap_code_agentic": 92,
+      "A_api_usage_xml": 200,
+      "B_error_recovery_xml": 100,
+      "C_multi_api_xml": 100,
+      "general_anti_forget": 804
+    },
+    "turn_count_median": 9,
+    "turn_count_max": 11,
+    "char_len_median": 2089,
+    "char_len_p95": 3404,
+    "char_len_max": 5376,
+    "has_tool_call_pct": 68.4
+  },
+  "contamination_fingerprint_scan": {
+    "status": "PASS",
+    "eval_entry_points": 488,
+    "corpus_pairs_mentioning_eval_api": 2079,
+    "note": "API names are ALLOWED in training corpus (§5.1 allows API docs). Informational only."
+  },
+  "parquet_conversion": {
+    "status": "PASS",
+    "rows": 2548,
+    "size_kb": 605.4,
+    "errors": 0
+  },
+  "train_val_split": {
+    "status": "PASS",
+    "train_rows": 2294,
+    "val_rows": 254,
+    "train_path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_surrogate_data/agentic_v39/train.parquet",
+    "val_path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_surrogate_data/agentic_v39/val.parquet"
+  },
+  "output_jsonl": "sft_pyaether_agentic_v39.jsonl",
+  "output_parquet": "sft_pyaether_agentic_v39.parquet",
+  "next_steps": [
+    "Run SFT: bash baize_posttrain_sft_surrogate.sh --src-parquet sft_pyaether_agentic_v39.parquet --run-name minicpm5_agentic_v39 --epochs 3 --lr 1e-5",
+    "After SFT, serve ckpt on GPU5 (:8097) and run EDA-Eval 158 tasks",
+    "Compare Pass@1 vs 36% baseline (pre-SFT) and 0% (v11v38 SFT)"
+  ]
+}

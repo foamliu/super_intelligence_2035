@@ -1,0 +1,229 @@
+diff --git a/sympy/printing/latex.py b/sympy/printing/latex.py
+index 8253b2f6..b37a7ca4 100644
+--- a/sympy/printing/latex.py
++++ b/sympy/printing/latex.py
+@@ -1478,17 +1478,45 @@ def _print_Adjoint(self, expr):
+ 
+     def _print_MatAdd(self, expr):
+         terms = list(expr.args)
+-        tex = " + ".join(map(self._print, terms))
++        tex = ""
++        for i, term in enumerate(terms):
++            if i == 0:
++                pass
++            elif term.is_MatMul:
++                c, e = term.as_coeff_mmul()
++                if c.is_Number and c < 0:
++                    tex += " - "
++                    if c == S.NegativeOne:
++                        term = e
++                    else:
++                        from sympy.matrices.expressions.matmul import MatMul
++                        term = MatMul(-c, *e.args, evaluate=False)
++                else:
++                    tex += " + "
++            else:
++                tex += " + "
++            term_tex = self._print(term)
++            if self._needs_add_brackets(term):
++                term_tex = r"\left(%s\right)" % term_tex
++            tex += term_tex
+         return tex
+ 
+     def _print_MatMul(self, expr):
+         from sympy import Add, MatAdd, HadamardProduct
+-
++        args = list(expr.args)
++        sign = ""
++        if args[0].is_Number and args[0] < 0:
++            if args[0] == S.NegativeOne:
++                args = args[1:]
++                sign = "- "
++            else:
++                args[0] = -args[0]
++                sign = "-"
+         def parens(x):
+             if isinstance(x, (Add, MatAdd, HadamardProduct)):
+                 return r"\left(%s\right)" % self._print(x)
+             return self._print(x)
+-        return ' '.join(map(parens, expr.args))
++        return sign + ' '.join(map(parens, args))
+ 
+     def _print_Mod(self, expr, exp=None):
+         if exp is not None:
+diff --git a/sympy/printing/pretty/pretty.py b/sympy/printing/pretty/pretty.py
+index db24f4c6..498d9b0a 100644
+--- a/sympy/printing/pretty/pretty.py
++++ b/sympy/printing/pretty/pretty.py
+@@ -819,7 +819,35 @@ def _print_BlockMatrix(self, B):
+         return self._print(B.blocks)
+ 
+     def _print_MatAdd(self, expr):
+-        return self._print_seq(expr.args, None, None, ' + ')
++        from sympy.matrices.expressions.matmul import MatMul
++        terms = list(expr.args)
++        pforms = []
++        for i, term in enumerate(terms):
++            if term.is_MatMul:
++                c, e = term.as_coeff_mmul()
++                if c.is_Number and c < 0:
++                    if c == S.NegativeOne:
++                        pos_term = e
++                    else:
++                        pos_term = MatMul(-c, *e.args, evaluate=False)
++                    pform = self._print(pos_term)
++                    if i == 0:
++                        if pform.height() > 1:
++                            pform_neg = '- '
++                        else:
++                            pform_neg = '-'
++                    else:
++                        pform_neg = ' - '
++                    if (pform.binding > prettyForm.NEG
++                        or pform.binding == prettyForm.ADD):
++                        p = stringPict(*pform.parens())
++                    else:
++                        p = pform
++                    p = stringPict.next(pform_neg, p)
++                    pforms.append(prettyForm(binding=prettyForm.NEG, *p))
++                    continue
++            pforms.append(self._print(term))
++        return prettyForm.__add__(*pforms)
+ 
+     def _print_MatMul(self, expr):
+         args = list(expr.args)
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index 0baefe0f..1665e2b4 100644
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -304,16 +304,40 @@ def _print_Mul(self, expr):
+             return sign + '*'.join(a_str) + "/(%s)" % '*'.join(b_str)
+ 
+     def _print_MatMul(self, expr):
+-        return '*'.join([self.parenthesize(arg, precedence(expr))
+-            for arg in expr.args])
++        args = list(expr.args)
++        sign = ""
++        if args[0].is_Number and args[0] < 0:
++            if args[0] == S.NegativeOne:
++                args = args[1:]
++            else:
++                args[0] = -args[0]
++            sign = "-"
++        return sign + '*'.join([self.parenthesize(arg, precedence(expr))
++            for arg in args])
+ 
+     def _print_HadamardProduct(self, expr):
+         return '.*'.join([self.parenthesize(arg, precedence(expr))
+             for arg in expr.args])
+ 
+     def _print_MatAdd(self, expr):
+-        return ' + '.join([self.parenthesize(arg, precedence(expr))
+-            for arg in expr.args])
++        terms = list(expr.args)
++        PREC = precedence(expr)
++        l = []
++        for term in terms:
++            t = self._print(term)
++            if t.startswith('-'):
++                sign = "-"
++                t = t[1:]
++            else:
++                sign = "+"
++            if precedence(term) < PREC:
++                l.extend([sign, "(%s)" % t])
++            else:
++                l.extend([sign, t])
++        sign = l.pop(0)
++        if sign == '+':
++            sign = ""
++        return sign + ' '.join(l)
+ 
+     def _print_NaN(self, expr):
+         return 'nan'
+diff --git a/sympy/printing/tests/test_ccode.py b/sympy/printing/tests/test_ccode.py
+index a473f800..f2f4a34c 100644
+--- a/sympy/printing/tests/test_ccode.py
++++ b/sympy/printing/tests/test_ccode.py
+@@ -755,7 +755,7 @@ def test_MatrixElement_printing():
+     assert(ccode(3 * A[0, 0]) == "3*A[0]")
+ 
+     F = C[0, 0].subs(C, A - B)
+-    assert(ccode(F) == "((-1)*B + A)[0]")
++    assert(ccode(F) == "(-B + A)[0]")
+ 
+ 
+ def test_subclass_CCodePrinter():
+diff --git a/sympy/printing/tests/test_fcode.py b/sympy/printing/tests/test_fcode.py
+index b2dc07ce..d3f4a07a 100644
+--- a/sympy/printing/tests/test_fcode.py
++++ b/sympy/printing/tests/test_fcode.py
+@@ -756,4 +756,4 @@ def test_MatrixElement_printing():
+     assert(fcode(3 * A[0, 0]) == "      3*A(1, 1)")
+ 
+     F = C[0, 0].subs(C, A - B)
+-    assert(fcode(F) == "      ((-1)*B + A)(1, 1)")
++    assert(fcode(F) == "      (-B + A)(1, 1)")
+diff --git a/sympy/printing/tests/test_jscode.py b/sympy/printing/tests/test_jscode.py
+index 64e47aa6..3eda9fe7 100644
+--- a/sympy/printing/tests/test_jscode.py
++++ b/sympy/printing/tests/test_jscode.py
+@@ -382,4 +382,4 @@ def test_MatrixElement_printing():
+     assert(jscode(3 * A[0, 0]) == "3*A[0]")
+ 
+     F = C[0, 0].subs(C, A - B)
+-    assert(jscode(F) == "((-1)*B + A)[0]")
++    assert(jscode(F) == "(-B + A)[0]")
+diff --git a/sympy/printing/tests/test_julia.py b/sympy/printing/tests/test_julia.py
+index 80c1ddfe..c70c08a7 100644
+--- a/sympy/printing/tests/test_julia.py
++++ b/sympy/printing/tests/test_julia.py
+@@ -374,4 +374,4 @@ def test_MatrixElement_printing():
+     assert(julia_code(3 * A[0, 0]) == "3*A[1,1]")
+ 
+     F = C[0, 0].subs(C, A - B)
+-    assert(julia_code(F) == "((-1)*B + A)[1,1]")
++    assert(julia_code(F) == "(-B + A)[1,1]")
+diff --git a/sympy/printing/tests/test_latex.py b/sympy/printing/tests/test_latex.py
+index 0f07d5e3..2f5d8f89 100644
+--- a/sympy/printing/tests/test_latex.py
++++ b/sympy/printing/tests/test_latex.py
+@@ -1710,7 +1710,7 @@ def test_MatrixElement_printing():
+     assert latex(3 * A[0, 0]) == r"3 A_{0, 0}"
+ 
+     F = C[0, 0].subs(C, A - B)
+-    assert latex(F) == r"\left(-1 B + A\right)_{0, 0}"
++    assert latex(F) == r"\left(- B + A\right)_{0, 0}"
+ 
+ 
+ def test_Quaternion_latex_printing():
+diff --git a/sympy/printing/tests/test_octave.py b/sympy/printing/tests/test_octave.py
+index a7d9f81c..3166a493 100644
+--- a/sympy/printing/tests/test_octave.py
++++ b/sympy/printing/tests/test_octave.py
+@@ -394,4 +394,4 @@ def test_MatrixElement_printing():
+     assert mcode(3 * A[0, 0]) == "3*A(1, 1)"
+ 
+     F = C[0, 0].subs(C, A - B)
+-    assert mcode(F) == "((-1)*B + A)(1, 1)"
++    assert mcode(F) == "(-B + A)(1, 1)"
+diff --git a/sympy/printing/tests/test_rcode.py b/sympy/printing/tests/test_rcode.py
+index 1292bbd2..bbc0ec96 100644
+--- a/sympy/printing/tests/test_rcode.py
++++ b/sympy/printing/tests/test_rcode.py
+@@ -488,4 +488,4 @@ def test_MatrixElement_printing():
+     assert(rcode(3 * A[0, 0]) == "3*A[0]")
+ 
+     F = C[0, 0].subs(C, A - B)
+-    assert(rcode(F) == "((-1)*B + A)[0]")
++    assert(rcode(F) == "(-B + A)[0]")
+diff --git a/sympy/printing/tests/test_str.py b/sympy/printing/tests/test_str.py
+index 884c09d9..a65dc1d3 100644
+--- a/sympy/printing/tests/test_str.py
++++ b/sympy/printing/tests/test_str.py
+@@ -784,4 +784,4 @@ def test_MatrixElement_printing():
+     assert(str(3 * A[0, 0]) == "3*A[0, 0]")
+ 
+     F = C[0, 0].subs(C, A - B)
+-    assert str(F) == "((-1)*B + A)[0, 0]"
++    assert str(F) == "(-B + A)[0, 0]"

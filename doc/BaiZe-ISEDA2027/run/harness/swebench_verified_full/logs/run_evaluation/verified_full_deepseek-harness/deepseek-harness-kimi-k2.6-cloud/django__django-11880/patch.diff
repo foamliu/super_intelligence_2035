@@ -1,0 +1,57 @@
+diff --git a/django/forms/fields.py b/django/forms/fields.py
+index 03cd8af8d7..18007accab 100644
+--- a/django/forms/fields.py
++++ b/django/forms/fields.py
+@@ -199,6 +199,7 @@ class Field:
+         result = copy.copy(self)
+         memo[id(self)] = result
+         result.widget = copy.deepcopy(self.widget, memo)
++        result.error_messages = copy.deepcopy(self.error_messages, memo)
+         result.validators = self.validators[:]
+         return result
+ 
+diff --git a/tests/forms_tests/tests/test_forms.py b/tests/forms_tests/tests/test_forms.py
+index 45f5405fee..50cef1c4c5 100644
+--- a/tests/forms_tests/tests/test_forms.py
++++ b/tests/forms_tests/tests/test_forms.py
+@@ -2912,6 +2912,40 @@ Good luck picking a username that doesn&#x27;t already exist.</p>
+         self.assertIsNot(field2.fields, field.fields)
+         self.assertIsNot(field2.fields[0].choices, field.fields[0].choices)
+ 
++    def test_field_deepcopy_error_messages(self):
++        """
++        Deep copying a Field should also copy the error_messages dict.
++        """
++        field = CharField()
++        field2 = copy.deepcopy(field)
++        # error_messages should be a different object after deepcopy
++        self.assertIsNot(field.error_messages, field2.error_messages)
++        # Modifying the copy should not affect the original
++        field2.error_messages['required'] = 'MODIFIED'
++        self.assertEqual(field.error_messages['required'], 'This field is required.')
++
++    def test_form_instances_independent_error_messages(self):
++        """
++        Each form instance should have fields with independent error_messages.
++        """
++        class MyForm(Form):
++            name = CharField()
++            age = IntegerField()
++
++        form1 = MyForm()
++        form2 = MyForm()
++        # Each form instance should have independent error_messages
++        self.assertIsNot(
++            form1.fields['name'].error_messages,
++            form2.fields['name'].error_messages
++        )
++        # Modifying one form's field should not affect the other
++        form1.fields['name'].error_messages['required'] = 'CHANGED'
++        self.assertEqual(
++            form2.fields['name'].error_messages['required'],
++            'This field is required.'
++        )
++
+     def test_multivalue_initial_data(self):
+         """
+         #23674 -- invalid initial data should not break form.changed_data()

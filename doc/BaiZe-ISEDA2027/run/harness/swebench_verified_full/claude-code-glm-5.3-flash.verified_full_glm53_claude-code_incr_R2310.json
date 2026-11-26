@@ -1,0 +1,11 @@
+{
+  "harness": "claude-code",
+  "run_id": "verified_full_glm53_claude-code_incr_R2310",
+  "round": "R2310",
+  "n": 1,
+  "resolved": [
+    "django__django-15161"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

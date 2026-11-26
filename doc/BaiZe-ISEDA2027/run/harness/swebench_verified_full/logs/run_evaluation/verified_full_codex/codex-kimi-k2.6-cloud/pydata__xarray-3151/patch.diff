@@ -1,0 +1,39 @@
+diff --git a/xarray/core/combine.py b/xarray/core/combine.py
+index 37ae903..f25929c 100644
+--- a/xarray/core/combine.py
++++ b/xarray/core/combine.py
+@@ -503,6 +503,8 @@ def combine_by_coords(datasets, compat='no_conflicts', data_vars='all',
+         # Check the overall coordinates are monotonically increasing
+         for dim in concatenated.dims:
+             if dim in concatenated:
++                if dim not in concat_dims:
++                    continue
+                 indexes = concatenated.indexes.get(dim)
+                 if not (indexes.is_monotonic_increasing
+                         or indexes.is_monotonic_decreasing):
+diff --git a/xarray/tests/test_combine.py b/xarray/tests/test_combine.py
+index 77e2993..114d824 100644
+--- a/xarray/tests/test_combine.py
++++ b/xarray/tests/test_combine.py
+@@ -611,6 +611,21 @@ class TestCombineAuto:
+         expected = Dataset({'x': 0, 'y': 1, 'z': 2})
+         assert_identical(expected, actual)
+ 
++    def test_combine_by_coords_incomplete_hypercube(self):
++        # test that this doesn't raise an error
++        # regression test for GH issue #3150
++        ds1 = Dataset({'data': (['x', 'y'], [[1, 2, 3],
++                                             [4, 5, 6]])},
++                      coords={'x': [1, 2], 'y': ['a', 'c', 'b']})
++        ds2 = Dataset({'data': (['x', 'y'], [[7, 8, 9]])},
++                      coords={'x': [3], 'y': ['a', 'c', 'b']})
++        actual = combine_by_coords([ds1, ds2])
++        expected = Dataset({'data': (['x', 'y'], [[1, 2, 3],
++                                                  [4, 5, 6],
++                                                  [7, 8, 9]])},
++                           coords={'x': [1, 2, 3], 'y': ['a', 'c', 'b']})
++        assert_identical(expected, actual)
++
+     def test_check_for_impossible_ordering(self):
+         ds0 = Dataset({'x': [0, 1, 5]})
+         ds1 = Dataset({'x': [2, 3]})

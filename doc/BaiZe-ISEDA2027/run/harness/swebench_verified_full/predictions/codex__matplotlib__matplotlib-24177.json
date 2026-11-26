@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "matplotlib__matplotlib-24177",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/test_hist_bug.py b/test_hist_bug.py\nnew file mode 100644\nindex 000000000..da6a95f5e\n--- /dev/null\n+++ b/test_hist_bug.py\n@@ -0,0 +1,33 @@\n+import numpy as np\n+import matplotlib\n+matplotlib.use('Agg')\n+import matplotlib.pyplot as plt\n+\n+np.random.seed(42)\n+scale = 1.2\n+test_random = np.random.randn(100000) * scale\n+\n+fig, ax = plt.subplots(1, 2, figsize=(20, 10))\n+hist_bar = ax[0].hist(test_random, bins=100, density=True, histtype=\"bar\")\n+hist_step = ax[1].hist(test_random, bins=100, density=True, histtype=\"step\")\n+\n+# Get y-limits\n+print(\"bar y-limits:\", ax[0].get_ylim())\n+print(\"step y-limits:\", ax[1].get_ylim())\n+\n+# Check if the top of the step histogram is within the y-limits\n+for a, title in [(ax[0], 'bar'), (ax[1], 'step')]:\n+    # Get the patches\n+    patches = a.patches\n+    if patches:\n+        print(f\"{title} patches: {len(patches)}\")\n+        for p in patches:\n+            print(f\"  {type(p).__name__}: \", end=\"\")\n+            if hasattr(p, 'get_path'):\n+                path = p.get_path()\n+                print(f\"path verts max y = {path.vertices[:, 1].max():.4f}\")\n+            elif hasattr(p, 'get_height'):\n+                print(f\"height = {p.get_height():.4f}\")\n+\n+plt.savefig('test_hist_bug.png', dpi=150)\n+print(\"Saved test_hist_bug.png\")\n"
+  }
+]

@@ -1,0 +1,57 @@
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143dda..9e698705c 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -39,6 +39,10 @@ class ChoicesMeta(enum.EnumMeta):
+             return any(x.value == member for x in cls)
+         return super().__contains__(member)
+ 
++    @property
++    def do_not_call_in_templates(cls):
++        return True
++
+     @property
+     def names(cls):
+         empty = ['__empty__'] if hasattr(cls, '__empty__') else []
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index b9356479d..fa3332a24 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -4,6 +4,7 @@ import ipaddress
+ import uuid
+ 
+ from django.db import models
++from django.template import Context, Template
+ from django.test import SimpleTestCase
+ from django.utils.functional import Promise
+ from django.utils.translation import gettext_lazy as _
+@@ -149,6 +150,29 @@ class ChoicesTests(SimpleTestCase):
+                 with self.subTest(member=member):
+                     self.assertEqual(str(test[member.name]), str(member.value))
+ 
++    def test_do_not_call_in_templates(self):
++        for choices_class in (models.Choices, models.IntegerChoices, models.TextChoices, Suit, YearInSchool):
++            with self.subTest(choices_class=choices_class):
++                self.assertIs(choices_class.do_not_call_in_templates, True)
++
++    def test_usable_in_templates(self):
++        context = Context({
++            'year_in_school': YearInSchool.FRESHMAN,
++            'YearInSchool': YearInSchool,
++        })
++        template = Template(
++            '{% if year_in_school == YearInSchool.FRESHMAN %}Freshman'
++            '{% elif year_in_school == YearInSchool.SENIOR %}Senior'
++            '{% else %}Other{% endif %}'
++        )
++        self.assertEqual(template.render(context), 'Freshman')
++
++        context = Context({
++            'year_in_school': YearInSchool.SENIOR,
++            'YearInSchool': YearInSchool,
++        })
++        self.assertEqual(template.render(context), 'Senior')
++
+ 
+ class Separator(bytes, models.Choices):
+     FS = b'\x1c', 'File Separator'

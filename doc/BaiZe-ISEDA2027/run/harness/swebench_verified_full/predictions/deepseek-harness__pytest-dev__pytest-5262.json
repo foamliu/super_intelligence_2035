@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-5262",
+    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 25eab7f..ae74738 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -447,6 +447,14 @@ class EncodedFile(object):\n         \"\"\"Ensure that file.name is a string.\"\"\"\n         return repr(self.buffer)\n \n+    @property\n+    def mode(self):\n+        \"\"\"The mode of the file, without 'b' since this is a text stream.\"\"\"\n+        mode = getattr(self.buffer, \"mode\", \"\")\n+        if \"b\" in mode:\n+            mode = mode.replace(\"b\", \"\")\n+        return mode\n+\n     def __getattr__(self, name):\n         return getattr(object.__getattribute__(self, \"buffer\"), name)\n \n"
+  }
+]

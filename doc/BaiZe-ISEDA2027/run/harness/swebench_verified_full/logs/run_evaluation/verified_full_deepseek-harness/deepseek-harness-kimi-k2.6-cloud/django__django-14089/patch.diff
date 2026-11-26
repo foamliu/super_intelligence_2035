@@ -1,0 +1,35 @@
+diff --git a/django/utils/datastructures.py b/django/utils/datastructures.py
+index 871b01671..99f9ff2a7 100644
+--- a/django/utils/datastructures.py
++++ b/django/utils/datastructures.py
+@@ -25,6 +25,9 @@ class OrderedSet:
+     def __iter__(self):
+         return iter(self.dict)
+ 
++    def __reversed__(self):
++        return reversed(self.dict)
++
+     def __contains__(self, item):
+         return item in self.dict
+ 
+diff --git a/tests/utils_tests/test_datastructures.py b/tests/utils_tests/test_datastructures.py
+index 45d172f98..03a89f701 100644
+--- a/tests/utils_tests/test_datastructures.py
++++ b/tests/utils_tests/test_datastructures.py
+@@ -55,6 +55,16 @@ class OrderedSetTests(SimpleTestCase):
+         s.add(2)
+         self.assertEqual(len(s), 2)
+ 
++    def test_reversed(self):
++        s = OrderedSet()
++        s.add(1)
++        s.add(2)
++        self.assertEqual(list(reversed(s)), [2, 1])
++
++    def test_reversed_empty(self):
++        s = OrderedSet()
++        self.assertEqual(list(reversed(s)), [])
++
+ 
+ class MultiValueDictTests(SimpleTestCase):
+ 

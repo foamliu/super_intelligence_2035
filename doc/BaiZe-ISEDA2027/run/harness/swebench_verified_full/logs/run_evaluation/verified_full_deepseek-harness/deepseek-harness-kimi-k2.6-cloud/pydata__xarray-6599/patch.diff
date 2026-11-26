@@ -1,0 +1,66 @@
+diff --git a/xarray/core/computation.py b/xarray/core/computation.py
+index 823cbe0..70343b0 100644
+--- a/xarray/core/computation.py
++++ b/xarray/core/computation.py
+@@ -1905,6 +1905,14 @@ def polyval(
+     coeffs = coeffs.reindex(
+         {degree_dim: np.arange(max_deg + 1)}, fill_value=0, copy=False
+     )
++
++    # For a DataArray, use the coordinate that shares the name of the dimension
++    # as the x values for polynomial evaluation, rather than the data values.
++    # This ensures correct behavior when data and coords differ (e.g., datetime64
++    # data with timedelta64 coords).
++    if hasattr(coord, "coords") and hasattr(coord, "name") and coord.name in coord.coords:
++        coord = coord.coords[coord.name]
++
+     coord = _ensure_numeric(coord)  # type: ignore # https://github.com/python/mypy/issues/1533 ?
+ 
+     # using Horner's method
+@@ -1933,7 +1941,7 @@ def _ensure_numeric(data: T_Xarray) -> T_Xarray:
+     from .dataset import Dataset
+ 
+     def to_floatable(x: DataArray) -> DataArray:
+-        if x.dtype.kind in "mM":
++        if x.dtype.kind == "M":
+             return x.copy(
+                 data=datetime_to_numeric(
+                     x.data,
+@@ -1941,6 +1949,11 @@ def _ensure_numeric(data: T_Xarray) -> T_Xarray:
+                     datetime_unit="ns",
+                 ),
+             )
++        elif x.dtype.kind == "m":
++            # timedelta64: convert directly to float64 (values in nanoseconds)
++            return x.copy(
++                data=x.data.astype(np.float64),
++            )
+         return x
+ 
+     if isinstance(data, Dataset):
+diff --git a/xarray/tests/test_computation.py b/xarray/tests/test_computation.py
+index 737ed82..7b02209 100644
+--- a/xarray/tests/test_computation.py
++++ b/xarray/tests/test_computation.py
+@@ -2010,6 +2010,21 @@ def test_where_attrs() -> None:
+             ),
+             id="datetime",
+         ),
++        pytest.param(
++            xr.DataArray(
++                pd.date_range("1970-01-01", freq="s", periods=3),
++                dims="x",
++                name="x",
++                coords={"x": pd.to_timedelta([0, 1, 2], unit="s")},
++            ),
++            xr.DataArray([0, 1], dims="degree", coords={"degree": [0, 1]}),
++            xr.DataArray(
++                [0, 1e9, 2e9],
++                dims="x",
++                coords={"x": pd.to_timedelta([0, 1, 2], unit="s")},
++            ),
++            id="timedelta64-coord",
++        ),
+     ],
+ )
+ def test_polyval(

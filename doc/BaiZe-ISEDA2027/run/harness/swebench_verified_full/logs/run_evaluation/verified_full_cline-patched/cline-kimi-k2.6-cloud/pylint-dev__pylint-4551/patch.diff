@@ -1,0 +1,315 @@
+diff --git a/classes.dot b/classes.dot
+new file mode 100644
+index 0000000..1be4e41
+--- /dev/null
++++ b/classes.dot
+@@ -0,0 +1,5 @@
++digraph "classes" {
++charset="utf-8"
++rankdir=BT
++"0" [label="{C|\l|method(a: str)\l}", shape="record"];
++}
+diff --git a/classes.vcg b/classes.vcg
+new file mode 100644
+index 0000000..54c2c35
+--- /dev/null
++++ b/classes.vcg
+@@ -0,0 +1,10 @@
++graph:{
++  title:"classes"
++  layoutalgorithm:dfs
++  late_edge_labels:yes
++  port_sharing:no
++  manhattan_edges:yes
++  node: {title:"0"  label:"\fbMyClass\fn\n\f______________________________________________________\n\f08a : Optional[str]\n\f08b : List[int]\n\f08c : MyClass\n\f______________________________________________________\n\f10method(a: Optional[str], b: List[int], c: 'MyClass')"
++  shape:box
++}
++}
+diff --git a/classes_comprehensive.dot b/classes_comprehensive.dot
+new file mode 100644
+index 0000000..345c120
+--- /dev/null
++++ b/classes_comprehensive.dot
+@@ -0,0 +1,7 @@
++digraph "classes_comprehensive" {
++charset="utf-8"
++rankdir=BT
++"0" [label="{Base|\l|}", shape="record"];
++"1" [label="{Derived|items : List[int]\lname : str\lparent : Base\lresult : bool\l|process(data: Optional[str])\l}", shape="record"];
++"1" -> "0" [arrowhead="empty", arrowtail="none"];
++}
+diff --git a/classes_test.dot b/classes_test.dot
+new file mode 100644
+index 0000000..1851cc3
+--- /dev/null
++++ b/classes_test.dot
+@@ -0,0 +1,7 @@
++digraph "classes_test" {
++charset="utf-8"
++rankdir=BT
++"0" [label="{Ancestor|attr : str\lcls_member\l|get_value()\lset_value(value)\l}", shape="record"];
++"1" [label="{Specialization|TYPE : str\lrelation\ltop : str\l|}", shape="record"];
++"1" -> "0" [arrowhead="empty", arrowtail="none"];
++}
+diff --git a/classes_test.vcg b/classes_test.vcg
+new file mode 100644
+index 0000000..4476a9c
+--- /dev/null
++++ b/classes_test.vcg
+@@ -0,0 +1,17 @@
++graph:{
++  title:"classes_test"
++  layoutalgorithm:dfs
++  late_edge_labels:yes
++  port_sharing:no
++  manhattan_edges:yes
++  node: {title:"0"  label:"\fbAncestor\fn\n\f__________________\n\f08attr : str\n\f08cls_member\n\f__________________\n\f10get_value()\n\f10set_value(value)"
++  shape:box
++}
++  node: {title:"1"  label:"\fbSpecialization\fn\n\f________________\n\f08TYPE : str\n\f08relation\n\f08top : str\n\f________________"
++  shape:box
++}
++  edge: {sourcename:"1" targetname:"0"  arrowstyle:solid
++  backarrowstyle:none
++  backarrowsize:10
++}
++}
+diff --git a/pylint/pyreverse/diagrams.py b/pylint/pyreverse/diagrams.py
+index bf9f67a..bed01c9 100644
+--- a/pylint/pyreverse/diagrams.py
++++ b/pylint/pyreverse/diagrams.py
+@@ -119,16 +119,25 @@ class ClassDiagram(Figure, FilterMixIn):
+         """return class names if needed in diagram"""
+         names = []
+         for node in nodes:
+-            if isinstance(node, astroid.Instance):
++            if isinstance(node, str):
++                if node not in names:
++                    names.append(node)
++            elif isinstance(node, astroid.Instance):
+                 node = node._proxied
+-            if (
++                if (
++                    isinstance(node, astroid.ClassDef)
++                    and hasattr(node, "name")
++                    and not self.has_node(node)
++                ):
++                    if node.name not in names:
++                        names.append(node.name)
++            elif (
+                 isinstance(node, astroid.ClassDef)
+                 and hasattr(node, "name")
+                 and not self.has_node(node)
+             ):
+                 if node.name not in names:
+-                    node_name = node.name
+-                    names.append(node_name)
++                    names.append(node.name)
+         return names
+ 
+     def nodes(self):
+diff --git a/pylint/pyreverse/inspector.py b/pylint/pyreverse/inspector.py
+index 8fa1220..e0c2d24 100644
+--- a/pylint/pyreverse/inspector.py
++++ b/pylint/pyreverse/inspector.py
+@@ -39,6 +39,39 @@ def _astroid_wrapper(func, modname):
+     return None
+ 
+ 
++def _get_annotation_value(node, frame):
++    """Return the annotation for a name if it is a function parameter."""
++    if not isinstance(frame, astroid.FunctionDef):
++        return None
++    for i, arg in enumerate(frame.args.args):
++        if arg.name == node.name and i < len(frame.args.annotations):
++            return frame.args.annotations[i]
++    for i, arg in enumerate(frame.args.posonlyargs):
++        if (
++            arg.name == node.name
++            and i < len(frame.args.posonlyargs_annotations)
++        ):
++            return frame.args.posonlyargs_annotations[i]
++    for i, arg in enumerate(frame.args.kwonlyargs):
++        if (
++            arg.name == node.name
++            and i < len(frame.args.kwonlyargs_annotations)
++        ):
++            return frame.args.kwonlyargs_annotations[i]
++    if frame.args.vararg == node.name and frame.args.varargannotation:
++        return frame.args.varargannotation
++    if frame.args.kwarg == node.name and frame.args.kwargannotation:
++        return frame.args.kwargannotation
++    return None
++
++
++def _annotation_to_string(node):
++    """Return a string representation of a type annotation node."""
++    if isinstance(node, astroid.Const) and isinstance(node.value, str):
++        return node.value
++    return node.as_string()
++
++
+ def interfaces(node, herited=True, handler_func=_iface_hdlr):
+     """Return an iterator on interfaces implemented by the given class node."""
+     try:
+@@ -231,6 +264,24 @@ class Linker(IdGeneratorMixIn, utils.LocalsVisitor):
+         """
+         try:
+             values = set(node.infer())
++        except astroid.InferenceError:
++            values = set()
++
++        # If the assignment has a type annotation (AnnAssign) or the assigned
++        # value is a parameter with a type annotation, use the annotation type.
++        assign = node.parent
++        if isinstance(assign, astroid.AnnAssign) and assign.target is node:
++            if assign.annotation is not None:
++                values = {_annotation_to_string(assign.annotation)}
++        elif isinstance(assign, astroid.Assign) and isinstance(
++            assign.value, astroid.Name
++        ):
++            frame = node.frame()
++            annotation = _get_annotation_value(assign.value, frame)
++            if annotation is not None:
++                values = {_annotation_to_string(annotation)}
++
++        try:
+             current = set(parent.instance_attrs_type[node.attrname])
+             parent.instance_attrs_type[node.attrname] = list(current | values)
+         except astroid.InferenceError:
+diff --git a/pylint/pyreverse/writer.py b/pylint/pyreverse/writer.py
+index 0d80bb9..39471c3 100644
+--- a/pylint/pyreverse/writer.py
++++ b/pylint/pyreverse/writer.py
+@@ -135,7 +135,19 @@ class DotWriter(DiagramWriter):
+             label = r"{}|{}\l|".format(label, r"\l".join(obj.attrs))
+             for func in obj.methods:
+                 if func.args.args:
+-                    args = [arg.name for arg in func.args.args if arg.name != "self"]
++                    args = []
++                    for i, arg in enumerate(func.args.args):
++                        if arg.name == "self":
++                            continue
++                        ann = (
++                            func.args.annotations[i]
++                            if i < len(func.args.annotations)
++                            else None
++                        )
++                        if ann is not None:
++                            args.append(f"{arg.name}: {ann.as_string()}")
++                        else:
++                            args.append(arg.name)
+                 else:
+                     args = []
+                 label = r"{}{}({})\l".format(label, func.name, ", ".join(args))
+@@ -199,7 +211,25 @@ class VCGWriter(DiagramWriter):
+             shape = "box"
+         if not self.config.only_classnames:
+             attrs = obj.attrs
+-            methods = [func.name for func in obj.methods]
++            methods = []
++            for func in obj.methods:
++                if func.args.args:
++                    args = []
++                    for i, arg in enumerate(func.args.args):
++                        if arg.name == "self":
++                            continue
++                        ann = (
++                            func.args.annotations[i]
++                            if i < len(func.args.annotations)
++                            else None
++                        )
++                        if ann is not None:
++                            args.append(f"{arg.name}: {ann.as_string()}")
++                        else:
++                            args.append(arg.name)
++                else:
++                    args = []
++                methods.append(f"{func.name}({', '.join(args)})")
+             # box width for UML like diagram
+             maxlen = max(len(name) for name in [obj.title] + methods + attrs)
+             line = "_" * (maxlen + 2)
+@@ -209,7 +239,7 @@ class VCGWriter(DiagramWriter):
+             if attrs:
+                 label = fr"{label}\n\f{line}"
+             for func in methods:
+-                label = fr"{label}\n\f10{func}()"
++                label = fr"{label}\n\f10{func}"
+         return dict(label=label, shape=shape)
+ 
+     def close_graph(self):
+diff --git a/tests/unittest_pyreverse_inspector.py b/tests/unittest_pyreverse_inspector.py
+index e1ff637..2f7edb0 100644
+--- a/tests/unittest_pyreverse_inspector.py
++++ b/tests/unittest_pyreverse_inspector.py
+@@ -128,3 +128,70 @@ def test_from_directory(project):
+ def test_project_node(project):
+     expected = ["data", "data.clientmodule_test", "data.suppliermodule_test"]
+     assert sorted(project.keys()) == expected
++
++
++def test_instance_attrs_type_annotations():
++    """Test that parameter type annotations are used for instance attributes."""
++    module = astroid.parse(
++        """
++    class C:
++        def __init__(self, a: str = None):
++            self.a = a
++    """
++    )
++    klass = module.body[0]
++    linker = inspector.Linker(inspector.Project("test"))
++    linker.visit_classdef(klass)
++    assert klass.instance_attrs_type["a"]
++    assert klass.instance_attrs_type["a"] == ["str"]
++
++
++def test_instance_attrs_annassign_annotations():
++    """Test that AnnAssign type annotations are used for instance attributes."""
++    module = astroid.parse(
++        """
++    class C:
++        def __init__(self):
++            self.a: str = None
++    """
++    )
++    klass = module.body[0]
++    linker = inspector.Linker(inspector.Project("test"))
++    linker.visit_classdef(klass)
++    assert klass.instance_attrs_type["a"]
++    assert klass.instance_attrs_type["a"] == ["str"]
++
++
++def test_get_annotation_value():
++    """Test _get_annotation_value helper."""
++    module = astroid.parse(
++        """
++    def func(a: str, b: int = 1, *args: list, **kwargs: dict):
++        pass
++    """
++    )
++    func = module.body[0]
++    a_name = astroid.parse("a").body[0].value
++    b_name = astroid.parse("b").body[0].value
++    args_name = astroid.parse("args").body[0].value
++    kwargs_name = astroid.parse("kwargs").body[0].value
++    c_name = astroid.parse("c").body[0].value
++
++    ann = inspector._get_annotation_value(a_name, func)
++    assert ann is not None
++    assert ann.as_string() == "str"
++
++    ann = inspector._get_annotation_value(b_name, func)
++    assert ann is not None
++    assert ann.as_string() == "int"
++
++    ann = inspector._get_annotation_value(args_name, func)
++    assert ann is not None
++    assert ann.as_string() == "list"
++
++    ann = inspector._get_annotation_value(kwargs_name, func)
++    assert ann is not None
++    assert ann.as_string() == "dict"
++
++    ann = inspector._get_annotation_value(c_name, func)
++    assert ann is None

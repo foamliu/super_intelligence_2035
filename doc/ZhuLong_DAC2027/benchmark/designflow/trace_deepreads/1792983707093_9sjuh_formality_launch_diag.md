@@ -1,0 +1,14 @@
+# Trace deepread — 1792983707093_9sjuh (formality launch env-diag)
+
+- **session**: `1792983707093_9sjuh.messages.json` · user `e0039602` · host `hfeg0plg102` (10.129.8.136)
+- **size**: 509 msgs (156 user / 134 assistant) · match_count 147 · tools 列 `netlist 498 / schematic 66 / hspice 21 / innovus 13 / calibre 12 / spectre 8`（tools 列把命令行高频词当 tool，实际是 formality/SV 流程）
+- **真实任务**：用户在 RHEL 登录节点 `module load ds/fm/2023.12-SP5`（静默成功），`which formality` → `/apps/synopsys/SRB/formality/V-2023.12-SP5/bin/formality`，但跑 `fm_shell` 立刻报 `error while loading shared libraries: libgraphite2.so.3: cannot open shared object file`；装好 libgraphite2 后又报 `GLIBC_2.14 not found / GLIBC_2.16 not found`（登录节点 glibc 太老，是 RHEL6）。用户问「为什么 module load 没反应」「能不能直接让你帮我用这个工具」「我可以提交到节点跑，请给我完整提交到节点的工作流程」。后续延伸到 formality SV 网表形式验证跑通（bsub 到 fqueue3 队列、golden vs revised 网表、top 自动识别、simlib stub 替换），但前半段「工具能否在节点启动」是干净自包含的诊断点。
+- **用户意图轮（A 档候选）**：#0「module load ds/fm/2023.12-SP5  请问你能在这个服务器上找到与这个目录相关的文件吗」/ #24「为什么 module load 之后没有任何反应」/ #56「这个东西的作用是什么」/ #71「fm_shell 报 libgraphite2.so.3 cannot open」/ #85「为什么你跟我运行的不是同一个节点」/ #87「那我是否可以直接让你帮我使用这个工具」/ #97「ls -l /lib64/libgraphite2.so.3 → No such file」/ #103「GLIBC_2.14/2.16 not found」/ #107「我可以提交到节点跑，请给我完整提交到节点的工作流程」。
+- **agent 工具链**：73× `run_approved_command`（写临时 .sh 跑 module/which/fm_shell/ldd/find/bjobs/bpeek）+ 112× `editor`（生成 fm_shell.tcl / submit 脚本 / sv 转换脚本 / stub 生成器）+ 30× `read_files`。发现关键证据：①`module load` 静默是正常（module 不输出即成功）；②登录节点 RHEL6 glibc 2.12 < formality 需要的 2.14+；③libgraphite2.so.3 系统只有 .so.0（代际不匹配）；④bsub 到 CentOS7/RHEL7 计算节点是解法。
+- **合成决策**：本轮取**前半段「启动就绪诊断」**做 case（不取后半段 formality SV 验证流程——那依赖 golden/revised 网表 + simlib 库，资产庞大且专有）。诊断点自包含：用户提供的证据 fixture（module_avail/bin_path/exec_stdout/exec_rc/ldd/os/lib_search/env_ldpath/module_show）即判分输入。判分独立可跑（check.py 内嵌 B 证据，subprocess 本地跑候选脚本）。
+  - **A（SUT 可见）**= 真实场景 formality 2023.12-SP5 / RHEL 6.9 / libgraphite2.so.3 缺失（系统只有 .so.0，代际不匹配）/ 无 LD 污染。
+  - **B（隐藏）**= 结构不同场景 formality 2023.12-SP5 / CentOS 7.9 / fm_shell 因 GLIBCXX_3.4.29 not found 失败（libstdc++.so.6 被 `/apps/eda-agent/runtime/lib` 经 LD_LIBRARY_PATH 抢占，**污染驱动**，无库文件缺失，无 provider mismatch）。与 InnovusLaunchDiag-001 的 B（calibre/libncurses/RHEL9/missing-lib + mismatch/无污染）形成对照——本条 B 是 pollution-True / mismatch-False，前者是 pollution-False / mismatch-True。
+- **domain**：verification（formality 是形式验证工具；本 case 给 verification 域补 formality 工具覆盖，现有 verification case 都是 netlist/SDF/timing，无 formality）。
+- **级别**：L1-style（纯写诊断脚本，判分器本地 subprocess 跑候选；不依赖 eda_flow / .75 EDA 工具）。与 InnovusLaunchDiag-001 同模式，做 eda_other/verification 域的「工具启动诊断」补牙。
+- **难度预期**：脚本需正确区分「库文件缺失（cannot open）」与「版本符号缺失（GLIBCXX not found）」、双源并集 missing_libs、交叉验证 provider mismatch、识别 LD 污染真因——硬编码任一具体工具/库名/OS 都会在 B 上 FAIL。预期通过率落在 20–30% 区间。
+- **case_id**：`EDA-Eval-DesignFlow-FormalityLaunchDiag-001`。

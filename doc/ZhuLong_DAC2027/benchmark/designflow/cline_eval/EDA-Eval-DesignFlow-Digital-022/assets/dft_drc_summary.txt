@@ -1,0 +1,18 @@
+===== DFT DRC / preview 关键指标对比 =====
+
+[baseline  case1_dc.tcl]
+  Number of chains        : 390
+  TEST-130 (ICG test pin unconnected) : 0
+  D1    (clock not controlled)        : 0
+  cells with scan=false               : 0
+  dft_drc total violations            : 1857
+  result                             : insert_dft PASS
+
+[failed    case_fail_dc.tcl]
+  Number of chains        : 0
+  TEST-130 (ICG test pin unconnected) : 731
+  D1    (clock not controlled)        : 3842
+  D8    (clock cannot capture data)   : 517
+  cells with scan=false               : 5150
+  dft_drc total violations            : 76943
+  result                             : insert_dft fail (TEST-269)

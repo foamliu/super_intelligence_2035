@@ -1,0 +1,57 @@
+The implementation passed all 5 checker cases on the Synopsys Custom WaveView Tcl sandbox.
+
+Implementation of `calibre_empty_derive_layer_classify`:
+
+```tcl
+proc calibre_empty_derive_layer_classify {summary {waive_list {}}} {
+    set total 0
+    set has_shapes 0
+    set empty 0
+    set waived_empty 0
+    set empty_unwaived {}
+    foreach line [split $summary "\n"] {
+        if {[regexp -nocase {rule:[[:space:]]*deriveCheck_([^[:space:]]+)[[:space:]]*errors:[[:space:]]*([0-9]+)} $line -> layer err]} {
+            incr total
+            if {$err > 0} {
+                incr has_shapes
+            } else {
+                incr empty
+                if {[lsearch -exact $waive_list $layer] >= 0} {
+                    incr waived_empty
+                } else {
+                    lappend empty_unwaived $layer
+                }
+            }
+        }
+    }
+    set empty_unwaived [lsort $empty_unwaived]
+    if {[llength $empty_unwaived] == 0} {
+        set empty_unwaived_str "none"
+        set verdict "pass"
+        set fail_reasons "none"
+    } else {
+        set empty_unwaived_str [join $empty_unwaived ","]
+        set verdict "fail"
+        set reasons {}
+        foreach l $empty_unwaived {
+            lappend reasons "empty_unwaived:$l"
+        }
+        set fail_reasons [join $reasons ";"]
+    }
+    return [dict create total_derive_layers $total has_shapes_count $has_shapes empty_count $empty waived_empty_count $waived_empty empty_unwaived $empty_unwaived_str verdict $verdict fail_reasons $fail_reasons]
+}
+```
+
+Key points:
+- Uses POSIX character classes (`[[:space:]]`, `[^[:space:]]`, `[0-9]`) only, no `\b`/`\s`/`\d` escapes, with `-nocase` for cosmetic variance.
+- Verdict semantics correctly inverted: `error_count == 0` = empty = potential defect.
+- Waive list honored via case-sensitive `lsearch -exact`.
+- `empty_unwaived` alphabetically sorted (`lsort`), joined with commas, and `fail_reasons` semicolon-joined in the same order.
+
+Sandbox result:
+```
+DESIGN_FLOW_VERDICT=PASS
+DETAIL=PASS 5 cases
+```
+
+DESIGN_FLOW_VERDICT=PASS

@@ -1,0 +1,7 @@
+给定两个 DC 综合脚本与 DRC 指标: 附件 case1_dc.tcl 是插入 DFT 成功的基线，case_fail_dc.tcl 是插入 DFT 失败的版本，dft_drc_summary.txt 是两者的 DRC/preview 关键指标对比(失败方 Number of chains=0、TEST-130=731、D1 大量、scan false 5150；成功方 chains=390、TEST-130=0)。
+
+任务:
+1. 对比两个脚本，诊断 DFT 插入失败的根因(需命中全部三处差异), 说明其如何导致 0 条扫描链的机制。
+2. 基于 case1_dc.tcl 给出修复后的脚本 dc_fixed.tcl。
+3. 输出 fix_report.md：根因分析(含 TEST-130/D1 等机制) + 修改对照 + 修复前后关键指标对比。
+4. 将 fix_report.md 与 dc_fixed.tcl 打包为 outputs/submit.zip。

@@ -1,0 +1,51 @@
+diff --git a/django/db/backends/sqlite3/schema.py b/django/db/backends/sqlite3/schema.py
+index 6752a8e3c..72a95ac35 100644
+--- a/django/db/backends/sqlite3/schema.py
++++ b/django/db/backends/sqlite3/schema.py
+@@ -326,8 +326,8 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
+         """Create a field on a model."""
+         # Fields with default values cannot by handled by ALTER TABLE ADD
+         # COLUMN statement because DROP DEFAULT is not supported in
+-        # ALTER TABLE.
+-        if not field.null or self.effective_default(field) is not None:
++        # ALTER TABLE. Also, UNIQUE columns cannot be added via ALTER TABLE.
++        if not field.null or self.effective_default(field) is not None or field.unique:
+             self._remake_table(model, create_field=field)
+         else:
+             super().add_field(model, field)
+diff --git a/tests/backends/sqlite/tests.py b/tests/backends/sqlite/tests.py
+index 07477a5c7..b428cea72 100644
+--- a/tests/backends/sqlite/tests.py
++++ b/tests/backends/sqlite/tests.py
+@@ -14,8 +14,7 @@ from django.db.utils import ConnectionHandler
+ from django.test import (
+     TestCase, TransactionTestCase, override_settings, skipIfDBFeature,
+ )
+-from django.test.utils import isolate_apps
+-
++from django.test.utils import CaptureQueriesContext, isolate_apps
+ from ..models import Author, Item, Object, Square
+ 
+ try:
+@@ -196,6 +195,21 @@ class SchemaTests(TransactionTestCase):
+             with connection.schema_editor(atomic=True) as editor:
+                 editor.alter_db_table(Author, "backends_author", "renamed_table")
+ 
++    def test_add_field_unique(self):
++        """Adding a unique field uses _remake_table on SQLite."""
++        new_field = CharField(max_length=255, unique=True, null=True)
++        new_field.set_attributes_from_name('uuid')
++        with CaptureQueriesContext(connection) as ctx, connection.schema_editor() as editor:
++            editor.add_field(Author, new_field)
++        # Table is rebuilt.
++        self.assertIs(any(
++            'CREATE TABLE' in query['sql']
++            for query in ctx.captured_queries
++        ), True)
++        self.assertIs(any(
++            'DROP TABLE' in query['sql']
++            for query in ctx.captured_queries
++        ), True)
+ 
+ @unittest.skipUnless(connection.vendor == 'sqlite', 'Test only for SQLite')
+ @override_settings(DEBUG=True)

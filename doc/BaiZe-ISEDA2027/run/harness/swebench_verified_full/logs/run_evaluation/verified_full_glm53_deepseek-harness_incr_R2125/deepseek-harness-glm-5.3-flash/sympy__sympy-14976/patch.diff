@@ -1,0 +1,66 @@
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index d0690142..7a09d9a8 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -331,6 +331,12 @@ def _print_Float(self, e):
+         args = str(tuple(map(int, e._mpf_)))
+         return '{func}({args})'.format(func=self._module_format('mpmath.mpf'), args=args)
+ 
++    def _print_Rational(self, expr):
++        return "{0}({1})/{0}({2})".format(
++            self._module_format('mpmath.mpf'),
++            expr.p,
++            expr.q
++        )
+ 
+     def _print_uppergamma(self, e):
+         return "{0}({1}, {2}, {3})".format(
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index 68994056..f0460e36 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -3,7 +3,7 @@
+ 
+ from sympy.codegen import Assignment
+ from sympy.core import Expr, Mod, symbols, Eq, Le, Gt, zoo, oo
+-from sympy.core.numbers import pi
++from sympy.core.numbers import pi, Rational
+ from sympy.codegen.ast import none
+ from sympy.external import import_module
+ from sympy.logic import And, Or
+@@ -40,6 +40,7 @@ def test_PythonCodePrinter():
+ def test_MpmathPrinter():
+     p = MpmathPrinter()
+     assert p.doprint(sign(x)) == 'mpmath.sign(x)'
++    assert p.doprint(Rational(1, 2)) == "mpmath.mpf(1)/mpmath.mpf(2)"
+ 
+ 
+ def test_NumPyPrinter():
+diff --git a/sympy/solvers/tests/test_numeric.py b/sympy/solvers/tests/test_numeric.py
+index cf188664..1efcae52 100644
+--- a/sympy/solvers/tests/test_numeric.py
++++ b/sympy/solvers/tests/test_numeric.py
+@@ -1,5 +1,5 @@
+ from sympy import (Eq, Matrix, pi, sin, sqrt, Symbol, Integral, Piecewise,
+-    symbols, Float, I)
++    symbols, Float, I, Rational, rf)
+ from mpmath import mnorm, mpf
+ from sympy.solvers import nsolve
+ from sympy.utilities.lambdify import lambdify
+@@ -100,6 +100,16 @@ def test_nsolve_precision():
+     assert abs(sqrt(sqrt(pi)).evalf(128) - sols[1]) < 1e-128
+     assert all(isinstance(i, Float) for i in sols)
+ 
++
++def test_nsolve_precision_with_rational():
++    # Equation with rational coefficient in the rhs: verify that the
++    # lambdified function maintains full precision (see issue #14972).
++    x = symbols('x')
++    eqn = Eq(rf(18, x), 77 + Rational(1, 3))
++    x0 = nsolve(eqn, Float('1.5', 64), prec=64)
++    assert abs(rf(18, x0).evalf(64) - (77 + Rational(1, 3)).evalf(64)) < Float('1e-60', 64)
++
++
+ def test_nsolve_complex():
+     x, y = symbols('x y')
+ 

@@ -1,0 +1,34 @@
+diff --git a/astropy/io/ascii/html.py b/astropy/io/ascii/html.py
+index 266cf22..038932b 100644
+--- a/astropy/io/ascii/html.py
++++ b/astropy/io/ascii/html.py
+@@ -354,6 +354,8 @@ class HTML(core.BaseReader):
+             self.data.fill_values = [self.data.fill_values]
+ 
+         self.data._set_fill_values(cols)
++        self.data.cols = cols
++        self.data._set_col_formats()
+ 
+         lines = []
+ 
+diff --git a/astropy/io/ascii/tests/test_html.py b/astropy/io/ascii/tests/test_html.py
+index 0515efa..a08b855 100644
+--- a/astropy/io/ascii/tests/test_html.py
++++ b/astropy/io/ascii/tests/test_html.py
+@@ -728,3 +728,16 @@ def test_read_html_unicode():
+                 '</table>']
+     dat = Table.read(table_in, format='ascii.html')
+     assert np.all(dat['col1'] == ['Δ', 'Δ'])
++
++
++def test_write_table_html_formats():
++    """
++    Test that passing formats should format columns correctly.
++    """
++    buffer_output = StringIO()
++    t = Table([(1.23875234858e-24, 3.2348748432e-15), (2, 4)], names=('a', 'b'))
++    ascii.write(t, buffer_output, formats={'a': '%.2e'},
++                format='html')
++
++    assert '<td>1.24e-24</td>' in buffer_output.getvalue()
++    assert '<td>3.23e-15</td>' in buffer_output.getvalue()

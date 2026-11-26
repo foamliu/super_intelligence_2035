@@ -1,0 +1,38 @@
+diff --git a/src/_pytest/python.py b/src/_pytest/python.py
+index b8b365a..5f2af31 100644
+--- a/src/_pytest/python.py
++++ b/src/_pytest/python.py
+@@ -286,7 +286,7 @@ class PyobjMixin(PyobjContext):
+             parts.append(name)
+         parts.reverse()
+         s = ".".join(parts)
+-        return s.replace(".[", "[")
++        return s
+ 
+     def reportinfo(self):
+         # XXX caching?
+diff --git a/testing/test_collection.py b/testing/test_collection.py
+index 8050e80..f45408a 100644
+--- a/testing/test_collection.py
++++ b/testing/test_collection.py
+@@ -1278,3 +1278,20 @@ def test_does_not_put_src_on_path(testdir):
+     )
+     result = testdir.runpytest()
+     assert result.ret == ExitCode.OK
++
++
++def test_getmodpath_with_brackets_in_id(testdir):
++    """Test that getmodpath preserves dots before brackets in parametrized ids."""
++    p = testdir.makepyfile(
++        """
++        import pytest
++
++        @pytest.mark.parametrize("a", ["..["])
++        def test_boo(a):
++            pass
++    """
++    )
++    items, reprec = testdir.inline_genitems(p)
++    assert len(items) == 1
++    assert items[0].name == "test_boo[..[]"
++    assert items[0].getmodpath() == "test_boo[..[]"

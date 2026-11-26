@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "scikit-learn__scikit-learn-13779",
+    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sklearn/ensemble/voting.py b/sklearn/ensemble/voting.py\nindex 7afa7180..d8e14b15 100644\n--- a/sklearn/ensemble/voting.py\n+++ b/sklearn/ensemble/voting.py\n@@ -78,6 +78,8 @@ class _BaseVoting(_BaseComposition, TransformerMixin):\n \n         if sample_weight is not None:\n             for name, step in self.estimators:\n+                if step is None:\n+                    continue\n                 if not has_fit_parameter(step, 'sample_weight'):\n                     raise ValueError('Underlying estimator \\'%s\\' does not'\n                                      ' support sample weights.' % name)\n"
+  }
+]

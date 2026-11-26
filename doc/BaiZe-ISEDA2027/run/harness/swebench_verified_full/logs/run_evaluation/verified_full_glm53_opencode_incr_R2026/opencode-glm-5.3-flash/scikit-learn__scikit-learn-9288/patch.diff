@@ -1,0 +1,58 @@
+diff --git a/sklearn/cluster/k_means_.py b/sklearn/cluster/k_means_.py
+index b7fbdf7d..5d0a4680 100644
+--- a/sklearn/cluster/k_means_.py
++++ b/sklearn/cluster/k_means_.py
+@@ -360,6 +360,7 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+     else:
+         raise ValueError("Algorithm must be 'auto', 'full' or 'elkan', got"
+                          " %s" % str(algorithm))
++    seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+     if effective_n_jobs(n_jobs) == 1:
+         # For a single thread, less memory is needed if we just store one set
+         # of the best results (as opposed to one set per run per thread).
+@@ -369,7 +370,7 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+                 X, sample_weight, n_clusters, max_iter=max_iter, init=init,
+                 verbose=verbose, precompute_distances=precompute_distances,
+                 tol=tol, x_squared_norms=x_squared_norms,
+-                random_state=random_state)
++                random_state=seeds[it])
+             # determine if these results are the best so far
+             if best_inertia is None or inertia < best_inertia:
+                 best_labels = labels.copy()
+@@ -378,7 +379,6 @@ def k_means(X, n_clusters, sample_weight=None, init='k-means++',
+                 best_n_iter = n_iter_
+     else:
+         # parallelisation of k-means runs
+-        seeds = random_state.randint(np.iinfo(np.int32).max, size=n_init)
+         results = Parallel(n_jobs=n_jobs, verbose=0)(
+             delayed(kmeans_single)(X, sample_weight, n_clusters,
+                                    max_iter=max_iter, init=init,
+diff --git a/sklearn/cluster/tests/test_k_means.py b/sklearn/cluster/tests/test_k_means.py
+index 362b0a91..12925255 100644
+--- a/sklearn/cluster/tests/test_k_means.py
++++ b/sklearn/cluster/tests/test_k_means.py
+@@ -90,6 +90,24 @@ def test_elkan_results(distribution):
+     assert_array_equal(km_elkan.labels_, km_full.labels_)
+ 
+ 
++@pytest.mark.parametrize('algorithm', ['full', 'elkan'])
++def test_kmeans_n_jobs(algorithm):
++    # non-regression test for the n_jobs=1 vs n_jobs>1 inconsistency (#10865)
++    X, _ = make_blobs(n_samples=1000, centers=10, n_features=2,
++                      random_state=2)
++
++    kmeans_kwargs = dict(n_clusters=10, random_state=2, algorithm=algorithm)
++    kmeans_single = KMeans(n_jobs=1, **kmeans_kwargs).fit(X)
++
++    for n_jobs in [2, 4]:
++        kmeans_parallel = KMeans(n_jobs=n_jobs, **kmeans_kwargs).fit(X)
++        assert_array_almost_equal(kmeans_parallel.inertia_,
++                                  kmeans_single.inertia_)
++        assert_array_equal(kmeans_parallel.labels_, kmeans_single.labels_)
++        assert_array_almost_equal(kmeans_parallel.cluster_centers_,
++                                  kmeans_single.cluster_centers_)
++
++
+ def test_labels_assignment_and_inertia():
+     # pure numpy implementation as easily auditable reference gold
+     # implementation

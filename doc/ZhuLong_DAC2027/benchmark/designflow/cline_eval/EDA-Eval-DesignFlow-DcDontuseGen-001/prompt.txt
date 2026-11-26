@@ -1,0 +1,34 @@
+从 Liberty(.lib) 的允许单元白名单生成 DC `dont_use` 策略脚本 (digital, DC synthesis 单元禁用策略)。
+
+用户原话（逐字，A 档 faithful，trace 1793324309763_tzth7 / e0045144 @ hfeg0pkn004，用户轮 #2）：
+「这个lib : `/proj/lacaa/TV1_digital/workdir/Data_Transfer/to_HF/e0037828_20261025/LIB/DBCP51H180L6W25T5_BASE_LVT_tt_typical_v0p75_85c_ccs.lib` 只允许用 `xorX1,nandx1,nandx2,norx1,norx2,invx1,invx2,invx16,bufx1,bufx3,bufx8,bufx128,tiehx1,tielx1,icgx1,dffx1,latx1,muxx1,delayx1` 这些类型cell，帮我产生个DC脚本」
+
+后续 refine（用户轮 #108）：「`set_dont_use [get_lib_cells */CK*]` ... `set_dont_use [get_lib_cells */*D32*]` 帮我按照这个格式写下」——要求按 `set_dont_use [get_lib_cells <pattern>]` 形式输出。
+
+== 任务背景 ==
+真实 lib（`/proj/lacaa/.../DBCP51H180L6W25T5_BASE_LVT_tt_typical_v0p75_85c_ccs.lib`）从评测环境不可达（permission denied，归他人组），故本评测提供**合成 faithful Liberty**（`lib_A.lib`，library 名与 cell 命名约定忠实重建）。用户白名单用 `<func>x<drive>` 风格（xorX1/invx1/bufx1...），合成 lib 的 cell 名为对应**大写**形式（XORX1/INVX1/BUFX1...），位于 `library (...)` 声明的库下。任务：给定 lib + 白名单，生成 DC 脚本，**禁用库内全部 cell，再对白名单中的 cell 解除禁用**（disable-all-then-enable-allowed 策略）。
+
+== 交付物 ==
+submit.zip 包含两件：
+1. `gen_dontuse.py` —— 通用 Liberty .lib + 白名单 → DC dont_use tcl 生成器（纯 Python 标准库，无第三方依赖），CLI：
+   ```
+   python3 gen_dontuse.py --lib <path.lib> --allow <allow.txt> -o <out.tcl>
+   ```
+   - `--lib`：输入 Liberty(.lib) 文件路径（必填）。脚本**必须从中解析 `library (...)` 头取得 LIB_NAME**，🚫 不得硬编任何库名/工艺后缀字面量。
+   - `--allow`：白名单文件，每行一个允许 cell 短名（如 `xorX1`），空行与 `#` 注释行跳过。
+   - `-o/--output`：输出 tcl 文件路径。
+   - 匹配规则：白名单每行**大写化**后与 lib 内 `cell (...)` 名做**精确（大小写不敏感）匹配**；命中的 cell 才被解除禁用；未命中的白名单行跳过（不报错）。lib 内**不在**白名单的 cell 保持禁用。
+2. `dont_use_A.tcl` —— 用你的 `gen_dontuse.py` 对可见 A bundle（`lib_A.lib` + `allow_A.txt`）预生成的 tcl 脚本。
+
+== 输出 tcl 规范 ==
+- 首部 `set LIB_NAME "<从 lib 解析的库名>"`。
+- 第 1 步：禁用库内全部 cell —— `set_dont_use [get_lib_cells "${LIB_NAME}/*"] true`
+- 第 2 步：对每个命中的允许 cell，输出 `set_dont_use [get_lib_cells "${LIB_NAME}/<CELL>"] false`（CELL 为 lib 内 cell 大写名，可按 `${LIB_NAME}/<upper>*` 通配或精确名，只要最终被解除禁用的 cell 集合**恰好**等于白名单命中的 cell 集合即可）。
+- tcl 须语法完整（`tclsh` `info complete` 返回 1）。
+
+== 附件（可见 A bundle）==
+- `lib_A.lib`：合成 Liberty（library 名 `DBCP51H180L6W25T5_BASE_LVT_tt_typical_v0p75_85c_ccs`，含 ~47 个 cell：19 个白名单命中 + 其余禁用 cell，命名大写）。
+- `allow_A.txt`：用户白名单 19 行（xorX1/nandx1/.../delayx1）。
+
+== 评测 ==
+判分器会：(1) 解压 submit.zip；(2) `python3 gen_dontuse.py --lib lib_A.lib --allow allow_A.txt -o out_A.tcl` 跑你的生成器于可见 A，并校验交付的 `dont_use_A.tcl`；(3) 用隐藏的 B bundle（library 名 / 白名单成员 / cell 集合全异，如 `XXYN40H120L4W20T4_BASE_SVT_ff_typical_v0p55_125c_ccs`）跑同一生成器；(4) 用独立 oracle 从 lib 重算期望「解除禁用集合」与 LIB_NAME，逐条比对；硬编 A 的库名或 enable 列表的候选会在 B 上失败（B 库名不匹配 / enable 数不匹配）。

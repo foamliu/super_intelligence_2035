@@ -1,0 +1,17 @@
+1786955991534_znyhe	e0025730	10.129.8.86	42	netlist:122;schematic:71;analog:21;hspice:15;synopsys:11;pyaether:4;skipper:3;aether:3;
+1789629900465_d3vay	pjli	172.16.8.13	77	netlist:265;cadence:26;cmos:9;schematic:1;
+1789887336293_97g9m	e0039602	10.129.8.136	42	waveview:261;analog:41;synopsys:23;techfile:10;cellview:8;virtuoso:4;pyaether:4;cadence:4;
+1789894067947_9lbfz	iceyma	10.129.2.14	43	netlist:252;calibre:245;pdk:158;.gds:36;schematic:35;.cdl:28;aether:19;.spi:18;
+1790065627121_rzitp	e0042337	10.129.32.190	56	netlist:222;analog:57;waveview:21;cadence:5;lib.defs:4;pyaether:3;aether:3;mosfet:1;
+1790127432240_oh3te	miccao	10.129.32.47	41	.gds:484;netlist:242;calibre:112;.cdl:82;schematic:43;pdk:21;aether:17;lib.defs:13;
+1790489156584_1bc9r	mike	10.129.32.80	57	analog:294;synopsys:48;pyaether:5;aether:4;pdk:1;
+1791429687866_2igp1	rongjiez	10.129.2.11	43	netlist:250;.lef:4;spectre:1;hspice:1;
+1791943493253_tjzn5	tongfanl	10.129.35.69	44	analog:209;netlist:91;lib.defs:4;schematic:2;aether:2;pyaether:1;
+1792201884887_c39j4	tongfanl	10.129.35.69	41	analog:135;netlist:80;.def:9;aether:2;
+1792210180787_8o8qn	e0014036	10.129.35.244	42	netlist:254;cmos:14;analog:10;schematic:7;lib.defs:7;aether:2;
+1792393981948_7xqp9	joelchen	10.129.2.13	43	cmos:379;schematic:94;gdsii:65;calibre:35;netlist:9;aether:9;.cdl:3;skipper:2;
+1792461218411_hojhc	aocao	10.129.32.107	43	netlist:131;synopsys:61;aether:59;analog:56;transistor:25;cmos:17;cadence:17;schematic:16;
+1792552761049_zw6mx	xinqiaoz	10.129.2.13	55	pdk:582;cadence:20;waveview:18;pyaether:10;aether:8;analog:6;skipper:4;synopsys:2;
+1792737644972_wdnwl	cuij	10.129.2.11	42	netlist:157;calibre:101;.spi:45;.def:44;cmos:25;analog:24;aether:24;.cdl:16;
+1792738969144_h0gyt	tongfanl	10.129.35.69	43	netlist:172;analog:140;
+1792982722079_a8164	miccao	10.129.32.47	43	aether:80;schematic:62;netlist:44;techfile:39;skipper:14;gdsii:6;pyaether:4;.spi:3;

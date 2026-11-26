@@ -1,0 +1,50 @@
+diff --git a/django/core/management/base.py b/django/core/management/base.py
+index e6cbf8c64..5deb50ce7 100644
+--- a/django/core/management/base.py
++++ b/django/core/management/base.py
+@@ -143,6 +143,10 @@ class OutputWrapper(TextIOBase):
+     def isatty(self):
+         return hasattr(self._out, 'isatty') and self._out.isatty()
+ 
++    def flush(self):
++        if hasattr(self._out, 'flush'):
++            self._out.flush()
++
+     def write(self, msg='', style_func=None, ending=None):
+         ending = self.ending if ending is None else ending
+         if ending and not msg.endswith(ending):
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index e4aeca260..d9ae7f9e3 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -8,6 +8,7 @@ from django.apps import apps
+ from django.core import management
+ from django.core.checks import Tags
+ from django.core.management import BaseCommand, CommandError, find_commands
++from django.core.management.base import OutputWrapper
+ from django.core.management.utils import (
+     find_command, get_random_secret_key, is_ignored_path,
+     normalize_path_patterns, popen_wrapper,
+@@ -452,3 +453,22 @@ class DeprecationTests(SimpleTestCase):
+         with mock.patch('django.core.management.base.BaseCommand.check') as mocked_check:
+             management.call_command(command)
+         self.assertIs(mocked_check.called, False)
++
++
++class OutputWrapperTests(SimpleTestCase):
++    def test_flush(self):
++        out = StringIO()
++        wrapper = OutputWrapper(out)
++        wrapper.write('test', ending='')
++        self.assertEqual(out.getvalue(), 'test')
++        # flush() should delegate to the underlying stream.
++        wrapper.flush()
++        self.assertEqual(out.getvalue(), 'test')
++
++    def test_flush_no_flush_method(self):
++        class NoFlush:
++            def write(self, msg):
++                pass
++        wrapper = OutputWrapper(NoFlush())
++        wrapper.flush()  # Should not raise.
++

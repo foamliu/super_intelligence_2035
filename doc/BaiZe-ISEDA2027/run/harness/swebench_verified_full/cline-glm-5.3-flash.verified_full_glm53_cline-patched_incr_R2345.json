@@ -1,0 +1,11 @@
+{
+  "harness": "cline",
+  "run_id": "verified_full_glm53_cline-patched_incr_R2345",
+  "round": "R2345",
+  "n": 1,
+  "resolved": [
+    "django__django-14434"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

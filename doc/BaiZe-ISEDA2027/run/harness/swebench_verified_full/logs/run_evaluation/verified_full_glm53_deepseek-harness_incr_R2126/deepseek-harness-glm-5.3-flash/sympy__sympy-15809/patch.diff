@@ -1,0 +1,59 @@
+diff --git a/sympy/functions/elementary/miscellaneous.py b/sympy/functions/elementary/miscellaneous.py
+index 5f9fe73c..4ae31c94 100644
+--- a/sympy/functions/elementary/miscellaneous.py
++++ b/sympy/functions/elementary/miscellaneous.py
+@@ -340,7 +340,10 @@ def real_root(arg, n=None, evaluate=None):
+ class MinMaxBase(Expr, LatticeOp):
+     def __new__(cls, *args, **assumptions):
+         if not args:
+-            raise ValueError("The Max/Min functions must have arguments.")
++            # with no args, the "greatest" (or "least") element of the empty
++            # set is the identity of Max (or Min): see
++            # https://en.wikipedia.org/wiki/Empty_set#Extended_real_numbers
++            return cls.identity
+ 
+         args = (sympify(arg) for arg in args)
+ 
+@@ -666,6 +669,9 @@ class Max(MinMaxBase, Application):
+     It is named ``Max`` and not ``max`` to avoid conflicts
+     with the built-in function ``max``.
+ 
++    With no arguments, ``Max`` returns ``-oo`` (the identity of ``Max``),
++    consistent with the convention that the supremum of the empty set is
++    -oo: see https://en.wikipedia.org/wiki/Empty_set#Extended_real_numbers .
+ 
+     Examples
+     ========
+@@ -768,6 +774,10 @@ class Min(MinMaxBase, Application):
+     It is named ``Min`` and not ``min`` to avoid conflicts
+     with the built-in function ``min``.
+ 
++    With no arguments, ``Min`` returns ``oo`` (the identity of ``Min``),
++    consistent with the convention that the infimum of the empty set is
++    +oo: see https://en.wikipedia.org/wiki/Empty_set#Extended_real_numbers .
++
+     Examples
+     ========
+ 
+diff --git a/sympy/functions/elementary/tests/test_miscellaneous.py b/sympy/functions/elementary/tests/test_miscellaneous.py
+index 00dc9460..9181c64b 100644
+--- a/sympy/functions/elementary/tests/test_miscellaneous.py
++++ b/sympy/functions/elementary/tests/test_miscellaneous.py
+@@ -85,7 +85,7 @@ def test_Min():
+     assert Min(p, p_).func is Min
+ 
+     # lists
+-    raises(ValueError, lambda: Min())
++    assert Min() == oo
+     assert Min(x, y) == Min(y, x)
+     assert Min(x, y, z) == Min(z, y, x)
+     assert Min(x, Min(y, z)) == Min(z, y, x)
+@@ -156,7 +156,7 @@ def test_Max():
+ 
+     # lists
+ 
+-    raises(ValueError, lambda: Max())
++    assert Max() == -oo
+     assert Max(x, y) == Max(y, x)
+     assert Max(x, y, z) == Max(z, y, x)
+     assert Max(x, Max(y, z)) == Max(z, y, x)

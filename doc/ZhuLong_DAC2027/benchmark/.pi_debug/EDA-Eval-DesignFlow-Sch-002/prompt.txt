@@ -1,0 +1,66 @@
+# Scenario: an analog/full-chip QA engineer receives an emy2netlist-exported
+# SPICE netlist whose cellview definitions are annotated with export-header
+# comment blocks:
+#       * Library : <LIB>
+#       * Cell    : <CELL>
+#       * View    : <VIEW>
+# A `* Library : <LIB>` line sets the CURRENT library; it stays in effect for
+# every following `* Cell` / `* View` block until the next `* Library` line
+# (so multiple cells can share one library header). A `* Cell : <CELL>` line
+# sets the current cell; a `* View : <VIEW>` line declares the view of the
+# current (library, cell) cellview. The team also has a cell list file -- a set
+# of `* Cell    : <NAME>` lines naming the cells they need library information
+# for. The deliverable is a `lib_cell.list`: for each requested cell that has a
+# `schematic`-view cellview somewhere in the netlist, emit the pair
+# `<Library> <Cell>`.
+#
+# You are given TWO multi-line strings:
+#   `cell_list` -- lines of the form `* Cell    : <NAME>` (the requested cells;
+#                  may contain duplicates and may name cells not present in the
+#                  netlist). Blank lines are skipped.
+#   `netlist`   -- the SPICE netlist with `* Library` / `* Cell` / `* View`
+#                  export-header comment blocks interspersed with `.subckt` /
+#                  `.ends` / component lines and ordinary `*` comments. Blank
+#                  lines are skipped.
+#
+# HEADER RECOGNITION (strict): a line is an export header iff it starts with
+# `*`, and after stripping the leading `*` and trimming, the body starts with
+# EXACTLY one of the keywords `Library` / `Cell` / `View` (case-SENSITIVE,
+# capitalized as shown) and the very next non-space character after the keyword
+# is `:`. The value is everything after that `:`, trimmed. A line like
+# `* Library catalog : fake` is NOT a Library header (after `Library` comes
+# ` catalog`, not `:`); a line like `* Cellar : foo` is NOT a Cell header.
+# Any other `*`-comment line (e.g. `* subcircuit body`, `* Instance count`) is
+# NOT a header and is ignored.
+#
+# EMIT RULE: when a `* View : schematic` header is seen (view value exactly
+# `schematic`), and the current library and current cell are both non-empty,
+# and the current cell is one of the REQUESTED cells, emit the pair
+# `<currentLibrary> <currentCell>`. Pairs are deduplicated by the
+# (library, cell) combination, preserving first-occurrence order in the netlist.
+# A `* View : symbol` (or any non-`schematic` view) does NOT emit.
+#
+# Implement
+#     netlist_lib_cell_map {cell_list netlist}
+# which RETURNS a Tcl dict (via `dict create`) with EXACTLY these keys (counts
+# as decimal strings; pairs / unmapped / multi_lib_cells as Tcl lists of
+# strings):
+#
+#   pairs            -- list of "<Library> <Cell>" strings, netlist order,
+#                       deduped by (library, cell); ONLY requested cells.
+#   mapped_count     -- number of pairs emitted ([llength $pairs]).
+#   unmapped         -- list of UNIQUE requested cells (cell_list order) that
+#                       had NO schematic-view pair in the netlist.
+#   unmapped_count   -- [llength $unmapped].
+#   total_cell_list  -- number of UNIQUE cells requested in cell_list
+#                       (distinct names, first-occurrence order).
+#   multi_lib_cells  -- list of UNIQUE requested cells that mapped to MORE than
+#                       one DISTINCT library (cell_list order).
+#   verdict          -- "complete" if unmapped_count == 0, else "incomplete".
+#
+# Implement in Tcl using ONLY Tcl builtins (no external packages). The runtime
+# is Synopsys Custom WaveView Tcl (host=waveview). You do NOT need regexp --
+# use `string range`, `string trim`, `string trimleft`, `string index`,
+# `string length`, `split`, and `dict create`. Maintain a current-library /
+# current-cell state machine as you scan the netlist line by line; emit only on
+# a `schematic` View header. Dedup pairs with an array keyed by "$lib|$cell".

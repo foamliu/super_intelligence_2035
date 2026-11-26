@@ -1,0 +1,62 @@
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index 11031f2..1b4d9d3 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -346,6 +346,7 @@ class LogCaptureFixture:
+         self._item = item
+         # dict of log name -> log level
+         self._initial_logger_levels = {}  # type: Dict[Optional[str], int]
++        self._initial_handler_level = None  # type: Optional[int]
+ 
+     def _finalize(self) -> None:
+         """Finalizes the fixture.
+@@ -356,6 +357,9 @@ class LogCaptureFixture:
+         for logger_name, level in self._initial_logger_levels.items():
+             logger = logging.getLogger(logger_name)
+             logger.setLevel(level)
++        # restore handler level
++        if self._initial_handler_level is not None:
++            self.handler.setLevel(self._initial_handler_level)
+ 
+     @property
+     def handler(self) -> LogCaptureHandler:
+@@ -434,6 +438,9 @@ class LogCaptureFixture:
+         # save the original log-level to restore it during teardown
+         self._initial_logger_levels.setdefault(logger, logger_obj.level)
+         logger_obj.setLevel(level)
++        # save the original handler level to restore it during teardown
++        if self._initial_handler_level is None:
++            self._initial_handler_level = self.handler.level
+         self.handler.setLevel(level)
+ 
+     @contextmanager
+diff --git a/testing/logging/test_fixture.py b/testing/logging/test_fixture.py
+index da53033..0bc28d5 100644
+--- a/testing/logging/test_fixture.py
++++ b/testing/logging/test_fixture.py
+@@ -274,3 +274,25 @@ def test_log_report_captures_according_to_config_option_upon_failure(testdir):
+         ["*Print message*", "*INFO log message*", "*WARNING log message*"]
+     )
+     assert result.ret == 1
++
++
++def test_change_level_handler_undo(testdir):
++    """Ensure that 'set_level' restores the handler level after the end of the test"""
++    testdir.makepyfile(
++        """
++        import logging
++
++        def test1(caplog):
++            caplog.set_level(logging.INFO)
++            assert caplog.handler.level == logging.INFO
++            assert 0
++
++        def test2(caplog):
++            assert caplog.handler.level == logging.NOTSET
++            assert 0
++    """
++    )
++    result = testdir.runpytest()
++    result.stdout.fnmatch_lines(["*2 failed in *"])
++    result.stdout.no_fnmatch_line("*AssertionError*")
++

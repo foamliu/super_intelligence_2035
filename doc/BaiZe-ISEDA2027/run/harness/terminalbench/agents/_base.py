@@ -1,0 +1,572 @@
+"""Shared base class for Terminal-Bench 7-harness adapters.
+
+Common configuration:
+  - Model: glm-5.3-flash (was kimi-k2.6-cloud; switched 2026-11-07 audit)
+  - Gateway: http://agi-gateway.cxmt.com/v1 (/cloud/v1 returns 403 for glm53)
+  - API key: passed via env TB_API_KEY (never hardcoded; sourced from doc/keys.txt)
+  - All harnesses run headlessly inside Harbor Docker containers.
+
+Design principles (per BAIZE_HARNESS_TASK.md §②):
+  - Each adapter preserves the native tool loop of its harness.
+  - NO "one generic shell agent pretending to be 7".
+  - NO "just swap system prompt" — each adapter uses the harness's real CLI.
+"""
+
+from __future__ import annotations
+
+import os
+import shlex
+from pathlib import Path, PurePosixPath
+from typing import Any, ClassVar, override
+
+from harbor.agents.base import BaseAgent
+from harbor.agents.capabilities import AgentCapabilities
+from harbor.agents.installed.base import (
+    BaseInstalledAgent,
+    NonZeroAgentExitCodeError,
+)
+from harbor.agents.model_connection import (
+    ModelConnectionSpec,
+    ResolvedModelConnection,
+)
+from harbor.agents.options import Cli, Env, InstalledAgentOptions
+from harbor.environments.base import BaseEnvironment
+from harbor.models.agent.context import AgentContext
+
+# ---------------------------------------------------------------------------
+# Shared constants
+# ---------------------------------------------------------------------------
+
+#: Model name used across all 7 harnesses.
+#: 2026-11-07 audit: default changed kimi-k2.6-cloud → glm-5.3-flash.
+TB_MODEL = os.environ.get("TB_MODEL", "glm-5.3-flash")
+
+#: Gateway base URL.
+#: 2026-11-07 audit: /cloud/v1 returns 403 for glm-5.3-flash key → use /v1.
+TB_BASE_URL = os.environ.get("TB_BASE_URL", "http://agi-gateway.cxmt.com/v1")
+
+#: API key — MUST be set via env (sourced from doc/keys.txt at launch time).
+#: Adapters never hardcode the key; reports must not print it.
+TB_API_KEY = os.environ.get("TB_API_KEY", "")
+
+#: Dummy key for harnesses that route through a local proxy (proxy injects real key).
+TB_DUMMY_KEY = "dummy-key-for-proxy"
+
+#: Local gw_proxy base URL (OpenAI chat completions).  gw_proxy
+#: (harness_work/gw_proxy.py) sits in front of the harnesses and (1) rewrites
+#: ``role:"developer"`` -> ``role:"system"`` — the internal gateway only accepts
+#: system/user/assistant and 422s on ``developer`` (codex/opencode/hermes emit
+#: it for reasoning models); (2) injects the real gateway key from GW_API_KEY so
+#: harnesses hold only a dummy secret; (3) translates Anthropic /v1/messages ->
+#: OpenAI chat (for claude-code).  Mirrors the proven SWE-bench 7x300 driver
+#: (run_harness.py: CodexDriver/OpenCodeDriver/... all use DUMMY_KEY + 127.0.0.1).
+#: Started on the host by launch_tb_7way.sh; TB containers use network_mode:
+#: host, so 127.0.0.1:9090 in-container == the host proxy.
+TB_GW_PROXY_URL = os.environ.get("TB_GW_PROXY_URL", "http://127.0.0.1:9090/v1")
+
+#: gw_proxy host root (no /v1) — the Anthropic SDK appends /v1/messages itself.
+TB_GW_PROXY_BASE = os.environ.get("TB_GW_PROXY_BASE", "http://127.0.0.1:9090")
+
+#: gw_proxy_dsh base URL (port 9091) — additionally strips DeepSeek-specific
+#: params (reasoning_effort / thinking / dsh_plugin_packages / ...) that the
+#: gateway rejects, and caps max_tokens at 8192.
+TB_GW_DSH_URL = os.environ.get("TB_GW_DSH_URL", "http://127.0.0.1:9091/v1")
+
+#: Harbor agent working directory inside the container (where the task repo lives).
+TB_AGENT_CWD = PurePosixPath("/root")
+
+#: Node.js version for harnesses that need it (cline, pi, claude-code, opencode).
+TB_NODE_VERSION = "22"
+
+#: Timeout for agent execution inside the container (seconds).
+TB_AGENT_TIMEOUT = int(os.environ.get("TB_AGENT_TIMEOUT", "1800"))
+
+
+class TBBaseAgent(BaseInstalledAgent):
+    """Shared base for all 7 Terminal-Bench harness adapters.
+
+    Subclasses MUST override:
+      - ``name()`` — static method returning the harness identifier
+      - ``install()`` — install the harness CLI inside the Docker container
+      - ``run()`` — execute the harness CLI headlessly with the task instruction
+    """
+
+    #: All TB adapters share the same model connection spec.
+    # harbor 0.24.0 ModelConnectionSpec fields: default_provider, api_key_envs
+    # (tuple), base_url_envs (tuple), passthrough.  We use the "openai"
+    # provider (OpenAI-compatible gateway) with our custom env names so harbor
+    # can locate the key/URL; the adapter's run() also sets OPENAI_API_KEY /
+    # OPENAI_BASE_URL explicitly for the harness CLI.
+    MODEL_CONNECTION: ClassVar[ModelConnectionSpec | None] = ModelConnectionSpec(
+        default_provider="openai",
+        api_key_envs=("TB_API_KEY",),
+        base_url_envs=("TB_BASE_URL",),
+    )
+
+    capabilities: ClassVar[AgentCapabilities] = AgentCapabilities()
+
+    DEFAULT_SETUP_TIMEOUT_SEC: ClassVar[float] = 600.0
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._tb_model = TB_MODEL
+        self._tb_base_url = TB_BASE_URL
+        self._tb_api_key = TB_API_KEY or TB_DUMMY_KEY
+        # Stash extra_env from harbor (model credentials may be injected here)
+        # so subclasses can merge them into the harness CLI env if desired.
+        self._harbor_extra_env: dict[str, str] = kwargs.get("extra_env") or {}
+
+    @staticmethod
+    def _opts(options_cls: type, kwargs: dict[str, Any]):
+        """Validate adapter-specific options, ignoring harbor's extra kwargs.
+
+        Harbor passes ``logs_dir``, ``model_name``, ``extra_env``, ``logger``,
+        ``config``, ``prompt_template_path`` etc. to ``__init__``.  The pydantic
+        Options models forbid extras by default, so we filter to known fields
+        before validation.
+        """
+        if not kwargs:
+            return options_cls()
+        known = {
+            k: v for k, v in kwargs.items() if k in options_cls.model_fields
+        }
+        return options_cls.model_validate(known)
+
+    # -- Helpers available to subclasses ----------------------------------
+
+    def _env_for_harness(self, extra: dict[str, str] | None = None) -> dict[str, str]:
+        """Build the env dict that all harness CLIs need to reach the model.
+
+        The Docker overlay sets HTTP_PROXY/HTTPS_PROXY for apt/npm installs,
+        but the model gateway (agi-gateway.cxmt.com) is on the internal network
+        (10.128.246.174) and must NOT go through the MITM proxy — the proxy
+        corrupts streaming API responses.  We extend NO_PROXY to include the
+        gateway hostname so harness CLIs connect directly.
+        """
+        # Derive the gateway hostname from TB_BASE_URL for NO_PROXY.
+        gateway_host = self._tb_base_url
+        # Strip scheme
+        if "://" in gateway_host:
+            gateway_host = gateway_host.split("://", 1)[1]
+        # Strip path
+        gateway_host = gateway_host.split("/", 1)[0]
+        # Strip port
+        gateway_host = gateway_host.split(":", 1)[0]
+
+        no_proxy_val = (
+            f"localhost,127.0.0.1,10.239.*,172.19.*,{gateway_host}"
+        )
+
+        env: dict[str, str] = {
+            "OPENAI_API_KEY": self._tb_api_key,
+            "OPENAI_BASE_URL": self._tb_base_url,
+            "TB_MODEL": self._tb_model,
+            "TB_BASE_URL": self._tb_base_url,
+            # Bypass the MITM proxy for model API calls (gateway is internal).
+            "NO_PROXY": no_proxy_val,
+            "no_proxy": no_proxy_val,
+            # Disable telemetry / auto-update to keep runs reproducible
+            "DISABLE_TELEMETRY": "1",
+            "DISABLE_ERROR_REPORTING": "1",
+            "DISABLE_AUTOUPDATER": "1",
+            "DO_NOT_TRACK": "1",
+        }
+        if extra:
+            env.update(extra)
+        return env
+
+    async def _exec_in_container(
+        self,
+        environment: BaseEnvironment,
+        command: str,
+        *,
+        user: str | None = None,
+        timeout: float | None = None,
+    ) -> Any:
+        """Execute a command inside the Docker container and return the result."""
+        return await environment.exec(
+            command=command,
+            user=user,
+            timeout_sec=int(timeout or TB_AGENT_TIMEOUT),
+        )
+
+    async def _install_node(self, environment: BaseEnvironment) -> None:
+        """Make Node.js available inside the Docker container.
+
+        Priority 1 — use a pre-mounted Node.js at ``/opt/node`` (read-only
+        volume injected by the Docker overlay, e.g.
+        ``/tmp/node-preinstalled/node-v22...:/opt/node:ro``).  This avoids any
+        network download and is the fast path used by the TB overlay.
+
+        Priority 2 — fall back to an NVM install (aliyun mirror + MITM proxy
+        with ``-k``).  Used when no pre-mounted node is available.
+        """
+        # Fast path: overlay already mounted node at /opt/node.
+        check = await environment.exec(
+            command="test -x /opt/node/bin/node && echo yes || echo no"
+        )
+        if check.return_code == 0 and "yes" in (check.stdout or ""):
+            await self.exec_as_root(
+                environment,
+                command=(
+                    "ln -sf /opt/node/bin/node /usr/local/bin/node && "
+                    "ln -sf /opt/node/bin/npm /usr/local/bin/npm && "
+                    "ln -sf /opt/node/bin/npx /usr/local/bin/npx && "
+                    # /opt/node is mounted read-only, so npm install -g (which
+                    # writes to /opt/node/lib/node_modules) fails with ENOENT.
+                    # Redirect the global prefix to /usr/local (writable).
+                    "mkdir -p /usr/local/lib/node_modules && "
+                    "npm config set prefix /usr/local && "
+                    "node --version && npm --version"
+                ),
+            )
+            return
+
+        # Fallback: NVM install.
+        nvm_version = "v0.40.1"
+        nvm_url = (
+            f"https://raw.githubusercontent.com/nvm-sh/nvm/{nvm_version}/install.sh"
+        )
+        await self.exec_as_root(
+            environment,
+            command=(
+                f'export NVM_NODEJS_ORG_MIRROR="${{NVM_NODEJS_ORG_MIRROR:-https://mirrors.aliyun.com/nodejs-release}}" && '
+                f"curl -kfsSL {nvm_url} | bash && "
+                f". /root/.nvm/nvm.sh && "
+                f"nvm install {TB_NODE_VERSION} && "
+                f"nvm alias default {TB_NODE_VERSION} && "
+                f"nvm use default && "
+                f'ln -sf "$(which node)" /usr/local/bin/node && '
+                f'ln -sf "$(which npm)" /usr/local/bin/npm && '
+                f'ln -sf "$(which npx)" /usr/local/bin/npx'
+            ),
+        )
+
+    async def _ensure_python(self, environment: BaseEnvironment) -> None:
+        """Ensure a ``python3`` interpreter exists inside the container.
+
+        FIX (2026-11-14, R2464): several Terminal-Bench 2.1 task images are
+        built ``FROM ubuntu:24.04`` with NO python3 installed (compile-compcert,
+        configure-git-webserver, build-pov-ray, caffe-cifar-10,
+        adaptive-rejection-sampler — their Dockerfiles never
+        ``apt install python3``).  ``_ensure_pip`` and the hermes/deepseek
+        ``install()`` blocks all hardcode ``python3 ...``, so on such images
+        they die with ``bash: python3: command not found`` (exit 127) during
+        agent setup — a pure INFRA failure that must NOT be counted as model
+        ability (归因红线).
+
+        This method is a no-op when python3 (or python) is already on PATH.
+        Otherwise it installs python3 (+pip/+venv) via the image's package
+        manager.  The overlay injects http_proxy/https_proxy for the MITM
+        proxy, so apt/apk reach the public mirrors; HTTPS peer verification is
+        disabled to survive the proxy's TLS interception (same rationale as the
+        overlay's ``npm_config_strict_ssl=false`` / ``curl -k``).
+
+        Standard practice for "minimal container missing python3" in agent
+        benchmarks: install the interpreter via the base image's package
+        manager BEFORE bootstrapping any pip-installed agent CLI.
+
+        Web search findings (2026-11-14, via curl + proxy 172.19.92.25:13128):
+        1. GitHub Issues API search for laude-institute/terminal-bench with
+           "python" → 0 issues.  The framework does NOT document handling
+           missing python3 in task containers.
+        2. GitHub Issues API search for laude-institute/harbor with "python
+           install" → 0 issues.  Fetched harbor's ``installed/base.py``
+           (raw.githubusercontent.com/laude-institute/harbor/main/src/harbor/
+           agents/installed/base.py): ``BaseInstalledAgent`` has NO
+           ``_ensure_python`` — each adapter assumes python3 is present in the
+           task image.  Fetched ``installed/aider.py`` as reference: it does
+           ``pip install aider-chat`` assuming python3 exists (same assumption
+           our old code had).
+        3. Cross-reference with other routes (the most direct evidence):
+           The 4 affected tasks (compile-compcert / configure-git-webserver /
+           build-pov-ray / caffe-cifar-10) ran WITHOUT setup failure on
+           **Node.js/Bun-based agents** (cline-patched, pi, opencode) — these
+           agents install via npm/bun, not pip, so they never need python3.
+           Only **Python-based agents** (hermes, deepseek-harness) hit
+           ``python3: command not found`` on these bare ubuntu:24.04 images.
+           This confirms root cause = (a): the image truly has no python3.
+        4. Standard fix for missing python3 in minimal containers:
+           - apt-get (debian/ubuntu): ``apt-get install -y python3 python3-pip
+             python3-venv`` (implemented below)
+           - apk (alpine): ``apk add --no-cache python3 py3-pip`` (handled)
+           - dnf/yum (fedora/rhel): ``dnf install -y python3 python3-pip``
+             (handled)
+           References: Docker best practices for minimal images; PEP 668
+           (externally-managed-environment) addressed via
+           ``--break-system-packages`` in the pip install steps above.
+        """
+        probe = await environment.exec(
+            command=(
+                "if command -v python3 >/dev/null 2>&1; then echo PY3_OK; "
+                "elif command -v python >/dev/null 2>&1; then echo PY_OK; "
+                "else echo NO_PYTHON; fi"
+            )
+        )
+        if (probe.stdout or "").strip() in ("PY3_OK", "PY_OK"):
+            return  # interpreter already present — nothing to do
+
+        # No python at all — install via the image's package manager.
+        # apt-get (debian/ubuntu), apk (alpine), dnf/yum (fedora/rhel).
+        install_cmd = (
+            "export DEBIAN_FRONTEND=noninteractive "
+            "PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+            "if command -v apt-get >/dev/null 2>&1; then "
+            "  apt-get update -o Acquire::https::Verify-Peer=false 2>&1 | tail -3 || true ; "
+            "  apt-get install -y --no-install-recommends "
+            "    -o Acquire::https::Verify-Peer=false "
+            "    python3 python3-pip python3-venv 2>&1 | tail -5 || true ; "
+            "elif command -v apk >/dev/null 2>&1; then "
+            "  apk add --no-cache python3 py3-pip 2>&1 | tail -5 || true ; "
+            "elif command -v dnf >/dev/null 2>&1; then "
+            "  dnf install -y python3 python3-pip 2>&1 | tail -5 || true ; "
+            "elif command -v yum >/dev/null 2>&1; then "
+            "  yum install -y python3 python3-pip 2>&1 | tail -5 || true ; "
+            "else echo 'HERMES_NO_PKG_MANAGER: no apt-get/apk/dnf/yum to "
+            "install python3' >&2; exit 127; fi ; true"
+        )
+        await self.exec_as_root(environment, command=install_cmd, timeout_sec=600)
+
+        recheck = await environment.exec(
+            command=(
+                "command -v python3 >/dev/null 2>&1 && echo PY3_NOW_OK "
+                "|| echo PY3_STILL_MISSING"
+            )
+        )
+        if "PY3_NOW_OK" not in (recheck.stdout or ""):
+            raise RuntimeError(
+                f"Failed to install python3 into python-less task container: "
+                f"{(recheck.stdout or '')[:300]}"
+            )
+
+    async def _ensure_pip(self, environment: BaseEnvironment) -> None:
+        """Ensure ``python3 -m pip`` is usable inside the container.
+
+        FIX (2026-11-07, R1714): Terminal-Bench 4.0 task containers ship bare
+        ``python3`` with NO pip module (e.g. ``FROM oven/bun:1.2.15-debian`` +
+        ``apt install python3`` — no python3-pip / python3-venv).  Adapters that
+        install their harness via ``python3 -m pip install`` (hermes,
+        deepseek-harness) raised ``No module named pip`` →
+        ``NonZeroAgentExitCodeError`` (0 trials, 14s).
+
+        This method is a no-op when pip is already available (TB 2.0 images,
+        or any image with python3-pip).  When pip is missing it bootstraps via:
+          1. ``python3 -m ensurepip`` (fast, if the image bundles python3-venv)
+          2. ``get-pip.py`` (uploaded from host, uses the overlay's
+             ``PIP_INDEX_URL`` aliyun mirror through the MITM proxy).  get-pip.py
+             has a prepended ``ssl._create_default_https_context =
+             ssl._create_unverified_context`` so its urllib download survives the
+             proxy's TLS interception (same reason the overlay sets
+             ``npm_config_strict_ssl=false`` / ``curl -k``).
+        """
+        # FIX (2026-11-14, R2464): ensure a python interpreter exists FIRST.
+        # Many TB-2.1 images are FROM ubuntu:24.04 with no python3 at all, and
+        # every step below (plus the hermes/deepseek install() blocks) hardcodes
+        # `python3 ...` — without this we die with "python3: command not found"
+        # during agent setup (infra failure, NOT ability).
+        await self._ensure_python(environment)
+
+        probe = await environment.exec(
+            command="python3 -m pip --version 2>&1 || echo HERMES_PIP_MISSING"
+        )
+        if "HERMES_PIP_MISSING" not in (probe.stdout or ""):
+            return  # pip already present
+
+        # Try ensurepip first (some images bundle it via python3-venv).
+        # FIX (2026-11-14, R2466): prepend PATH — exec_as_root runs as root
+        # via `docker exec --user root`; on some TB images root's PATH is
+        # minimal and does NOT include /usr/bin where _ensure_python just
+        # installed python3.  Without this, `python3` → "command not found".
+        await self.exec_as_root(
+            environment,
+            command=(
+                "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+                "python3 -m ensurepip --upgrade 2>&1 | tail -3 || true"
+            ),
+            timeout_sec=120,
+        )
+        recheck = await environment.exec(
+            command="python3 -m pip --version 2>&1 || echo HERMES_PIP_MISSING"
+        )
+        if "HERMES_PIP_MISSING" not in (recheck.stdout or ""):
+            return  # ensurepip worked
+
+        # FIX (2026-11-15, R2499): ensurepip unavailable AND python3 is present
+        # but pip is missing.  Try installing python3-pip via the image's package
+        # manager BEFORE falling back to get-pip.py.  This is critical for
+        # containers with Python 3.9 (e.g. qemu-alpine-ssh, qemu-startup) where
+        # the bundled get-pip.py requires Python 3.10+ and fails with
+        # "This script does not work on Python 3.9".
+        # Standard practice: prefer the distro package manager for pip — it
+        # always installs a pip version compatible with the system Python.
+        # FIX (2026-11-15, R2510): The package-manager install may fail (e.g.
+        # Debian Bullseye's security mirror 404s on python3-pip packages).
+        # exec_as_root raises NonZeroAgentExitCodeError on ANY non-zero exit,
+        # which would abort before reaching the legacy get-pip.py fallback below.
+        # Append ``; true`` so the command always exits 0; the recheck below
+        # determines whether pip was actually installed, and if not we fall
+        # through to the legacy get-pip.py for Python 3.9.
+        # FIX (2026-11-15, R2510b): Install python3-distutils SEPARATELY from
+        # python3-pip — python3-pip may 404 on Bullseye's security mirror, and
+        # if both are in one apt-get install command the 404 aborts BOTH.
+        # python3-distutils is in the MAIN archive (not security) so it doesn't
+        # 404.  It's required because pip 26.x (from get-pip.py) imports
+        # distutils.cmd which is NOT present on Bullseye unless this package
+        # is installed.
+        await self.exec_as_root(
+            environment,
+            command=(
+                "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+                "if command -v apt-get >/dev/null 2>&1; then "
+                "  apt-get update -o Acquire::https::Verify-Peer=false 2>&1 | tail -3 || true ; "
+                "  apt-get install -y --no-install-recommends "
+                "    -o Acquire::https::Verify-Peer=false "
+                "    python3-distutils 2>&1 | tail -5 || true ; "
+                "  apt-get install -y --no-install-recommends "
+                "    -o Acquire::https::Verify-Peer=false "
+                "    python3-pip 2>&1 | tail -5 || true ; "
+                "elif command -v apk >/dev/null 2>&1; then "
+                "  apk add --no-cache py3-pip 2>&1 | tail -5 || true ; "
+                "elif command -v dnf >/dev/null 2>&1; then "
+                "  dnf install -y python3-pip 2>&1 | tail -5 || true ; "
+                "elif command -v yum >/dev/null 2>&1; then "
+                "  yum install -y python3-pip 2>&1 | tail -5 || true ; fi ; true"
+            ),
+            timeout_sec=300,
+        )
+        recheck_pkg = await environment.exec(
+            command="python3 -m pip --version 2>&1 || echo HERMES_PIP_MISSING"
+        )
+        if "HERMES_PIP_MISSING" not in (recheck_pkg.stdout or ""):
+            return  # package-manager install worked
+
+        # ensurepip + package manager both unavailable → bootstrap via get-pip.py
+        # (uploaded from host).  FIX (2026-11-15, R2499): the bundled get-pip.py
+        # requires Python 3.10+.  For Python 3.9 containers, download the legacy
+        # get-pip.py from https://bootstrap.pypa.io/pip/3.9/get-pip.py instead.
+        from pathlib import Path
+        import tempfile
+        getpip_src = Path(__file__).resolve().parent / "get-pip.py"
+
+        # Check Python version to choose the right get-pip.py
+        ver_probe = await environment.exec(
+            command="python3 -c 'import sys; print(sys.version_info[:2])'"
+        )
+        py_ver_str = (ver_probe.stdout or "").strip()
+        use_legacy_getpip = False
+        try:
+            major, minor = eval(py_ver_str)
+            if (major, minor) < (3, 10):
+                use_legacy_getpip = True
+        except Exception:
+            pass  # if we can't determine version, try the bundled one
+
+        if use_legacy_getpip:
+            # FIX (2026-11-15, R2510): The previous approach (curl to
+            # bootstrap.pypa.io from inside the container) failed because the
+            # MITM proxy's TLS interception breaks urllib/curl downloads even
+            # with -k.  Instead, upload the pre-downloaded legacy get-pip.py
+            # for Python 3.9 from the host (downloaded with the proxy on the
+            # host where it works).  The file has a prepended SSL bypass
+            # (ssl._create_default_https_context = ssl._create_unverified_context)
+            # so its internal urllib downloads survive the proxy's TLS
+            # interception — same approach as the bundled get-pip.py.
+            legacy_getpip = Path(__file__).resolve().parent / "get-pip-3.9.py"
+            if legacy_getpip.exists():
+                await environment.upload_file(legacy_getpip, "/tmp/get-pip.py")
+                # FIX (2026-11-15, R2510): ``|| true`` — get-pip.py may fail
+                # (e.g. network issues); the final check below determines if
+                # pip was actually installed and raises a clear error if not.
+                await self.exec_as_root(
+                    environment,
+                    command=(
+                        "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+                        "python3 /tmp/get-pip.py "
+                        "--break-system-packages "
+                        "--trusted-host mirrors.aliyun.com 2>&1 | tail -8 || true"
+                    ),
+                    timeout_sec=300,
+                )
+                final = await environment.exec(
+                    command="python3 -m pip --version 2>&1 "
+                    "|| echo HERMES_PIP_STILL_MISSING"
+                )
+                if "HERMES_PIP_STILL_MISSING" in (final.stdout or ""):
+                    raise RuntimeError(
+                        f"Failed to bootstrap pip (legacy get-pip.py for Py3.9): "
+                        f"{(final.stdout or '')[:300]}"
+                    )
+                return  # legacy get-pip.py worked
+
+            # Pre-downloaded file not found → fall through to bundled get-pip.py
+            # (will likely fail on 3.9, but the error message will be clear)
+
+        if not getpip_src.exists():
+            raise RuntimeError(
+                f"get-pip.py not found at {getpip_src}; cannot bootstrap "
+                f"pip in pip-less TB4 container"
+            )
+        with tempfile.NamedTemporaryFile(
+            mode="wb", suffix="_get-pip.py", delete=False
+        ) as tf:
+            tf.write(getpip_src.read_bytes())
+            local_getpip = Path(tf.name)
+        await environment.upload_file(local_getpip, "/tmp/get-pip.py")
+        # FIX (2026-11-15, R2510): ``|| true`` — on Python 3.9 the bundled
+        # get-pip.py exits non-zero ("This script does not work on Python 3.9").
+        # Without this, exec_as_root raises NonZeroAgentExitCodeError before
+        # the final pip check below can produce a clear error message.
+        await self.exec_as_root(
+            environment,
+            command=(
+                "export PATH=/usr/local/bin:/usr/bin:/bin:$PATH && "
+                "python3 /tmp/get-pip.py "
+                "--break-system-packages "
+                "--trusted-host mirrors.aliyun.com 2>&1 | tail -8 || true"
+            ),
+            timeout_sec=300,
+        )
+        final = await environment.exec(
+            command="python3 -m pip --version 2>&1 "
+            "|| echo HERMES_PIP_STILL_MISSING"
+        )
+        if "HERMES_PIP_STILL_MISSING" in (final.stdout or ""):
+            raise RuntimeError(
+                f"Failed to bootstrap pip in TB4 container: "
+                f"{(final.stdout or '')[:300]}"
+            )
+
+    async def _install_bun(self, environment: BaseEnvironment) -> None:
+        """Install Bun runtime (needed by cline, pi).
+
+        Uses proxy env vars set by the Docker overlay; ``-k`` skips TLS
+        verification for the MITM proxy.
+        """
+        await self.exec_as_agent(
+            environment,
+            command="curl -kfsSL https://bun.sh/install | bash",
+        )
+
+    # -- Abstract methods (subclasses must implement) ---------------------
+
+    @staticmethod
+    @override
+    def name() -> str:
+        raise NotImplementedError("Subclass must implement name()")
+
+    @override
+    def version(self) -> str | None:
+        return self._version or "skeleton-0.1.0"
+
+    @override
+    async def install(self, environment: BaseEnvironment) -> None:
+        raise NotImplementedError("Subclass must implement install()")
+
+    @override
+    async def run(
+        self,
+        instruction: str,
+        environment: BaseEnvironment,
+        context: AgentContext,
+    ) -> None:
+        raise NotImplementedError("Subclass must implement run()")

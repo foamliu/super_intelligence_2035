@@ -1,0 +1,62 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index ce5ac00..11dc08c 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,3 +1,15 @@
++Version 5.2 (unreleased)
++========================
++
++Bug Fixes
++---------
++
++astropy.io.ascii
++^^^^^^^^^^^^^^^^
++
++- Fix writing HTML tables to respect the ``formats`` argument passed to
++  ``Table.write`` or ``astropy.io.ascii.write``. [#13459]
++
+ Version 5.1 (2022-05-23)
+ ========================
+ 
+diff --git a/astropy/io/ascii/html.py b/astropy/io/ascii/html.py
+index 266cf22..038932b 100644
+--- a/astropy/io/ascii/html.py
++++ b/astropy/io/ascii/html.py
+@@ -354,6 +354,8 @@ class HTML(core.BaseReader):
+             self.data.fill_values = [self.data.fill_values]
+ 
+         self.data._set_fill_values(cols)
++        self.data.cols = cols
++        self.data._set_col_formats()
+ 
+         lines = []
+ 
+diff --git a/astropy/io/ascii/tests/test_html.py b/astropy/io/ascii/tests/test_html.py
+index 0515efa..46f0f64 100644
+--- a/astropy/io/ascii/tests/test_html.py
++++ b/astropy/io/ascii/tests/test_html.py
+@@ -671,6 +671,24 @@ def test_write_table_html_fill_values_masked():
+     assert buffer_output.getvalue() == buffer_expected.getvalue()
+ 
+ 
++@pytest.mark.skipif('not HAS_BS4')
++def test_write_table_html_formats():
++    """
++    Test to make sure that the HTML writer respects the ``formats`` argument.
++    """
++    buffer_output = StringIO()
++    t = Table([[1.23875234858e-24, 3.2348748432e-15], [2, 4]], names=('a', 'b'))
++    ascii.write(t, buffer_output, formats={'a': '{:.2e}'}, format='html')
++
++    # The 'a' column should be formatted with 2 decimal places in exponential
++    # notation while the 'b' column is unchanged.
++    out = buffer_output.getvalue()
++    assert '<td>1.24e-24</td>' in out
++    assert '<td>3.23e-15</td>' in out
++    assert '<td>2</td>' in out
++    assert '<td>4</td>' in out
++
++
+ def test_multicolumn_table_html_fill_values():
+     """
+     Test to make sure that the HTML writer writes multidimensional

@@ -1,0 +1,18 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index 822968ef56..dc708f44f4 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -1299,6 +1299,13 @@ class When(Expression):
+         template_params = extra_context
+         sql_params = []
+         condition_sql, condition_params = compiler.compile(self.condition)
++        if not condition_sql:
++            # In some cases, e.g. When(~Q(pk__in=[])), the condition can be
++            # compiled to an empty SQL string because it matches everything.
++            # A boolean expression that's always true is used in this case
++            # because an empty condition is invalid SQL in a CASE WHEN
++            # clause.
++            condition_sql, condition_params = compiler.compile(Value(True))
+         template_params["condition"] = condition_sql
+         sql_params.extend(condition_params)
+         result_sql, result_params = compiler.compile(self.result)

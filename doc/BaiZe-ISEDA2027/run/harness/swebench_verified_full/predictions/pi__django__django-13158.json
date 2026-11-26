@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13158",
+    "model_name_or_path": "pi-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py\nindex 686e75c979..c4c5b4bc86 100644\n--- a/django/db/models/sql/compiler.py\n+++ b/django/db/models/sql/compiler.py\n@@ -431,6 +431,8 @@ class SQLCompiler:\n         return sql, params\n \n     def get_combinator_sql(self, combinator, all):\n+        if self.query.is_empty():\n+            raise EmptyResultSet\n         features = self.connection.features\n         compilers = [\n             query.get_compiler(self.using, self.connection)\ndiff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py\nindex 9c6fd474ca..2c0aa30fb9 100644\n--- a/tests/queries/test_qs_combinators.py\n+++ b/tests/queries/test_qs_combinators.py\n@@ -99,6 +99,13 @@ class QuerySetSetOperationTests(TestCase):\n         self.assertEqual(len(qs2.union(qs2)), 0)\n         self.assertEqual(len(qs3.union(qs3)), 0)\n \n+    def test_none_on_combined_queries(self):\n+        qs1 = Number.objects.filter(num__lte=1)\n+        qs2 = Number.objects.filter(num__gte=2, num__lte=3)\n+        self.assertEqual(len(qs1.union(qs2).none()), 0)\n+        self.assertEqual(len(qs1.intersection(qs2).none()), 0)\n+        self.assertEqual(len(qs1.difference(qs2).none()), 0)\n+\n     def test_limits(self):\n         qs1 = Number.objects.all()\n         qs2 = Number.objects.all()\n"
+  }
+]

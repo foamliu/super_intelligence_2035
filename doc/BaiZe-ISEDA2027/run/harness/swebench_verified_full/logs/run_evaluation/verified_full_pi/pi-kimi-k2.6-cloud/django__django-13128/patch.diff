@@ -1,0 +1,49 @@
+diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py
+index d91365829..d23083c36 100644
+--- a/django/db/models/expressions.py
++++ b/django/db/models/expressions.py
+@@ -480,6 +480,19 @@ class CombinedExpression(SQLiteNumericMixin, Expression):
+         c.rhs = c.rhs.resolve_expression(query, allow_joins, reuse, summarize, for_save)
+         return c
+ 
++    def _resolve_output_field(self):
++        if self.connector == self.SUB:
++            lhs = self.lhs._output_field_or_none
++            rhs = self.rhs._output_field_or_none
++            if lhs is not None and rhs is not None:
++                lhs_type = lhs.get_internal_type()
++                rhs_type = rhs.get_internal_type()
++                datetime_fields = {'DateField', 'DateTimeField', 'TimeField'}
++                if lhs_type in datetime_fields and lhs_type == rhs_type:
++                    return fields.DurationField()
++        return super()._resolve_output_field()
++
++
+ 
+ class DurationExpression(CombinedExpression):
+     def compile(self, side, compiler, connection):
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index 72f95f019..052bbeb82 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1626,6 +1626,20 @@ class FTimeDeltaTests(TestCase):
+         )
+         for e in qs:
+             self.assertEqual(e.delta, delta)
++    @skipUnlessDBFeature('supports_temporal_subtraction')
++    def test_datetime_subtraction_without_expression_wrapper(self):
++        qs = Experiment.objects.annotate(
++            delta=F('end') - F('start') + Value(datetime.timedelta(), output_field=DurationField())
++        )
++        for e in qs:
++            self.assertEqual(e.delta, e.end - e.start)
++    @skipUnlessDBFeature('supports_temporal_subtraction')
++    def test_datetime_subtraction_without_expression_wrapper_simple(self):
++        qs = Experiment.objects.annotate(delta=F('end') - F('start'))
++        for e in qs:
++            self.assertEqual(e.delta, e.end - e.start)
++
++
+ 
+     def test_duration_with_datetime(self):
+         # Exclude e1 which has very high precision so we can test this on all

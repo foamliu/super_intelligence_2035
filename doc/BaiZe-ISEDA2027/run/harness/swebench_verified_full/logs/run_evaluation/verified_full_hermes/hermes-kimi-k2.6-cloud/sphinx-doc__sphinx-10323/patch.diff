@@ -1,0 +1,52 @@
+diff --git a/sphinx/directives/code.py b/sphinx/directives/code.py
+index dc44ed3..9437fe9 100644
+--- a/sphinx/directives/code.py
++++ b/sphinx/directives/code.py
+@@ -224,9 +224,9 @@ class LiteralIncludeReader:
+                        self.start_filter,
+                        self.end_filter,
+                        self.lines_filter,
++                       self.dedent_filter,
+                        self.prepend_filter,
+-                       self.append_filter,
+-                       self.dedent_filter]
++                       self.append_filter]
+             lines = self.read_file(self.filename, location=location)
+             for func in filters:
+                 lines = func(lines, location=location)
+diff --git a/tests/test_directive_code.py b/tests/test_directive_code.py
+index 98a9aa8..b6a27f4 100644
+--- a/tests/test_directive_code.py
++++ b/tests/test_directive_code.py
+@@ -216,6 +216,31 @@ def test_LiteralIncludeReader_prepend(literal_inc_path):
+                        "Sphinx\n")
+ 
+ 
++@pytest.mark.xfail(os.name != 'posix', reason="Not working on windows")
++def test_LiteralIncludeReader_prepend_dedent(literal_inc_path):
++    # dedent is applied to the included file, not to the prepended/appended lines
++    options = {'lines': '9-11', 'dedent': 2, 'prepend': 'Hello', 'append': 'Sphinx'}
++    reader = LiteralIncludeReader(literal_inc_path, options, DUMMY_CONFIG)
++    content, lines = reader.read()
++    assert content == ("Hello\n"
++                       "  def baz():\n"
++                       "      pass\n"
++                       "\n"
++                       "Sphinx\n")
++
++
++@pytest.mark.xfail(os.name != 'posix', reason="Not working on windows")
++def test_LiteralIncludeReader_prepend_dedent_with_leading_whitespace(literal_inc_path):
++    # prepend with leading whitespace is preserved when dedent is used
++    options = {'lines': '9-11', 'dedent': 2, 'prepend': '  Hello'}
++    reader = LiteralIncludeReader(literal_inc_path, options, DUMMY_CONFIG)
++    content, lines = reader.read()
++    assert content == ("  Hello\n"
++                       "  def baz():\n"
++                       "      pass\n"
++                       "\n")
++
++
+ @pytest.mark.xfail(os.name != 'posix', reason="Not working on windows")
+ def test_LiteralIncludeReader_dedent(literal_inc_path):
+     # dedent: 2

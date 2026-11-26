@@ -1,0 +1,35 @@
+diff --git a/sklearn/base.py b/sklearn/base.py
+index 56ffb18..3499827 100644
+--- a/sklearn/base.py
++++ b/sklearn/base.py
+@@ -48,7 +48,7 @@ def clone(estimator, safe=True):
+     # XXX: not handling dictionaries
+     if estimator_type in (list, tuple, set, frozenset):
+         return estimator_type([clone(e, safe=safe) for e in estimator])
+-    elif not hasattr(estimator, 'get_params'):
++    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):
+         if not safe:
+             return copy.deepcopy(estimator)
+         else:
+diff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py
+index ebcb389..b611c18 100644
+--- a/sklearn/tests/test_base.py
++++ b/sklearn/tests/test_base.py
+@@ -105,6 +105,17 @@ def test_clone():
+     assert selector is not new_selector
+ 
+ 
++def test_clone_class_as_param():
++    # Checks that clone works when the estimator contains a class as a
++    # parameter, e.g. an estimator type instead of an estimator instance.
++    from sklearn.preprocessing import StandardScaler
++
++    clf = StandardScaler(with_mean=StandardScaler)
++    clf2 = clone(clf)
++
++    assert_true(clf2.with_mean is StandardScaler)
++
++
+ def test_clone_2():
+     # Tests that clone doesn't copy everything.
+     # We first create an estimator, give it an own attribute, and

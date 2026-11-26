@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-16100",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py\nindex 5f07a4208..3fc54a8aa 100644\n--- a/django/contrib/admin/options.py\n+++ b/django/contrib/admin/options.py\n@@ -1912,6 +1912,10 @@ class ModelAdmin(BaseModelAdmin):\n \n     @csrf_protect_m\n     def changelist_view(self, request, extra_context=None):\n+        with transaction.atomic(using=router.db_for_write(self.model)):\n+            return self._changelist_view(request, extra_context)\n+\n+    def _changelist_view(self, request, extra_context=None):\n         \"\"\"\n         The 'change list' admin view for this model.\n         \"\"\"\n"
+  }
+]

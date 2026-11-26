@@ -1,0 +1,40 @@
+diff --git a/src/_pytest/pathlib.py b/src/_pytest/pathlib.py
+index f0bdb14..64c7fec 100644
+--- a/src/_pytest/pathlib.py
++++ b/src/_pytest/pathlib.py
+@@ -558,7 +558,7 @@ def visit(
+     entries = sorted(os.scandir(path), key=lambda entry: entry.name)
+     yield from entries
+     for entry in entries:
+-        if entry.is_dir(follow_symlinks=False) and recurse(entry):
++        if entry.is_dir(follow_symlinks=True) and recurse(entry):
+             yield from visit(entry.path, recurse)
+ 
+ 
+diff --git a/testing/test_collection.py b/testing/test_collection.py
+index 841aa35..b3c218b 100644
+--- a/testing/test_collection.py
++++ b/testing/test_collection.py
+@@ -1256,6 +1256,22 @@ def test_collect_sub_with_symlinks(use_pkg, testdir):
+     )
+ 
+ 
++def test_collect_symlinked_directory(testdir):
++    """Collection follows symlinked directories (#8100)."""
++    real = testdir.mkdir("real")
++    real.join("test_real.py").write("def test_real(): pass")
++    sub = testdir.mkdir("sub")
++    symlink = sub.join("link_to_real")
++    symlink_or_skip(str(real), symlink, target_is_directory=True)
++    result = testdir.runpytest("-v", str(sub))
++    result.stdout.fnmatch_lines(
++        [
++            "sub/link_to_real/test_real.py::test_real PASSED*",
++            "*1 passed in*",
++        ]
++    )
++
++
+ def test_collector_respects_tbstyle(testdir):
+     p1 = testdir.makepyfile("assert 0")
+     result = testdir.runpytest(p1, "--tb=native")

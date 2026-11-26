@@ -1,0 +1,65 @@
+diff --git a/django/core/management/base.py b/django/core/management/base.py
+index abc6f79a15..a13b2add8d 100644
+--- a/django/core/management/base.py
++++ b/django/core/management/base.py
+@@ -57,6 +57,23 @@ class CommandParser(ArgumentParser):
+         self.called_from_command_line = called_from_command_line
+         super().__init__(**kwargs)
+ 
++    def add_subparsers(self, **kwargs):
++        parser_class = kwargs.setdefault("parser_class", type(self))
++        if issubclass(parser_class, CommandParser):
++
++            class _CommandParser(parser_class):
++                def __init__(inner_self, **inner_kwargs):
++                    inner_kwargs.setdefault(
++                        "called_from_command_line", self.called_from_command_line
++                    )
++                    inner_kwargs.setdefault(
++                        "missing_args_message", self.missing_args_message
++                    )
++                    super().__init__(**inner_kwargs)
++
++            kwargs["parser_class"] = _CommandParser
++        return super().add_subparsers(**kwargs)
++
+     def parse_args(self, args=None, namespace=None):
+         # Catch missing argument for a better error message
+         if self.missing_args_message and not (
+diff --git a/tests/user_commands/management/commands/subparser_missing_args.py b/tests/user_commands/management/commands/subparser_missing_args.py
+new file mode 100644
+index 0000000000..757f8d3a27
+--- /dev/null
++++ b/tests/user_commands/management/commands/subparser_missing_args.py
+@@ -0,0 +1,11 @@
++from django.core.management.base import BaseCommand
++
++
++class Command(BaseCommand):
++    def add_arguments(self, parser):
++        subparsers = parser.add_subparsers(required=True)
++        create = subparsers.add_parser("create")
++        create.add_argument("name")
++
++    def handle(self, *args, **options):
++        pass
+diff --git a/tests/user_commands/tests.py b/tests/user_commands/tests.py
+index e40632385c..0145e8d24a 100644
+--- a/tests/user_commands/tests.py
++++ b/tests/user_commands/tests.py
+@@ -406,6 +406,15 @@ class CommandTests(SimpleTestCase):
+         with self.assertRaisesMessage(CommandError, msg):
+             management.call_command("subparser_dest", subcommand="foo", bar=12)
+ 
++    def test_subparser_missing_args(self):
++        """
++        Missing arguments on subparsers should produce CommandError
++        (not a stack trace) when called programmatically.
++        """
++        msg = "Error: the following arguments are required: name"
++        with self.assertRaisesMessage(CommandError, msg):
++            management.call_command("subparser_missing_args", "create")
++
+     def test_create_parser_kwargs(self):
+         """BaseCommand.create_parser() passes kwargs to CommandParser."""
+         epilog = "some epilog text"

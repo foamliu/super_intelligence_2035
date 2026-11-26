@@ -1,0 +1,67 @@
+diff --git a/shim/sitecustomize.py b/shim/sitecustomize.py
+new file mode 100644
+index 00000000..caa1cd1c
+--- /dev/null
++++ b/shim/sitecustomize.py
+@@ -0,0 +1,12 @@
++import numpy as np
++for alias in ('int','float','bool','object','complex'):
++    if not hasattr(np, alias):
++        setattr(np, alias, getattr(__builtins__, alias, getattr(np, alias+'64', None)))
++import scipy.optimize.linesearch as _ls
++if not hasattr(_ls, 'line_search_wolfe2'):
++    import scipy.optimize._linesearch as _real_ls
++    for _name in ('line_search_wolfe2','line_search_wolfe1','line_search_armijo'):
++        _fn = getattr(_real_ls, _name, None)
++        if _fn is not None:
++            setattr(_ls, _name, _fn)
++
+diff --git a/sklearn/svm/base.py b/sklearn/svm/base.py
+index 64cebe83..88054345 100644
+--- a/sklearn/svm/base.py
++++ b/sklearn/svm/base.py
+@@ -287,8 +287,11 @@ class BaseLibSVM(BaseEstimator, metaclass=ABCMeta):
+         n_SV = self.support_vectors_.shape[0]
+ 
+         dual_coef_indices = np.tile(np.arange(n_SV), n_class)
+-        dual_coef_indptr = np.arange(0, dual_coef_indices.size + 1,
+-                                     dual_coef_indices.size / n_class)
++        if n_SV == 0:
++            dual_coef_indptr = np.zeros(n_class + 1, dtype=np.intp)
++        else:
++            dual_coef_indptr = np.arange(0, dual_coef_indices.size + 1,
++                                         dual_coef_indices.size / n_class)
+         self.dual_coef_ = sp.csr_matrix(
+             (dual_coef_data, dual_coef_indices, dual_coef_indptr),
+             (n_class, n_SV))
+diff --git a/sklearn/svm/tests/test_sparse.py b/sklearn/svm/tests/test_sparse.py
+index 7cf6e8af..49732b8b 100644
+--- a/sklearn/svm/tests/test_sparse.py
++++ b/sklearn/svm/tests/test_sparse.py
+@@ -360,3 +360,26 @@ def test_consistent_proba():
+     with ignore_warnings(category=ConvergenceWarning):
+         proba_2 = a.fit(X, Y).predict_proba(X)
+     assert_array_almost_equal(proba_1, proba_2)
++
++
++def test_sparse_empty_support_vectors():
++    # Check that SVM with sparse input and empty support vectors does not raise
++    # a ZeroDivisionError
++    x_train = np.array([[0, 1, 0, 0],
++                        [0, 0, 0, 1],
++                        [0, 0, 1, 0],
++                        [0, 0, 0, 1]])
++    y_train = np.array([0.04, 0.04, 0.10, 0.16])
++    model = svm.SVR(C=316.227766017, cache_size=200, coef0=0.0, degree=3,
++                    epsilon=0.1, gamma=1.0, kernel='linear', max_iter=15000,
++                    shrinking=True, tol=0.001, verbose=False)
++    # Dense fit
++    model.fit(x_train, y_train)
++    assert model.support_vectors_.shape[0] == 0
++    assert model.dual_coef_.shape == (1, 0)
++
++    # Sparse fit - should not raise
++    model.fit(sparse.csr_matrix(x_train), y_train)
++    assert model.support_vectors_.shape[0] == 0
++    assert model.dual_coef_.shape == (1, 0)
++    assert sparse.issparse(model.dual_coef_)

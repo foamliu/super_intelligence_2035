@@ -1,0 +1,124 @@
+diff --git a/sklearn/feature_selection/_sequential.py b/sklearn/feature_selection/_sequential.py
+index e983c55d..7e2c483d 100644
+--- a/sklearn/feature_selection/_sequential.py
++++ b/sklearn/feature_selection/_sequential.py
+@@ -8,12 +8,12 @@ import numpy as np
+ import warnings
+ 
+ from ._base import SelectorMixin
+-from ..base import BaseEstimator, MetaEstimatorMixin, clone
++from ..base import BaseEstimator, MetaEstimatorMixin, clone, is_classifier
+ from ..utils._param_validation import HasMethods, Hidden, Interval, StrOptions
+ from ..utils._param_validation import RealNotInt
+ from ..utils._tags import _safe_tags
+ from ..utils.validation import check_is_fitted
+-from ..model_selection import cross_val_score
++from ..model_selection import check_cv, cross_val_score
+ from ..metrics import get_scorer_names
+ 
+ 
+@@ -273,9 +273,18 @@ class SequentialFeatureSelector(SelectorMixin, MetaEstimatorMixin, BaseEstimator
+ 
+         old_score = -np.inf
+         is_auto_select = self.tol is not None and self.n_features_to_select == "auto"
++
++        # The cross-validation splits are computed once and reused at each
++        # iteration of the feature selection procedure. In particular, this
++        # makes it possible to pass a generator of splits, e.g. the output of
++        # `cv.split(X, y, groups)`, that can only be consumed once.
++        cv = list(
++            check_cv(self.cv, y, classifier=is_classifier(cloned_estimator)).split(X, y)
++        )
++
+         for _ in range(n_iterations):
+             new_feature_idx, new_score = self._get_best_new_feature_score(
+-                cloned_estimator, X, y, current_mask
++                cloned_estimator, X, y, current_mask, cv
+             )
+             if is_auto_select and ((new_score - old_score) < self.tol):
+                 break
+@@ -291,7 +300,7 @@ class SequentialFeatureSelector(SelectorMixin, MetaEstimatorMixin, BaseEstimator
+ 
+         return self
+ 
+-    def _get_best_new_feature_score(self, estimator, X, y, current_mask):
++    def _get_best_new_feature_score(self, estimator, X, y, current_mask, cv):
+         # Return the best new feature and its score to add to the current_mask,
+         # i.e. return the best new feature and its score to add (resp. remove)
+         # when doing forward selection (resp. backward selection).
+@@ -309,7 +318,7 @@ class SequentialFeatureSelector(SelectorMixin, MetaEstimatorMixin, BaseEstimator
+                 estimator,
+                 X_new,
+                 y,
+-                cv=self.cv,
++                cv=cv,
+                 scoring=self.scoring,
+                 n_jobs=self.n_jobs,
+             ).mean()
+diff --git a/sklearn/feature_selection/tests/test_sequential.py b/sklearn/feature_selection/tests/test_sequential.py
+index f6451a36..f42f5941 100644
+--- a/sklearn/feature_selection/tests/test_sequential.py
++++ b/sklearn/feature_selection/tests/test_sequential.py
+@@ -6,11 +6,12 @@ from numpy.testing import assert_array_equal
+ from sklearn.preprocessing import StandardScaler
+ from sklearn.pipeline import make_pipeline
+ from sklearn.feature_selection import SequentialFeatureSelector
+-from sklearn.datasets import make_regression, make_blobs
++from sklearn.datasets import make_classification, make_regression, make_blobs
+ from sklearn.linear_model import LinearRegression
+ from sklearn.ensemble import HistGradientBoostingRegressor
+-from sklearn.model_selection import cross_val_score
++from sklearn.model_selection import LeaveOneGroupOut, cross_val_score
+ from sklearn.cluster import KMeans
++from sklearn.neighbors import KNeighborsClassifier
+ 
+ 
+ def test_bad_n_features_to_select():
+@@ -185,6 +186,47 @@ def test_sanity(seed, direction, n_features_to_select, expected_selected_feature
+     assert_array_equal(sfs.get_support(indices=True), expected_selected_features)
+ 
+ 
++@pytest.mark.parametrize("direction", ("forward", "backward"))
++def test_cv_generator(direction):
++    """Check that passing a generator of cv splits is supported.
++
++    Non-regression test for
++    https://github.com/scikit-learn/scikit-learn/issues/25967
++    """
++    X, y = make_classification(n_samples=100, n_features=10, random_state=0)
++
++    groups = np.zeros_like(y, dtype=int)
++    groups[y.size // 2 :] = 1
++
++    cv = LeaveOneGroupOut()
++    clf = KNeighborsClassifier(n_neighbors=5)
++
++    # A generator of splits, as produced by `cv.split(...)`, can only be
++    # consumed once while the splits are needed at each iteration of the
++    # feature selection procedure.
++    sfs_generator = SequentialFeatureSelector(
++        clf,
++        n_features_to_select=5,
++        direction=direction,
++        scoring="accuracy",
++        cv=cv.split(X, y, groups=groups),
++    )
++    sfs_generator.fit(X, y)
++    assert sfs_generator.get_support().sum() == 5
++
++    # The selection matches the one obtained with the equivalent list of
++    # splits.
++    sfs_list = SequentialFeatureSelector(
++        clf,
++        n_features_to_select=5,
++        direction=direction,
++        scoring="accuracy",
++        cv=list(cv.split(X, y, groups=groups)),
++    )
++    sfs_list.fit(X, y)
++    assert_array_equal(sfs_generator.get_support(), sfs_list.get_support())
++
++
+ @pytest.mark.filterwarnings("ignore:Leaving `n_features_to_select` to ")
+ def test_sparse_support():
+     # Make sure sparse data is supported

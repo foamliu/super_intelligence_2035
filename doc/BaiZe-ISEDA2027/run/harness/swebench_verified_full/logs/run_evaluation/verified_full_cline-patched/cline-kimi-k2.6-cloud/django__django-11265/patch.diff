@@ -1,0 +1,77 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index d69c24419..7cd933fdd 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1666,6 +1666,7 @@ class Query(BaseExpression):
+             filter_expr = (filter_lhs, OuterRef(filter_rhs.name))
+         # Generate the inner query.
+         query = Query(self.model)
++        query._filtered_relations = self._filtered_relations.copy()
+         query.add_filter(filter_expr)
+         query.clear_ordering(True)
+         # Try to have as simple as possible subquery -> trim leading joins from
+@@ -2160,7 +2161,23 @@ class Query(BaseExpression):
+         # But the first entry in the query's FROM clause must not be a JOIN.
+         for table in self.alias_map:
+             if self.alias_refcount[table] > 0:
+-                self.alias_map[table] = BaseTable(self.alias_map[table].table_name, table)
++                join = self.alias_map[table]
++                if isinstance(join, Join) and join.filtered_relation is not None:
++                    alias_refcount_before = self.alias_refcount.copy()
++                    where = self.build_filtered_relation_q(
++                        join.filtered_relation.condition,
++                        reuse=set(join.filtered_relation.path),
++                    )
++                    self.where.add(where, AND)
++                    # Restore refcounts to their state before building the condition,
++                    # since build_filtered_relation_q increases refcounts for reused
++                    # aliases but we don't want them to affect FROM clause generation.
++                    for alias in list(self.alias_refcount):
++                        if alias in alias_refcount_before:
++                            self.alias_refcount[alias] = alias_refcount_before[alias]
++                        else:
++                            del self.alias_refcount[alias]
++                self.alias_map[table] = BaseTable(join.table_name, table)
+                 break
+         self.set_select([f.get_col(select_alias) for f in select_fields])
+         return trimmed_prefix, contains_louter
+diff --git a/tests/filtered_relation/tests.py b/tests/filtered_relation/tests.py
+index 5e85dff16..ddc099b44 100644
+--- a/tests/filtered_relation/tests.py
++++ b/tests/filtered_relation/tests.py
+@@ -98,6 +98,35 @@ class FilteredRelationTests(TestCase):
+             [self.author1]
+         )
+ 
++    def test_with_join_exclude(self):
++        self.assertSequenceEqual(
++            Author.objects.annotate(
++                book_alice=FilteredRelation('book', condition=Q(book__title__iexact='poem by alice')),
++            ).exclude(book_alice__isnull=False),
++            [self.author2]
++        )
++
++    def test_with_join_exclude_negated_q(self):
++        self.assertSequenceEqual(
++            Author.objects.annotate(
++                book_alice=FilteredRelation('book', condition=Q(book__title__iexact='poem by alice')),
++            ).filter(~Q(book_alice__isnull=False)),
++            [self.author2]
++        )
++
++    def test_with_join_and_complex_condition_exclude(self):
++        self.assertSequenceEqual(
++            Author.objects.annotate(
++                book_alice=FilteredRelation(
++                    'book', condition=Q(
++                        Q(book__title__iexact='poem by alice') |
++                        Q(book__state=Book.RENTED)
++                    ),
++                ),
++            ).exclude(book_alice__isnull=False),
++            [self.author2]
++        )
++
+     def test_with_join_and_complex_condition(self):
+         self.assertSequenceEqual(
+             Author.objects.annotate(

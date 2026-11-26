@@ -1,0 +1,27 @@
+diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py
+index 7eaf9a46..b6b9ad91 100644
+--- a/sklearn/pipeline.py
++++ b/sklearn/pipeline.py
+@@ -199,6 +199,10 @@ class Pipeline(_BaseComposition):
+             if trans is not None and trans != 'passthrough':
+                 yield idx, name, trans
+ 
++    def __len__(self):
++        """Returns the length of the Pipeline"""
++        return len(self.steps)
++
+     def __getitem__(self, ind):
+         """Returns a sub-pipeline or a single esimtator in the pipeline
+ 
+diff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py
+index 8d6fe8f7..ec99d03f 100644
+--- a/sklearn/tests/test_pipeline.py
++++ b/sklearn/tests/test_pipeline.py
+@@ -533,6 +533,7 @@ def test_pipeline_slice():
+     pipe = Pipeline([('transf1', Transf()),
+                      ('transf2', Transf()),
+                      ('clf', FitParamT())])
++    assert 3 == len(pipe)
+     pipe2 = pipe[:-1]
+     assert isinstance(pipe2, Pipeline)
+     assert pipe2.steps == pipe.steps[:-1]

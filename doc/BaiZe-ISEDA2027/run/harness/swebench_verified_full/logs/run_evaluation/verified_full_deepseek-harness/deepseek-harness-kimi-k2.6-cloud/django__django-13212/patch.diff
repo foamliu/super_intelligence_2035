@@ -1,0 +1,210 @@
+diff --git a/django/core/validators.py b/django/core/validators.py
+index 84b4f31ec..33102e7b9 100644
+--- a/django/core/validators.py
++++ b/django/core/validators.py
+@@ -48,7 +48,7 @@ class RegexValidator:
+         regex_matches = self.regex.search(str(value))
+         invalid_input = regex_matches if self.inverse_match else not regex_matches
+         if invalid_input:
+-            raise ValidationError(self.message, code=self.code)
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+     def __eq__(self, other):
+         return (
+@@ -100,11 +100,11 @@ class URLValidator(RegexValidator):
+ 
+     def __call__(self, value):
+         if not isinstance(value, str):
+-            raise ValidationError(self.message, code=self.code)
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+         # Check if the scheme is valid.
+         scheme = value.split('://')[0].lower()
+         if scheme not in self.schemes:
+-            raise ValidationError(self.message, code=self.code)
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+         # Then check full URL
+         try:
+@@ -115,7 +115,7 @@ class URLValidator(RegexValidator):
+                 try:
+                     scheme, netloc, path, query, fragment = urlsplit(value)
+                 except ValueError:  # for example, "Invalid IPv6 URL"
+-                    raise ValidationError(self.message, code=self.code)
++                    raise ValidationError(self.message, code=self.code, params={'value': value})
+                 try:
+                     netloc = punycode(netloc)  # IDN -> ACE
+                 except UnicodeError:  # invalid domain part
+@@ -132,14 +132,14 @@ class URLValidator(RegexValidator):
+                 try:
+                     validate_ipv6_address(potential_ip)
+                 except ValidationError:
+-                    raise ValidationError(self.message, code=self.code)
++                    raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+         # The maximum length of a full host name is 253 characters per RFC 1034
+         # section 3.1. It's defined to be 255 bytes or less, but this includes
+         # one byte for the length of the name and one byte for the trailing dot
+         # that's used to indicate absolute names in DNS.
+         if len(urlsplit(value).netloc) > 253:
+-            raise ValidationError(self.message, code=self.code)
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+ 
+ integer_validator = RegexValidator(
+@@ -208,12 +208,12 @@ class EmailValidator:
+ 
+     def __call__(self, value):
+         if not value or '@' not in value:
+-            raise ValidationError(self.message, code=self.code)
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+         user_part, domain_part = value.rsplit('@', 1)
+ 
+         if not self.user_regex.match(user_part):
+-            raise ValidationError(self.message, code=self.code)
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+         if (domain_part not in self.domain_allowlist and
+                 not self.validate_domain_part(domain_part)):
+@@ -225,7 +225,7 @@ class EmailValidator:
+             else:
+                 if self.validate_domain_part(domain_part):
+                     return
+-            raise ValidationError(self.message, code=self.code)
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+     def validate_domain_part(self, domain_part):
+         if self.domain_regex.match(domain_part):
+@@ -272,12 +272,12 @@ def validate_ipv4_address(value):
+     try:
+         ipaddress.IPv4Address(value)
+     except ValueError:
+-        raise ValidationError(_('Enter a valid IPv4 address.'), code='invalid')
++        raise ValidationError(_('Enter a valid IPv4 address.'), code='invalid', params={'value': value})
+ 
+ 
+ def validate_ipv6_address(value):
+     if not is_valid_ipv6_address(value):
+-        raise ValidationError(_('Enter a valid IPv6 address.'), code='invalid')
++        raise ValidationError(_('Enter a valid IPv6 address.'), code='invalid', params={'value': value})
+ 
+ 
+ def validate_ipv46_address(value):
+@@ -287,7 +287,7 @@ def validate_ipv46_address(value):
+         try:
+             validate_ipv6_address(value)
+         except ValidationError:
+-            raise ValidationError(_('Enter a valid IPv4 or IPv6 address.'), code='invalid')
++            raise ValidationError(_('Enter a valid IPv4 or IPv6 address.'), code='invalid', params={'value': value})
+ 
+ 
+ ip_address_validator_map = {
+@@ -438,7 +438,7 @@ class DecimalValidator:
+     def __call__(self, value):
+         digit_tuple, exponent = value.as_tuple()[1:]
+         if exponent in {'F', 'n', 'N'}:
+-            raise ValidationError(self.messages['invalid'])
++            raise ValidationError(self.messages['invalid'], params={'value': value})
+         if exponent >= 0:
+             # A positive exponent adds that many trailing zeros.
+             digits = len(digit_tuple) + exponent
+@@ -550,7 +550,7 @@ class ProhibitNullCharactersValidator:
+ 
+     def __call__(self, value):
+         if '\x00' in str(value):
+-            raise ValidationError(self.message, code=self.code)
++            raise ValidationError(self.message, code=self.code, params={'value': value})
+ 
+     def __eq__(self, other):
+         return (
+diff --git a/tests/validators/tests.py b/tests/validators/tests.py
+index d6d013c02..5332a65ec 100644
+--- a/tests/validators/tests.py
++++ b/tests/validators/tests.py
+@@ -550,3 +550,86 @@ class DeprecationTests(SimpleTestCase):
+         )
+         with self.assertRaisesMessage(RemovedInDjango41Warning, msg):
+             validator.domain_whitelist = ['mydomain']
++
++
++class TestValueInValidationError(SimpleTestCase):
++    """Test that built-in validators include the provided value in ValidationError."""
++
++    def test_regex_validator_includes_value(self):
++        v = RegexValidator(regex='^[0-9]+\$', message='%(value)s is not a number.')
++        with self.assertRaisesMessage(ValidationError, 'abc is not a number.'):
++            v('abc')
++
++    def test_email_validator_includes_value(self):
++        v = EmailValidator(message='%(value)s is not a valid email.')
++        with self.assertRaisesMessage(ValidationError, 'blah is not a valid email.'):
++            v('blah')
++
++    def test_url_validator_includes_value(self):
++        v = URLValidator(message='%(value)s is not a valid URL.')
++        with self.assertRaisesMessage(ValidationError, 'not_a_url is not a valid URL.'):
++            v('not_a_url')
++
++    def test_validate_ipv4_address_includes_value(self):
++        v = validate_ipv4_address
++        with self.assertRaises(ValidationError) as cm:
++            v('not_ip')
++        self.assertEqual(cm.exception.params['value'], 'not_ip')
++
++    def test_validate_ipv6_address_includes_value(self):
++        v = validate_ipv6_address
++        with self.assertRaises(ValidationError) as cm:
++            v('not_ipv6')
++        self.assertEqual(cm.exception.params['value'], 'not_ipv6')
++
++    def test_validate_ipv46_address_includes_value(self):
++        v = validate_ipv46_address
++        with self.assertRaises(ValidationError) as cm:
++            v('not_ip')
++        self.assertEqual(cm.exception.params['value'], 'not_ip')
++
++    def test_prohibit_null_characters_validator_includes_value(self):
++        v = ProhibitNullCharactersValidator(message='%(value)s contains null characters.')
++        with self.assertRaisesMessage(ValidationError, 'ab\\x00cd contains null characters.'):
++            v('ab\x00cd')
++
++    def test_decimal_validator_includes_value(self):
++        v = DecimalValidator(max_digits=2, decimal_places=2)
++        with self.assertRaises(ValidationError) as cm:
++            v(Decimal('NaN'))
++        self.assertEqual(str(cm.exception.params['value']), 'NaN')
++
++    def test_int_list_validator_includes_value(self):
++        v = int_list_validator(message='%(value)s is not a valid integer list.')
++        with self.assertRaisesMessage(ValidationError, 'a,b,c is not a valid integer list.'):
++            v('a,b,c')
++
++    def test_integer_validator_includes_value(self):
++        v = validate_integer
++        with self.assertRaises(ValidationError) as cm:
++            v('abc')
++        self.assertEqual(cm.exception.params['value'], 'abc')
++
++    def test_validate_slug_includes_value(self):
++        v = validate_slug
++        with self.assertRaises(ValidationError) as cm:
++            v('invalid slug')
++        self.assertEqual(cm.exception.params['value'], 'invalid slug')
++
++    def test_validate_unicode_slug_includes_value(self):
++        v = validate_unicode_slug
++        with self.assertRaises(ValidationError) as cm:
++            v('invalid slug')
++        self.assertEqual(cm.exception.params['value'], 'invalid slug')
++
++    def test_validate_comma_separated_integer_list_includes_value(self):
++        v = validate_comma_separated_integer_list
++        with self.assertRaises(ValidationError) as cm:
++            v('a,b,c')
++        self.assertEqual(cm.exception.params['value'], 'a,b,c')
++
++    def test_file_extension_validator_includes_value(self):
++        v = FileExtensionValidator(allowed_extensions=['txt'])
++        with self.assertRaises(ValidationError) as cm:
++            v(ContentFile('contents', name='file.jpg'))
++        self.assertEqual(cm.exception.params['extension'], 'jpg')

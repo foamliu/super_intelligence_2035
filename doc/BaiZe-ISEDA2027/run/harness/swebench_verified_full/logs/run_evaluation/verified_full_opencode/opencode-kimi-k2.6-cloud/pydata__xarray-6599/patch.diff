@@ -1,0 +1,67 @@
+diff --git a/xarray/core/computation.py b/xarray/core/computation.py
+index 823cbe0..007664e 100644
+--- a/xarray/core/computation.py
++++ b/xarray/core/computation.py
+@@ -1909,7 +1909,7 @@ def polyval(
+ 
+     # using Horner's method
+     # https://en.wikipedia.org/wiki/Horner%27s_method
+-    res = coeffs.isel({degree_dim: max_deg}, drop=True) + zeros_like(coord)
++    res = zeros_like(coord) + coeffs.isel({degree_dim: max_deg}, drop=True)
+     for deg in range(max_deg - 1, -1, -1):
+         res *= coord
+         res += coeffs.isel({degree_dim: deg}, drop=True)
+@@ -1933,7 +1933,7 @@ def _ensure_numeric(data: T_Xarray) -> T_Xarray:
+     from .dataset import Dataset
+ 
+     def to_floatable(x: DataArray) -> DataArray:
+-        if x.dtype.kind in "mM":
++        if x.dtype.kind == "M":
+             return x.copy(
+                 data=datetime_to_numeric(
+                     x.data,
+@@ -1941,6 +1941,14 @@ def _ensure_numeric(data: T_Xarray) -> T_Xarray:
+                     datetime_unit="ns",
+                 ),
+             )
++        elif x.dtype.kind == "m":
++            return x.copy(
++                data=datetime_to_numeric(
++                    x.data,
++                    offset=np.timedelta64(0, "ns"),
++                    datetime_unit="ns",
++                ),
++            )
+         return x
+ 
+     if isinstance(data, Dataset):
+diff --git a/xarray/tests/test_computation.py b/xarray/tests/test_computation.py
+index 737ed82..7e61d58 100644
+--- a/xarray/tests/test_computation.py
++++ b/xarray/tests/test_computation.py
+@@ -1951,7 +1951,7 @@ def test_where_attrs() -> None:
+             xr.DataArray(
+                 [[0, 1], [0, 1]], dims=("y", "degree"), coords={"degree": [0, 1]}
+             ),
+-            xr.DataArray([[1, 2, 3], [1, 2, 3]], dims=("y", "x")),
++            xr.DataArray([[1, 1], [2, 2], [3, 3]], dims=("x", "y")),
+             id="broadcast-x",
+         ),
+         pytest.param(
+@@ -2010,6 +2010,16 @@ def test_where_attrs() -> None:
+             ),
+             id="datetime",
+         ),
++        pytest.param(
++            xr.DataArray(pd.to_timedelta(["0s", "1s", "2s"]), dims="x"),
++            xr.DataArray([0, 1], dims="degree", coords={"degree": [0, 1]}),
++            xr.DataArray(
++                [0, 1e9, 2e9],
++                dims="x",
++                coords={"x": pd.to_timedelta(["0s", "1s", "2s"])},
++            ),
++            id="timedelta",
++        ),
+     ],
+ )
+ def test_polyval(

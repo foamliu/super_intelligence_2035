@@ -1,0 +1,17 @@
+{
+  "device_type": "nmos",
+  "vdd": 1.8,
+  "vds_lin": 0.1,
+  "vds_sat": 1.8,
+  "vgs_start": 0.0,
+  "vgs_stop": 1.8,
+  "vgs_step": 0.0125,
+  "iref_per_wl": 1.2e-7,
+  "spec": {
+    "vth_elr_min": 0.45,
+    "vth_elr_max": 0.72,
+    "vth_cc_min": 0.45,
+    "vth_cc_max": 0.72
+  },
+  "accept_if_in_window": true
+}

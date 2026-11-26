@@ -1,0 +1,31 @@
+diff --git a/sympy/utilities/lambdify.py b/sympy/utilities/lambdify.py
+index da67263b..e13822f3 100644
+--- a/sympy/utilities/lambdify.py
++++ b/sympy/utilities/lambdify.py
+@@ -961,7 +961,10 @@ def _recursive_to_string(doprint, arg):
+             left, right = "()"
+         else:
+             raise NotImplementedError("unhandled type: %s, %s" % (type(arg), arg))
+-        return left +', '.join(_recursive_to_string(doprint, e) for e in arg) + right
++        inner = ', '.join(_recursive_to_string(doprint, e) for e in arg)
++        if isinstance(arg, tuple) and len(arg) == 1:
++            inner += ','
++        return left + inner + right
+     elif isinstance(arg, str):
+         return arg
+     else:
+diff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py
+index 023c2fb5..66625ac3 100644
+--- a/sympy/utilities/tests/test_lambdify.py
++++ b/sympy/utilities/tests/test_lambdify.py
+@@ -1193,6 +1193,10 @@ def test_issue_14941():
+     f2 = lambdify([x, y], (y, x), 'sympy')
+     assert f2(2, 3) == (3, 2)
+ 
++    # test single-element tuple (issue 23278)
++    f2b = lambdify([], tuple([1]))
++    assert f2b() == (1,)
++
+     # test list
+     f3 = lambdify([x, y], [y, x], 'sympy')
+     assert f3(2, 3) == [3, 2]

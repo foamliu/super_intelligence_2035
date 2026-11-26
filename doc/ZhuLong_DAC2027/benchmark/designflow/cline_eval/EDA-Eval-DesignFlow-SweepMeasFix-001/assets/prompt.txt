@@ -1,0 +1,1 @@
+/rundata/drcoa/V0/simdir/finesim/workdir/johnl/simulation/drcoa_digital_T_IsmTop_schematic_ALPS    submit_ismosc_corner_meas.sh   summarize_meas.sh     利用这两个脚本完成superon_sweep_20261021_133105/的数据收集   你只能进行微小改动 主要利用现有的脚本能力 改动后确认diff改动必要性
