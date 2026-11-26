@@ -260,3 +260,27 @@ P1/P2/P3/P4 全闭合后首轮回归 spot-check。确认 r1274/r1275 判分逻�
 **影响范围**：仅 shard A 2 个 P1 pilot case 的 check_live 探针（+ test 字段同步）。🚫 未改 check_static 断言/strictness/prompt/assets/hidden/case JSON test 外字段/别 shard。RtlDesign 两 case 原本即确定性（API 存在性探针）无需改。
 
 **教训**：L2.live "graceful path" 策略（依赖 `aeGetCurDesign()` 返回 None）在 .75 sandbox 不可靠——init 成功即加载默认 emyLiveProbe。后续 P2 check_live 凡依赖 design 状态的应改用 strategy-1 结构探针（API 名/签名/源码引用），或显式开一个真实 design 再判。NetCellMap-001/SvIntegrateGen-001（r1275 P2）走真 vcs/vlogan elaborate 不依赖 aeGetCurDesign，不受此问题影响。
+
+## §r1292 P2 T2 FloatPinToTop-001 自决：stays L1 (infra-honest L1-boundary)
+
+**日期**：2026-11-26 r1292
+
+**背景**：P2 T2 清单余 FloatPinToTop-001（pyAether-AST-proxy，自决）。本轮核查决定是否提升到 L2.live。
+
+**核查**：
+1. check.py 条件 (d) 是 AST/源码 proxy：仅校验候选源码**含字符串** `ae.dbGetMemName`/`ae.dbCreateLabel`/`aeOpenDesign`/`ae.dbGetInstByName`（substring match），不实际调用。check.py 顶部 L2 note 明确声明「condition (d) is the AST/source proxy (the judge env has no ae module and cannot reach .75). Mirrors CTLEAether-001 infra-honest L1-boundary grading.」
+2. 参考解 `cxmt_floatAllPinToTop_ref.py` 的 `_pyaether_pin_float()`（guarded `import ae as _ae`）引用 `_ae.aeOpenDesign`/`_ae.dbGetPinShapes`/`_ae.dbGetInstByName`/`_ae.dbGetMemName`/`_ae.dbFindSigByName`/`_ae.dbGetNameNumBit`/`_ae.dbCreateLabel`，仅在 `--aether` 模式调用；JSON CLI 模式（check.py 实跑路径）不触发。
+3. **.75 pyAether 沙盒实测探测**（EDASession.run_code('pyAether')）：
+   - 模块名是 `pyAether`（`import ae` → ModuleNotFoundError；`import pyAether` → OK）
+   - `pyAether` 实有属性：`aeOpenDesign`/`dbGetMemName`/`dbFindSigByName`/`dbGetNameNumBit`/`aeGetCurDesign`/`emyInitAether`/`aeDesignIsSchematic`
+   - `pyAether` **缺失**属性：`dbCreateLabel`/`dbGetInstByName`/`dbGetPinShapes`
+4. 关键结论：check.py 条件 (d) **要求**的 4 个 API 中有 2 个（`dbCreateLabel`/`dbGetInstByName`）在真实 pyAether **不存在**；参考解的 `_pyaether_pin_float()` 引用这 3 个不存在的 API —— 该 pyAether 代码路径在真实沙盒**永远无法成功执行**（一旦真调即 AttributeError）。整个 pyAether 路径是装饰性的，真实计算在 JSON CLI 模式完成。
+
+**决策**：FloatPinToTop-001 **保持 judge_layers=["L0","L1"]，不加 check_live**。
+- 理由 1（不可加 API-存在性探针）：参考解自身引用不存在的 API（`dbCreateLabel`/`dbGetInstByName`），任何「候选引用的 ae.* API 必须在真实 pyAether 存在」的 check_live 都会让**参考解 FAIL** —— 判分器无牙地 fail 正解。
+- 理由 2（弱探针无牙）：仅检「候选模块在 pyAether 沙盒可 import + 函数签名」的弱探针不增加 teeth —— 候选 `import ae as _ae` 是 guarded（沙盒里 `ae` 不存在 → `_ae=None`，不影响 import），且函数签名校验已由 check_static 的 AST 条件 (l)(m) 完成。弱 check_live 等于重复 L1，违反「check_live 必须有牙」。
+- 理由 3（infra-honest 声明）：check.py 顶部已显式声明本 case 是「infra-honest L1-boundary grading」，与 CTLEAether-001 同类——候选的 pyAether 路径无法在真实沙盒跑通，故判分诚实地停在 L1，不伪造 L2。
+
+**影响**：P2 T2 闭合（2/2：FmRtl2RtlDemo-001 → L2.live r1291；FloatPinToTop-001 → 留 L1 本轮自决）。shard A L2.live case 数不变（8），L0L1 case 数不变（577）。🚫 未改 case/check.py/negative/assets/hidden/case JSON。
+
+**教训**：P2「自决」case 必须先探测真实沙盒 API 可用性——若参考解自身引用的 API 在真实 EDA 工具不存在，则该 case 是 infra-honest L1，强行加 L2.live 要么无牙（弱探针）要么误杀正解（强探针）。后续 P2 候选先跑 `hasattr(pyAether, api)` 探测再决定。
