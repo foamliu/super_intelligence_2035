@@ -3,16 +3,16 @@
 > 判分契约改造（check_static/check_live 拆分）shard A 跟踪文档。
 > 指南：`/nasdata/app.e0031982/code/EDA-Flow-Bench/reports/CONTRACT_REFORM_GUIDE.md`
 
-## 状态总览（2026-11-26 r1274）
+## 状态总览（2026-11-26 r1275）
 
 | 优先级 | 状态 | 计数 | 说明 |
 |:--|:--|:--|:--|
 | P1 pilot 12 (A 份额) | ✅ DONE | 4/4 L2.live PASS | r1270 基础 + r1274 re-verify（FindPcells ref-fix + 3 stale selftest fix） |
-| P2 真-EDA L2.live | 🔄 重开 | 2 T1 | r1273 P4 复核新发现 2 真-T1（NetCellMap-001/SvIntegrateGen-001，check.py 已直调 vcs 但 r1272 漏扫），待改 L2.live |
+| P2 真-EDA L2.live | ✅ DONE | 2/2 T1 | r1275: NetCellMap-001 + SvIntegrateGen-001 拆 check_static/check_live + route .75 real vcs/vlogan，2/2 L2.live PASS on .75 |
 | P3 mock 声明 judge_layers | ✅ DONE | 585/585 | r1272 收口最后 3 条 |
 | P4 实跑适合性分析 | ✅ DONE | 122 A-owned | r1273: T1=2 / T2=2 / T3=117（+1 已 L2.live） |
 
-**CONTRACT 心跳**：`P1=4/4 L2.live PASS ✅r1274 · P2=2 T1 待改(NetCellMap/SvIntegrateGen, check.py 已本地跑 vcs green, 改造=契约对齐) · P3=585/585 · P4=122 分析完(T1=2/T2=2/T3=117)`
+**CONTRACT 心跳**：`P1=4/4 L2.live PASS ✅r1274 · P2=2/2 T1 L2.live PASS ✅r1275(NetCellMap-001/SvIntegrateGen-001 route .75 real vcs/vlogan) · P3=585/585 · P4=122 分析完(T1=2/T2=2/T3=117)`
 
 ## P1 — pilot 12 case（A 份额 4/4 DONE）
 
@@ -52,11 +52,40 @@ r1271 关键词扫出 3 条「真-EDA subprocess」候选（含 vcs/verdi/calibr
 
 **r1273 P4 本质问复核重开 P2**：r1272 漏扫根因 = P2 关键字扫 cases/A/ JSON test 字段路径，而 2 条真-T1（NetCellMap-001/SvIntegrateGen-001）的 check.py 在 `reference/<id>/check.py`（路径解析不一致漏扫）。P4 全量复核 122 A-owned 发现这 2 条 check.py **已直调 vcs/vlogan 真二进制且为 required 条件**（非 optional），当前 judge_layers=[L0,L1] 误标 mock。详见 §P4 T1 清单。
 
-**P2 待办（按 P4 T1 清单推进）**：
-1. NetCellMap-001：拆 check_static(text conds) + check_live(cond j vcs route .75) + 声明 judge_layers=[L0,L1,L2.live]
-2. SvIntegrateGen-001：拆 check_static + check_live(cond h,i vlogan+vcs route .75) + 声明 judge_layers=[L0,L1,L2.live]
+**P2 待办（按 P4 T1 清单推进）**：~~1. NetCellMap-001~~ / ~~2. SvIntegrateGen-001~~ — **r1275 全部 DONE**，见下方 r1275 记录。
 
 注：2 条 check.py 当前已在本地 judge 环境直调 vcs 且 Lite green，改造核心 = 契约对齐 + vcs route .75 增鲁棒性，非修判分缺陷。T2（FloatPinToTop/FmRtl2RtlDemo）自决，T3 不碰。
+
+### r1275 — P2 收口（2/2 T1 L2.live PASS on .75）
+
+**改造目标**：把 NetCellMap-001 / SvIntegrateGen-001 的真-VCS 判分（原 check.py 内 `shutil.which("vcs")` 守卫 + 本地 mock 回退）route 到 .75 真 VCS（`/apps/synopsys/SRB/vcs/R-2020.12/bin/`），拆 check_static/check_live + 声明 judge_layers=[L0,L1,L2.live]。非侵入包装：原 check 函数体一字不动 → `_check_static_impl`。
+
+**手法**（两 case 一致）：
+1. `def check(...)` → `def _check_static_impl(...)`（函数体逐字保留，含原 in-process faithful vcs/vlogan mock 作 L1 fallback）。
+2. `check_static(deliverable, workdir)` 包装：try/except 收口为三元组 `(ok, errors, fail_stage)`，AssertionError → L1.semantic。
+3. `check_live(deliverable, workdir, sess)` 新增：upload submit.zip + 必需 assets/hidden 到 .75，跑真 vcs/vlogan，断言 rc==0 + 无 Error-[ / simv 产。
+4. `check(deliverable, workdir)` 兼容包装：调 check_static 返 bool。
+5. case JSON：`metadata.judge_layers=["L0","L1","L2.live"]` + `test` 字段与 reference/check.py sha 同步。
+6. negative_selftest.py：改用 check_static 三元组（旧式 `except AssertionError` 期望 stale，契约后 check() 返 bool 不 raise ⇒ 全 UNEXPECTED-PASS；同 r1274 pilot 修法）。
+
+**NetCellMap-001 check_live**：upload submit.zip + simlib_base.sv（本地 ASSETS 读）→ .75 unzip → 对每个 B_MODS 在独立子目录跑 `vcs -full64 -sverilog +define+CDLYW=1 -timescale=1ns/1ps -top <mod> simlib_base.sv netlist_converted.v`，断言 rc==0 且 log 无 `Error-[`。条件 (j) 的 L2 实跑化。
+
+**SvIntegrateGen-001 check_live**：upload submit.zip + hidden B (b_sram.v/b_top.sv/b_if.sv) + ASCII helper `svint_livechk.py` → .75 unzip candidate → helper 跑 candidate 产 b_out.sv → 与 _check_static_impl 同构的 TB splice（decls + inst block 注入 b_top）→ 真 `vlogan -sverilog` + `vcs -full64 -sverilog` → 断言 rc==0 + simv 产。条件 (h)/(i) 的 L2 实跑化。
+
+**.75 可达性 + VCS 自验（r1275）**：eda_flow MCP open_session 秒级；`which vcs vlogan` → `/apps/synopsys/SRB/vcs/R-2020.12/bin/{vcs,vlogan}`；smoke test `vcs -top tiny tiny.v` RC=0 + simv 产（license OK）。
+
+**自验 ground truth（r1275）**：
+
+| case_id | check_static(ref) | check_live(ref) | negative_selftest | teeth test |
+|:--|:--|:--|:--|:--|
+| NetCellMap-001 | PASS ✅ | PASS ✅ (.75 real VCS, 6 B modules) | 5 negs ALL FAIL, 4 distinct {b,e,h,i} ✅ | ✅ mock-PASS / live-FAIL：注入 `.NONEXIST_PORT_` 端口连接（mock 只查 cell 名解析不查端口名 ⇒ 静默过；真 vcs `Error: fewer port connections than module definition` ⇒ FAIL） |
+| SvIntegrateGen-001 | PASS ✅ | PASS ✅ (.75 real vlogan+vcs, simv 产) | 5 negs ALL FAIL, 4 distinct {c,d,e,m} ✅ | (NetCellMap teeth 已证 check_live 能抓 mock 漏；本 case mock 同构，不再重复) |
+
+**纪律**：
+- 🚫 未改 check.py 断言逻辑/断言数/strictness/prompt/assets/hidden
+- 🚫 未碰别 shard 文件、未碰 jsonl
+- ✅ 只动：2 个 reference/check.py（rename check→_check_static_impl + 加 check_static/check_live/check 包装 + SvIntegrateGen 加 ASSETS 常量）+ 2 个 negative_selftest.py（改用 check_static 三元组）+ 2 个 case JSON（judge_layers + test 字段同步）
+- EFB commit pending
 
 ## P3 — mock case 声明 judge_layers（585/585 DONE）
 
