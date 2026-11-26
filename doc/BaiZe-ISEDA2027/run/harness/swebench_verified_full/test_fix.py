@@ -1,33 +1,42 @@
-import django
-from django.db import models
-from django.db.models.fields import CharField
-from django.test import TestCase
+import numpy as np
+import matplotlib.colors as colors
 
-# Setup Django
-django.setup()
+# Test the fix with all masked array
+data = np.full((5, 5), -1, dtype=np.float64)
+mask = np.ones_like(data, dtype=bool)  # All masked
+resampled_masked = np.ma.masked_array(data, mask)
 
-# Create a custom lookup
-class CustomExact(models.lookups.Exact):
-    lookup_name = 'custom_exact'
+# Create LogNorm with vmin=1, vmax=1e20
+norm = colors.LogNorm(vmin=1, vmax=1e20)
+print(f"vmin={norm.vmin}, vmax={norm.vmax}")
 
-# Test the fix
-print("Testing lookup unregister cache clearing...")
+# This used to raise ValueError("Invalid vmin or vmax")?
+try:
+    result = norm(resampled_masked)
+    print("✓ No error raised!")
+    print(f"Result is all masked: {result.mask.all()}")
+except ValueError as e:
+    print(f"✗ Error raised: {e}")
 
-# Register the lookup
-CharField.register_lookup(CustomExact)
+# Test with some valid values
+data = np.full((5, 5), -1, dtype=np.float64)
+data[0:2, :] = 1e20
+mask = data < 1
+resampled_masked = np.ma.masked_array(data, mask)
+try:
+    result = norm(resampled_masked)
+    print("\n✓ No error raised with partial valid values!")
+    print(f"Result shape: {result.shape}")
+    print(f"Valid values: {result[~result.mask]}")
+except ValueError as e:
+    print(f"\n✗ Error raised with partial valid values: {e}")
 
-# Check it exists
-field = CharField()
-lookup = field.get_lookup('custom_exact')
-print(f"Lookup registered: {lookup is not None}")
-assert lookup is CustomExact, "Lookup should be registered"
-
-# Unregister the lookup
-CharField._unregister_lookup(CustomExact)
-
-# Check it no longer exists (this would fail before our fix)
-lookup = field.get_lookup('custom_exact')
-print(f"Lookup unregistered: {lookup is None}")
-assert lookup is None, "Lookup should be unregistered and cache cleared"
-
-print("All tests passed! Fix is working correctly.")
+# Test with invalid vmin
+print("\n--- Testing with invalid vmin (0) ---")
+norm_invalid = colors.LogNorm(vmin=0, vmax=1e20)
+data = np.array([1, 10, 100])
+try:
+    result = norm_invalid(data)
+    print("✓ No error raised! All masked? {np.ma.is_masked(result)}")
+except ValueError as e:
+    print(f"✗ Error raised: {e}")
