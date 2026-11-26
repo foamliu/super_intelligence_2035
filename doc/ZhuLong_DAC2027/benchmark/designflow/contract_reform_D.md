@@ -442,3 +442,39 @@ deliverable = 文本/脚本/日志分析/网表变换/诊断报告/问答。chec
 - 9 条 OPT 全部有结论：**FEASIBLE 1**（LDOGen）+ **FEASIBLE-WITH-EFFORT 1**（DlySigmaSweep）+ **BLOCKED 4**（AutoCellRmAvPf/HierDescend/RsCalcRnodePlace/InvCSOpt）+ **PARTIAL 1**（PyaetherScreenshotVerifyQA）+ **待 probe 1**（RsCalcFlow）+ **R1.5 收口 1**（DominoPVTsweep）。
 - **解冻后 R2 排期建议**：仅 **LDOGen-001** 与 **DlySigmaSweep-001** 值得做 OPT→L2.live 升级（仿真类，model lib 替代可行）；mock-pyAether 族因 .75 pyAether 沙盒缺 db* geometry API 无升级路径，维持 OPT 不排期；InvCSOpt 维持 BLOCKED。
 - 三分类**不变**：REQ=3（全闭合）· OPT=9 · NA=109。本轮仅丰富 OPT 的「缺什么」证据，无 verdict 变更、无落盘改判分（冻结窗口）。
+
+---
+
+## §2.1 桩体检复验（r1480 · 冻结窗口只读复验 · 用户令「须按新判据复验」）
+
+> 用户令强调 D 的 `hspice_mock` 家族（Shichman-Hodges python 桩）与 `pyAether` 关键字假阳性家族须按 §2.1 新判据复验。本轮对 lite-121 内两族逐条复验 Q1（语义保真）/ Q2（能否被骗）。
+
+### 1. hspice_mock / Shichman-Hodges 家族（lite-121 内 4 条，全已 R1/R1.5 判，本轮复验）
+
+| case | verdict | Q1（桩语义保真） | Q2（能否被骗） | 复验结论 |
+|:--|:--|:--|:--|:--|
+| IOBufTune-001 | REQ(done) | hspice_mock 假仿真输出+GT常量 → 已 r1448 改 real PrimeSim HSPICE | 旧桩会判过 → 升 L2.live 已闭合 | 维持 REQ(done) |
+| IOBufParamTune-001 | NA | **无 mock 桩**：`evaluate()`(L24-34) 为独立 python Shichman-Hodges RC 模型（`ron()`+tau+exp），数值由 spec_B 物理常量算出非编 | **不会判过**：cond(f)(g) 比候选**自报** dataH/dataL vs `evaluate()` 独立复算（tol 1e-4/1e-6）；候选伪造 feasible 值必败；cond(m)(n)(o) anti-hardcode（无 A 字面量/B2 反向/A_GT 比对）；deck 用 level-1 .model 与 python 模型同语义，真 HSPICE 无增量 | **NA 维持**（R1.5 结论复验确认） |
+| InvCSOpt-001 | OPT(BLOCKED) | best_design.json 自报 delay/idd/duty 无独立复算 → gap | cond(p) 会判过（候选写 fake feasible） → 本应 REQ | r1478 探针：.75 FineSim+HSPICE 均无法加载 level-109 mosra FMI → 按 §3.6 降 OPT(BLOCKED) |
+| DominoPVTsweep-001 | OPT | Vm 来源=hidden B mt0 CSV 经 `_recompute()` 独立复算（非自报） | 不会判过 | OPT 维持 |
+
+### 2. pyAether 关键字家族（lite-121 内 8 条，本轮逐条复验）
+
+| case | verdict | 复验 Q1/Q2 | 结论 |
+|:--|:--|:--|:--|
+| SelFigReport-001 | REQ(done) | 已 r1446 stub→real pyAether aeGetCurDesign | 维持 REQ(done) |
+| SkillToAether-001 | REQ(done) | 已 r1442 SKILL stub→real pyAether | 维持 REQ(done) |
+| AutoCellRmAvPf-001 | OPT | mock_pyAether 记录 API 调用序（非假物理输出），Q2 低风险；geometry 升级 BLOCKED（缺 db* API） | OPT 维持 |
+| PyaetherScreenshotVerifyQA-001 | OPT | pyaether_mock 记录调用序，Q2 低风险；截图 aeCapture PARTIAL（增量低） | OPT 维持 |
+| RsCalcRnodePlace-001 | OPT | pyAether_mock 记录调用序，Q2 低风险；RN geometry BLOCKED（缺 db* API） | OPT 维持 |
+| CellCrtVw-001 | NA | **无 mock 桩**（grep 无 class Mock/def mock/_stub）：deliverable=pyAether 生成器脚本(gen_create_cell.py→create_cell.py+creation_report.json)；check 跑候选 python 生成器(subprocess sys.executable) 校验 emit 脚本 API token(dbNewCellView+aeOpenDesign)+report 结构+cross-input guard+确定性；pyAether 仅作 emit 脚本 token 非真调亦非假物理；Q2 低风险（用户意图=生成脚本非跑工具） | **NA 维持**（reason 由通用 boilerplate 细化为 pyAether-specific） |
+| RsCalcLabelAdd-001 | NA | **无 mock 桩**：deliverable=SKILL 标签脚本生成器(gen_rtext_rnode.py→add_labels.il+rtext_rnode_plan.json)；check 跑候选 python 生成器校验 .il API token(dbOpenCellViewByType/dbCreateLabel/dbSave/dbClose)+plan.json 计数(power_nets=4/RNODE=29)+guard+确定性；db* 仅作 emit .il token；Q2 低风险 | **NA 维持**（reason 细化） |
+| SchPinAdd-001 | NA | **无 mock 桩**：deliverable=pyAether schpin 生成器(gen_add_schpin.py→add_schpin.py+pin_report.json)；check 跑候选 python 生成器校验 emit 脚本 API token(dbCreateSchPinEx/dbOpenCVByType/dbFindTermByName/emyPointF/dbCheckAndSaveDesign)+report 结构+guard+确定性；Q2 低风险 | **NA 维持**（reason 细化） |
+
+### 3. 复验小结
+
+- **三分类不变**：REQ=3（全闭合）· OPT=9 · NA=109。
+- **verdict 零变更**：两族 12 条复验结论全部维持原判。
+- **文档修复**：3 条 NA pyAether case（CellCrtVw/RsCalcLabelAdd/SchPinAdd）的 `live_reason` 由通用 boilerplate（误提 hspice/finesim/calibre/vcs）细化为 pyAether-specific 的 Q1（无 mock 桩）/ Q2（deliverable=生成脚本非跑工具）推理；tsv 已更新，round=R1+R1.5(r1480复验)。
+- **关键判据确认**：lite-121 内 pyAether NA 族**均无自写 mock 桩**（pyAether 仅作候选 emit 脚本的 API token，check 跑候选 python 生成器校验输出结构），故 §2.1 Q1 N/A、Q2 低风险；与 Full 集里 hspice_mock/finesim_mock 假二进制桩（lite-121 外，本轮范围外）本质不同。
+- **冻结窗口**：zhulong r3' 仍进行中（run_batch PID 1498010 未收口），本轮纯只读复验 + tsv reason 细化，未触 check.py/cases/*.json。
