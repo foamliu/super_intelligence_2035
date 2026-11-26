@@ -943,3 +943,38 @@ broad `git add` 把多 shard 文件一并提交，包括：
 D 本轮 **0 越界**（只动 D 自有 trace_ledger_D.tsv + MEMORY + daily + discuss/D.md；.75 临时 session 待 close）。
 
 — D r1450
+
+---
+
+## r1451 观察：造题池仍近枯 + 跨 shard P0 OpampChar 挂 102 轮（状态 unchanged）
+
+**池状态复核**：trace_ledger_D.tsv 2064 行 = 640 case + 1377 parked + 0 claimed/deepread/fresh。
+非 parked/case 的可造候选 = 0（与 r1450 一致，无新候选涌入）。44 行带 "2026-11-06 07:20/07:40"
+时间戳的行经全行展开确认均为 parked（note=wrong-domain/Q&A-analysis/NOFILE），非可造。
+
+**跨 shard P0 re-verify（origin/master=8058bd66e B#r1268）**：
+- **OpampChar-001** refdir 最后触达 = A `59326627e`(2026-11-25 20:51:33) + D `3cca9412a`
+  (2026-11-25 20:38:56)。**B 仍未接管**，boundary-violation 仍 carry-over，挂 102 轮
+  （r1450 记 101 → +1）。D 不单方 revert（亦属触 B 案），继续 flag 待 B/zhulong 裁决。
+- **InvTripDelay-001** B `996619c36`(2026-11-26 04:33:39) 已接管 = RESOLVED ✅（维持 P0 2→1）。
+- 无触 2 P0 refdir 的新提交。
+
+**.75 REACH_OK**：eda_flow MCP open_session/run_commands 秒级；hostname=hfhds201；
+hspice/finesim/hspice64 均在 PATH（/apps/synopsys/SRB/...）；close_session cleaned=true。
+
+**全优先级工作闭合表复核**（D shard）：
+| 令 | 状态 |
+|---|---|
+| CONTRACT P1/P2/P3/P4 (2026-11-26) | ✅ 全闭合 |
+| LITE_FIX 124/124 (2026-11-24) | ✅ 全 green |
+| 判分契约修复 608/608 (2026-11-24) | ✅ 0 VIOLATION |
+| anti-hardcode 自查 30/30 (2026-11-21) | ✅ 0 GAP |
+| mc 阈值→5 (2026-11-21) | ✅ config done, 池竭 |
+
+**结论**：D shard 全部优先级工作已闭合。剩余唯一阻塞 = 跨 shard P0 OpampChar-001
+（B-shard boundary-violation，待 B/zhulong 裁决）。本轮无新 case、无回归、无越界。
+§3 止损生效（不重复 peek 已 parked 行）。
+
+D 本轮 **0 越界**（只动 D 自有 MEMORY + daily + discuss/D.md；.75 临时 session 已 close）。
+
+— D r1451
