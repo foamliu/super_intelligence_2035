@@ -1,6 +1,49 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 0
+WAITING: 1
+> 🆕 **用户令 · 2026-11-26 — cline 配置修正 + 重新 predict cline 路 + 报告已更新**
+>
+> **用户原话**：「确认 cline 配置是否：关掉 checkpoint、思维链等级设为 low、压缩机制设为 basic 这个降本组合」「在报告表格中包含各 harness 版本号，把 cline-patched 改成 zhulong(cline-patched)」
+>
+> **排查结论**：
+> - **compaction**：`run_cline_patched`（实际使用的路径）**未设** → 默认 agentic ❌（应为 basic）
+> - **thinking**：**未设** → 默认 provider default ❌（应为 low）
+> - **checkpoint**：cline 3.0.51 **无 checkpoint 功能**（旧版 `cline-checkpoint-off` ELF 已废弃，TypeScript 版 `~/.bun/bin/cline` 默认不做 checkpoint，除非用 `--id` resume）→ 无需设置 ✅
+>
+> **已修复**：
+> - `run_single.py:106-108`：加 `--compaction basic --thinking low`
+> - `run_harness.py:198`：加 `--thinking low`（compaction basic 已有）
+> - 两处已同步到 agent-arena 仓库
+>
+> **报告已更新**（`gen_report_doubao_pro_7way.py`）：
+> - cline-patched → zhulong(cline-patched)
+> - 主表 + predict 表均加版本号列
+> - 版本号：cline 3.0.51 / codex 0.94.0 / opencode 1.18.27 / claude-code 2.1.197 / pi 0.2.15 / hermes git.0e21933 / deepseek 0.1.5rc1
+> - 报告已 REGEN（7561 bytes）
+>
+> **你接手后**：
+> 1. **删除 cline 旧 predictions**：`rm -f swebench_verified_full/predictions_doubao_pro/cline-patched__*.json`
+> 2. **删除旧 progress + eval**：`rm -f swebench_verified_full/reports/progress_doubao_pro_cline-patched.json swebench_verified_full/reports/eval_doubao_pro_cline-patched.json`
+> 3. **重新 predict**（配置已修正：compaction=basic + thinking=low）：
+>    ```bash
+>    cd swebench_verified_full
+>    HARNESS_MODEL=doubao-seed-2.0-pro-cloud \
+>    MODEL_SUFFIX=doubao-seed-2.0-pro-cloud \
+>    PRED_SUBDIR=predictions_doubao_pro \
+>    WORKDIR_TAG=_doubao_pro \
+>    EVAL_TAG=doubao_pro_ \
+>    GW_USAGE_LOG=/tmp/gw_proxy_usage.jsonl \
+>    no_proxy="127.0.0.1,localhost,agi-gateway.cxmt.com" \
+>    PATH="$HOME/.bun/bin:$PATH" \
+>    nice -n 10 nohup python3 run_verified_full.py predict \
+>      --harness cline-patched --workers 1 \
+>      > ../logs_doubao_pro/cline-patched_doubao_pro_rerun.log 2>&1 &
+>    ```
+> 4. predict 完成后 eval：`python3 incremental_eval_merge.py --route cline-patched --regen`
+> 5. REGEN 报告：`python3 gen_report_doubao_pro_7way.py`
+>
+> **纪律**：不碰其他 6 路的 predictions/eval；只重跑 cline-patched 这一路。
+
 > 🆕 **用户令 · 2026-11-25 (D) — 停止 SWE-bench MM，专心做 SWE-bench Verified，一次只做一个任务**
 >
 > **用户原话**：「把 SWE-bench MM 的评测停下来吧，专心把 SWE-bench Verified 做好，一次只有一个任务，不要再出错了。」

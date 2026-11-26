@@ -105,7 +105,10 @@ def run_cline_patched(instance, workdir, timeout):
     def run_patched(self, instance, workdir, timeout=3600):
         cmd = [CLINE_BIN, "-c", str(workdir), "--data-dir", data_dir,
                "-P", "openai", "-m", UNIFIED_MODEL, "-k", DUMMY_KEY,
-               "--auto-approve", "true", "--json", instance["problem_statement"]]
+               "--auto-approve", "true",
+               "--compaction", "basic",
+               "--thinking", "low",
+               "--json", instance["problem_statement"]]
         r = _run(cmd, workdir, timeout, env={
             "OPENAI_API_KEY": DUMMY_KEY,
             "OPENAI_BASE_URL": f"http://127.0.0.1:{os.environ.get('GW_PROXY_PORT', '9090')}/v1",
