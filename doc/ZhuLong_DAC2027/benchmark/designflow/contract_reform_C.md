@@ -162,6 +162,57 @@ FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强�
 
 ---
 
+## Live-eval 审视（2026-11-26 用户令 · `BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`）
+
+> **R1 只读审视 · r1228 · 冻结窗口内（zhulong r3' 41% 进行中）**。逐条重判 lite-137 全量，按 §2.1 三条硬规则（mock 桩体检 Q1/Q2 + 工具名出现≠真跑 + 旧 P4 不作数）。
+> **方法**：脚本扫 137 条 check.py → 检 spice_mock / fake_tool / real-EDA-binary subprocess / check_live → 人工深读桩体检可疑项 + 16 T2 全量 + 抽样 T3。
+
+### 三分类合计
+
+| verdict | 数量 | 说明 |
+|:--|--:|:--|
+| **LIVE-REQ (done)** | 6 | 已 L2.live（T1=6 闭合，r1204-r1214 完成） |
+| **LIVE-OPT** | 6 | faithful stdlib mock 替代真二进制；Q1=yes Q2=not-fooled；.75 真跑可加 mock-fidelity 辅助断言 |
+| **LIVE-NA** | 125 | deliverable 本身=脚本/文本/CSV/config；静态判分为主意图且充分；无自写假工具 |
+| **合计** | 137 | lite-137 全量 |
+
+### REQ 清单（6 · 已闭合，无需再改）
+
+`AdjViaSelect-001` / `FindCircuitByPath-001` / `PortPropagate-001` / `PowerFillMergeGen-001` / `RsCalcChkPtGen-001` / `TrMatchHelperGen-001` —— judge_layers=`[L0,L1,L2.live]`，check_live + check_static 拆分已完成，ref L2.live PASS on .75（pyAether ae* hasattr+callable 探针）。
+
+### OPT 清单（6 · 本轮新发现 · 旧 P4 误归 T3）
+
+| case_id | mock | 桩体检 Q1/Q2 | 缺什么 |
+|:--|:--|:--|:--|
+| DummyDeck-001 | calibredrv_mock.py | Q1=faithful：解析真实 GDSII LAYER/DATATYPE record；Q2=not-fooled：候选拿到真实 layer 数据无法伪造 | real calibredrv GUI 二进制（.75 可能无 GUI 工具） |
+| PowerFill-001 | calibredrv_mock.py | Q1=faithful：解析真实 GDSII（topcell/bbox/layers/cells/celltext/units）；Q2=not-fooled | real calibredrv（同上） |
+| DummyMeas-001 | skipper_mock.py | Q1=faithful：解析真实 GDSII + tclsh8.6 db* procs；Q2=not-fooled：AUDIT vs guideline_B GT + 独立 parse | real skipper GUI 二进制 |
+| GDSBump2-001 | skipper_mock.py | Q1=faithful：解析真实 GDSII db* API；Q2=not-fooled：reimport GDS vs 真实 layer set GT | real skipper（同上） |
+| PGLayout-001 | skipper_mock.py | Q1=faithful：解析真实 GDSII db* API；Q2=not-fooled：produced GDS vs 真实 geometry GT | real skipper（同上） |
+| DummyQA-001 | rules_syntax_checker_mock.py | Q1=faithful：逐条解析真实 SVRF deck vs 真 SVRF 关键词白名单（非 hardcode-B）；Q2=not-fooled：check 独立重跑 mock 验候选 verdict（cond h） | real Calibre rules_syntax_checker |
+
+> **OPT 处置**：6 条 mock 均为「真实输入文件的 stdlib 解析器」（读真实 GDSII 二进制 / 真 SVRF 文本），非编造数据桩。判分已足够（候选无法伪造几何/语法数据）。.75 真跑 real binary 仅能 cross-validate mock 保真度，不能多抓候选 ⇒ OPT 非 REQ。若 .75 无 calibredrv/skipper GUI 二进制 ⇒ 记 `BLOCKED: 缺 GUI 工具`，保持 mock（铁律 2 infra，不写成能力结论）。
+
+### NA 清单（125 · 16 T2 + 109 T3）
+
+- **16 T2（旧 P4 待审）**：全部 NA。deliverable=SKILL/.il 生成器或分析器脚本，check.py 跑候选 Python + 断言生成文本/AST/结构（无自写假工具）。Q2：text-check 可被「形状对但 runtime 逻辑错」的 SKILL 骗过，**但** L2.live load-check 同样无法验证逻辑（load 成功 ≠ 逻辑对，旧 P4 论点仍成立）⇒ deliverable 本身是脚本 = NA。含 CmMaOpTableGen / ConvexEnclosePcellGen / DRQAPlan2Skill / HeadlessLatchSkillGen / MaxAreaRatioSidewallSolver / NetlistExtractSkill / RTextChkPlan / ResFlow / RsCalcCfgSync / RsCalcMesh / SchNetPrefixHilightGen / SkillFlowAnalyzer / SkillM1ShapeDeleteAudit / SkillMenuRoute / AutoViaGen / VirtuosoLaunchRecipeGen。
+- **109 T3**：NA。deliverable=Python 脚本/文本/JSON/config/CSV；check.py 跑候选 + 断言输出结构/数值（hidden-B 重参 + anti-hardcode）；无 spice_mock / 无 real-EDA-binary subprocess（脚本扫 137 条 0 命中）。
+
+### 与旧 P4 的差异
+
+1. **口径统一**：旧 P4 按 585/609 全量 + 关键词扫，本轮按 lite-137 全量 + 桩体检复验。
+2. **T2=16 全降 NA**：旧 P4 标「待审/可选增强」，本轮按 §2.1 Q2 判定 deliverable=脚本 ⇒ NA（L2.live load-check 不验证逻辑）。
+3. **T3 挖出 6 OPT**（旧 P4 漏报）：DummyDeck/PowerFill/DummyMeas/GDSBump2/PGLayout/DummyQA 用 faithful mock 替代真二进制 —— 旧 P4 关键词扫未识别「自写假工具」类（§2.1 规则 1 本轮重点）。本轮判定 mock 读真实输入 ⇒ Q1 faithful Q2 not-fooled ⇒ OPT（非 REQ），但需 .75 真工具 cross-validate 保真度才算收口。
+4. **0 REQ 待改造**：lite-137 内无新增 REQ（6 REQ 已闭合；6 OPT 为增强非必须；125 NA 保持 mock）。
+
+### 下一步（R2，待冻结窗口解除）
+
+- 冻结窗口内（zhulong r3' 未收口）🚫 改 check.py / cases/*.json。
+- 解冻后：6 OPT 逐条探 .75 可达性（calibredrv / skipper / rules_syntax_checker），可达则加 check_live mock-fidelity 断言（≤3 条/轮）；不可达记 `BLOCKED: 缺 <工具>`。
+- 125 NA 无需改造（R1 写完理由即结束，不占轮次）。
+
+---
+
 ## 纪律
 
 - 🚫 未改 check.py / 断言逻辑 / prompt / assets / hidden（P4 只读分析）
