@@ -196,6 +196,7 @@ class ClineDriver:
             "-k", self.api_key,
             "--auto-approve", "true",
             "--compaction", "basic",
+            "--thinking", "low",
             "--json",
             instance["problem_statement"],
         ]

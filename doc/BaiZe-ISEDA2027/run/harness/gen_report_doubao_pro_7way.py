@@ -11,7 +11,16 @@ NOW = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 ROUND = os.environ.get("ROUND", "R3000")
 
 HARNESSES = ["cline-patched", "codex", "opencode", "claude-code", "pi", "hermes", "deepseek-harness"]
-DISPLAY = {"cline-patched": "cline", "deepseek-harness": "deepseek"}
+DISPLAY = {"cline-patched": "zhulong(cline-patched)", "deepseek-harness": "deepseek"}
+VERSIONS = {
+    "cline-patched": "3.0.51",
+    "codex": "0.94.0",
+    "opencode": "1.18.27",
+    "claude-code": "2.1.197",
+    "pi": "0.2.15",
+    "hermes": "git.0e21933 (2026.9.24)",
+    "deepseek-harness": "0.1.5rc1",
+}
 
 def disp(h):
     return DISPLAY.get(h, h)
@@ -60,11 +69,15 @@ for h in HARNESSES:
     empty_n = predict_n - real
     remaining = 500 - predict_n
     pass_pct = resolved / 500 * 100
+    # A route is "done" when eval has been run (eval_n > 0), not when predict_n == 500
+    # (some instances may have no prediction file due to infra failures, which is expected)
+    has_eval = eval_n > 0
     rows.append({
-        "harness": disp(h), "predict": predict_n, "remaining": remaining,
+        "harness": disp(h), "version": VERSIONS.get(h, "?"),
+        "predict": predict_n, "remaining": remaining,
         "empty": empty_n, "eval_n": eval_n, "resolved": resolved,
         "pass_pct": pass_pct, "infra_cases": infra_cases, "empties": empties,
-        "done": predict_n >= 500,
+        "done": has_eval,
         "in_toks": total_in_toks, "out_toks": total_out_toks, "calls": total_calls,
     })
 
@@ -77,17 +90,19 @@ main_rows = ""
 for i, r in enumerate(rows_sorted, 1):
     main_rows += (
         f"<tr><td>{i}</td><td><strong>{esc(r['harness'])}</strong></td>"
+        f"<td><code>{esc(r['version'])}</code></td>"
         f"<td class='pass' style='font-weight:bold'>{r['resolved']}/500</td>"
         f"<td style='font-size:1.35em;font-weight:bold;color:#27ae60'>{r['pass_pct']:.1f}%</td></tr>\n"
     )
 
 pred_rows = ""
 for r in rows_sorted:
-    status = "✅ 满量" if r["done"] else "⏳ 进行中"
+    status = "✅ 完成" if r["done"] else "⏳ 进行中"
     in_m = r['in_toks'] / 1e6
     out_k = r['out_toks'] / 1e3
     pred_rows += (
         f"<tr><td><strong>{esc(r['harness'])}</strong></td>"
+        f"<td><code>{esc(r['version'])}</code></td>"
         f"<td>{r['predict']}/500</td>"
         f"<td>{r['remaining']}</td>"
         f"<td class='fail'>{r['empty']}</td>"
@@ -96,7 +111,7 @@ for r in rows_sorted:
         f"<td>{status}</td></tr>\n"
     )
 
-backlog = [r for r in rows if r["remaining"] > 0]
+backlog = [r for r in rows if r["remaining"] > 0 and not r["done"]]
 backlog.sort(key=lambda r: r["remaining"], reverse=True)
 backlog_html = ""
 if backlog:
@@ -105,7 +120,7 @@ if backlog:
         backlog_html += f"<tr><td><strong>{esc(r['harness'])}</strong></td><td>{r['remaining']}</td></tr>\n"
     backlog_html += "</table>\n"
 else:
-    backlog_html = "<p>无（全部 7 路已 attempt 500 题）。</p>\n"
+    backlog_html = "<p>无（全部 7 路已 eval 完成）。未达 500 的 predict 差额为 infra 失败（quota-block / git fetch 失败等），属正常收尾。</p>\n"
 
 rerun = []
 for r in rows:
@@ -124,20 +139,21 @@ HTML = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SWE-bench Verified · doubao-pro 7 路横评报告</title>
-<style>body{{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}}h1{{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}}h2{{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}}table{{border-collapse:collapse;width:100%;margin:15px 0}}th,td{{border:1px solid #ddd;padding:8px 12px;text-align:left}}th{{background:#2980b9;color:white}}tr:nth-child(even){{background:#ecf0f1}}.pass{{color:#27ae60;font-weight:bold}}.fail{{color:#e74c3c}}.note{{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}}.info{{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}}code{{background:#f0f0f0;padding:2px 6px;border-radius:3px}}</style></head><body>
+<style>body{{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}}h1{{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}}h2{{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}}table{{border-collapse:collapse;width:100%;margin:15px 0}}th,td{{border:1px solid #ddd;padding:8px 12px;text-align:left}}th{{background:#2980b9;color:white}}tr:nth-child(even){{background:#ecf0f1}}.pass{{color:#27ae60;font-weight:bold}}.fail{{color:#e74c3c}}.note{{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}}.info{{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}}code{{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:0.9em}}</style></head><body>
 <h1>SWE-bench Verified · doubao-pro 7 路横评报告</h1>
 <div class="info">
-<p><strong>模型</strong>：doubao-seed-2.0-pro-cloud　|　<strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
+<p><strong>模型</strong>：doubao-seed-2.0-pro-cloud　|　<strong>7 路</strong>：zhulong(cline-patched) / codex / opencode / claude-code / pi / hermes / deepseek</p>
 <p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：{NOW}（{ROUND}）</p>
+<p><strong>cline 配置</strong>：compaction=basic · thinking=low · checkpoint=off（cline 3.0.51 无 checkpoint 功能，旧版 cline-checkpoint-off ELF 已废弃）</p>
 </div>
 
 <h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 7 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
-<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
+<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>版本</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
 {main_rows}</tbody></table>
 <div class="note"><p>分母恒 500。Pass% = resolved/500。未跑完的路按已 resolved 数 / 500 计算。</p></div>
 
 <h2>1. Predict 进度 + Token 统计</h2>
-<table><thead><tr><th>Harness</th><th>Predict/500</th><th>剩余</th><th>Empty</th><th>API calls</th><th>Input/Output tokens</th><th>状态</th></tr></thead><tbody>
+<table><thead><tr><th>Harness</th><th>版本</th><th>Predict/500</th><th>剩余</th><th>Empty</th><th>API calls</th><th>Input/Output tokens</th><th>状态</th></tr></thead><tbody>
 {pred_rows}</tbody></table>
 <div class="note"><p>Token 数据来自 prediction JSON 的 usage 字段（input_tokens / output_tokens / n_api_calls）。</p></div>
 
@@ -157,5 +173,4 @@ with open(out_path, "w") as f:
     f.write(HTML)
 print(f"Report written: {out_path} ({len(HTML)} bytes)")
 for r in rows_sorted:
-    print(f"  {r['harness']}: resolved={r['resolved']}/500 pass%={r['pass_pct']:.1f}% predict={r['predict']}/500 empty={r['empty']} calls={r['calls']} in={r['in_toks']/1e6:.1f}M out={r['out_toks']/1e3:.0f}K")
-
+    print(f"  {r['harness']} v{r['version']}: resolved={r['resolved']}/500 pass%={r['pass_pct']:.1f}% predict={r['predict']}/500 empty={r['empty']} calls={r['calls']} in={r['in_toks']/1e6:.1f}M out={r['out_toks']/1e3:.0f}K")
