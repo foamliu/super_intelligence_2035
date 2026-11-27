@@ -1414,3 +1414,51 @@ DEBT:0. WAITING:0(不设等待§1.1).
 
 **零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动** (桩体检只读).
 DEBT:0. WAITING:0 (不设等待 §1.1).
+
+### r1361 (2026-11-28) — non-Lite-500 R2 改造 #14: CmdEdgeMeasGen-001 (reformed)
+
+**case**: EDA-Eval-DesignFlow-CmdEdgeMeasGen-001 (spice_sim, candidate-runs-finesim + judge-compares-GT). r1360 桩体检 PASS de-risked, 本轮直接执行 wrap (同 r1359 InvOptSpec candidate-runs-sim+judge-reads-report 模板).
+
+**pattern**: candidate `meas_gen.py <netlist> <spec> <out_dir>` 从 spec 读 clk/cmd/data sigs + vth + N + cmd_start, 在网表副本 .end 前追加参数化 .measure deck (rise=N / td=cmd_start / when v(sig)=vth) + `subprocess.run(["finesim","-spice",deck])` 自身跑 FineSim (parse .mt0) → report.json (t_Nthck/t_cmd_start/t_data_edge/t_dsu/t_cmd_to_Nth + finesim_ran/completed/rc); judge cond (c) 查候选 log 含 FineSim+Successfully Completed+primesim 签名, conds (d)-(h) 比候选 report metrics vs 内嵌 GT_B (2%/5% tol), (i) deck rise=N_B, (j) td=cmd_start_B, (k) when-v B sigs+vth_B 不泄漏 A, (l) A 跨输入 t_Nthck vs GT_A, (m) schema 7 keys, (n) 确定性 B2 ±1% → 全 mislabeled [L0,L1], broken in SUT 沙箱 (无 finesim ⇒ cond c finesim_ran=F + conds d-h metrics None). **判据同原 c..n 一字迁移** (TOL 2%/5%/1% 原封).
+
+**Q1 保真实证** (.75 EDASession hfhds201, finesim V-2023.12-1, 3-seed): r1360 已验证, 本轮 ref check_live 复跑 B+A report.json metrics **EXACT match GT_B/GT_A**:
+- B: t_nthck=1.6040e-8(GT 1.6040e-8) / t_cmd_start=8.0400e-9 / t_data_edge=1.5000e-8(GT 1.5001e-8, 0.007% finesim rounding) / t_dsu=1.0396e-9(GT 1.0395e-9) / t_cmd_to_nth=8.0000e-9
+- A: t_nthck=2.5050e-8 / t_cmd_start=1.0050e-8 / t_data_edge=2.2001e-8 / t_dsu=3.0495e-9 / t_cmd_to_nth=1.5000e-8
+- 3-seed ref check_live PASS x3 identical.
+- **physics REAL NOT fabricated** (CMOS inv DUT, 3rd CLK rise after cmd gate td=8n → t_Nthck=16.04ns, data edge 15n → t_dsu=1.04ns; contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated GT).
+
+**非侵入包装**:
+- `_check_static_impl` keep (a) zip+meas_gen.py + (b) py_compile 一字不动 + **(sa/sb/sc) only-add** 源码结构检查:
+  - sa 候选源码含 subprocess+finesim 调用 (FineSim 真跑意图)
+  - sb 候选源码含 .measure deck 构造 (rise= 边沿门控, 从 spec 参数化) — **关键 sb fix**: 原 sb 要求 ".tran"+".measure" 但 ref 源码 ".tran" 仅出现在 docstring (非真实 deck 构造) ⇒ sb 改为 ".measure"+"rise" (rise= 是 cond i 的必要参数化门控, 任何能过 cond i 的候选必含 rise=); cheat_no_run/cheat_hardcode_a 因此正确 static-PASS
+  - sc 候选源码含 .mt0 parse
+- `check_static` try/except 收口三元组
+- `check_live(sess)` .75 real finesim V-2023.12-1@hfhds201: upload submit.zip + sim_A.sp + spec_A.json (A visible) + sim_B.sp + spec_B.json (B hidden) + live_driver.py → driver 跑候选 B+A+B2 (determinism) → 读候选 report.json + deck + log → JSON → 断 c..n 同判据 (finesim_sig / 5 metrics vs GT_B 2%/5% tol 原封 / deck rise=N_B / td=cmd_start_B / when-v B sigs+vth_B 不泄漏 A / A cross-input vs GT_A / schema 7 keys / determinism ±1%) + `check()` 兼容 + `__main__` 改 check_static
+
+**LIVE_DRIVER**: 镜像原 run_cand() 一字 — `python3 meas_gen.py <abs net> <abs spec> <abs out>` + 读 report.json/sim_full.sp/sim_full.log, log 截 8KB (finesim banner+completion 在首部), 返回 repB(deckB+logB+rcB)/repA(deckA+rcA)/repB2(rcB2). 用 python3 (非 sys.executable, .75 无本地 python 路径) + PYTHONIOENCODING=utf-8.
+
+**negative_selftest.py 重写**: 按 InvOptSpec 模板, STATIC_NEGATIVES + LIVE_NEGATIVES 双段, EDA_FLOW_LIVE_NEG=1 走 .75 check_live. ref=reference_submit.zip (非 ref_submit/ 目录, 适配本 case 单文件 neg).
+
+**static-neg 3-distinct §4.9 trio**:
+- naive_empty.py (§4.9a) → empty zip, 无 meas_gen.py → cond (a)
+- naive_print_expected.py (§4.9b) → prints expected, no subprocess+finesim → cond (sa)
+- naive_core_deleted.py (§4.9c, 新建) → ref 骨架, 删 parse_mt0 全函数 + docstring 无 .mt0 token → cond (sc)
+
+**live-neg 2-distinct static-pass/live-fail**:
+- cheat_no_run.py (新建): builds 参数化 deck (static sa/sb/sc PASS) + 写假 report, 但不调 finesim, log 无 finesim 签名 ⇒ cond (c) live-FAIL
+- cheat_hardcode_a.py (新建): 真跑 finesim on B (cond c PASS) + deck 从 B spec 参数化 (i/j/k PASS), 但 report 5 metrics 填 A GT 值 ⇒ cond (d) live-FAIL (B t_Nthck=2.505e-8=A vs GT_B 1.604e-8)
+
+**§4.9 trio distinct {empty:a, print_expected:sa, core_deleted:sc} 3/3**.
+
+**§5 七项全绿**:
+1. ref check_live PASS hfhds201 finesim V-2023.12-1 (B+A metrics EXACT match GT)
+2. 3 static neg distinct {a,sa,sc} + 2 live-neg distinct {c,d}
+3. 3-seed ref check_live PASS x3 identical
+4. SKIP_RUN deploy workdir leak 自检通过 (无 check.py/reference/hidden 泄漏 SUT) + ref check_static PASS 5/5
+5. judge_layers=[L0,L1,L2.live] JSON test md5 46af35917a9d 3-way sync disk==JSON
+6. 断言 14 → 17 only-add (3 static only-add sa/sb/sc, 判据 c..n 一字迁移不放宽)
+7. check_live 不读 reference/ GT — GT_A/GT_B embedded as constants in check.py, 仅读 hidden B inputs sim_B.sp+spec_B.json (input 非 GT)
+
+**额外证据**: `run_one.sh EDA-Eval-DesignFlow-CmdEdgeMeasGen-001 --shard B` 真跑 cline (doubao-seed-2.0-pro-cloud, thinking=low, 105s) → verdict=FAIL cond(sb) — cline 候选 meas_gen.py 未用 rise= 参数化 (用了 cross/fall 等), static 层即拦, 案件有牙 (ref PASS vs cline FAIL 区分明确).
+
+**落盘**: check.py (reformed, sb fix) + negative_selftest.py (重写) + negative/{cheat_no_run,cheat_hardcode_a,naive_core_deleted}.py (新建) + cases/B JSON (judge_layers+k_check 14→17+test_rationale 17+test sha sync). live_eval_changes.tsv +1 行 (repo_commit=1fcb550c1). live_eval_review_nonlite_B.tsv CmdEdgeMeasGen-001 status TODO→done. EDA-Flow-Bench HEAD=1fcb550c1 pushed. DEBT:0. WAITING:0 (不设等待 §1.1).
