@@ -144,17 +144,12 @@ export BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s1_preblend.tsv"
 
 | 测试 | 结果 |
 |:--|:--|
-| standalone 10/10 | ✅ PASS |
-| shim importable on real megatron bridge | ✅ PASS |
+| standalone (test_blend_switch.py) 8/8 | ✅ PASS (zero_overlap=0, ratio max_dev=0.0087%, flag-off byte-identical, real S1→S2 7→12 zero overlap=0) |
+| bridge (test_bridge_compat.py) 10/10 | ✅ PASS (shim importable, cursor offset sum=10000, zero overlap=0, flag-off di_same+dsi_same, ratio max_dev=0.000000, Bresenham 70/30) |
+| integration (test_blend_hot_switch_integration.py) 7/7 | ✅ PASS (zero overlap=0, ratio max_dev=0.0027%, checkpoint roundtrip, stock sampler epoch bug, BlendedDataset compat) |
 | cursor offset computation (89.6M samples) | ✅ PASS |
-| zero overlap (shared sources) | ✅ overlap=0 |
-| flag-off stock equivalence | ✅ byte-identical |
-| ratio accuracy | ✅ max_dev=0.000000 |
-| new source zero overlap | ✅ overlap=0 |
-| Bresenham pattern match | ✅ 70/30 for 0.7/0.3 |
-| integration full switch | ✅ zero overlap + ratio |
-| train.sh SSH passthrough | ✅ L203-207 (#3479, pretrain fixed) |
-| pretrain_launcher.py shim import | ✅ L302-310, commit 3dbf056 |
+| train.sh SSH passthrough | ✅ L202/L206 (#3479, pretrain fixed) |
+| pretrain_launcher.py shim import | ✅ L302-307, commit 3dbf056 |
 
 ## 9. 常见问题
 
