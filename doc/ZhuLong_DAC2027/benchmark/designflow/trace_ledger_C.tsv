@@ -1380,3 +1380,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795586032370_24ap1	kenwang	hfeg0plg54	387	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckPrune-001	2026-11-28 06:24	
 1789550083559_vjlni.messages.json	e0020134	hfeg0plg86	1164	layout_aether	case	EDA-Eval-DesignFlow-LvsDiagReportGen-001	2026-11-28 06:50	NAND2 cell create+schematic+layout+DRC+LVS, 655msgs>600, DEBT next round
 1795593886132_tnxc7.messages.json	adaml	hfhds201	150	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoSocketBridge-001	2026-11-28 07:12	
+1795660572732_r3c4o	carlhe	hfeg0plg47	100	physical_verify	case	EDA-Eval-DesignFlow-CronKillVirtuosoAudit-001	2026-11-28 07:34	
