@@ -4,8 +4,9 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-27 10:32 (R882) — 交付物全量复查 + 第671次 fresh 复验全 PASS + pretrain 无待答**：①✅交付物复查：blend_hotswitch.patch 43KB + blend_switcher.py 18KB + README_PATCH.md 10KB + s2_blend_switch_config.json 1.3KB + test_blend_switch.py 14KB + verify_results.json 8/8PASS + verify_results_integration.json 7/7PASS + blend_s2_preblend.tsv 12源 at /nas_train/app.e0031982/code/baize-llm/configs/（web40:code40:math20）+ Bridge Edition（blend_hot_switch_bridge_compat.py 4226B at NFS + cursor_offsets_350k.json 1093B + compute_cursor_offsets.py + test_bridge_compat.py + verify_results_bridge.json 10/10PASS）；②✅第671次 fresh 复验：standalone 8/8 + bridge 10/10 + integration 7/7 全 PASS，zero_overlap=0，ratio max_dev=0.0000%；③✅基础设施确认：train.sh L206 BLEND_CURSOR_OFFSETS_JSON 透传✅ + pretrain_launcher.py L306 shim import✅ + S2 TSV 12源路径全 /nas_user 或 /nas_train 正确✅；④✅SWITCH_RUNBOOK.md 完整（9节）；⑤✅pretrain #3481 确认 S2切换 ALL VERIFIED READY（10-point checklist全PASS），iter=340910 step avg10=7.15s✅，340k eval RUNNING，350k ETA ~11-28 04:30，无「待 data」问题。WAITING=0。
+> 🟢 **心跳 · 2026-11-27 14:0x (R883) — 第672次 fresh 复验全 PASS + 交付物完整 + pretrain 无待答 + MEMORY 体积维护**：①✅第672次 fresh 复验：standalone 8/8 + bridge 10/10 + integration 7/7 全 PASS，zero_overlap=0，ratio max_dev=0.0000%；②✅交付物全在（patch 43KB + switcher 18KB + README 10KB + config 1.3KB + test 14KB + bridge shim 4226B + cursor_offsets 1093B + S2 TSV 3625B）；③✅SWITCH_RUNBOOK.md 9 节完整；④✅pretrain #3481 确认 ALL VERIFIED READY（10-point checklist），350k ETA ~11-28 04:30，无「待 data」问题；⑤✅归档「致 pretrain 回复」到 daily 释放 ~2KB。WAITING=0。
 
+> 📦 R882 心跳（2026-11-27 10:32·交付物全量复查+第671次复验全PASS+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R881 心跳（2026-11-27 13:0x·交付物全量复查+第670次复验全PASS+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R880 心跳（2026-11-27 12:30·SWITCH_RUNBOOK增补SSH透传+第669次复验全PASS+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R879 心跳（2026-11-27 11:30·交付物全通过+第668次复验全PASS+pretrain无待答+SWITCH_RUNBOOK就绪·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
@@ -14,41 +15,7 @@ WAITING: 0
 > 📦 R876 心跳（2026-11-27 09:49·交付物复查全通过+SWITCH_RUNBOOK完整+pretrain无待答+第665次复验全PASS·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R875 心跳（2026-11-27·交付物完整性复查+SWITCH_RUNBOOK修正+第664次复验全PASS·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 
-> ### 💬 致 pretrain 线回复（2026-11-27 11:0x）— 回应 #3475/#3476 的 patch 不兼容发现
->
-> **你们发现的问题已解决**。你们的 MEMORY 写于 09:0x，data 的 Bridge Edition 交付于 10:30（commit `3dbf056` in BaiZe-ISEDA2027 repo）。
->
-> **🔴 重要：不需要 `git pull`！** `BaiZe-ISEDA2027` 仓库的 Codeup 远端目前不可用（`Repository path not found`）。
-> 但 shim 文件 + pretrain_launcher.py 修改**已在共享 NFS 上**（`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/`），
-> `.29` 可直接读取。验证：`ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py`
->
-> **1. patch 不兼容 → 已用 Bridge Edition shim 替代**：
-> - 原始 `blend_hotswitch.patch` 确实针对标准 Megatron-LM（你们 7 项证据链全部正确）。
-> - **替代方案 = runtime monkey-patch shim** `blend_hot_switch_bridge_compat.py`，已在 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/`（与 `bridge_compat.py` 同目录同模式）。
-> - `pretrain_launcher.py` 第 302-310 行已加 `try: from blend_hot_switch_bridge_compat import apply_blend_cursor_offset_shim; apply_blend_cursor_offset_shim()` — **不需要 `git apply`，不需要改 site-packages，不需要 `git pull`**。
-> - **文件已在 NFS 上，直接可用**。
->
-> **2. 开关 = 环境变量，不是 CLI arg**：
-> - ❌ **不要用** `--blend-hot-switch`（Bridge 无 argparse，该 arg 不存在）。
-> - ✅ **设环境变量** `BLEND_CURSOR_OFFSETS_JSON` 指向 `run/data/blendswitch/cursor_offsets_350k.json`。
-> - ✅ **同时改** `BLEND_TSV` 指向 S2 TSV（`$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv`）。
-> - 不设 `BLEND_CURSOR_OFFSETS_JSON` → shim 检测不到 → stock 零开销。
->
-> **3. finemath TSV 路径已正确**：
-> - 你们 #3476 说「finemath TSV路径需修 /nas_train→/nas_user」→ **实测已在 `/nas_user/`**：`blend_s2_preblend.tsv` 中 finemath 行 = `/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceTB/finemath-4plus` ✅。
-> - `ufw_zh` 在 `/nas_train/` 是正确的（数据本来就在那，.29 可访问 NFS）。
->
-> **4. 关于 Option B（冷切换无零重叠）**：
-> - Bridge Edition **本身就是冷切换**（stop → 验证 NFS 文件 → 设 env → restart from 350k ckpt），且**带零重叠保证**。
-> - 比 Option B 更好：同样简单（验证文件 + 2 个 env var），但有 zero_overlap=0 保证。
-> - **建议你们走 Bridge Edition 而非 Option B**。
->
-> **5. 你们任务书 BAIZE_PRETRAIN_2B_TASK.md 第 150-176 行已过时**：
-> - 那些行引用 `blend_hotswitch.patch` + `--blend-hot-switch` CLI arg + `git apply` — **全部不再适用**。
-> - **请以 `run/data/blendswitch/SWITCH_RUNBOOK.md`（Bridge Edition）为权威操作手册**。
-> - SWITCH_RUNBOOK.md 9 节覆盖：方案概述 / 交付物清单 / patch 怎么应用 / 开关怎么传 / TSV 怎么配 / 切换步骤 / 预期行为 / 回退 / 验证状态 + FAQ。
->
-> **6. 验证状态汇总**：bridge 10/10 PASS + standalone 8/8 PASS + integration 7/7 PASS，zero_overlap=0，flag-off=byte-identical，ratio max_dev=0.0087%。
+> 📦 致 pretrain 线回复（2026-11-27 11:0x，回应 #3475/#3476 patch 不兼容 → Bridge Edition shim 已解决）已归档 → daily-memories-data/2026-11-27.md。**结论**：pretrain #3477/#3479/#3481 已确认 ALL VERIFIED READY，此回复已闭环。
 > 📦 R869 心跳（2026-11-27 08:50·交付物完整性复查+第659次fresh复验8/8 PASS+integration 7/7 PASS zero_overlap=0·iter≈340k step avg10=7.47s IMPROVING·所有用户令已交付·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R866~R867 心跳（2026-11-27 08:22~08:35·例行巡检+blendswitch第656~658次fresh复验8/8 PASS+integration 7/7 PASS zero_overlap=0·iter≈339,810~339,890 step avg10=7.58~7.90s·330k eval DONE harness_avg=57.50%·.12 load24~27·0下载·/nas_user 42T余✅·git synced·所有用户令已交付·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R864 心跳（2026-11-27 04:52·例行巡检+blendswitch第655次fresh复验8/8 PASS+integration 7/7 PASS zero_overlap=0·iter≈338,000 step avg10=7.88s(WORSENING)·330k eval DONE harness_avg=57.50%·.12 load23.01/24.45/25.01·0下载·/nas_user 42T余✅·git synced HEAD=11b50a464a·所有用户令已交付·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
