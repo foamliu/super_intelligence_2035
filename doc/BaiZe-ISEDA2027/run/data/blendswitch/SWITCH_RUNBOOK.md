@@ -21,8 +21,8 @@ BaiZe 训练使用 **Megatron Bridge**（非标准 Megatron-LM），因此 data 
 
 | 文件 | 位置（绝对路径） | 用途 |
 |:--|:--|:--|
-| `blend_hot_switch_bridge_compat.py` | `code/baize-llm/pretrain/` *(active)* + `code/BaiZe-ISEDA2027/` *(dev copy)* | 运行时 shim，monkey-patch BlendedDataset._build_indices |
-| `pretrain_launcher.py` | `code/baize-llm/pretrain/` *(active)* | 已加 shim import（L302-310）|
+| `blend_hot_switch_bridge_compat.py` | `code/BaiZe-ISEDA2027/` *(🔴 active=BAIZE_TRAIN_CODE)* + `code/baize-llm/pretrain/` *(backup)* | 运行时 shim，monkey-patch BlendedDataset._build_indices |
+| `pretrain_launcher.py` | `code/BaiZe-ISEDA2027/` *(🔴 active)* + `code/baize-llm/pretrain/` *(backup)* | 已加 shim import（L306）|
 | `compute_cursor_offsets.py` | `run/data/blendswitch/` | 计算 S1 per-source 消费量 → 生成 cursor offsets JSON |
 | `cursor_offsets_350k.json` | `run/data/blendswitch/` | 预计算好的 350k 切换点 cursor offsets |
 | `s2_blend_switch_config.json` | `run/data/blendswitch/` | S2 配置（source keys / weights / shared mask）|
@@ -38,22 +38,26 @@ BaiZe 训练使用 **Megatron Bridge**（非标准 Megatron-LM），因此 data 
 
 ## 2. patch 怎么应用
 
-**不需要 `git apply`，也不需要 `git pull`**。shim 文件已经在共享 NFS 上的正确位置，
-pretrain 已将文件复制到训练主仓库 `code/baize-llm/pretrain/`，`.29` 可直接访问：
+**不需要 `git apply`，也不需要 `git pull`**。shim 文件已经在共享 NFS 上的正确位置。
 
-1. **`blend_hot_switch_bridge_compat.py`** → `/nas_train/app.e0031982/code/baize-llm/pretrain/blend_hot_switch_bridge_compat.py`
-   （与 `bridge_compat.py` 同目录模式，runtime monkey-patch）
-2. **`pretrain_launcher.py`** → `/nas_train/app.e0031982/code/baize-llm/pretrain/pretrain_launcher.py`
-   已修改：在 `bridge_compat.apply_all_compat_shims()`（~L300）后加了自动 import shim 的
-   try/except 块（L302-310）
+🔴 **关键**：`common.env` L12 定义 `BAIZE_TRAIN_CODE=/nas_train/app.e0031982/code/BaiZe-ISEDA2027`，
+`train.sh` L237 执行 `cd "$BAIZE_TRAIN_CODE"`——**训练实际运行的代码目录是 `code/BaiZe-ISEDA2027/`**，
+不是 `code/baize-llm/pretrain/`。shim 必须在 `BAIZE_TRAIN_CODE` 目录下才能被 import。
 
-> ⚠️ **注意**：`BaiZe-ISEDA2027` 开发副本的 Codeup 远端不可用（`Repository path not found`），
-> 但**不影响切换**——训练用的是 `code/baize-llm/` 里的副本。
-> pretrain **不要**在 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/` 目录执行 `git pull`（会失败）。
-> **切换前验证文件存在**：
+当前两处都有 shim 且内容完全一致（已 `diff` 验证）：
+
+1. **`blend_hot_switch_bridge_compat.py`**（4226B）→ 两处：
+   - 🔴 **训练用**：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py`
+   - 备份副本：`/nas_train/app.e0031982/code/baize-llm/pretrain/blend_hot_switch_bridge_compat.py`
+2. **`pretrain_launcher.py`** → 两处都有，已修改（L306 加了 shim import）：
+   - 🔴 **训练用**：`/nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py`
+   - 备份副本：`/nas_train/app.e0031982/code/baize-llm/pretrain/pretrain_launcher.py`
+
+> ⚠️ `BaiZe-ISEDA2027` 目录的 Codeup 远端不可用（`Repository path not found`），不要在此目录执行 `git pull`。
+> **切换前验证文件存在**（检查 `BAIZE_TRAIN_CODE` 目录）：
 > ```bash
-> ls -l /nas_train/app.e0031982/code/baize-llm/pretrain/blend_hot_switch_bridge_compat.py
-> grep -n 'blend_hot_switch' /nas_train/app.e0031982/code/baize-llm/pretrain/pretrain_launcher.py
+> ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py
+> grep -n 'blend_hot_switch' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py
 > ```
 
 ## 3. `--blend-hot-switch` 开关怎么传
@@ -115,9 +119,9 @@ BLEND_TSV="${BLEND_TSV:-$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv}"
 # 1. 等训练到 350k 步，自然 save checkpoint（每 2000 步一次，350k 是 2000 的倍数）
 # 2. 确认 350k checkpoint 已保存
 # 3. 停止训练进程
-# 4. 验证 shim 文件在 NFS 上可读（不需要 git pull）：
-ls -l /nas_train/app.e0031982/code/baize-llm/pretrain/blend_hot_switch_bridge_compat.py
-grep -n 'blend_hot_switch' /nas_train/app.e0031982/code/baize-llm/pretrain/pretrain_launcher.py
+# 4. 验证 shim 文件在 BAIZE_TRAIN_CODE 目录下可读（不需要 git pull）：
+ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py
+grep -n 'blend_hot_switch' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py
 # 4b. 🔴 验证 train.sh SSH 透传行存在（否则 rank0/.12 不应用 cursor offsets）：
 grep -n 'BLEND_CURSOR_OFFSETS_JSON' /nas_train/app.e0031982/code/baize-llm/scripts/train.sh
 # 5. 设置环境变量（在 s1.env 或 train.sh 启动前 export）：
@@ -168,7 +172,7 @@ export BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s1_preblend.tsv"
 | integration (test_blend_hot_switch_integration.py) 7/7 | ✅ PASS (zero overlap=0, ratio max_dev=0.0027%, checkpoint roundtrip, stock sampler epoch bug, BlendedDataset compat) |
 | cursor offset computation (89.6M samples) | ✅ PASS |
 | train.sh SSH passthrough | ✅ L202/L206 (#3479, pretrain fixed) |
-| pretrain_launcher.py shim import | ✅ L302-310 (`code/baize-llm/pretrain/`) |
+| pretrain_launcher.py shim import | ✅ L306 (`code/BaiZe-ISEDA2027/` = BAIZE_TRAIN_CODE) |
 
 ## 9. 常见问题
 
