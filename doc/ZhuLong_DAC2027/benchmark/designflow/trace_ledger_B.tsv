@@ -1769,4 +1769,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795424182447_3pyum	lvyy	hfeg0pkn005	46	spice_sim	case	EDA-Eval-DesignFlow-ResCharPlotSummaryProduce-001	2026-11-24 12:58	
 1795415009363_wu7zw.messages.json	e0030760	hfeg0pkn001	51	spice_sim	case	EDA-Eval-DesignFlow-WsnmlMcFailDiagProduce-001	2026-11-24 21:06	
 1795425420593_tvmlu	yinyus	10.129.32.75	351	spice_sim	case	EDA-Eval-DesignFlow-PwlStimulusGen-001	2026-11-24 22:14	r1167: PWL current stimulus generator from waveform data (read data file -> Ivblh vblh! 0 pwl(... offset 120us)); L1 reframe -> pwl_stimulus_gen.py manifest-driven
-1795402738072_omzbr	yinyus	hfeg0pkn004	322	spice_sim	claimed		2026-11-27 14:56	
+1795402738072_omzbr	yinyus	hfeg0pkn004	322	spice_sim	parked		2026-11-27 15:01	DUP of WvCurPwlStimGen-001(iyoge mc4988)/PwlStimulusGen-001(tvmlu mc351): same yinyus ivblh_idd5b2.sp->ivblh_iloadIDD.sp +120us PWL task; r1335 B-viable was false-positive dup, void PwlIloadGen-001 plan
