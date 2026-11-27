@@ -636,3 +636,36 @@ assign full = (wr_ptr_gray == {~wr_ptr_gray_sync2[PTR_WIDTH-1],
 **口径变更**：`judge_layers` [L0,L1] → [L0,L1,L2.live]，已登记 `live_eval_changes.tsv`。A shard REQ 7 done 7（0 BLOCKED），L2.live 8→11。
 
 **纪律**：🚫 未改 prompt/assets/hidden/断言严格度/strictness/别 shard/jsonl/论文宏。✅ 改：check.py（非侵入包装）+ ref RTL/TB（bug fix）+ reference_submit.zip（regen）+ negative/live_msb_only_bug（新）+ negative_selftest.py + case JSON（judge_layers/level/test sha）。
+
+---
+
+## §non-Lite-500 R2 — SimMakefileVCS-001 L2.live 落盘（2026-11-27 r1448）
+
+**令**：顶部 11-27 用户令「non-Lite-500 case 实跑评估改造」(A shard 469 case)。R1 (r1447) 已判 SimMakefileVCS-001 = LIVE-REQ（cond (m) 真调 VCS R-2020.12 on hidden B，现 judge_layers=[L0,L1] 缺 L2.live）。本轮 R2 非侵入包装落盘。
+
+**关键发现（R2 实施期）**：
+1. 原 `check()` 把 cond (m) 真跑 VCS 块**内嵌在本地 check()**（subprocess 到 `/apps/synopsys/SRB/vcs/...`）—— 本地判分机无 VCS ⇒ ref 静态判分必挂 ⇒ case 在原框架下实为 broken。R2 把 cond (m) 整体迁出到 `check_live(sess)`（.75 真跑），静态层只留 cond (a-l,n)。
+2. **judge hidden-upload 对子目录崩溃**：框架 judge 的 `for hf in os.listdir('hidden'): open('hidden/'+hf).read()` 对 hidden/ 下的子目录（sim_B/ rtl_B/）抛 `IsADirectoryError` ⇒ 整个 L2.live 判分挂。**修法**：hidden B 扁平化（`sim_B/filelist_B.f` → `sim_B_filelist_B.f` 等 4 个 flat 带前缀文件，内容一字未改），check_live 在 .75 重建 sim_B/rtl_B/ 目录结构。
+3. **check.py ASSETS 路径在 judge env 失效**：`CASE_DIR=basename(HERE)`，judge 里 HERE=`.../g1/g2` ⇒ CASE_DIR='g2' ⇒ ASSETS 错。**修法**：check_live 候选路径 `[ASSETS/hidden, HERE/hidden]`（judge 经 symlink `g1/g2/hidden → $JUDGE/hidden` 命中）。
+
+**非侵入包装**：
+- `_check_static_impl`：原 check() 静态部分 cond (a)-(l),(n) 一字不动（cond (m) 真跑块迁出）。
+- `check_static`：try/except 收口三元组。
+- `check_live(deliverable, workdir, sess)`：upload Makefile + 4 flat hidden B + vcs_wrap → .75 重建 sim_B/rtl_B → `make vcs FILELIST=filelist_B.f TOP=tb_cfreq_B VCS_BIN=vcs_wrap SIMULATOR='bash vcs_wrap'` → 断 simv 产 + `./simv` exit0 + waves_B.vcd + **ALL TESTS PASSED** + **[TB_B] COUNT_OUT=31**（12.5MHz VCO 在 32 周期窗的边沿计数，真实 VCS 仿真确定性物理结果）+ **VCS banner**（证明真二进制跑过非桩）。后 3 条为新增硬断言（只增不减）。
+- `check`：兼容包装（旧框架回退）。
+
+**live-neg**：`fake_print_expected`（echo-only vcs recipe，`@echo "+define+DUMP_FSDB -f $(FILELIST) -top $(TOP) -o simv"`）—— 静态全过（文本 pattern 满足 (f)(g)(n)）但 `make vcs` 不产 simv ⇒ check_live FAIL `[m] make vcs on B failed (no simv)`。原 §4.9b print-expected 负样本，原靠 cond(m) 挂，现自然成为 live-neg（静态过/实跑挂）。
+
+**.75 实跑（hfhds201, VCS R-2020.12）**：
+- ref check_live → **PASS**（make vcs RC0 wall~2.8s 产 simv；./simv RC0 wall~0.6s 打印 `ALL TESTS PASSED` + `[TB_B] COUNT_OUT=31` + 产 waves_B.vcd 3926B）。
+- live-neg check_live → **FAIL**（no simv）。
+- 4 static-neg（fake_empty/fake_core_deleted/naive_keep_iverilog/naive_hardcode_a）check_static FAIL distinct {b,e,f,g}。
+- 3-run 确定性：COUNT_OUT=31 三次一致（VCD md5 随秒级 timestamp 变，故 check_live 不断 VCD md5，断 COUNT_OUT=31 文本）。
+
+**judge 全流程模拟**（faithful 复刻 run_one.sh judge Python 块）：check_static PASS → hidden upload OK（5 flat files，无 IsADirectoryError）→ check_live PASS → verdict PASS infra_fail=0。
+
+**§5 七项全绿**：① ref check_live PASS（hfhds201 RC0 wall~3s）② 4 static-neg FAIL distinct{b,e,f,g} + live-neg FAIL ③ 3-run COUNT_OUT=31 确定性 ④ judge-sim 全流程 PASS（含 static-only 路径）⑤ sha 49318e00 3-way sync（JSON test / 磁盘 check.py）⑥ 断言只增（check_live +3 硬断言：banner/ALL TESTS PASSED/COUNT_OUT=31）⑦ hidden-B flat 不进 SUT（attachments 不含 flat 文件，run_one 跳 hidden/）、check_live 不读 reference/、沙箱无 jsonl/test。
+
+**口径变更**：`judge_layers` [L0,L1] → [L0,L1,L2.live]，已登记 `live_eval_changes.tsv`（EFB e51135ad4）。non-Lite-500 A shard L2.live 11→12（4 preexisting + 1 R2 done + 3 REQ pending: DFTTestmaxFlow/Digital-010/DrvqaGateNetlist）。
+
+**纪律**：🚫 未改 prompt/A 侧 assets 难度/断言严格度/strictness/别 shard/jsonl/论文宏。✅ 改：check.py（非侵入包装）+ negative_selftest.py（static/live 分类）+ hidden B 扁平化（layout only, 内容一字未改）+ hidden_manifest.json（同步 flat layout）+ case JSON（judge_layers/test sha/test_rationale ⑬ 细化）。

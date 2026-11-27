@@ -265,7 +265,7 @@ EDA-Eval-DesignFlow-SignalXrefMap-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		
 EDA-Eval-DesignFlow-SimDefineDeltaDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SimIncludeMissDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SimLibGuiAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-SimMakefileVCS-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-REQ	条件(m) 用提交 Makefile 经 vcs_wrap(剥 DUMP_FSDB) 在 .75 真跑 vcs R-2020.12 产 simv, 再 ./simv exit0+产 waves_B.vcd; iverilog 残留/坏 recipe 在真 vcs 下挂. 现 judge_layers=[L0,L1] 缺 L2.live, 需拆 check_static/check_live.	N/A	test.py cond m: make vcs via real vcs -> simv -> waves_B.vcd	r2-2026-11-27
+EDA-Eval-DesignFlow-SimMakefileVCS-001	A	non-lite	1	1	1	1	1	1	A	L0,L1,L2.live	LIVE-REQ-DONE	条件(m) 用提交 Makefile 经 vcs_wrap(剥 DUMP_FSDB) 在 .75 真跑 vcs R-2020.12 产 simv, 再 ./simv exit0+产 waves_B.vcd; iverilog 残留/坏 recipe 在真 vcs 下挂. 现 judge_layers=[L0,L1] 缺 L2.live, 需拆 check_static/check_live. | R2 DONE: check_live .75 真 VCS PASS.	check_live: make vcs FILELIST=filelist_B.f TOP=tb_cfreq_B via vcs_wrap -> simv -> ./simv -> ALL TESTS PASSED + COUNT_OUT=31 + waves_B.vcd	.75 hfhds201 RC0 wall~3s; COUNT_OUT=31 3-run deterministic; live-neg fake_print_expected FAIL (no simv); 4 static-neg FAIL distinct {b,e,f,g}; sha 49318e00 3-way; EFB e51135ad4	r2-done-2026-11-27
 EDA-Eval-DesignFlow-SimRerunStatusAuditProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SimStimulusLocateQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SmokeLogFailDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
