@@ -1,118 +1,177 @@
-# S2 Blend Hot-Switch Runbook — 2026-11-27
+# S2 Blend Hot-Switch Runbook — Bridge Edition · 2026-11-27
 
-> **状态**: 🔴 CRITICAL — data 线 patch 架构不兼容，需运维/data 拍板选路后才能执行
-> **作者**: pretrain agent #3475
+> **状态**: ✅ READY — Bridge Edition shim 已验证，所有交付物就位，等待 350k ckpt
+> **作者**: pretrain agent (updated #3477)
 > **用户令**: 2026-11-27 08:3x「按照方案 A 做准备」
+> **数据线**: data R874 (2026-11-27 11:0x) 已回复所有疑问，Bridge Edition 10/10 PASS
 
 ---
 
-## 1. 问题核心：patch 架构不兼容
+## 0. 方案概述
 
-### 1.1 data 线 patch 目标
+BaiZe 训练使用 **Megatron Bridge**（非标准 Megatron-LM）。data 线原有的
+`blend_hotswitch.patch`（针对标准 Megatron-LM）**不适用**（详见 #3475/#3476 证据链）。
 
-data 线 `blend_hotswitch.patch` 修改 6 个文件，全在**标准 Megatron-LM** 路径：
-- `megatron/core/datasets/blend_switcher.py`（新建）
-- `megatron/core/datasets/blended_dataset.py`（加 update_weights）
-- `megatron/legacy/data/data_samplers.py`（加 BlendHotSwitchRandomSampler）
-- `megatron/training/arguments.py`（加 --blend-hot-switch 等 CLI args）
-- `megatron/training/training.py`（train loop 加 maybe_trigger_blend_switch 调用）
-- `megatron/training/checkpointing.py`（保存/恢复 _blend_switch_done）
+**替代方案 = runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`），
+遵循现有 `bridge_compat.py` 的同一模式：在 `pretrain_launcher.py` 中 import 并调用，
+不修改 site-packages。切换方式 = **冷切换**（stop → set env → restart from 350k ckpt）。
 
-### 1.2 BaiZe 实际训练架构
-
-BaiZe 训练走 **Megatron Bridge** 路径（完全不同的代码）：
-- `pretrain_launcher.py:147` → `from megatron.bridge.training.pretrain import pretrain`
-- `pretrain_launcher.py:306` → `pretrain(cfg, forward_step_func=forward_step)`
-- → `megatron.bridge.training.train.train()`（lines 71-466，无 blend switch 调用）
-- → `megatron.bridge.data.samplers.MegatronPretrainingSampler`（无 BlendHotSwitchRandomSampler）
-
-### 1.3 证据链（7 项）
-
-1. Launcher 明确调用 bridge API（pretrain_launcher.py:147,306）
-2. BAIZE_TRAIN_CODE = BaiZe-ISEDA2027（common.env:12，NOT Megatron-LM）
-3. megatron 包来自 conda 安装（miniforge3/envs/py310/site-packages/megatron）
-4. bridge train loop 无 maybe_trigger_blend_switch 调用（train.py:71-466）
-5. bridge 用 ConfigContainer dataclass，非 get_args() argparse → CLI arg 不存在
-6. bridge sampler 无 BlendHotSwitchRandomSampler
-7. blend_switcher.py 不在安装包 MCore 中
-
-### 1.4 额外发现
-
-- `blend_s2_preblend.tsv` **不存在**（data runbook 声称已交付但两处路径均无）
-- `Megatron-LM-blendswitch` fork 有 patch 但训练不使用此 fork
-- data runbook 假设错误：line15 BAIZE_TRAIN_CODE、line78 不需重启、line145 base commit
-
+**零重叠保证**: cursor_offsets_350k.json 预计算了 S1 消费 350k×256=89.6M 样本的
+per-source 游标。S2 的 BlendedDataset 构建后，shim 将共享源的 `dataset_sample_index`
+加上 S1 消费偏移 → S1 已消费的 shuffle 位置被跳过 → zero_overlap=0（已验证）。
 
 ---
 
-## 2. 三个选项（待运维/data 拍板）
+## 1. 交付物清单（全部已验证存在 ✅）
 
-### Option A：适配 bridge 路径（完整热切换）
-
-将 data 线 patch 逻辑移植到 bridge 代码路径。需改 5 个 conda 安装包文件：
-1. `bridge/data/samplers.py` — 加 BlendHotSwitchRandomSampler
-2. `bridge/training/train.py` — train loop 加 maybe_trigger_blend_switch 调用
-3. `core/datasets/blended_dataset.py` — 加 update_weights + blend_switcher 属性
-4. 新建 `core/datasets/blend_switcher.py` — 从 data 线交付物复制
-5. `bridge/training/config.py` 或 launcher — 加配置项
-
-额外需创建 `blend_s2_preblend.tsv`。
-工时 ~2-4h。风险=改 conda 包。优点=保留 zero-overlap。回退=从 350k 用 S1 resume。
-
-### Option B：冷切换（kill + 改 TSV + resume）
-
-350k ckpt 保存后 kill 训练，修改 BLEND_TSV 环境变量指向 S2 blend，从 350k resume。
-工时 ~30min。风险=无 zero-overlap 保证（但 S1/S2 数据源重叠可控）。
-优点=简单可靠不碰 conda 包。回退=从 350k 用 S1 resume。
-
-### Option C：推迟切换
-
-暂不执行 350k 切换，等 data 线适配 bridge 路径后再切。
-工时 0。风险=切换点后移。优点=最安全不改代码。
+| 文件 | 位置 | 状态 | 用途 |
+|:--|:--|:--|:--|
+| `blend_hot_switch_bridge_compat.py` | `code/BaiZe-ISEDA2027/` | ✅ 4226B, commit 3dbf056 | 运行时 shim |
+| `pretrain_launcher.py` L302-310 | `code/BaiZe-ISEDA2027/` | ✅ 已加 try/import shim | 自动加载 shim |
+| `cursor_offsets_350k.json` | `run/data/blendswitch/` | ✅ 1093B | 350k 切换点 cursor offsets |
+| `blend_s2_preblend.tsv` | `code/baize-llm/configs/` | ✅ 3625B | S2 blend TSV (12 源) |
+| `train.sh` (modified) | `code/baize-llm/scripts/` | ✅ +4 lines | BLEND_CURSOR_OFFSETS_JSON 透传双节点 |
+| `verify_results_bridge.json` | `run/data/blendswitch/` | ✅ 10/10 PASS | Bridge Edition 验证结果 |
 
 ---
 
-## 3. 当前训练状态快照（2026-11-27 09:0x）
+## 2. 关键参数
 
-- iter=340100/700000 (48.6%), loss≈1.99, step~7.4s, 0NaN/0skip ✅
-- GPU .29 8×95-100% / 74-75GB / 43-62°C ✅
-- latest ckpt=iter_0340000 (saved 08:34:42)
-- 350k ETA ≈ 11-28 01:00 (≈16.5h)
-- daemon PID 501728 idle, autoqueue 57/57 (10k-330k, 330k=57.50%)
-- eval_next=340k (ON DISK ✅)
+| 参数 | 值 | 说明 |
+|:--|:--|:--|
+| 切换步 | 350000 | save-interval=2000, 350k 自然落盘 |
+| 开关 | env `BLEND_CURSOR_OFFSETS_JSON` | 不设=stock; 设=应用 cursor offsets |
+| S2 TSV | `blend_s2_preblend.tsv` | 12 源: web40/code40/math20 |
+| 共享源 | 7 | 获得 cursor offset (跳过 S1 已消费) |
+| 新源 | 5 | offset=0 (零重叠, 从头开始) |
+| 总消费 | 89,600,000 | 350000 步 × GBS 256 |
+| 训练参数 | 不变 | LR=1e-3, warmup=2000, seq=16K |
 
----
+### cursor_offsets_350k.json（S2 源顺序）
 
-## 4. 执行切换通用步骤（选项确定后）
-
-> 授权在 350k 时 kill + 应用修改 + 重启（仅限此次）
-
-### 切换前
-- [x] 阅读 data 交付物
-- [x] 代码核查（发现不兼容）
-- [x] 制定 runbook
-- [ ] 运维/data 确认选项
-- [ ] 执行所选选项的准备步骤
-- [ ] commit 记录现场
-
-### 切换时
-1. 确认 350k ckpt 落盘
-2. 记录切换前状态
-3. Kill 训练（两节点）
-4. 应用修改
-5. 从 350k resume
-6. 验证 step time / loss / ratio
-
-### 切换后
-- 继续监控 + L1 评测 350k
-- 恢复维护态
-- 异常 → kill + 从 350k S1 resume → 标 ⚠️ 待运维处理
+| # | Source Key | Shared | Offset |
+|:--|:--|:--|:--|
+| 0 | en_v1_4 | ✅ | 58,240,000 |
+| 1 | ufw_l1_en_hq | ✅ | 4,480,000 |
+| 2 | ufw_zh | ✅ | 3,584,000 |
+| 3 | code_l2 | ✅ | 13,440,000 |
+| 4 | code_l3 | ✅ | 3,584,000 |
+| 5 | stackv3_filt | ❌ new | 0 |
+| 6 | math_l1 | ✅ | 4,480,000 |
+| 7 | math_l3 | ✅ | 1,792,000 |
+| 8-11 | megamath/finemath/nemotron/megamath_web | ❌ new | 0 |
 
 ---
 
-## 5. 待确认问题（给 data 线）
+## 3. 🔧 train.sh 修改（已完成）
 
-1. `blend_s2_preblend.tsv` 在哪里？
-2. data 线是否知道 BaiZe 训练用 Megatron Bridge？
-3. 如选 Option A，data 线能否协助适配 bridge？
-4. S2 blend 的 10 源具体是哪些？
+**问题**: `train.sh` 的 SSH 命令只导出 `NCCL_ENV` + `PYTORCH_ENV` 到远程节点 (.12)。
+`BLEND_CURSOR_OFFSETS_JSON` 不在其中 → rank0 (.12) 不会应用 cursor offsets →
+rank0 读 S1 数据, rank1 读 S2 数据 → DDP 数据不一致 → 训练异常。
+
+**修复**: 在 `PYTORCH_ENV` 构建中加一行（与 BAIZE_NUM_WORKERS #801 同机制）:
+```bash
+PYTORCH_ENV="$PYTORCH_ENV BLEND_CURSOR_OFFSETS_JSON=${BLEND_CURSOR_OFFSETS_JSON:-}"
+```
+位置: `train.sh` L202-206 (PYTHONNOUSERSITE 行之后)。空值=no-op (stock 行为)。
+
+---
+
+## 4. 切换操作步骤（350k 时执行）
+
+### 步骤 1: 确认 350k ckpt 落盘
+```bash
+cat .../checkpoints/latest_checkpointed_iteration.txt  # 应输出 350000
+ls -d .../checkpoints/iter_0350000
+```
+
+### 步骤 2: 记录切换前状态
+```bash
+tail -3 /tmp/baize_s1_baize2b_worker.log   # iter / step / loss
+ps -eo pid=,ppid=,etimes=,args= | grep -E 'pretrain_launcher|train.sh' | grep -v grep
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader
+```
+
+### 步骤 3: Kill 训练（两节点）
+```bash
+kill <train.sh PID>     # 在 .29 上 kill train.sh
+sleep 5
+ssh -n -o BatchMode=yes 10.239.2.12 'pgrep -af pretrain_launcher || echo "CLEAN"'
+# 如有残留: ssh 10.239.2.12 'kill <PID>'
+```
+
+### 步骤 4: 验证代码就位
+```bash
+ls -la /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py
+grep -n 'blend_hot_switch_bridge_compat' .../pretrain_launcher.py
+grep -n 'BLEND_CURSOR_OFFSETS_JSON' .../baize-llm/scripts/train.sh
+ls -la .../baize-llm/configs/blend_s2_preblend.tsv
+ls -la .../run/data/blendswitch/cursor_offsets_350k.json
+cd .../BaiZe-ISEDA2027 && python -c \
+  'from blend_hot_switch_bridge_compat import apply_blend_cursor_offset_shim; print("OK")'
+```
+
+### 步骤 5: 设置环境变量 + 重启训练
+```bash
+setsid bash -c 'cd /nas_train/app.e0031982/code/baize-llm && \
+  export BLEND_TSV=/nas_train/app.e0031982/code/baize-llm/configs/blend_s2_preblend.tsv && \
+  export BLEND_CURSOR_OFFSETS_JSON=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json && \
+  bash scripts/train.sh s1' > /tmp/baize_s1_s2_launch.log 2>&1 < /dev/null &
+echo "LAUNCHED PID=$!"
+```
+> `s1.env` 的 `BLEND_TSV="${BLEND_TSV:-...}"` 不会覆盖已设置的值。
+
+### 步骤 6: 验证切换成功（前 100 步）
+```bash
+grep '\[blend-hot-switch\]' /tmp/baize_s1_baize2b_master.log
+grep '\[blend-hot-switch\]' /tmp/baize_s1_baize2b_worker.log
+tail -20 /tmp/baize_s1_baize2b_worker.log
+```
+| 指标 | 预期 | 异常阈值 | 处置 |
+|:--|:--|:--|:--|
+| loss | 微跳 ±5% | >±15% | 调查 → 可能 rollback |
+| step time | ≤+2% vs ~7.3s | >+5% (>7.7s) | 调查 |
+| NaN/skip | 0 | >0 | 立即 rollback |
+| LR | 恒定 1e-3 | 任何变化 | 调查 |
+
+### 步骤 7: 继续监控 + L1 评测 350k
+- 350k 是 10k 边界 → L1 评测照做（S1 最后一个点）
+- 切换后恢复维护态（不再自行重启）
+
+---
+
+## 5. 回退（如切换后异常）
+```bash
+# 1. Kill 训练 (同步骤 3)
+# 2. 撤销环境变量:
+unset BLEND_CURSOR_OFFSETS_JSON
+# 3. 恢复 S1 blend TSV + resume:
+setsid bash -c 'cd /nas_train/app.e0031982/code/baize-llm && \
+  export BLEND_TSV=/nas_train/app.e0031982/code/baize-llm/configs/blend_s1_preblend.tsv && \
+  bash scripts/train.sh s1' > /tmp/baize_s1_rollback.log 2>&1 < /dev/null &
+# 4. 标 ⚠️ 待运维处理, WAITING=1
+```
+
+---
+
+## 6. 验证状态汇总
+
+| 测试 | 结果 |
+|:--|:--|
+| Bridge shim importable | ✅ IMPORT OK (本轮实测) |
+| standalone 10/10 | ✅ PASS |
+| integration 7/7 | ✅ PASS |
+| zero_overlap (7→12) | ✅ overlap=0 |
+| flag-off stock equivalence | ✅ byte-identical |
+| pretrain_launcher.py modified | ✅ L302-310, commit 3dbf056 |
+| train.sh BLEND_CURSOR_OFFSETS_JSON | ✅ L202-206 (本轮修改) |
+| blend_s2_preblend.tsv | ✅ 3625B |
+| S2 12/12 source data | ✅ (data R874 确认) |
+
+---
+
+## 7. 历史（#3475/#3476 已解决）
+- **#3475 (09:0x)**: 发现原 patch 不兼容 Bridge → 提出 Option A/B/C
+- **#3476 (09:2x)**: 终确认 4/6 目标文件不存在 → 推荐 Option B
+- **data R874 (11:0x)**: Bridge Edition shim 已解决 → 10/10 PASS
+- **#3477 (本轮)**: 确认 Bridge Edition 可用 + 修复 SSH env 透传 → READY
