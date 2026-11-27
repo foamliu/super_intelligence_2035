@@ -29,6 +29,9 @@ SANDBOX_HOST="10.129.32.75"
 
 MODE="--check"
 [ $# -ge 1 ] && MODE="$1"
+# optional second arg (used by --rescore to pick runN, default 1)
+EXTRA_ARG=""
+[ $# -ge 2 ] && EXTRA_ARG="$2"
 
 echo "===== A5 resume preflight @ $(date '+%F %T') ====="
 
@@ -82,8 +85,37 @@ fi
 echo "===== preflight PASS — all 5 gates UP ====="
 [ "$MODE" = "--check" ] && { echo "[--check] done, not launching eval."; exit 0; }
 
-# --- 5. launch eval ---
 cd "$RUN_DIR"
+
+# --- --rescore: re-score a saved code-gen JSONL (e.g. run1 produced while tunnel was down) ---
+# Usage: --rescore [runN]   (default run1). Re-runs run_eval.py on the JSONL saved in the run dir,
+#   WITHOUT redoing code-gen. This is the smoke-completion path once the tunnel is restored.
+if [ "$MODE" = "--rescore" ]; then
+  RESCORE_RUN="${EXTRA_ARG:-1}"
+  RUN_DIR_ONE="/tmp/posttrain_5run_eval/$LABEL/run${RESCORE_RUN}"
+  JSONL="$RUN_DIR_ONE/completed_code_generation.jsonl"
+  if [ ! -f "$JSONL" ]; then
+    # fallback: discover the batch jsonl from the run's codegen.log
+    echo "[--rescore] no saved JSONL at $JSONL; trying to discover from codegen.log..."
+    CG_TS=$(grep -oP '生成代码文件:\s+\Kcode_generation_\S+\.jsonl' "$RUN_DIR_ONE/codegen.log" 2>/dev/null | head -1 | sed 's/code_generation_//; s/\.jsonl//')
+    [ -n "$CG_TS" ] && JSONL="$HOME/eda_code_eval/completed_code_generation_${CG_TS}.jsonl"
+  fi
+  if [ ! -f "$JSONL" ]; then echo "[--rescore] FATAL: no JSONL found for run${RESCORE_RUN}. ABORT."; exit 1; fi
+  echo "[--rescore] re-scoring run${RESCORE_RUN} JSONL: $JSONL"
+  EDA_BASE="/home/app.e0031982/code/eda_fastmcp"
+  VPY="$EDA_BASE/.venv/bin/python"
+  cd "$EDA_BASE"
+  PYTHON="$VPY" "$VPY" scripts/run_eval.py --generations "$JSONL" 2>&1 | tee "$RUN_DIR_ONE/rescore.log"
+  # copy final report
+  EVAL_FW_DIR=$(grep -E '^EVAL_FW_DIR=' "$EDA_BASE/.env" 2>/dev/null | tail -1 | cut -d= -f2-)
+  EVAL_FW_DIR="${EVAL_FW_DIR:-/home/app.e0031982/code/EDA-Eval-Framework}"
+  FR=$(find "$EVAL_FW_DIR/output_evaluation" -name 'final_report*.json' -newer "$RUN_DIR_ONE/codegen.log" 2>/dev/null | head -1)
+  [ -n "$FR" ] && cp "$FR" "$RUN_DIR_ONE/final_report.json" && echo "[--rescore] Pass@1: $(python3 -c "import json;d=json.load(open('$RUN_DIR_ONE/final_report.json'));m=d.get('metrics',{});print(m.get('pass_rate',d.get('pass_rate',d.get('pass@1','N/A'))))" 2>/dev/null)"
+  echo "===== A5 rescore complete @ $(date '+%F %T') ====="
+  exit 0
+fi
+
+# --- 5. launch eval ---
 if [ "$MODE" = "--smoke" ]; then
   echo ">>> 1-run smoke"
   bash "$EVAL_SH" --endpoint "$ENDPOINT" --model "$MODEL" --label "$LABEL" --run 1
@@ -91,6 +123,6 @@ elif [ "$MODE" = "--run-all" ]; then
   echo ">>> 5-run full"
   bash "$EVAL_SH" --endpoint "$ENDPOINT" --model "$MODEL" --label "$LABEL" --run-all
 else
-  echo "unknown mode: $MODE (use --check/--smoke/--run-all)"; exit 1
+  echo "unknown mode: $MODE (use --check/--smoke/--rescore [runN]/--run-all)"; exit 1
 fi
 echo "===== A5 resume complete @ $(date '+%F %T') ====="

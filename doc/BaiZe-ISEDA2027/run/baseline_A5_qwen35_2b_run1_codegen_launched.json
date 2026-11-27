@@ -1,0 +1,73 @@
+{
+  "wake": "wake868",
+  "timestamp": "2026-11-28T00:16:00",
+  "arm": "A5",
+  "user_order": "2026-11-27 17:4x (highest priority): launch A5 = Qwen3.5-2B fp16 vLLM, run EDA-Eval-PyAether 158-task eval",
+  "verdict": "A5 run1 CODE-GEN LAUNCHED in background and HEALTHY; sandbox SCORING still blocked solely by dual-nix-tunnel (:3333) down (ops). Code-gen needs only serve+MCP+RAG (all UP); only scoring (run_eval->run_on_sandbox->:8664) needs the tunnel. Running code-gen now parallelizes the wait.",
+  "run1_codegen_launch": {
+    "launched_at": "2026-11-28 00:11:24",
+    "launcher_pid": 1218741,
+    "batch_id": "A5_qwen35_2b_run1_2026_1128_001123",
+    "script": "baize_posttrain_5run_eval.sh --endpoint http://127.0.0.1:8097/v1 --model qwen3.5-2b-a5 --label A5_qwen35_2b --run 1",
+    "log": "/tmp/a5_run1_codegen.log",
+    "run_dir": "/tmp/posttrain_5run_eval/A5_qwen35_2b/run1",
+    "task_dir": "/home/app.e0031982/eda_code_eval/2026_1128_001126",
+    "protocol": "158 tasks / Pass@1 / 2500s / single-trace / -p 8 -n / cline harness",
+    "caliber": "has-RAG (EDA_PROMPT_TEMPLATE=eval_sys_prompt_template_no_sandbox.md, MCP search_apis via :18888->RAG :9003, no-sandbox-MCP) = matches A0_base ACTUAL caliber for single-variable pairing (only base model changes). tiegui3. Task text 'A5=no-RAG same as A0' is self-contradictory; A0_base actually has RAG (wake864 audit); correct A5 caliber=has-RAG."
+  },
+  "early_progress_at_00_16": {
+    "tasks_completed": 8,
+    "py_outputs_written": 8,
+    "vllm_throughput": "156 tok/s gen, 4 running+3 waiting, KV cache 2.9%, prefix-cache hit 94.8%",
+    "serve_200ok": true,
+    "model_behavior_note": "Qwen3.5-2B occasionally invents 'write_files' tool call (2x) which cline rejects (harness exposes 'editor'); model recovers via editor+submit_and_exit. Minor quirk, NOT a blocker; surfaces a model-behavior difference vs A0 (MiniCPM5-2B)."
+  },
+  "serve_status": {
+    "endpoint": "http://127.0.0.1:8097/v1",
+    "model_id": "qwen3.5-2b-a5",
+    "root": "/nas_data/app.e0031982/models/Qwen3.5-2B",
+    "b1_identity": "PASS (id==served==ckpt path)",
+    "pid": 997478,
+    "gpu": "GPU5 (37831 MiB)",
+    "vllm_version": "0.33.0 (~/code/vllm_venv)",
+    "tool_parser": "qwen3_xml",
+    "dtype": "bfloat16",
+    "max_model_len": 65536,
+    "max_num_seqs": 4
+  },
+  "codegen_chain_up": {
+    "eda_mcp_18888": "UP",
+    "rag_9003": "UP (executor_ready=true, 14019 docs)",
+    "cline_binary": "/home/app.e0031982/.bun/bin/cline",
+    "venv_python": "/home/app.e0031982/code/eda_fastmcp/.venv/bin/python (3.13.14)"
+  },
+  "scoring_blocker_unchanged": {
+    "scoring_path": "run_eval.py -> run_on_sandbox.py -> 127.0.0.1:8664 (SSH -L -> 10.251.36.15 -> 10.129.32.75)",
+    "tunnel_3333": "DOWN (refused) re-confirmed 2026-11-28 00:00",
+    "sandbox_ports_8664_8669": "all DOWN",
+    "windows_relay_172.19.195.133": "PINGABLE but 22/3389/2222/3333 ALL CLOSED (tunnel.ps1 not running)",
+    "dot15_22": "CLOSED (firewalled, ICMP only)",
+    "pyaether_run_code_8653": "DOWN (refused) - sandbox unreachable via MCP run_code too",
+    "root_cause": "13:17 reboot killed the dual-nix-tunnel; Windows relay up (pingable) but tunnel.ps1 not running. :3333 reverse tunnel is created BY Windows tunnel.ps1 (Windows SSHes OUT with -R); .17 is passive listener, CANNOT self-recover (.15:22 and Windows:22 both closed from .17).",
+    "owner": "OPS - run .\\tunnel.ps1 on Windows relay 172.19.195.133",
+    "expected_after_codegen": "5run_eval.sh step5 (run_eval.py) runs after code-gen, fails fast (Connection_error->0/158). JSONL saved to run_dir/completed_code_generation.jsonl BEFORE scoring (step4), preserved for re-scoring."
+  },
+  "resume_when_tunnel_up": {
+    "step0_preflight": "bash baize_posttrain_a5_resume_when_tunnel.sh --check",
+    "step1_rescore_run1_smoke": "bash baize_posttrain_a5_resume_when_tunnel.sh --rescore  (re-scores saved run1 JSONL -> run1 Pass@1 = smoke; confirms B1 serve + B3 ruler)",
+    "step2_runs_2_to_5": "bash baize_posttrain_5run_eval.sh --endpoint http://127.0.0.1:8097/v1 --model qwen3.5-2b-a5 --label A5_qwen35_2b --run 2  (then 3/4/5)",
+    "step3_5run_summary": "5-run mean+-std from run1..5 final_report.json",
+    "step4_paired_compare": "baseline_A0_vs_A5_paired_compare.json (McNemar/bootstrap, 158 tasks) using A0_base_ragfix 5-run (has-RAG matching caliber) as A0 baseline"
+  },
+  "a0_baseline_for_pairing": "A0_base_ragfix 5-run = 45.06%+-3.89% (has-RAG, restored retrieval) - matching A0 baseline for A5. Files: baseline_A0_base_ragfix_run{1..5}_pertask.json + _5run_summary.json. Old A0_base 43.29%+-3.92% (degraded retrieval) superseded by ragfix (wake842).",
+  "health": {
+    "gpu0_3": "root SGLang (untouched)",
+    "gpu4": "FREE",
+    "gpu5": "A5 serve :8097 + run1 code-gen (this line)",
+    "gpu6": "vision (untouched)",
+    "gpu7": "FREE",
+    "providers_json": "set to A5 during run1; 5run_eval.sh restores glm-5.2 backup after code-gen",
+    "rogue_eval": "none (checked before launch)",
+    "killed_other_line": "none"
+  }
+}
