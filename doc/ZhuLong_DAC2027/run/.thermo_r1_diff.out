@@ -1,0 +1,48 @@
+baseline=r3' (rerun#2 round 3, status_doubao_pro_rerun2_r3.jsonl, 500 cases)
+r1 cases=500
+common cases=500
+
+## newly ERROR (was PASS/FAIL in r3', now ERROR in r1): 2
+  - EDA-Eval-DesignFlow-GrDecPwrVerifTb-001  (r3'=FAIL -> r1=ERROR)
+  - EDA-Eval-DesignFlow-PkgVarPassDutTb-001-v2  (r3'=FAIL -> r1=ERROR)
+
+## newly FAIL (was PASS in r3', now FAIL in r1): 19
+  - EDA-Eval-DesignFlow-AutoViaPFAudit-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-Backannot-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-CdlBulkSanitize-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-CrEdgeAlignFix-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-DecoderNetlistGen-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-DummyTargetLayerCmp-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-FsdbPulseFilter-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-InnovusProjLogDiag-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-InnovusPwrRtDiag-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-LefPostprocessFix-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-MVVarNamingAudit-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-NetlistModSplice-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-PexStimulusBuild-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-RTextChkPlan-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-RandStimVecFix-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-ResFlow-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-SpiceSim-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-SpiceTbGen-001  (r3'=PASS -> r1=FAIL)
+  - EDA-Eval-DesignFlow-TempSelWaveform-001  (r3'=PASS -> r1=FAIL)
+
+## newly PASS (was FAIL in r3', now PASS in r1): 14
+  - EDA-Eval-DesignFlow-CalibreLvsRepDiag-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-CombCellNetlistSyn-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-DeckConsistencyCheck-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-DummyCfgCheck-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-FinesimIgnoreGen-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-GpioPortRefactor-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-LibToParm-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-Lpddr5CovTermitFix-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-NetlistChk-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-PFMergeAudit-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-PortCatch-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-SignalRunXref-001  (r3'=FAIL -> r1=PASS)
+  - EDA-Eval-DesignFlow-SpiceClosureExtract-001  (r3'=FAIL -> r1=PASS)
+  - GdsLayerAreaMeasure-001  (r3'=FAIL -> r1=PASS)
+
+## recovered from ERROR (was ERROR in r3', now PASS/FAIL in r1): 2
+  - EDA-Eval-DesignFlow-RefreshRunAnalyze-001  (r3'=ERROR -> r1=FAIL)
+  - EDA-Eval-DesignFlow-StrongarmFomSweep-001  (r3'=ERROR -> r1=FAIL)
