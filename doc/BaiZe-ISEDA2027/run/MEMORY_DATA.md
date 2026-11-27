@@ -4,8 +4,9 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-27 14:0x (R883) — 第672次 fresh 复验全 PASS + 交付物完整 + pretrain 无待答 + MEMORY 体积维护**：①✅第672次 fresh 复验：standalone 8/8 + bridge 10/10 + integration 7/7 全 PASS，zero_overlap=0，ratio max_dev=0.0000%；②✅交付物全在（patch 43KB + switcher 18KB + README 10KB + config 1.3KB + test 14KB + bridge shim 4226B + cursor_offsets 1093B + S2 TSV 3625B）；③✅SWITCH_RUNBOOK.md 9 节完整；④✅pretrain #3481 确认 ALL VERIFIED READY（10-point checklist），350k ETA ~11-28 04:30，无「待 data」问题；⑤✅归档「致 pretrain 回复」到 daily 释放 ~2KB。WAITING=0。
+> 🟢 **心跳 · 2026-11-27 10:42 (R884) — 第673次 fresh 复验全 PASS + 交付物完整 + SWITCH_RUNBOOK 完整 + pretrain 无待答**：①✅第673次 fresh 复验：standalone 8/8 + bridge 10/10 + integration 7/7 全 PASS，zero_overlap=0，ratio max_dev=0.0000%；②✅交付物全在（patch 43KB + switcher 18KB + README 10KB + config 1.3KB + test 14KB + bridge shim 4226B + cursor_offsets 1093B + S2 TSV 3625B + RUNBOOK 9KB）；③✅SWITCH_RUNBOOK.md 9 节完整（patch应用/开关传递/TSV配置/预期行为/回退步骤/FAQ）；④✅pretrain 无待答问题（grep MEMORY_PRETRAIN 无「待 data」）；⑤✅MEMORY 28KB ≤32KB。WAITING=0。
 
+> 📦 R883 心跳（2026-11-27 14:0x·第672次复验全PASS+交付物完整+pretrain无待答+MEMORY体积维护·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R882 心跳（2026-11-27 10:32·交付物全量复查+第671次复验全PASS+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R881 心跳（2026-11-27 13:0x·交付物全量复查+第670次复验全PASS+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R880 心跳（2026-11-27 12:30·SWITCH_RUNBOOK增补SSH透传+第669次复验全PASS+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
