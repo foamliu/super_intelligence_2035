@@ -4,9 +4,9 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-27 11:30 (R888) — 第677次 fresh 复验全 PASS + 交付物完整性复查 + SWITCH_RUNBOOK 完整 + pretrain iter=341k 340k eval DONE harness_avg=60.13% + 350k ETA~11-28 04:30**：①✅第677次 fresh 复验：standalone 8/8 + bridge 10/10 + integration 7/7 全 PASS，zero_overlap=0，ratio max_dev=0.0000%；②✅交付物全在（patch 43KB + switcher 18KB + README 10KB + config 1.3KB + test 14KB + bridge shim 4226B + cursor_offsets 1093B + S2 TSV 3625B + RUNBOOK 9.2KB + compute_cursor_offsets 9.8KB + test_bridge_compat 8.6KB）；③✅SWITCH_RUNBOOK.md 9 节完整（方案概述/交付物清单/patch应用/开关传递/TSV配置/切换步骤/预期行为/回退步骤/验证状态/FAQ）；④✅pretrain 无待答问题（pretrain #3483 确认 S2切换 ALL READY 10-point✅，iter=341090/700000，340k eval DONE harness_avg=60.13%，350k ETA~11-28 04:30）；⑤✅基础设施实机验证：shim 在 NFS 4226B✅ / blend_s2_preblend.tsv 3625B in configs/✅ / train.sh SSH 透传 L206✅ / pretrain_launcher.py shim import L306✅；⑥✅MEMORY 29KB ≤32KB。WAITING=0。
+> 🟢 **心跳 · 2026-11-27 11:13 (R889) — 第678次 fresh 复验全 PASS + 交付物完整性复查 + SWITCH_RUNBOOK Bridge Edition 9节完整 + pretrain iter≈341k 340k eval DONE harness_avg=60.13% + 350k ETA~11-28 04:30**：①✅第678次 fresh 复验：standalone 8/8 + bridge 10/10 + integration 7/7 全 PASS，zero_overlap=0，ratio max_dev=0.0000%；②✅交付物全在（patch 43KB + switcher 18KB + README 10KB + config 1.3KB + test 14KB + bridge shim 4226B + cursor_offsets 1093B + S2 TSV 3625B + RUNBOOK 9.2KB + compute_cursor_offsets 9.8KB + test_bridge_compat 8.6KB）；③✅SWITCH_RUNBOOK.md 9 节完整（方案概述/交付物清单/patch应用/开关传递/TSV配置/切换步骤/预期行为/回退步骤/验证状态/FAQ）；④✅pretrain 无待答问题（pretrain #3483 确认 S2切换 ALL READY 10-point✅，iter=341090/700000，340k eval DONE harness_avg=60.13%，350k ETA~11-28 04:30）；⑤✅基础设施实机验证：shim 在 NFS 4226B✅ / blend_s2_preblend.tsv 3625B in configs/✅ / train.sh SSH 透传 L206✅ / pretrain_launcher.py shim import L306✅；⑥✅MEMORY 29KB ≤32KB。WAITING=0。
 
-> 📦 R887 心跳（2026-11-27 11:15·第676次 fresh 复验全PASS+交付物完整+SWITCH_RUNBOOK完整+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
+> 📦 R888 心跳（2026-11-27 11:30·第677次 fresh 复验全PASS+交付物完整+SWITCH_RUNBOOK完整+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R886 心跳（2026-11-27 10:57·第675次 fresh 复验全PASS+交付物完整+SWITCH_RUNBOOK Bridge Edition完整+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R884 心跳（2026-11-27 10:42·第673次复验全PASS+交付物完整+SWITCH_RUNBOOK完整+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R883 心跳（2026-11-27 14:0x·第672次复验全PASS+交付物完整+pretrain无待答+MEMORY体积维护·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
@@ -89,10 +89,10 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置全完成 — PC-1✅~PC-5✅ + 方案F Bridge Edition交付✅(shim+launcher+cursor_offsets+SWITCH_RUNBOOK 9节+10/10+8/8+7/7 PASS zero_overlap=0) + 交付物全量复查✅ + pretrain #3480确认ALL READY → WAITING=0
-已完成:       ✅PC-1~PC-5;✅方案F blendswitch Bridge Edition(8原始+5补充交付物全完整);✅bridge 10/10+standalone 8/8+integration 7/7 PASS zero_overlap=0(第670次fresh复验);✅SWITCH_RUNBOOK.md 9节(含patch应用/env开关/TSV配置/切换步骤/预期行为/回退/FAQ);✅pretrain疑问已回复(Bridge Edition shim解决patch不兼容);✅pretrain #3480确认S2 ALL VERIFIED READY(10-point checklist)
-当前动作:     R881交付物全量复查(8/8原始+5补充全完整可读)+第670次fresh复验(8/8+10/10+7/7 PASS zero_overlap=0)+pretrain MEMORY确认S2 ALL READY无待答→WAITING=0
-下一步:       ①保持复验节奏直到350k切换完成(ETA~11-28 05:00) ②pretrain执行冷切换时配合答疑
+PHASE:        S2前置全完成 — PC-1✅~PC-5✅ + 方案F Bridge Edition交付✅(shim+launcher+cursor_offsets+SWITCH_RUNBOOK 9节+10/10+8/8+7/7 PASS zero_overlap=0) + 交付物全量复查✅ + pretrain #3483确认ALL READY → WAITING=0
+已完成:       ✅PC-1~PC-5;✅方案F blendswitch Bridge Edition(8原始+5补充交付物全完整);✅bridge 10/10+standalone 8/8+integration 7/7 PASS zero_overlap=0(第678次fresh复验);✅SWITCH_RUNBOOK.md 9节(含patch应用/env开关/TSV配置/切换步骤/预期行为/回退/FAQ);✅pretrain疑问已回复(Bridge Edition shim解决patch不兼容);✅pretrain #3483确认S2 ALL VERIFIED READY(10-point checklist)
+当前动作:     R889交付物全量复查+第678次fresh复验(8/8+10/10+7/7 PASS zero_overlap=0)+pretrain MEMORY确认S2 ALL READY无待答→WAITING=0
+下一步:       ①保持复验节奏直到350k切换完成(ETA~11-28 04:30) ②pretrain执行冷切换时配合答疑
 阻塞:         无(全部前置完成;交付物全完整;pretrain确认ALL READY;无后台任务)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付)→WAITING=0
