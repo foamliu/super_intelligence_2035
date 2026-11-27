@@ -2064,4 +2064,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795411956334_rr6qb	shushengz	hfeg0pkn004	306	analog_context	case	EDA-Eval-DesignFlow-XistorTypeSizeHierCount-001	2026-11-24 22:36	
 1794798158521_eig3b	nevinrao	hfeg0plg103	49	analog_context	case	EDA-Eval-DesignFlow-Lpddr5TmPatternProduce-001	2026-11-27 18:02	
 1794819070733_0yu3c	harrywu	hfeg0plg49	265	analog_context	case	EDA-Eval-DesignFlow-CellTopoClassify-001	2026-11-27 18:48	
-1794970604490_f1olf	dsgao	hfhds201	318	schematic_netlist	claimed		2026-11-27 19:02	
+1794970604490_f1olf	dsgao	hfhds201	318	schematic_netlist	case	EDA-Eval-DesignFlow-TwoStepSenseAdjNetlistProduce-001	2026-11-27 19:39	
