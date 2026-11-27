@@ -1241,3 +1241,70 @@ worst wnm=0.3 / iread=-3.991e-6 / iwrite=1.5e-6 / sym=0.0 / **spec_pass=False==B
 **本轮零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动**（桩体检只读 + ledger）。live_eval_review_nonlite_B.tsv Sram6tDcChar-001 check_live+live_evidence 填 Q1 实证。
 
 - **R2 累计进度（non-Lite-500）**: done 11/34（不变）；BLOCKED 1（SlicerSizeOpt-001）；桩体检 PASS 待 wrap 1（Sram6tDcChar-001，de-risked for r1357）；余 21 REQ 待改造。剩余 REQ 全为 candidate-runs-sim + judge-直调 hybrid。
+
+---
+
+## r1357 Sram6tDcChar-001 wrap (non-Lite-500 R2 reform #12)
+
+**Pattern**: candidate-runs-hspice + judge-直调 hybrid（同 r1345..r1355 族）。candidate
+`sram6t_dcchar_gen.py --cell --corner --spec --outdir` 对 6 PVT×5 deck=30 deck 自跑
+HSPICE（parse .ms0/.mt0 → report.json per_corner 5 metrics+worst+spec_pass）；judge
+cond(k) 独立重跑 HSPICE on candidate-emitted `tt_0_1p08_wnm_1.sp`（parse jcheck.ms0
+wnm_1~A_GT）。原 mislabeled `[L0,L1]`，broken in SUT sandbox（eval host 无 hspice →
+candidate .ms0=0 → 全 metric conds fail）。R1b verdict LIVE-REQ 稳固（r1356 桩体检 PASS
+de-risked）。
+
+### 判据迁移 table (orig cond → new cond, 断言条数 14→18 only-add)
+
+| orig | new | 判定 | 层 |
+|---|---|---|---|
+| a (prereq unzip+gen+30deck+report) | a | zip 合法+含 sram6t_dcchar_gen.py+py_compile | static |
+| — | sa | 候选源码含 subprocess+hspice 调用 | static only-add |
+| — | sb | 候选源码含 .dc+.measure 构造 | static only-add |
+| — | sc | 候选源码含 .ms0/.mt0 parse | static only-add |
+| a | b | repA per_corner 恰好 6 条 | L2.live |
+| b | c | 每角落 5 metric 非 None | L2.live |
+| c | d | wnm_1==wnm_2 (\|diff\|<=0.01) + sym_max_observed<=spec.sym_max | L2.live |
+| d | e | A wnm 逐角落匹配 A_GT (rel0.02 floor0.01) | L2.live |
+| e | f | A \|iread\| 逐角落匹配 A_GT (rel0.03 floor1e-7) | L2.live |
+| f | g | A iwrite 逐角落匹配 A_GT (rel0.03 floor1e-7) | L2.live |
+| g | h | A \|ileak\|<=ileak_max (1e-6) 逐角落 | L2.live |
+| h | i | A worst 聚合正确 (wnm/iread/iwrite/ileak/sym vs A_WORST, incl pc_ileak_max) | L2.live |
+| i | j | A spec_pass==True (A_SPEC_PASS) | L2.live |
+| j | k | deck 真实性 — outA>=6 .ms0 + judge indep hspice rerun tt_0_1p08_wnm_1.sp wnm_1~A_GT | L2.live |
+| n | l | deck 结构 — 4 sample deck MEASFORM=1+.dc+.measure dc+Xcell...Sram6t | L2.live |
+| k | m | 跨输入守卫 — repB 逐角落 wnm/\|iread\|/iwrite 匹配 B_GT | L2.live |
+| l | n | B spec_pass==False (B_SPEC_PASS) + A/B wnm GT 显著不同 (>=0.02) | L2.live |
+| m | o | 确定性 — repA vs repA2 逐角落 5 metric exact == | L2.live |
+| — | p | 确定性 B — repB vs repB2 逐角落 5 metric exact == | L2.live only-add |
+
+阈值不放宽（close/metric_tol/A_GT/B_GT/A_WORST/B_WORST/A_SPEC_PASS/B_SPEC_PASS 原封迁移）；
+条件不删；条数 14→18 only-add（+sa/sb/sc static + p determinism-B）。
+
+### §5 七项 evidence
+
+1. **.75 ref check_live PASS** — hfhds201 hspice V-2023.12-SP1-1, 3-seed (seed1 27.2s /
+   seed2 26.5s / seed3 26.9s) all PASS, cond o/p enforce determinism (repA==repA2,
+   repB==repB2). report.json 6/6 A corners EXACT match A_GT (wnm 0.4069-0.6369 /
+   iread -3.78e-5..-3.39e-4 / iwrite 1.74e-5..2.47e-4 / ileak ~pA / spec_pass=True).
+2. **3 static-neg FAIL distinct {a,sa,sb}** + **3 live-neg static-pass/live-fail
+   distinct {c,e,m}** (≥1 live-neg): naive_empty(a no generator .py) /
+   naive_no_hspice_call(sa source lacks subprocess+hspice) /
+   naive_no_measure(sb source lacks .measure) / fabricated_report(c emits decks but
+   never runs hspice, metrics None) / naive_core_deleted(e runs hspice but wnm zeroed)
+   / naive_hardcode_a(m overwrites B report with A_GT).
+3. **3-seed determinism** — ref check_live PASS ×3 (26-27s), cond o/p passed each.
+4. **SKIP_RUN=1 static PASS** — `python3 check.py reference_submit.zip .` → STATIC PASS.
+5. **sha 3-way sync** — judge_layers=[L0,L1,L2.live]; JSON test field sha 95e911efae
+   == disk check.py sha 95e911efae == HEAD check.py sha (concurrent bench-sync
+   11897365e pushed byte-identical check.py; this commit 9914d63d4 syncs stale case
+   JSON + negative_selftest.py + reference_submit.zip).
+6. **断言 14→18 only-add, 阈值不放宽** — 见上表 (4 static a/sa/sb/sc + 14 live b..n+o+p).
+7. **L5 不退化** — check_live 不读 reference/ GT（A_GT/B_GT/A_WORST/B_WORST 内嵌常量）；
+   仅读 hidden B inputs (cell_B.sp/corner_B.sp/spec_B.json = inputs not GT)；SUT 沙箱
+   不含 .jsonl/test 字段.
+
+**neg first-fails**: static {a, sa, sb}; live {c, e, m}; §4.9 trio {naive_empty:a,
+fabricated_report:c, naive_core_deleted:e} 3-distinct.
+
+**DEBT:0 · WAITING:0**. EDA-Flow-Bench HEAD=9914d63d4. L2.live B nonlite 11→12.
