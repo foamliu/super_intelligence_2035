@@ -962,3 +962,37 @@ BisecMt0SmCalc-001, BridgeCfgDiag-001, ButterflyCurve-001, CTLETranDeck-001, Cab
 - **口径变更登记**：`live_eval_changes.tsv` B 行 29 条（jl `[L0,L1]`→`[L0,L1,L2.live]`，repo_commit 范围 r1294–r1330，HEAD=`924a14db4`）。
 - **待 A**：出 `designflow/live_eval_summary.md`（4 shard 三分类合计 + REQ 改造进度 + 缺口台账）；通报 zhulong 变更 commit 范围。B 不写 A 的文件。
 - **🚫 不设等待**（§1.1）：B 随时可改判分（只需 `live_eval_changes.tsv` 追加登记）；zhulong 体温计反馈的新增 FAIL 优先于 OPT。
+
+---
+
+## Live-eval 审视 · non-Lite-500（2026-11-27 用户令 · R1 起步）
+
+> 用户令：「安排 designflow 4 agent 对 Lite-500 之外其它的 Case 进行实跑评估改造」。本 shard 名册 `designflow/live_eval_review_nonlite_B.tsv`（471 条）。口径同 Lite-500（`BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`），不重复。Lite-500 已审视过的 case 不重审。
+
+### R1 方法论（2026-11-27 r1）
+
+**非关键词扫**：旧 P4 关键词扫法已被证伪（§2.1 rule 3）。本轮 R1 基于 **check.py 代码结构扫描**（非工具名出现）三分类：
+
+1. **deck-driven hspice/finesim-mock GT-replay**（`_ensure_hspice`/`_MOCK_SRC` + GT .75-measured + 按 .param 签名 replay .lis）→ **LIVE-REQ**（Q2 cheat：correct signature + garbage netlist → mock 仍 replay GT → 假阳）。同 Lite-500 family。
+2. **judge 自身 subprocess 直调 real hspice/finesim**（`subprocess.run(["hspice",...])` / `_run_hspice`）→ **LIVE-REQ**（judge 实质依 real sim product；当前 mislabeled `[L0,L1]`）。
+3. **candidate 跑 real hspice/finesim，judge 查 `{hspice,finesim}_ran/rc` + GT**（cand-runs-tool）→ **LIVE-REQ**（judge 实质依 candidate 产出的 real sim product）。
+4. **check.py 无任何 real EDA binary 调用**（无 subprocess hspice/finesim/vcs；无 `_ensure_*` mock；无 `{hspice,finesim}_ran` 检查；judge 跑 SUT python tool on hidden B + 解析 text/CSV/JSON/log）→ **LIVE-NA**（deliverable = 计算/文本生成脚本；pass/fail 不依 real EDA 工具产物）。6 条随机 spot-check 确认（NetlistSelectInvDiag / FineSimDiag / PwlStimulusGen / WtmStructReview / CellFamilyExtractGen / CompressNetlist）。
+5. **workflow-orchestration mock**（intentional fake bsub/finesim/fake_run 验调用结构，非 physics）→ **LIVE-NA**（real tool 不增判分价值）。
+6. **剩余 117 TODO**：含 real-tool 调用模式（41）或非 `sys.executable` subprocess（76）→ 需逐条人工读 check.py，留 R1b。
+
+### R1 产出（r1-2026-11-27）
+
+`live_eval_review_nonlite_B.tsv` 填 354/471：
+- **LIVE-REQ = 22**（done 0，R2 改造）：
+  - deck-mock GT-replay（2）：NocalOffsetDeck-001 / Vcc2scMultiDeckSpecCompare-001
+  - judge 直调 real binary（10）：C2cRfbCmStab-001 / CellLeakageIvPlot-001 / FineSimTbAuditFix-001 / IfElsePairFix-001 / PulseStimTbGen-001 / SAoptPwrDly-001 / SlicerDmMeasAdd-001 / SlicerSizeOpt-001 / StimLoopComplianceFix-001 / SwitchChgDchVerif-001
+  - cand-runs-tool（10）：CmdEdgeMeasGen-001 / InstCurrentMeasGen-001 / InvOptSpec-001 / McRonMismatch-001 / MeasExtractCornerTrace-001 / NetlistTranDeck-001 / PVTvarSpecJudge-001 / SramIreadGen-001 / Tr0JitterRemeas-001 / VwlpPumpReport-001
+- **LIVE-NA = 332**（15 逐条实证 + 317 代码结构扫描 bulk；deck-generator 子集 R1b 复审可能升 OPT）
+- **LIVE-OPT = 0**（R1b 在 deck-generator 子集中甄别）
+- **TODO = 117**（R1b 逐条人工读 check.py）
+
+### 与旧 P4 差异
+旧 P4 未覆盖 non-Lite-500（仅 Lite 子集）。本轮 R1 首次对 nonlite 471 条做代码结构三分类，非关键词扫。
+
+### R2 排期
+REQ 22 条按家族改造（B 预算 ≤6–8 条/轮，§4 前提）：先 deck-mock GT-replay 家族（NocalOffsetDeck/Vcc2scMultiDeckSpecCompare，同 Lite-500 r1294–r1330 模板），再 judge-直调 + cand-runs-tool。每条：`_check_static_impl` 一字不动 + `check_static` 收口 + `check_live(sess)` real hspice/finesim on `.75` + live-neg + §5 七项全绿 + `live_eval_changes.tsv` 登记。
