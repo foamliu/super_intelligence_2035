@@ -35,7 +35,7 @@ WAITING: 1
 PHASE:        11-27令·重启后执行 opencode v1.19.6 + 7-way doubao-pro 评测
 已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·opencode旧v1.18.x数据清空✅·harness脚本归档到baize-llm/scripts/harness✅
 当前动作:     opencode v1.19.6全量重跑中·55/500已完成·并行度=8·zhulong(无policy)评测启动中·0/500·其余6路已完成无重跑
-下一步:       opencode跑完500题（约12小时，28日凌晨3点前完成）·zhulong 4worker并行约18小时完成 → 统一eval → 生成8路对比报告
+下一步:       opencode跑完500题（约11.5小时，28日凌晨2:30前完成）→ opencode完成后自动将zhulong并行度从4提升至12worker，zhulong预计总耗时缩短至约12小时 → 统一eval → 生成8路对比报告
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~26KB / MEMORY≈5KB
