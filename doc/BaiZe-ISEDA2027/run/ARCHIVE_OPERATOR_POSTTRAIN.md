@@ -698,3 +698,236 @@ commit 前缀 `posttrain plan:`。
 
 ---
 
+
+### ARCHIVE · 2026-11-27 task-file slimming (original of 2026-11-22 operator order)
+
+### 🔴🔴 运维令 · 2026-11-22 09:3x（**已被上方 2026-11-27 用户令覆盖排期**）
+
+> **用户原话**：「把指令下发给 posttrain，让他写一份吧。」（针对 A0 能力对照报告的署名与执行主体）
+
+#### 一、当前任务优先级
+
+| 顺序 | 任务 | 说明 |
+|:--|:--|:--|
+| **P0-1** | **继续完成 A1** | 5-run 跑完 → compare-watcher 出 A0 vs A1 配对统计（McNemar / paired bootstrap）→ report-watcher 重生成里程碑报告。**这是主线，不许让路。** |
+| **P0-2** | **新臂 A5（Qwen3.5-2B）就位** | A0 配置为基线，唯一变化 = `MiniCPM5-2B` → `Qwen3.5-2B`。**先 serve 就位 + 1 run 冒烟，A1 未收口前不并行跑满 5-run。** |
+| **P1** | **A0 深度数据分析报告（本令核心交付）** | 在 P0 有空隙时执行。**由 posttrain 自己撰写并署名**，见下节要求。 |
+
+#### 二、A5 臂定义（预注册 · 先写判据再跑 · 跑完不许改）
+
+- **A5 = Qwen3.5-2B 原模型**（非 SFT、非 adapter）。
+- **完全对齐 A0 口径**：`.17` 起评 / **无 RAG** / **无沙盒 MCP** / cline harness / `-p 8 -n` / 无 hook / 修复后量尺 / **158 题** / Pass@1 / 2500s / 单 trace / **5-run**。
+- **唯一自变量 = 基座模型**。其余六元组逐项必须一致；任一项漂移 ⇒ 视为口径错误需重跑。
+- **判据（预注册，先写进 MEMORY 再跑）**：
+  1. **B1 身份四证**：`curl /v1/models` id == requested == served，否则停跑；
+  2. **B3 judge 确定性**：judge_sd = 0，且同臂两 run 差值 < 2×judge_sd，否则先修协议；
+  3. **主判据**：**A5 vs A0 逐题配对检验**（McNemar / paired bootstrap，158 题），报 **Δ 与 95% CI**；
+  4. 报 **5-run mean ± std**；随机性结论以 5-run 为准；
+  5. **双向解释**：A5 显著优于 A0 ⇒ 瓶颈在「2B 通用基模选择」而非 EDA 领域知识；A5 ≈ A0 ⇒ MiniCPM5-2B 已近 2B 同规模上限，提升必须来自方法创新（奖励设计 / 数据构造）。
+- **资源纪律**：Qwen3.5-2B 当前在 **GPU6** 由 vision 用作 VQA 服务（`:30001` / `:30003`）——**🚫 绝不抢占或 kill vision 服务**。请在 **GPU5 或 GPU7** 新起 vLLM serve，`--served-model-name qwen3.5-2b-a5`，端口 **`:8097`**（`:8098` 保持 A0 base 不动）。起 serve 前 `nvidia-smi` 确认目标卡为空；**不碰 GPU0-3 / GPU6**。
+- **交付**：`baseline_A5_qwen35_2b_run<N>_pertask.json` × 5 + `baseline_A5_qwen35_2b_5run_summary.json` + `baseline_A0_vs_A5_paired_compare.json`。
+
+#### 三、A0 深度数据分析报告（**本令要求 posttrain 自己写**）
+
+> 🚩 **背景**：2026-11-22 09:21 有一份 `reports/_ops_draft_A0_vs_deepseek_capability_zh.html` 是 **ops 代拟稿**（不是 posttrain 自己写的，未进正史，文件名带 `_ops_draft_` 前缀即为标记）。
+> **本令要求 posttrain 以第一责任方身份重新撰写、复核并署名**。可参考代拟稿的分析角度，但**所有数字必须自己从落盘 JSON 重新算一遍**，不许直接抄。
+
+**交付路径**：`run/reports/report_posttrain_A0_capability_deepdive_zh.html`
+
+**必须回答的核心问题**：
+> **MiniCPM5-2B 跟 DeepSeek-V4-Pro 相比，哪些能力接近，哪些能力有明显不足？**
+
+**硬性要求**：
+
+1. **口径声明必须在首屏**（不许含糊）：
+   - A0 = MiniCPM5-2B｜`.17` 起评｜无 RAG｜无沙盒 MCP｜43.29% ± 3.92%（5-run）
+   - DeepSeek-V4-Pro = **36.15** 起评｜**有 RAG**｜**有 MCP**｜82.1% ± 3.0%（5/5，来源 `PLAN_MINICPM5_PYAETHER_158.md` L24）
+   - ⇒ **四维不同（机器 / RAG / MCP / 规模），绝对差值同时含能力与环境两个成分 ⇒ 禁止把两个百分比直接相减当能力差**
+   - 引用 `doc/AGENTS.md` §4.3「大模型参照不可与 2B 比较」
+2. **只做结构性 / 行为学对照**，不做裸分数排名：失败模式分布、工具行为、产出形态、稳定性、规划效率。
+3. **数据必须自己算**，数据源：
+   - `run/baseline_A0_base_run1_pertask.json`（158 题逐题：`tool_calls` / `input_tokens` / `output_tokens` / `fail_mode` / `error_types` / `generation_status` / `execution_status`）
+   - `run/baseline_A0_base_run{2,3,4}_pertask.json` + `baseline_A0_base_4run_interim_summary.json`
+   - `run/baseline_A0_base_5run_summary.json`（在 `.17`，若本地无则从 MEMORY 取并标注来源）
+4. **建议分析维度**（可增不可减）：① 5-run 稳定性与逐题类别（pass_all / fail_all / partial）；② 五分类失败模式；③ 底层异常类型（TypeError / AttributeError / AssertionError …）；④ **PASS 组 vs FAIL 组的工具行为与 token 效率差异**；⑤ 工具使用广度；⑥ 与 A1（SFT 退化）的相互印证。
+5. **诚实性**：
+   - DeepSeek 侧**只有单点分数锚点、无逐题数据** ⇒ 明确写「无法做配对检验」，不得伪造逐题对照；
+   - 已知局限照写（如 run 间极差、cancelled session 未回溯）；
+   - 负结果不洗白。
+6. **格式**：中文、单文件 HTML、**0 外链、0 script**、内联 CSS、关键数字卡片、每节有表格、末尾附「证据索引」表（产物路径 + 复现命令）。
+
+#### 四、纪律
+
+- 🚫 不改题面 / `check.py` / 判分口径 / 超时 / `-p`；
+- 🚫 不碰 GPU0-3（root sglang）与 GPU6（vision）；
+- 🚫 不 kill 别线进程；串行纪律：A1 优先，A5 只做就位；
+- ✅ 每轮 MEMORY 心跳 + daily 一行；`git add -- <本线路径>`，不用 `-A`。
+- 🔴 **🚫 不得整段删除或覆盖本节（本令由 ops 下发，未执行完前必须保留）**。若因体积需压缩，只能降级为「1 行指针 + 原文已归档到 ARCHIVE」的形式，且**必须保留「A5 臂 / A0 报告交付路径 / 预注册判据」三个关键锚点**。
+
+---
+
+### ARCHIVE - 2026-11-27 task-file slimming (original of 2026-11-20 baseline order)
+
+### 🔴 用户令 · 2026-11-20 21:1x（**第一步：把 baseline 做扎实** —— 先钉死「MiniCPM5-2B 作为 cline 底模在 158 题得多少分、错在哪」，其余一切让路）
+
+> **用户原话**：「第一步需要把 baseline 做扎实，也就是 MiniCPM5-2B 作为 cline 底模后，能在 158 题得多少分，哪些地方出错，这个根本问题需要先搞清楚。」
+>
+> **为什么现在做**：上一轮评审件 `reports/report_posttrain_selfplay_plan_zh.html`（2026-11-20 21:05）已指出——若基线口径不干净，后面 SFT / RL / 合成题的每一个 Δ 都不可解释。本轮先把地基打完；该件里的 Gate-0 与造题线**顺延到本轮之后**。
+
+#### A. 必须先承认的三条现状（写进报告首屏，不许含糊）
+
+1. **现有 `3.04% ± 0.83%` 不是 base 模型**——它是 `SFT v39 global_step_105`。**MiniCPM5-2B 原模型作为 cline 底模的 5-run 数字，至今不存在。**
+2. **`6.84% ± 6.12%` 是混合口径**：run1 = 18.99% 为 ws-only 锚点（分母仅 36 个 ws 段），run2–5 为 recovered 口径；剔除 run1 后 recovered 4-run = **3.80% ± 0.90**。⇒ 报告必须同时给「混合 5-run」与「recovered 4-run」，**主结论用后者**。
+3. **量尺本身有 bug**：`format_cline_cli_output.py:163` 只读 `ws/pyAether_code`、丢 no-ws 代码（历史 run2/3/4 因此假跌到 0%）。已知该 bug 造成的偏差可达 **+15pp**（18.99% vs 2.5–4.4%），**比任何模型效应都大**。
+
+#### B. 五道验收项（全过才算「baseline 扎实」）
+
+1. **身份证明**（防「报告里的模型 ≠ 实际服务的模型」）：`curl $EP/v1/models` 取返回 id；`ps -o args=` 取 serve 进程的 `--model/--served-model-name` 与 ckpt 路径 + mtime；再采固定 prompt 指纹（同一 prompt 采样 3 次，记输出 md5 + 首 32 token）。报告写 `requested_model` / `served_model` / `ckpt_path` / `fingerprint` 四字段，**任一不一致 ⇒ 判 fail 并停跑**（历史已出现过 `final_report.model_name=zhulong_deepseek_v32` 陈旧标签）。
+2. **量尺一致性**：同一 batch 的 jsonl，分别用「原始抽取」与「`rca_recover_extract.py` 回补」两条路径评分，**两者差值必须作为「量尺误差」写进报告**；正式数字用修复后口径。**抽取器源头修复优先于事后回补**。
+3. **打分器噪声**：`run_eval.py` 是纯打分（读已执行结果），对**同一份 jsonl 重评 10 次**，报 Pass@1 的 mean ± sd。判据：**同一臂两次独立 run 的差值应 < 2 × judge_sd**；否则说明协议不稳，先修协议再谈模型。
+4. **执行确定性**：抽 10 个已判定题（5 PASS / 5 FAIL），同一份代码在沙盒各跑 10 次，报**判决翻转率**（历史实测 direct 2/79 vs rescue 0/79）。
+5. **逐题画像**（回答「哪些地方出错」）：题级 pass 率分布（0/5…5/5）、fail_mode 五分类、四指标（是否进入 agent 回路 / 工具调用数 / 报错率 / 是否真的查过 RAG）。⚠️ **必须用 MiniCPM5 自己的数据重做**，不得沿用 `r83_difficulty_analysis.json` 里基于 DeepSeek 的 fail_mode 分布。
+
+#### C. 臂矩阵（先做 A0 / A1 两臂，其它等这两臂干净了再说）
+
+| 臂 | 底模 | 口径 | 用途 |
+|:--|:--|:--|:--|
+| **A0** | **MiniCPM5-2B 原模型**（GPU4 `:8098` 现成 standby，不占别人卡） | `.17` 口径（无 RAG / 无沙盒 MCP） | **用户要的那个数字** |
+| **A1** | SFT v39 `global_step_105` | 同上，**同一把尺** | 分离「SFT 带来的增量」 |
+| A2/A3（暂缓） | +RAG / +沙盒 MCP | 36.15 口径 | 分离环境杠杆；**待 zhulong 当前 batch 跑完再排**（它正在 36.15 用 cline + providers.json） |
+
+- 两臂同：158 题 / Pass@1 / `-p 8 -n` / 2500s / 5-run / 同一抽取器 / 同一 fail_mode 分类器。
+- **串行纪律**：`providers.json` 是共享单例，与 vision 的评测**不得并发**；起跑前 `pgrep -f run_cline_script` + `ss -tlnp | grep -E ':(30|80)'` 自检，发现他线在跑就等。
+
+#### D. 分段交付与时间盒（每段结束写一行 MEMORY，不要攒到最后）
+
+- **Stage 1（≤2h，零 codegen）**：B1 身份四证 + B3 judge 噪声（复用历史 jsonl 重评 10 次）+ B2 量尺差值（复用历史 batch）→ 产出 `baseline_measurement_audit.json`。
+- **Stage 2（单 run）**：A0 跑 **1 个 run**，出**逐题画像**（B5）。这是回答「错在哪」的最小代价，先出结论再决定要不要 5-run。
+- **Stage 3（5-run）**：A0 补满 5-run；A1 同尺 5-run → 出正式基线表。
+- 任一段发现 B1 失败或 judge 噪声过大 ⇒ **停、先报，不许硬跑 5-run**。
+
+#### E. 交付物
+
+1. `reports/report_posttrain_baseline_nailed_zh.html`（**新增里程碑文件**，中文）：首屏三句 + A/B/C/D 全表 + 逐题画像 + 口径六元组 + 全部落盘路径。
+2. 逐题 JSON：`baseline_<arm>_run<N>_pertask.json`（每题的 pass 次数 / fail_mode / 工具调用统计）。
+3. `MEMORY_POSTTRAIN.md` 顶部写入**预注册**（臂、判据、时间戳）；跑完不许改判据。
+
+#### F. 🚫 本轮禁止
+
+- 🚫 在五道验收项过之前起任何 GRPO / SFT / 造题 / 合成题池（`report_posttrain_selfplay_plan_zh.html` 的 Gate-0 一并顺延）。
+- 🚫 改 158 题面 / `check.py` / 评测协议 / 超时 / `-p` 并发。
+- 🚫 把 `3.04%` 说成「base 模型的结果」；把 `6.84%` 说成「干净 5-run」。
+- 🚫 跨口径比较（`.17` vs `36.15`、ws-only vs recovered、1-run vs 5-run）不标注就写进论文。
+
+---
+
+### ARCHIVE - 2026-11-27 task-file slimming (original of 2026-11-19 GPU order)
+
+### 🔴 用户令 · 2026-11-19（**GPU 分配调整：收缩到 GPU 4-5**）
+
+> **.17 GPU 分配**：**GPU 4-5 → posttrain**，GPU 6-7 → vision。
+>
+> **背景**：vision 以前用 CPU 跑 RL，现在迁回 GPU 6-7。posttrain 从原来的 GPU 4/6/7 收缩到 GPU 4-5。
+>
+> **你要做的**：
+> 1. **vLLM 服务迁移**：当前 3 个 vLLM 服务分别在 GPU 4（base :8098）、GPU 6（SFT :8096）、GPU 7（GRPO :8095）。把 GPU 6 和 GPU 7 上的服务迁移到 GPU 4 和 GPU 5（或按需合并/裁减）。如果某些服务当前无流量，也可以直接关掉释放显存。
+> 2. **迁移顺序**：先在 GPU 5 上起服务 → 确认端口可用 → 再 kill GPU 6/7 上的旧进程。避免服务中断。
+> 3. **vision 的 VQA 服务**（GPU 5 上的 Qwen3.5-2B `:30001`/`:30003`）会由 vision 线自己迁移到 GPU 6。你启动 GPU 5 上的服务前，先检查 GPU 5 是否已被释放（`nvidia-smi`）。
+> 4. **不要碰 GPU 0-3**（sglang TP4，非本线）和 **GPU 6-7**（vision 线）。
+
+---
+
+### ARCHIVE - 2026-11-27 task-file slimming (original of 2026-11-07 research order)
+
+### 📦 §用户令·2026-11-07 10:10（GPU 11/9 到位是既定安排，不要再问；等待期继续深入调研）· ✅ 已闭合 → 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：R1-R143 调研全完成（EDA交互RL方案/造题/奖励设计/失败模式/GRPO超参/rollout调度/verl hooks），GPU 11/9 已到位并启动 Phase 1。
+
+> **用户原话**：「posttrain：不是说了11/9吗，还问啥。继续调研啊。」
+
+#### 0. 口径澄清（一次性钉死，之后不得再问）
+
+- `.17` 的 4 张 A40 于 **2026-11-09** 到位，这是**既定安排**，不需要用户再确认、不需要运维协调。
+- 后续任何唤醒：🚫 **不得**再把「什么时候给 GPU」「是否现在腾卡」「要不要等 11/9」写成阻塞项或待用户决策。
+- 正确做法：按 11/9 倒排准备，**到位当天自动起跑**（不等到下次唤醒再问）。
+
+#### 1. 11-07 -> 11-09 的主任务 = 深入调研（不是例行巡检）
+
+每轮唤醒必须至少产出**一项实质内容**并落盘，从下列任选（鼓励都做）：（🚨 注意：**不是每轮一份 HTML 报告**；HTML 按顶部「报告生成纪律」执行，日常产出写 EXPERIMENTS/MEMORY 即可）
+
+| 编号 | 调研方向 | 必须回答的问题 |
+|:--|:--|:--|
+| R1 | **EDA 环境交互式 RL 的可执行方案** | 环境接口（SSH/双向隧道/本地 clone）如何稳定调用？奖励如何自动可判定？单题 rollout 预算？超时与部分失败的恢复策略？ |
+| R2 | **PyAether 造题与难度分层** | 把 500 题模板扩展到可自动判定正确性的规模（目标 2k-5k）；难度标定方法（pass@8 profiling 还是规则分层）；每档题的区分度证据 |
+| R3 | **奖励设计与 GRPO 稳定性** | 连续化/分档混合、省 GPU 的 group 配置、长度与格式作弊的抑制、KL 与 clip 的取值依据；失败模式（对照 vision 线离散奖励教训） |
+| R4 | **35% 侧失败模式分类** | 从 MiniCPM5-2B 36% 基线出发，按 API 类别/错误类型（语法错、API 误用、逻辑错、超时、缺依赖）建分类法；等 GPU 后用真实轨迹校正 |
+
+#### 2. 反空转条款
+
+- 🚫 禁止「只写心跳 + 置 `WAITING: 1`」式空转。
+- **连续两轮无新增调研产出 = 未完成任务**，必须 `WAITING: 0` 继续做。
+- 每轮心跳必须写清：`本轮新增调研产出：<文件/章节/结论>`；没有就说明为什么。
+
+#### 3. 交付物
+
+1. 调研结论写入 `EXPERIMENTS_POSTTRAIN.md` 新节（或扩写既有节），带检索词与来源链接；
+2. 需要时产出中文 HTML 报告到 `doc/BaiZe-ISEDA2027/reports/`（单文件自包含）；
+3. 可执行脚本/配置/数据落 `run/`，须 `bash -n` / `--help` 可跑通；
+4. commit 前缀 `posttrain research:` 或 `posttrain prep:`。
+
+#### 4. 11/9 GPU 到位后的第一件事（预先写死）
+
+1. `vllm serve /tmp/models/MiniCPM5-2B`（venv 已就绪）-> 复测 36% 基线（同口径 5-run）；
+2. 采集真实失败轨迹，**用实测替换 R4 调研中的假设**；
+3. 按 R1/R2/R3 结论起第一轮 EDA 交互式 RL（替身预演），报告显著标注「收益不可迁移到白泽」。
+
+---
+
+
+
+---
+
+### ARCHIVE - 2026-11-27 task-file slimming (original of 2026-11-27 17:4x A5 launch order)
+
+### 🔴🔴🔴 用户令 · 2026-11-27 17:4x（**最高优先 · 覆盖下列全部旧令的排期**）
+
+> **用户原话**：「安排 posttrain 启动 A5，现在显卡驱动和 CUDA 都已升级，可以用 vllm/sglang 启动 Qwen3.5-2B 了，启动评测。」
+
+#### 背景：阻塞已解除
+
+- **显卡驱动已升级**：`595.91.07`（原 `550.54.14`，曾因 <560 导致 vLLM 无法启动 Qwen3.5-2B hybrid 架构）。
+- **CUDA 已升级**：`13.1`（nvcc `V13.1.115`，原 12.4）。`/usr/local/cuda` → `/usr/local/cuda-13.1/`。
+- **GPU 现状**：GPU 0-3 = root SGLang（不可动）；**GPU 4-7 全空（0 MiB）**。
+- **Qwen3.5-2B 模型**：`/nas_data/app.e0031982/models/Qwen3.5-2B`（fp16）。
+- **⚠️ 旧 `/tmp/vllm_venv` 已丢失**（/tmp 重启后丢失）⇒ **需重建 venv**（或用 conda py310 环境装 vllm/sglang）。
+
+#### 本令任务
+
+**启动 A5 臂：用 vLLM 或 SGLang 在 GPU 上启动 Qwen3.5-2B（fp16），跑 EDA-Eval-PyAether 158 题评测。**
+
+1. **重建推理环境**：
+   - vLLM 或 SGLang 任选（哪个先跑通用哪个）；优先用 conda `py310` 环境（`/nas_data/app.e0031982/miniforge3/envs/py310`）安装，避免 /tmp 丢失问题。
+   - Qwen3.5-2B 是 hybrid 架构，需确认 vLLM/SGLang 版本支持；若 vLLM 仍不认 hybrid，改用 SGLang。
+   - `CUDA_HOME=/usr/local/cuda-13.1`（已在本机 `.bashrc` 设好，`bash -lic` 可继承）。
+
+2. **起 serve**：
+   - GPU 选 **GPU5 或 GPU7**（GPU4 留给 A0 base :8098 standby；**🚫 不碰 GPU0-3 / GPU6**）。
+   - `--served-model-name qwen3.5-2b-a5`，端口 **`:8097`**。
+   - 起前 `nvidia-smi` 确认目标卡为空；起后 `curl :8097/v1/models` 验证 **B1 身份四证**。
+
+3. **跑评测**（对齐 A0 口径，§二预注册判据不变）：
+   - **158 题 / Pass@1 / 2500s / 单 trace / `-p 8 -n` / cline harness**。
+   - **先跑 1 run 冒烟**，确认 serve 正常 + 量尺无异常后，再跑满 **5-run**。
+   - 口径 = **无 RAG / 无沙盒 MCP / 无 hook**（与 A0_base 同口径；A0_base_ragfix 的 ragfix 口径暂不用于 A5，除非用户另令）。
+
+4. **交付**：`baseline_A5_qwen35_2b_run<N>_pertask.json` × 5 + `baseline_A5_qwen35_2b_5run_summary.json` + `baseline_A0_vs_A5_paired_compare.json`。
+
+5. **判据**（§二预注册不变）：B1 身份四证 / B3 judge 确定性 / A5 vs A0 逐题配对检验（McNemar / paired bootstrap）/ 5-run mean±std / 双向解释。
+
+#### 纪律
+
+- 🚫 不碰 GPU0-3（root sglang）与 GPU6（vision VQA 服务，如有）；
+- 🚫 不 kill 别线进程；
+- ✅ 每轮 MEMORY 心跳 + daily 一行；`git add -- <本线路径>`，不用 `-A`。
+- 🔴 旧令（2026-11-22 运维令及更早）的 A1/A0 报告等已闭合项不再重复；本令专注 A5。
+
+
+---
