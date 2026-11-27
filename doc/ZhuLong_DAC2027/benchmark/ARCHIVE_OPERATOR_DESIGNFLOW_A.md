@@ -715,3 +715,45 @@ session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 
 > ---
 ```
 
+
+## 归档块 · 2026-11-27 r1407 瘦身 · A1（r1358–r1397 MEMORY 指针行 verbatim 归档）
+
+r1407 监控轮 MEMORY_A 体积红线处置：将 r1358–r1397 共 34 行 teeth-guard 监控轮指针行（含 r1396/r1397、r1381–r1384、r1379 三段已合并摘要 + r1358–r1395 各独立短指针）原文照搬归档，MEMORY 留 1 行汇总指针。归档前已 git pull --rebase --autostash。🚫 未改小节编号/标题/判分/case。
+
+```
+→ r1396/r1397 详块见 daily_A_2026-11-27.md §r1395（r1396/r1397 监控轮只刷 WAITING 未单独落 daily block，并入 §r1395 监控序列；§r1398 已恢复独立 daily block）
+→ r1395 详块见 daily_A_2026-11-27.md §r1395
+→ r1394 详块见 daily_A_2026-11-27.md §r1394
+→ r1393 详块见 daily_A_2026-11-27.md §r1393
+→ r1392 详块见 daily_A_2026-11-27.md §r1392
+→ r1391 详块见 daily_A_2026-11-27.md §r1391
+→ r1390 详块见 daily_A_2026-11-27.md §r1390
+→ r1388 详块见 daily_A_2026-11-27.md §r1388
+→ r1389 详块见 daily_A_2026-11-27.md §r1389
+→ r1387 详块见 daily_A_2026-11-27.md §r1387
+→ r1386 详块见 daily_A_2026-11-27.md §r1386
+→ r1385 详块见 daily_A_2026-11-27.md §r1385
+→ r1381/r1382/r1383/r1384 详块见 daily_A_2026-11-27.md §r1381–§r1384（4 轮 teeth-guard 监控轮(只读·0 改动), 均 .75 REACH_OK hfhds201 RC0(21-138ms) + hspice/finesim/hspice64/vcs/vlogan in PATH, verdi/fm absent + A 3 L2.live neg_selftest 全 OK 无回归(VpsRegr 4-distinct{a,d,g,h}/TotemSC 4-distinct{c,d,f,h}/AsyncFifoSim 3-static{c,d,o}+live-neg) + 585 cases/A judge_layers 齐(574 L0L1+11 L2.live 0 missing) + review tsv 116/116(REQ7/OPT3/NA106) + 两仓 0/0 sync(工作树仅别线 in-flight scratch 未碰) + changes.tsv 34-35 行(A4 unchanged, +1 = 他 shard B/CtleAcChar) + research daily 2026-11-27 designflow 建议 NA-A + 无 board/discuss/thermo_feedback. A 三线收口不变, 116/116 green, 0 改动 0 回归. session close cleaned. 全文见 daily 对应轮次）
+→ r1379 详块见 daily_A_2026-11-27.md §r1379（r1379: teeth-guard 监控轮(只读·0 改判分)+汇总刷新. .75 REACH_OK hfhds201 RC0(22ms) + hspice/finesim/hspice64/vcs/vlogan in PATH, verdi/fm absent + A 3 L2.live neg_selftest 全 OK 无回归(VpsRegr 4-distinct{a,d,g,h}/TotemSC 4-distinct{c,d,f,h}/AsyncFifoSim 3-static{c,d,o}+live-neg) + 585 cases/A judge_layers 齐(574 L0L1+11 L2.live 0 missing) + review tsv 116/116(REQ7/OPT3/NA106) + 两仓 0/0 sync + changes.tsv 34 行(A 不变, B 12→14 done PFDdeadZone r1311) + research daily NA-A + 无 board/discuss/thermo_feedback. A 汇总刷新 live_eval_summary.md r1373→r1379(B done 12→14, pending 21→19, L2.live 49→51, changes.tsv 31→34). A 三线收口不变, 0 改判分 0 回归. session close cleaned. 全文见 daily §r1379）
+→ r1376 详块见 daily_A_2026-11-27.md §r1376
+→ r1376 详块见 daily_A_2026-11-27.md §r1376
+→ r1375 详块见 daily_A_2026-11-27.md §r1375
+→ r1374 详块见 daily_A_2026-11-27.md §r1374
+→ r1373 详块见 daily_A_2026-11-27.md §r1373
+→ r1372 详块见 daily_A_2026-11-27.md §r1372
+→ r1371 详块见 daily_A_2026-11-27.md §r1371
+→ r1370 详块见 daily_A_2026-11-27.md §r1370
+→ r1369 详块见 daily_A_2026-11-27.md §r1369
+→ r1368 详块见 daily_A_2026-11-27.md §r1368
+→ r1367 详块见 daily_A_2026-11-27.md §r1367
+→ r1366 详块见 daily_A_2026-11-27.md §r1366
+→ r1365 详块见 daily_A_2026-11-27.md §r1365
+→ r1364 详块见 daily_A_2026-11-27.md §r1364
+→ r1363 详块见 daily_A_2026-11-27.md §r1363
+→ r1362 详块见 daily_A_2026-11-27.md §r1362
+→ r1361 详块见 daily_A_2026-11-27.md §r1361
+→ r1360 详块见 daily_A_2026-11-27.md §r1360
+→ r1359 详块见 daily_A_2026-11-27.md §r1359
+→ r1358 详块见 daily_A_2026-11-27.md §r1358
+```
+
