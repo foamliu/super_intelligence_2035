@@ -909,3 +909,56 @@ L2.live done 21→22；REQ 未改造 31-22=9 条（hspice-mock/finesim-mock GT-r
 **.75 通路 OK**（r1330 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session sfto-reflive/sfto-negself 用后 close）。
 
 **累计（REQ 收口）**：REQ 29（done **29/29**，余 0），OPT 19，NA 76，cross_shard 2，L2.live 28→**29**。**B shard live-eval R2/R3 改造全部完成**——所有 29 条 confirmed-REQ 已落 L2.live + live-neg + §5 全绿；OPT 19 待排期，NA 76 仅记理由。
+
+## Live-eval 收口（2026-11-27 r1331 · B shard 全绿，报 A 汇总）
+
+> 触发：LIVE_EVAL_ORDER §8 收口判据「REQ 全绿 + OPT 有结论 + NA 有依据」三项全满足。本轮为**只读结账轮**——零 check.py / cases / judge_layers / live_eval_changes.tsv 改动（REQ 改造已于 r1330 全部落盘，见上节）。
+
+### 收口三口径（与 `live_eval_review_B.tsv` 全量对账一致）
+
+| verdict | 条数 | 收口状态 | 依据落盘 |
+|:--|--:|:--|:--|
+| **LIVE-REQ** | 29 | ✅ 全绿（done 29/29，§5 七项全勾） | 每条 r1294–r1330 落 `check_live` + live-neg + `judge_layers=[L0,L1,L2.live]` + JSON test sha 3-way sync；29 行登记 `live_eval_changes.tsv` |
+| **LIVE-OPT** | 19 | ✅ 全部有结论（concluded 19/19，0 reformed） | 每条 tsv `live_reason` + `check_live` + `live_evidence` 填满；结论分两类见下 |
+| **LIVE-NA** | 76 | ✅ 全部有依据（reason 填满） | tsv `live_reason` 逐条写明「deliverable 本身是文本/脚本/日志分析/改文件/问答」 |
+| cross_shard | 2 | 走 cross_shard 流程，不进本轮三分类 | OtaAcReport-001 / PUvddSweep-001 |
+| **合计** | **126** | = 124 green_verified + 2 cross_shard | — |
+
+### REQ 29 条清单（全部 reformed → L2.live）
+
+AOI21ArcChar-001, AlterDeckSplit-001, BistOscRccReorder-001, CdlBulkSanitize-001, CmlPvtAcReport-001, CtleAcChar-001, DelayChainEdgeMeas-001, DelaySigma-001, DffSetupHoldChar-001, FineSimModelScopeFix-001, FineSimWorkflowRunner-001, GmidLut-001, GrDecPwrVerifTb-001, InvPVTchar-001, InvTripDelay-001, OpampACSpec-001, PFDdeadZone-001, PVTalterChar-001, PorCapSweep-001, SlicerFbTimeOpt-001, SpiceSim-001, SpiceTbGen-001, SramSNM-001, StdLibCharTmpl-001, StrongarmFomSweep-001, TaperBufOpt-001, Vcc2scTranGen-001, VcoKvcoChar-001, VwlpRefDeckSet-001
+
+**家族分布**：hspice-mock GT-replay-by-signature 24 条（deck-driven，候选自建 deck ⇒ Q2 可骗）+ finesim-mock GT-replay 3 条（FineSimModelScopeFix/FineSimWorkflowRunner/BistOscRccReorder）+ hspice-mock range-synthesizer 1 条（SpiceTbGen，非 GT-replay 但 real hspice 有 genuine L2 gain）+ hspice-mock GT-replay-by-.param-signature 1 条（SlicerFbTimeOpt，漏洞在 cond(n) 复核漏约束变量 t0/t1）。
+
+### OPT 19 条清单（全部 concluded，0 reformed — L2.live 增益为零或边际）
+
+CTLEAC-001, CTLESpec-001, FineSimNoRefCktFix-001, LisMeasExtract-001, MinpulseRewriteRun-001, NetlistLintHsp-001, OpampChar-001, PlatMosThinIdsatIoffSweep-001, PostsimPortAudit-001, PostsimToggleDiag-001, PwlStimTransform-001, RcurrDirClassify-001, SimExpl-001, SpGen-001, StimPWL-001, Tr0TrTfMeas-001, TxRonSize-001, Vcc2scActDeckGen-001, VlshftParamOpt-001
+
+**结论分两类**（逐条 .75 实证 / full-mock-body 读支撑，落 tsv `live_evidence`）：
+- **Type B（11 条）**：候选跑 **PROVIDED** deck/netlist/tb（judge-built），不 author deck ⇒ Q2「shape-right-physics-wrong deck 假阳」**不成立**（候选不能注入 garbage physics，hidden tb 只读）；mock==real tool 对该固定输入。代表：CTLESpec/CTLEAC/OpampChar/NetlistLintHsp/PostsimPortAudit/PostsimToggleDiag/RcurrDirClassify/SimExpl/Tr0TrTfMeas/LisMeasExtract/MinpulseRewriteRun。
+- **Faithful-physics-solver / syntax-validator（8 条）**：mock 非 GT-replay——要么 faithful level-1 Shichman-Hodges DC solver（SpGen/PlatMosThinIdsatIoffSweep/TxRonSize，bit-exact real hspice level=1），要么 PWL-crossing 纯插值（StimPWL），要么纯语法/结构 validator（PwlStimTransform/Vcc2scActDeckGen/FineSimNoRefCktFix/VlshftParamOpt，real hspice 与 mock 同 conclude garbage，零物理增益）。
+
+**OPT 不 reform 的依据**：每条均 .75 实证 mock==real（bit-exact 或同 conclude）或结构证明 Type B 候选不可骗；L2.live 加零或边际断言，不增判分严格度。OPT「done 0」= 0 条 reform（OPT 按 §8 仅需结论，不需改造）；「concluded 19/19」= 收口判据「OPT 有结论」满足。
+
+### NA 76 条清单（deliverable 本身是文本/脚本/日志分析/改文件/问答，保持 [L0,L1]）
+
+BisecMt0SmCalc-001, BridgeCfgDiag-001, ButterflyCurve-001, CTLETranDeck-001, CabufPvtDatAudit-001, ClampPwrStateExtract-001, CmlBwExtensionHandbook-001, CmlDivOscDiag-001, CmlSweepHeadroomDiag-001, Coord3DProj-001, CosimRunBlockOpt-001, DQSEHFlagNoEffectDiag-001, DblTailSlicerDeckGen-001, DcaStimSweepGen-001, Ddr6RptCmdExtract-001, DeckConsistencyCheck-001, DelayCornerIdent-001, DupSubcktDefDiag-001, FifoDelayOptDiag-001, FinesimLaunchAgent-001, FinesimMatrixrunAgent-001, FsdbPulseFilter-001, FsdbScopeSignalLocate-001, GaaFetDeckAugment-001, LatchSubcktLocate-001, LvLvioSweep-001, MBistTopAnalyze-001, MR7PsdScopeAnalyze-001, McVthSpVariantGen-001, ModelLibVerDiff-001, MonteCarloDeckGen-001, Mt0Reorg-001, Mt0TskewCalc-001, NetlistModSummary-001, NetlistWLReduce-001, PdkLayerLocate-001, PexStimulusBuild-001, PlatInvsThick-001, RonMonoDiag-001, RsCalcAutoVia-001, SentaurusDeckSetupSummary-001, SharedLibDeployFix-001, SiInpTokenRm-001, SimModelMismatchDiag-001, SimProgressCheck-001, SimSavedCornerComplete-001, SimSpecJudge-001, SlicerSweepFomOpt-001, SnmButterflyCalc-001, Sp2tVerilogaSwitch-001, SpRcAlterGen-001, SpfAutosimSetup-001, SpfNtsvMissingDiag-001, SpiceMeasInjector-001, Sram6tTbBuild-001, StackedMOSOpAnalysis-001, StimScriptCfgLocate-001, StrongarmBaselineAnalyze-001, SubcktInstParamInj-001, SwitchTbGen-001, TbMeasCheck-001, TbSpiceMeasureAudit-001, TmVerifyTbGen-001, TranStimSync-001, TrimMarginSpec-001, TrtfMeasDeckGen-001, TscodecompTbVerify-001, TzqlatLocate-001, VSplit-001, VsimFinesimAdapt-001, WtmFileReview-001, WtmPatternDirReview-001, WtmWriteArrayScope-001, XmelabCuvpomPortDiag-001, XrunLogErrDiag-001, ZqPatternTimingAnalyze-001
+
+**NA 依据共性**：deliverable = 写 Makefile/tcl/脚本、解析既有 log、改文件、答 API 用法、生成 deck 文本（不跑 sim）；check.py 的 subprocess 仅跑候选脚本本身，hspice/finesim/vcs 仅出现在 deck 文本/字段名/evidence，非真二进制直调。R1 逐条核 subprocess 上下文（r1288/r1289），仅 LisMeasExtract-001 误判（升 OPT），余 76 稳固。
+
+### 与旧 P4 的差异（r1264 → 本轮）
+
+| 维度 | 旧 P4 (r1264) | 本轮收口 (r1331) | 差异依据 |
+|:--|:--|:--|:--|
+| 口径 | 全量 130 Lite-B（含 cross_shard 4） | lite-500 B 名册 126（= 124 green + 2 cross_shard） | LIVE_EVAL_ORDER §1.1 名册唯一来源 `lite_health_all.tsv` |
+| T1/T2/T3 | T1=0/T2=1/T3=129 | REQ=29/OPT=19/NA=76/cross=2 | 三分类重判 + 桩体检 |
+| mock 桩体检 | 未系统做 | 29 REQ + 19 OPT 全部 full-mock-body 读 + .75 实证 | §2.1 Q1/Q2 逐条答 |
+| 关键词扫法 | 旧 P4 用关键词 | 本轮证伪关键词扫（r1290/r1302/r1303/r1315/r1325/r1326 6 条 REQ→OPT 降级，R1 generic boilerplate 误分类清零） | §2.1 规则 2 |
+| 落盘 | 旧 P4 只分析 | 29 REQ 全部落 L2.live + live-neg + §5 全绿 | r1294–r1330 |
+
+### 报 A 汇总数字
+
+- **B shard live-eval 收口完成**：REQ 29/29 reformed（L2.live 0→29），OPT 19/19 concluded（0 reformed），NA 76/76 有依据，cross_shard 2 走原流程。
+- **口径变更登记**：`live_eval_changes.tsv` B 行 29 条（jl `[L0,L1]`→`[L0,L1,L2.live]`，repo_commit 范围 r1294–r1330，HEAD=`924a14db4`）。
+- **待 A**：出 `designflow/live_eval_summary.md`（4 shard 三分类合计 + REQ 改造进度 + 缺口台账）；通报 zhulong 变更 commit 范围。B 不写 A 的文件。
+- **🚫 不设等待**（§1.1）：B 随时可改判分（只需 `live_eval_changes.tsv` 追加登记）；zhulong 体温计反馈的新增 FAIL 优先于 OPT。
