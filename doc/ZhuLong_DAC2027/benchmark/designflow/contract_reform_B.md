@@ -1073,3 +1073,33 @@ R1b 新增 12 REQ 全部为「judge/candidate 直调真二进制」家族（r134
 REQ 34 条（R1 22 + R1b 12）按家族改造（B 预算 ≤6–8 条/轮，§4 前提）：先 deck-mock GT-replay 家族（R1 22 条，同 Lite-500 r1294–r1330 模板），再 R1b 12 条 judge-直调/cand-runs-sim（每条：`_check_static_impl` 一字不动 + `check_static` 收口 + `check_live(sess)` real hspice/finesim/wv on `.75` + live-neg + §5 七项全绿 + `live_eval_changes.tsv` 登记）。
 
 - 心跳：`LIVE-NL: B review=471/471 · REQ=34(done 0) · OPT=0 · NA=437 · L2.live 0→0 · R1b 收口(2026-11-27 non-Lite-500 实跑评估改造, TODO 117→0)`
+
+## R2 改造（non-Lite-500 · 2026-11-27 r1343 起）
+
+### r1343：NocalOffsetDeck-001（hspice-mock deck-driven GT-replay Type A · R2 首条）
+
+**桩体检结论（读桩定论，Type A 稳固）**：check.py 的 `HSPICE_MOCK_SRC` 是 deck-driven GT-replay 桩——按 deck 的 `(.subckt cmp_dut_b, .measure tran offset_b)` 签名 replay 预捕获的 `.lis`（offset_b=236.1581m，.75 real HSPICE V-2023.12-SP1-1 实测）。**Q1 语义保真**：GT 值来自 .75 真跑，mock 抄了一遍 ✅。**Q2 能否被骗**：候选造「签名对、物理错」的 deck（如改 `.param vhalfbx=0.5→0.9`，保持 `.subckt cmp_dut_b`+`.measure tran offset_b`）→ mock 按签名 replay GT → 静态 cond i/j/k 全 PASS（假阳）；real HSPICE 算出 offset_b=-0.167（dev 170.8% > 20%）⇒ **Q2=会判过 ⇒ REQ 稳固**。
+
+**改造手法（非侵入包装）**：
+1. 原 `check` → 改名 `_check_static_impl`，14 conds a..n **一字不动**（含 mock + `_ensure_hspice()` + GT 常量）。
+2. `check_static(...)` 包 try/except 收口三元组 `(ok, errs, stage)`。
+3. **新增** `check_live(deliverable, workdir, sess)`：经 eda_flow 在 .75 真跑 HSPICE，上传 hidden B (cal_B.sp + spec_B.json) + submit.zip → 候选生成 nocal_only.sp → real hspice → 读 .lis → 解析 offset_b → 断 **同 cond k 阈值** `|offset_b - GT_B_OFFSET|/GT_B_OFFSET <= 20%`（only-add，不放宽）。不读 `reference/`、不读隐藏 GT 文件。
+4. `check()` 兼容包装；`__main__` 改用 `check_static`。
+5. case JSON `metadata.judge_layers` `[L0,L1]` → `[L0,L1,L2.live]`；`test` 字段与磁盘 `check.py` sha 同步。
+
+**live-neg**：`negative/cheat_vhalf_corrupt.py`——正确改写 init/clk/en 控制 vsource（过 cond c..h）+ 篡改 `.param vhalfbx=0.5→0.9`（mock 不查 .param 值，按签名 replay GT → 静态全过）；real HSPICE 算 offset_b=-0.167（dev 170.8% > 20%）⇒ check_live FAIL。
+
+**§5 七项全绿**：
+- ① `.75` 真跑 ref PASS：hostname=hfhds201，hspice=V-2023.12-SP1-1，offset_b=0.236158（dev 0.0008% from GT 0.23616）。
+- ② 6 static neg FAIL **distinct**（b/c/d/g/h/m）+ live-neg cheat_vhalf_corrupt **static-pass/live-fail**（first-fail = L2.live 阈值）。
+- ③ 3-seed 确定性：offset_b=236.1581m ×3 identical（.lis md5 仅 timestamp 头差异，check_live 只解析 offset_b 值）。
+- ④ `SKIP_RUN=1 eval/run_one.sh` clean（infra_fail=0；check_static ref PASS 14/14 直接验）。
+- ⑤ sha 三方同步：case JSON `test` == 磁盘 `check.py`；`judge_layers=[L0,L1,L2.live]`。
+- ⑥ 断言条数只增不减：static 14 conds 原样；check_live only-adds（concluded + numeric + 阈值）。
+- ⑦ L5 不退化：check_live 不读 `reference/`；hidden-B 从 `assets/hidden/` 上传；沙箱不含 jsonl/test。
+
+**登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
+
+### R2 累计进度（non-Lite-500）
+- done: 1/34（NocalOffsetDeck-001）
+- 余 33 REQ 待改造（deck-mock 1: Vcc2scMultiDeckSpecCompare；judge-直调 10；cand-runs-tool 10；R1b 12）
