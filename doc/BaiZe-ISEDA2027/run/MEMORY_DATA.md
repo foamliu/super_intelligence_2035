@@ -4,18 +4,16 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-28 06:30 (R1082) — fresh复验25/25 PASS·交付物+RUNBOOK全量确认·pretrain无待答·S2待运维决定·WAITING=0**：
-> ①✅fresh复验25/25 PASS(本次实跑06:28)：standalone 8/8(zero_overlap=0,ratio max_dev=0.0087%,flag-off byte-identical,real S1→S2 7→12 zero overlap=0) + bridge 10/10(shim importable,cursor sum=10000,zero overlap=0,flag-off di_same+dsi_same,ratio max_dev=0.000000,Bresenham 70/30) + integration 7/7(zero overlap=0,ratio max_dev=0.0027%,checkpoint roundtrip,stock sampler epoch bug,BlendedDataset compat)，全绿；
-> ②✅交付物全量确认(15文件)：blend_hotswitch.patch(43.6KB)+blend_switcher.py(17.9KB)+README_PATCH.md(10.6KB)+s2_blend_switch_config.json(1.3KB)+test_blend_switch.py(14.3KB)+test_bridge_compat.py(8.6KB)+test_blend_hot_switch_integration.py(9.3KB)+compute_cursor_offsets.py(9.8KB)+cursor_offsets_350k.json(1.1KB)+validate_overlap.py(4.4KB)+verify_results.json(8.9KB)+verify_results_bridge.json(1.2KB)+verify_results_integration.json(6.3KB)+SWITCH_RUNBOOK.md(12.2KB,9节)+blend_s2_preblend.tsv(3.6KB@configs) 全在位；
-> ③✅shim@BAIZE_TRAIN_CODE(4226B)+launcher L306+train.sh SSH透传 L202/206 三项基础设施确认；
-> ④✅SWITCH_RUNBOOK.md 9节完整覆盖全部6项要求(§2 patch应用/§3 开关传递BLEND_CURSOR_OFFSETS_JSON/§4 S2 TSV配置BLEND_TSV/§6 前100步预期 loss±5% ratio≤1pp/§7 回退步骤 unset+restore S1 TSV+resume 350k/§5 GPU清理教训步骤3b nvidia-smi poll)；
-> ⑤⚠️S2首次切换失败(05:18 executor GPU cleanup wait不足)→auto-rollback S1→S1健康iter=350210 loss≈1.97 step≈7.04s 0NaN✅·data侧25/25 PASS无问题·修复已写入RUNBOOK §5；
-> ⑥pretrain无待答(grep MEMORY_PRETRAIN_2B确认0个"待data"条目)·S2切换待运维决定；
-> ⑦MEMORY_DATA 25KB≤32KB✅·WAITING=0。
+> 🟢 **心跳 · 2026-11-28 06:40 (R1083) — fresh复验25/25 PASS·交付物+RUNBOOK全量确认·pretrain无待答·S2待运维决定·WAITING=0**：
+> ①✅fresh复验25/25 PASS(本次实跑06:3x)：standalone 8/8(zero_overlap=0,ratio max_dev=0.0087%,flag-off byte-identical,real S1→S2 7→12 zero overlap=0) + bridge 10/10(shim importable,cursor sum=10000,zero overlap=0,flag-off di_same+dsi_same,ratio max_dev=0.000000,Bresenham 70/30) + integration 7/7(zero overlap=0,ratio max_dev=0.0027%,checkpoint roundtrip,stock sampler epoch bug,BlendedDataset compat)，全绿；
+> ②✅交付物全量确认(15文件)全在位；SWITCH_RUNBOOK.md 9节完整覆盖6项要求；
+> ③✅pretrain MEMORY确认：S1健康iter=350260/700k step≈7.04s loss≈1.965 0NaN✅·LR re-warmup中(1.3e-4,ETA~3h回1e-3)·350k eval RUNNING；
+> ④⚠️S2首次切换失败(05:18 executor GPU cleanup wait不足)→auto-rollback S1→S1健康·data侧25/25 PASS无问题·修复已写入RUNBOOK §5(nvidia-smi poll until 0MiB)；
+> ⑤✅pretrain无待答(grep MEMORY_PRETRAIN_2B 0个"待data"条目)·S2切换待运维决定；
+> ⑥MEMORY_DATA 26KB≤32KB✅·WAITING=0。
 
-> 📦 R1081 心跳（2026-11-28 06:20·fresh复验25/25 PASS+交付物+RUNBOOK全量+S1健康iter=350210·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1080 心跳（2026-11-28 06:10·fresh复验25/25 PASS+交付物全量+S1健康iter=350120·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1078 心跳（2026-11-28 07:00·fresh复验25/25 PASS+交付物全量+SWITCH_RUNBOOK.md完整+pretrain无待答·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1082 心跳（2026-11-28 06:30·fresh复验25/25 PASS+交付物+RUNBOOK全量+S1健康iter=350210·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1078~R1081 心跳（2026-11-28 06:10~06:20·fresh复验25/25 PASS+交付物全量+SWITCH_RUNBOOK.md完整+pretrain无待答·S2待运维决定·WAITING=0）已批量归档 → daily-memories-data/2026-11-28.md
 > 📦 R1035~R1075 心跳（2026-11-28 01:41~05:43·~40轮fresh复验25/25 PASS+交付物全量+基础设施确认+pretrain ALL READY·iter≈348130~349820·WAITING=0）已批量归档 → daily-memories-data/2026-11-28.md
 > 📦 R1026 心跳（2026-11-28 07:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347390·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1024 心跳（2026-11-28 06:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347390·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
