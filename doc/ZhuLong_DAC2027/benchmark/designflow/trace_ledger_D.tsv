@@ -2075,3 +2075,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795403333217_txjim	binwenh	hfeg0pkn003	350	analog_context	case	EDA-Eval-DesignFlow-AmsWrapperProduce-001	2026-11-28 01:32	
 1795231971092_l3gmz.messages.json	eric9zhu	hfeg0pkn005	146	schematic_netlist	case	EDA-Eval-DesignFlow-LvsDiodeBackAnnotateProduce-001	2026-11-28 02:06	
 1795505250070_vkplj	cyrusrao	hfhds201	532	schematic_netlist	case	EDA-Eval-DesignFlow-FanoutNodeAnalyze-001	2026-11-28 02:39	
+1788241882830_hht3e	wellesc	hfeg0plg17	826	waveform	case	EDA-Eval-DesignFlow-FsdbHierFaninTrace-001	2026-11-28 03:18	
