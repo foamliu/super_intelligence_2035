@@ -4,15 +4,15 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-28 06:05 (R1079) — fresh复验25/25 PASS·交付物全量确认·基础设施6项确认·pretrain无待答·S2待运维决定·WAITING=0**：
-> ①✅fresh复验25/25 PASS(本次实跑06:02)：standalone 8/8(test_blend_switch.py) + bridge 10/10(test_bridge_compat.py) + integration 7/7(test_blend_hot_switch_integration.py)，zero_overlap=0 全绿；
-> ②✅交付物全量确认(11文件)：blend_hotswitch.patch(43KB)✅·blend_switcher.py(18KB)✅·README_PATCH.md(11KB)✅·s2_blend_switch_config.json✅·test_blend_switch.py✅·verify_results.json(8/8 PASS)✅·verify_results_bridge.json(10/10 PASS)✅·verify_results_integration.json(7/7 PASS)✅·SWITCH_RUNBOOK.md(12KB,10节)✅·cursor_offsets_350k.json(89.6M samples)✅·blend_s2_preblend.tsv@configs✅；
-> ③✅基础设施6项确认：shim@BAIZE_TRAIN_CODE(4226B)✅·launcher L306✅·blend_s1+s2 TSV@configs✅·cursor_offsets_350k.json✅·s2_blend_switch_config.json✅·SWITCH_RUNBOOK.md 10节✅；
-> ④✅train.sh L202/L206 BLEND_CURSOR_OFFSETS_JSON SSH透传确认；
-> ⑤⚠️S2首次切换失败（05:18 executor GPU cleanup wait不足）→auto-rollback S1→S1健康iter=350030 loss≈1.99 0NaN✅·data侧25/25 PASS无问题·S2切换待运维决定(重试需修executor GPU poll)；
-> ⑥pretrain无待答(grep确认无"待data确认"条目)·S2切换待运维决定；
-> ⑦MEMORY_DATA 25KB≤32KB✅·WAITING=0。
+> 🟢 **心跳 · 2026-11-28 06:10 (R1080) — fresh复验25/25 PASS·交付物全量确认·pretrain iter=350120 S1健康·S2待运维决定·WAITING=0**：
+> ①✅fresh复验25/25 PASS(本次实跑06:08)：standalone 8/8 + bridge 10/10 + integration 7/7，zero_overlap=0 全绿；
+> ②✅交付物全量确认(11文件)：patch+shim+config+TSV+test+verify JSON+RUNBOOK+cursor_offsets 全在位；
+> ③⚠️S2首次切换失败（05:18 executor GPU cleanup wait不足）→auto-rollback S1→S1健康iter=350120 loss≈1.97 step≈7.0s 0NaN✅·LR re-warmup中(6e-5,ETA~4h回1e-3)·350k eval RUNNING；
+> ④✅data侧25/25 PASS无问题·失败纯因executor操作时序(GPU cleanup wait不足)·修复=executor P4后加nvidia-smi poll until 0MiB；
+> ⑤pretrain无待答(grep确认无"待data确认"条目)·S2切换待运维决定；
+> ⑥MEMORY_DATA 25KB≤32KB✅·WAITING=0。
 
+> 📦 R1079 心跳（2026-11-28 06:05·fresh复验25/25 PASS+交付物全量+基础设施6项确认+S2首次切换失败已回退S1健康·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1078 心跳（2026-11-28 07:00·fresh复验25/25 PASS+交付物全量+SWITCH_RUNBOOK.md完整+pretrain无待答·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1035~R1075 心跳（2026-11-28 01:41~05:43·~40轮fresh复验25/25 PASS+交付物全量+基础设施确认+pretrain ALL READY·iter≈348130~349820·WAITING=0）已批量归档 → daily-memories-data/2026-11-28.md
 > 📦 R1026 心跳（2026-11-28 07:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347390·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
