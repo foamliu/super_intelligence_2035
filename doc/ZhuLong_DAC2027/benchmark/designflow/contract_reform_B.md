@@ -1139,3 +1139,13 @@ REQ 34 条（R1 22 + R1b 12）按家族改造（B 预算 ≤6–8 条/轮，§4 
 - done: 3/34（NocalOffsetDeck-001 deck-mock / Vcc2scMultiDeckSpecCompare-001 deck-mock / BatchBsubHspice-001 judge-直调）
 - 余 31 REQ 待改造（deck-mock 0；judge-直调 20；cand-runs-tool 11）
 - **judge-直调 pattern 已建立**（r1345），后续 20 条同类可复用：拆 real-tool cond 到 check_live + 升级为 candidate-discriminating + `python3`+`PYTHONIOENCODING=utf-8`。
+
+### r1348（2026-11-27）non-Lite-500 R2 改造#6: PulseStimTbGen-001
+- **verdict**: LIVE-REQ → reformed（judge-直调 pattern #4，同 r1345/r1346/r1347 同族）
+- **pattern**: candidate 只 GENERATES tran testbench deck（不跑 hspice，忠实 trace 0nar3）；原 check() cond j/k/l/m/o 经 `_run_hspice()` subprocess.run(["hspice",...]) 本地真跑 hspice on 候选生成的 B/A tran deck → mislabeled [L0,L1] → SUT 沙箱无 hspice 必 FAIL。
+- **改造**: _check_static_impl 保留 10 static conds a..i,n 一字不动（删 j/k/l/m/o 本地 hspice 块）+ check_static try/except 收口三元组 + check_live(sess) .75 real hspice V-2023.12-SP1-1@hfhds201 跑候选 gen 的 B+A+B-determinism 三 deck，断同判据（j: job concluded / k: vhigh>=0.8vdd & vlow<=0.2vdd / l: period±5% vs GT_B_PERIOD / m: A 跨输入 concluded+vhigh±10% vs GT_A_VHIGH+period±5% vs GT_A_PERIOD / o: 确定性 vhigh±1%）+ check() 兼容 + __main__ 改 check_static。
+- **live-neg=cheat_badinc.py**: 同 ref deck 生成（静态 a..i,n 全 PASS）但顶部注入 `.inc 'nonexistent_live_include.sp'` ⇒ real hspice aborts ⇒ j/k/l/m/o 全 FAIL（first-fail=j）。
+- **selftest 修复**: 原 negative_selftest.py 引用不存在的 pulse_stim_tb_gen_ref.py（latent bug）→ 改为从 reference_submit.zip 取 ref 候选。
+- **§5 七项全绿**: (1)ref check_live PASS B vhigh=1.5236/vlow=-0.01128/period=1e-6 A vhigh=1.2285/period=2e-6 (2)6 static neg FAIL distinct{c,d,g,f,i,h}=6-distinct + live-neg static-pass/live-fail (3)3-seed PASS x3 identical (4)SKIP_RUN=1 deploy clean no leak + ref check_static PASS (5)judge_layers=[L0,L1,L2.live] JSON test sha b7731f69 3-way sync (6)断言 15 total 只增不减 (7)check_live 不读 reference/ GT。
+- **跨 shard 碰撞说明**: check.py + cheat_badinc.py 已在 a37ff1296（并发 shard C 批量提交，19:19:22）落盘且与本轮独立写出版字节一致（同族同模板同解）；r1348 commit 9788ae0b3 补 JSON judge_layers+test sha sync + selftest + 台账。
+- **R2 累计进度（non-Lite-500）**: done 6/34（NocalOffsetDeck/Vcc2scMultiDeckSpecCompare deck-mock ×2；BatchBsubHspice/IfElsePairFix/DffSetupHoldStimGen/PulseStimTbGen judge-直调 ×4）；余 28 REQ 待改造。
