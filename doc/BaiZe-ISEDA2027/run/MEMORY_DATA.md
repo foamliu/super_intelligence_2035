@@ -4,14 +4,13 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-27 10:10 (R878) — 用户令 11-27 08:3x 职责分工持续执行：交付物全通过 + 第667次 fresh 复验全 PASS + pretrain 无待答问题**：①✅全部交付物完整可读（8 文件 + Bridge Edition 3 文件 + cursor_offsets_350k.json + compute_cursor_offsets.py）；②✅第667次 fresh 复验：standalone 8/8 + bridge 10/10 + integration 7/7 全 PASS，zero_overlap=0，ratio max_dev=0.0000%；③✅pretrain #3478 已确认 S2切换 READY（train.sh L202-206 SSH 透传已修复，shim+launcher+cursor_offsets+TSV+runbook 全验证通过），340k eval RUNNING，350k ETA ~11-28 05:00，无「待 data」问题；④✅SWITCH_RUNBOOK.md 9 节完整（Bridge Edition），覆盖 patch 应用/env 开关/TSV 配置/切换步骤/预期行为/回退/FAQ；⑤✅blend_s2_preblend.tsv 在 code/baize-llm/configs/（12 源 web40:code40:math20）。WAITING=0。
+> 🟢 **心跳 · 2026-11-27 11:30 (R879) — 用户令 11-27 08:3x 职责分工：全部交付物完整 + 第668次 fresh 复验全 PASS + pretrain 无待答问题 + SWITCH_RUNBOOK 已就绪**：①✅全部交付物完整可读（blend_hotswitch.patch 43.6KB + blend_switcher.py 18.0KB + README_PATCH.md 10.6KB + s2_blend_switch_config.json 1.3KB + test_blend_switch.py 14.3KB + verify_results.json 8.9KB + verify_results_integration.json 6.3KB + blend_s2_preblend.tsv 3.6KB + Bridge Edition: blend_hot_switch_bridge_compat.py 4.2KB + test_bridge_compat.py 8.6KB + verify_results_bridge.json 1.2KB + cursor_offsets_350k.json 1.1KB + compute_cursor_offsets.py 9.8KB + SWITCH_RUNBOOK.md 7.9KB）；②✅第668次 fresh 复验：standalone 8/8 + bridge 10/10 + integration 7/7 全 PASS，zero_overlap=0，ratio max_dev=0.0000%；③✅pretrain #3478 确认 S2切换 READY（train.sh L202-206 SSH 透传已修复，shim+launcher+cursor_offsets+TSV+runbook 全验证通过），340k eval RUNNING，350k ETA ~11-28 05:00，无「待 data」问题；④✅SWITCH_RUNBOOK.md 9 节完整（Bridge Edition）；⑤✅blend_s2_preblend.tsv 在 code/baize-llm/configs/。WAITING=0。
 
-> 📦 R877 心跳（2026-11-27 09:53·交付物全通过+第666次复验全PASS+pretrain无待答·bridge10/10+standalone8/8+integration7/7 zero_overlap=0·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R876 心跳（2026-11-27 09:49·交付物复查全通过+SWITCH_RUNBOOK完整+pretrain无待答+第665次复验全PASS·bridge10/10+standalone8/8+integration7/7 zero_overlap=0·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R875 心跳（2026-11-27 12:0x·交付物完整性复查+SWITCH_RUNBOOK修正+第664次复验全PASS·bridge10/10+standalone8/8+integration7/7 zero_overlap=0·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R874 心跳（2026-11-27 11:0x·回复pretrain #3475/#3476+第663次复验全PASS·bridge10/10+standalone8/8+integration7/7 zero_overlap=0·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R873 心跳（2026-11-27 10:30·Bridge Edition shim 交付完成·shim+launcher+cursor_offsets+SWITCH_RUNBOOK+blend_s2_preblend.tsv 全齐·10/10 PASS·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R872 心跳（2026-11-27 09:25·第662次 fresh 复验 8/8 PASS+integration 7/7 PASS zero_overlap=0·交付物完整·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
+> 📦 R878 心跳（2026-11-27 10:10·交付物全通过+第667次复验全PASS+pretrain无待答·bridge10/10+standalone8/8+integration7/7 zero_overlap=0·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
+> 📦 R877 心跳（2026-11-27 09:53·交付物全通过+第666次复验全PASS+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
+> 📦 R876 心跳（2026-11-27 09:49·交付物复查全通过+SWITCH_RUNBOOK完整+pretrain无待答+第665次复验全PASS·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
+> 📦 R875 心跳（2026-11-27 12:0x·交付物完整性复查+SWITCH_RUNBOOK修正+第664次复验全PASS·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
+> 📦 R874 心跳（2026-11-27 11:0x·回复pretrain #3475/#3476+第663次复验全PASS·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 
 > ### 💬 致 pretrain 线回复（2026-11-27 11:0x）— 回应 #3475/#3476 的 patch 不兼容发现
 >
