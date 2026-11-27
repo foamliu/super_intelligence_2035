@@ -1361,3 +1361,32 @@ r1352 BLOCKED 1000x fabricated GT — 本 case GT 是 ref 候选真跑 HSPICE �
 
 **零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动**(桩体检只读).
 DEBT:0. WAITING:0(不设等待§1.1).
+
+### r1359 (2026-11-28) — non-Lite-500 R2 改造 #13: InvOptSpec-001
+
+**case**: EDA-Eval-DesignFlow-InvOptSpec-001 (spice_sim, candidate-runs-hspice + judge-reads-report).
+**pattern**: candidate `inv_opt_spec_ref.py --config <cfg> --outdir <dir> --hspice <bin>` 对 grid 8 个 W/L/M 点各建 HSPICE tran deck (CMOS inv PMOS-body→vdd, PULSE 20-80% edge, .measure tpd/ivdd/t_high/t_per) + 自身调 HSPICE (parse .mt0) → report.json; judge 读候选 report.json 比内嵌 GT_A/GT_B (conds e..p) → 全 mislabeled [L0,L1], broken in SUT (no hspice ⇒ hspice_ran=F ⇒ cond e + metric conds 全 FAIL).
+
+**非侵入包装**:
+- `_check_static_impl` keep (a/b/c/d) zip+harness+report_A+py_compile+importable+run() 一字不动 + (sa/sb/sc) only-add 源码结构检查 (subprocess+hspice / .tran+.measure / .mt0 parse).
+- `check_static` try/except 收口三元组.
+- `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201: upload submit.zip+config_A.json(A)+config_B.json(B hidden)+live_driver.py → driver 跑候选 A+A2(determinism)+B → JSON → 断 e..p 同判据 (TOL_DELAY0.5ps/TOL_IDD0.05µA/TOL_DUTY0.5% 原封) + (q) determinism repA==repA2 exact only-add.
+- `check()` 兼容包装 + `__main__` 改 check_static.
+
+**Q1 保真** (.75 hspice, ref check_live PASS ~24s): repA EXACT match GT_A (hspice_ran=T/n_grid8/n_feas6/best idx1·wp2.0·mp1/delay15.04ps/idd10.9µA/duty49.97/input_full_rise3.333e-11); repB EXACT match GT_B (n_feas5/best idx6·wp4.0·mp2/delay15.61/idd15.06); cond q repA==repA2 exact. physics REAL (inv tpd 15ps@GHz, idd 10-15µA level-1 MOS VDD 1.0-1.1V; contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated).
+
+**negatives** (rebuilt as dirs; old neg_naive_hardcode_A.zip had CRC corruption + `__rser__` typo latent bug):
+- static-neg 2-distinct: naive_empty(a) / naive_print_expected(sa).
+- live-neg 4-distinct static-pass/live-fail: naive_no_run(e) / naive_wrong_edge(f) / naive_core_deleted(h,§4.9c) / naive_hardcode_a(o).
+- §4.9 trio distinct {empty:a, print_expected:sa, core_deleted:h} 3/3.
+
+**§5 七项全绿**:
+1. ref check_live PASS hfhds201 hspice V-2023.12-SP1-1 ~24s.
+2. 2 static neg distinct{a,sa} + 4 live-neg distinct{e,f,h,o}.
+3. determinism cond q repA==repA2 exact.
+4. SKIP_RUN=1 deploy workdir clean no-leak + ref check_static PASS.
+5. judge_layers=[L0,L1,L2.live] JSON test md5 d3ff9b59 3-way sync disk==JSON.
+6. 断言 16->20 only-add (7 static + 13 live incl sa/sb/sc/q only-add).
+7. check_live 不读 reference/ GT 仅读 hidden B config_B.json input.
+
+**落盘**: live_eval_changes.tsv +1 row (repo_commit=6d99e827e). EDA-Flow-Bench HEAD=6d99e827e (check.py+negatives+ref_submit+negative_selftest.py via concurrent bench-sync 8ca2f9412; case JSON sync 本 commit). review_nonlite_B.tsv InvOptSpec row → R2 done. DEBT:0. WAITING:0.
