@@ -1374,3 +1374,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795758425756_56vki	xxchen	hfeg0plg56	1933	physical_verify	case	EDA-Eval-DesignFlow-SpacePlugMerge-001	2026-11-28 02:51	L2.live: merge space_PLUG forbidden_inside switch into space DRC-pattern fn; 16 conds (8 static AST + 8 live gdspy on .75); 4 negs (3 static + 1 live-neg); tool snap /home/e0031982/drcpv_tool_snap.tgz
 1795572780344_xza9c	jaychen	hfeg0pkn005	827	physical_verify	case	EDA-Eval-DesignFlow-CalibreRuleSuffixXform-001	2026-11-28 04:10	
 1795745321483_4iv57	xxchen	hfeg0plg56	1229	physical_verify	claimed		2026-11-28 04:26	
+4iv57					case	EDA-Eval-DesignFlow-SchematicStripeFix-001	2026-11-28 04:56	
