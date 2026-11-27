@@ -1,10 +1,10 @@
 case_id	owner_shard	lite_status	L0	L1	L2	L3	L4	L5	src_shard	judge_layers_now	live_verdict	live_reason	check_live	live_evidence	round
 AccAutoConnectSumm-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 AccCfgGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-AearTbcfgCliEnhanceProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+AearTbcfgCliEnhanceProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=config generator; check writes/validates config string 'simtype = vcs'. vcs only in candidate-written config text, check does not invoke vcs (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 AsyncRiskNewItemsDiffProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 AutoViaV4M4M5FillAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-BtopPendJobs-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+BtopPendJobs-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=summary analyzer; 'fm' is a dict variable (fm=summary.get('folders_missing_111')), not the formality tool. check runs candidate python, no EDA invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 CcoptCellExtractDelete-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 CmHierRootAutoDetectProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 CmPatternRunGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -19,7 +19,7 @@ DqCompareDelayExplain-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-2
 DqselDefineMismatchQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-AcQueueFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-AddKeywordFile-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-AgentCodeStructAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=code-structure analyzer; 'skill' appears in trace/profile_scripts context (user loaded lpddr6-jedec-kg skill). check runs candidate python on source tree, no skill invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-AhbMasterVerilog-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-AhbSbCompareGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-AprSetupAudit-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -28,23 +28,23 @@ EDA-Eval-DesignFlow-AsyncResetSyncRelease-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TOD
 EDA-Eval-DesignFlow-AutoTmscanScriptAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-AutoViaV4Diagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-BadecNetlistRead-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-BjobsDupCwdDetect-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-BjobsDupCwdDetect-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=bjobs_dup_cwd_detect.py; check runs candidate python; 'finesim' only in a rundata path string being analyzed. no finesim invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-Bl6CompcodeMerge-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-CPU8bitVerilog-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-CadenceVipLinkErrorDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-CalibreOpen1Fix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-CalibrePdf2md-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-CalibrePdf2md-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=calibre_handbook.md+build_paged_md.sh. check runs pdfinfo/pdftotext (poppler, standard) + candidate bash md-builder; validates paged-md structure. 'calibre' = source PDF doc content, not a tool invocation. deliverable = markdown text conversion (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-CdcRunSpecDocGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-CdlBodyMapFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-CdlTbGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-CdlTbGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=make_tb.py (finesim SPICE testbench generator); check runs candidate generator + validates output TB structure. finesim only in generator purpose/output context, check does not run finesim (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-CdlVbnBulkRemap-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-CdlVerilogConv-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-CdlVerilogConv-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=converter; check runs candidate python; 'vcs' only in trace text ('vcs-verified PASS:512 vectors'). no vcs invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-CgTimingMeetExactlyFilter-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-ClineWorkdirDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-CmBusBitExpandProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-CmdsDedupBySrNameProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-CombSdcGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-CombSynthClean-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-CombSynthClean-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=synth.tcl+SDC; check explicitly 'never launches dc_shell' — static structural checks on zip layout + tcl. no dc_shell invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-CompErrRerunGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-CompressRd14bitAdd-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-ConCsvSliceOrderGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -60,15 +60,15 @@ EDA-Eval-DesignFlow-CslWlGateMap-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r
 EDA-Eval-DesignFlow-CsvHierSortProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-D2pHandoffDirGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DCCombHier-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-DCSynth-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-DCSynth-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=synth.tcl+run_dc.sh+SDC. check cond(p) runs candidate run_dc.sh via bash but asserts rc!=0 (graceful-failure robustness, NOT real synth result) + _tcl_structural Python pass on tcl. real DC synthesis output never validated (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-DDR4TbFramework-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DFTTestmaxFlow-001	A	non-lite	1	1	1	1	1	1	A	[L0,L1,L2.live]	LIVE-REQ-DONE	check.py 真调 VCS R-2020.12 编译+仿真 A/B/buggy rtl; cond(c)(d)(e)(f)(n) 依赖真实 VCS log 的 PASS/FAIL 标记与 3-rerun 确定性; mock 桩无法伪造 VCS 编译产物. Q2=会判过(伪造tb/RTL但log文本对→真VCS跑挂). R2 DONE: check_live .75 真 VCS PASS (cond c/d/e/f/n + VCS banner).	check_live: upload tb+A rtl+hidden B rtl+buggy -> .75 vcs -full64 compile simv_A/simv_BUG/simv_B -> ./simv_*; 断 (c)A编译运行成功+VCS banner (d)A ALL TESTS PASSED 无[FAIL] (e)buggy-run 含 FAIL (f)B 编译运行成功(cross-input) (n)3-rerun A 一致 PASS	.75 hfhds201 RC0; ref check_live PASS wall~3s (A ALL TESTS PASSED + buggy TESTS FAILED + B elaborates OK + 3-rerun PASS x3 + VCS banner Chronologic VCS); live-neg fake_print_expected FAIL cond e (buggy-run 无 FAIL, tb 不检查 led_out); 4 static-neg FAIL distinct {a,g,i,l}; sha 9c645d3a 3-way sync; EFB 6508d73e8	r2-done-2026-11-27
 EDA-Eval-DesignFlow-DcDontuseGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DcFmUnresolvedDiagnoseQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DcLogErrDiagnose-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DcLogErrDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-DcPolicyRemoveMigrate-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-DcScriptMigrate-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-DcPolicyRemoveMigrate-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=migrated run_dc.sh; check runs candidate python to validate script text (dc_shell from PATH, no hardcoded path). dc_shell only in candidate script content, check does not run it (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
+EDA-Eval-DesignFlow-DcScriptMigrate-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=migrated script; check validates candidate script text (BASH_SOURCE, dc_shell -f synth.tcl). dc_shell only in script content, not invoked (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-DcSynthAnalyze-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DcSynthAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DcUpfPgDiagnose-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -89,11 +89,11 @@ EDA-Eval-DesignFlow-Digital-022	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-202
 EDA-Eval-DesignFlow-Digital-023	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	verdi/vcs 仅出现在 `make -n`(dry parse) 展开串, 非直调真二进制(§2.1 rule2). deliverable=参数化 Makefile, check 验 make -n 解析+目标结构, 不依赖真实仿真产物.	N/A	test.py: subprocess make -n -f makefile_para (dry-run parse only)	r2-2026-11-27
 EDA-Eval-DesignFlow-DmiPinCompareDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DqTraverseAllEntryMode-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-DrcDocConvert-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-DrcDocConvert-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=md2html.py+html; check runs candidate python converter; 'calibre' only in a keyword list being converted. no calibre invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-DrexpDefinesLocateQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DriverClkTimingFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DrvqaGateNetlist-001	A	non-lite	1	1	1	1	1	1	A	L0,L1,L2.live	LIVE-REQ-DONE	条件(j)(p) 真调 vcs(/apps/synopsys/SRB/vcs/R-2020.12/bin) 仿真候选 DRVQA 网表 over all 512/256 inputs vs 独立 python oracle; 硬编码A真值表在结构不同的 B 上必挂. 原 check() cond(j)(p) 真跑 VCS 内嵌本地 subprocess→本地无 VCS ref 必挂(case 实为 broken)→迁出 check_live. R2 DONE: check_live .75 真 VCS PASS (cond j/p + VCS banner + 3-rerun A 确定性).	check_live: upload 提交 A.v + 候选 gen + visible A spec/rtl + 自带 live_judge.py -> .75; live_judge 写 hidden B_RTL/B_SPEC(inline) -> 候选 gen 产 R_XDEC.v -> vcs sim A(512) vs oracle_A + vcs sim B(256) vs oracle_B; 断 (j)A 全 512 输入 (row,col,valid)==oracle_A (p)B 全 256 输入 (bank,idx,valid)==oracle_B + Chronologic VCS banner + 3-rerun A md5 一致	.75 hfhds201 RC0; ref check_live PASS (j A matches oracle_A 512 inputs / p B matches oracle_B 256 inputs / banner Chronologic VCS / det 3-rerun A md5=8a15b9d5 identical); live-neg=live_neg_wrong_logic.py(data-driven wrong-logic gen: 静态全过 a-i,k-o / 实跑 cond j mismatch input 1 got(1,1,1) exp(1,0,1)); 5 static-neg FAIL distinct {a,d,f,h,l}; sha f53b2316 3-way sync test==check.py==JSON; EFB 4cc602c90	r2-done-2026-11-27
-EDA-Eval-DesignFlow-ETMExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-ETMExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=etm.tcl+run_etm.sh+Makefile.etm; check validates candidate script structure (module load + pt_shell -f). pt_shell only in candidate script content, check does not run pt_shell (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-EcoSpareGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-EillenLogMerge-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-ErrforcebitMeaningQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -108,16 +108,16 @@ EDA-Eval-DesignFlow-FindPcells-001	A	non-lite	1	1	1	1	1	1	A	L0,L1,L2.live	LIVE-R
 EDA-Eval-DesignFlow-FindVfilesSymlink-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-FloorplanTclAudit-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-FloorplanTclAudit-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-FlowGuide-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-FmDontVerifyGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-FlowGuide-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=flow_extractor.py+README; check runs candidate python; pt_shell/starrc only in flow-description text being extracted. no tool invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
+EDA-Eval-DesignFlow-FmDontVerifyGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=dont_verify.tcl+fm.tcl+Makefile+report.json (generators); check runs candidate generators + validates output structure. fm only in generated-file names, check does not run fm (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-FmFreqVsTAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-FmR2rFlowGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-FmR2rLogDiag-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-FmR2rLogDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-FmRtl2RtlFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-FmRtl2RtlFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-REQ	judge-direct-real-EDA: check() cond(l) runs subprocess(['bash',run_fm_r2r.sh,'--check-rtl']) on candidate launcher; cond(l) requires real simv binary produced (proof real vcs ran, defeats print-stubs) + vcs banner + RTL_OK + no Error-[; cond(k) requires run_fm_r2r.sh invoke fm_shell. sibling of done FmRtl2RtlDemo-001. locally broken without vcs/fm -> migrate to check_live	pending R2 reform	test.py: cond(l) subprocess bash run_fm_r2r.sh --check-rtl -> vcs simv + fm_shell; no mock	r2-2026-11-27
 EDA-Eval-DesignFlow-FmRtl2rtlLogInterpret-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-FormalBindS2pAdapt-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-FormalityLaunchDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-FormalityLaunchDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=diagnose script; check validates candidate diagnosis text (fm_shell fails via GLIBCXX). fm_shell only in log/diagnosis content, check does not run it (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-FsDbcFrontendCmp-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-FsdbDumpConvert-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-FsdbTogglePatch-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -127,7 +127,7 @@ EDA-Eval-DesignFlow-FuseUncalledAudit-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO
 EDA-Eval-DesignFlow-FuseUncalledAudit-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-Gddr7CaoscTestGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-GenvectorStimColConsistencyAuditProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-GgFlowReport-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-GgFlowReport-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=report analyzer; 'fm' is a dict key (fm=rep_f.get('fail_markers')), not formality. check runs candidate python, no fm invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-GitSshCloneDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-GpioCsvFormatConvert-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-HierDcSynth-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -151,7 +151,7 @@ EDA-Eval-DesignFlow-LPDDR6CACodecProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO
 EDA-Eval-DesignFlow-LefBmObsMissingDiagnoseQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-LefFilelistGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-LibArcExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-LibInventoryManifestProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-LibInventoryManifestProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=manifest generator; check runs candidate python; 'finesim' only in a file-extension skip-list. no finesim invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-LibPVT-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-LibPVT-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-LintRptAnalyzeQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -191,7 +191,7 @@ EDA-Eval-DesignFlow-PRStartMethodSelect-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TO
 EDA-Eval-DesignFlow-PTSignoff-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	L1-boundary grader(明示: 真 pt_shell 仅 GOLD 标准创建, 不在 check.py). tclsh stub 记录 pt_shell 调用验候选 pt_sta.tcl 在隐藏 B 传正确值(current_design/read_verilog/link_path). deliverable=PT signoff 流程脚本, 正确性=脚本结构+参数化非真实时序数值(WNS/TNS 设计相关无固定GT). Q2=不判过(正确性即调用结构+参数化, stub 忠实记录).	N/A	test.py docstring: L1-boundary; tclsh stub records pt_shell calls; cond t-u-v-w on B values	r2-2026-11-27
 EDA-Eval-DesignFlow-PTStaFlowBuild-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	静态结构校验 STA 流程脚本(run cshell 含 pt_shell+module load / scr sta_main+编号 tcl). pt_shell 仅字面量结构断言, check 不直调. deliverable=STA flow 脚本构建, 属'写脚本'(§2 NA).	N/A	test.py: static cond c/d/e on pt_shell/module load literal in runner	r2-2026-11-27
 EDA-Eval-DesignFlow-PTVersionRecon-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-PTVersionRecon-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-PTVersionRecon-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=version recon script; check uses stubs for binname ('pt_shell','primetime') detection — stub models binname lookup, not real pt output. pt_shell not really invoked (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-PatStatSpeed-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-PatternTaskXref-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-PdkDirSizeScan-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -208,7 +208,7 @@ EDA-Eval-DesignFlow-ProbeTclSignalHierarchyExtractProduce-001	A	non-lite	1	1	1	1
 EDA-Eval-DesignFlow-ProjVersionDiffAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-PtCellExtractProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-PtempCondUsageAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-PwrGlobals-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-PwrGlobals-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=gui/power.globals (Innovus init-globals Tcl config). check executes candidate tcl via faithful tclsh stub (stubs init_design/dbGet/defIn builtins) with hidden-B common_setup.tcl injected; cond(k)-(t) verify B semantic values flow through (VDD_PE/hl22_io_ctrl_top/VHV tlef/io_ctrl mmmc.view) + no A-literal leak. stub is execution-harness not fake-output; Q2 safe (hidden-B value-flow defeats shape-only). real Innovus only adds 'design loads' (tests tool not deliverable) (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-PwrSeqRecoveryProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-PyAetherCurDesignApi-001	A	non-lite	1	1	1	1	1	1	A	L0,L1,L2.live	LIVE-REQ-PREEXISTING		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-QtProUserMigrate-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -250,10 +250,10 @@ EDA-Eval-DesignFlow-RunRegrCaselistAdapter-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TO
 EDA-Eval-DesignFlow-RunScenarioExtractProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-RunSimPprNewShAnalyzeQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-RunTaskMapExtractor-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-RunsetVerFind-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-RunsetVerFind-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=version finder; check runs candidate python; 'calibre' only in trace-context description. no calibre invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-RwConflictBackstop-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SPFCoupling-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-STAFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-STAFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=STA_flow tcl scripts; check validates candidate script structure (pt_shell -f sta_main.tcl). pt_shell only in candidate script content, not invoked (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-SaNPCtrlTruthTable-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SacapSignalMissingDiagnose-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SdcCdcFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -270,14 +270,14 @@ EDA-Eval-DesignFlow-SimRerunStatusAuditProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L
 EDA-Eval-DesignFlow-SimStimulusLocateQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SmokeLogFailDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SocProjStructAnalyze-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-SocProjStructAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-SpecArcXdriveFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-SocProjStructAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=structure analyzer; check runs candidate python; 'fm' only in a tools-coverage manifest field. no fm invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
+EDA-Eval-DesignFlow-SpecArcXdriveFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=fix script; check runs candidate python; 'vcs' only in identifier-membership check (has_vcs='vcs' in vi_norm). no vcs invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-SpfCouplingParser-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SpfNetCapDiff-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SpfRcSummaryGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SpfsablaCountCheck-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SrFunctionExtractProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-Sram2pConflictFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-Sram2pConflictFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=fix script; check runs candidate python; 'vcs' only in membership check ('vcs' not in vw). no vcs invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-SramConflictDeltaPort-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SramDualPortTbGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SramFarCellSelect-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -305,22 +305,22 @@ EDA-Eval-DesignFlow-SvHierRefDiag-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/
 EDA-Eval-DesignFlow-SvHierRefDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SvTaskReport-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SvTbBugFix-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-SvTbVcdFsdbVerdiEdit-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-SvTbVcdFsdbVerdiEdit-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=editor script; check runs candidate python; vcs/verdi/fsdb only in identifier lists being edited. no tool invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-SvrfUserefCatalog-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SvrfUserefCatalog-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SwbProjectCreate-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SweepMeasFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-SweepParallel-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-SweepParallel-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=run_sweep.sh (parallelized)+compare_report.md. check runs candidate run_sweep.sh in explicit DRY_RUN mode with stubbed module+bsub in PATH on hidden B; asserts per-corner split correctness+script structure+report content. check itself states 'No real fine[sim]'. split-logic verdict not real-sim-dependent (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-SymlinkLocalizeProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-SynPortProjBuild-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-SynPortProjBuild-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=project builder; check runs candidate python; 'fm' only in generated script names (dc.tcl/fm.tcl/pt.tcl). no fm invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-SynReportCompareFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-TLEFRules-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-TLEFRules-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=lef_rules.py+rules_report; check runs candidate python; 'innovus' only in trace metadata context. no innovus invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-TbAlignReport-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-TbFamilyCoverage-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-TbSkeletonGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-TbTriggerChainExtract-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-TbTriggerChainExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-Tcl2SkillTranspile-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-Tcl2SkillTranspile-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=transpiler; check runs candidate python; 'skill' is the output language, not a tool invocation. no skill invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-TimingECO-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	L1-boundary grader(明示: 真 pt_shell 仅 GOLD 创建). tclsh source common_setup.tcl with B vars 验 OUT_PREFIX 参数化解析. deliverable=TimingECO 流程脚本(run cshell+编号 tcl+ECO 引擎), 正确性=流程结构+参数化非真实 ECO 时序结果. 属'写脚本/流程'(§2 NA).	N/A	test.py docstring: L1-boundary; tclsh common_setup B vars; cond i on OUT_PREFIX	r2-2026-11-27
 EDA-Eval-DesignFlow-TmBusToggleAnalyze-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-TmBusToggleAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -335,7 +335,7 @@ EDA-Eval-DesignFlow-UserCmdLogMergeRunnerProduce-001	A	non-lite	1	1	1	1	1	1	A	L0
 EDA-Eval-DesignFlow-UvmSramTbCodeReviewQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-UvmTbStructAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-UvsVerRegrCompareProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VCSMakefile-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-VCSMakefile-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-REQ	judge-direct-real-EDA: check() cond runs subprocess(['make','all',...]) on candidate Makefile, env hardcodes VCS_REAL=/apps/synopsys/SRB/vcs/R-2020.12/bin/vcs; no mock injection. ref must produce real vcs elaboration. locally broken without vcs (DrvqaGateNetlist/SimMakefileVCS pattern) -> migrate to check_live	pending R2 reform	test.py: subprocess(['make','all',...]) -> vcs; VCS_REAL real path; no mock	r2-2026-11-27
 EDA-Eval-DesignFlow-VcheckMacroAdd-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VcsBoostLinkFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VcsCompileErrorDiagnoseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -352,13 +352,13 @@ EDA-Eval-DesignFlow-VerdiFsdbLoadDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TOD
 EDA-Eval-DesignFlow-VerilogHierExtractProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VerilogPatternMerge-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VerilogPowerPinConsist-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VerilogrunWalkthroughVcimAbsentQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-VerilogrunWalkthroughVcimAbsentQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=QA/diagnose; check validates candidate text; 'vcs' only in trace identifier-context. no vcs invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-VlibFlowRetryRewrite-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VlibTransToolAnalyzeProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VlibVerifierConvSummaryProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VlnPinTableShellProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VlogFindLibSubdepParseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VlogLibTransSkillPkgProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-VlogLibTransSkillPkgProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=skill-pkg generator; check runs candidate python; 'skill' only in output skill-package context. no skill invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-VlogShellWrapGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VlogTaskGraphProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VpsInterfaceSummaryQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -377,7 +377,7 @@ EDA-Eval-DesignFlow-WaveviewModuleUpdate-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO
 EDA-Eval-DesignFlow-WicaParamUpdateProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-WlMonitorLogicViewAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-WtmIs4PhaseMisuseCheck-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-WvCursorApiGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-WvCursorApiGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=api gen; check runs candidate python; 'waveview' only in desc_keys/sig_args descriptor. no waveview invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-WvDataeyeMeasure-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-WvSineWaveAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-X8FusePatternGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -390,9 +390,9 @@ EDA-Eval-DesignFlow-XrunLogStatusCheck-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		
 EDA-Eval-DesignFlow-XrunTimingCompare-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-XsCheckReportDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-XyzBudgetEnum-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EccLinkConfAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EccLinkConfAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=analyze_linkecc_conformance.py; check runs candidate python; 'skill' only in trace context (user loaded a skill). no skill invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 FinesimDcConvCatalogAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-FmRtl2GateConfig-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+FmRtl2GateConfig-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=config scripts; check validates candidate script text (run_fm.sh contains fm_shell -f fm.tcl). fm_shell only in candidate script content, not invoked (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 GenLibCornerEmptyAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 HelperFilesOrganize-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 HierSearchMissingDiagQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -411,7 +411,7 @@ MbistTwincellDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 MemcharInstParseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 MrrDqExpFlowAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 NetlistVersionDiffAnalyzeProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-NoConnPurposeExplainQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+NoConnPurposeExplainQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=explanation/QA; check validates candidate report mentions Innovus (if 'innovus' not in Rl). innovus only in report-mention check, not invoked (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 PatternTaskDecodeProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 PprRandomBankExplain-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 PreEMSigDataflowTraceProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -429,16 +429,16 @@ RunWholeFlowOrchestrateProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-
 SameNameFileContentDiffProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 SentaurusTcadProjectGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 SignalBusNameCheckExplain-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-SimRunDepExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+SimRunDepExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=dep extractor; check runs candidate python; 'finesim' only in a rundata path string being parsed. no finesim invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 SimdirDiffClassifyProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-SkillLogdirReportPatch-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-SkillReviewAskEda-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+SkillLogdirReportPatch-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=SKILL.md patch; check validates candidate skill-doc text. 'skill' = skill-doc deliverable, not a tool invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
+SkillReviewAskEda-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=review script; check runs candidate python reviewing a SKILL.md. 'skill' = skill-doc context, not invoked (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 SpecNotifClassify-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 SpiceStructAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 SramGrpStructAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 SramSelLogicAnalyzeProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 StaInterruptCauseAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-StaLsfBlockRewriteProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+StaLsfBlockRewriteProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=rewrite script; check validates candidate script text (module load + pt_shell + tee). pt_shell only in candidate script content, not invoked (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 StaResultEvalProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 StrapGenericRefactorProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 SvDirInventoryProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -449,11 +449,11 @@ TmscanCheckerFailDiagnoseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r
 ToolRcFormatMapQa-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 TruthTblCheckVerDiff-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 Upf579Patch-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-VcsArtifactIsolateProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-VcsCfcilfbiDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+VcsArtifactIsolateProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=Makefile rewriter; check runs candidate rewriter then uses mock_vcs.sh as vcs substitute to validate artifact landing/clean-coverage/file-list absolutization. mock models vcs file-output behavior to test the REWRITER's path logic (deliverable), not vcs correctness; Q2 safe (mock validates path logic on hidden B). real vcs not needed to judge rewriter correctness (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
+VcsCfcilfbiDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=diagnose script; check runs candidate python; vcs/vlogan only in log-string matching patterns. no tool invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 VctGaaSprocessRewriteProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 VerdiFsdbSignalNotFoundDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-VerdiLicenseCheckoutDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+VerdiLicenseCheckoutDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=diagnose_verdi_license.py; check runs candidate python parsing verdi rcfile/log content. verdi only in log text, not invoked (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 VerilibEquiAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 VerilogBeginEndBalanceCheckProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 VnetDontTouchDiffProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
