@@ -1462,3 +1462,34 @@ DEBT:0. WAITING:0 (不设等待 §1.1).
 **额外证据**: `run_one.sh EDA-Eval-DesignFlow-CmdEdgeMeasGen-001 --shard B` 真跑 cline (doubao-seed-2.0-pro-cloud, thinking=low, 105s) → verdict=FAIL cond(sb) — cline 候选 meas_gen.py 未用 rise= 参数化 (用了 cross/fall 等), static 层即拦, 案件有牙 (ref PASS vs cline FAIL 区分明确).
 
 **落盘**: check.py (reformed, sb fix) + negative_selftest.py (重写) + negative/{cheat_no_run,cheat_hardcode_a,naive_core_deleted}.py (新建) + cases/B JSON (judge_layers+k_check 14→17+test_rationale 17+test sha sync). live_eval_changes.tsv +1 行 (repo_commit=1fcb550c1). live_eval_review_nonlite_B.tsv CmdEdgeMeasGen-001 status TODO→done. EDA-Flow-Bench HEAD=1fcb550c1 pushed. DEBT:0. WAITING:0 (不设等待 §1.1).
+
+## r1362 (2026-11-28) — non-Lite-500 R2 桩体检 #15: InstCurrentMeasGen-001 (de-risk next R2 wrap)
+
+**case pattern = candidate-runs-hspice + judge-reads-report**: candidate `inst_current_meas_gen.py <netlist> <spec> <out_dir>` builds tran testbench (`.inc` DUT + vdd supply + optional vgg PULSE + `.tran` + per-target `.measure tran i_<inst>_avg avg i(<inst>) from/to` + `.option post=1`) + 自身调 HSPICE (`subprocess.run(['hspice','-i',tb,'-o',prefix])`, parse `.lis`/`.mt0`) → `currents_report.json` (hspice_ran/converged/instances[]/n_targets + deck_path/sim_log_path); judge `_run_cand` 跑候选 on hidden B (and visible A for cross-input) → 断 c (hspice_ran + 'job concluded' in run.log) / d (converged + no 'job aborted') / e (4 instances non-null) / f-h (r_pull_b/r_sink_b/r_load_b vs GT_B ±5%) / i (mn_act_b vs GT_B ±8%) / j (deck has `.measure ... avg i(r_pull_b|mn_act_b)`) / k (B_NAMES subset + no A_NAMES leak) / l (A r_bleed_a≈24u ±5%) / m (B2 determinism ±2%) / n (0<cur≤0.5mA plausible) → 全 mislabeled [L0,L1] (judge_layers=None), broken in SUT sandbox (no hspice=eval host → candidate hspice_ran=F → cond c first-fail + conds d/f-i fail metrics).
+
+**REQ 稳固 confirmed** (R1 verdict 正确). 同 r1359 InvOptSpec-001 / r1361 CmdEdgeMeasGen-001 族 (candidate-runs-hspice + judge-reads-report, 候选产 report judge 比 GT), 本条 candidate 自身跑 HSPICE parse .lis/.mt0.
+
+**Q1 保真实证 (.75 EDASession hfhds201 hspice V-2023.12-SP1-1, session q1-nonlite-r1362, wall≈6s/cand)**:
+- B run (dut_B.sp vdd=1.5, r_pull_b 12k / r_sink_b 6k / r_load_b 33k / mn_act_b w6u l250n): hspice_ran=T / converged=T / 'job concluded' → `currents_report.json` 4 currents **EXACT match GT_B**:
+  - r_pull_b=83.3333u (GT 83.3333e-6) ✓
+  - r_sink_b=83.3333u (GT 83.3333e-6) ✓
+  - r_load_b=45.4545u (GT 45.4545e-6) ✓
+  - mn_act_b=144.3875u (GT 144.3875e-6) ✓
+- A run (dut_A.sp vdd=1.2): r_bleed_a=24.0000u == GT_A_BLEED 24.0000e-6 ✓ + r_vdd_div_a=100.0000u / r_gnd_div_a=100.0000u / mn_drv_a=59.3650u / mn_sw_a=35.7046u 全 == hidden_manifest gt_currents_A_avg ✓
+- B2 re-run (determinism): 4 currents 与 B 完全一致 ✓ (cond m ±2%, 实测 0%)
+
+**physics REAL NOT fabricated** (B 分压器自洽: nb=1.5×6/(12+6)=0.5V → r_pull_b=(1.5−0.5)/12k=83.33µA ✓, r_sink_b=0.5/6k=83.33µA ✓, r_load_b=1.5/33k=45.45µA ✓; A: r_bleed_a=1.2/50k=24µA ✓, r_vdd_div_a=(1.2−0.4)/8k=100µA ✓; mn_act_b NMOS level-1 vto=0.65 kp=60u gate-pulse-to-1.5V avg 144µA 合理。contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated GT).
+
+**Q2 = NO (错的解法不会判过)**: (1) naive_hardcode_a → 输出 A currents on B → cond k (B_NAMES not subset / A_NAMES leaked) + conds f-i (B currents ≠ GT_B) first-fail; (2) naive_no_rerun / 不跑 hspice → cond c (hspice_ran=F + no 'job concluded' in run.log) first-fail; (3) hidden B 防硬编 GT_B (候选仅见 A, B 仅 runtime 传入 — 解析 B 网表算分压器电流 + 伪造 run.log "job concluded" 理论可绕 cond c 但 cond j deck `.measure i(<inst>)` + cond l cross-input A 须同时伪造, 现有 negative {naive_hardcode_a,naive_no_rerun,naive_print_expected,naive_probe_star,fake_core_deleted} 覆盖标准 cheat)。REQ 稳固。
+
+**R2 wrap plan (de-risked, 下轮 r1363 直接执行, 同 r1359 InvOptSpec / r1361 CmdEdgeMeasGen candidate-runs-hspice+judge-reads-report 模板)**:
+- `_check_static_impl` keep (a) zip 含 inst_current_meas_gen.py + (b) py_compile 一字不动 + **(sa/sb/sc) only-add** 源码结构检查 (sa 候选源码含 subprocess+['hspice'] 调用 / sb 含 `.measure` + `i(` per-target deck 构造 / sc 含 `.lis`/`.mt0` parse)
+- `check_static` try/except 收口三元组
+- `check_live(sess)` .75 upload submit.zip + dut_A/spec_A (A visible) + dut_B/spec_B (B hidden) + live_driver.py → driver 跑候选 A+B+B2(determinism) real hspice → JSON → 断 c..n 同判据 (TOL 5%/8%/2% 原封) + `(o)` 确定性 only-add
+- `check()` 兼容 + `__main__` 改 check_static
+- **关键 fix**: live_driver 须用 `python3` (非 sys.executable — 本地 judge python 路径在 .75 不存在, 同 r1345 BatchBsubHspice 教训)
+- live-neg 2-distinct static-pass/live-fail: cheat_no_run (cond c live-FAIL) + cheat_hardcode_a (cond k/f-i live-FAIL)
+- §4.9 trio distinct {empty:a, print_expected:?, core_deleted:?}
+- §5 七项全绿 (ref check_live PASS / 3 static-neg + 2 live-neg distinct / 3-seed / ref check_static PASS / judge_layers=[L0,L1,L2.live] sha 3-way sync / 断言 14→15 only-add / check_live 不读 reference/ GT 仅读 hidden B)
+
+**零 check.py / cases / judge_layers / live_eval_changes.tsv 落盘改动** (桩体检只读). 仅 live_eval_review_nonlite_B.tsv InstCurrentMeasGen-001 行 check_live TODO→"桩体检 PASS r1362" + live_evidence + round=r1362-2026-11-28.
