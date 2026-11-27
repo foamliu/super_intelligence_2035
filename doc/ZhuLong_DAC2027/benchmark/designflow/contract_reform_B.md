@@ -887,3 +887,25 @@ L2.live done 21→22；REQ 未改造 31-22=9 条（hspice-mock/finesim-mock GT-r
 **.75 通路 OK**（r1329 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session spicetbgen_probe/negselftest 用后 close）。
 
 **累计**：REQ 29（done 28，余 1 confirmed-REQ 待 R3 改造：SlicerFbTimeOpt），OPT 19，NA 76，cross_shard 2，L2.live 27→28。
+
+### r1330：SlicerFbTimeOpt-001（hspice-mock GT-replay-by-.param-signature · 第29条 · R3 第3条 · 末条 REQ 收口）
+
+**Mock 模式（GT-replay-by-.param-signature）**：`_HSPICE_MOCK_SRC`（L141-236）`MOCK_OUTPUTS` dict 按 (4 widths+VVDD+vcm+temp+cap) `.param` 签名回放预录 .75 HSPICE .measure（t0/t1_feedbacktime+i_total）。**不读 slicer netlist**——纯 `.param` 签名 lookup。
+
+**Q2 实证（r1330）**：cheat `cheat_lie_t0t1` —— 选 cfg0（B 上 global-min i_total=436.674n，但真 t0/t1=140.75ps/140.38ps>60ps），**LIE** best_t0/best_t1=46ps≤60ps；all_results 填真实 GT（cfg0..cfg7 t0/t1/i_total from MOCK_OUTPUTS）；A 报真 best=cfg1（t0/t1=46.26ps≤60ps）保 cross-input cond (l)。`_check_static_impl` **14/14 PASS 假阳**：cond (f) 信任候选自报 t0/t1≤limit（盲）；cond (n) L2 re-verify 只 `_grab(out,"i_total")` ±30%（mock 按 cfg0 签名回放同 GT，i_total 对得上），**不复核 t0/t1**（约束变量本身）；cond (i) argmin 只查 best_i_total≤passing i_total（不查 best 是否 passing）⇒ 选 failing config 当 best 也能过。真 hspice V-2023.12-SP1-1 @ hfhds201：cfg0+params_B `t0=1.407552e-10`/`t1=1.40382e-10`>60ps ⇒ **cond (f)-live FAILS**（独立重跑真 hspice 于 best_config 读 real hsp.log）。
+
+**KEY POINT**：与 Vcc2scActDeckGen-syntax-misclass（r1325 OPT）不同——此处 mock 是真 GT-replay（按签名回放 byte-exact 真 hspice 值，非 syntax-only 验证），且 cond (n) 已「真跑」i_total 复核；漏洞在于复核**漏了约束变量 t0/t1**（只查 i_total）。real hspice 补 t0/t1 复核 ⇒ genuine L2 gain ⇒ **REQ confirmed**（r1327 verdict upheld）。
+
+**Q1 保真**：.75 真跑 ref sweep（honest deck）→ REF check_live PASS：B 逐 config real hspice t0/t1/i_total == `_MOCK_GT_B` **byte-exact 0.00% err**（cfg0 140.7552ps/cfg1 68.6381ps/cfg2 44.2068ps）。mock 是 value-faithful（非 range-faithful）⇒ Q1 = byte-exact。
+
+**改造（非侵入包装）**：`_check_static_impl` 14 conds a-n 一字不动 + `check_static` try/except 3-tuple + `check` 兼容 + `check_live(sess)` .75 real-hspice rerun candidate `slicer_fbtime_opt.py` on hidden B AND visible A AND B determinism re-run；**AND** 独立 `_rerun_best`（compose deck via `_override_deck(real src_sp, best_config, params)` → real hspice → 读 real `hsp.log`）于候选 B-best_config 与 A-best_config，re-assert (f)-live real t0 AND t1≤60ps（closes mock-blind t0/t1 hole）+ (n)-live real |i_total| ±30% cand best_i_total（同静态容差，现于真 hspice）+ (l)-live A-best≠B-best + (m)-live both fb_time_limit==6e-11 + Q1 fidelity refB 逐 config real==`_MOCK_GT_B` ±5% + det B rerun best_i_total 1e-9+best_config 同。live-neg=`cheat_lie_t0t1`（static-PASS/live-FAIL cond f）。
+
+**§5 全绿**：① REF check_live PASS（real hspice B-best t0=4.421e-11/t1=4.400e-11/i=1.573e-06==cfg2 真 best + A-best ok + Q1 refB==GT byte-exact + det ok）；② 6 static neg FAIL 6-distinct{c,h,e,f,l,d} + §4.9 trio distinct{c,h,e}3/3 + live-neg FAIL cond (f)；③ determinism det B rerun best_i_total 1e-9；④ SKIP_RUN deploy workdir clean（无 leak）；⑤ sha `bb9192f2ee` 3-way sync（disk==JSON）；⑥ 断言条数只增不减（14 static + 6 live）；⑦ L5 hidden-B uploaded to sess, workdir clean no check.py/reference leak。
+
+**infra note**：`_live_upload` via `printf %s '<b64>' | base64 -d` zero-corruption（r1324 precedent）；`_rerun_best` 读 `hsp.log`（`grep` measure 行）parse t0/t1/i_total。
+
+**登记**：`live_eval_changes.tsv` +1 行（ts=2026-11-27T13:35+08:00, jl `[L0,L1]`→`[L0,L1,L2.live]`, repo_commit=924a14db4）。
+
+**.75 通路 OK**（r1330 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session sfto-reflive/sfto-negself 用后 close）。
+
+**累计（REQ 收口）**：REQ 29（done **29/29**，余 0），OPT 19，NA 76，cross_shard 2，L2.live 28→**29**。**B shard live-eval R2/R3 改造全部完成**——所有 29 条 confirmed-REQ 已落 L2.live + live-neg + §5 全绿；OPT 19 待排期，NA 76 仅记理由。
