@@ -64,8 +64,27 @@ ps -eo pid=,args=|grep 'pretrain_launcher\.py'|grep -v grep|awk '{print $1}'|xar
 log "  .29 killed"
 ssh -n -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=10 "$RIP" \
   "pkill -f pretrain_launcher 2>/dev/null;pkill -f 'torchrun.*node_rank=0' 2>/dev/null;sleep 2" 2>&1|while read -r l;do log "  .12:$l";done
-sleep 20; G0=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader 2>/dev/null|head -1)
-log "  .29 GPU0=${G0}MiB after kill"
+# Phase 4b: Poll GPU memory on BOTH nodes until clear (fix for 05:18 failure)
+# Root cause: old code only checked .29 GPU0 after fixed 20s sleep; .12 GPU
+# was still occupied → launcher FATAL "10.239.2.12 GPU 非空闲" → rollback.
+log "P4b: polling GPU memory on both nodes until clear (5s interval, max 180s)"
+GPU_CLEAR=0
+for i in $(seq 1 36); do
+  G29_MAX=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | sort -n | tail -1)
+  G12_MAX=$(ssh -n -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=10 "$RIP" \
+    "nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | sort -n | tail -1" 2>/dev/null)
+  G29_MAX=${G29_MAX:-99999}; G12_MAX=${G12_MAX:-99999}
+  log "  poll#$i .29 max=${G29_MAX}MiB .12 max=${G12_MAX}MiB"
+  if [ "$G29_MAX" -lt 1000 ] 2>/dev/null && [ "$G12_MAX" -lt 1000 ] 2>/dev/null; then
+    log "  both nodes GPU clear ✓"; GPU_CLEAR=1; break
+  fi
+  sleep 5
+done
+if [ "$GPU_CLEAR" -ne 1 ]; then
+  log "FATAL: GPU not clear after 180s (.29 max=${G29_MAX} .12 max=${G12_MAX})"
+  rollback
+fi
+log "  GPU clear: .29 max=${G29_MAX}MiB .12 max=${G12_MAX}MiB ✓"
 # Phase 5: Export S2 env + restart
 log "P5: restart with S2 blend"
 export BLEND_CURSOR_OFFSETS_JSON="$CURSOR_JSON"
