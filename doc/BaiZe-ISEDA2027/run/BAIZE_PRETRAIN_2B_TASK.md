@@ -191,63 +191,11 @@
 
 ---
 
-### ✅ 用户令 · 2026-11-25 13:1x（**有空时修 daemon 内联 print 口径：acc_only → harness_avg**）· 用户直令 · 低优先 · 已完成（#3365 13:40）
-
-> **用户原话**：「让 pretrain 有空时把小遗留修一下。」
-
-**背景**：L1 排查（#3349）发现 daemon 的内联 print 脚本（`gguf_lmeval_run.py` lines 183-190 附近）用 `acc_only` 打印日志数字，而非 `harness_avg`（acc_norm×6 + acc×2）。这不影响 `results.json` 和报告（两者都正确），但导致 daemon 日志里的 Avg 比实际低 ~2.9pp，之前造成了「L1 下降」的误判。
-
-**任务（低优先，不抢训练、不抢 eval）**：
-1. 找到 daemon 内联 print 的代码位置（`run/pretrain_cpu_eval_gguf/gguf_lmeval_run.py` 或 `code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh` 里内联的 print 逻辑），把日志输出的 Avg 从 `acc_only` 改为 `harness_avg`（acc_norm×6 + acc×2），与报告口径一致。
-2. 改完后不影响正在运行的 daemon（下一次 eval pick 时自然用新代码），**不要重启 daemon**。
-3. commit `pretrain eval fix:`，心跳写一行「daemon print 口径已修」。
-
-**纪律**：维护态铁律不变（不碰训练、不重启 daemon/loop）；有空时做，不急。
-
-> **完成（#3365 13:40）**：`baize_l1_autoqueue_continuous.sh` lines 183-201 PYEOF2 heredoc 已改 `acc,none`→harness(`acc_norm,none`×6 + `acc,none`×2)，与 `gen_llamacpp_scaling_report.py` `task_harness_metric` 一致。验证 316k: harness=57.38%=MEMORY#3359 ✅，旧 acc_only=55.25%=MEMORY#3359 ✅。未重启 daemon（bash 已 parse function body，下次 daemon restart 时自然生效）。commit `pretrain eval fix:`。
+> 📦 §2026-11-25 13:1x（daemon print 口径修复 acc_only→harness_avg · #3365 已完成）→ `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-25」节。
 
 ---
 
-### ✅ 用户令 · 2026-11-25 10:2x（**排查 L1 评测持续下降：270k 后从 ~58% 降到 ~53%**）· 用户直令 · 最高优先 · 已完成（#3349 10:42）
-
-> **排查结论**：**NOT 真下降**。根因=口径混淆(acc_only vs harness_avg)+limit=100统计噪声。5项排查全通过：①口径全一致(48/48ckpt)✅ ②报告HTML 312k=55.62%(harness) vs daemon log 52.75%(acc_only)→非矛盾,是两种指标 ③GGUF脚本git diff空=未改✅ ④llama.cpp二进制md5全程一致✅ ⑤训练loss平坦无异常✅。统计判定：pre-270k均值56.72% vs post-270k均值58.30%=+1.57pp(更高)。详见 MEMORY #3349。
-
-> **用户原话**：「持续下降也不正常。好的，下发指令让 pretrain 排查。」
-
-**背景（运维已从报告提取完整 L1 曲线，别再重复提取）**：
-L1 harness 口径 8 集 Avg% 完整曲线：
-- 10k-260k：稳步上升 49.88% → 58.50%（正常）
-- **270k 起**：58.37% → 290k=52.62% → 292k=59.13%（异常高点）→ 逐点下降 → **312k=52.75%**
-- 270k 后波动剧烈且整体下行，从 ~58% 降到 ~53%，**降了 ~5pp，连续 10+ 个点无回升趋势**
-- 报告 HTML 里 312k=52.75%，MEMORY 里写 55.62%，**两处数字不一致**——需先对齐
-
-**排查任务（逐项查实，每项给 trace 证据）**：
-
-1. **评测口径一致性**：
-   - 确认 270k-312k 所有点的 Avg% 是否全部用同一口径（harness: acc_norm×6 + acc×2），还是混用了 acc-only（method B）。
-   - 之前 #3210-#3219 曾误用 acc-only，已纠正——但纠正是否覆盖了 270k-312k 所有点？逐个 ckpt 的 `results.json` 核实口径。
-   - 报告 HTML（52.75%）vs MEMORY（55.62%）的 312k 差异，是口径不同还是报告未刷新？
-
-2. **GGUF 转换一致性**：
-   - 312k eval 中途卡了 9h（`01_convert_hf_to_gguf.sh` 被 git untrack，commit `931cc40e30`），恢复后重新转的 GGUF 是否与之前 ckpt 用同一脚本/同一 llama.cpp 版本？
-   - 检查 `01_convert_hf_to_gguf.sh` 当前版本是否与 260k 之前用的版本一致（git diff 或 md5）。
-   - 如果 GGUF 转换有版本差异，270k 之后的点可能全部受影响——需确认。
-
-3. **llama.cpp 二进制一致性**：
-   - 评测用的 llama.cpp 二进制是否在 270k 前后换过？之前修过 Nemotron-H SSM bug（PR #31703），修复后的二进制是否从某个 ckpt 开始才用上？
-   - 如果 270k 前用旧版（有 bug）、270k 后用新版（已修），可能产生口径断层。
-
-4. **训练侧排查**：
-   - loss 曲线 270k 前后是否有异常（spike / 平台 / 回升）？从 worker log 或 tb 抽取 260k-312k 的 loss 趋势。
-   - 数据配比在 270k 附近是否有过变化（shard 顺序、数据源切换、blend TSV 变更）？S1 阶段应保持 74:19:7 不变，确认没有意外切换。
-   - grad norm 是否有异常（之前看到过 0.264 的单点 spike）？
-
-5. **结论 + 建议**：
-   - 如果是口径/GGUF/二进制不一致 → 修正后重评受影响 ckpt，曲线应恢复。
-   - 如果口径全一致、GGUF/二进制也一致 → L1 下降是真实的，需分析原因（数据? 训练 dynamics?），并评估是否需要调整（比如提前切 S2）。
-   - 把完整排查结论写进 MEMORY 心跳第一行 + 一行「是否真下降」的判定。
-
-**纪律**：只排查不动训练（维护态铁律不变）；评测用 CPU（`CUDA_VISIBLE_DEVICES=""`），不拖训练吞吐；commit `pretrain eval:`。保持 `WAITING=0`。
+> 📦 §2026-11-25 10:2x（L1 评测持续下降排查 · NOT 真下降 · #3349 已完成）→ `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-25」节。
 
 ---
 

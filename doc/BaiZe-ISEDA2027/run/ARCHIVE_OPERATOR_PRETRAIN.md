@@ -4256,3 +4256,27 @@ commit `pretrain 项目:`。✅ 已完成：commit e1c6be4 pushed, 28 files（�
 5. **编译验收**：`latexmk -pdf main.tex` 0 error、0 undefined ref；`git add` 论文文件 → commit `pretrain paper:` → push。心跳第一行写「删重复句/贡献点3项/§5改Domain Adaptation + 编译0err」。
 
 > **归档原因**：论文改进第二轮已闭环（commit 53985409e，2026-11-19 14:12）。① 1_intro.tex 删除 `\paragraph{Contributions.}` 后的重复引述句及其中文注释。② 贡献点 3 项重写为：(1) A 2B Mamba2-hybrid backbone with a 1M-token context window（对应 §3 sec:arch/sec:longctx）；(2) Curriculum learning that strengthens code, math, and agentic capability（对应 §4 sec:llm-pretrain）；(3) Domain adaptation validating the subagent as a deployable EDA agent core（对应 §5 sec:llm-posttrain，含 EDA 脚本胶水 + 大小模型协作可行性验证）。③ 5_llm_posttrain.tex 标题 `\section{LLM Post-Training}` → `\section{Domain Adaptation}`（`\label{sec:llm-posttrain}` 不变），中文注释同步改「领域适配」，新增 ACI 段落说明第二条高 ROI 工程路线。④ 3_architecture.tex pipeline 表 `(ii) Post-training (SFT, RLVR)` → `(ii) Domain adaptation (anneal, SFT, RLVR)`。⑤ latexmk 编译 0 error、5 页、0 undefined ref。已 push 到 origin/main。
+
+## 归档 2026-11-25（daemon print 口径修复 + L1 下降排查）
+
+### ✅ 用户令 · 2026-11-25 13:1x（daemon 内联 print 口径：acc_only → harness_avg）· 已完成（#3365 13:40）
+
+> **用户原话**：「让 pretrain 有空时把小遗留修一下。」
+
+**背景**：L1 排查（#3349）发现 daemon 的内联 print 脚本（`gguf_lmeval_run.py` lines 183-190 附近）用 `acc_only` 打印日志数字，而非 `harness_avg`（acc_norm×6 + acc×2）。这不影响 `results.json` 和报告（两者都正确），但导致 daemon 日志里的 Avg 比实际低 ~2.9pp，之前造成了「L1 下降」的误判。
+
+**任务**：1.找到 daemon 内联 print 代码位置，把日志输出的 Avg 从 `acc_only` 改为 `harness_avg`。2.改完后不影响正在运行的 daemon。3.commit `pretrain eval fix:`。
+
+> **完成（#3365 13:40）**：`baize_l1_autoqueue_continuous.sh` lines 183-201 PYEOF2 heredoc 已改 `acc,none`→harness(`acc_norm,none`×6 + `acc,none`×2)，与 `gen_llamacpp_scaling_report.py` `task_harness_metric` 一致。验证 316k: harness=57.38%=MEMORY#3359 ✅，旧 acc_only=55.25%=MEMORY#3359 ✅。未重启 daemon（bash 已 parse function body，下次 daemon restart 时自然生效）。commit `pretrain eval fix:`。
+
+### ✅ 用户令 · 2026-11-25 10:2x（排查 L1 评测持续下降：270k 后从 ~58% 降到 ~53%）· 已完成（#3349 10:42）
+
+> **排查结论**：**NOT 真下降**。根因=口径混淆(acc_only vs harness_avg)+limit=100统计噪声。5项排查全通过：①口径全一致(48/48ckpt)✅ ②报告HTML 312k=55.62%(harness) vs daemon log 52.75%(acc_only)→非矛盾,是两种指标 ③GGUF脚本git diff空=未改✅ ④llama.cpp二进制md5全程一致✅ ⑤训练loss平坦无异常✅。统计判定：pre-270k均值56.72% vs post-270k均值58.30%=+1.57pp(更高)。详见 MEMORY #3349。
+
+> **用户原话**：「持续下降也不正常。好的，下发指令让 pretrain 排查。」
+
+**背景**：L1 harness 口径 8 集 Avg% 完整曲线：10k-260k稳步上升49.88%→58.50%；270k起波动剧烈且整体下行至312k=52.75%。
+
+**排查任务5项**：1.评测口径一致性 2.GGUF转换一致性 3.llama.cpp二进制一致性 4.训练侧排查(loss/配比/grad norm) 5.结论+建议。
+
+> **完成（#3349 10:42）**：5项排查全通过，NOT 真下降。根因=口径混淆(acc_only vs harness_avg)+limit=100统计噪声。
