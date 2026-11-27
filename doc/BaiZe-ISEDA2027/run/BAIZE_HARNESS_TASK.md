@@ -1,8 +1,13 @@
 # BAIZE_HARNESS_TASK.md
 
-### 🆕 用户令 · 2026-11-27（**重启后执行：opencode v1.19.6 + 7-way doubao-pro 评测**）· ⬜ 待执行
+### 🆕 用户令 · 2026-11-27（**重启后执行：opencode v1.19.6 + 7-way doubao-pro 评测**）· 🟢 执行中
 
 > **背景**：harness agent 在执行令 F 期间失控——花大量时间 debug opencode v2.4 bug 而不降级。运维已 kill loop + cline，stash opencode 改动，opencode 回到 v1.19.6。**令 F/G/H 已被本令取代。**
+>
+> **补充指令（2026-11-27 11:00）**：
+> 1. opencode前432题由v1.18.27跑出，版本不一致，已清空旧预测/进度/日志文件，**全量500题用v1.19.6重跑**
+> 2. harness相关脚本（launch_doubao_7way.sh/gen_report_doubao_pro_7way.py/run_single.py/run_verified_full.py）已提交到 `baize-llm/scripts/harness/` 目录归档
+> 3. 重跑任务已启动，其他6路已完成任务不会重复执行，仅opencode从零开始跑
 
 > **7-harness 版本**（已由运维固定，不要改）：
 > | Harness | 版本 | 说明 |
