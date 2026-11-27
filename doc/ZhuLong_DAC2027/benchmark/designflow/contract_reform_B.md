@@ -1564,3 +1564,23 @@ REQ 稳固.
 **本轮零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动** (桩体检只读, 仅 review_nonlite_B.tsv 行更新). 详见 designflow/live_eval_review_nonlite_B.tsv C2cRfbCmStab-001 行.
 
 **三分类不变**: REQ 34(done 16, BLOCKED 1, 桩体检-PASS-待wrap 1 C2cRfbCmStab)/OPT 0/NA 437. DEBT:0. WAITING:0(不设等待§1.1).
+
+---
+
+## r1369 — OtaAutoTune-001 R2 non-Lite-500 live-eval reform (#18)
+
+**Pattern**: candidate-runs-hspice + judge-直调 hybrid (r1368 Q1 桩体检 PASS de-risked 直接执行, 同 r1367 C2cRfbCmStab/r1353 NmosAgeChar 模板).
+
+**Case**: candidate `ota_tune.py --params <p.json> --outdir <dir>` — 5T OTA deck (.LSTB stb vsource=v0 + .ac DEC 20 0.1-10G + .meas ac GAIN/PM/GBW/GM) + 自身调 HSPICE (parse .lis -> report.json); judge cond(k) 独立重跑 HSPICE on best_B 比 gain/pm ±2%/gbw ±5%. Mislabeled [L0,L1], broken in SUT (no hspice => cond f first-fail + cond k crash + cond l 0 trials).
+
+**Reform (非侵入包装)**: `_check_static_impl` keep (a/b/c/d) zip+compile+A-report 一字不动 + (sa/sb/sc) only-add source-structure checks (subprocess+hspice / .LSTB+.meas ac deck / .lis parse, strip #comments 反 docstring 糊弄) + `check_static` try/except 三元组 + `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201 (driver cand B+B2 determinism + judge indep hspice rerun best_B) + (q) determinism only-add + (r) .lis evidence only-add + `check()` compat. **21 conds (16 orig + 5 only-add sa/sb/sc/q/r)**, 判据一字迁移 (TOL gain/pm 2%/gbw 5% 原封).
+
+**关键 fix (r1368 Q2 漏判)**: r1368 Q2 称 print-expected -> cond f method!=hspice_run first-fail, 但仅对 dumb stub 成立。Smart print-expected 硬编 B best 真值 (wn=6.2e-6, Q1 证实 real-hspice-reproducible) + 标 method=hspice_run => cond(k) indep rerun EXACT match => **会误过**。新增 cond(r) >=6 非空 .lis in runs/ 给 live-neg 牙。
+
+**Q1 保真 (.75 hspice 3-seed)**: ref check_live PASS — cand B 25 trials, BEST_B wn=6.2e-6/ln=1e-6/wp=8.2e-6/lp=1e-6 gain=54.6875/pm=83.8776/gbw=1.9726e9 meets B spec; cond(k) EXACT rel=0.0; cond(p) cross-input wn!=8.2e-6; cond(q) candB2==candB EXACT; cond(r) 25 .lis. physics REAL (5T OTA LEVEL=1, gain 54dB/PM 84deg/GBW 2GHz).
+
+**Negatives**: static-neg 3-distinct {empty(a)/no_hspice_call(sa)/no_measure(sb)}; live-neg 3-distinct {print_expected(->r)/core_deleted(->h)/hardcode_a(->j)}. §4.9 trio {a,r,h} 3-distinct.
+
+**§5 七项全绿**: ref check_live PASS 3-seed identical / 3 static+3 live neg distinct / SKIP_RUN clean no-leak / sha 07337918 3-way sync / 16->21 only-add / check_live 仅读 hidden B params_B.json + cond k GT 由 .75 indep hspice 现算.
+
+**落盘**: check.py + cases/B JSON (judge_layers+[L2.live]+test sha sync+test_rationale 21 conds) + negative/ (5 stubs) + negative_selftest.py. live_eval_changes.tsv +1 (repo_commit=cb9cee78d). review_nonlite_B.tsv OtaAutoTune 行 R2 DONE. EDA-Flow-Bench HEAD=cb9cee78d. L2.live B nonlite 17->18.
