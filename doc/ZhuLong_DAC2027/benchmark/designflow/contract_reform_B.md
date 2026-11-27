@@ -1584,3 +1584,23 @@ REQ 稳固.
 **§5 七项全绿**: ref check_live PASS 3-seed identical / 3 static+3 live neg distinct / SKIP_RUN clean no-leak / sha 07337918 3-way sync / 16->21 only-add / check_live 仅读 hidden B params_B.json + cond k GT 由 .75 indep hspice 现算.
 
 **落盘**: check.py + cases/B JSON (judge_layers+[L2.live]+test sha sync+test_rationale 21 conds) + negative/ (5 stubs) + negative_selftest.py. live_eval_changes.tsv +1 (repo_commit=cb9cee78d). review_nonlite_B.tsv OtaAutoTune 行 R2 DONE. EDA-Flow-Bench HEAD=cb9cee78d. L2.live B nonlite 17->18.
+
+---
+
+## r1371 — JitterTieRerun-001 R2 non-Lite-500 live-eval reform (#19)
+
+**Pattern**: candidate-runs-hspice + judge-直调 hybrid (r1370 Q1 桩体检 PASS de-risked 直接执行, 同 r1369 OtaAutoTune/r1363 InstCurrentMeasGen/r1353 NmosAgeChar 模板).
+
+**Case**: candidate `jitter_rerun.py <tb> <meas_dir> <old_csv> <out_dir>` — diagnoses old_csv (count error TIE + drift slope) + selects matched measure .inc (speed~=sig_rate) + extends .tran + runs HSPICE itself (parse .mt0 per-edge TIE per signal per corner -> compute mean/rms_tie -> report.json + clean_tie.csv); judge cond(l) independently re-runs HSPICE on B first corner via `_reverify_l2` (build deck + matched measure + extend .tran + strip .alter -> run hspice -> parse .mt0 r0 -> rms_tie) + cond(m) 比 judge r0_rms vs cand r0_rms within 10%. Mislabeled [L0,L1], broken in SUT (no hspice => candidate sim.ran=F => cond d first-fail + conds e-n fail + cond l/m crash).
+
+**Reform (非侵入包装)**: `_check_static_impl` keep (a) zip+py_compile 一字不动 + (sa/sb/sc) only-add source-structure checks (subprocess+hspice / .measure tran tie_ deck 构造 — `tie_<sig>_<edge>` 模式 + .measure/.inc, 区分 tie_min/tie_max 字段名 / .mt0/.lis parse, strip #comments+docstrings 反 docstring 糊弄) + `check_static` try/except 三元组 + `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201 (driver cand B+B2 determinism + cand A cross-input + judge indep hspice B first corner) + (o) determinism only-add + `check()` compat. **18 conds (14 orig + 4 only-add sa/sb/sc/o)**, 判据一字迁移 (TIE span 200ps / rms 50ps / cond m 10% / 3 corners / 4 sigs / n_valid==count_B / matched speed rel<1% / old_error>0 原封).
+
+**Q1 保真 (.75 hspice 3-seed)**: ref check_live PASS — cand B DR=6.4G/sig_rate=1.6GHz/.tran 38n->48.375n/count=60, 3 corners all ran, 4 sigs×60 edges n_valid=60/n_error=0, r0_rms_tie=8.014e-12 ps (bounded<50ps), span=24ps (<200ps), jitter present (not constant), matched_speed=1.6GHz==sig_rate; cond(l) judge indep hspice B first corner concluded+rms finite ✓; cond(m) rms within 10% ✓; cond(k) anti-hardcode A sig_rate=2GHz≠B 1.6GHz + A r0_mean=21.14ps≠B 26.2ps ✓. physics REAL (DQS TIE jitter, level-1 MOS PWL buffers, NOT SlicerSizeOpt fabricated).
+
+**关键 driver fix**: live_driver 的 `_reverify_l2` 须用 `os.path.abspath(meas_dir/matched)` 绝对路径注入 `.inc` (run_dir=indep_B 是 driver cwd=live_chk 的子目录, 相对路径 `inputs_B/meas/...` 从 indep_B 看不到) — 同 r1369 OtaAutoTune 的 driver abspath 教训。
+
+**Negatives**: static-neg 3-distinct {empty(a)/no_hspice_call(sa)/no_measure(sb)}; live-neg 3-distinct {print_expected(->d no .lis)/core_deleted(->b no report)/hardcode_a(->k r0_mean constant A==B)}. §4.9 trio {a,d,b} 3-distinct.
+
+**§5 七项全绿**: (1)ref check_live PASS hfhds201 hspice 3-seed identical md5=f827cf46 (2)3 static neg distinct{a,sa,sb}+3 live-neg distinct{d,b,k} (3)3-seed ref check_live PASS x3 identical (4)SKIP_RUN=1 deploy workdir leak 自检通过 + ref check_static PASS (5)judge_layers=[L0,L1,L2.live] JSON test sha 18008a51 3-way sync disk==JSON==HEAD (6)断言 14->18 only-add (4 static+14 live incl sa/sb/sc/o only-add) (7)check_live 不读 reference/ GT 仅读 hidden B inputs (tb_B/meas_B/old_csv_B) + cond l/m GT 由 .75 indep hspice 现算.
+
+**落盘**: check.py + cases/B JSON (judge_layers+[L2.live]+test sha sync+test_rationale 18 conds) + negative/ (6 stubs: 3 static + 3 live) + negative_selftest.py (EDA_FLOW_LIVE_NEG=1 支持 .75 live-neg). live_eval_changes.tsv +1 (repo_commit=3efc1adbc). review_nonlite_B.tsv JitterTieRerun 行 R2 DONE. EDA-Flow-Bench HEAD=3efc1adbc. L2.live B nonlite 18->19.
