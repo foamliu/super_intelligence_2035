@@ -1211,3 +1211,33 @@ REQ 34 条（R1 22 + R1b 12）按家族改造（B 预算 ≤6–8 条/轮，§4 
   - ⑦ check_live 不读 `reference/` GT：仅读 hidden B inputs（switch_cell_B.sp+verify_config_B.json，input 非 GT）+ in-code 判据常量；沙箱不含 jsonl/test/check.py。
 - **跨 session 碰撞（同 r1347 先例）**: 本轮写完 check.py 后 git pull 发现 concurrent shard-B bench-sync commit `6f570a0e5`（23:14:31）已同款 reform check.py+negatives+JSON（字节完全相同，共享 worktree auto-commit）；本轮独立 selftest（静态+live+3-seed+SKIP_RUN+sha sync）全绿确认正确性，补 super_intelligence_2035 tracking。live_eval_changes.tsv +1 行（repo_commit=6f570a0e5）。EDA-Flow-Bench HEAD=6f570a0e5（concurrent 已 push，无新 commit）。L2.live B nonlite 10→11。
 - **R2 累计进度（non-Lite-500）**: done 11/34（deck-mock ×2；judge-直调/hybrid ×9：BatchBsubHspice/IfElsePairFix/DffSetupHoldStimGen/PulseStimTbGen/FineSimDcConvFix/TimingMeasGen/SlicerDmMeasAdd/SwitchChgDchVerif；NmosAgeChar candidate-runs-hspice×1）；BLOCKED 1（SlicerSizeOpt-001 fabricated GT）；余 22 REQ 待改造。剩余 REQ 全为 candidate-runs-sim + judge-直调 hybrid。
+
+### r1356（2026-11-27）non-Lite-500 R2 桩体检: Sram6tDcChar-001（candidate-runs-hspice + judge-直调 hybrid · Q1 PASS 只读）
+
+**case pattern** = candidate-runs-hspice + judge-直调 hybrid（同 r1353 NmosAgeChar / r1355 SwitchChgDchVerif 族）：candidate `sram6t_dcchar_gen.py --cell --corner --spec --outdir` 自身调 HSPICE（emits 5 decks/pt × 6 PVT = 30 decks + `subprocess.run([HSPICE,"-i",deck,"-o",prefix])` + parse .ms0/.mt0 → report.json per_corner 5 metrics + worst + spec_pass）AND judge `check()` cond (j) 独立重跑 HSPICE on candidate-emitted `tt_0_1p08_wnm_1.sp` deck（`subprocess.run([HSPICE, deck, "-o", "jcheck"])` → parse jcheck.ms0 → wnm_1 ~ A_GT）→ 全 mislabeled [L0,L1]（judge_layers=None）→ SUT sandbox no hspice ⇒ candidate .ms0=0 ⇒ conds a-i/k/m 全 fail (metrics None) + cond j crash + cond n (deck-structure, decks 已 emit 不需 hspice) PASS。**REQ 稳固 confirmed**（R1b verdict 正确）。
+
+**Q1 桩体检（§2.1 语义保真）= PASS** — 经 .75 EDASession hfhds201 hspice V-2023.12-SP1-1（session default_sram6t_q1）跑 ref candidate on hidden B：30 decks 全 ran（.ms0=30），report.json 6/6 corners **EXACT match** embedded B_GT（4 sig figs）：
+| corner/temp/vdd | wnm (cand/GT) | iread (cand/GT) | iwrite (cand/GT) | ileak |
+|---|---|---|---|---|
+| tt/-40/0.9 | 0.3000/0.3000 | -1.574e-5/-1.574e-5 | 6.417e-6/6.417e-6 | -1.8e-12 |
+| tt/100/1.1 | 0.5131/0.5131 | -8.752e-5/-8.752e-5 | 4.063e-5/4.063e-5 | -1.352e-10 |
+| ss/-40/0.9 | 0.3000/0.3000 | -3.991e-6/-3.991e-6 | 1.500e-6/1.500e-6 | -1.8e-12 |
+| ss/100/1.1 | 0.5279/0.5279 | -4.753e-5/-4.753e-5 | 2.194e-5/2.194e-5 | -1.352e-10 |
+| ff/-40/0.9 | 0.3160/0.3160 | -3.832e-5/-3.832e-5 | 1.582e-5/1.582e-5 | -1.8e-12 |
+| ff/100/1.1 | 0.4986/0.4986 | -1.470e-4/-1.470e-4 | 9.026e-5/9.026e-5 | -1.352e-10 |
+worst wnm=0.3 / iread=-3.991e-6 / iwrite=1.5e-6 / sym=0.0 / **spec_pass=False==B_SPEC_PASS** ✓。**physics REAL NOT fabricated**（wnm 0.3-0.53V 合理 SRAM 静态噪声容限，iread µA 级合理，iwrite µA 级合理，ileak ~pA level-1 OFF-MOS gmin-dominated 合理；contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated GT）。wall=6.6s（candidate 自跑 30 hspice decks，单 deck ~0.2s）。
+
+**Q2（错的解法会不会照样判过）= NO** — candidate 必须真跑 hspice on B 产 matching metrics：hardcode-A 候选 → cond k B metrics mismatch GT（B≠A：B wnm 0.30-0.53 vs A 0.41-0.64，B iread µA 级 vs A 不同）+ cond l B spec_pass 应 False 但 hardcode-A 给 True；fabricate-report 候选（emit 正确 deck 结构但不跑 hspice，hardcode report.json）→ cond j judge indep hspice rerun on emitted deck 仍 PASS（deck 真）但 conds a/b (per_corner count + metrics non-None) + d/e/f (report metrics vs GT) catch None metrics ⇒ REQ 稳固。
+
+**R2 wrap plan（de-risked, 下轮 r1357 直接执行）**:
+- `_check_static_impl`: keep (n) deck-structure cond 一字不动（MEASFORM=1/.dc/.measure dc/Xcell...Sram6t，decks 已 emit 不需 hspice）+ **only-add (sa/sb/sc)** source-structure checks（候选源码含 subprocess+hspice 调用 / 含 .dc+.measure testbench 构造 / 含 .ms0 parse）；删除 candidate-run block（conds a-i/k/m 全依赖 candidate .ms0）+ judge hspice block（cond j）。
+- `check_static` try/except 收口三元组。
+- `check_live(sess)`: .75 upload submit.zip + A assets(cell/corner/spec) + B hidden assets + live_driver.py → driver 跑候选 A(outA 30 decks+hspice+report) + B(outB) + B2(outB2 determinism) + judge indep hspice on A `tt_0_1p08_wnm_1.sp` deck(cond j) → JSON → 断 a..m 同判据（per_corner 6 / 5 metrics non-None / wnm sym / A metrics~A_GT / A worst / A spec_pass=True / cond j judge hspice concluded+wnm~GT / B metrics~B_GT / B spec_pass=False / cross-input A≠B）+ (o) determinism only-add（outB vs outB2 metrics identical）。
+- `check()` 兼容 + `__main__` 改 check_static。
+- **static-neg 3-distinct**: naive_empty(n 无 generator .py / a fail) / naive_no_hspice_call(sa 源码缺 subprocess+hspice) / naive_no_measure(sb 源码缺 .measure)。
+- **live-neg static-pass/live-fail**: fabricated-report candidate（emits 30 decks + has source structure → static-pass sa/sb/sc + n deck-structure，但 never runs hspice，hardcodes report.json with None metrics → live-fail cond b/a metrics None）—— 区分 candidate-runs-hspice 真伪；naive_core_deleted（runs hspice 真跑 .ms0 产但 parse_neutered → metrics None → live-fail b）；naive_hardcode_a（runs hspice 真跑但 B report 覆写 A_GT 值 → live-fail k B≠GT）。
+- §5 七项全绿预期：ref check_live PASS x3 3-seed + 3 static-neg distinct{a,sa,sb} + 3 live-neg distinct{b,e,k} + §4.9 trio{empty:a, fabricated-report:b, core_deleted:e} + judge_layers=[L0,L1,L2.live] JSON test sha sync + 断言 only-add + check_live 不读 reference/。
+
+**本轮零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动**（桩体检只读 + ledger）。live_eval_review_nonlite_B.tsv Sram6tDcChar-001 check_live+live_evidence 填 Q1 实证。
+
+- **R2 累计进度（non-Lite-500）**: done 11/34（不变）；BLOCKED 1（SlicerSizeOpt-001）；桩体检 PASS 待 wrap 1（Sram6tDcChar-001，de-risked for r1357）；余 21 REQ 待改造。剩余 REQ 全为 candidate-runs-sim + judge-直调 hybrid。
