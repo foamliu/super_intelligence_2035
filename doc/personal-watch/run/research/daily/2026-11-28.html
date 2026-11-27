@@ -47,7 +47,7 @@
 <header class="hero">
   <h1>论文观察日报 · 2026-11-28</h1>
   <div class="sub">🌅 00:00 首窗（新一天 A 轨额度重置）· 今日进度 <b>5 / 5</b> · 数据源 arXiv</div>
-  <div class="meta">生成时间：2026-11-28 03:0x CST（r276 更新）｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 455）｜ 作者网 422（X 已核验 165）｜ 作者信 190（实质回信 8 信 / 7 人 ≈4.3%）</div>
+  <div class="meta">生成时间：2026-11-28 06:0x CST（r278 更新）｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 458）｜ 作者网 425（X 已核验 167）｜ 作者信 191（实质回信 8 信 / 7 人 ≈4.3%）</div>
 </header>
 
 <div class="note">
@@ -198,6 +198,21 @@
   <p class="small">核验：arXiv API <code>200</code> + <code>application/atom+xml</code>（3 entries，<code>published</code> 逐字 <code>2015-02-10T19:18:29Z</code> / <code>2016-06-16T16:36:00Z</code> / <code>2016-12-02T08:40:40Z</code>；abs <code>comments</code>：SQuAD = EMNLP 2016、PointNet = CVPR 2017、Show Attend 无）+ OpenAlex <code>3/3 200</code>（10,308 / 11,133 / 11,443，查询日 2026-11-28）；三 ID 条目级查重 <b>0 命中</b>；<code>1502.03044</code> 另用 ar5iv HTML <code>200</code>（192,682 B）核到解码器输入 <b>196×512</b> 与卷积顶层 <b>14×14</b>。</p>
 </div>
 
+<h3 class="sec">🕒 06:00 时窗（r278 · A 轨仍满 5/5 ⇒ 0 新收；B 轨 / 作者网 / 发信 / 回信照做）</h3>
+<div class="card">
+  <ul>
+    <li><b>A 轨 0 新收</b>：今日已收满 <b>5/5</b>（00:00 窗），守「宁少勿凑」，本窗不检索、不凑第 6 篇。</li>
+    <li><b>B 轨 +3 → 458</b>（补激活函数 / 潜空间世界模型 RL / 表格树提升三处真空白）：
+      <b>GELU</b>（<a href="https://arxiv.org/abs/1606.08415">1606.08415</a>，2016-06-27，被引 <b>10,723</b>）— <code>xΦ(x)</code> 按输入数值加权、而非 ReLU 按符号门控；视觉 / NLP / 语音任务上均优于 ReLU/ELU（摘要未给具体数值）。归属：pretrain（激活函数选型）· vision（次）。<br>
+      <b>Dreamer / Dream to Control</b>（<a href="https://arxiv.org/abs/1912.01603">1912.01603</a>，ICLR 2020，被引 <b>2,750</b>）— 在学到的世界模型紧凑潜空间里展开想象轨迹，把状态值的<b>解析梯度</b>反传；20 个视觉控制任务上数据效率 / 计算时间 / 最终性能更优。归属：posttrain（model-based RL）· zhulong（成本口径）· vision（次）。<br>
+      <b>XGBoost</b>（<a href="https://arxiv.org/abs/1603.02754">1603.02754</a>，KDD 2016，被引 <b>14,912</b>）— 稀疏感知算法 + 加权分位草图做近似树学习，并从缓存访问 / 压缩 / 分片扩展到十亿级样本。归属：data（表格基线）· harness（廉价基线）· designflow（可解释归因）。</li>
+    <li><b>作者网 +3 → 425</b>（X 已核验 <b>167</b>，+2）：<b>#423 Tianqi Chen 陈天奇</b>（CMU，XGBoost 一作；A 级 <code>tqchen@cmu.edu</code>，X <code>@tqchenml</code> 双源）— 已发信 #191；<b>#424 Carlos Guestrin</b>（Stanford，XGBoost 末位；A 级 <code>guestrin@stanford.edu</code>，X <code>@guestrin</code> 单源待核）— 仅建档（同论文 ≤1）；<b>#425 Mohammad Norouzi</b>（Google DeepMind / Ideogram，Dreamer 末位；无公开邮箱，X <code>@mo_norouzi</code> 双源）— 仅建档。</li>
+    <li><b>作者信 +1 → 191</b>（今日 <b>3/12</b>）：<b>#191 Tianqi Chen</b> — 中文 <b>279 汉字</b>；主题 <code>XGBoost 的加权分位草图、稀疏缺失与工程瓶颈：三个实现问题</code>；<code>SENT OK 06:03:23</code>；问题 = 偏斜分布下的近似分裂误差与默认 ε / 稀疏感知缺失值默认分支是否可学 + 结构性缺失 / 缓存·压缩·分片三项吞吐优先级；落款两行（<code>祝好，</code> / <code>Yang Liu</code>，其后无行）；正文不含项目名、不报雇主。</li>
+    <li><b>回信核验</b>（IMAP 只读）：INBOX <b>70 封</b>（与 03:00 持平，<b>+0</b>）；<code>SINCE 26-Nov-2026</code> 7 封 = 腾讯云 / Ollama / 已知 #183 退信 / Facebook / 招聘 / 已知 #187 Petar 回复 / Ultralytics；<b>无新实质回信、无新退信</b>。累计实质 <b>8 信 / 7 人 ≈4.3%</b> · 自动 1 · 退信 9 · 无应答(&gt;14d) 32 · 未到期 141 ⇒ 8+1+9+32+141 = <b>191</b> ✔；送达口径 8/182 ≈ 4.4%。</li>
+  </ul>
+  <p class="small">核验：arXiv API <code>200</code> + <code>application/atom+xml</code>（<code>published</code> 逐字 <code>2016-06-27T19:20:40Z</code> / <code>2019-12-03T18:57:16Z</code> / <code>2016-03-09T01:11:51Z</code>；abs <code>comments</code> 逐字：GELU = Trimmed version of 2016 draft、Dreamer = 9 pages, 12 figures、XGBoost = KDD'16 changed all figures to type1）+ OpenAlex <code>3/3 200</code>（10,723 / 2,750 / 14,912，查询日 2026-11-28）；三 ID 条目级查重 <b>0 命中</b>。⚠️ 纠错：候选 GloVe 记忆 ID <code>1405.2296</code> 经 arXiv 实测为暗能量物理论文 ⇒ 弃，未收录。</p>
+</div>
+
 <h3 class="sec">🎯 对各线的可执行建议（6 线齐全，无建议显式写「无」）</h3>
 <div class="card">
   <ul>
@@ -233,14 +248,14 @@
     <li><b>元数据</b>：<code>export.arxiv.org/api/query</code> ⇒ <code>200</code> + atom；<code>published</code> 逐条 2026-11-25T14:39:59Z / 2026-11-24T11:07:23Z / 2026-11-24T19:32:45Z / 2026-11-25T17:38:00Z / 2026-11-25T18:01:22Z。</li>
     <li><b>abs 页</b>：<b>5/5 <code>200</code></b>（42,679 / 41,364 / 42,915 / 42,297 / 44,837 B）；主分类 cs.LG / cs.AR / cs.AR / cs.LG / cs.CV 取自各 abs 页 <code>primary-subject</code>。</li>
     <li><b>去重</b>：五个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> 均 <b>0 命中</b>。</li>
-    <li><b>B 轨核验</b>（本日两窗合计 6 条）：00:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>；03:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Show Attend / SQuAD / PointNet，查询日 2026-11-28）；六个 ID 条目级查重均 0 命中。</li>
+    <li><b>B 轨核验</b>（本日三窗合计 9 条）：00:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>；03:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Show Attend / SQuAD / PointNet）；06:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（GELU / Dreamer / XGBoost，查询日 2026-11-28）；九个 ID 条目级查重均 0 命中。</li>
     <li><b>网络</b>：arXiv <code>200</code>、OpenAlex <code>200</code>（首查一次 <code>429</code>，加 <code>mailto</code> + ≥3s 间隔后 <code>200</code>）、X 经代理 <code>200</code>、GitHub <code>200</code>；SMTP <code>SENT OK</code>、IMAP <code>LOGIN OK</code> / 70 封。</li>
   </ul>
 </div>
 
 <footer>
-  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 03:0x CST（r276 更新）<br>
-  本期（r275 + r276）：A 轨 <b>5/5</b> · B 轨 <b>+6 → 455</b> · 作者网 <b>+6 → 422</b>（X 165）· 作者信 <b>+2 → 190</b> · 实质回信 <b>8 信 / 7 人 ≈4.3%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
+  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 06:0x CST（r278 更新）<br>
+  本期（r275 + r276 + r278）：A 轨 <b>5/5</b> · B 轨 <b>+9 → 458</b> · 作者网 <b>+9 → 425</b>（X 167）· 作者信 <b>+3 → 191</b> · 实质回信 <b>8 信 / 7 人 ≈4.3%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
 </footer>
 
 </div>

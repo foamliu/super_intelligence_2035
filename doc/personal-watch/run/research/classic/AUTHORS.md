@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-28 06:0x · r278）**：作者 **425** 人（编号最大 **425**）· X 已核验 **167**（本轮 **+2**：`@tqchenml` 由本人主页 <https://tqchen.com/> `200` / 6,008 B 页内 `Twitter : @tqchenml` 外链 + 代理抓 `x.com/tqchenml` `200` / 186,301 B，`og:title` = `Tianqi Chen (@tqchenml) on X`、bio = `AssocProf @CarnegieMellon … Creator of @XGBoostProject` ⇒ 双源；`@mo_norouzi` 由本人主页 <https://norouzi.github.io/> `200` / 23,647 B 外链 `twitter.com/mo_norouzi` + 代理抓 `x.com/mo_norouzi` `200` / 198,504 B，`og:title` = `Mohammad Norouzi (@mo_norouzi) on X`、bio = `Founder and CEO at Ideogram` ⇒ 双源；`@guestrin` 仅 X 页 `og:title` + bio 自述 `Co-author of XGBoost` 单源、本人主页无 X 外链 ⇒ **待核、不计入**）· 已发信 **191**（台账 #1–#191；本窗 **+1**：#191 Tianqi Chen；今日 **3/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 03:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Tianqi Chen 陈天奇（XGBoost 一作，CMU，A 级 `tqchen@cmu.edu`〔本人主页 `Email : tqchen at cmu dot edu` 还原〕，X `@tqchenml` 双源 ⇒ 已发信 #191）· Carlos Guestrin（XGBoost 末位，Stanford，A 级 `guestrin@stanford.edu`〔本人 contact 页明文〕，X `@guestrin` 单源待核 ⇒ 仅建档，守「同一论文 ≤1」）· Mohammad Norouzi（Dreamer 末位，Google DeepMind / Ideogram，主页无公开邮箱，X `@mo_norouzi` 双源 ⇒ 仅建档）。
 > **当前计数（2026-11-28 03:0x · r276）**：作者 **422** 人（编号最大 **422**）· X 已核验 **165**（本轮 **+1**：`@pranavrajpurkar` 由本人主页 <https://pranavrajpurkar.com/> `200` / 31,854 B 外链 + 代理抓 `x.com/pranavrajpurkar` `200` / 169,490 B，`og:title` = `Pranav Rajpurkar (@pranavrajpurkar) on X` ⇒ 双源；Aaron Courville 页面仅 Mila 机构账号、Kelvin Xu 页面无 x/twitter 外链 ⇒ 均记「未找到 X」，不猜）· 已发信 **190**（台账 #1–#190；本窗 **+1**：#190 Aaron Courville；今日 **2/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 00:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Aaron C. Courville（Show, Attend and Tell 资深作者，Mila / 蒙特利尔大学，A 级 `courvila@mila.quebec`〔MILA 官方人员页 `mailto:` 明文〕，X 未找到 ⇒ 已发信 #190）· Pranav Rajpurkar（SQuAD 一作，Harvard Medical School，主页无邮箱、X 双源 ⇒ 仅建档）· Kelvin Xu（Show, Attend and Tell 一作，Google DeepMind，A 级 `kelvinxx@google.com`〔本人主页 `mailto:` 明文〕，X 未找到 ⇒ 仅建档，守「同一论文 ≤1」）。
 > **当前计数（2026-11-28 00:0x · r275）**：作者 **419** 人（编号最大 **419**）· X 已核验 **164**（本轮 **+0**：DiversePlace 三位作者本人主页均无 x/twitter 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **189**（台账 #1–#189；本窗 **+1**：#189 Zhiyao Xie；今日 **1/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 21:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 +0）。本轮 **+3**：Zhiyao Xie 谢知遥（DiversePlace 资深作者，香港科技大学，A 级 `eezhiyao@ust.hk`〔本人主页 <https://zhiyaoxie.com/> 页内 `mailto:` 明文〕，X 未找到 ⇒ 已发信 #189）· Ling Pan（DiversePlace 末位，香港科技大学，A 级 `lingpan@ust.hk`〔本人主页 <https://ling-pan.github.io/> 页内明文 `lingpan [@] ust [DOT] hk` 还原〕，X 未找到 ⇒ 仅建档）· Wenrui Zhou（DiversePlace 一作，香港科技大学，本人主页 `200` 但无 `mailto:`/明文邮箱，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-27 21:0x · r274）**：作者 **416** 人（编号最大 **416**）· X 已核验 **164**（本轮 **+2**：`@jietang` 由本人主页 <https://keg.cs.tsinghua.edu.cn/jietang/> 外链 `twitter.com/jietang` + 代理抓 `x.com/jietang` `200` / 182,716 B，`og:title` = `jietang (@jietang) on X` ⇒ 双源；`@MichaelAuli` 由本人主页 <https://michaelauli.github.io/> 外链 `twitter.com/michaelauli` + 代理抓 `x.com/michaelauli` `200` / 168,407 B，`og:title` = `Michael Auli (@MichaelAuli) on X`、bio = `Research Scientist @FacebookAI` ⇒ 双源；Zhilin Yang 本人主页无 x/twitter 外链、`x.com/kimiyoung` 属他人 ⇒ 记「未找到 X」，不猜）· 已发信 **188**（台账 #1–#188；本窗 **+1**：#188 Jie Tang；今日 **4/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，较 00:2x 的 69 多 1 = 已知 Petar #187 回复；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Jie Tang 唐杰（P-Tuning 末位/通讯，中文，本人主页可见 `jietang at tsinghua . edu . cn` ⇒ A 级 ⇒ 已发信 #188）· Michael Auli（GLU 三作，英文，本人主页无邮箱、X 双源 ⇒ 仅建档）· Zhilin Yang（P-Tuning 五作，中文，本人主页 `200` 但无邮箱 / 无本人 X ⇒ 仅建档）。
@@ -5948,3 +5949,43 @@
 | X 账号 | **未找到 X**（主页无 x/twitter 外链；未猜） |
 | 状态 | **仅建档**（有 A 级邮箱；守「同一论文 ≤1」——同论文已发资深作者 #190，不重复打扰） |
 | 备注 | 语言=中文(判据=华人姓名族属；机构在美国，按姓名族属优先)。Show, Attend and Tell 一作；注意力机制 + 规模化预训练经验与 vision/pretrain 两线相关；仅建档。 |
+
+
+### 423. Tianqi Chen（陈天奇）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tianqi Chen（陈天奇） |
+| 机构 | **Carnegie Mellon University**（Assoc Prof；本人主页与 X bio 均自述，另 Distinguished Eng @NVIDIA） |
+| 代表论文 | **XGBoost: A Scalable Tree Boosting System**（`1603.02754`，B 轨 2026-11-28 收录，一作）· Apache TVM（creator） |
+| 邮箱 | **A 级** `tqchen@cmu.edu`（本人主页 <https://tqchen.com/> `200` / 6,008 B 页内 `Email : tqchen at cmu dot edu` 去混淆还原） |
+| 主页 | <https://tqchen.com/>（`200` / 6,008 B） |
+| X 账号 | **@tqchenml**（本人主页 `Twitter : @tqchenml` 外链 + 代理抓 `x.com/tqchenml` `200` / 186,301 B，`og:title` = `Tianqi Chen (@tqchenml) on X`、bio 自述 `AssocProf @CarnegieMellon … Creator of @XGBoostProject` ⇒ 双源） |
+| 状态 | **已发信 #191**（2026-11-28 06:03:23 `SENT OK`） |
+| 备注 | 语言=中文(判据=华人姓名族属「Tianqi Chen / 陈天奇」+ CMU 机构；姓名族属优先于机构所在地)。信内容 = 加权分位草图在偏斜分布下的误差控制 / 稀疏感知缺失值默认分支与结构性缺失 / 缓存-压缩-分片中哪项对单机吞吐影响最大。 |
+
+### 424. Carlos Guestrin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Carlos Guestrin |
+| 机构 | **Stanford University**（Fortinet Founders Professor, CS；Director, Stanford AI Lab） |
+| 代表论文 | **XGBoost: A Scalable Tree Boosting System**（`1603.02754`，B 轨 2026-11-28 收录，末位）；另 LIME / TextGrad / TVM / GraphLab 等 |
+| 邮箱 | **A 级** `guestrin@stanford.edu`（本人 contact 页 <https://guestrin.su.domains/contact/> `200` / 40,020 B 页内明文） |
+| 主页 | <https://guestrin.su.domains/>（`200` / 41,048 B） |
+| X 账号 | **@guestrin**（`x.com/guestrin` `200` / 193,276 B，`og:title` = `Carlos Guestrin (@guestrin) on X`、bio 自述 `@Stanford Prof … Co-author of XGBoost` ⇒ **单源待核**；本人主页无 x/twitter 外链，不计入 X 已核验数） |
+| 状态 | **仅建档**（有 A 级邮箱；守「同一论文 ≤1」——同论文已发一作 Tianqi Chen，不重复打扰） |
+| 备注 | 语言=英文(判据=姓名族属/机构存在美洲多语背景，按 `RESEARCH_MAIL_SPEC §2` 判据冲突兜底英文)。XGBoost 的表格基线价值同 #423；仅建档。 |
+
+### 425. Mohammad Norouzi
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mohammad Norouzi |
+| 机构 | **Google DeepMind**（论文发表时为 Google Brain Toronto）；X bio 现为 **Ideogram** Founder & CEO |
+| 代表论文 | **Dream to Control: Learning Behaviors by Latent Imagination**（`1912.01603`，B 轨 2026-11-28 收录，末位） |
+| 邮箱 | **未找到**（本人主页 <https://norouzi.github.io/> `200` / 23,647 B 无明文邮箱；按纪律不猜） |
+| 主页 | <https://norouzi.github.io/>（`200` / 23,647 B） |
+| X 账号 | **@mo_norouzi**（本人主页外链 `twitter.com/mo_norouzi` + 代理抓 `x.com/mo_norouzi` `200` / 198,504 B，`og:title` = `Mohammad Norouzi (@mo_norouzi) on X`、bio = `Founder and CEO at Ideogram` ⇒ 双源；⚠️ 身份已从学界转业界，当前机构以 bio 为准） |
+| 状态 | **仅建档**（X 已核验；无 A 级公开邮箱 ⇒ 不发信） |
+| 备注 | 语言=英文(判据=伊朗姓名 + 美国/加拿大机构；波斯语不在需全文母语清单)。Dreamer 的潜空间想象 + 解析梯度反传与 posttrain/zhulong 的 model-based RL 对照相关；仅建档跟踪。 |

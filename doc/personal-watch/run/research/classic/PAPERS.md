@@ -9,7 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
-**本轮快照**：累计 **455** 条（**第一百二十九轮 2026-11-28 03:0x +3 → 455**（B 轨补视觉注意力 / 阅读理解 / 点云真空白）：Show, Attend and Tell `1502.03044`（**10,308**，2015 预印本；软注意力在 **196（14×14）** 位置上取期望 + 硬注意力采样并最大化变分下界，可可视化注视显著物体，Flickr8k / Flickr30k / MS COCO SOTA）/ SQuAD `1606.05250`（**11,133**，EMNLP 2016；10 万+ 众包问题、答案必为原文片段，逻辑回归 F1 **51.0%** vs 简单基线 20%，人类 86.8%）/ PointNet `1612.00593`（**11,443**，CVPR 2017；直接消费点云并保持置换不变，统一分类 / 部件分割 / 语义解析）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2015-02-10T19:18:29Z` / `2016-06-16T16:36:00Z` / `2016-12-02T08:40:40Z`；abs `comments`：SQuAD = EMNLP 2016、PointNet = CVPR 2017、Show Attend 无）+ OpenAlex 3/3 `200`（10,308 / 11,133 / 11,443，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 视觉注意力 / 抽取式阅读理解与人类上限 / 置换不变集合编码；本轮归属：vision +2 · harness +1 · data +1 · pretrain +0 · posttrain +0 · zhulong +0 · designflow +0）
+**本轮快照**：累计 **458** 条（**第一百三十轮 2026-11-28 06:0x +3 → 458**（B 轨补激活 / 世界模型 / 表格 ML 真空白）：GELU `1606.08415`（**10,723**，2016 预印本；`xΦ(x)` 按输入数值加权、而非像 ReLU 那样按符号门控，视觉 / NLP / 语音任务上均优于 ReLU/ELU）/ Dream to Control / Dreamer `1912.01603`（**2,750**，ICLR 2020；在学到的世界模型紧凑潜空间里展开想象轨迹，把状态值的解析梯度反传回去，20 个视觉控制任务上数据效率 / 计算时间 / 最终性能更优）/ XGBoost `1603.02754`（**14,912**，KDD 2016；稀疏感知算法 + 加权分位草图做近似树学习，并从缓存访问 / 数据压缩 / 分片层面扩展到十亿级样本）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-06-27T19:20:40Z` / `2019-12-03T18:57:16Z` / `2016-03-09T01:11:51Z`；abs `comments` 逐字：GELU = `Trimmed version of 2016 draft`、Dreamer = `9 pages, 12 figures`、XGBoost = `KDD'16 changed all figures to type1`）+ OpenAlex 3/3 `200`（10,723 / 2,750 / 14,912，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 激活函数 / 潜空间世界模型 RL / 表格树提升系统；本轮归属：pretrain +1 · posttrain +1 · zhulong +1 · vision +2 · data +1 · harness +1 · designflow +1）
+**本轮快照（前一）**：累计 **455** 条（**第一百二十九轮 2026-11-28 03:0x +3 → 455**（B 轨补视觉注意力 / 阅读理解 / 点云真空白）：Show, Attend and Tell `1502.03044`（**10,308**，2015 预印本；软注意力在 **196（14×14）** 位置上取期望 + 硬注意力采样并最大化变分下界，可可视化注视显著物体，Flickr8k / Flickr30k / MS COCO SOTA）/ SQuAD `1606.05250`（**11,133**，EMNLP 2016；10 万+ 众包问题、答案必为原文片段，逻辑回归 F1 **51.0%** vs 简单基线 20%，人类 86.8%）/ PointNet `1612.00593`（**11,443**，CVPR 2017；直接消费点云并保持置换不变，统一分类 / 部件分割 / 语义解析）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2015-02-10T19:18:29Z` / `2016-06-16T16:36:00Z` / `2016-12-02T08:40:40Z`；abs `comments`：SQuAD = EMNLP 2016、PointNet = CVPR 2017、Show Attend 无）+ OpenAlex 3/3 `200`（10,308 / 11,133 / 11,443，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 视觉注意力 / 抽取式阅读理解与人类上限 / 置换不变集合编码；本轮归属：vision +2 · harness +1 · data +1 · pretrain +0 · posttrain +0 · zhulong +0 · designflow +0）
 **本轮快照（前一）**：累计 **452** 条（**第一百二十八轮 2026-11-28 00:0x +3 → 452**（B 轨补架构/多模态真空白）：Sparse Transformers `1904.10509`（**3,468**，2019 预印本；注意力矩阵稀疏因子化把 O(n²) 降到 **O(n√n)**，配深层稳定初始化 + 注意力重算省显存 + 快速注意力 kernel，同一架构建模图像/音频/文本原始字节）/ DALL·E · Zero-Shot Text-to-Image Generation `2102.12092`（**6,727**，2021 预印本；用一个 transformer 把文本 token 与图像 token 当**单一数据流自回归联合建模**，数据与规模足够时零样本可比专用文生图）/ MLP-Mixer `2105.01601`（**4,393**，NeurIPS 2021；仅两类 MLP（逐 patch 混合 + 跨 patch 混合）证明**卷积与注意力都非必需**，大数据或现代正则下逼近同类精度）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 `2019-04-23T19:29:47Z` / `2021-02-24T06:42:31Z` / `2021-05-04T16:17:21Z`；Sparse/DALL·E `comments` 为空，MLP-Mixer 为修订说明）+ OpenAlex 3/3 `200`（3,468 / 6,727 / 4,393，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**（⚠️ 候选 `2206.10658` 经 arXiv 实测为 ART 稠密检索、`2206.07682`〔Emergent Abilities〕已在表内 ⇒ 均弃）；覆盖轴 = 稀疏长序列注意力 / 统一 token 自回归多模态 / 全 MLP 视觉骨干；本轮归属：pretrain +3 · vision +3 · data +1 · zhulong +1 · posttrain +0 · harness +0 · designflow +0）
 **本轮快照（前一）**：累计 **449** 条（**第一百二十七轮 2026-11-27 21:0x +3 → 449**（B 轨补真空白）：LSSL / S4 `2110.13985`（**1,300**，NeurIPS 2021；线性连续时间状态空间层 `ẋ = Ax + Bu, y = Cx + Du` + 可训练结构化 `A`（HiPPO 式长程记忆），把 RNN / 时序卷积 / NDE 统一并推广到连续时间；长度 16,000 语音分类比此前方法 **+24** 个百分点）/ Gated Convolutional Networks / GLU `1612.08083`（**1,589**，2016 预印本；门控线性单元 `(X*W+b) ⊗ σ(X*V+c)`，堆叠卷积 + 门控并行打分，WikiText-103 SOTA、打分延迟比循环基线低一个数量级）/ GPT Understands, Too / P-Tuning `2103.10385`（**1,626**，OpenAlex 记 AI Open 2023；可训练连续 prompt 与离散模板拼接 + prompt encoder（LSTM/MLP）+ anchor，缩小不同离散模板间方差，LAMA / SuperGLUE 提升，冻结与微调、全监督与少样本均有效）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2021-10-26T19:44:53Z / 2016-12-23T20:32:33Z / 2021-03-18T17:13:50Z；S4 `comments` 逐字 `NeurIPS 2021`）+ OpenAlex 3/3 `200`（1,300 / 1,589 / 1,626，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**（注：候选 RTLLM 记 `2309.05076` 经 arXiv 实测为情感 agent 论文、真 ID `2308.05345` 已在表内 ⇒ 弃）；覆盖轴 = 长序列状态空间 / 门控卷积语言模型 / 连续 prompt 适配；本轮归属：pretrain +3 · posttrain +2 · harness +1 · zhulong +1 · data +1 · vision +1 · designflow +0）
 **本轮快照（前一）**：累计 **446** 条（**第一百二十六轮 2026-11-27 00:2x 补轮 +3 → 446**：OpenAI Gym `1606.01540`（**9,534**，2016 预印本；统一 `reset/step/reward/done` 环境接口 + 环境注册/版本化，把环境与 agent 解耦，成为后续 RL 与 agent 评测 harness 的公共接口约定）/ Graph Attention Networks `1710.10903`（**24,761**，ICLR 2018；掩码自注意力 + 多头在邻居上加权聚合，可归纳到未见图）/ MobileNetV2 `1801.04381`（**37,626**，CVPR 2018；倒残差 + 线性瓶颈，低算力视觉骨干）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2017-10-30T12:41:12Z / 2016-06-05T17:54:48Z / 2018-01-13T04:46:26Z）+ OpenAlex 3/3 `200`（查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = RL 环境接口 / 图注意力 / 高效视觉骨干；本轮归属：harness +2 · data +2 · pretrain +3 · vision +2 · posttrain +1 · designflow +1 · zhulong +0）
@@ -7897,3 +7898,49 @@
 | 与我们工作的关系 | **vision（主 · 集合/几何编码）**：置换不变的集合编码提醒我们，若把版图/几何量当点集输入，编码器不应依赖任意排序。<br>**designflow（次）**：几何/点集类用例的输入表示可选点集而非栅格，便于保住位置精度。<br>**pretrain / posttrain / data / harness / zhulong**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-28**（第一百二十九轮 · 03:0x） |
 | 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-12-02T08:40:40Z`；abs `comments` 逐字 `CVPR 2017`）；OpenAlex **`200`**（11,443 / 2016 / `preprint` / source = arXiv，查询日 2026-11-28）；「直接消费点云 / 置换不变 / 分类-部件分割-语义解析统一架构 / 扰动鲁棒性分析」取自摘要逐字；摘要无具体分数 ⇒ 本条不写未核数字。条目级查重：`1612.00593` 在 `PAPERS.md` **0 命中**。 |
+
+
+## 456. Gaussian Error Linear Units (GELUs)
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Gaussian Error Linear Units (GELUs) |
+| 作者（前 3） | Dan Hendrycks · Kevin Gimpel（arXiv / OpenAlex 逐字核，共 2 位） |
+| 年份 | **2016**（arXiv API `published` 逐字 `2016-06-27T19:20:40Z`；v2 `updated` `2023-06-06T01:53:32Z`） |
+| 会议 / 期刊 | **arXiv 预印本**（abs `comments` 逐字 `Trimmed version of 2016 draft`；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **10,723**（OpenAlex `10.48550/arxiv.1606.08415`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1606.08415> ｜ `10.48550/arXiv.1606.08415` |
+| 一句话贡献 | 提出 **GELU** 激活 `xΦ(x)`（`Φ` 为标准正态 CDF）：与 ReLU 按符号门控不同，它按输入数值**加权**输入；在视觉、NLP、语音任务上相对 ReLU / ELU 均报告性能提升。摘要只说「all considered computer vision, natural language processing, and speech tasks」有提升，**未给具体数字** ⇒ 本条不写未核分数。 |
+| 与我们工作的关系 | **pretrain（主 · 激活函数选型）**：GELU 是 BERT / GPT 系默认激活，做「架构选型对比」时应作为明确基线；若做激活替换消融，须标注与 ReLU 的可比区间。<br>**vision（次）**：摘要称视觉任务上亦有提升，可作为视觉骨干激活的对照。<br>**posttrain / data / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十轮 · 06:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-06-27T19:20:40Z`、`updated` `2023-06-06T01:53:32Z`；`comments` 逐字 `Trimmed version of 2016 draft`；primary `cs.LG`）+ OpenAlex **`200`**（10,723 / 2016 / `preprint` / source = arXiv，查询日 2026-11-28）。`xΦ(x)` / 按数值加权 vs ReLU 按符号门控 / CV-NLP-语音均有提升 取自摘要逐字；摘要无具体数值 ⇒ 不写未核数字。条目级查重：`1606.08415` 在 `PAPERS.md` **0 命中**。 |
+
+## 457. Dream to Control: Learning Behaviors by Latent Imagination（Dreamer）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Dream to Control: Learning Behaviors by Latent Imagination |
+| 作者（前 3） | Danijar Hafner · Timothy Lillicrap · Jimmy Ba（OpenAlex 逐字核；另 Mohammad Norouzi，共 4 位） |
+| 年份 | **2020**（v1 `published` 逐字 `2019-12-03T18:57:16Z`；v2 `updated` `2020-03-17T17:10:58Z`；ICLR 2020） |
+| 会议 / 期刊 | **ICLR 2020**（OpenAlex `type=conference-paper`、source = International Conference on Learning Representations；abs `comments` 逐字 `9 pages, 12 figures`，未写会议名 ⇒ 会议以 OpenAlex 为准） |
+| 被引数 | **2,750**（OpenAlex `10.48550/arxiv.1912.01603`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1912.01603> ｜ `10.48550/arXiv.1912.01603` |
+| 一句话贡献 | **Dreamer** 仅靠**潜空间想象**求解长程视觉控制任务：先学世界模型，再在其紧凑状态空间里展开想象轨迹，把学到的状态值的**解析梯度**沿想象轨迹反传以学行为；在 **20** 个视觉控制任务上，数据效率、计算时间与最终性能均优于已有方法。 |
+| 与我们工作的关系 | **posttrain（主 · model-based RL / 世界模型）**：与我们在真实 EDA 环境做 RL 的取舍（样本效率 vs 环境成本）直接相关；可作为「先学世界模型、再在潜空间优化」的对照臂。<br>**zhulong（次 · 成本口径）**：「数据效率 / 计算时间 / 最终性能」三轴同时报告，值得参照其成本口径写法。<br>**vision（次 · 高维图像输入）**：从图像学世界模型，与波形图/截图类输入相关。<br>**pretrain / data / harness / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十轮 · 06:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2019-12-03T18:57:16Z`、`updated` `2020-03-17T17:10:58Z`；`comments` 逐字 `9 pages, 12 figures`；primary `cs.LG`）+ OpenAlex **`200`**（2,750 / 2020 / `conference-paper` / source = ICLR，查询日 2026-11-28）。「潜空间想象轨迹 / 解析梯度反传 / 20 个视觉控制任务 / 数据效率-计算时间-最终性能」取自摘要逐字；摘要无具体分数 ⇒ 不写未核数字。条目级查重：`1912.01603` 在 `PAPERS.md` **0 命中**。 |
+
+## 458. XGBoost: A Scalable Tree Boosting System
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | XGBoost: A Scalable Tree Boosting System |
+| 作者（前 3） | Tianqi Chen · Carlos Guestrin（arXiv / OpenAlex 逐字核，共 2 位） |
+| 年份 | **2016**（arXiv API `published` 逐字 `2016-03-09T01:11:51Z`；v2 `updated` `2016-06-10T23:23:51Z`） |
+| 会议 / 期刊 | **KDD 2016**（abs `comments` 逐字 `KDD'16 changed all figures to type1`；OpenAlex `type=preprint`、source = arXiv ⇒ 会议以 abs `comments` 为准） |
+| 被引数 | **14,912**（OpenAlex `10.48550/arxiv.1603.02754`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1603.02754> ｜ `10.48550/arXiv.1603.02754` |
+| 一句话贡献 | 提出可扩展的端到端树提升系统 **XGBoost**：**稀疏感知算法** + **加权分位草图**做近似树学习；并从**缓存访问模式、数据压缩、分片**给出系统级洞察，使其在远少于已有系统的资源下扩展到**十亿级样本**。 |
+| 与我们工作的关系 | **data（主 · 表格 / 结构化特征基线）**：EDA 里大量表格特征（时序 / 功耗 / 良率统计）可用树提升做**强基线**，避免一上来就上大模型。<br>**harness（次 · 基线口径）**：树模型是廉价、可复现的基线，用来界定「LLM / agent 到底加了什么」。<br>**designflow（次 · 特征与可解释归因）**：用例的数值特征可先用树模型做可解释归因。<br>**pretrain / posttrain / vision / zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十轮 · 06:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-03-09T01:11:51Z`、`updated` `2016-06-10T23:23:51Z`；`comments` 逐字 `KDD'16 changed all figures to type1`；primary `cs.LG`）+ OpenAlex **`200`**（14,912 / 2016 / `preprint` / source = arXiv，查询日 2026-11-28）。「稀疏感知算法 / 加权分位草图 / 缓存访问-压缩-分片 / 十亿级样本」取自摘要逐字；摘要无具体分数 ⇒ 不写未核数字。条目级查重：`1603.02754` 在 `PAPERS.md` **0 命中**。 |
