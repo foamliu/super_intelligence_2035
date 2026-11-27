@@ -770,3 +770,22 @@ r1407 监控轮 MEMORY_A 体积红线处置：将 r1358–r1397 共 34 行 teeth
 → r1433 详块见 daily_A_2026-11-27.md §r1433（teeth-guard 监控轮(只读·0 改动, r1432 基线不变仅复核). 9 项全绿(.75 REACH_OK RC0 167ms / 3 L2.live neg_selftest OK / 585 judge_layers 齐 / review tsv 116-116 / 两仓 0-0 sync / changes.tsv 50 行 含 B SlicerFbTimeOpt @13:35 ⇒ B R3 收口全 benchmark REQ 全绿 / NA-A / 无 board/discuss/thermo_feedback). A 三线收口不变, 0 改动 0 回归. 全文见 daily §r1433）
 → r1419–r1432 详块见 daily_A_2026-11-27.md §r1419–§r1432（14 轮 teeth-guard 监控轮(只读·0 改动, r1419 基线 + 后续仅复核). 均 9 项全绿(.75 REACH_OK hfhds201 RC0 13-220ms + hspice/hspice64/finesim/vcs/vlogan/calibre in PATH, verdi/fm/icv absent / 3 L2.live neg_selftest 全 OK 无回归 / 585 judge_layers 齐 574L0L1+11L2.live / review tsv 116-116 / 两仓 0-0 sync / changes.tsv 42-50 行 A=4 unchanged / research daily NA-A / 无 board/discuss/thermo_feedback). A 三线收口不变, 0 改动 0 回归. 各轮全文见 daily 对应轮次）
 → r1408-r1417 详块见 daily_A_2026-11-27.md §r1408–§r1417（10 轮 teeth-guard 监控轮(只读·0 改动), 均 .75 REACH_OK + 3 L2.live neg_selftest OK + 585 judge_layers 齐 + 两仓 0-0 sync + changes.tsv A unchanged. 0 改动 0 回归. 详 daily/ARCHIVE）
+
+## 归档块 · 2026-11-27 r1462 瘦身 · A1（r1456–r1460 teeth-guard 监控轮 verbatim 归档）
+
+> 5 轮 teeth-guard 监控轮(只读·0 改动·9 项全绿)，均为 .75 REACH_OK hfhds201 RC0 + hspice/hspice64/finesim/vcs/vlogan/calibre in PATH, verdi/fm/icv absent + 585 cases/A judge_layers 齐(569 L0L1+16 L2.live 文件=15 active+1 retired RtlDesignScenarioBoot-001) + 3 L2.live neg_selftest 全 OK 无回归(VpsRegr 4-distinct{a,d,g,h}+TotemSC 4-distinct{c,d,f,h}+AsyncFifoSim 3-static{c,d,o}+live-neg) + nonlite review 469/469 收口(NA461+REQ-DONE5+REQ-PREEXISTING3) + Lite review 116/116(REQ7/OPT3/NA106) + changes.tsv A=9 unchanged + 两仓 0/0 sync + research daily 11-27 designflow 建议=有(①RTL 造题 ②DRC L2.live 判分增强, 均非 A 可落地) + discuss 仅 D.md 无 board.md quota 豁免 + A-pure 池枯竭(scan=11-24 无新扫描 shard_A_new=0). A 三线收口口径不变(non-Lite REQ 8/8 done, OPT 0, NA 461, L2.live(active)=15; Lite 116/116 green; contract P1-P4 done). 0 改判分 0 回归. 原文 verbatim 归档，全文见 daily_A_2026-11-27.md §r1456/§r1457/§r1458/§r1459/§r1460.
+
+### r1460 原文
+→ r1460 详块见 daily_A_2026-11-27.md §r1460（teeth-guard 监控轮(只读·0 改判分) + summary_stats.json mc30 修(0→3477, 加 mc15/mc20/mc100/users_mc10/scansync). 9 项全绿(.75 REACH_OK hfhds201 RC0 105ms + hspice/hspice64/finesim/vcs/vlogan/calibre in PATH / 585 judge_layers 齐 569L0L1+16L2.live文件 / 3 neg_selftest OK VpsRegr+TotemSC+AsyncFifoSim / nonlite 469/469 + Lite 116/116 / changes.tsv 63行 A=9 / 两仓 0/0 sync / research daily 11-27 有建议[非A可落地] / 无 board/discuss). scansync scan=11-24 无新扫描, A-pure 池枯竭不变. A 三线收口不变, 0 改判分 0 回归. 详 daily）
+
+### r1459 原文
+→ r1459 详块见 daily_A_2026-11-27.md §r1459（teeth-guard 监控轮(只读·0 改动) + MEMORY 瘦身归档轮. 9 项全绿(.75 REACH_OK hfhds201 RC0 126ms via eda_flow MCP + hspice/hspice64/finesim/vcs/vlogan/calibre in PATH, verdi/fm/icv absent / 3 L2.live neg_selftest 全 OK 无回归 VpsRegr 4-distinct{a,d,g,h}+TotemSC 4-distinct{c,d,f,h}+AsyncFifoSim 3-static{c,d,o}+live-neg / 585 cases/A judge_layers 齐 569L0L1+16L2.live文件 / nonlite 469/469 + Lite 116/116 / changes.tsv 63行 A=9 unchanged / 两仓 0/0 sync / research daily 11-27 designflow 建议=**有**(RTL 造题/DRC 判分增强, 非本轮可落地, 已记备查) / 无 board/discuss/thermo_feedback). A 三线收口不变, 0 改判分 0 回归. 瘦身: ~30 轮 r1408-r1446 teeth-guard 指针 verbatim 归档 ARCHIVE r1459 瘦身 A1, MEMORY 41.3KB→37.7KB. 详 daily）
+
+### r1458 原文
+→ r1458 详块见 daily_A_2026-11-27.md §r1458（teeth-guard 监控轮(只读·0 改动). 9 项全绿(.75 REACH_OK hfhds201 RC0 47ms + hspice/finesim/vcs/vlogan/calibre in PATH / 585 judge_layers 齐 569L0L1+16L2.live文件 / 3 neg_selftest OK VpsRegr+TotemSC+AsyncFifoSim / nonlite 469/469 + Lite 116/116 / changes.tsv 63行 A=9 / 两仓 0/0 sync / research daily 11-27 有 designflow 建议[造题/判分增强·非本轮可落地] / 无 board/discuss/thermo_feedback). A 三线收口不变, 0 改判分 0 回归. 详 daily）
+
+### r1457 原文
+→ r1457 详块见 daily_A_2026-11-27.md §r1457（teeth-guard 监控轮(只读·0 改动). 9 项全绿(.75 REACH_OK hfhds201 RC0 343ms + hspice/finesim/vcs/vlogan/calibre in PATH / 585 judge_layers 齐 569L0L1+16L2.live文件 / 3 neg_selftest OK VpsRegr+TotemSC+AsyncFifoSim / nonlite 469/469 + Lite 116/116 / changes.tsv A=9 / 两仓 0/0 sync / research NA-A / 无 board/discuss/thermo_feedback). A 三线收口不变, 0 改判分 0 回归. 详 daily）
+
+### r1456 原文
+→ r1456 详块见 daily_A_2026-11-27.md §r1456（teeth-guard 监控轮(只读·0 改动). 9 项全绿(.75 REACH_OK hfhds201 RC0 148ms + hspice/finesim/vcs/vlogan/calibre in PATH / 585 judge_layers 齐 569L0L1+16L2.live文件 / 3 neg_selftest OK VpsRegr+TotemSC+AsyncFifoSim / nonlite 469/469 + Lite 116/116 / changes.tsv A=9 / 两仓 0/0 sync / research NA-A / 无 board/discuss/thermo_feedback). A 三线收口不变, 0 改判分 0 回归. 详 daily）
