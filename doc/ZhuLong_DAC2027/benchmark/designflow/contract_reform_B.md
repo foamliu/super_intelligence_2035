@@ -1390,3 +1390,27 @@ DEBT:0. WAITING:0(不设等待§1.1).
 7. check_live 不读 reference/ GT 仅读 hidden B config_B.json input.
 
 **落盘**: live_eval_changes.tsv +1 row (repo_commit=6d99e827e). EDA-Flow-Bench HEAD=6d99e827e (check.py+negatives+ref_submit+negative_selftest.py via concurrent bench-sync 8ca2f9412; case JSON sync 本 commit). review_nonlite_B.tsv InvOptSpec row → R2 done. DEBT:0. WAITING:0.
+
+### r1360 (2026-11-28) — non-Lite-500 R2 桩体检 #14: CmdEdgeMeasGen-001 (de-risk next R2 wrap)
+
+**case**: EDA-Eval-DesignFlow-CmdEdgeMeasGen-001 (spice_sim, candidate-runs-finesim + judge-compares-GT).
+**pattern**: candidate `meas_gen.py <netlist> <spec> <out_dir>` 从 spec 读 clk/cmd/data sigs + vth + N + cmd_start, 在网表副本 .end 前追加 .measure deck (parameterized), `subprocess.run(["finesim","-spice",deck])` 自身跑 FineSim (parse .mt0) → report.json (t_Nthck/t_cmd_start/t_data_edge/t_dsu/t_cmd_to_Nth + finesim_ran/completed/rc); judge cond (c) 查候选 log 含 FineSim+Successfully Completed+primesim 签名, conds (d)-(h) 比候选 report metrics vs 内嵌 GT_B (2%/5% tol), (i) deck rise=N_B, (j) td=cmd_start_B, (k) when v(sigs)=vth_B name-agnostic, (l) A 跨输入重跑比 GT_A, (m) schema, (n) 确定性 → 全 mislabeled [L0,L1], broken in SUT 沙箱 (无 finesim ⇒ cond c finesim_ran=F + conds d-h metrics None). **REQ 稳固 confirmed** (R1 verdict 正确).
+
+**Q1 保真实证** (.75 EDASession hfhds201, finesim V-2023.12-1, session `nonlite-r1360`, wall≈3s/deck):
+- 绕过 flaky 候选上传通道 (长 base64 经 run_commands printf / write_file content=base64 均出现随机字符替换: meas_gen.py `build_deck`→`build_eck` 丢 1 字节, spec_A.json `e-08`→`e-04`, mbA `e-08`→`e-04`), 改为在 .75 上**直接从 md5-verified sim_B.sp 构造 .measure deck** (head -n -1 strip .end + meas_block + .end), mbB 经 write_file content=base64 md5 ✓ (e8198b8a), mbA 经 sed 修复 e-04→e-08.
+- **B deck** (clkp/wcmd/din, vth=0.5, N=3, cmd_start=8e-9): real finesim rc=0 'FineSim Successfully Completed' primesim license checked in → .mt0 **EXACT match GT_B**: t_nthck=1.6040e-8(GT 1.6040e-8) / t_cmd_start=8.0400e-9(GT 8.0400e-9) / t_data_edge=1.5000e-8(GT 1.5001e-8, 0.007% finesim rounding) / t_dsu=1.0396e-9(GT 1.0395e-9) / t_cmd_to_nth=8.0000e-9(GT 8.0000e-9).
+- **A deck** (ck/cmd_b/data_a, vth=0.6, N=4, cmd_start=1e-8): real finesim rc=0 → .mt0 **EXACT match GT_A**: t_nthck=2.5050e-8 / t_cmd_start=1.0050e-8 / t_data_edge=2.2001e-8 / t_dsu=3.0495e-9 / t_cmd_to_nth=1.5000e-8.
+- **3-seed B 确定性**: runB / runB/s2 / runB/s3 三次 finesim .mt0 **完全一致** (1.6040e-8/8.0400e-9/1.5000e-8/1.0396e-9/8.0000e-9).
+- **physics REAL NOT fabricated** (CMOS inv DUT, CLK pulse tclk=4n, 3rd rising edge after cmd gate td=8n → t_Nthck=16.04ns, data edge 15n → t_dsu=1.04ns setup, cmd_to_Nth=8ns; 物理自洽; contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated GT).
+
+**Q2 = NO** (错的解法不会判过): 候选被给 sim_B.sp+spec_B.json 输入但**不知 GT_B** ⇒ 不跑 finesim 无法产出正确 metrics (conds d-h 比 real GT_B, 2% tol); cond (c) 要求候选 log 含 finesim 签名 (fabricate report 无真 finesim log ⇒ cond c FAIL); conds (i/j/k) 查 deck 从 spec_B 参数化 (rise=N_B=3 / td=cmd_start_B=8n / when-v 用 B sigs+vth_B=0.5, hardcode A 的 N=4/10n/0.6 ⇒ FAIL). 唯一通过路径 = 真跑 finesim on B ⇒ genuinely L2.
+
+**R2 wrap plan (de-risked, 下轮 r1361 直接执行, 同 r1359 InvOptSpec candidate-runs-sim+judge-reads-report 模板)**:
+- `_check_static_impl` keep (a) zip 含 meas_gen.py + (b) py_compile 一字不动 + **(sa/sb/sc) only-add** 源码结构检查 (sa 候选源码含 subprocess+finesim 调用 / sb 含 .measure deck 构造 from spec / sc 含 .mt0 parse).
+- `check_static` try/except 收口三元组.
+- `check_live(sess)` .75 real finesim V-2023.12-1@hfhds201: upload submit.zip+sim_B.sp+spec_B.json(B hidden)+sim_A.sp+spec_A.json(A visible)+live_driver.py → driver 跑候选 B+A+B2(determinism) → 读候选 report.json+log → JSON → 断 c..n 同判据 (cond c finesim_sig / conds d-h 5 metrics vs GT_B 2%/5% tol 原封 / cond i deck rise=N_B / cond j td=cmd_start_B / cond k when-v B sigs+vth_B 不泄漏 A / cond l A 跨输入 t_Nthck vs GT_A + A sigs / cond m schema 7 keys / cond n B2 t_Nthck ±1% determinism) + `check()` 兼容 + `__main__` 改 check_static.
+- **live-neg 2-distinct static-pass/live-fail**: cheat_no_run (候选不调 finesim, 写假 report 但 log 无 finesim 签名 ⇒ cond c live-FAIL) + cheat_hardcode_a (候选跑 finesim on A 但 report 填 A metrics 当 B ⇒ conds d-h B metrics=A values live-FAIL, first-fail=d). 满足 §5.② ≥1 live-neg + §4.9 trio distinct.
+- **判据完全同原 c..n 一字迁移** (TOL 2%/5%/1% 原封).
+
+**零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动** (桩体检只读).
+DEBT:0. WAITING:0 (不设等待 §1.1).
