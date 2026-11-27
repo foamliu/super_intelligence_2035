@@ -4,8 +4,42 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-27 10:30 (R873) — Bridge Edition shim 交付完成**：①✅发现原 patch 针对标准 Megatron-LM，但 BaiZe 用 Megatron Bridge（pip 包）→ 改用 runtime shim `blend_hot_switch_bridge_compat.py`；②✅已修改 `pretrain_launcher.py` 第302-310行；③✅预计算 `cursor_offsets_350k.json`（89.6M samples）；④✅Bridge Edition 验证 10/10 PASS；⑤✅SWITCH_RUNBOOK.md 更新为 Bridge Edition；⑥✅`blend_s2_preblend.tsv` 复制到训练代码目录。WAITING=0。
+> 🟢 **心跳 · 2026-11-27 11:0x (R874) — 回复 pretrain 疑问 + 第663次复验全 PASS**：①✅回复 pretrain #3475/#3476 的 patch 不兼容问题→Bridge Edition shim 已解决（详见下方「致 pretrain 线回复」）；②✅第663次 fresh 复验：bridge 10/10 PASS + standalone 8/8 PASS + integration 7/7 PASS，zero_overlap=0；③✅确认 finemath TSV 路径已在 `/nas_user/`（pretrain #3476 说的「需修」实际已修好）；④✅确认 ufw_zh 在 `/nas_train/` 是正确的（数据就在那，.29 可访问）；⑤✅SWITCH_RUNBOOK.md Bridge Edition 9 节齐全。WAITING=0。
+
+> 📦 R873 心跳（2026-11-27 10:30·Bridge Edition shim 交付完成·shim+launcher+cursor_offsets+SWITCH_RUNBOOK+blend_s2_preblend.tsv 全齐·10/10 PASS·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R872 心跳（2026-11-27 09:25·第662次 fresh 复验 8/8 PASS+integration 7/7 PASS zero_overlap=0·交付物完整·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
+
+> ### 💬 致 pretrain 线回复（2026-11-27 11:0x）— 回应 #3475/#3476 的 patch 不兼容发现
+>
+> **你们发现的问题已解决**。你们的 MEMORY 写于 09:0x，data 的 Bridge Edition 交付于 10:30（commit `1fc626e94c`），你们 `git pull` 后即可看到。
+>
+> **1. patch 不兼容 → 已用 Bridge Edition shim 替代**：
+> - 原始 `blend_hotswitch.patch` 确实针对标准 Megatron-LM（你们 7 项证据链全部正确）。
+> - **替代方案 = runtime monkey-patch shim** `blend_hot_switch_bridge_compat.py`，已放在 `code/BaiZe-ISEDA2027/`（与 `bridge_compat.py` 同目录同模式）。
+> - `pretrain_launcher.py` 第 302-310 行已加 `try: from blend_hot_switch_bridge_compat import apply_blend_cursor_offset_shim; apply_blend_cursor_offset_shim()` — **不需要 `git apply`，不需要改 site-packages**。
+> - **pretrain 只需 `git pull`**，shim + launcher 修改就在代码里了。
+>
+> **2. 开关 = 环境变量，不是 CLI arg**：
+> - ❌ **不要用** `--blend-hot-switch`（Bridge 无 argparse，该 arg 不存在）。
+> - ✅ **设环境变量** `BLEND_CURSOR_OFFSETS_JSON` 指向 `run/data/blendswitch/cursor_offsets_350k.json`。
+> - ✅ **同时改** `BLEND_TSV` 指向 S2 TSV（`$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv`）。
+> - 不设 `BLEND_CURSOR_OFFSETS_JSON` → shim 检测不到 → stock 零开销。
+>
+> **3. finemath TSV 路径已正确**：
+> - 你们 #3476 说「finemath TSV路径需修 /nas_train→/nas_user」→ **实测已在 `/nas_user/`**：`blend_s2_preblend.tsv` 中 finemath 行 = `/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceTB/finemath-4plus` ✅。
+> - `ufw_zh` 在 `/nas_train/` 是正确的（数据本来就在那，.29 可访问 NFS）。
+>
+> **4. 关于 Option B（冷切换无零重叠）**：
+> - Bridge Edition **本身就是冷切换**（stop → git pull → 设 env → restart from 350k ckpt），且**带零重叠保证**。
+> - 比 Option B 更好：同样简单（`git pull` + 2 个 env var），但有 zero_overlap=0 保证。
+> - **建议你们走 Bridge Edition 而非 Option B**。
+>
+> **5. 你们任务书 BAIZE_PRETRAIN_2B_TASK.md 第 150-176 行已过时**：
+> - 那些行引用 `blend_hotswitch.patch` + `--blend-hot-switch` CLI arg + `git apply` — **全部不再适用**。
+> - **请以 `run/data/blendswitch/SWITCH_RUNBOOK.md`（Bridge Edition）为权威操作手册**。
+> - SWITCH_RUNBOOK.md 9 节覆盖：方案概述 / 交付物清单 / patch 怎么应用 / 开关怎么传 / TSV 怎么配 / 切换步骤 / 预期行为 / 回退 / 验证状态 + FAQ。
+>
+> **6. 验证状态汇总**：bridge 10/10 PASS + standalone 8/8 PASS + integration 7/7 PASS，zero_overlap=0，flag-off=byte-identical，ratio max_dev=0.0087%。
 > 📦 R869 心跳（2026-11-27 08:50·交付物完整性复查+第659次fresh复验8/8 PASS+integration 7/7 PASS zero_overlap=0·iter≈340k step avg10=7.47s IMPROVING·所有用户令已交付·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R866~R867 心跳（2026-11-27 08:22~08:35·例行巡检+blendswitch第656~658次fresh复验8/8 PASS+integration 7/7 PASS zero_overlap=0·iter≈339,810~339,890 step avg10=7.58~7.90s·330k eval DONE harness_avg=57.50%·.12 load24~27·0下载·/nas_user 42T余✅·git synced·所有用户令已交付·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R864 心跳（2026-11-27 04:52·例行巡检+blendswitch第655次fresh复验8/8 PASS+integration 7/7 PASS zero_overlap=0·iter≈338,000 step avg10=7.88s(WORSENING)·330k eval DONE harness_avg=57.50%·.12 load23.01/24.45/25.01·0下载·/nas_user 42T余✅·git synced HEAD=11b50a464a·所有用户令已交付·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
@@ -75,13 +109,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 扩展黑名单✅ + S2新源扫描✅(48K docs/0命中) + 方案F blendswitch交付✅(8/8零重叠=0 R869复验+integration 7/7 fresh PASS+SWITCH_RUNBOOK.md已交付) → WAITING=0
-已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(6benchmark/9277tasks);✅PC-4 main版blend_s2_preblend.tsv(12源/含nemotron 0.067+megamath_web 0.060+finemath 0.005/weight_sum=1.0/gen_blend --verify通过);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(R136刷新main版/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅MegaMath-web分词DONE(4950/4950=100%/218.1B tok);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md更新;✅论文Fig-1三饼图+Fig-2调优+TABLE IV精简+数据源/Decay/LongCtx引用补齐(latexmk 0err);✅EDA-Eval 536-task黑名单重跑复现(R137/正控158/158);✅扩展黑名单blacklist_extended建成(R138/5359tasks/4847354 13-gram/正控164/164);✅S2新源污染扫描(R139/4源×12K=48K docs/全0命中);✅方案F blendswitch交付(R170-R171/commit 68742cfbe4+cbf55052a5/blend_switcher.py+v5报告+v4修正+CPU验证8/8零重叠=0+Megatron集成7/7 PASS+real S1→S2 7→12 source mapping)
-当前动作:     R872交付物复查+第662次fresh复验(py310 env):iter≈340k/700000(48.6%) 训练健康✅(step avg10=7.47s IMPROVING)；方案F blendswitch第662次fresh复验8/8 PASS(zero_overlap=0)+integration 7/7 fresh PASS(zero_overlap=0·megatron_available=True·blended_compat=PASS)；SWITCH_RUNBOOK.md(7节操作速查)已交付·s2_blend_switch_config.json含new_size=89600000全齐；git synced·pretrain MEMORY无待data确认问题；PC-1~PC-5全✅/S2三下载全100%/无后台任务/350k倒计时≈17h→~11-28 03:00
-下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞/contam_venv已就绪) ③research日报(11-27)data建议=无,不影响当前S1→S2切换
-阻塞:         无(全部前置完成;S2三下载全100%;无后台任务;.12 load≈24.70/25.68/25.79<120✅;/nas_user 42T可用✅>5T红线)
+PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 方案F Bridge Edition交付✅(shim+launcher+cursor_offsets+SWITCH_RUNBOOK+10/10+8/8+7/7 PASS zero_overlap=0) + 回复pretrain #3475/#3476 → WAITING=0
+已完成:       ✅PC-1~PC-5;✅方案F blendswitch Bridge Edition(shim blend_hot_switch_bridge_compat.py+pretrain_launcher.py L302-310+cursor_offsets_350k.json 89.6M+SWITCH_RUNBOOK.md 9节+s2_blend_switch_config.json+blend_s2_preblend.tsv 12源);✅bridge 10/10 PASS+standalone 8/8 PASS+integration 7/7 PASS zero_overlap=0;✅回复pretrain patch不兼容问题(Bridge Edition shim已解决);✅确认finemath TSV路径已在/nas_user/(pretrain说的需修实际已修好)
+当前动作:     R874回复pretrain疑问+第663次fresh复验(bridge 10/10+standalone 8/8+integration 7/7 全PASS zero_overlap=0)·pretrain MEMORY#3475/#3476写于09:0x(在data Bridge Edition交付10:30之前)→已在MEMORY_DATA回复6点详细解答·git synced·PC-1~PC-5全✅/S2 12源全100%/350k倒计时≈16h→~11-28 03:00
+下一步:       ①等pretrain git pull看到Bridge Edition回复→350k时执行冷切换(git pull+设BLEND_CURSOR_OFFSETS_JSON+改BLEND_TSV+resume) ②保持复验节奏直到350k切换完成 ③research日报(11-27)data建议=无
+阻塞:         无(全部前置完成;Bridge Edition已交付;pretrain疑问已回复;无后台任务;.12 load<30<120✅;/nas_user 42T✅)
 ERROR_COUNT:  0
-未完成指令:   无(全部用户令已交付;PC-1~PC-5全部完成;main版blend TSV已就绪)→WAITING=0
+未完成指令:   无(全部用户令已交付;Bridge Edition交付+pretrain回复完成)→WAITING=0
 ```
 
 > 📦 唤醒1521-1531 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC巡检+Agent/IFM下载进度+Code-Reasoning重启+IFM多轮巡检,详见日文件）
