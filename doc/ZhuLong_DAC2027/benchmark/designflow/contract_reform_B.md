@@ -849,3 +849,19 @@ L2.live done 21→22；REQ 未改造 31-22=9 条（hspice-mock/finesim-mock GT-r
 **不改** check.py / cases / judge_layers（只读 verdict 确认）。**不进** `live_eval_changes.tsv`（无口径变更）。tsv 3 行更新 live_reason（mock-body 证据）+ check_live（R3 改造方案）+ round=2。
 
 **累计**：REQ 29（done 26，余 3 confirmed-REQ 待 R3 改造），OPT 19，NA 76，cross_shard 2，L2.live 26 不变。**R1 boilerplate 误分类悬念清零**——3 条全部真 REQ，下一轮起 R3 改造（≤6-8 条/轮，hspice/finesim 真跑，每条 §5 七项全勾）。
+
+### r1328：StdLibCharTmpl-001（hspice-mock GT-replay-by-corner-signature · 第27条 · R3 首条）
+
+**Q2 实证（r1328）**：cheat `cheat_garbage_subckt.py` 复制 ref `std_char_tmpl_gen_ref.py`，在 `_gen_deck` 把每个 cell `.subckt_body` 行的晶体管 `w=<x>u`→`w=1e-21u`、`l=<x>n`→`l=1e3u`（电死），保留 corner 签名（`.temp 85`/`.param vddb=1.5`/`.measure tran tpd_inv_b` for B，`.temp 25`/`vdda=1.8`/`tpd_inv_a` for A）+ `.subckt` 数≥2 + 4 measure kinds（桩 `HSPICE_MOCK_SRC` 按 corner-签名字符串匹配查 `_EMBED_SIM{B,A}_MT0/LIS` 回放，**不读 .subckt 拓扑**）→ `_check_static_impl` **15/15 PASS 假阳**（mock 按 corner-sig 回放 GT tpd，不校验晶体管 W/L 物理）。真 hspice V-2023.12-SP1-1 @ hfhds201：w=1e-21u 晶体管电死 → 无切换 → `.measure tpd_inv_b` failed → `job ended`（not `job concluded`）→ judge.mt0 无 tpd_inv_b → conds (i)(j)(k) FAIL。
+
+**Q1 保真**：.75 真跑 ref gen（honest deck）→ REF check_live PASS：B invb_tpd=9.986e-11 / norb_tpd=1.009e-10 == mock `GT_B_INVB_TPD`/`GT_B_NORB_TPD` **逐位一致**；A inva_tpd=5.369e-11 == mock `GT_A_INVA_TPD` **逐位一致**（byte-exact，r1328 实测）。
+
+**改造**：非侵入包装（`_check_static_impl` 15 conds a-o 一字不动 + `check_static` try/except 3-tuple + `check` 兼容 + `check_live(sess)` .75 real-hspice **judge-independent rerun** on candidate-generated `char_template.sp` for hidden B AND visible A AND B determinism re-run，读 real `judge.mt0` 复断 (i)job concluded+(j)invb_tpd within GT_B ±15%+(k)norb_tpd within GT_B ±15%+(n)A inva_tpd within GT_A ±15% cross-input+(o)determinism invb_tpd within 2%，only-add never relax；judge 独立跑 hspice 不信候选 report，封 fake-report 漏洞）+ live-neg（`cheat_garbage_subckt.py`：dead-W .subckt，static-pass mock-replays-GT / live-fail cond (i)(j)(k)）+ `negative_selftest.py` 重写（STATIC 7 negs distinct{b,c,g,e,d,l,h}=7-distinct + §4.9 trio distinct{empty:b,print:c,core:h}3/3 + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `94d75a75e849` 3-way sync（disk==JSON）。
+
+**§5 全绿**：① REF check_live PASS（real hspice B invb_tpd=9.986e-11 == mock GT Q1 fidelity byte-exact）；② 7 static neg FAIL 7-distinct{b,c,g,e,d,l,h} + §4.9 trio distinct{b,c,h}3/3 + live-neg FAIL cond (i)(j)(k)；③ determinism cond (o)（B rerun invb_tpd identical within 2%）；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏，workdir 仅 assets/outputs）；⑤ sha `94d75a75e849` 3-way sync；⑥ 断言条数只增不减（check_live re-assert i/j/k/n/o 同阈值）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，check_live 不读 reference/。
+
+**登记**：`live_eval_changes.tsv` +1 行（ts=2026-11-27T12:45+08:00, jl `[L0,L1]`→`[L0,L1,L2.live]`, repo_commit=94d75a75e849）。
+
+**.75 通路 OK**（r1328 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session slct_r1328/negselftest 用后 close）。自验通道：`_live_upload` via `printf %s '<b64>' | base64 -d` 零腐蚀（r1324 precedent），REF live PASS + CHEAT live FAIL 一次过。
+
+**累计**：REQ 29（done 27，余 2 confirmed-REQ 待 R3 改造：SlicerFbTimeOpt/SpiceTbGen），OPT 19，NA 76，cross_shard 2，L2.live 26→27。
