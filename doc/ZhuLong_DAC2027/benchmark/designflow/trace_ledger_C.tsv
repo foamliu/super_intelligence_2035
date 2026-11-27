@@ -1378,4 +1378,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1789544771710_m60gy	e0020134	hfeg0plg86	1164	layout_aether	case	EDA-Eval-DesignFlow-AetherBridgeClient-001	2026-11-28 05:26	
 1795075084116_js4n1.messages.json	e0024852	hfhds201	545	physical_verify	case	EDA-Eval-DesignFlow-ViaMetalOptGdsGen-001	2026-11-28 05:53	
 1795586032370_24ap1	kenwang	hfeg0plg54	387	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckPrune-001	2026-11-28 06:24	
-1789550083559_vjlni.messages.json	e0020134	hfeg0plg86	1164	layout_aether	deepread		2026-11-28 06:35	NAND2 cell create+schematic+layout+DRC+LVS, 655msgs>600, DEBT next round
+1789550083559_vjlni.messages.json	e0020134	hfeg0plg86	1164	layout_aether	case	EDA-Eval-DesignFlow-LvsDiagReportGen-001	2026-11-28 06:50	NAND2 cell create+schematic+layout+DRC+LVS, 655msgs>600, DEBT next round
