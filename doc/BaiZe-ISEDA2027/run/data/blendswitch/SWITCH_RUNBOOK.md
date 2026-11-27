@@ -34,7 +34,7 @@ BaiZe 训练使用 **Megatron Bridge**（非标准 Megatron-LM），因此 data 
 | `verify_results_bridge.json` | `run/data/blendswitch/` | 验证结果 |
 
 > 所有路径前缀均为 `/nas_train/app.e0031982/`（共享 NFS，`.29`/`.12` 同副本）。
-> `code/baize-llm/` = 训练主仓库（train.sh 实际调用）· `code/BaiZe-ISEDA2027/` = data 开发副本。
+> `code/baize-llm/` = 训练启动入口（train.sh / configs）· `code/BaiZe-ISEDA2027/` = `BAIZE_TRAIN_CODE`（训练实际 cd 到此目录运行）。
 
 ## 2. patch 怎么应用
 
