@@ -30,7 +30,7 @@ per-source 游标。S2 的 BlendedDataset 构建后，shim 将共享源的 `data
 | `pretrain_launcher.py` L302-310 | `code/BaiZe-ISEDA2027/` | ✅ 已加 try/import shim | 自动加载 shim |
 | `cursor_offsets_350k.json` | `run/data/blendswitch/` | ✅ 1093B | 350k 切换点 cursor offsets |
 | `blend_s2_preblend.tsv` | `code/baize-llm/configs/` | ✅ 3625B | S2 blend TSV (12 源) |
-| `train.sh` (modified) | `code/baize-llm/scripts/` | ✅ +4 lines | BLEND_CURSOR_OFFSETS_JSON 透传双节点 |
+| `train.sh` (modified) | `code/baize-llm/scripts/` | ✅ +5 lines (L203-207, #3479 re-fixed) | BLEND_CURSOR_OFFSETS_JSON 透传双节点 |
 | `verify_results_bridge.json` | `run/data/blendswitch/` | ✅ 10/10 PASS | Bridge Edition 验证结果 |
 
 ---
@@ -63,7 +63,10 @@ per-source 游标。S2 的 BlendedDataset 构建后，shim 将共享源的 `data
 
 ---
 
-## 3. 🔧 train.sh 修改（已完成）
+## 3. 🔧 train.sh 修改（已完成 — #3479 re-fixed）
+
+> ⚠️ **#3477 声称已修复但实际未落盘**（grep NOT FOUND, git diff 空, git log 无 commit）。
+> #3479 重新修复并验证。根因可能是 NFS 竞态 / 其他 agent git 操作覆盖 / 编辑丢失。
 
 **问题**: `train.sh` 的 SSH 命令只导出 `NCCL_ENV` + `PYTORCH_ENV` 到远程节点 (.12)。
 `BLEND_CURSOR_OFFSETS_JSON` 不在其中 → rank0 (.12) 不会应用 cursor offsets →
@@ -73,7 +76,7 @@ rank0 读 S1 数据, rank1 读 S2 数据 → DDP 数据不一致 → 训练异�
 ```bash
 PYTORCH_ENV="$PYTORCH_ENV BLEND_CURSOR_OFFSETS_JSON=${BLEND_CURSOR_OFFSETS_JSON:-}"
 ```
-位置: `train.sh` L202-206 (PYTHONNOUSERSITE 行之后)。空值=no-op (stock 行为)。
+位置: `train.sh` L203-207 (TORCH_DISTRIBUTED_DEBUG if-block 之后, dry-run 之前)。空值=no-op (stock 行为)。
 
 ---
 
@@ -164,7 +167,7 @@ setsid bash -c 'cd /nas_train/app.e0031982/code/baize-llm && \
 | zero_overlap (7→12) | ✅ overlap=0 |
 | flag-off stock equivalence | ✅ byte-identical |
 | pretrain_launcher.py modified | ✅ L302-310, commit 3dbf056 |
-| train.sh BLEND_CURSOR_OFFSETS_JSON | ✅ L202-206 (本轮修改) |
+| train.sh BLEND_CURSOR_OFFSETS_JSON | ✅ L203-207 (#3479 re-fixed — #3477 claimed done but NOT in file) |
 | blend_s2_preblend.tsv | ✅ 3625B |
 | S2 12/12 source data | ✅ (data R874 确认) |
 

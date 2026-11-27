@@ -200,6 +200,11 @@ PYTORCH_ENV="$PYTORCH_ENV TORCHINDUCTOR_COMPILE_THREADS=${TORCHINDUCTOR_COMPILE_
 if [ -n "${TORCH_DISTRIBUTED_DEBUG:-}" ]; then
   PYTORCH_ENV="$PYTORCH_ENV TORCH_DISTRIBUTED_DEBUG=$TORCH_DISTRIBUTED_DEBUG"
 fi
+# 2026-11-27 fix (S2 blend hot-switch): BLEND_CURSOR_OFFSETS_JSON must reach
+# BOTH nodes. Without this, rank0 (.12 via SSH) won't apply cursor offsets →
+# DDP data inconsistency (rank0 reads S1 positions, rank1 reads S2 offsets).
+# Same mechanism as BAIZE_NUM_WORKERS #801. Empty = no-op (stock behavior).
+PYTORCH_ENV="$PYTORCH_ENV BLEND_CURSOR_OFFSETS_JSON=${BLEND_CURSOR_OFFSETS_JSON:-}"
 
 # ---------- dry-run（跳过 GPU/端口门禁，只验参数与数据）----------
 if [ "$DRY" = "1" ]; then
