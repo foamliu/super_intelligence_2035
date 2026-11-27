@@ -1,6 +1,22 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
-> ## 🔬 2026-11-26 18:5x 用户令 · Lite-500 逐条「实跑评估」审视 · 最高优先（造题/扩池让位）
+> ## 🌐 2026-11-27 用户令 · non-Lite-500 case「实跑评估」改造 · 最高优先（造题/扩池让位）
+>
+> **用户原话**：「安排 designflow 4 agent 对 Lite-500 之外其它的 Case 进行实跑评估改造」。
+> **前置**：Lite-500 实跑评估改造已于 2026-11-27 r1434 全绿收口（REQ 48/48 done，L2.live 31→66），本令接续。
+> **规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`（三分类 + 桩体检 + 非侵入包装 + 七项全绿，口径同 Lite-500，不重复）。
+> **本 shard 名册**：`designflow/live_eval_review_nonlite_C.tsv`（**502 条**，只勾这份，🚫 不改别人清单）。
+> **范围**：全仓 non-lite case（全仓 2419 - Lite-500 = 1919 条；C shard 639 - lite 137 = 502 条）。Lite-500 已审视过的 case **不重审**。
+> **现状**：502 条中绝大多数声明 [L0,L1]（静态）；C shard 已预存 L2.live 10 条（AetherHiliteCmd / HierJump / HierSearchDFS / ListInstCV / PyLibApiDocGen / RedundantPinRemoval / RnodeScatterScript / SchematicPinAdd / TopPinLabelExtract / WheelZoom，**保留不重判**，标 `LIVE-REQ-PREEXISTING`）；含 EDA 关键词的潜在候选 ~310 条（calibre 129 / verdi 108 / pyAether 104 / skill 98 / virtuoso 91 / aether 89 / innovus 38）——C domain 以 physical_verify（273）/ layout_aether（112）/ layout_virtuoso（76）/ pg_layout（40）为主，calibre/virtuoso/pyAether 家族是 REQ 高发区；注意 A r1292 先例：pyAether 沙盒缺 `dbCreateLabel`/`dbGetInstByName`/`dbGetPinShapes` ⇒ 这类只能留 L1-boundary，须显式声明理由。
+> **三分类**（同 Lite-500 P4「本质问」）：判分是否实质依赖真实 EDA 工具产物？算数→NA / 不算数→REQ / 部分算数→OPT。
+> **桩体检**（规格 §2.1）：mock 桩若「按模板造对形状、物理量全错」也能判过 ⇒ `LIVE-REQ`。旧 P4 关键词结论**不作数**，一律复验。
+> **改造手法**：非侵入包装（原 `check` → `_check_static_impl` 一字不动 + `check_static` 收口 + `check_live` + `check` 兼容 + `judge_layers` 加 `L2.live` + test sha 同步）。只增不减。
+> **实跑预算**：A/C/D **≤3 条/轮**；B **≤6–8 条/轮**（逐条独立自验 / `.75` 严格串行 / 单条失败降级不拖批）。
+> **登记台账**：每条 L2.live 变更往 `designflow/live_eval_changes.tsv` 追加一行。
+> **心跳**：MEMORY 顶部一行 `LIVE-NL: C review=<n>/502 · REQ=<a>(done <b>) · OPT=<c>(done <d>) · NA=<e> · L2.live 19→<g>`。
+> **主辅关系**：designflow 主线、zhulong 辅线，不设等待（同 Lite-500 §7.6）。
+
+> ## ✅ [已完成 2026-11-27 r1434] 🔬 2026-11-26 18:5x 用户令 · Lite-500 逐条「实跑评估」审视 · 最高优先（造题/扩池让位）
 >
 > **用户原话**：「安排 designflow 4 agent 对 lite-500 中自己的 Case 进行审视，按需进行『实跑评估』改造」。
 > **完整规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`。
