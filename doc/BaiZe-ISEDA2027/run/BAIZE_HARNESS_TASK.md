@@ -9,6 +9,7 @@
 > 2. harness相关脚本（launch_doubao_7way.sh/gen_report_doubao_pro_7way.py/run_single.py/run_verified_full.py）已提交到 `baize-llm/scripts/harness/` 目录归档
 > 3. 重跑任务已启动，其他6路已完成任务不会重复执行，仅opencode从零开始跑
 > 4. **2026-11-27 11:40 补充**：已将并行度从默认1提升到`PREDICT_WORKERS=4`，预计完成时间从5天缩短至约30小时
+> 5. **2026-11-27 11:55 紧急调整**：并行度提升至`PREDICT_WORKERS=8`，预计完成时间约15小时（28日凌晨3点左右），确保明早8点前完成
 
 > **7-harness 版本**（已由运维固定，不要改）：
 > | Harness | 版本 | 说明 |
