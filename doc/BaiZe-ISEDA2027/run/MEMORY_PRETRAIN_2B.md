@@ -1,4 +1,4 @@
-⚠️ S2切换失败已回退S1·训练恢复健康iter=350030/700k(50.0%) step≈7.1s(✅<7.4s gate)·loss~1.99·0NaN/0skip✅·LR re-warmup中(1.5e-5,ETA~4h回1e-3)·350k ckpt安全·S2根因=executor未等.12 GPU释放→launcher GPU check fail·手动S1重启350k成功(3iter稳定✅)·eval daemon killed待稳定后重启·eval_next=350k·WAITING=0
+⚠️ S2切换失败已回退S1·训练健康iter=350120/700k(50.0%) step≈7.0s(✅<7.4s gate)·loss~1.97·0NaN/0skip✅·LR re-warmup中(6e-5,ETA~4h回1e-3)·eval daemon已重启(PID 3535099)·350k eval RUNNING(GGUF DONE→lm_eval 8set)·S2待运维决定(patch 25/25 PASS·fail=executor GPU cleanup wait不足)·eval_next=360k·WAITING=0
 > #3560（2026-11-28 05:50, ⚠️S2切换失败·S1手动恢复成功·训练iter=350030 step≈7.1s loss≈1.99 0NaN✅·LR re-warmup中·eval daemon待重启）→ daily-memories/2026-11-28.md
 > **S2切换事件全记录**:
 > ①05:18:26 350k ckpt确认✅·executor自动执行切换
@@ -13,6 +13,8 @@
 > **当前状态**:S1训练健康iter=350030·LR re-warmup(5e-6→1.5e-5,linear+5e-6/10step,ETA~4h回1e-3)·350k ckpt安全·eval daemon(PID 501728)killed by executor P3,待训练稳定(~100iter≈12min)后重启评350k
 > **S2切换待运维决定**:patch/shim/cursor all verified✅(data 25/25 PASS)·失败纯因executor操作时序(GPU cleanup wait不足)·修复=executor P4后加`ssh .12 nvidia-smi` poll until 0MiB
 > evidence: /tmp/s2_switch_execution.log(full timeline)·/tmp/baize_s1_baize2b_worker_pre_s2.log(pre-switch)·/tmp/baize_s1_restart_350k.log(restart)·worker_log iter 350010-350030 step/loss/lr
+> #3561（2026-11-28 06:01, 监控巡检+S2失败后续·训练健康iter=350120 step≈7.0s loss≈1.97 0NaN✅·LR=6e-5 re-warmup中·eval daemon已重启(PID 3535099)·350k eval RUNNING(GGUF F16 4.44G DONE@06:00→lm_eval 8set limit=100 -t4 nice19)·pre-eval step=7.0s·.29 load=22.25·.12 load=23.56·S2切换待运维决定(fail=executor GPU cleanup wait不足·fix=加nvidia-smi poll until 0MiB)·eval_next=360k）→ daily-memories/2026-11-28.md
+
 > 📦 #3558（2026-11-28 04:29, 监控巡检·训练健康iter=349590 step avg10≈7.34s·S2切换ALL READY(7pt verified✅)·350k ETA~05:19）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3557（2026-11-28 04:19, 监控巡检·iter=349510 step avg10≈7.23s·S2切换ALL READY(7pt verified✅)·350k ETA~05:18）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3556（2026-11-28 04:06, 监控巡检·训练健康iter=349400 step avg10≈7.14s(all<7.4s gate✅)·S2切换ALL READY(7pt re-verified✅·25/25 PASS)·350k ETA~05:18 on 11-28）→ daily-memories/2026-11-28.md；需要时再读。
@@ -32,33 +34,7 @@
 > 📦 #3542（2026-11-28 01:00, 监控巡检·训练健康iter=347850 step avg10≈7.27s·S2切换ALL READY(7pt re-verified·25/25 PASS)·350k ETA~05:20 on 11-28）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3541（2026-11-28 00:36, 监控巡检·训练健康iter=347650 step avg10≈7.24s·S2切换ALL READY(7pt re-verified·25/25 PASS)·350k ETA~05:17 on 11-28）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3540（2026-11-28 00:24, 监控巡检·训练健康iter=347550 step avg10≈7.25s·S2切换ALL READY(7pt re-verified·25/25 PASS)·350k ETA~05:19 on 11-28）→ daily-memories/2026-11-28.md；需要时再读。
-> 📦 #3539（2026-11-28 00:05, 监控巡检·训练健康iter=347390 step avg10≈7.26s·S2切换ALL READY(7pt re-verified·25/25 PASS)·350k ETA~05:20 on 11-28）→ daily-memories/2026-11-28.md；需要时再读。
-> 📦 #3538（2026-11-27 23:50, 监控巡检·训练健康iter=347260 step avg10≈7.28s·S2切换ALL READY(7pt re-verified·25/25 PASS)·350k ETA~05:23 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3537（2026-11-27 23:37, 监控巡检·训练健康iter=347160 step avg10≈7.34s·S2切换ALL READY(7pt re-verified·25/25 PASS)·350k ETA~05:24 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3536（2026-11-27 23:26, 监控巡检·训练健康iter=347070 step avg10≈7.33s·S2切换ALL READY(7pt verified)·350k ETA~05:21 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3535（2026-11-27 23:11, 监控巡检·训练健康iter≈346950 step avg10≈7.53s·S2切换ALL READY(7pt verified)·350k ETA~05:34 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3534（2026-11-27 22:57, 监控巡检·训练健康iter≈346833 step avg10≈7.53s·S2切换ALL READY(7pt verified)·350k ETA~05:34 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3533（2026-11-27 22:39, 监控巡检·训练健康iter≈346690 step avg10≈7.43s(~gate·marginal·fluctuating·NON-eval·daemon idle·loss stable~1.99)·S2切换ALL READY(7pt verified)·350k ETA~05:24 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3532（2026-11-27 22:27, 监控巡检·训练健康iter=346590 step avg10≈7.36s(below gate·improved from 7.48s·NON-eval·daemon idle·loss stable~1.99)·S2切换ALL READY(7pt re-verified)·350k ETA~05:24 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3531（2026-11-27 22:14, 监控巡检·训练健康iter=346490 step avg10≈7.48s(above gate·fluctuating·NON-eval·daemon idle·loss stable~1.99)·S2切换ALL READY(7pt re-verified)·350k ETA~05:32 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3530（2026-11-27 21:53, 监控巡检·训练健康iter=346320 step avg10≈7.82s(above gate·fluctuating·NON-eval·daemon idle·loss stable~2.0)·S2切换ALL READY(7pt re-verified)·350k ETA~05:53 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3529（2026-11-27 21:43, 监控巡检·训练健康iter=346240 step avg10≈7.60s(above gate·fluctuating·NON-eval·daemon idle·loss stable~1.99)·S2切换ALL READY(7pt re-verified)·350k ETA~05:38 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3528（2026-11-27 21:30, 监控巡检·训练健康iter=346140 step avg10≈7.61s(above gate·fluctuating·NON-eval·daemon idle·loss stable~2.0)·S2切换ALL READY(7pt re-verified)·350k ETA~05:40 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3527（2026-11-27 21:12, 监控巡检·训练健康iter=346000 step avg10≈7.71s(above gate·fluctuating·NON-eval·daemon idle·loss stable~2.0·grad norm spike@345870=2.640 recovered)·S2切换ALL READY(7pt re-verified)·350k ETA~05:46 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3526（2026-11-27 21:04, 监控巡检·训练健康iter=345930 step avg10≈7.74s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:48 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3525（2026-11-27 20:51, 监控巡检·训练健康iter=345840 step avg10≈7.68s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:44 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3524（2026-11-27 20:41, 监控巡检·训练健康iter=345760 step avg10≈7.80s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:50 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3523（2026-11-27 20:24, 监控巡检·训练健康iter=345620 step avg10≈7.52s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:30 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3522（2026-11-27 20:09, 监控巡检·iter=345510 step avg10≈7.57s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:35 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3521（2026-11-27 19:53, 监控巡检·iter=345380 step avg10≈7.71s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:50 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3520（2026-11-27 19:40, 监控巡检·iter=345280 step avg10≈7.65s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:40 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-
-> 📦 #3516（2026-11-27 18:43, 监控巡检·iter=344820 step avg10≈7.50s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:30 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3515（2026-11-27 18:30, 监控巡检·iter=344730 step avg10≈7.57s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:35 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3514（2026-11-27 18:15, 监控巡检·iter=344610 step avg10≈7.62s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:36 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3513（2026-11-27 18:03, 监控巡检·iter=344510 step avg10≈7.60s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:36 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3512（2026-11-27 17:38, 监控巡检·iter≈344320 step avg10≈7.81s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:56 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3511（2026-11-27 17:28, 监控巡检·iter≈344258 step avg≈7.65s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:40 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
+> 📦 §#3511–#3539（2026-11-27 17:28 – 2026-11-28 00:05, 监控巡检~28轮·训练健康step~7.1-7.8s·S2切换ALL READY(7pt verified✅·25/25 PASS)·350k ETA~05:15-05:56 on 11-28）→ daily-memories/2026-11-27.md + daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3510（2026-11-27 17:13, 监控巡检·iter≈344120 step avg10≈7.93s(above gate WORSENING 10/10>7.4s·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~06:09 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
 > 📦 #3509（2026-11-27 16:52, 监控巡检·iter≈343960 step avg10≈7.62s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:37 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
 > 📦 #3508（2026-11-27 16:39, 监控巡检·iter≈343860 step avg10≈7.72s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:50 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
