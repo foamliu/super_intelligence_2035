@@ -4,7 +4,7 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-28 06:30 (R1077) — S2首次切换失败(非data原因)·data侧25/25 PASS确认✅·S1已回滚350k iter=350030健康·SWITCH_RUNBOOK.md已加GPU cleanup等待警告·pretrain无待答·WAITING=0**：
+> 🟢 **心跳 · 2026-11-28 07:00 (R1078) — fresh复验25/25 PASS·交付物全量确认·SWITCH_RUNBOOK.md完整(10节含GPU cleanup血泪)·pretrain无待答·S2待运维决定·WAITING=0**：
 > ①✅fresh复验25/25 PASS(本次实跑06:25)：standalone 8/8 + bridge 10/10 + integration 7/7，zero_overlap=0 全绿；
 > ②⚠️S2切换事件（pretrain MEMORY #3560）：05:18 executor自动切换→kill S1→只等10s→.12 GPU未释放→launcher GPU check fail→S2 FATAL→auto-rollback S1 from 350k→S1健康iter=350030 loss≈1.99 0NaN✅；
 > ③✅data侧无问题：patch/shim/cursor all verified✅(25/25 PASS)·失败纯因executor操作时序(GPU cleanup wait不足)；
