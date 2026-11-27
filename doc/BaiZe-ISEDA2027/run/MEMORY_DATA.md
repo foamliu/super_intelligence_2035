@@ -4,9 +4,9 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-28 05:3x (R1065) — fresh复验25/25 PASS(本次实跑) + 交付物全量在位✅(15文件) + 基础设施6项确认✅ + SWITCH_RUNBOOK.md 9节(205行)✅ + pretrain无待答✅(S2 ALL READY·切换即将到来) + WAITING=0**：①✅fresh复验25/25 PASS(本次实跑)：standalone 8/8(zero_overlap=0,real S1→S2 7→12 zero overlap=0,ratio max_dev=0.0000%,flag-off byte-identical) + bridge 10/10(shim importable,cursor offset sum=10000,zero overlap=0,flag-off di_same+dsi_same,ratio max_dev=0.000000%,Bresenham 70/30) + integration 7/7(zero overlap=0,ratio max_dev=0.0027%,checkpoint roundtrip,stock sampler epoch bug)；②✅交付物全量在位(15文件)；③✅基础设施6项确认：shim@BAIZE_TRAIN_CODE(4226B)✅·launcher L306 shim import✅·train.sh L202/L206 SSH透传✅·s1.env L16 BLEND_TSV=S1✅·blend_s1+s2 TSV@configs✅·cursor_offsets_350k.json(12源89.6M)✅；④用户令4项职责全✅；⑤pretrain确认S2 ALL READY无待答；⑥MEMORY_DATA 30.3KB≤32KB✅·WAITING=0。
+> 🟢 **心跳 · 2026-11-28 06:0x (R1066) — fresh复验25/25 PASS(本次实跑) + 交付物全量在位✅(15文件) + 基础设施6项确认✅ + SWITCH_RUNBOOK.md 9节(205行)✅ + pretrain无待答✅(S2 ALL READY·350k切换点即将/正在到来) + WAITING=0**：①✅fresh复验25/25 PASS(本次实跑)：standalone 8/8(zero_overlap=0,real S1→S2 7→12 zero overlap=0,ratio max_dev=0.0000%,flag-off byte-identical) + bridge 10/10(shim importable,cursor offset sum=10000,zero overlap=0,flag-off di_same+dsi_same,ratio max_dev=0.000000%,Bresenham 70/30) + integration 7/7(zero overlap=0,ratio max_dev=0.0027%,checkpoint roundtrip,stock sampler epoch bug)；②✅交付物全量在位(15文件)；③✅基础设施6项确认：shim@BAIZE_TRAIN_CODE(4226B)✅·launcher L306 shim import✅·train.sh L202/L206 SSH透传✅·s1.env L16 BLEND_TSV=S1✅·blend_s1+s2 TSV@configs✅·cursor_offsets_350k.json(12源89.6M)✅；④用户令4项职责全✅；⑤pretrain确认S2 ALL READY无待答；⑥MEMORY_DATA 30.4KB≤32KB✅·WAITING=0。
 
-> 📦 R1064 心跳（2026-11-28 04:46·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY·iter≈349590·350k ETA~05:19·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1065 心跳（2026-11-28 05:3x·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY·iter≈349590·350k ETA~05:19·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1063 心跳（2026-11-28 04:42·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY·iter≈349590·350k ETA~05:19·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1062 心跳（2026-11-28 04:37·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY·iter≈349590·350k ETA~05:19·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1061 心跳（2026-11-28 04:33·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY·iter≈349510·350k ETA~05:18·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
@@ -101,10 +101,10 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置全完成 — 用户令11-27 4项职责复查全✅ + 方案F Bridge Edition交付✅(shim+launcher+cursor_offsets+SWITCH_RUNBOOK 9节+25/25 PASS zero_overlap=0) + 交付物全量复查✅ + 基础设施5项确认✅ + pretrain S2 ALL READY无待答 → WAITING=0
-已完成:       ✅PC-1~PC-5;✅方案F blendswitch Bridge Edition(14文件全完整);✅bridge 10/10+standalone 8/8+integration 7/7 PASS zero_overlap=0(第774次fresh复验);✅SWITCH_RUNBOOK.md 9节完整;✅基础设施确认(shim@BAIZE_TRAIN_CODE 4226B+train.sh L202/L206+launcher L306+blend_s1+s2 TSV+cursor_offsets_350k.json);✅pretrain S2 ALL READY 7pt verified无待答
-当前动作:     R1024:第774次fresh复验全PASS(8/8+10/10+7/7 zero_overlap=0)+交付物完整性复查✅(14文件全完整)+基础设施5项确认✅+pretrain iter≈347390 step avg10≈7.26s 350k切换点即将到达→WAITING=0
-下一步:       ①保持复验节奏直到350k切换完成(即将到达) ②pretrain执行冷切换时配合答疑
+PHASE:        S2前置全完成 — 用户令11-27 4项职责复查全✅ + 方案F Bridge Edition交付✅(shim+launcher+cursor_offsets+SWITCH_RUNBOOK 9节+25/25 PASS zero_overlap=0) + 交付物全量复查✅(15文件) + 基础设施6项确认✅ + pretrain S2 ALL READY无待答 → WAITING=0
+已完成:       ✅PC-1~PC-5;✅方案F blendswitch Bridge Edition(15文件全完整);✅bridge 10/10+standalone 8/8+integration 7/7 PASS zero_overlap=0(fresh复验R1066);✅SWITCH_RUNBOOK.md 9节完整(205行);✅基础设施确认(shim@BAIZE_TRAIN_CODE 4226B+train.sh L202/L206+launcher L306+blend_s1+s2 TSV+cursor_offsets_350k.json 12源89.6M);✅pretrain S2 ALL READY 7pt verified无待答
+当前动作:     R1066:fresh复验25/25 PASS(8/8+10/10+7/7 zero_overlap=0)+交付物完整性复查✅(15文件全完整)+基础设施6项确认✅+pretrain iter≈349590 350k切换点即将/正在到来→WAITING=0
+下一步:       ①保持复验节奏直到350k切换完成(即将/正在到来) ②pretrain执行冷切换时配合答疑
 阻塞:         无(全部前置完成;交付物全完整;pretrain S2 ALL READY无待答;基础设施全确认;无后台任务)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付)→WAITING=0
