@@ -2,6 +2,22 @@
 
 > 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。适用于**所有线**（pretrain / vision / data / harness / zhulong / news / recruit / research / video）。
 
+## 2026-11-27 — 用户令「用 baize-llm 仓库跟踪各线脚本、配置与论文」→ 已初始化，各线须遵守
+
+> **仓库**：`/nas_train/app.e0031982/code/baize-llm/`（内部 Git `ssh://git@devops.cxmt.com:8022/git/AIX/PAI/eda/baize-llm.git`，分支 `master`）
+> **结构**：见仓库内 `REPO_STRUCTURE.md`（pretrain/ data/ posttrain/ harness/ paper/ configs/ scripts/ docs/）
+> **各线入仓规则**：
+> - **pretrain**：`pretrain/`（pretrain_launcher.py, bridge shim）+ `pretrain/eval/`（L1/L2 评测脚本）+ `scripts/`（train.sh 等）+ `configs/`
+> - **data**：`data/blendswitch/`（patch, shim, config, tests, runbook）+ 数据处理脚本
+> - **posttrain**：`posttrain/sft/` + `posttrain/rl/` + `posttrain/eval/` + `posttrain/sandbox/`
+> - **harness**：`harness/swebench/` + `harness/terminalbench/` + `harness/mm/`
+> - **论文**：`paper/ISEDA2027/`（.tex + .bib + main.tex）
+> - 🚫 **不入仓**：评测结果 JSON、模型 ckpt、GGUF、编译产物（.pdf/.aux/.log）、MEMORY/daily-memories
+> - 🚫 **不用 `git add -A`**：只 add 本线明确路径
+> - ✅ **commit 前缀**：`pretrain:` / `data:` / `posttrain:` / `harness:` / `paper:`
+> - 各线新产出脚本/配置时，**同时 copy 一份到 baize-llm 对应目录**并 commit + push（保持仓库同步）
+> - 修改 baize-llm 里的文件后，也要同步回工作副本（或直接在 baize-llm 里改，再 copy 回工作副本使用）
+
 ## 2026-11-16 22:0x — 用户令「找 4 个空闲沙盒口起新 MCP，别跟 zhulong 互等」→ 已下「先判共用、再判自建」两步令
 
 - **用户原话**：「post-train：要不在 8650-8670 之间找 4 个没人用的沙盒端口，起个新的 MCP 用？这样就不用跟 zhulong 互相等了」。
