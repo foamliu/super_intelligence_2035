@@ -679,8 +679,12 @@ r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第�
 | r1313 | DelayChainEdgeMeas-001 | hspice-mock GT-replay | DONE |
 | r1314 | OpampACSpec-001 | hspice-mock GT-replay | DONE |
 | r1316 | VwlpRefDeckSet-001 | hspice-mock GT-replay | DONE |
+| r1317 | DelaySigma-001 | hspice-mock GT-replay | DONE |
+| r1318 | PorCapSweep-001 | hspice-mock GT-replay | DONE |
+| r1319 | CmlPvtAcReport-001 | hspice-mock GT-replay | DONE |
+| r1320 | StrongarmFomSweep-001 | hspice-mock GT-replay | DONE |
 
-L2.live done 17→18；REQ 未改造 31-18=13 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+L2.live done 21→22；REQ 未改造 31-22=9 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
 
 ### r1316：VwlpRefDeckSet-001（hspice-mock GT-replay-by-signature · 第18条）
 
@@ -817,3 +821,17 @@ L2.live done 17→18；REQ 未改造 31-18=13 条（hspice-mock/finesim-mock GT-
 - **DelaySigma-001**：mock `_MOCK_VALUES` dict（L48）按 (vdd, L) 签名 lookup STD0..STD19，忽略网表 ⇒ GT-replay-by-signature confirmed。
 
 **累计**：REQ 33→31（done 17，余 14），OPT 15→17，NA=76，L2.live 17 不变。
+
+### r1320：StrongarmFomSweep-001（hspice-mock GT-replay-by-signature · 第22条）
+
+**Q2 实证（r1320）**：cheat `negative/cheat_dead_dut.py` 复制 ref `strongarm_fom_sweep.py`，在 `build_deck` 把 `.include '<netlist>'` + `xsa vdd inp inn outp outn clk strongarm` 替换为 `routp outp 0 1e12` / `routn outn 0 1e12` 死负载（outp/outn=0），**保持 `.param ITAIL=.. INW=..` 签名 + `.measure tran ck2q/idc_avg` 行**（桩 `HSPICE_MOCK_SRC._parse_deck` 按 `(ITAIL, INW)` .param 签名查 `_MOCK_VALUES` 回放 real-HSPICE .measure，**不解析 .include/xsa 例化/DUT 拓扑**）→ `_check_static_impl` **14/14 PASS 假阳**（mock 按签名回放 GT ck2q/idc_avg，**不校验 strongarm DUT 物理**）。真 hspice V-2023.12-SP1-1 @ hfhds201：死负载 outp/outn 恒 0 → `.measure ck2q targ v(outp) val=0.6 rise=1` never crosses → ck2q=failed=None → 所有 point ck2q=None → cond (f) FAIL（g/h/i/l/k 连锁）。
+
+**Q1 保真**：.75 真跑 ref（honest deck）→ B 6 grid points ck2q(10.5671n/10.4427n/10.3831n/10.3490n/10.3866n/10.5315n) + idc_avg(450.9804n/686.4786n/922.2641n/1.1583u/504.3028n/1.0298u) —— **== mock `_MOCK_VALUES` 逐位一致**（byte-exact，r1320 REF check_live PASS 复验 Q1 fidelity cond m 全过）。
+
+**改造**：非侵入包装（`_check_static_impl` 14 conds a-n 一字不动 + `check_static` try/except 3-tuple parse first-fail tag + `check` 兼容 + `check_live(sess)` .75 real-hspice rerun candidate `strongarm_fom_sweep.py` on hidden B(6pts) AND visible A(4pts) AND B determinism re-run，`sess.upload_text`(base64) 上传 candidate+A/B 资产，read real `report.json` re-assert conds d/e/f/g/h/i/l(B) + j/k(A cross-input) + m(Q1 fidelity B ck2q==mock GT±2%) + n(determinism B rerun ck2q identical 1e-9)，only-add never relax）+ live-neg `cheat_dead_dut`（static-pass 14/14 via mock / live-fail cond f ck2q=None）+ `negative_selftest.py` 重写（STATIC 6 negs distinct{b,c,d,f,h,i}=6-distinct + §4.9 trio distinct{empty:b,print:c,core:f} + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `ea065f796c48ce2d` 3-way sync（disk==JSON）。
+
+**§5 全绿**：① REF check_live PASS（real hspice B 6pts ck2q==GT Q1 fidelity + A 4pts cross-input + det ok）；② 6 static neg FAIL 6-distinct + §4.9 trio distinct + live-neg FAIL cond f；③ determinism cond n（B rerun ck2q identical 1e-9）；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏）；⑤ sha `ea065f796c48ce2d` 3-way sync；⑥ 断言条数只增不减（check_live re-assert d/e/f/g/h/i/l/j/k/m/n 同阈值）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，check_live 不读 reference/。
+
+**登记**：`live_eval_changes.tsv` +1 行（ts=2026-11-27T09:45+08:00, repo_commit=ea065f796c48）。同时 tsv 翻转 5 条已 done 但 verdict 未 flip 的（StrongarmFomSweep-001 新 + DelaySigma/PorCapSweep/CmlPvtAcReport/VwlpRefDeckSet stale）→ LIVE-REQ 9 / LIVE-REQ(done) 22。
+
+**.75 通路 OK**（r1320 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session shardB_r1320 用后 close）。自验通道：本地 Python `from eda_flow_judge import EDASession` → `sess.upload_text`(base64) 上传 candidate+A/B 资产，REF live PASS + CHEAT live FAIL 一次过零腐蚀。
