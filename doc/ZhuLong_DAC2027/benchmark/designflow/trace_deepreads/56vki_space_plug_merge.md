@@ -68,3 +68,14 @@
 ## 6. stop-loss 意义
 
 r1241 起止损 rationale「fresh C-domain produce-task 全 techlib-dep stdcell-layout 族」**被本 trace 推翻**：56vki 是 fresh non-techlib C-domain produce-task（DRC pattern tool 开发，gdspy 纯 Python，tool 在 .75），可造 L2.live case。下一轮交付 SpacePlugMerge-001 后，stop-loss 应解除或收窄到「fresh stdcell-layout techlib-dep 族」。
+
+## 7. 交付记录（r1468, 2026-11-28）
+
+**已交付**: EDA-Eval-DesignFlow-SpacePlugMerge-001 落 cases/C/EDA-Eval-DesignFlow-SpacePlugMerge-001.json。
+- 16 断言（8 static AST + 8 live gdspy on .75），judge_layers=[L0,L1,L2.live]
+- check_live 上传候选 + _live_driver.py 到 .75，解压 /home/e0031982/drcpv_tool_snap.tgz（pre-merge space.py 安全默认），swap 候选，跑 default + forbidden_inside 两 config，gdspy 真解析 GDS
+- hidden B FI config 用 M0C（M2C 不在 layer.map）不同 value/params（0.5/0.3,0.8,0.12,0.35 vs verify 默认 0.47/0.273,0.9,0.1,0.3）
+- 4 negs：§4.9 trio{cheat_premerge_unchanged/fake_print_only/fake_deleted_core} + 1 live-neg{cheat_wrong_roots}
+- .75 E2E 验证：ref PASS static+live / premerge FAIL live / live-neg FAIL live
+- ledger mark 56vki→case；cases/C 639→640, L2.live 20→21, DEBT 1→0
+- check_sha256=92af41ccce2809879e4fda1dc283b194de36f208e601763006c1bb3a1889cc11
