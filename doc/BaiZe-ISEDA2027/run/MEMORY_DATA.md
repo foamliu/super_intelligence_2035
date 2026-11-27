@@ -4,9 +4,9 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-27 18:0x (R919) — 第708次fresh复验全PASS(8/8+10/10+7/7=25/25) + 基础设施6项实机确认✅ + pretrain无待答 + 350k ETA~05:33 on 11-28**：①✅第708次fresh复验：standalone 8/8 PASS(zero_overlap=0·ratio max_dev=0.0000%·flag-off byte-identical·real S1→S2 7→12 zero overlap=0) + bridge 10/10 PASS(shim importable·cursor offset sum=10000·zero overlap=0·flag-off di_same+dsi_same·Bresenham 70/30) + integration 7/7 PASS(zero overlap=0·ratio max_dev=0.0027%·checkpoint roundtrip·stock sampler epoch bug·BlendedDataset compat)；②✅基础设施6项实机确认：shim 4226B✅ + pretrain_launcher.py L306✅ + train.sh L202/L206透传✅ + blend_s2_preblend.tsv 3625B✅ + blend_s1_preblend.tsv 727B✅ + s1.env BLEND_TSV=S1✅；③✅交付物14件全量在位；④✅SWITCH_RUNBOOK.md 9节完整(§0~§9)；⑤✅pretrain无待答(grep "待data"=0条)；⑥pretrain iter≈342k/700k(48.9%) step avg10=7.58s loss stable 1.97-2.00·350k ETA~05:33 on 11-28·WAITING=0。
+> 🟢 **心跳 · 2026-11-27 19:2x (R920) — 第709次fresh复验全PASS(8/8+10/10+7/7=25/25) + 交付物全量复查✅ + SWITCH_RUNBOOK 9节✅ + pretrain无待答 + 350k ETA~05:33 on 11-28**：①✅第709次fresh复验：standalone 8/8 PASS(zero_overlap=0·real S1→S2 7→12 zero overlap=0·ratio max_dev=0.0000%·flag-off byte-identical) + bridge 10/10 PASS(shim importable·cursor offset sum=10000·zero overlap=0·flag-off di_same+dsi_same·Bresenham 70/30) + integration 7/7 PASS(zero overlap=0·ratio max_dev=0.0027%·checkpoint roundtrip·stock sampler epoch bug·BlendedDataset compat)；②✅交付物全量在位(15件)；③✅SWITCH_RUNBOOK.md 9节完整(§0~§9)；④✅基础设施确认：shim 4226B + pretrain_launcher.py L302-310 + train.sh L202/L206透传 + blend_s2_preblend.tsv 3625B + cursor_offsets_350k.json 1247B；⑤✅pretrain无待答(grep MEMORY_PRETRAIN_2B=0条)；⑥350k ETA~05:33 on 11-28·WAITING=0。
 
-> 📦 R917~R918 心跳（2026-11-27 16:0x~17:0x·第706~707次fresh复验8/8+10/10+7/7 PASS+交付物全量在位+基础设施实机确认+SWITCH_RUNBOOK 9节+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
+> 📦 R917~R919 心跳（2026-11-27 16:0x~18:0x·第706~708次fresh复验8/8+10/10+7/7 PASS+交付物全量在位+基础设施实机确认+SWITCH_RUNBOOK 9节+pretrain无待答·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R906~R914 心跳（2026-11-27·第695~703次fresh复验全PASS+交付物完整性复查✅+SWITCH_RUNBOOK 9节✅+基础设施实机确认✅+pretrain无待答·WAITING=0）已批量归档 → daily-memories-data/2026-11-27.md
 > 📦 R898~R902 心跳（2026-11-27·第664~691次复验全PASS+交付物全量在位+SWITCH_RUNBOOK完整+pretrain无待答·WAITING=0）已批量归档 → daily-memories-data/2026-11-27.md
 
@@ -80,10 +80,10 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2前置全完成 — 用户令11-27 4项职责全确认✅ + 方案F Bridge Edition交付✅(shim+launcher+cursor_offsets+SWITCH_RUNBOOK 9节+10/10+8/8+7/7 PASS zero_overlap=0) + 交付物全量复查✅ + 基础设施实机确认✅ + pretrain确认ALL READY → WAITING=0
-已完成:       ✅PC-1~PC-5;✅方案F blendswitch Bridge Edition(15文件全完整);✅bridge 10/10+standalone 8/8+integration 7/7 PASS zero_overlap=0(第695次fresh复验);✅SWITCH_RUNBOOK.md 9节完整;✅基础设施实机确认(shim+train.sh+launcher+TSV+cursor_offsets);✅pretrain无待答;✅pretrain确认S2 ALL VERIFIED READY(10-point)
-当前动作:     R906用户令11-27执行:第695次fresh复验全PASS(8/8+10/10+7/7 zero_overlap=0)+交付物完整性复查✅+基础设施实机确认✅+pretrain无待答→WAITING=0
-下一步:       ①保持复验节奏直到350k切换完成(ETA~11-28 05:00) ②pretrain执行冷切换时配合答疑
+PHASE:        S2前置全完成 — 用户令11-27 4项职责全确认✅ + 方案F Bridge Edition交付✅(shim+launcher+cursor_offsets+SWITCH_RUNBOOK 9节+10/10+8/8+7/7 PASS zero_overlap=0) + 交付物全量复查✅ + 基础设施确认✅ + pretrain确认ALL READY → WAITING=0
+已完成:       ✅PC-1~PC-5;✅方案F blendswitch Bridge Edition(15文件全完整);✅bridge 10/10+standalone 8/8+integration 7/7 PASS zero_overlap=0(第709次fresh复验);✅SWITCH_RUNBOOK.md 9节完整;✅基础设施确认(shim+train.sh+launcher+TSV+cursor_offsets);✅pretrain无待答;✅pretrain确认S2 ALL VERIFIED READY(10-point)
+当前动作:     R920:第709次fresh复验全PASS(8/8+10/10+7/7 zero_overlap=0)+交付物完整性复查✅+SWITCH_RUNBOOK 9节✅+pretrain无待答→WAITING=0
+下一步:       ①保持复验节奏直到350k切换完成(ETA~11-28 05:33) ②pretrain执行冷切换时配合答疑
 阻塞:         无(全部前置完成;交付物全完整;pretrain确认ALL READY;基础设施全确认;无后台任务)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付)→WAITING=0
