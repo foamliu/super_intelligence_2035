@@ -1,0 +1,58 @@
+{
+  "wake": "wake867",
+  "timestamp": "2026-11-27T23:25:00",
+  "arm": "A5",
+  "user_order": "2026-11-27 17:4x (highest priority): launch A5 = Qwen3.5-2B fp16 vLLM, run EDA-Eval-PyAether 158-task eval",
+  "verdict": "A5 serve + code-gen FULLY READY; eval BLOCKED solely by dual-nix-tunnel (:3333) down -> sandbox scoring Connection_error",
+  "a5_serve_status": {
+    "endpoint": "http://127.0.0.1:8097/v1",
+    "model_id": "qwen3.5-2b-a5",
+    "root": "/nas_data/app.e0031982/models/Qwen3.5-2B",
+    "b1_identity": "PASS (id==served==ckpt path)",
+    "pid": 997478,
+    "uptime_sec": 2839,
+    "gpu": "GPU5 (37831 MiB)",
+    "vllm_version": "0.33.0 (~/code/vllm_venv)",
+    "tool_parser": "qwen3_xml (--enable-auto-tool-choice --tool-call-parser qwen3_xml)",
+    "dtype": "bfloat16",
+    "max_model_len": 65536,
+    "throughput_observed": "106-156 tok/s generation, 200 OK responses"
+  },
+  "codegen_chain": {
+    "eda_mcp_18888": "UP (search_apis/get_api_details/search_apis_by_keyword/run_code ON)",
+    "rag_9003": "UP (executor_ready=true, document_count=14019, collections pyAether:8984/skill:5035)",
+    "wake866_smoke": "3/3 cline-completed (001=61s/002=97s/003=80s), 0 tool-choice errors, MCP tools returned real APIs",
+    "wake867_fresh_confirm": "serve actively serving code-gen requests at 23:17-23:21 (200 OK, model calling MCP tools + generating .py)"
+  },
+  "sandbox_scoring_blocker": {
+    "scoring_path": "run_eval.py -> assemble_for_execution.py -> run_on_sandbox.py -> 127.0.0.1:8664 (SSH -L -> 10.251.36.15 -> 10.129.32.75 remote EDA sandbox)",
+    "run_eval_execution_evidence": {
+      "jsonl_tested": "completed_code_generation_2026_1127_223144.jsonl (wake866 smoke output)",
+      "step1_assemble": "SUCCESS (assembled generated code)",
+      "step2_sandbox": "FAILED - Connection_error: 1 on shard0 (port 8664) AND shard1 (port 8665)",
+      "step3_calculate": "0/158 pass (0.0%) - because sandbox could not execute (generated: 2 ok, 156 fail, 0 exec_err)",
+      "conclusion": "Code-gen produces valid output; ONLY the sandbox execution step fails, due to tunnel down"
+    },
+    "tunnel_3333": "DOWN (Connection refused)",
+    "sandbox_ports_8664_8669": "all DOWN",
+    "direct_10.129.32.75_8664": "CLOSED (unreachable from .17)",
+    "relay_10.251.36.15_22": "CLOSED (firewalled, ICMP only)",
+    "windows_relay_172.19.195.133": "PINGABLE (ICMP ok) but ports 22/3389/2222/3333 ALL CLOSED - SSH service down / tunnel.ps1 not running",
+    "dot29_dot12_22": "CLOSED (firewalled, no alternative relay)",
+    "local_pyAether": "NOT installed (ModuleNotFoundError) - sandbox cannot be replicated locally (needs Virtuoso SKILL + SWIG)",
+    "root_cause": "2026-11-27 13:17 machine reboot killed the dual-nix-tunnel; Windows relay (172.19.195.133) is up (pingable) but its SSH/tunnel.ps1 is not running. The :3333 reverse tunnel is created BY Windows tunnel.ps1 (Windows SSHes OUT to .17/.15); .17 is a passive listener and CANNOT self-recover (both .15:22 and Windows:22 are closed from .17).",
+    "owner": "ops (must run tunnel.ps1 on Windows relay 172.19.195.133, or restart Windows OpenSSH)"
+  },
+  "caliber_note": "A0_base actual caliber = has-RAG (search_apis via :18888 -> :9003) + no-sandbox-MCP (no_sandbox prompt) + external-sandbox-scoring (run_eval -> :8664 -> 36.15). A5 replicates this has-RAG caliber for single-variable pairing (only base model changes). Task wording 'A5=no-RAG same as A0' is self-contradictory; correct A0_base has RAG.",
+  "one_click_resume": "bash baize_posttrain_a5_resume_when_tunnel.sh --check (preflight) / --smoke (1-run) / --run-all (5-run). Auto: rebuilds SSH -L 8664-8669 -> 10.129.32.75 via :3333, verifies serve+MCP+RAG+sandbox, then launches eval.",
+  "health": {
+    "gpu0_3": "root SGLang (untouched)",
+    "gpu4": "FREE (0 MiB)",
+    "gpu5": "A5 serve :8097 (this line)",
+    "gpu6": "vision (9116 MiB, untouched)",
+    "gpu7": "FREE (0 MiB)",
+    "providers_json": "restored to glm-5.2 (no disturbance to other lines)",
+    "rogue_eval": "none",
+    "killed_other_line": "none"
+  }
+}
