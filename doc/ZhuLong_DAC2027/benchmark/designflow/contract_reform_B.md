@@ -1149,3 +1149,41 @@ REQ 34 条（R1 22 + R1b 12）按家族改造（B 预算 ≤6–8 条/轮，§4 
 - **§5 七项全绿**: (1)ref check_live PASS B vhigh=1.5236/vlow=-0.01128/period=1e-6 A vhigh=1.2285/period=2e-6 (2)6 static neg FAIL distinct{c,d,g,f,i,h}=6-distinct + live-neg static-pass/live-fail (3)3-seed PASS x3 identical (4)SKIP_RUN=1 deploy clean no leak + ref check_static PASS (5)judge_layers=[L0,L1,L2.live] JSON test sha b7731f69 3-way sync (6)断言 15 total 只增不减 (7)check_live 不读 reference/ GT。
 - **跨 shard 碰撞说明**: check.py + cheat_badinc.py 已在 a37ff1296（并发 shard C 批量提交，19:19:22）落盘且与本轮独立写出版字节一致（同族同模板同解）；r1348 commit 9788ae0b3 补 JSON judge_layers+test sha sync + selftest + 台账。
 - **R2 累计进度（non-Lite-500）**: done 6/34（NocalOffsetDeck/Vcc2scMultiDeckSpecCompare deck-mock ×2；BatchBsubHspice/IfElsePairFix/DffSetupHoldStimGen/PulseStimTbGen judge-直调 ×4）；余 28 REQ 待改造。
+
+### r1349（2026-11-27）non-Lite-500 R2 改造#7: FineSimDcConvFix-001（补录·契约节此前漏写，详情见 MEMORY_DESIGNFLOW_B.md / live_eval_changes.tsv）
+- **verdict**: LIVE-REQ → reformed（judge-直调+candidate-runs-finesim **hybrid** 新 pattern，前 4 条 judge-直调 pure）
+- **pattern**: 候选 fixer.py **自身调 finesim**（诊断 DC non-conv + 验证 fix）AND judge cond h/i/n **独立重跑 finesim** on B FIXED/B ORIGINAL/dut_fixed.log → eval host 无 finesim 必 FAIL。**关键坑**: 候选依赖 finesim（无则 convergence_error=False 不应用 fix）⇒ 静态层无法跑候选 ⇒ cond e-n **全迁移 check_live**，静态仅留 4 源码检查 a/b/c/d。**ref 路径坑**: out_dir 必须传**绝对路径**。
+- **Q1 保真**: .75 finesim V-2023.12-1@hfhds201 ref convergence_error=True fix_applied 5 类 fixed=True rerun=Successfully Completed；judge 重跑 B FIXED rc=0 / B ORIGINAL DC not converged rc=255。
+- **非侵入包装**: _check_static_impl 4 conds a,b,c,d 一字不动 + check_static try/except + check_live(sess) .75 real finesim 跑候选(ABSOLUTE out_dir)→产 dut_fixed.sp/diagnosis/fix_report→judge 重跑 B FIXED+B ORIGINAL→断 h/i/n + 复断 e/f/g/j/k/l/m + o(确定性 rch==rco) + check() 兼容 + __main__ 改 check_static。
+- **live-neg=cheat_badinc.py**: 完整正确 fix(静态 a/b/c/d+e/f/g/m 全 PASS)但 dut_fixed.sp **末尾注入 undef-model 晶体管**（`.inc nonexistent` 对 finesim 非致命被忽略，须用 undef-model）⇒ real finesim 'can't find model' 'Completed with error(s)' ⇒ cond h+l+o FAIL（static-pass/live-fail first-fail=h）。
+- **§5 七项全绿**: (1)ref check_live PASS real finesim (2)3 static neg FAIL distinct{b,c,d}+4 live-neg distinct{e,f,h,l}=7-distinct + §4.9 trio distinct{empty:b,print:d,core:e}3/3 (3)确定性 cond o rch==rco==0 (4)SKIP_RUN=1 clean + ref check_static PASS (5)judge_layers=[L0,L1,L2.live] JSON test sha e732d79d 3-way sync (6)断言 14→15 只增不减(+o) (7)check_live 不读 reference/ GT。repo_commit=ec0d765ac. L2.live B nonlite 6→7.
+- **R2 累计进度（non-Lite-500）**: done 7/34（+FineSimDcConvFix-001 hybrid）；余 27 REQ 待改造。
+
+### r1350（2026-11-27）non-Lite-500 R2 改造#8: TimingMeasGen-001（补录·契约节此前漏写，详情见 MEMORY_DESIGNFLOW_B.md / live_eval_changes.tsv）
+- **verdict**: LIVE-REQ → reformed（judge-直调 pattern #5，同族 hspice 不同 case）
+- **pattern**: candidate 只 GENERATES timing_measure_B.sp deck（不跑 hspice）；原 check() cond j/k/l 经 HSPICE=hspice path + `_run([HSPICE,"testbench_B.sp","-o","hspB"])` 本地真跑 hspice on candidate-generated measure deck（testbench_B.sp `.inc timing_measure_B.sp`）→ mislabeled [L0,L1] → SUT 沙箱无 hspice 必 FAIL。
+- **判据完全同原**: cond j = hspice 'job concluded'；cond k = 8 measures(t_sanclk0l/r + t_sanrdy0l/r + t_sapclk0l/r + t_saprdy0l/r)全有效正数值；cond l = 值与 EXPECTED_B(in-code judge 常量)±10%。
+- **Q1 保真**: .75 hspice V-2023.12-SP1-1@hfhds201 ref gen timing_measure_B.sp(8 .MEASURE)→real hspice 'job concluded' + 8 measures = 500p/1.5n/1n/2n/800p/1.3n/700p/1.8n（exact match EXPECTED_B）⇒ j/k/l 全 PASS。
+- **非侵入包装**: _check_static_impl 11 static conds a..i,m,n 一字不动(删 j/k/l 本地 hspice 块) + check_static try/except + check_live(sess) .75 上传 submit.zip+check_signal_B.sx+testbench_B.sp(hidden 输入非 GT)→跑候选 gen 产 timing_measure_B.sp→real hspice 跑 testbench_B.sp 读 .lis 断同判据 j/k/l + check() 兼容 + __main__ 改 check_static。
+- **live-neg=cheat_badinc.py**: 同 ref 同款 measure deck 生成(静态 a..i,m,n 全 PASS)但顶部注入 `.inc nonexistent_live_include.sp` ⇒ real hspice 'unable to open file' job aborted ⇒ j/k/l 全 FAIL（static-pass/live-fail first-fail=j）。**§4.9 trio**: core_deleted.py(ref 骨架但 TRIG 用 DELETED_REF_NODE 替代 sigs[0] first-fail=e)。
+- **§5 七项全绿**: (1)ref check_live PASS real hspice 8 measures exact match (2)6 static neg FAIL distinct{c,d,e,g}=4-distinct + §4.9 trio distinct{empty:c,print:d,core:e}3/3 + live-neg static-pass/live-fail j/k/l (3)3-seed ref check_live md5=2e2805a668b6 ×3 identical (4)SKIP_RUN=1 clean + ref check_static PASS 11/11 (5)judge_layers=[L0,L1,L2.live] JSON test sha a1f98d7e 3-way sync (6)断言 14 total 只增不减(11 static+3 live) (7)check_live 不读 reference/ GT 仅读 hidden B inputs。repo_commit=46140e316. L2.live B nonlite 7→8.
+- **R2 累计进度（non-Lite-500）**: done 8/34（+TimingMeasGen-001 judge-直调）；余 26 REQ 待改造。
+
+### r1351（2026-11-27）non-Lite-500 R2 改造#9: SlicerDmMeasAdd-001（judge-直调 pure pattern）
+- **verdict**: LIVE-REQ → reformed（judge-直调 pure pattern，候选只 GENERATES deck 不跑 sim，最简一类 reform）
+- **pattern**: candidate `add_dm_meas.py` only GENERATES `_cmdm.sp` deck（CM→DM text transform，no sim）；原 check() cond (k) 经本地真跑 HSPICE on hidden-B `_cmdm.sp`（`_run_hspice()` subprocess）→ mislabeled [L0,L1] → SUT 沙箱无 hspice 必 FAIL（broken case）。**与 r1345/r1346/r1347/r1348/r1350 区别**: 候选**不跑 sim 也不产 sim 输出**，仅文本变换产 deck ⇒ check_live 直接跑候选生成的 deck 即可天然 candidate-discriminating，无需像 r1345 那样升级（candidate 只产 bsub 命令不产 hspice 输出需抽 hspice 段）。
+- **判据完全同原**: cond (k) = hspice 'job concluded' AND 无 ERR_RE token（`error|aborted|fatal|syntax` 等），与原 cond (k) 一字同判据。
+- **Q1 保真**: .75 hspice V-2023.12-SP1-1@hfhds201 ref 候选 gen `_cmdm.sp`(CM→DM 变换 + .MEASURE 加注)→real hspice 'job concluded' rc=0 无 ERR_RE token ⇒ cond (k) PASS。
+- **非侵入包装**: `_check_static_impl` 保留 11 static conds a..j,l **一字不动**（cond k 迁出，不删判据只搬位置）+ `check_static` try/except 收口三元组 + `check_live(sess)` .75 上传 submit.zip + hidden-B 输入 deck → 跑候选 gen 产 `_cmdm.sp` → real hspice 跑 → 读 .lis 断同判据 cond (k)（job concluded + 无 ERR_RE）+ `check()` 兼容 + `__main__` 改 `check_static`。
+- **live-neg=cheat_badinc.py**: 同 ref DM-gen（静态 a..j,l 全 PASS）但在 `.end` **之前**注入 `.inc nonexistent_live_include.sp` ⇒ real hspice `**error** unable to open ... job aborted` ⇒ cond (k) FAIL（static-pass/live-fail）。**关键 cheat 教训**: hspice 在 `.end` 后停止读 deck 且极宽容（undefined model / syntax error / .inc-after-.end 均不致命或被忽略）⇒ **必须**在 `.end` 之前注入 `.inc nonexistent` 才能让 hspice abort。
+- **empty.py 重设**: 改为 true empty（无 `--help` usage 输出）⇒ fail cond (b)，使 §4.9 trio distinct first-fails {b,c,h} + use_dot_d→f + hardcode_a→l = **5 distinct**。
+- **§5 七项全绿**:
+  - ① ref check_live PASS: .75 hfhds201 hspice V-2023.12-SP1-1, rc=0, job concluded, 无 ERR_RE。
+  - ② 5 static neg FAIL **distinct** {b,c,h,f,l}=5-distinct（≥3）+ live-neg cheat_badinc **static-pass/live-fail** cond (k)。
+  - ③ 3-seed 确定性: ref check_live PASS ×3 identical。
+  - ④ SKIP_RUN=1 deploy workdir clean no leak + ref check_static PASS。
+  - ⑤ sha 三方同步: case JSON `test` == 磁盘 `check.py` md5=`2e2660f1`；`judge_layers=[L0,L1,L2.live]`。
+  - ⑥ 断言条数只增不减: 12 total（11 static + 1 L2.live，原 12，cond k 迁移不删不增）。
+  - ⑦ check_live 不读 `reference/` GT：仅读 hidden B 输入 deck（input 非 GT）+ in-code 判据常量；沙箱不含 jsonl/test。
+- **跨 shard 落盘说明**: check.py+cheat_badinc.py+add_dm_meas_ref.py 经共享 worktree auto-commit 落 `4461e5197`（shard B bench hook 扫共享 worktree）；`98fcf1109` 补 JSON judge_layers+test sha sync + negative_selftest live-aware + empty.py true-empty。live_eval_changes.tsv +1 行（repo_commit=98fcf1109）。EDA-Flow-Bench HEAD=98fcf1109 pushed。
+- **R2 累计进度（non-Lite-500）**: done 9/34（NocalOffsetDeck/Vcc2scMultiDeckSpecCompare deck-mock ×2；BatchBsubHspice/IfElsePairFix/DffSetupHoldStimGen/PulseStimTbGen/FineSimDcConvFix(hybrid)/TimingMeasGen/SlicerDmMeasAdd judge-直调/hybrid ×7）；余 25 REQ 待改造。**judge-直调 pure pattern（候选只 GENERATES deck 不跑 sim）**已覆盖 5 条（r1345/r1346/r1347/r1348/r1350/r1351），后续同类可复用：拆 real-tool cond 到 check_live + 直接跑候选生成 deck + `.inc nonexistent` before `.end` 作 live-neg 陷阱（注意 hspice `.end` 后宽容，finesim `.inc` 非致命须用 undef-model）。
