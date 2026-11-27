@@ -2895,3 +2895,10 @@ r1562 轮释 MEMORY 体积：将 r1560 / r1553 / r1484 三条全量流水原文�
 
 r1563 轮释 MEMORY 体积：将 r1561 全量流水原文收口为指针（MEMORY 31223→31339B，净增 r1563 全量流水 - r1561 全量 + r1561 指针）。r1561 为监控/teeth-guard 轮（.75 REACH_OK + IOBufTune-001 spot 全green牙齿完整 §4.9 trio full(6neg distinct) + cross-shard P0 re-verify(OpampChar挂~190轮/InvTripDelay RESOLVED) + live_eval 121/121 全green），无判分改动/无 verdict 升降/无 judge_layers 变更。原文见：
 - r1561 → daily_D_2026-11-27_r1561.md（IOBufTune-001 spot）
+
+
+## 归档批次 r1565（2026-11-27，r1565 释体积）
+
+r1565 轮释 MEMORY 体积：将 r1562 / r1563 两条全量流水原文收口为指针（MEMORY ~31339→~30.5kB，净增 r1564 全量 - r1562全量 - r1563全量 + 2指针）。两条均为监控/teeth-guard 轮（.75 REACH_OK + L2.live spot-check 全green牙齿完整 §4.9 trio full + cross-shard P0 re-verify + live_eval 121/121 全green），无判分改动/无 verdict 升降/无 judge_layers 变更。原文见各 daily 文件：
+- r1562 → daily_D_2026-11-27_r1562.md（OpenDmViewsProduce-001 spot）
+- r1563 → daily_D_2026-11-27_r1563.md（AeDelCellCurCellProduce-001 spot）
