@@ -996,3 +996,80 @@ BisecMt0SmCalc-001, BridgeCfgDiag-001, ButterflyCurve-001, CTLETranDeck-001, Cab
 
 ### R2 排期
 REQ 22 条按家族改造（B 预算 ≤6–8 条/轮，§4 前提）：先 deck-mock GT-replay 家族（NocalOffsetDeck/Vcc2scMultiDeckSpecCompare，同 Lite-500 r1294–r1330 模板），再 judge-直调 + cand-runs-tool。每条：`_check_static_impl` 一字不动 + `check_static` 收口 + `check_live(sess)` real hspice/finesim on `.75` + live-neg + §5 七项全绿 + `live_eval_changes.tsv` 登记。
+
+---
+
+## R1b non-Lite-500 TODO 逐条收口（2026-11-27 r1342 · 只读）
+
+> 接续 r1341 R1（471 条 nonlite 静态三分类，354 done / 117 TODO）。本轮对 117 TODO 逐条读 `check.py`
+> 实证三分类，清零 TODO。只读：仅改 `live_eval_review_nonlite_B.tsv` 的 verdict/reason/evidence 列 + 本节，
+> 🚫 未碰 `reference/*/check.py` / `cases/*.json` / `judge_layers` / `live_eval_changes.tsv`。
+
+### 方法
+
+对 117 TODO 做**实证 grep + 关键行深读**（非关键词扫，r1341 已证伪关键词法）：
+
+1. **real-bin 模式扫描**：正则匹配 `["hspice"|"finesim"|"wv"|...]` 作为 subprocess 首参 / `HSPICE=...` / `FINESIM=...` / `WV_BIN=...` / `shutil.which("hspice")` / `os.environ.get("HSPICE*")` 五类信号。
+2. **候选内部跑 sim 探测**：对带 hspice/finesim/mt0 名字但无 judge-side BIN 变量的 case，读 prompt + check 条件判候选是否被要求真跑 HSPICE（prompt 明示「调用 HSPICE 真跑」+ judge 比对隐藏 GT）。
+3. **.mt0/.lis 来源判别**：`.mt0`/`.lis`/`.ms0` 出现时核其是 pre-captured hidden 输入（runB.zip / embedded oracle / `assets/hidden/`）还是候选跑 sim 产物。
+4. **NA 确认**：subprocess 仅跑候选 `sys.executable cand_py` / `bash run.sh` / `tclsh` / `perl -c`，judge 解析候选输出（JSON/CSV/text/deck/report），deliverable = parser/generator/auditor/diag/QA 脚本。
+
+`.75` 工具可达性实证（经 eda_flow open_session→run_commands，hostname=hfhds201，wall=231ms）：
+hspice=/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/hspice · finesim=/apps/synopsys/SRB/finesim/V-2023.12-1/bin/finesim · hspice64 同目录 · **wv=/apps/synopsys/SRB/wv/T-2022.06-SP1/bin/wv（WaveView 可达）** · calibre=/apps/mentor/calibre/2020.1_36/.../calibre · verdi=NO_VERDI。
+
+### 三分类结果（117 TODO）
+
+| verdict | 数量 | 说明 |
+|:--|--:|:--|
+| **LIVE-REQ** | 12 | judge 或候选直接 subprocess 调真 EDA 二进制（hspice/finesim/wv），pass/fail 实质依赖真工具产物；当前 mislabeled `[L0,L1]`，须 R2 拆 check_static/check_live + 加 L2.live + live-neg |
+| **LIVE-NA** | 105 | judge 仅跑候选 python/perl/tclsh/bash + 解析输出，deliverable=脚本/文本/解析/QA，无真工具产物依赖 |
+| **LIVE-OPT** | 0 | — |
+
+### LIVE-REQ 清单（12 · R2 改造优先序）
+
+按「judge 直调真二进制」(11) + 「候选跑真 sim + judge 比对 GT」(1) 分两类：
+
+**A. judge 直接 subprocess 调真 EDA 二进制（11 条）**：
+
+| case | real binary | 关键 cond | .75 工具 |
+|:--|:--|:--|:--|
+| BatchBsubHspice-001 | hspice (`_hspice_bin`=which hspice) | judge 跑 candidate deck 于 inv_tb.sp | ✅ |
+| DffSetupHoldStimGen-001 | hspice (abs path) | cond l/m job concluded + numeric measure | ✅ |
+| FineSimDcConvFix-001 | finesim (`FINESIM="finesim"`) | cond h/i judge 重跑 B FIXED/ORIGINAL | ✅ |
+| JitterTieRerun-001 | hspice (`HSPICE_BIN`) | cond l L2 独立重跑 + cond d sim.ran + .lis | ✅ |
+| NmosAgeChar-001 | hspice (`HSPICE`) | judge 跑 ref.sp + cond k candidate ran_hspice | ✅ |
+| OtaAutoTune-001 | hspice (`HSPICE_BIN`) | cond c/f method=hspice_run + k 独立重跑 + l ≥6 trials | ✅ |
+| PlatSweepGen-001 | hspice64 (abs path) | cond f B baseline == GT HSPICE | ✅ |
+| Sram6tDcChar-001 | hspice (abs path) | cond j 跑 candidate wnm_1 deck + .ms0 齐全 | ✅ |
+| TimingMeasGen-001 | hspice (`HSPICE_BIN`) | cond j 跑 testbench_B + job concluded | ✅ |
+| VihTripTune-001 | hspice (`HSPICE`) | judge 独立重跑 B+A 算 trips cross-input | ✅ |
+| WvFmFreqExtract-001 | wv WaveView (`WV_BIN="wv"`) | cond c wv really ran (rc==0 + log markers) | ✅ wv T-2022.06-SP1 |
+
+**B. 候选跑真 sim + judge 比对隐藏 GT（1 条）**：
+
+| case | 候选工具 | judge GT 比对 | .75 工具 |
+|:--|:--|:--|:--|
+| CTLEtranChar-001 | 候选 ctle_tran.py 必须调 HSPICE 真跑（prompt 明示「调用 HSPICE 真跑」+ 解析 .mt0） | cond l/m B eye_amp/pwr_avg vs 隐藏 refB within 5%；cond n/o 防 B~=A 硬编 | ✅ |
+
+### LIVE-NA（105 条 · 不逐条列出）
+
+共同特征：judge 的 subprocess 仅跑候选 `sys.executable cand_py` / `bash run.sh` / `tclsh` / `perl -c`，judge 解析候选输出（JSON/CSV/text/deck/report）做结构/数值断言；deliverable = parser/generator/auditor/diag/QA 脚本；pass/fail 不依赖真 EDA 工具产物。`.mt0`/`.lis`/`.ms0` 若出现均为 pre-captured hidden 输入（runB.zip / embedded oracle / `assets/hidden/`），非候选跑 sim 产物。"hspice/finesim" 字串仅出现在 deck 文本/字段名/oracle token/注释，非 subprocess 二进制。
+
+代表样本（已逐条 grep 确认）：HspiceSparamSubmit(--dry-run 生成 submit 脚本) / HspiceAlterTrnPredictor(预测 .trn 文件名) / HspiceLibDiffClaimVerify(.lib diff 核对) / BiasOpAnalysis(解析 pre-captured .op) / SanadjRblDeckSweep(生成 sweep deck 文本) / Mt0AggregateGen(聚合 pre-captured .mt0) / FinesimMt0ParserProduce(解析 embedded .mt0.csv) / WmMt0Diag(诊断 pre-captured .mt0) / CosineWaveAnalyze(tclsh + WaveView API stubs 离线算) / BsubNoFolderDiag(诊断 bsub 命令行) / TwoStageLogExplainQA(解析 log 配置 token) / DumWLDeckExplainQA(解析 deck 选项)。
+
+### 与 r1341 R1 的差异
+
+| 项 | r1341 R1 (354 done) | r1342 R1b (117 TODO) | 合计 (471) |
+|:--|--:|--:|--:|
+| LIVE-REQ | 22 | 12 | **34** |
+| LIVE-NA | 332 | 105 | **437** |
+| LIVE-OPT | 0 | 0 | **0** |
+| TODO | 117 | 0 | **0** |
+
+R1b 新增 12 REQ 全部为「judge/candidate 直调真二进制」家族（r1341 R1 的 22 REQ 为 deck-mock GT-replay 家族 + judge-直调 + cand-runs-tool 混合）。两轮方法论一致（code-structure scan + 关键行深读，非关键词扫）。
+
+### R2 排期（non-Lite-500）
+
+REQ 34 条（R1 22 + R1b 12）按家族改造（B 预算 ≤6–8 条/轮，§4 前提）：先 deck-mock GT-replay 家族（R1 22 条，同 Lite-500 r1294–r1330 模板），再 R1b 12 条 judge-直调/cand-runs-sim（每条：`_check_static_impl` 一字不动 + `check_static` 收口 + `check_live(sess)` real hspice/finesim/wv on `.75` + live-neg + §5 七项全绿 + `live_eval_changes.tsv` 登记）。
+
+- 心跳：`LIVE-NL: B review=471/471 · REQ=34(done 0) · OPT=0 · NA=437 · L2.live 0→0 · R1b 收口(2026-11-27 non-Lite-500 实跑评估改造, TODO 117→0)`
