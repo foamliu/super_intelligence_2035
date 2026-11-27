@@ -1103,3 +1103,39 @@ REQ 34 条（R1 22 + R1b 12）按家族改造（B 预算 ≤6–8 条/轮，§4 
 ### R2 累计进度（non-Lite-500）
 - done: 1/34（NocalOffsetDeck-001）
 - 余 33 REQ 待改造（deck-mock 1: Vcc2scMultiDeckSpecCompare；judge-直调 10；cand-runs-tool 10；R1b 12）
+
+### r1345 — BatchBsubHspice-001 (judge-直调 pattern 首条, non-Lite-500 R2 #3)
+
+**case**: EDA-Eval-DesignFlow-BatchBsubHspice-001 (B shard, spice_sim, non-lite)
+**原状**: `check()` 11 cond (a-k)，其中 cond (j) 经 `_hspice_bin()`+`subprocess.run([hspice,"-i","inv_tb.sp","-o","inv_tb"])` **本地真跑 HSPICE** on hidden deck → mislabeled `[L0,L1]` → SUT 沙箱无 hspice 必 FAIL（broken case）。judge-直调 pattern（区别于前 2 条 deck-mock Type A）。
+
+**桩体检 Q2 升级**: 原 cond (j) 跑的是 hidden **固定** deck（不依赖候选输出）⇒ 候选只生成 bsub 命令、不产 hspice 输出 ⇒ 若简单把 cond (j) 整体迁 check_live，会变成 candidate-independent sanity check，**无法满足 §5.② live-neg**（静态过/实跑错需要 check_live 依赖候选）。
+
+**解法 = check_live 升级为 candidate-discriminating**:
+1. `_check_static_impl`: 保留 cond a-i, k（10 条静态一字不动），**删 cond (j) 本地 hspice 块**（迁出）。
+2. `check_static` 收口三元组。
+3. `check_live` cond (j): .75 跑候选 `--dry-run`（给 hidden simdir_B 绝对路径）→ 抽首条 bsub 行的 hspice 段 (`hspice -i <abs deck> -o <abs stem>`) → 用真实 hspice V-2023.12-SP1-1@hfhds201 跑该调用 → 断同判据（`hspice job concluded` / `rc==0` / 无 `error|aborted|fatal|syntax` tokens，与原 cond (j) 一致）。
+4. `check()` 兼容包装；`__main__` 改用 `check_static`。
+5. case JSON `judge_layers` `[L0,L1]` → `[L0,L1,L2.live]`；`test` 字段与 `check.py` sha 同步。
+
+**两个 .75 坑修复**（judge-直调 pattern 首次踩到，后续同类 case 复用）:
+- ① `sys.executable` 是本地 python 路径在 .75 不存在 → 改用 `python3`。
+- ② 候选 `print` 中文 summary 在 .75 ASCII stdout 崩 `UnicodeEncodeError` → 命令前加 `PYTHONIOENCODING=utf-8`。
+
+**live-neg** = `negative/cheat_bogus_deckpath.py`: 生成结构齐全的 bsub 命令但 `hspice -i/-o` 指向 `/nonexistent_bogus_deckdir_live_neg/`（不存在的绝对路径）⇒ 静态 cond (e) 只查 flag 存在、不查路径真实 ⇒ static-PASS；真跑 hspice abort `rc=1` permission-denied `.lis` ⇒ live-FAIL。
+
+**§5 七项全绿**:
+- ① `.75` 真跑 ref PASS: hostname=hfhds201, hspice=V-2023.12-SP1-1, rc=0, concluded.
+- ② 5 static neg FAIL **distinct** {b,c,e,g}=4-distinct（≥3）+ live-neg cheat_bogus_deckpath **static-pass/live-fail**.
+- ③ 3-seed 确定性: ref check_live PASS ×3 identical.
+- ④ selftest ref check_static PASS（SKIP_RUN=1 无 deliverable 属正常，静态层不被 live 拖垮已由 selftest 证明）.
+- ⑤ sha 三方同步: case JSON `test` == 磁盘 `check.py` md5=6c96ef66; `judge_layers=[L0,L1,L2.live]`.
+- ⑥ 断言条数只增不减: 11 total（10 static + 1 live，原 11）.
+- ⑦ L5 不退化: check_live 不读 `reference/` GT；仅读 hidden B 输入 deck（input 非 GT）；沙箱不含 jsonl/test.
+
+**登记**: `live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`, repo_commit=6bc7aa80c）。
+
+### R2 累计进度（non-Lite-500）
+- done: 3/34（NocalOffsetDeck-001 deck-mock / Vcc2scMultiDeckSpecCompare-001 deck-mock / BatchBsubHspice-001 judge-直调）
+- 余 31 REQ 待改造（deck-mock 0；judge-直调 20；cand-runs-tool 11）
+- **judge-直调 pattern 已建立**（r1345），后续 20 条同类可复用：拆 real-tool cond 到 check_live + 升级为 candidate-discriminating + `python3`+`PYTHONIOENCODING=utf-8`。
