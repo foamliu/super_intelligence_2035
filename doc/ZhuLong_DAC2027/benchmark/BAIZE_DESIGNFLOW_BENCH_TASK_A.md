@@ -30,7 +30,6 @@
 > **优先级**：P1 > P2 > P3。造新题让位给 P1/P2，P3 可与造题并行。体积超限先归档已闭合的旧令（Lite-500 令已完成，可搬 ARCHIVE）。
 
 
-
 > ## 🥇 2026-11-24 22:0x 用户令 · 4 shard 优先修 Lite 集（500） · 最高优先（排期覆盖造题/扩池/治理）
 >
 > **用户原话**：「安排 designflow 4 shard 优先修复 lite 集」。**完整规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LITE_FIX_ORDER.md`。
@@ -82,125 +81,20 @@
 >
 > **难度分布是观察对象，不是生产指标。** L1/L2/L3 只用于事后统计当前题库覆盖了什么，**不得用于限制新建 case**。**通过率同样是观察值**——由用户任务的真实难度与 agent 真实能力共同决定，如实测量即可，不为凑数字而挑题、改题、加难或降难。
 
-> 📦 **已闭合 · 2026-11-21 shard A eda_flow 健康自检令**：r897–r938 共 42 次实测均 `EDA_FLOW_OK`（:18891 pid3365754 跨 24.9 天稳定 / open_session 17–21ms 四参齐 / run_commands exit0 / close cleaned / curl HTTP200 `EDA-FastMCP-Flow v1.25.0`），报告 `designflow/reports/eda_flow_health_r*_20261121.md`。**本令不再执行，勿复测**；下一次扫描+造题见下方 15:1x 令。
+> 📦 归档指针 · 2026-11-21 eda_flow 健康自检令（已闭合 r897–r938）· 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_A.md「归档块 · 2026-11-27 r1406 瘦身 · A1」
+---
+
+> 📦 归档指针 · 2026-11-21 15:1x 全量扫描扩池令（已执行；A-pure 池后证枯竭 r942）· 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_A.md「归档块 · 2026-11-27 r1406 瘦身 · A2」
+---
+
+> 📦 归档指针 · 2026-11-15 重审已造题与候选池令（intent_audit_A.tsv 已交付 34 题 keep；pool_reaudit 被后续换池+live-eval 取代）· 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_A.md「归档块 · 2026-11-27 r1406 瘦身 · A3」
+
+
+> 📦 归档指针 · 2026-11-21 16:4x mc 降到 5 令（止损触发：mc≥5 连续 0 case，A-pure 枯竭，shard_mc.A 回 10）· 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_A.md「归档块 · 2026-11-27 r1406 瘦身 · A4」
 
 ---
 
-> ## 🔴 2026-11-21 15:1x 用户令 · shard A：eda_flow 已验证正常 ⇒ 立即开新一轮全量扫描扩池 · 最高优先
-
-> **用户原话**：「designflow A 如果验证 eda_flow MCP 正常，那就可以开启新一轮的全扫，以扩充候选池。」
-
-> 📦 前置已满足：r897–r938 共 42 次实测 `EDA_FLOW_OK`。**自检已闭合、不再复测、不再写 health 报告**；下一轮若仍是 0-case 自检视为未执行本令。
-
-**一、立刻全量扫描**（沿用 11-14 运维令四护栏）：
-1. 先查上次：`ls -dt /home/t0002965/log/ssh_eda_search_* | head -5`；最近 `..._20261121_005100`（11-21 00:51）距今 ~15h ⇒ **允许扫**（每日 ≤1 次，本次用掉今日额度）。
-2. 全量 `ssh_eda_search`（698 机）：分批 **5–10 台/次**（🚫 一次打 698 必超时）；只读 `ls/stat/head/grep`，🚫 不写远端/chmod/删文件；经 `eda_flow run_commands` 在 `.75` 跑，`ssh` 前加 `</dev/null`；起跑 `WAITING: 1`，扫完回 `WAITING: 0`。
-3. **扫完必须闭环**（r528：扫了不换池=白扫）：新 `summary_<MMDD>.tsv` → 刷 `mc_matrix.src`/`summary_stats.json`（`target_mc`=10）→ 按 r462/r501 **POOL_SWITCH** 落盘、旧快照留 `_hist` → MEMORY 记 scan 目录/行数/dedup/mc10/耗时。
-4. 异常即停：denied/超时/不可达 >20% ⇒ 报运维。
-
-**二、扫完即做**：① `trace_ledger.py --shard A mc-matrix --src <新summary>` 报 `pool/touched/fresh`（仍枯竭再按 11-15 令降 mc≥5 并给依据）；② **恢复造题 1 条**（§6 流程）；`analysis-Q&A`/`doc-search`/`debug-Q&A`/`env-config`/`flow-driving` 都是合法真实意图，不再判 weak；③ **正面回答「A-domain 还剩多少可做」**并写进 MEMORY —— 此前「A-pure 枯竭」是旧池所致，新扫描就是给真实数字。
-
-**三、纪律**：🚫 不改题/图/`check.py`、不动别 shard、不 `git add -A`；🚫 不为凑数造 weak case（§4 质量闸门照旧）；✅ infra 失败 ≠ 能力结论。
-
----
-
-> ## 🔍 2026-11-15 用户令 · 用新标准重审「已造的题」与「候选池」· 最高优先 · 全部 4 shard
-
-> **用户原话**：「安排4线重新审视自己已经造的题和候选池，如果跟任务初衷有违背可以重做」
-
-**为什么现在要重审**
-
-任务初衷已置顶（见本文件开头），但**你现有的题和候选池，是在旧规则下筛出来的**——旧规则里有 `L1≤30%/L2≥50%/L3≥20%` 的难度配额、有"只做 L2/L3"的准入限制、有"analysis-only 判为 weak"的筛子、还有"通过率必须落 20–30%"的调难度要求。**这些规则今天全部作废。**因此旧题里可能混进了两类问题：
-
-- **A 类（该删/该重做）**：为了满足配额或通过率区间而**人为加难、改题、硬凑工具链路**的题——它们不是用户真实想干的事。
-- **B 类（被误杀，该复活）**：当年因为"归为 analysis / doc-search / Q&A / env-config"被判 weak 而**没造的候选**——按新标准这些都是合法任务。
-
-**一、重审「已造的题」（本 shard 全部 jsonl）**
-
-逐题过一遍，用这三个问题判定：
-
-1. **这条题问的，是 trace 里用户真实想干的事吗？**
-   - 是 → 保留
-   - 否（为了凑 L2/L3 配额硬加的步骤、为过题而人为改造的任务、把用户没要求的东西塞进判分） → 标 **`off_intent`**，进重做队列
-2. **如果 `check()` 判分要求的东西，超出了用户原始意图**（例如用户只要"看到结果"，判分却要求特定文件结构/特定实现路径） → 标 **`over_constrained`**，把判分收敛回用户真实交付物
-3. **有没有因为旧配额规则，把用户真实任务"降级/裁剪"后才入库的？** → 标 **`downgraded`**，考虑恢复原形态
-
-**产出**：`designflow/intent_audit_A.tsv`，列固定：
-```
-case_id | user_intent_from_trace | 判定(keep/off_intent/over_constrained/downgraded) | 理由 | 处置(保留/重做/下线)
-```
-并在 MEMORY 写一行：`🔍 意图审计: N 题, keep=x / off_intent=y / over_constrained=z / downgraded=w`
-
-**二、重审「候选池」**
-
-旧筛子把大量真实用户意图判成了"不可造"。逐项重判：
-
-- **旧判为 weak / analysis-only / 不可造的候选**：`analysis-Q&A`、`doc-search`、`debug-Q&A`、`env-config`、`flow-driving`、`setup 类`、`retrieval 类`、`explain 类` —— **按任务初衷，这些都是真实用户意图，全部恢复为可造**。
-- 唯一保留的排除标准只有两条：
-  1. **没有真实 trace**（无 `trace_source` 可溯源）→ 不可造
-  2. **写不出能区分真假交付的 `check()`**（判分没有"牙"）→ 不可造
-- 其余一律视为**有资格造题**。
-
-**产出**：`designflow/pool_reaudit_A.tsv`，列：
-```
-session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 拟造任务形态
-```
-并在 MEMORY 写：`🔍 候选重审: 旧可造=x → 新可造=y（新增 z 条被旧规则误杀）`
-
-**三、重做的方式（重要）**
-
-- **重做不是删了重来**：保留原 case 及其 `check()`（作历史对照），新建修正版（case_id 加 `-v2` 后缀或独立新 id），并在 MEMORY 说明「v2 相对 v1 改了什么、为什么」。
-- 🚫 **不删旧 case、不删 jsonl 行**——旧题是"旧规则下的产物"的证据，留着才能说明口径变迁。
-- ✅ 允许**下线**：标 `retired` + 理由，从通过率分母中剔除（但 jsonl 行保留）。
-- **工作量提示**：1366 条全审不是一轮能干完的（A=293 / B=319 / C=358 / D=396）。**分批做**：每轮审 N 条（自己定），把进度写进 MEMORY（`审计进度 x/N`），审完再回到正常造题。
-
-**四、顺序建议**
-
-1. 先审**最近 50 条**（最近的最可能带旧配额痕迹）
-2. 再审 `rewrite_queue.tsv` 里挂着的那批
-3. 最后扫历史存量
-4. **候选池重审优先于继续造题**——池里被误杀的候选可能比你现在能挖到的更多
-
-**五、纪律**
-
-- 🚫 不改别人 shard 的 jsonl / MEMORY
-- 🚫 不删数据（重做 = 新增版本 + 标状态）
-- ✅ 审计结论要能逐题追溯到 trace 原文（`user` / `session_file` / 用户原话）
-
-
-
-> ## 🔴 2026-11-21 16:4x 用户令 · shard A：**批准 mc 降到 5，立即用 mc≥5 池再造题** · 最高优先
-
-> **用户原话**：「designflow 好的 mc降到5」
-
-**一、配置已由我改好（直接生效，无需你改）**：`designflow/summary_stats.json` → `shard_mc = {"A": 5, "B": 10, "C": 10, "D": 10}`（单行 diff，只动 A）。`target_mc` **仍为 10**（全局覆盖率分母口径不变）。`trace_ledger.py` L337-340 会优先读 `shard_mc["A"]`，故 `--shard A` 自动按 mc≥5 选料。
-
-**二、为什么现在批**：你 r942 已用 7 倍扩池（151844，8808 sessions）证明 **strict A-pure（ak>ck, ak≥20, mc≥10）top-80 fresh = 0**；broad 过滤出的 17 fresh 全是 junxu virtuoso-dominant（C 域）。高 mc A-pure 确实耗尽 ⇒ 降 mc 是唯一扩池手段，也是 11-15 令的本意。
-
-**三、立刻做**：
-1. 复算：`python3 designflow/trace_ledger.py --shard A mc-matrix --src designflow/summary_1121.tsv --thresholds 5,10,15,20,30`，报 **mc5 / mc10 / touched / fresh** 并写进 MEMORY。
-2. **用 mc≥5 池造题**（§6 流程，1 条 case）。**质量闸门一条都不放松**：k≥8、3 neg 全 FAIL、§4.9 三假 FAIL、hidden B、A 档自包含、真实 trace 溯源（`metadata.trace_source`）。
-3. **A 域归属先判**（关键，防串台）：先看 keyword 构成，`virtuoso/skill/layout/gds/calibre/drc/lvs` 主导 ⇒ 归 **C**，`hspice/netlist/spice/schematic` 主导 ⇒ 归 **B/D**。**只有 digital/verification/pnr_signoff/eda_other 主导才算 A**。跨域候选记一行交对应 shard，🚫 不改别人的题。
-
-**四、止损（写进判断逻辑，不用问我）**：若 **mc≥5 连续 3 轮仍 0 case**（且每轮都真的 peek 过 ≥10 个 A-domain fresh 候选），则把 `shard_mc.A` 改回 10，在 MEMORY 写「mc≥5 扩池实测无效 + 数据依据」，并转做**不依赖新候选**的产出（已有 case 的 §4.9 anti-hardcode 普查 / `test_rationale` 补断言清单 / ledger 治理）。
-
-**五、纪律**：🚫 不改题/图/`check.py`、不动别 shard 文件、不 `git add -A`；🚫 不为凑数造 weak case。✅ 每轮心跳必须报三数：**mc≥5 的 pool/touched/fresh · 本轮 peek 的 A-domain vs 跨域比例 · 本轮产出 case 数**。
-
-> 📦 **2026-11-15 shard A「mc 阈值降到 5」令 · 已被上条 16:4x 令接管**。注：该令所称「配置已由运维改好 A=5」**实际从未落地**（11-21 16:4x 核查 `summary_stats.json` 仍为 A=10，这是它长期「未完成」的真因）；现已真正改为 A=5。原文见 git 历史。
-
----
-
-> 🟢 **运维令 · 2026-11-14 18:0x（用户直令）· A 可主动全量扫描 698 机 —— 覆盖 §9「默认否，只被动只读发现」**
->
-> **用户原话**：「designflow A 要开新全量扫描就开吧，随他。」
->
-> **授权**：A 可**自行发起主动全量 `ssh_eda_search`（698 机）**，不必再逐次请示；§9 该条已同步标注「已确认」。**「随他」指节奏自主，不是无约束**，四条护栏同时生效：
-> 1. **频率**：全量**每日 ≤1 次**（确需补扫 ≤2，须在心跳写明理由）；扫前先 `ls -dt /home/t0002965/log/ssh_eda_search_*` 记录上次数与 mtime —— **同池不重复扫**。
-> 2. **只读 + 低影响**：仅 `ls/stat/head/grep` 级元数据；🚫 不写远端、不 chmod、不删文件、不跑长命令；并发与 `nice/ionice` 沿用既有脚本默认（若要提高并发，先在心跳记录改动与理由）。
-> 3. **扫完必须闭环**（r528 教训：扫了不换池 = 白扫）：新 `summary_<MMDD>.tsv` → 刷新 `mc_matrix.src` / `summary_stats.json` → 按 r462/r501 的 **POOL_SWITCH** 流程落盘（旧快照留 `_hist`）→ 同轮在 MEMORY 写 **scan 目录名 / 行数 / mtime / 耗时**。
-> 4. **异常即停**：Permission denied / 超时 / 主机不可达 比例异常（>20%）⇒ 停手报运维，不硬刚。
->
-> **本轮目标**：把 r528 查到的 95 条 fresh（14/14 抽查 NOFILE = 文件已被 rotation 蒸发）变成**可 peek 的活会话**，并回答「A-core 到底还剩多少可做」；扫完前两轮不要再用「枯竭」措辞。
+> 📦 归档指针 · 2026-11-14 18:0x A 可主动全量扫描 698 机令（A-pure 枯竭后重扫无效；需重扫时从 ARCHIVE 复活）· 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_A.md「归档块 · 2026-11-27 r1406 瘦身 · A5」
 
 > 🆕 **用户令 · WAVEVIEW 协作 · 2026-11-14（vision ↔ designflow 协作 · 空闲时认领）**
 >
@@ -217,9 +111,7 @@ session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 
 >
 > ---
 >
-> 🔁 **换池职责变更 · 2026-11-12 用户令**：候选池 11/05 → 11/09 的切换**改由 B 执行**（见 `BAIZE_DESIGNFLOW_BENCH_TASK_B.md` 顶部令）。**A 不再执行 A1–A6 换池步骤**，也不再重复生成 `summary_1109.tsv`；A 继续负责 `board.md` 维护与选料，等 B 落盘 `summary_stats.json.mc_matrix.src=summary_1109.tsv` 后**直接使用新池**（不得再用 1105 的 fresh 数字做选料结论）。
->
-> ---
+> 📦 归档指针 · 2026-11-12 换池职责变更令（11/05→11/09 切换由 B 执行，已完成）· 原文见 ARCHIVE_OPERATOR_DESIGNFLOW_A.md「归档块 · 2026-11-27 r1406 瘦身 · A6」
 >
 
 > 💬 **2026-11-11 用户令（第 2 版）：讨论区 `benchmark/designflow/discuss/`**
@@ -251,7 +143,6 @@ session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 
 > 召集人 = **shard A**（board 只由 A 写；A 也要发言）。讨论产出是**建议**不是结论。论文目录只读。
 
 
-
 > ### ⚠️ 同步纪律（共享工作副本 · 2026-11-11 补 · 源自两次真实事故）
 >
 > 4 个 shard + 其他线**共用一个 git 工作区**。文件系统不会写坏文件，**但 git 合并会丢内容**：
@@ -268,7 +159,6 @@ session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 
 > 2. 🚫 禁止 `git stash pop` 去"恢复"残留 —— 会阻塞全部线。
 > 3. ✅ 冲突解不掉就**停手报 blocker**，🚫 别靠 rebase 硬推（丢的是别人的数据）。
 >
-
 
 
 > 📦 **归档指针 · 2026-11-11「mc 阈值全线 30 → 10」**（已作废 · 被 2026-11-15 mc≥5 令覆盖；配置已落地 target_mc=10/shard_mc 全 10）：原文见 `ARCHIVE_OPERATOR_DESIGNFLOW.md`「归档块 · 2026-11-20 r866 瘦身 · A1」。
@@ -464,7 +354,6 @@ git commit -m "designflow #<轮次>: <一句话>" && git push origin master
 ---
 
 > ⚠️ 本文件为**只读指令文件**，agent 禁止修改；有异议写进 MEMORY 并存疑执行。
-
 
 
 ## 🔀 SHARD 配置（本 shard 专用 · 覆盖主 TASK 中的通用描述）
