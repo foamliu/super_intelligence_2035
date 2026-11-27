@@ -1,4 +1,4 @@
-⚠️ S2切换失败已回退S1·训练健康iter=350120/700k(50.0%) step≈7.0s(✅<7.4s gate)·loss~1.97·0NaN/0skip✅·LR re-warmup中(6e-5,ETA~4h回1e-3)·eval daemon已重启(PID 3535099)·350k eval RUNNING(GGUF DONE→lm_eval 8set)·S2待运维决定(patch 25/25 PASS·fail=executor GPU cleanup wait不足)·eval_next=360k·WAITING=0
+⚠️ S2切换失败已回退S1·训练健康iter=350210/700k(50.0%) step avg10≈7.04s(✅<7.4s gate)·loss~1.97·0NaN/0skip✅·LR re-warmup中(1.05e-4,ETA~3.5h回1e-3)·eval daemon运行中(PID 3535099)·350k eval RUNNING(lm_eval 8set limit=100~11min)·S2待运维决定(patch 25/25 PASS·fail=executor GPU cleanup wait不足)·eval_next=360k·WAITING=0
 > #3560（2026-11-28 05:50, ⚠️S2切换失败·S1手动恢复成功·训练iter=350030 step≈7.1s loss≈1.99 0NaN✅·LR re-warmup中·eval daemon待重启）→ daily-memories/2026-11-28.md
 > **S2切换事件全记录**:
 > ①05:18:26 350k ckpt确认✅·executor自动执行切换
@@ -14,6 +14,8 @@
 > **S2切换待运维决定**:patch/shim/cursor all verified✅(data 25/25 PASS)·失败纯因executor操作时序(GPU cleanup wait不足)·修复=executor P4后加`ssh .12 nvidia-smi` poll until 0MiB
 > evidence: /tmp/s2_switch_execution.log(full timeline)·/tmp/baize_s1_baize2b_worker_pre_s2.log(pre-switch)·/tmp/baize_s1_restart_350k.log(restart)·worker_log iter 350010-350030 step/loss/lr
 > #3561（2026-11-28 06:01, 监控巡检+S2失败后续·训练健康iter=350120 step≈7.0s loss≈1.97 0NaN✅·LR=6e-5 re-warmup中·eval daemon已重启(PID 3535099)·350k eval RUNNING(GGUF F16 4.44G DONE@06:00→lm_eval 8set limit=100 -t4 nice19)·pre-eval step=7.0s·.29 load=22.25·.12 load=23.56·S2切换待运维决定(fail=executor GPU cleanup wait不足·fix=加nvidia-smi poll until 0MiB)·eval_next=360k）→ daily-memories/2026-11-28.md
+
+> #3562（2026-11-28 06:11, 监控巡检·训练健康iter=350210/700k(50.0%) step avg10≈7.04s(last10=7022/7074/6981/7078/7106/6949/7090/7046/7002/7039ms·all<7.4s gate✅) loss≈1.967(range1.959-1.978) 0NaN/0skip✅·LR=1.05e-4 re-warmup中(+5e-6/10step,ETA~3.5h回1e-3)·grad norm 0.063-0.072(normal)·350k eval RUNNING(lm_eval 8set limit=100 -t4 nice19·~11min elapsed·results dir空=未完成·llama-server PID 3601257+gguf_lmeval_run.py PID 3617896 alive)·pre-eval step=7.0s·.29 load=24.97·.12 load=25.18·GPU .29 8×97-100%/73693-74191MiB/56-63°C✅·GPU .12 8×98-100%/73763-74641MiB/55-64°C✅·train PID 2221607 alive(~29min)·BLEND_CURSOR_OFFSETS_JSON=""(S1 stock✅)·S2待运维决定(patch/shim/cursor 25/25 PASS·fail=executor GPU cleanup wait不足·fix=加nvidia-smi poll until 0MiB)·eval_next=360k·WAITING=0）→ daily-memories/2026-11-28.md
 
 > 📦 #3558（2026-11-28 04:29, 监控巡检·训练健康iter=349590 step avg10≈7.34s·S2切换ALL READY(7pt verified✅)·350k ETA~05:19）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3557（2026-11-28 04:19, 监控巡检·iter=349510 step avg10≈7.23s·S2切换ALL READY(7pt verified✅)·350k ETA~05:18）→ daily-memories/2026-11-28.md；需要时再读。
