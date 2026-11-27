@@ -1493,3 +1493,34 @@ DEBT:0. WAITING:0 (不设等待 §1.1).
 - §5 七项全绿 (ref check_live PASS / 3 static-neg + 2 live-neg distinct / 3-seed / ref check_static PASS / judge_layers=[L0,L1,L2.live] sha 3-way sync / 断言 14→15 only-add / check_live 不读 reference/ GT 仅读 hidden B)
 
 **零 check.py / cases / judge_layers / live_eval_changes.tsv 落盘改动** (桩体检只读). 仅 live_eval_review_nonlite_B.tsv InstCurrentMeasGen-001 行 check_live TODO→"桩体检 PASS r1362" + live_evidence + round=r1362-2026-11-28.
+
+### r1365 (2026-11-28) — non-Lite-500 R2 改造 #16: CTLEtranChar-001 (reformed)
+
+**case**: EDA-Eval-DesignFlow-CTLEtranChar-001 (spice_sim, candidate-runs-hspice + judge-runs-ref-solver). r1364 桩体检 PASS de-risked, 本轮直接执行 wrap.
+
+**pattern**: candidate `ctle_tran.py --params <p.json> --out <dir>` builds CTLE tran deck (.inc ctle.sp + .lib corner.lib tt + LFSR pseudo-random diff source + .TRAN + .MEAS eye/CM/timing/slew/overshoot/power 14 keys) + 自身调 HSPICE (parse .mt0 $DATA1) -> tran_report.json (14 REQUIRED_KEYS); judge cond(c) fresh-A-run vs submitted tran_report_A 8% anti-fab + conds(d)-(j) A metrics vs refA (judge indep REF.run hspice) 5% + cond(k) candidate run B + conds(l)(m) B metrics vs refB 5% + conds(n)(o) B eye_amp/pwr_avg differs from A >5% anti-hardcode-A + cond(p) deck LFSR 非 PRBS → 全 mislabeled [L0,L1], broken in SUT (no hspice => candidate fresh-A no report => cond c first-fail). **判据同原 c..p 一字迁移** (TOL_ANTIFAB 8% / TOL_REF 5% / TOL_DET 1% 原封).
+
+**Q1 保真实证** (.75 EDASession hfhds201 hspice V-2023.12-SP1-1, 3-seed): ref check_live PASS — cand A+B+A2 + judge indep ref solver A+B 全真跑 hspice; cand freshA + refA **EXACT match GT_A** (eye_amp0.4214/pwr1.60e-4/outcm0.6123/eye_vmax0.2107/eye_vmin-0.2107/eye_mid-2.762e-7/i_vdd-2.0e-4); cand B + refB **match GT_B** (eye_amp0.5699 vs GT0.5710 0.19% / pwr3.00e-4 exact / outcm0.7870 exact); 3-seed ref check_live PASS ×3 identical (cond q determinism). **physics REAL NOT fabricated** (pwr=VDD*|i_vdd|=2*Itail*VDD exact: A 0.8*200u=160uW, B 1.0*300u=300uW; outcm=VDD-Itail*RL; contrast SlicerSizeOpt r1352 BLOCKED 1000x fabricated).
+
+**非侵入包装**:
+- `_check_static_impl` keep (a) zip 含 ctle_tran.py+tran_report_A.json + (b) py_compile 一字不动 + **(sa/sb/sc) only-add** 源码结构检查 (sa subprocess+hspice / sb LFSR deck 构造 反 PRBS() 糊弄 trace 核心陷阱 / sc .mt0 parse).
+- `check_static` try/except 三元组.
+- `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201: upload submit.zip+params_A+params_B(hidden)+ctle.sp+corner.lib+ctle_tran_ref.py(judge ref solver)+live_driver.py -> driver 跑候选 A(fresh)+B+A2(determinism) + judge indep ref solver A+B (REF.run hspice) -> JSON -> 断 c..p 同判据 + (q) determinism only-add.
+- `check()` 兼容包装 + `__main__` 改 check_static.
+
+**negatives** (rebuilt as .py files; old neg subdirs removed):
+- static-neg 3-distinct: naive_empty(a) / naive_print_expected(sa) / naive_core_deleted(sc).
+- live-neg 2-distinct static-pass/live-fail: naive_no_run→cheat_no_run(c, no .mt0) / cheat_hardcode_a(l, B eye_amp=A vs refB).
+- §4.9 trio distinct {empty:a, print_expected:sa, core_deleted:sc} 3/3.
+- 关键教训: 静态 neg 的 docstring/注释不能出现 trigger 词 (subprocess/hspice/LFSR/.mt0), 否则 substring 源码结构检查假阳 — 注释须 sanitized. live-neg 的 submitted tran_report_A.json 须匹配其 fresh-A 行为 (cheat_no_run=伪造值, cheat_hardcode_a=真 A 值), 否则 antifab cond(c) 误截断 first-fail.
+
+**§5 七项全绿**:
+1. ref check_live PASS hfhds201 hspice V-2023.12-SP1-1 3-seed identical.
+2. 3 static-neg distinct{a,sa,sc} + 2 live-neg distinct{c,l}.
+3. 3-seed ref check_live PASS ×3 identical (cond q).
+4. SKIP_RUN=1 deploy workdir clean no-leak + ref check_static PASS.
+5. judge_layers=[L0,L1,L2.live] JSON test md5 130d8f3e 3-way sync disk==JSON==HEAD.
+6. 断言 16->20 only-add (5 static a/b/sa/sb/sc + 15 live c..p+q, 原 16 +4 only-add) 阈值不放宽.
+7. check_live 不读 reference/ GT 文件, 仅读 hidden B params_B.json 输入 + ref solver 在 .75 真跑算 GT (非预存 GT 文件, 同原 check.py in-process REF.run).
+
+**落盘**: live_eval_changes.tsv +1 row (repo_commit=eb95732fb). EDA-Flow-Bench HEAD=eb95732fb pushed (check.py+negatives+negative_selftest.py+case JSON sync). review_nonlite_B.tsv CTLEtranChar-001 → R2 done. L2.live B nonlite 15->16. DEBT:0. WAITING:0.
