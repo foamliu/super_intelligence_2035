@@ -865,3 +865,25 @@ L2.live done 21→22；REQ 未改造 31-22=9 条（hspice-mock/finesim-mock GT-r
 **.75 通路 OK**（r1328 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session slct_r1328/negselftest 用后 close）。自验通道：`_live_upload` via `printf %s '<b64>' | base64 -d` 零腐蚀（r1324 precedent），REF live PASS + CHEAT live FAIL 一次过。
 
 **累计**：REQ 29（done 27，余 2 confirmed-REQ 待 R3 改造：SlicerFbTimeOpt/SpiceTbGen），OPT 19，NA 76，cross_shard 2，L2.live 26→27。
+
+### r1329：SpiceTbGen-001（hspice-mock RANGE-SYNTHESIZER · 第28条 · R3 第2条）
+
+**Mock 模式（distinct from GT-replay family）**：`HSPICE_MOCK_SRC` 是 deck-driven **RANGE-SYNTHESIZER**（非 GT-replay）：parse `.measure tran` 行，delay measures → 1.0e-9（落在 delay-range 1e-12..1e-8），param measures → `eval(expr with vdd)`（落在 volt-range 0.5..1.3），写 job-concluded `.lis`+`.mt0`。**无 `_MOCK_OUTPUTS`/GT dict，无 signature lookup**——对任何结构正确（`.include`/vdd dc/PULSE/`.tran`/≥2 `.measure`/`.options`/`.temp`/`.print` + B-net refs）的 deck 一律吐 1e-9+vdd。conds (i)(j)(l)(m) 只校验 value RANGES 不校验具体值。
+
+**Q2 实证（r1329）**：cheat `cheat_unreachable_trig` —— 结构正确 B testbench（`.include dut.sp`/vdd dc/PULSE/`.tran`/4 `.measure`/`.options`/`.temp`/`.print` + B-net refs a/b/z_nand/z_buf），但 `.measure tpd_a2buf`/`tpd_nand` 的 `trig v(a) val=999` 永不跨越 → `_check_static_impl` **14/14 PASS 假阳**（mock 按 `.measure` name token 发 1e-9，无视 trig 可达性）。真 hspice V-2023.12-SP1-1 @ hfhds201：`val=999` 永不跨越 → `tpd_a2buf=failed`/`tpd_nand=failed`，`vswing=1.2`/`vlow=0` finite → **cond (j) ≥2 finite 仍 PASS**（param measures 活），但 **cond (l) delay-range FAILS**（无 finite delay value）。
+
+**KEY DISTINCTION vs Vcc2scActDeckGen-REQ→OPT-downgrade（r1325）**：那个 mock **重写 DUT netlist 为 model-free stubs**（真 hspice 也 conclude garbage，zero physics gain → OPT）；此处 mock **原样跑候选 testbench 在真 dut_B.sp**（via `.include`）→ 真 hspice **确实 exercise DUT 物理**，能抓 non-converging/unreachable-trig testbench → genuine L2 gain ⇒ **REQ confirmed**（R2 verdict upheld，reason 修正为 range-synthesizer 非 GT-replay）。
+
+**Q1 保真**：.75 真跑 ref testbench（honest deck）→ REF check_live PASS：B `tpd_a2buf=2.204e-09`/`tpd_nand=2.556e-11`/`vswing=1.2000` == `expected_measures_B`（tpd_a2buf_ns=2.2045/tpd_nand_ps=25.56/vswing=1.2）。mock 是 range-faithful 非 value-faithful（发 1e-9 vs real 2.204e-09，均落 delay-range）⇒ Q1 = mock-passing ref genuinely works on real hspice（无 false-negative），非 byte-exact。
+
+**改造（非侵入包装）**：`_check_static_impl` 14 conds a-n 一字不动 + `check_static` try/except 3-tuple + `check` 兼容 + `check_live(sess)` .75 real-hspice judge-independent rerun candidate testbench + hidden `dut_B.sp`（as `dut.sp`）on B，read real `judge.lis`/`.mt0`，re-assert (i)concluded+no-fatal + (j)≥2 finite real measures + (l)delay-range 1e-12..1e-8 + (m)voltage-range 0.5..1.3 **SAME thresholds never relaxed**；+ Q1 fidelity（ref testbench real hspice B `tpd_a2buf`==2.204e-09±20% / `vswing`==1.2±5%）；+ determinism (o) B rerun delay ±2%；robust `_parse_mt0_live` 处理 real hspice `failed` value token（naive parser 会被 shift）。live-neg=`cheat_unreachable_trig`（static-PASS/live-FAIL cond l）。
+
+**§5 全绿**：① REF check_live PASS（real hspice B tpd_a2buf=2.204e-09/tpd_nand=2.556e-11/vswing=1.2 Q1保真）；② 4 static neg FAIL 4-distinct{b,c,f,k} + §4.9 trio distinct{b,c,f}3/3 + live-neg FAIL cond (l)；③ determinism (o) B rerun delay ±2%；④ SKIP_RUN deploy workdir clean（无 leak）；⑤ sha `71100b227f69` 3-way sync；⑥ 断言条数只增不减；⑦ L5 hidden-B uploaded to sess not in SUT sandbox。
+
+**infra note**：`_live_run_hspice_tb` uploads both tb+dut content via `_live_upload`（`printf %s '<b64>' | base64 -d`）zero-corruption，**no local path on .75**（首版 `cp '<local_path>'` 在 .75 不存在致 hspice `path is wrong` rc=255，已修为 content-upload）。
+
+**登记**：`live_eval_changes.tsv` +1 行（ts=2026-11-27T13:10+08:00, jl `[L0,L1]`→`[L0,L1,L2.live]`, repo_commit=71100b227f69）。
+
+**.75 通路 OK**（r1329 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session spicetbgen_probe/negselftest 用后 close）。
+
+**累计**：REQ 29（done 28，余 1 confirmed-REQ 待 R3 改造：SlicerFbTimeOpt），OPT 19，NA 76，cross_shard 2，L2.live 27→28。
