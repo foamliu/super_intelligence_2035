@@ -1524,3 +1524,43 @@ DEBT:0. WAITING:0 (不设等待 §1.1).
 7. check_live 不读 reference/ GT 文件, 仅读 hidden B params_B.json 输入 + ref solver 在 .75 真跑算 GT (非预存 GT 文件, 同原 check.py in-process REF.run).
 
 **落盘**: live_eval_changes.tsv +1 row (repo_commit=eb95732fb). EDA-Flow-Bench HEAD=eb95732fb pushed (check.py+negatives+negative_selftest.py+case JSON sync). review_nonlite_B.tsv CTLEtranChar-001 → R2 done. L2.live B nonlite 15->16. DEBT:0. WAITING:0.
+
+## r1366 non-Lite-500 R2 桩体检#17 — C2cRfbCmStab-001 Q1 桩体检 PASS (2026-11-28)
+
+**case pattern = candidate-runs-hspice + judge-直调 hybrid** (同 r1345..r1365 族, 本条 candidate-runs-hspice 且 judge cond(m) ALSO 独立重跑 HSPICE on B base corner nonrfb):
+
+- candidate `c2c_cm_probe.py <netlist.sp> <sim_config.json> <out_dir>` 对 rfb/nonrfb 两变体各改 `.param rfb_r=` 后跑一次 HSPICE .tran (45 PVT .alter corners = 5 vto × 3 temp × 3 vdd), parse .lis `.measure AVG_CM` (avg of v(xi_wck_c2c_19.out) over 2n-5n) -> report.json (corners/stats_rfb/stats_nonrfb/comparison/conclusion + probe + n_corners_expected + hspice_ran).
+- judge cond(m) 独立重跑 HSPICE on B base corner (extract pre-.alter deck + override rfb_r=nonrfb_r) -> parse avg_cm -> 与候选 nonrfb corner0 比 5% tol.
+- 全 mislabeled [L0,L1] (judge_layers=None), broken in SUT sandbox (no hspice -> candidate hspice_ran=F -> cond d first-fail + conds e/g/h/i/l metric fail + cond m crash).
+
+**REQ 稳固 confirmed** (R1 verdict 正确).
+
+**Q1 保真实证 (.75 EDASession hfhds201 hspice V-2023.12-SP1-1, session q1-r1366, wall~15s/cand)**:
+- ref candidate on B: hspice_ran rfb=T/nonrfb=T, 45/45 corners.
+  - stats_rfb mean=0.5984 std=0.0301 (near vref 0.62, in [0.5,0.7] ✓ cond i); min/max 0.5449/0.6283.
+  - stats_nonrfb mean=0.5441 std=0.1931 (PVT drift 0.251-0.826V ✓ cond h); min/max 0.2509/0.8262.
+  - stability_factor_nonrfb_over_rfb=6.423 (>1.5 ✓ cond l), rfb_more_stable=True (✓ cond g), std_reduction=84.4%.
+  - probe inst=xi_wck_c2c_19 node=out (✓ cond n).
+- cond(m) judge indep hspice rerun B base corner nonrfb (rfb_r=2g): avg_cm=0.7472872 == cand nonrfb corner0=0.7472872, rel=0.000% (<5% ✓ cond m exact match).
+- A cross-input: rfb mean=0.5955/nonrfb mean=0.6227, A corner0 != B corner0 (anti-hardcode ✓ cond k).
+- determinism: B/B2 corners md5=5b636ccacffb9d91ffa4c7feb4c2955c identical (3-seed 等价).
+
+**physics REAL NOT fabricated**: RFB (rfb_r=3k) diode-probe clamped to vref 0.62 via feedback, std 仅 30mV; NON-RFB (rfb_r=2g open) out=vdd-I*RL drifts 0.25-0.83V across 45 PVT corners, std 193mV. 物理自洽 (contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated GT).
+
+**Q2=NO (错的解法不会判过)**:
+- fabricated-report (no hspice) -> cond d first-fail (no .lis on disk + hspice_ran=F).
+- hardcode-A -> cond k first-fail (A/B corner0 must differ) + cond m indep rerun matches B nonrfb corner0 not A.
+- wrong-deck -> cond m first-fail (indep avg_cm != cand nonrfb corner0 within 5%).
+- no-sim/print-only stub -> cond d first-fail.
+REQ 稳固.
+
+**R2 wrap plan (de-risked, 下轮 r1367 直接执行, 同 r1365 CTLEtranChar/r1363 InstCurrentMeasGen candidate-runs-hspice+judge-直调 模板)**:
+- `_check_static_impl` keep (a/b/c/d) zip+c2c_cm_probe.py+py_compile+harness+report_A 一字不动 + **(sa/sb/sc) only-add** 源码结构检查 (sa subprocess+hspice / sb .tran+.measure AVG_CM deck 构造 / sc .lis parse) 一字不动删候选跑块(conds b-n 依赖 candidate .lis/report)+judge hspice block(cond m).
+- `check_static` try/except 收口三元组.
+- `check_live(sess)` .75 upload submit.zip+c2c_cm_probe_A.sp+sim_config_A.json(A visible)+c2c_cm_probe_B.sp+sim_config_B.json(B hidden)+live_driver.py -> driver 跑候选 B+A+B2(determinism) + judge indep hspice rerun B base corner nonrfb(cond m) -> JSON -> 断 b..n 同判据 (45 corners / numeric stats / rfb std<nonrfb std / PVT drift / rfb mean in [0.5,0.7] / stability_factor>1.5 / A cross-input / anti-hardcode / indep hspice avg_cm within 5% / conclusion+probe) + `(o)` determinism only-add + `check()` 兼容 + `__main__` 改 check_static.
+- live-neg=cheat_no_run(cond d no .lis, hspice_ran=F live-FAIL) + cheat_hardcode_a(cond k A/B corner0 identical + cond m indep rerun=B not A, live-FAIL) 2 distinct.
+- static-neg §4.9 trio: naive_empty(a 无 c2c_cm_probe.py)/naive_print_expected(sa 无 subprocess+hspice)/naive_core_deleted(sc 无 .lis parse).
+
+**本轮零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动** (桩体检只读, 仅 review_nonlite_B.tsv 行更新). 详见 designflow/live_eval_review_nonlite_B.tsv C2cRfbCmStab-001 行.
+
+**三分类不变**: REQ 34(done 16, BLOCKED 1, 桩体检-PASS-待wrap 1 C2cRfbCmStab)/OPT 0/NA 437. DEBT:0. WAITING:0(不设等待§1.1).
