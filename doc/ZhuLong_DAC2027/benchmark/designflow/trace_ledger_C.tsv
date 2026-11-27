@@ -1377,3 +1377,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 4iv57					case	EDA-Eval-DesignFlow-SchematicStripeFix-001	2026-11-28 04:56	
 1789544771710_m60gy	e0020134	hfeg0plg86	1164	layout_aether	case	EDA-Eval-DesignFlow-AetherBridgeClient-001	2026-11-28 05:26	
 1795075084116_js4n1.messages.json	e0024852	hfhds201	545	physical_verify	case	EDA-Eval-DesignFlow-ViaMetalOptGdsGen-001	2026-11-28 05:53	
+1795586032370_24ap1	kenwang	hfeg0plg54	387	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckPrune-001	2026-11-28 06:24	
