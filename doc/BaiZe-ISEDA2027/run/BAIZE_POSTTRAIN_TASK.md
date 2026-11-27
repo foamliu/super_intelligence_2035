@@ -1,6 +1,50 @@
 # BAIZE_POSTTRAIN_TASK.md
 
-### 🔴🔴 运维令 · 2026-11-22 09:3x（**最高优先 · 覆盖下列全部旧令的排期**）
+### 🔴🔴🔴 用户令 · 2026-11-27 17:4x（**最高优先 · 覆盖下列全部旧令的排期**）
+
+> **用户原话**：「安排 posttrain 启动 A5，现在显卡驱动和 CUDA 都已升级，可以用 vllm/sglang 启动 Qwen3.5-2B 了，启动评测。」
+
+#### 背景：阻塞已解除
+
+- **显卡驱动已升级**：`595.91.07`（原 `550.54.14`，曾因 <560 导致 vLLM 无法启动 Qwen3.5-2B hybrid 架构）。
+- **CUDA 已升级**：`13.1`（nvcc `V13.1.115`，原 12.4）。`/usr/local/cuda` → `/usr/local/cuda-13.1/`。
+- **GPU 现状**：GPU 0-3 = root SGLang（不可动）；**GPU 4-7 全空（0 MiB）**。
+- **Qwen3.5-2B 模型**：`/nas_data/app.e0031982/models/Qwen3.5-2B`（fp16）。
+- **⚠️ 旧 `/tmp/vllm_venv` 已丢失**（/tmp 重启后丢失）⇒ **需重建 venv**（或用 conda py310 环境装 vllm/sglang）。
+
+#### 本令任务
+
+**启动 A5 臂：用 vLLM 或 SGLang 在 GPU 上启动 Qwen3.5-2B（fp16），跑 EDA-Eval-PyAether 158 题评测。**
+
+1. **重建推理环境**：
+   - vLLM 或 SGLang 任选（哪个先跑通用哪个）；优先用 conda `py310` 环境（`/nas_data/app.e0031982/miniforge3/envs/py310`）安装，避免 /tmp 丢失问题。
+   - Qwen3.5-2B 是 hybrid 架构，需确认 vLLM/SGLang 版本支持；若 vLLM 仍不认 hybrid，改用 SGLang。
+   - `CUDA_HOME=/usr/local/cuda-13.1`（已在本机 `.bashrc` 设好，`bash -lic` 可继承）。
+
+2. **起 serve**：
+   - GPU 选 **GPU5 或 GPU7**（GPU4 留给 A0 base :8098 standby；**🚫 不碰 GPU0-3 / GPU6**）。
+   - `--served-model-name qwen3.5-2b-a5`，端口 **`:8097`**。
+   - 起前 `nvidia-smi` 确认目标卡为空；起后 `curl :8097/v1/models` 验证 **B1 身份四证**。
+
+3. **跑评测**（对齐 A0 口径，§二预注册判据不变）：
+   - **158 题 / Pass@1 / 2500s / 单 trace / `-p 8 -n` / cline harness**。
+   - **先跑 1 run 冒烟**，确认 serve 正常 + 量尺无异常后，再跑满 **5-run**。
+   - 口径 = **无 RAG / 无沙盒 MCP / 无 hook**（与 A0_base 同口径；A0_base_ragfix 的 ragfix 口径暂不用于 A5，除非用户另令）。
+
+4. **交付**：`baseline_A5_qwen35_2b_run<N>_pertask.json` × 5 + `baseline_A5_qwen35_2b_5run_summary.json` + `baseline_A0_vs_A5_paired_compare.json`。
+
+5. **判据**（§二预注册不变）：B1 身份四证 / B3 judge 确定性 / A5 vs A0 逐题配对检验（McNemar / paired bootstrap）/ 5-run mean±std / 双向解释。
+
+#### 纪律
+
+- 🚫 不碰 GPU0-3（root sglang）与 GPU6（vision VQA 服务，如有）；
+- 🚫 不 kill 别线进程；
+- ✅ 每轮 MEMORY 心跳 + daily 一行；`git add -- <本线路径>`，不用 `-A`。
+- 🔴 旧令（2026-11-22 运维令及更早）的 A1/A0 报告等已闭合项不再重复；本令专注 A5。
+
+---
+
+### 🔴🔴 运维令 · 2026-11-22 09:3x（**已被上方 2026-11-27 用户令覆盖排期**）
 
 > **用户原话**：「把指令下发给 posttrain，让他写一份吧。」（针对 A0 能力对照报告的署名与执行主体）
 
