@@ -1,6 +1,7 @@
 # ARCHIVE_OPERATOR_DESIGNFLOW_D.md — shard D 历史快照归档
 
 > 本文件由 MEMORY_DESIGNFLOW_D.md §8 体积规程归档而来。
+>   归档批次 r1571-pointer（2026-11-27）：r1570/r1569 监控/teeth-guard 轮原文转指针（r1571 释体积）。r1570=.75 REACH_OK+IOBufTune-001 spot 全green §4.9 trio full(6neg)；r1569=.75 REACH_OK+TrMatchHelper-001 spot 全green §4.9 trio full(4neg)；均 cross-shard P0 stays 1(OpampChar挂~193-194轮/InvTripDelay RESOLVED)+live_eval 121/121 全green。原文见 daily_D_2026-11-27_r15{69,70}.md。
 >   归档批次 D1（2026-11-16）：r670-r749 历史快照原文（125 条）。
 >   归档批次 D2（2026-11-17）：r782-r805 历史快照原文（24 轮，自 MEMORY 体积归档搬迁）。
 >   归档批次 r1047（2026-11-21）：r1040→r1016 历史快照原文（21 轮，自 MEMORY 体积归档搬迁）。
