@@ -1,15 +1,21 @@
 {
   "mc10": 4529,
-  "mc100": 0,
-  "mc15": 0,
-  "mc20": 0,
-  "mc30": 0,
+  "mc100": 1917,
+  "mc15": 4225,
+  "mc20": 3869,
+  "mc30": 3477,
+  "prev_sessions": 9245,
   "scan_date": "2026-11-24",
   "scan_dir": "ssh_eda_search_20261124_023802",
   "scan_path": "/home/t0002965/log/ssh_eda_search_20261124_023802/summary.tsv",
   "scansync": {
-    "prev_scan": "ssh_eda_search_20261109_224902",
-    "updated_at": "2026-11-26T17:30:00"
+    "dedup_hosts": 681,
+    "dedup_sessions": 9245,
+    "dedup_users": 665,
+    "scan_dir": "/home/t0002965/log/ssh_eda_search_20261124_023802/",
+    "shard_A_new": 0,
+    "shard_A_pool_mc10": 3735,
+    "total_rows": 52377
   },
   "sessions": 9245,
   "shard_A_new_mc10": 1314,
@@ -24,6 +30,6 @@
   },
   "target_mc": 10,
   "total_rows": 52377,
-  "updated_at": "2026-11-26 17:25",
-  "users_mc10": 0
+  "updated_at": "2026-11-27 21:15",
+  "users_mc10": 594
 }
