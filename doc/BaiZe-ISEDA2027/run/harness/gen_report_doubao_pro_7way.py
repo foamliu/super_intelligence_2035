@@ -10,16 +10,17 @@ PRED_DIR = "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA
 NOW = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 ROUND = os.environ.get("ROUND", "R3000")
 
-HARNESSES = ["cline-patched", "codex", "opencode", "claude-code", "pi", "hermes", "deepseek-harness"]
-DISPLAY = {"cline-patched": "zhulong(cline-patched)", "deepseek-harness": "deepseek"}
+HARNESSES = ["cline-patched", "codex", "opencode", "claude-code", "pi", "hermes", "deepseek-harness", "zhulong"]
+DISPLAY = {"cline-patched": "zhulong(cline-patched)", "deepseek-harness": "deepseek", "zhulong": "zhulong(no policy)"}
 VERSIONS = {
-    "cline-patched": "3.0.51",
-    "codex": "0.94.0",
-    "opencode": "1.18.27",
-    "claude-code": "2.1.197",
-    "pi": "0.2.15",
-    "hermes": "git.0e21933 (2026.9.24)",
-    "deepseek-harness": "0.1.5rc1",
+    "cline-patched": "3.0.76",
+    "codex": "0.172.0",
+    "opencode": "1.19.6",
+    "claude-code": "2.1.332",
+    "pi": "1.6.1",
+    "hermes": "v0.23.3+ (git.e0dcc39)",
+    "deepseek-harness": "0.2.2rc2",
+    "zhulong": "git.main (2026.11.26, no policy)",
 }
 
 def disp(h):

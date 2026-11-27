@@ -39,7 +39,7 @@ GW_PORT_MAIN="9090"   # codex/opencode/cc/pi/hermes + cline OPENAI_BASE_URL env
 GW_PORT_CLINE="9092"  # cline globalState.json fallback
 GW_PORT_DSH="9091"     # deepseek-harness
 
-HARNESSES=("cline-patched" "codex" "opencode" "pi" "claude-code" "hermes" "deepseek-harness")
+HARNESSES=("cline-patched" "codex" "opencode" "pi" "claude-code" "hermes" "deepseek-harness" "zhulong")
 
 # ── Env vars for run_verified_full.py ──
 export HARNESS_MODEL="$DOUBAO_MODEL"

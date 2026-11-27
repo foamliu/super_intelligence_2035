@@ -120,11 +120,41 @@ def run_cline_patched(instance, workdir, timeout):
     return driver.run(instance, workdir, timeout)
 
 
+def run_zhulong(instance, workdir, timeout):
+    """Zhulong CLI (Cline fork, no policy) runner.
+    完全复用cline参数配置，仅替换启动命令路径。
+    """
+    import types
+    from run_harness import UNIFIED_MODEL, ClineDriver
+    driver = ClineDriver()
+    # 共用cline的数据目录，配置已适配doubao-pro网关
+    data_dir = os.environ.get(
+        "CLINE_DATA_DIR", "/nas_train/app.e0031982/harness_work/cline_harness_data")
+    _seed_cline_data_dir(data_dir)
+    ZHULONG_BIN = ["/usr/bin/bun", "run", "/nas_train/app.e0031982/harness/eda_platform/apps/cli/src/index.ts"]
+    def run_zhulong_impl(self, instance, workdir, timeout=3600):
+        cmd = ZHULONG_BIN + ["-c", str(workdir), "--data-dir", data_dir,
+               "-P", "openai-compatible", "-m", UNIFIED_MODEL, "-k", DUMMY_KEY,
+               "--auto-approve", "true",
+               "--compaction", "basic",
+               "--thinking", "low",
+               "--json", instance["problem_statement"]]
+        r = _run(cmd, workdir, timeout, env={
+            "OPENAI_API_KEY": DUMMY_KEY,
+            "OPENAI_BASE_URL": f"http://127.0.0.1:{os.environ.get('GW_PROXY_PORT', '9090')}/v1",
+        })
+        r.harness = "zhulong"
+        r.model_patch = git_patch(workdir)
+        return r
+    driver.run = types.MethodType(run_zhulong_impl, driver)
+    return driver.run(instance, workdir, timeout)
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Run a single harness on a single SWE-bench instance")
     ap.add_argument("--harness", required=True,
-                    choices=list(DRIVERS.keys()) + ["cline-patched"])
+                    choices=list(DRIVERS.keys()) + ["cline-patched", "zhulong"])
     ap.add_argument("--instance-json", required=True)
     ap.add_argument("--workdir", required=True)
     ap.add_argument("--base-commit", default="")
@@ -151,6 +181,9 @@ def main():
     if harness_name == "cline-patched":
         print(f"[run_single] running cline (patched) ...")
         res = run_cline_patched(inst, workdir, args.timeout)
+    elif harness_name == "zhulong":
+        print(f"[run_single] running zhulong (no policy) ...")
+        res = run_zhulong(inst, workdir, args.timeout)
     else:
         driver = DRIVERS[harness_name]
         if not driver.available():
