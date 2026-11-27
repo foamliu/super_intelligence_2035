@@ -546,3 +546,57 @@ eda_flow open_session(hfhds201) → 4 个 hidden-B GDS 经 `echo <b64> | base64 
 **登记**：`live_eval_changes.tsv` **0 新行**（无 judge_layers 变更，保持 [L0,L1]）。`live_eval_review_C.tsv` 3 行 round 追加 +r1237，check_live/live_evidence/live_reason 更新 OPT-closed 证据。
 
 **R2 全收口**：REQ 9/9 done（R2.1 calibredrv×2+rules_checker×1 + 既有 6），OPT 3/3 closed（R2.2 skipper×3 OPT-with-evidence），NA 125。C 19/638 L2.live（不变）。LIVE review 137/137 全填满。**报 A 汇总**：C 三分类 REQ=9 / OPT=3 / NA=125，R2 闭合，无口径变更（live_eval_changes.tsv 0 新行）。
+
+---
+
+## Live-eval 审视 — non-Lite-502（2026-11-27 用户令 · R1 静态重判）
+
+> **令**：`BAIZE_DESIGNFLOW_BENCH_TASK.md` 顶部 2026-11-27 用户令「non-Lite-500 case 实跑评估改造」。
+> **名册**：`designflow/live_eval_review_nonlite_C.tsv`（502 条 = C 639 − lite 137）。
+> **范围**：全仓 non-lite case；Lite-500 已审视（137 条）不重审。
+> **既有 L2.live 10 条**（AetherHiliteCmd / HierJump / HierSearchDFS / ListInstCV / PyLibApiDocGen / RedundantPinRemoval / RnodeScatterScript / SchematicPinAdd / TopPinLabelExtract / WheelZoom）标 `LIVE-REQ-PREEXISTING`，保留不重判。
+
+### R1 三分类结果（2026-11-27 r1417）
+
+| verdict | 计数 | 说明 |
+|:--|--:|:--|
+| LIVE-REQ-PREEXISTING | 10 | 既有 L2.live，保留 |
+| LIVE-REQ | 0 | R1 静态重判未发现新增 REQ |
+| LIVE-OPT | 0 | — |
+| LIVE-NA | 492 | 全部 TODO 条目重判为 NA |
+| **合计** | **502** | |
+
+**本质问结论**：492 条 TODO 全部判 **LIVE-NA** —— 判分**不实质依赖**真实 EDA 工具产物。
+
+### NA 判据（逐条本质问 + 桩体检）
+
+C 域 non-lite case 的判分器呈现 5 种 faithful 模式，均无「static-pass / live-fail gap」：
+
+1. **runcand-oracle（主导，~439 条）**：check 在 hidden B 上跑候选脚本（`subprocess.run([sys.executable, candidate.py, ...])`），与**独立 re-derive 的纯 Python oracle** 比较 ground truth。oracle 不调任何真 EDA 工具，从 B 输入直接算期望值。候选脚本即 deliverable，跑它 = 验脚本逻辑，非验真实工具产物。
+2. **static-parse（~24 条）**：纯文本/log/json/csv regex 解析，deliverable 是分析报告/Q&A/改文件，无 subprocess。
+3. **runcand-default（~17 条）**：subprocess 跑候选交付脚本（非真 EDA binary），校验输出结构/内容。
+4. **mock-record / mock-faithful（~8 条）**：自写 mock（pyAether/calibre/spice）—— 已逐条桩体检：
+   - **mock-record**（AutoPlacementStep3 / ScanCopyVerify 等）：mock 记录 API 调用序列 / faithful 模拟 cellview 库，deliverable 是 API 编排脚本，无「物理量」可造假 ⇒ Q2 = not-fooled。
+   - **mock-faithful**（DrcPipelineRunner 的 `mock_calibre_drc.py` 发手算 oracle / FreezeMaker 的 mock calibre 只 log 调用 / DrcSearchReqGen 等的 `_emit(results)` 是 check 自身 verdict emitter 非 fake tool）：mock 抄了真实工具语义或只记录调用，候选无法「按模板造对形状、物理量全错」骗过 ⇒ Q2 = not-fooled。
+5. **gdspy-faithful（YamlToGds 等）**：check 用**真 gdspy/gdstk 库**读候选产出的真 GDS，逐层/逐几何/bbox 比对独立 re-derive 期望。gdspy 真读 GDS 几何（非 mockable 工具），候选造假几何 ⇒ gdspy 读到错几何 ⇒ FAIL。无 mock 可骗。
+
+**关键对照（与 Lite-137 REQ 9 条的差异）**：Lite REQ 9 条（PowerFill / DummyDeck / DummyQA 等）的 check **信任候选自报 JSON 字段**且 cross-input guard 不覆盖该字段 ⇒ 候选可硬编自报字段过静态 ⇒ static-pass/live-fail gap ⇒ REQ。non-lite 492 条**无此模式**：要么 check 独立解析候选产物（不信任自报），要么 oracle 独立 re-derive，要么 mock faithful 记录调用 —— **均无 gap**。
+
+### 与旧 P4 的差异
+
+无旧 P4 覆盖 non-lite（旧 P4 只扫 585/609 全量按关键词，non-lite 未单独审视）。本轮为 non-lite 首次逐条三分类。
+
+### BROKEN 标记（4 条，非 live-eval 问题，单独报）
+
+下列 4 条 check.py 为 trivial stub（`def check(deliverable, workdir): ...return True`，len=48，无任何断言，恒 PASS）—— 这是**判分质量缺陷**，不是 live-eval 分类问题（本质问答「不算数」是因为 check 无牙，非因依赖真实工具）。本轮判 LIVE-NA + 标 BROKEN，**单独报 A 修复**（不在 live-eval 改造范围内退/改题）：
+
+- `DummyDeckMaskDiag-001`
+- `EDA-Eval-DesignFlow-DrcExactWaiver-001`
+- `EDA-Eval-DesignFlow-DrcVsDrmRuleAudit-001`
+- `EDA-Eval-DesignFlow-LibPinManifest-001`
+
+### 登记
+
+- `live_eval_changes.tsv` **0 新行**（无 judge_layers 变更，492 条保持 `[L0,L1]`）。
+- `live_eval_review_nonlite_C.tsv` 502 行 verdict/reason/check_live/live_evidence 全填满。
+- **报 A 汇总**：C non-lite 三分类 REQ=0 / OPT=0 / NA=492（含 4 BROKEN-stub 待修）；PREEXISTING=10。R1 收口，无 R2 改造需求。
