@@ -1,13 +1,18 @@
-🟢 监控巡检·S2切换执行器已部署·训练健康iter=349820/700k(49.97%) step≈7.18s(✅<7.4s gate)·loss~2.01·0NaN/0skip✅·latest ckpt=348000·350k ETA~05:20·S2切换执行器PID=3019011 running(polling 350k every 30s)·eval_next=350k(=S2切换点)·s2_switch_executor.sh已部署(9 phases:auto-wait→kill→switch→verify→rollback)·WAITING=0
-> #3559（2026-11-28 04:57, S2切换执行器部署·训练健康iter=349820 step≈7.18s·350k ETA~05:20·执行器PID=3019011 polling·
-> 训练健康iter=349820(worker_log@04:44:31) loss≈2.000 step≈7176ms(✅<7.4s gate)·LR=1e-3✅·0NaN/0skip✅·grad norm正常·
-> **S2切换执行器已部署并运行**:PID 3019011(s2_switch_executor.sh·setsid detached)·9 phases:①P0 record pre-switch ②P1 poll 350k every 30s(max 2h) ③P2 save pre-switch logs ④P3 kill daemon+llama-server ⑤P4 kill training both nodes(.29 kill PID 2547367+.12 ssh pkill) ⑥P5 export BLEND_CURSOR_OFFSETS_JSON+BLEND_TSV=S2+setsid bash train.sh s1 ⑦P6 wait 180s check alive(rollback if died) ⑧P7 monitor 300s+check shim .29+.12+check NaN(rollback if NaN) ⑨P8 restart daemon ⑩P9 final status log·
-> **auto-rollback条件**:train.sh exits<180s OR NaN detected OR training dies during monitoring·rollback=kill new training+unset env+restore S1 TSV+resume from 350k·
-> **shim检测**:P7 grep 'blend.hot.switch' on both worker_log(.29)+master_log(.12)·if MISSING→log ⚠️ for agent investigation·
-> **pre-switch state**:iter=349820 loss=2.010476E+00 step=7175.7ms ckpt=348000 train_pid=2547367 daemon_pid=501728·
-> **350k ETA**:(350000-349820)×7.18s≈1293s≈22min→~05:19·执行器auto-execute when latest_checkpointed_iteration.txt=350000·
-> **执行器日志**:/tmp/s2_switch_execution.log(detailed)·/tmp/s2_switch.log(stdout)·pre-switch logs→/tmp/baize_s1_baize2b_{worker,master}_pre_s2.log·
-> **未碰训练/configs/.bak**(维护态铁律·350k切换授权覆盖)·evidence:worker_log 349820@04:44:31 step 7176ms loss 2.000·s2_switch_executor.sh 115 lines bash -n OK·MEMORY≈31.5KB✅·
+⚠️ S2切换失败已回退S1·训练恢复健康iter=350030/700k(50.0%) step≈7.1s(✅<7.4s gate)·loss~1.99·0NaN/0skip✅·LR re-warmup中(1.5e-5,ETA~4h回1e-3)·350k ckpt安全·S2根因=executor未等.12 GPU释放→launcher GPU check fail·手动S1重启350k成功(3iter稳定✅)·eval daemon killed待稳定后重启·eval_next=350k·WAITING=0
+> #3560（2026-11-28 05:50, ⚠️S2切换失败·S1手动恢复成功·训练iter=350030 step≈7.1s loss≈1.99 0NaN✅·LR re-warmup中·eval daemon待重启）→ daily-memories/2026-11-28.md
+> **S2切换事件全记录**:
+> ①05:18:26 350k ckpt确认✅·executor自动执行切换
+> ②05:18:41 kill S1训练(.29 PID 2547367+.12 ssh pkill)·05:19:11 .29 GPU确认clear·立即启动S2训练
+> ③05:19:17 S2训练FATAL:`10.239.2.12 GPU 非空闲`·根因=executor kill .12后未等GPU释放(memory residual from killed S1 workers)·pretrain_launcher GPU check fail
+> ④05:22:11 auto-rollback:kill S2+unset BLEND_CURSOR_OFFSETS_JSON+BLEND_TSV=S1+setsid bash train.sh s1
+> ⑤05:22:27 rollback S1启动成功(100 shard S1 blend✅)·05:28-05:29 iter 350010(10.5s)/350020(7.0s) loss≈1.99 0NaN✅
+> ⑥~05:30 .29训练crash("leaked semaphore at shutdown"×8)·原因不明(无error/traceback in log)·.12 orphaned(NCCL stuck 100% GPU)→~05:35 .12 also died
+> ⑦05:34 agent唤醒发现训练DOWN(.29+.12 GPU全idle)·05:42 手动重启S1 from 350k(bash scripts/train.sh s1·PID 2218437)
+> ⑧05:47-05:50 iter 350010(10.9s)→350020(7.0s)→350030(7.1s) loss≈1.99 0NaN✅·训练稳定(alive 8min✅·past rollback crash point 350020)
+> **根因分析**:S2 fail=executor P4 kill .12后只等10s未验GPU clear→launcher GPU check fail·rollback crash=未知(可能NCCL/CUDA transient,无error in log)
+> **当前状态**:S1训练健康iter=350030·LR re-warmup(5e-6→1.5e-5,linear+5e-6/10step,ETA~4h回1e-3)·350k ckpt安全·eval daemon(PID 501728)killed by executor P3,待训练稳定(~100iter≈12min)后重启评350k
+> **S2切换待运维决定**:patch/shim/cursor all verified✅(data 25/25 PASS)·失败纯因executor操作时序(GPU cleanup wait不足)·修复=executor P4后加`ssh .12 nvidia-smi` poll until 0MiB
+> evidence: /tmp/s2_switch_execution.log(full timeline)·/tmp/baize_s1_baize2b_worker_pre_s2.log(pre-switch)·/tmp/baize_s1_restart_350k.log(restart)·worker_log iter 350010-350030 step/loss/lr
 > 📦 #3558（2026-11-28 04:29, 监控巡检·训练健康iter=349590 step avg10≈7.34s·S2切换ALL READY(7pt verified✅)·350k ETA~05:19）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3557（2026-11-28 04:19, 监控巡检·iter=349510 step avg10≈7.23s·S2切换ALL READY(7pt verified✅)·350k ETA~05:18）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3556（2026-11-28 04:06, 监控巡检·训练健康iter=349400 step avg10≈7.14s(all<7.4s gate✅)·S2切换ALL READY(7pt re-verified✅·25/25 PASS)·350k ETA~05:18 on 11-28）→ daily-memories/2026-11-28.md；需要时再读。
