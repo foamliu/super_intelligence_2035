@@ -62,7 +62,7 @@ EDA-Eval-DesignFlow-D2pHandoffDirGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/
 EDA-Eval-DesignFlow-DCCombHier-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DCSynth-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DDR4TbFramework-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-DFTTestmaxFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-DFTTestmaxFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-REQ	check.py 真调 VCS R-2020.12 (module load+vcs -full64) 编译+仿真 A/B/buggy rtl, 条件(c)(d)(e)(f)(n) 依赖真实 VCS log 的 PASS/FAIL 标记与 3-rerun 确定性; mock 桩无法伪造 VCS 编译产物. Q2=会判过(伪造tb/RTL但log文本对→真VCS跑挂). 现 judge_layers=[L0,L1] 缺 L2.live, 需拆 check_static/check_live.	N/A	test.py: _vcs_run subprocess bash -lc vcs -full64; cond c/d/e/f/n on real simv log	r2-2026-11-27
 EDA-Eval-DesignFlow-DcDontuseGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DcFmUnresolvedDiagnoseQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DcLogErrDiagnose-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -83,16 +83,16 @@ EDA-Eval-DesignFlow-DecoderSchemGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A
 EDA-Eval-DesignFlow-DelPgLib-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DftEnvAnalysis-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DftEnvAnalysis-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-Digital-010	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-Digital-010	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-REQ	TRUE L2 grader: 在 .75 真 VCS R-2020.12 上对候选 mac4.v 重跑 (1) 可见 tbA + (2) 隐藏 tbB(结构不同激励), 条件(o)(q)(r)(s) 依赖 fresh B sim 的饱和/累加结果. 硬编码A向量/伪log 在 B 重跑下必挂. 现 judge_layers=[L0,L1] 缺 L2.live, 需拆 check_static/check_live.	N/A	test.py docstring: RE-RUNS VCS R-2020.12 on .75; cond o/q/r/s on hidden B sim	r2-2026-11-27
 EDA-Eval-DesignFlow-Digital-021	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-Digital-022	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-Digital-023	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-Digital-023	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	verdi/vcs 仅出现在 `make -n`(dry parse) 展开串, 非直调真二进制(§2.1 rule2). deliverable=参数化 Makefile, check 验 make -n 解析+目标结构, 不依赖真实仿真产物.	N/A	test.py: subprocess make -n -f makefile_para (dry-run parse only)	r2-2026-11-27
 EDA-Eval-DesignFlow-DmiPinCompareDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DqTraverseAllEntryMode-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DrcDocConvert-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DrexpDefinesLocateQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-DriverClkTimingFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-DrvqaGateNetlist-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-DrvqaGateNetlist-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-REQ	条件(j)(p) 真调 vcs(/apps/synopsys/SRB/vcs/R-2020.12/bin) 仿真候选 DRVQA 网表 over all 512/256 inputs vs 独立 python oracle; 硬编码A真值表在结构不同的 B 上必挂. 现 judge_layers=[L0,L1] 缺 L2.live, 需拆 check_static/check_live.	N/A	test.py: subprocess vcs over all inputs vs oracle_A/oracle_B; cond j/p	r2-2026-11-27
 EDA-Eval-DesignFlow-ETMExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-EcoSpareGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-EillenLogMerge-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -135,7 +135,7 @@ EDA-Eval-DesignFlow-HlmcMoscapDiffQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/
 EDA-Eval-DesignFlow-Http429Diagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-IcwbGdsSprocessCmdProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-IncdirImportSemanticsQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-InnovusLaunchDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-InnovusLaunchDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=check_launch.py 诊断脚本, 读 evidence 目录文本夹具(module_avail/exec_stdout/ldd_out 等)输出 JSON 报告; --module calibre 是字符串参数非二进制调用. check 跑候选脚本验 JSON 字段, 属'解析既有 log'(§2 NA).	N/A	test.py: subprocess sys.executable check_launch.py --evidence-dir; calibre=string arg	r2-2026-11-27
 EDA-Eval-DesignFlow-InstTieZeroProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-IrunCofllxGenFailDiagnoseQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-IrunIllegalLogParser-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -188,8 +188,8 @@ EDA-Eval-DesignFlow-NetlistSigNameRename-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO
 EDA-Eval-DesignFlow-OdtErrScan-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-OutputPathInvalidDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-PRStartMethodSelect-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-PTSignoff-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-PTStaFlowBuild-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-PTSignoff-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	L1-boundary grader(明示: 真 pt_shell 仅 GOLD 标准创建, 不在 check.py). tclsh stub 记录 pt_shell 调用验候选 pt_sta.tcl 在隐藏 B 传正确值(current_design/read_verilog/link_path). deliverable=PT signoff 流程脚本, 正确性=脚本结构+参数化非真实时序数值(WNS/TNS 设计相关无固定GT). Q2=不判过(正确性即调用结构+参数化, stub 忠实记录).	N/A	test.py docstring: L1-boundary; tclsh stub records pt_shell calls; cond t-u-v-w on B values	r2-2026-11-27
+EDA-Eval-DesignFlow-PTStaFlowBuild-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	静态结构校验 STA 流程脚本(run cshell 含 pt_shell+module load / scr sta_main+编号 tcl). pt_shell 仅字面量结构断言, check 不直调. deliverable=STA flow 脚本构建, 属'写脚本'(§2 NA).	N/A	test.py: static cond c/d/e on pt_shell/module load literal in runner	r2-2026-11-27
 EDA-Eval-DesignFlow-PTVersionRecon-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-PTVersionRecon-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-PatStatSpeed-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -243,8 +243,8 @@ EDA-Eval-DesignFlow-RtlDesignScenarioBoot-001	A	non-lite	1	1	1	1	1	1	A	L0,L1,L2.
 EDA-Eval-DesignFlow-RtlFuncAnalyzeProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-RtlHierarchyVerdiGuide-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-RtlHierarchyVerdiGuide-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-RtlPathSwapProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-RtlSimfixVerdict-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-RtlPathSwapProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	check 装 stub vcs/simv(记录 argv+exit0) 验候选 run_tb_vcs.py 的 vcs 调用结构(argv[1] 路径/flags/tb路径/vcs-not-found分支/args_file). deliverable=包装脚本, 正确性=调用结构非真实编译产物; 真 vcs 无更硬断言(RTL 是 stub module).	N/A	test.py: _make_stub_bin vcs/simv records argv; cond 5-15 on cmd structure	r2-2026-11-27
+EDA-Eval-DesignFlow-RtlSimfixVerdict-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=诊断脚本, check 跑候选 python 脚本 on 提供的 sim-log/mod-log 输出 JSON 判定. verdi 仅在脚本名/log 上下文, 非直调. 属'解析既有 log'(§2 NA).	N/A	test.py: subprocess sys.executable gen --sim-log --mod-log --out	r2-2026-11-27
 EDA-Eval-DesignFlow-RunRegrArchAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-RunRegrCaselistAdapter-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-RunScenarioExtractProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -265,7 +265,7 @@ EDA-Eval-DesignFlow-SignalXrefMap-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		
 EDA-Eval-DesignFlow-SimDefineDeltaDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SimIncludeMissDiag-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SimLibGuiAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-SimMakefileVCS-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-SimMakefileVCS-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-REQ	条件(m) 用提交 Makefile 经 vcs_wrap(剥 DUMP_FSDB) 在 .75 真跑 vcs R-2020.12 产 simv, 再 ./simv exit0+产 waves_B.vcd; iverilog 残留/坏 recipe 在真 vcs 下挂. 现 judge_layers=[L0,L1] 缺 L2.live, 需拆 check_static/check_live.	N/A	test.py cond m: make vcs via real vcs -> simv -> waves_B.vcd	r2-2026-11-27
 EDA-Eval-DesignFlow-SimRerunStatusAuditProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SimStimulusLocateQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-SmokeLogFailDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -292,8 +292,8 @@ EDA-Eval-DesignFlow-StaRunEvalProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N
 EDA-Eval-DesignFlow-StaSpec21Audit-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-StaStepDriverGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-StaSweepCfgFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-StarRCDspfFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-StarRCFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-StarRCDspfFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	check 装 fake module+StarXtract 夹具(让候选脚本可跑) 验 spf_layers.py 解析 DSPF 的 resistor→layer 映射 on A/B/mutated spf + bash -n 验 run 脚本. deliverable=DSPF 解析+流程脚本, 正确性=解析逻辑非 StarRC 物理产物; 真 StarRC 不增硬断言.	N/A	test.py: _make_star_fixture fake StarXtract; cond on spf_layers parse A/B/mutated	r2-2026-11-27
+EDA-Eval-DesignFlow-StarRCFlow-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	check 装 fake module+StarXtract 夹具 验 setup_and_run.sh/extract_rc.py/extract_net_info.py on hidden B sample.spf + bash -n. deliverable=SPF 解析+编排脚本, 正确性=脚本结构+SPF 解析非 StarRC 物理 RC; 真 StarRC 不增硬断言.	N/A	test.py: _make_module_fixture fake StarXtract; subprocess candidate scripts on B.spf	r2-2026-11-27
 EDA-Eval-DesignFlow-StdCellBtiAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-StdlibPptxGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-StimulusPatternExtend-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -321,7 +321,7 @@ EDA-Eval-DesignFlow-TbSkeletonGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO
 EDA-Eval-DesignFlow-TbTriggerChainExtract-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-TbTriggerChainExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-Tcl2SkillTranspile-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-TimingECO-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-TimingECO-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	L1-boundary grader(明示: 真 pt_shell 仅 GOLD 创建). tclsh source common_setup.tcl with B vars 验 OUT_PREFIX 参数化解析. deliverable=TimingECO 流程脚本(run cshell+编号 tcl+ECO 引擎), 正确性=流程结构+参数化非真实 ECO 时序结果. 属'写脚本/流程'(§2 NA).	N/A	test.py docstring: L1-boundary; tclsh common_setup B vars; cond i on OUT_PREFIX	r2-2026-11-27
 EDA-Eval-DesignFlow-TmBusToggleAnalyze-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-TmBusToggleAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-TmDqSwitchAdaptRestore-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -340,8 +340,8 @@ EDA-Eval-DesignFlow-VcheckMacroAdd-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A	
 EDA-Eval-DesignFlow-VcsBoostLinkFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VcsCompileErrorDiagnoseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VcsEquiv-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VcsIpdSverilogFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VcsMkfileSimDiagnoseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+EDA-Eval-DesignFlow-VcsIpdSverilogFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=gen_vcs_ipd_fix.py 生成器脚本, check 跑生成器(py_compile+on B spec)验输出 makefile 结构+3-seed 确定性. vcs 仅在生成器名/输出 makefile 上下文, check 不直调 vcs. 属'写脚本'(§2 NA).	N/A	test.py: subprocess sys.executable gen_py spec_b; vcs in gen name/output only	r2-2026-11-27
+EDA-Eval-DesignFlow-VcsMkfileSimDiagnoseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	vcs/verdi/simv 仅出现在 `make -n` 各目标展开串(dry parse, §2.1 rule2). deliverable=诊断 Makefile, check 验 make -n help/compile/sim/verdi/clean 目标解析+字面量, 不直调真工具.	N/A	test.py: make -n -f mk compile/sim/verdi/clean (dry-run parse)	r2-2026-11-27
 EDA-Eval-DesignFlow-VecRandfailDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VecTimingXDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 EDA-Eval-DesignFlow-VecgenExpCompareLocate-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
@@ -421,7 +421,7 @@ RandAddrOverflowDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-1
 RdcViolCatalog-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 RedBistFlowRecon-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 RegAllListMergeProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-ReleaseNoteEmptyFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
+ReleaseNoteEmptyFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=release-note 生成器脚本, check 跑生成器 3 trial 验 9 非空节+确定性. starrc 仅在 release-note 内容上下文, check 不直调 starrc. 属'写脚本'(§2 NA).	N/A	test.py: subprocess sys.executable gen_path; starrc in release note content	r2-2026-11-27
 RhrMirrorPhwlGroupAnalyzeProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 RowredB64RestoreProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
 RunRegrDriverGenProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
