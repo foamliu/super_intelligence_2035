@@ -115,10 +115,21 @@ BLEND_TSV="${BLEND_TSV:-$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv}"
 
 ## 5. 切换操作步骤（350k 时执行）
 
+> 🔴🔴 **血泪教训（2026-11-28 05:18 首次切换失败）**：pretrain executor 在 kill S1 后
+> **只等了 10s 就尝试启动 S2**，但 `.12` 的 GPU 显存尚未释放（killed S1 workers 的
+> CUDA context 残留）→ `pretrain_launcher.py` GPU check fail → S2 启动 FATAL。
+> **修复**：步骤 3→4 之间必须 **poll `.12` GPU 直到 0MiB**（见下方步骤 3b）。
+> **data 侧 25/25 PASS，失败纯因 executor 操作时序**。
+
 ```bash
 # 1. 等训练到 350k 步，自然 save checkpoint（每 2000 步一次，350k 是 2000 的倍数）
 # 2. 确认 350k checkpoint 已保存
-# 3. 停止训练进程
+# 3. 停止训练进程（.29 + .12 两节点都 kill）
+# 3b. 🔴🔴 关键：kill 后必须 poll .12 GPU 直到显存归零（首次切换就是栽在这里！）：
+#     ssh 10.239.2.12 'nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits' | awk '{s+=$1} END{print s}'
+#     重复执行直到输出为 0（通常需要 30-60s，不要只等 10s！）
+#     同时确认 .29 GPU 也归零：
+#     nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | awk '{s+=$1} END{print s}'
 # 4. 验证 shim 文件在 BAIZE_TRAIN_CODE 目录下可读（不需要 git pull）：
 ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py
 grep -n 'blend_hot_switch' /nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py
