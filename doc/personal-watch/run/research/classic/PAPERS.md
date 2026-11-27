@@ -9,7 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
-**本轮快照**：累计 **446** 条（**第一百二十六轮 2026-11-27 00:2x 补轮 +3 → 446**：OpenAI Gym `1606.01540`（**9,534**，2016 预印本；统一 `reset/step/reward/done` 环境接口 + 环境注册/版本化，把环境与 agent 解耦，成为后续 RL 与 agent 评测 harness 的公共接口约定）/ Graph Attention Networks `1710.10903`（**24,761**，ICLR 2018；掩码自注意力 + 多头在邻居上加权聚合，可归纳到未见图）/ MobileNetV2 `1801.04381`（**37,626**，CVPR 2018；倒残差 + 线性瓶颈，低算力视觉骨干）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2017-10-30T12:41:12Z / 2016-06-05T17:54:48Z / 2018-01-13T04:46:26Z）+ OpenAlex 3/3 `200`（查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = RL 环境接口 / 图注意力 / 高效视觉骨干；本轮归属：harness +2 · data +2 · pretrain +3 · vision +2 · posttrain +1 · designflow +1 · zhulong +0）
+**本轮快照**：累计 **449** 条（**第一百二十七轮 2026-11-27 21:0x +3 → 449**（B 轨补真空白）：LSSL / S4 `2110.13985`（**1,300**，NeurIPS 2021；线性连续时间状态空间层 `ẋ = Ax + Bu, y = Cx + Du` + 可训练结构化 `A`（HiPPO 式长程记忆），把 RNN / 时序卷积 / NDE 统一并推广到连续时间；长度 16,000 语音分类比此前方法 **+24** 个百分点）/ Gated Convolutional Networks / GLU `1612.08083`（**1,589**，2016 预印本；门控线性单元 `(X*W+b) ⊗ σ(X*V+c)`，堆叠卷积 + 门控并行打分，WikiText-103 SOTA、打分延迟比循环基线低一个数量级）/ GPT Understands, Too / P-Tuning `2103.10385`（**1,626**，OpenAlex 记 AI Open 2023；可训练连续 prompt 与离散模板拼接 + prompt encoder（LSTM/MLP）+ anchor，缩小不同离散模板间方差，LAMA / SuperGLUE 提升，冻结与微调、全监督与少样本均有效）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2021-10-26T19:44:53Z / 2016-12-23T20:32:33Z / 2021-03-18T17:13:50Z；S4 `comments` 逐字 `NeurIPS 2021`）+ OpenAlex 3/3 `200`（1,300 / 1,589 / 1,626，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**（注：候选 RTLLM 记 `2309.05076` 经 arXiv 实测为情感 agent 论文、真 ID `2308.05345` 已在表内 ⇒ 弃）；覆盖轴 = 长序列状态空间 / 门控卷积语言模型 / 连续 prompt 适配；本轮归属：pretrain +3 · posttrain +2 · harness +1 · zhulong +1 · data +1 · vision +1 · designflow +0）
+**本轮快照（前一）**：累计 **446** 条（**第一百二十六轮 2026-11-27 00:2x 补轮 +3 → 446**：OpenAI Gym `1606.01540`（**9,534**，2016 预印本；统一 `reset/step/reward/done` 环境接口 + 环境注册/版本化，把环境与 agent 解耦，成为后续 RL 与 agent 评测 harness 的公共接口约定）/ Graph Attention Networks `1710.10903`（**24,761**，ICLR 2018；掩码自注意力 + 多头在邻居上加权聚合，可归纳到未见图）/ MobileNetV2 `1801.04381`（**37,626**，CVPR 2018；倒残差 + 线性瓶颈，低算力视觉骨干）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2017-10-30T12:41:12Z / 2016-06-05T17:54:48Z / 2018-01-13T04:46:26Z）+ OpenAlex 3/3 `200`（查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = RL 环境接口 / 图注意力 / 高效视觉骨干；本轮归属：harness +2 · data +2 · pretrain +3 · vision +2 · posttrain +1 · designflow +1 · zhulong +0）
 **本轮快照（前一）**：累计 **443** 条（**第一百二十五轮 2026-11-27 00:0x +3 → 443**（B 轨转「补充/更正」补真空白）：MAGE `2412.07822`（**153**，2024 预印本；OpenAlex 记 `conference-paper` / source = DAC / `publication_year=2025`；**&lt;500 按「本领域权威 / EDA agent 标志性工作」收**：多智能体引擎 + 高温度候选采样 + Verilog-state checkpoint，作者自报 VerilogEval-Human v2 **95.7%**、比 Claude-3.5-sonnet 高 **23.3%**） / Neural Turing Machines `1410.5401`（**3,139**，2014 预印本；控制器 + 可寻址外部记忆矩阵，内容寻址与位置寻址的**可微读写**，学会 copy / repeat / 联想回忆与简单算法） / Hindsight Experience Replay `1707.01495`（**2,803**，NeurIPS 2017；把失败轨迹按**实际达成目标**重标注，使任意 off-policy RL 能从稀疏二值奖励学习）；核验：abs 3/3 `200`（42,024 / 39,527 / 44,446 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（153 / 3,139 / 2,803，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = EDA 多智能体 + 状态检查点 / 外部可微记忆 / 稀疏奖励目标重标注；本轮归属：designflow +2 · zhulong +2 · harness +3 · posttrain +2 · pretrain +1 · data +0 · vision +0）
 **本轮快照（前一）**：累计 **440** 条（**第一百二十四轮 2026-11-26 21:0x +3 → 440**：VGG `1409.1556`（**111,603**，2014 预印本 / ICLR 2015；3×3 小核堆叠到 16–19 层，ILSVRC-2014 定位第一·分类第二）/ Focal Loss + RetinaNet `1708.02002`（**10,051**，ICCV 2017 / TPAMI；对易分样本降权的 `α/γ` 焦点损失，单阶段检测器超当时两阶段 SOTA 精度）/ A3C `1602.01783`（**11,372**，ICML 2016；异步 actor-learner 并行 + 共享参数 Hogwild 式更新，Atari 单 CPU 半时间超 SOTA）；核验：abs 3/3 `200`（41,480 / 43,389 / 43,580 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（111,603 / 10,051 / 11,372，查询日 2026-11-26）；三 ID 条目级查重 **0 命中**；覆盖轴 = 深层小核视觉骨干 / 类别不平衡焦点损失 / 异步并行 RL 采样；本轮归属：vision +2 · posttrain +1 · harness +1 · designflow +1 · pretrain +0 · data +0 · zhulong +0）
 **本轮快照（前一）**：累计 **425** 条（**第一百一十九轮 2026-11-26 09:0x +3 → 425**：GCN `1609.02907`（**45,348**，ICLR 2017；谱图卷积的局部一阶近似 ⇒ 边线性扩展的半监督节点分类，表示同时编码局部结构与节点特征）/ WaveNet `1609.03499`（**9,779**，2016 预印本；全概率自回归原始波形，每秒数万点可训，TTS 听众评价超参数式/拼接式，单模型多说话人，兼作音素识别判别模型）/ PixelRNN `1601.06759`（**2,470**，ICML 2016；逐像素二维顺序预测 + 原始像素离散概率 + 快速二维循环层 + 残差，log-likelihood 显著超此前 SOTA，ImageNet 基准）；核验：abs 3/3 `200`（42,227 / 43,245 / 41,831 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（45,348 / 9,779 / 2,470，查询日 2026-11-26）+ PixelRNN 会议归属 OpenAlex source = ICML / PMLR v48；三 ID 条目级查重 **0 命中**；覆盖轴 = 图结构半监督学习 / 原始波形自回归生成 / 像素自回归似然建模；本轮归属：vision +2 · pretrain +3 · data +1 · zhulong +3 · designflow +2 · harness +0）
@@ -7759,3 +7760,48 @@
 | 与我们工作的关系 | **vision（主 · 低算力视觉骨干）**：波形 / 版图图像属于密集视觉任务，线性瓶颈 + 深度可分离卷积是端侧/受限算力下的基线骨干选择。<br>**pretrain（次 · 高效骨干与吞吐）**：骨干的 FLOPs / 延迟直接影响训练与评测吞吐，选型时须同报算力口径。<br>**harness / posttrain / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-27**（第一百二十六轮 · 00:2x 补轮） |
 | 核验状态 | arXiv API **`200`** + `application/atom+xml`（3 entries，`published` 逐字 `2018-01-13T04:46:26Z`）；OpenAlex **`200`**（37,626 / 2018 / `conference-paper` / source = CVPR，查询日 2026-11-27）。倒残差 / 线性瓶颈 / ReLU 位置均取自摘要逐字核（摘要未给具体 ImageNet 精度 ⇒ 本条**不写未核数字**）。条目级查重：`1801.04381` 在 `PAPERS.md` **0 命中**（一作 Mark Sandler 建入作者网 #413）。 |
+
+## 447. Combining Recurrent, Convolutional, and Continuous-time Models with Linear State-Space Layers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Combining Recurrent, Convolutional, and Continuous-time Models with Linear State-Space Layers |
+| 作者（前 3） | Albert Gu · Isys Johnson · Karan Goel（arXiv `citation_author` 逐字核；后续 Khaled Saab · Tri Dao · Atri Rudra · Christopher Ré，共 7 位） |
+| 年份 | **2021**（v1 `2021/10/26`；arXiv API `published` 逐字 `2021-10-26T19:44:53Z`） |
+| 会议 / 期刊 | **NeurIPS 2021**（arXiv `arxiv:comment` 逐字 `NeurIPS 2021`；OpenAlex `type=conference-paper` / source = neural information processing systems / `publication_year=2021`） |
+| 被引数 | **1,300**（OpenAlex `10.48550/arxiv.2110.13985`，查询日 **2026-11-27**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2110.13985> ｜ `10.48550/arXiv.2110.13985` |
+| 一句话贡献 | 提出 **线性状态空间层 LSSL**：直接模拟线性连续时间状态空间 `ẋ = Ax + Bu, y = Cx + Du`，并引入可训练的结构化矩阵 `A`（继承连续时间记忆理论）以获得长程记忆；理论上统一 RNN / 时序卷积 / 神经微分方程三族模型，实验中在长依赖时序、医疗回归与语音任务上刷新结果 —— 长度 **16,000** 的语音分类比此前方法高 **24** 个百分点，且在短 100 倍的序列上超过使用手工特征的基线。 |
+| 与我们工作的关系 | **pretrain（主 · 长上下文序列建模）**：LSSL / S4 是 Mamba 等 SSM 的直接前身；其「结构化 `A` 初始化 + 线性递推 = 长程记忆」是评估 hybrid / SSM 骨干与长上下文预算的关键参照。<br>**vision（次 · 长波形序列）**：长度 16,000 的语音分类即长序列信号任务，与波形 / 时序信号建模同形。<br>**zhulong / harness（次 · 长序列成本口径）**：长序列实验必须同时报序列长度与算力/延迟，不能只报精度。<br>**data / posttrain / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十七轮 · 21:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2021-10-26T19:44:53Z`；`comments` 逐字 `NeurIPS 2021`）；OpenAlex **`200`**（1,300 / 2021 / `conference-paper` / source = NeurIPS，查询日 2026-11-27）。摘要逐字核对：`+24 accuracy points`、`length-16000`、`100x shorter` 均取自摘要，未外推。条目级查重：`2110.13985` 在 `PAPERS.md` **0 命中**（一作 Albert Gu 已在作者网 #2、Tri Dao 在 #1，本轮不重复建档）。 |
+
+## 448. Language Modeling with Gated Convolutional Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Language Modeling with Gated Convolutional Networks |
+| 作者（前 3） | Yann N. Dauphin · Angela Fan · Michael Auli（arXiv `citation_author` 逐字核；后续 David Grangier，共 4 位） |
+| 年份 | **2016**（v1 `2016/12/23`；arXiv API `published` 逐字 `2016-12-23T20:32:33Z`；updated `2017-09-08T22:26:49Z`） |
+| 会议 / 期刊 | **2016 预印本**（arXiv abs 页**无 `comments`**；OpenAlex 该 DOI 记 `type=preprint` / source = arXiv，**未记会议版** ⇒ 不写未核会议） |
+| 被引数 | **1,589**（OpenAlex `10.48550/arxiv.1612.08083`，查询日 **2026-11-27**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1612.08083> ｜ `10.48550/arXiv.1612.08083` |
+| 一句话贡献 | 用**堆叠卷积**做有限上下文语言模型（可并行于序列 token），并提出简化的**门控线性单元（GLU）**：`(X*W+b) ⊗ σ(X*V+c)` 的乘性门控优于当时基线；在长依赖的 WikiText-103 上取得当时 SOTA、Google Billion Words 上有竞争力，且给一句话打分的延迟比循环基线低**一个数量级**——据作者称是首个在大型语言任务上与强循环模型竞争的非循环方法。 |
+| 与我们工作的关系 | **pretrain（主 · FFN 门控与并行训练）**：GLU 是现代 LLM FFN（SwiGLU / GeGLU）的门控源头；「乘性门控 + 无循环并行」直接影响预训练吞吐与块结构选型。<br>**data（次 · 语料与长依赖）**：WikiText-103 的长依赖评测口径可作为数据/评测切片的参照。<br>**vision / harness / posttrain / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十七轮 · 21:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-12-23T20:32:33Z`）；OpenAlex **`200`**（1,589 / 2016 / `preprint` / source = arXiv，查询日 2026-11-27）。`order of magnitude` 延迟、WikiText-103 / Google Billion Words 结果均取自摘要逐字；**摘要未给具体 perplexity ⇒ 本条不写未核分数**。条目级查重：`1612.08083` 在 `PAPERS.md` **0 命中**（三作 Michael Auli 建入作者网 #415）。 |
+
+## 449. GPT Understands, Too（P-Tuning）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | GPT Understands, Too |
+| 作者（前 3） | Xiao Liu · Yanan Zheng · Zhengxiao Du（arXiv `citation_author` 逐字核；后续 Ming Ding · Yujie Qian · Zhilin Yang · Jie Tang，共 7 位） |
+| 年份 | **2021**（v1 `2021/03/18`；arXiv API `published` 逐字 `2021-03-18T17:13:50Z`） |
+| 会议 / 期刊 | **AI Open（2023）**（OpenAlex `type=article`、source = AI Open、`publication_year=2023`）；arXiv abs 页**无 `comments`** |
+| 被引数 | **1,626**（OpenAlex `10.48550/arxiv.2103.10385`，查询日 **2026-11-27**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2103.10385> ｜ `10.48550/arXiv.2103.10385` |
+| 一句话贡献 | 指出**人工离散 prompt 不稳定**（改一个词就可能大幅掉点），提出 **P-Tuning**：把**可训练的连续 prompt 嵌入**与离散模板拼接，并用 prompt encoder（LSTM / MLP）+ anchor 缩小不同离散模板间的方差；在 LAMA、SuperGLUE 等 NLU 任务上稳定训练并明显提升，且对**冻结模型与微调模型、全监督与少样本**均有效。 |
+| 与我们工作的关系 | **posttrain（主 · 参数高效适配与少样本）**：P-Tuning 是 PEFT 三源头之一（与 Prefix / Prompt Tuning 并列）；「连续 prompt + 模板方差」直接关系 posttrain 的少样本适配方案。<br>**pretrain（次 · 适配评测口径）**：预训练模型的适配能力需在少样本、跨模板条件下评测，单模板结论不可靠。<br>**harness（次 · 模板方差）**：评测必须报告模板敏感性 / 方差，不能只报单模板最好分。<br>**data（次 · 模板与字段顺序）**：结构化文本的字段顺序固定但同义表述多，模板设计属于数据侧工作。<br>**vision / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-27**（第一百二十七轮 · 21:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2021-03-18T17:13:50Z`；abs `comments` 为空）；OpenAlex **`200`**（1,626 / 2023 / `article` / source = AI Open，查询日 2026-11-27）。LAMA / SuperGLUE、LSTM/MLP prompt encoder、anchor、冻结/微调与少样本均取自摘要逐字；**摘要未给具体分数 ⇒ 本条不写未核数字**。条目级查重：`2103.10385` 在 `PAPERS.md` **0 命中**（末位/通讯作者 Jie Tang 建入作者网 #414、Zhilin Yang 建入 #416）。 |

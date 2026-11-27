@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-27 21:0x · r274）**：作者 **416** 人（编号最大 **416**）· X 已核验 **164**（本轮 **+2**：`@jietang` 由本人主页 <https://keg.cs.tsinghua.edu.cn/jietang/> 外链 `twitter.com/jietang` + 代理抓 `x.com/jietang` `200` / 182,716 B，`og:title` = `jietang (@jietang) on X` ⇒ 双源；`@MichaelAuli` 由本人主页 <https://michaelauli.github.io/> 外链 `twitter.com/michaelauli` + 代理抓 `x.com/michaelauli` `200` / 168,407 B，`og:title` = `Michael Auli (@MichaelAuli) on X`、bio = `Research Scientist @FacebookAI` ⇒ 双源；Zhilin Yang 本人主页无 x/twitter 外链、`x.com/kimiyoung` 属他人 ⇒ 记「未找到 X」，不猜）· 已发信 **188**（台账 #1–#188；本窗 **+1**：#188 Jie Tang；今日 **4/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，较 00:2x 的 69 多 1 = 已知 Petar #187 回复；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Jie Tang 唐杰（P-Tuning 末位/通讯，中文，本人主页可见 `jietang at tsinghua . edu . cn` ⇒ A 级 ⇒ 已发信 #188）· Michael Auli（GLU 三作，英文，本人主页无邮箱、X 双源 ⇒ 仅建档）· Zhilin Yang（P-Tuning 五作，中文，本人主页 `200` 但无邮箱 / 无本人 X ⇒ 仅建档）。
 > **当前计数（2026-11-27 00:2x 补轮 · r273）**：作者 **413** 人（编号最大 **413**）· X 已核验 **162**（本轮 **+2**：`@PetarV_93` 由本人主页 <https://petar-v.com/> 外链 `x.com/PetarV_93` + 代理抓 `x.com/PetarV_93` `200` / 160,699 B，`og:title` = `Petar Veličković (@PetarV_93) / X` ⇒ 双源；`@gdb` 由本人博客 <https://blog.gregbrockman.com/> 外链 `x.com/gdb` + 代理抓 `x.com/gdb` `200` / 191,418 B，`og:title` = `Greg Brockman (@gdb) / X` ⇒ 双源；Mark Sandler 无本人 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **187**（台账 #1–#187；本窗 **+1**：#187 Petar Veličković；今日 **3/12**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **69** 封，与 00:00 持平；无新实质回信、无新退信；退信 **9**、本窗 **+0**）。本轮 **+3**：Petar Veličković（GAT 一作，英文〔判据=塞尔维亚姓名 + DeepMind/剑桥机构；塞语不在需母语清单 ⇒ 英文兜底〕，本人 Contact 页 `petarv at google dot com` 明文还原 ⇒ A 级 ⇒ 已发信 #187）· Greg Brockman（Gym 一作，英文，无公开邮箱 + X 双源 ⇒ 仅建档）· Mark Sandler（MobileNetV2 一作，英文，`marksandler.com` 实测 1&amp;1 停放页、无公开邮箱 ⇒ 仅建档）。
 
 > **当前计数（2026-11-27 00:0x · r272）**：作者 **410** 人（编号最大 **410**）· X 已核验 **160**（本轮 **+0**：Alex Graves、Jishen Zhao、Yujie Zhao 三人主页均无本人 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **186**（台账 #1–#186；本窗 **+2**：#185 Alex Graves / #186 Jishen Zhao；今日 **2/12**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **69** 封，较 21:00 的 71 少 2，非本线操作〔只读、未删信〕，如实记；无新实质回信、无新退信）· 退信 **9**（本窗 **+0**）。本轮 **+3**：Alex Graves（NTM 一作，英文，多伦多大学主页当前明文 `graves@cs.toronto.edu` ⇒ A 级 ⇒ 已发信 #185）· Jishen Zhao（MAGE 资深作者，中文，本人主页 `jishenzhao.github.io` 明文 `jzhao@ucsd.edu` ⇒ A 级 ⇒ 已发信 #186）· Yujie Zhao（MAGE 一作，中文，UCSD 博士，仅论文 PDF 明文 `yuz285@ucsd.edu` ⇒ B 级、当前主页未定位 ⇒ 仅建档不发）。
@@ -5828,3 +5829,42 @@
 | X 账号 | **未找到 X**（不猜 handle） |
 | 状态 | **仅建档**（无 A 级公开邮箱，本窗不发） |
 | 备注 | 语言=英文(判据=英文姓名 + Google 机构)。研究方向：高效视觉骨干 / 移动端模型。MobileNetV2 的倒残差 + 线性瓶颈与 vision 线低算力骨干选型相关；仅建档，地址待其主页出现后再评估。 |
+
+### 414. Jie Tang（唐杰）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jie Tang（唐杰，中文姓名 ⇒ `语言=中文`，判据=华人姓名族属 + 清华大学机构） |
+| 机构 | **清华大学** 计算机科学与技术系教授 · KEG（Knowledge Engineering Group） |
+| 代表论文 | **GPT Understands, Too（P-Tuning）**（`2103.10385`，B 轨 #449，末位 / 通讯）· AMiner / 图神经网络与知识图谱系列 |
+| 邮箱 | **`jietang@tsinghua.edu.cn`**（本人主页 <https://keg.cs.tsinghua.edu.cn/jietang/> `HTTP 200` / 217,568 B 页内可见 `E-Mail:&nbsp; jietang at tsinghua . edu . cn` ⇒ 还原；**A 级**） |
+| 主页 | <https://keg.cs.tsinghua.edu.cn/jietang/>（`200` / 217,568 B） |
+| X 账号 | **`@jietang`**（本人主页 `href` 外链 `twitter.com/jietang` + 代理抓 `x.com/jietang` `200` / 182,716 B，`og:title` = `jietang (@jietang) on X` ⇒ **双源**） |
+| 状态 | **已发信**（#188，中文 **219 汉字**，2026-11-27 21:04:58 `SENT OK`；落款两行） |
+| 备注 | 语言=中文(判据=华人姓名族属 + 清华大学)。研究方向：知识图谱 / 图神经网络 / 社交网络挖掘 / 预训练模型。P-Tuning 信问「离散模板改一个词就掉点的量化方差、anchor 数与 prompt encoder（LSTM/MLP）的取舍、连续 prompt 长度与上下文挤占、与 LoRA 叠加的联合训练顺序」；同论文只发一封（一作 Xiao Liu 未定位可核邮箱，本轮不发）。 |
+
+### 415. Michael Auli
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Michael Auli（英文姓名 ⇒ `语言=英文`） |
+| 机构 | **Facebook AI Research**（GLU 发表时；X bio 自述 `Research Scientist @FacebookAI`） |
+| 代表论文 | **Language Modeling with Gated Convolutional Networks**（`1612.08083`，B 轨 #448，三作）· wav2vec 2.0 系列 |
+| 邮箱 | **无公开邮箱**（本人主页 `michaelauli.github.io` `200` / 42,808 B 内仅有模板占位 `1st.last@gmail.com` ⇒ 不采用、不猜） |
+| 主页 | <https://michaelauli.github.io/>（`200` / 42,808 B） |
+| X 账号 | **`@MichaelAuli`**（本人主页 `href` 外链 `twitter.com/michaelauli` + 代理抓 `x.com/michaelauli` `200` / 168,407 B，`og:title` = `Michael Auli (@MichaelAuli) on X`、bio = `Research Scientist @FacebookAI` ⇒ **双源**） |
+| 状态 | **仅建档**（无 A 级公开邮箱，本窗不发；守「无公开地址不发信」） |
+| 备注 | 语言=英文(判据=英文姓名 + 美国机构)。研究方向：语音 / 语言模型 / 高效序列建模。GLU 的门控与并行卷积是 pretrain 侧 FFN / 吞吐选型的历史参照；仅建档跟踪。 |
+
+### 416. Zhilin Yang（杨植麟）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhilin Yang（杨植麟，中文姓名 ⇒ `语言=中文`，判据=华人姓名族属 + 清华大学机构） |
+| 机构 | **清华大学** 交叉信息研究院（IIIS；主页自述 `Our group at Tsinghua University`） |
+| 代表论文 | **GPT Understands, Too（P-Tuning）**（`2103.10385`，B 轨 #449，五作）· XLNet / Transformer-XL / HotpotQA |
+| 邮箱 | **未找到**（本人主页 <https://kimiyoung.github.io/> `200` / 91,449 B 无可提取明文 / `mailto:`；按纪律不猜） |
+| 主页 | <https://kimiyoung.github.io/>（`200` / 91,449 B） |
+| X 账号 | **未找到 X**（主页无 x/twitter 外链；`x.com/ZhilinYang` `404`、`x.com/kimiyoung` 经 `og:title` 为 `kim Young (@KimiYoung)` 他人账号 ⇒ 不登记） |
+| 状态 | **仅建档**（无邮箱、无本人 X；同论文已发通讯 Jie Tang #188，守「同一论文 ≤1」不另发） |
+| 备注 | 语言=中文(判据=华人姓名族属 + 清华大学)。研究方向：预训练语言模型 / 长上下文 / 知识增强。P-Tuning 的连续 prompt 与 XLNet 的排列式训练对 posttrain 的适配与长上下文实验均有参照价值；仅建档。 |
