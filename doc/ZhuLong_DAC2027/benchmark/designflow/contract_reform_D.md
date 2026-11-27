@@ -522,3 +522,65 @@ ref `dut_ldo.sp` 忠实 emit config_B `pass_nf=400`，但该 sizing 在真实 pi
 - `live_eval_review_D.tsv` LDOGen 行 `live_evidence` 由 `check_live=FEASIBLE` 改 `check_live=BLOCKED(r1482 .75实测...)`，`round` = `R1+R2-prep+R2(r1482实测)`。
 - 本节（contract_reform_D.md §R2 实测）。
 - MEMORY §1.1 清账 + r1479/r1480 归档释体积。
+
+---
+
+## Live-eval 审视（non-Lite-500, 2026-11-27 用户令 · R1 静态重判）
+
+> 用户令「安排 designflow 4 agent 对 Lite-500 之外其它的 Case 进行实跑评估改造」。规格 `BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`。本 shard 名册 `designflow/live_eval_review_nonlite_D.tsv`（485 条 = 609 D-shard − 124 lite）。Lite-500 已审视的 121 条不重审。
+
+### R1 方法（信号扫描 + 分类深验，非逐条手读 481 条）
+
+1. **全量信号提取**（读 481 TODO case 的 `test` 字段全文）：`subprocess` / `mock` / `tool-keyword` / `ae*` / `ae_import` / `realbin`(check 直调真实 EDA 二进制) / `realrun_assert`(断言候选真跑产出 .lis/.mt0)。
+2. **信号阳性逐条深读**：2 个 realbin 候选 + 9 个 ae-mention + 25 个 mock-pattern 全部人工核验。
+3. **分类代表抽样深读**：deck-gen / log-parse / Q&A-guide / netlist-extract / folder-analyzer / schematic-build(mock-pyAether) 各族取代表 1–3 条读 test 全文确认模式。
+
+### 三分类结果（R1 填满 481 TODO + 4 preexisting 保留）
+
+| verdict | 计数 | 说明 |
+|:--|--:|:--|
+| LIVE-REQ-PREEXISTING | 4 | AeDelCellCurCellProduce / FullAdderSchemBuild / OpenDmViewsProduce / TrMatchHelper（保留不重判） |
+| LIVE-REQ | **1** | SramButterfly-001（新增 REQ，R2 待改造） |
+| LIVE-NA | 480 | 静态结构判分已足够，判分不依赖真实 EDA 工具产物 |
+| LIVE-OPT | 0 | 无 OPT 候选（详见下） |
+
+### REQ 清单（1 条）
+
+**SramButterfly-001**（schematic_netlist/waveform，SRAM 6T 蝶形曲线 SNM 表征）：
+- check.py `_run_hspice` 直调 `/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/hspice` 二进制；
+- 断言 (k) 依赖候选真实产出 `vtca.lis`/`vtcb.lis`（"HSPICE actually ran, anti print-expected"）；
+- reference SNM 经 `_ref_run`→`_run_hspice` real-hspice 复算；
+- §2.1 Q2 = shape-correct-wrong-SNM 会 FAIL（cond j SNM 容差 + reference 独立复算）；
+- 当前 `judge_layers=[L0,L1]`，check() 直接跑 hspice（纯静态 judge env 会缺 hspice）⇒ **R2 需拆 check_static/check_live + `[L0,L1,L2.live]` + .75 真跑验 ref PASS**。
+
+### NA 族归类（480 条，按判分模式分桶）
+
+| 桶 | 模式 | 代表 | 计数 |
+|:--|:--|:--|--:|
+| mock-pyAether schematic-build | mock pyAether 记录候选 ae* 调用, check 独立校验 netlist/JSON 拓扑(器件/pins/net connectivity/anti-hardcode); §2.1 Q2=不骗过 | InvSchemBuild-001 / AnalogCmpSchemBuild-001 / StdCellFromNetlistProduce-001 / QaLibCellBuild-001 | ~6 |
+| ae-mention text-check / Q&A guide | 候选生成 ae* 调用脚本/操作指南, check 文本校验生成脚本/JSON 提及正确 API 名+结构, ae_import=False | AetherNetHighlightQA-001 / HierNetTraceQA-v2 / McpSseApiDocParseProduce-001 / KeepaliveToPopupPatch-001 | ~9 |
+| parse-existing-sim-log | deliverable=解析既有 .mt0/.lis/.log 的脚本, check 跑候选+独立 walk/parse 得 GT 比对, 日志为 hidden fixture 文本 | BsmFailAnalyzer-001 / IVCurveRegionClassify-001 / LeakageCellPvtAudit-001 / Mt0BlConsistSummary-001 / FsdbMeasRun-001 / InstArcDiagFix-001 | ~12 |
+| deck/script generator (L1 offline) | deliverable=deck/脚本/工作流生成器, check 校验生成 deck/脚本文本结构(emyInitAether/setSimulator/.measure/netlistAndRun 调用形态), 不真跑 hspice/finesim | FineSimWorkflow-001 / CtleTranPower-001("No live HSPICE run (L1 offline)") / InvSpiceSim-001 / SpiceMeasGen-001 | ~180 |
+| generic script/report analyzer | deliverable=脚本/报告/JSON/CSV, check 跑候选脚本(subprocess)+独立断言输出结构/计数/拓扑, 无真实 EDA 二进制调用 | NetlistHierExtract-001 / SimSetupFolderAnalysisQA-001 / CslBlCouplingExtract-001 | ~273 |
+
+### 为什么 0 OPT（与 Lite-500 的 9 OPT 对比）
+
+Lite-500 的 9 OPT 多为「hspice-mock 桩体检判 OPT/BLOCKED」族（LDOGen/DlySigmaSweep/InvCSOpt 等），其 check 调自写 Shichman-Hodges python 桩产数值 GT。本轮 nonlite 481 条信号扫确认：**无 check.py 自写 fake spice 桩产数值 GT 的案例**（`hspice_mock`/`finesim_mock`/Shichman-Hodges 桩模式 0 命中；mock 命中均为 hidden fixture 命名或 anti-hardcode 假提交 runner，非假工具）。deck-gen 族 check 明确 "L1 offline / No live HSPICE run"，deliverable=deck 文本，判分=结构校验，按「本质问」判 NA（用户意图是生成 deck，不是拿仿真结果）。
+
+§2.1 桩体检结论：mock-pyAether 族（InvSchemBuild 等）的 mock 是**记录型 harness**（记录候选 ae* 调用），GT 来自**独立拓扑校验**（非 mock 产物），Q2=不骗过 ⇒ NA。与 r1446 Lite-500「8 api 子类候选无真实 pyAether 调用 = 关键字误命中」结论一致，本轮按新判据复验仍 NA。
+
+### 与旧 P4 的差异
+
+- 旧 P4（lite-128）D T1=4（4 L2.live）；本轮 nonlite 481 TODO 复验出 1 新 REQ（SramButterfly），旧 P4 未覆盖 nonlite（lite-only）⇒ 无冲突，纯增量。
+- SramButterfly-001 旧 P4 未判（nonlite 范围）；本轮新判 REQ，待 R2 改造。
+
+### R1 产出
+
+- `live_eval_review_nonlite_D.tsv` 全量填满（481 TODO → 480 NA + 1 REQ；4 preexisting 保留）。
+- 本节（contract_reform_D.md §non-Lite R1）。
+- **无 `live_eval_changes.tsv` 登记**（§1.2 仅 `judge_layers` 变更才登记；R1 仅填 verdict，无 jl 变更）。
+- **R1 收口**：REQ=1(done 0) · OPT=0 · NA=480 · L2.live 7→7（R2 改造 SramButterfly 后 7→8）。
+
+### R2 排期（下一轮起，A/C/D ≤3 条/轮）
+
+1. **SramButterfly-001** 改造：非侵入包装 `_check_static_impl`(原 check 去 hspice 部分) + `check_static` + `check_live`(.75 sess 真跑 hspice 读 .lis/SNM) + `judge_layers=[L0,L1,L2.live]` + live-neg(static-pass/live-fail: 候选 deck 用错误 sizing 产出 .lis 但 SNM 错) + §5 七项全绿。
