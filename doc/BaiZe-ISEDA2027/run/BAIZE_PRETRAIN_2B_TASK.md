@@ -141,6 +141,56 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-27 08:3x（**S2 切换准备：350k 时执行 blend hot-switch，由你操作**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「按照方案 A 做准备」——即 data 交付 patch + know-how，**pretrain 执行切换并继续监控**。
+
+**背景（必读）**：
+- 训练当前 iter ≈ 340k/700k，**350k 切换点 ETA ≈ 11-28 06:00**（约 18h 后）
+- data 线已完成 **Plan F 自定义改造**：`blend_switcher.py`（416 行）+ `blend_hotswitch.patch`，实现了 S1→S2 权重热更新 + per-source 游标映射 + 零重叠
+- 验证状态：standalone 8/8 PASS + Megatron integration 7/7 PASS，zero_overlap=0，flag-off 与 stock 逐字节等价
+- **你的职责**：在 350k ckpt 保存后，应用 patch + 切换 S2 blend → 重启训练 → 继续监控
+
+**切换前准备（现在就做，不等 350k）**：
+
+1. **阅读 data 交付物**（理解 patch 原理和操作步骤）：
+   - `run/data/blendswitch/README_PATCH.md`：patch 说明 + 安装步骤 + 验证结果
+   - `run/data/blendswitch/blend_hotswitch.patch`：patch 本体（新增 `blend_switcher.py` + 修改 `blended_dataset.py` / `samplers.py` / `loaders.py`）
+   - `run/data/blendswitch/blend_switcher.py`：核心逻辑（权重热更新 + 游标映射）
+   - `run/data/blendswitch/s2_blend_switch_config.json`：S2 切换配置（source keys + weights）
+   - `run/data/blendswitch/test_blend_switch.py`：验证脚本（8 项测试）
+   - `run/data/blendswitch/verify_results.json`：验证结果（8/8 PASS）
+   - `run/data/blendswitch/verify_results_integration.json`：集成验证结果（7/7 PASS）
+
+2. **理解关键参数**：
+   - patch 的开关是 `--blend-hot-switch`（默认关闭，关闭时与 stock 逐字节等价）
+   - S2 blend 配置：`blend_s2_preblend.tsv`（已在 `code/baize-llm/configs/` 中，10 源 web40/code40/math20）
+   - 切换时机：350k ckpt 保存后（save-interval=2000，所以 350k 会自然落盘）
+   - 切换后训练参数不变（LR、warmup、seq-length 等全保持，只换 blend）
+
+3. **制定切换 runbook**（写进 MEMORY，不等 350k）：
+   - 步骤 1：等 350k ckpt 落盘确认（`ls checkpoints/iter_0350000`）
+   - 步骤 2：kill 当前训练进程（两个节点的 torchrun + pretrain_launcher）
+   - 步骤 3：应用 patch 到训练代码（`cd code/baize-llm && git apply run/data/blendswitch/blend_hotswitch.patch`，或手动 cp `blend_switcher.py`）
+   - 步骤 4：修改 `s1.env` 或启动参数，加入 `--blend-hot-switch` + S2 blend TSV 路径
+   - 步骤 5：从 350k ckpt resume 启动训练（`bash scripts/train.sh s1`，配置已含 S2 blend）
+   - 步骤 6：验证切换成功（step time 正常 ~7s、loss 无异常突跳、前 100 步 ratio 偏差 ≤1pp）
+   - 步骤 7：继续监控 + L1 评测 350k（S1 最后一个点）
+
+4. **向 data 确认疑问**：如果阅读 patch 后有不确定的操作步骤，在自己的 MEMORY 记一行「待 data 确认：<具体问题>」，data 下轮唤醒会看到并回答。
+
+**执行切换（350k 时）**：
+- **本令授权你在 350k 时 kill 训练 + 应用 patch + 重启**（覆盖此前维护态「禁止重启」的铁律，仅限 350k S2 切换这一次）
+- 切换后恢复维护态（不再自行重启）
+- 切换前先 commit 记录现场（当前 ckpt / step time / loss / 进程 PID）
+
+**纪律**：
+- 切换前后的 step time / loss / GPU 状态必须记录
+- 如果 patch 应用失败或切换后训练异常（loss spike / NaN / step time >>7.4s），**立即 kill + 从 350k ckpt 用原 S1 配置恢复训练**（回退），并标 `⚠️ 待运维处理`
+- S2 blend 的 zero_overlap 已由 data 验证（8/8 + 7/7 PASS），你不需要重验，但切换后前 100 步要观察 loss 是否有异常突跳
+
+---
+
 ### ✅ 用户令 · 2026-11-25 13:1x（**有空时修 daemon 内联 print 口径：acc_only → harness_avg**）· 用户直令 · 低优先 · 已完成（#3365 13:40）
 
 > **用户原话**：「让 pretrain 有空时把小遗留修一下。」

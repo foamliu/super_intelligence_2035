@@ -1,5 +1,40 @@
 # BAIZE_DATA_TASK.md
 
+> 🔴 **用户令 · 2026-11-27 08:3x — S2 切换职责分工：你交付 patch + know-how，pretrain 执行切换（最高优先）**
+
+> **用户原话**：「按照方案 A 做准备」——即 data 交付 patch + know-how，**pretrain 执行切换并继续监控**。
+
+**你的职责（交付 + 配合，不执行切换）**：
+
+1. **确保交付物完整可读**（已基本完成，检查一遍）：
+   - `run/data/blendswitch/blend_hotswitch.patch` — patch 本体
+   - `run/data/blendswitch/blend_switcher.py` — 核心逻辑
+   - `run/data/blendswitch/README_PATCH.md` — 安装步骤 + 验证结果
+   - `run/data/blendswitch/s2_blend_switch_config.json` — S2 切换配置
+   - `run/data/blendswitch/test_blend_switch.py` — 验证脚本
+   - `run/data/blendswitch/verify_results.json` — standalone 8/8 PASS
+   - `run/data/blendswitch/verify_results_integration.json` — integration 7/7 PASS
+   - `code/baize-llm/configs/blend_s2_preblend.tsv` — S2 blend TSV
+
+2. **写一份「切换操作速查」**（1 页，给 pretrain 用的 runbook 补充）：
+   - patch 怎么应用（`git apply` 还是手动 cp？应用到哪个目录？）
+   - `--blend-hot-switch` 开关怎么传（改 `s1.env`？改 `train.sh`？还是命令行参数？）
+   - S2 blend TSV 路径怎么配（`BLEND_TSV` 环境变量？）
+   - 切换后前 100 步的预期行为（loss 可能微跳但不应 spike，ratio 偏差 ≤1pp）
+   - 如果出问题怎么回退（撤 patch + 恢复 S1 blend TSV + 从 350k ckpt resume）
+   - 落盘到 `run/data/blendswitch/SWITCH_RUNBOOK.md`
+
+3. **配合 pretrain 疑问**：pretrain 可能在 MEMORY 里记「待 data 确认：<问题>」，你看到后在 MEMORY_DATA 回答即可。常见问题预判：
+   - patch 是否与当前训练用的 Megatron 版本兼容？（README_PATCH 已记录 base commit + 验证过的包版本）
+   - `--blend-hot-switch` 是否需要额外依赖？（否，纯 Python，numpy 已有）
+   - S2 blend 的 source keys 与 S1 的映射关系？（`s2_blend_switch_config.json` 已含完整映射）
+
+4. **继续 blendswitch 复验**（直到 350k 切换完成）：保持 8/8 + 7/7 PASS 的验证节奏，确保切换时刻验证仍然通过。
+
+**你不做的**：不执行切换操作（kill 训练 / 应用 patch / 重启训练），不登录 .29 操作训练进程。这些由 pretrain 在 350k 时执行。
+
+---
+
 > 📦 **用户令 · 2026-11-22 19:4x（F 方案小白科普报告·内联SVG）· ✅ 已交付** → `run/reports/report_s1s2_blendswitch_f_explainer_zh.html`（40,743B ≤80KB✅ / `<script`=0 / `https?://`=0 / `<svg`=6≥5 / div·table·tr·td 全配对 23/6/36/163）。8 节（一页看懂→背景5词→为什么难→三路线对比→F原理逐步图解→代码改动4处→7项验证+条形图→FAQ5条）+ 6 张手写内联 SVG（时间轴/配比双饼/stock重叠/per-source游标映射核心图/验证条形图/切换时序）。每个术语首次出现带白话+类比（游标=书签/epoch=翻完一遍/blend=混几桶米/shard=分小袋/shuffle=打乱书页）。诚实标注：实测(zero_overlap=0 / ratio dev 0.0087% / flag-off byte-identical / new-source 0 / 7项全 PASS，来源 `data/blendswitch/verify_results.json`) vs 估算(D+E ~12% 未实测) vs 待测(GPU step time/显存)。v4/v5 保留不删。commit `b23a829b46`+`30ea2164f3` 已 push。原文归档 `ARCHIVE_OPERATOR_DATA.md`「§用户令·2026-11-22 19:4x」。
 
 ---
