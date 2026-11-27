@@ -1187,3 +1187,27 @@ REQ 34 条（R1 22 + R1b 12）按家族改造（B 预算 ≤6–8 条/轮，§4 
   - ⑦ check_live 不读 `reference/` GT：仅读 hidden B 输入 deck（input 非 GT）+ in-code 判据常量；沙箱不含 jsonl/test。
 - **跨 shard 落盘说明**: check.py+cheat_badinc.py+add_dm_meas_ref.py 经共享 worktree auto-commit 落 `4461e5197`（shard B bench hook 扫共享 worktree）；`98fcf1109` 补 JSON judge_layers+test sha sync + negative_selftest live-aware + empty.py true-empty。live_eval_changes.tsv +1 行（repo_commit=98fcf1109）。EDA-Flow-Bench HEAD=98fcf1109 pushed。
 - **R2 累计进度（non-Lite-500）**: done 9/34（NocalOffsetDeck/Vcc2scMultiDeckSpecCompare deck-mock ×2；BatchBsubHspice/IfElsePairFix/DffSetupHoldStimGen/PulseStimTbGen/FineSimDcConvFix(hybrid)/TimingMeasGen/SlicerDmMeasAdd judge-直调/hybrid ×7）；余 25 REQ 待改造。**judge-直调 pure pattern（候选只 GENERATES deck 不跑 sim）**已覆盖 5 条（r1345/r1346/r1347/r1348/r1350/r1351），后续同类可复用：拆 real-tool cond 到 check_live + 直接跑候选生成 deck + `.inc nonexistent` before `.end` 作 live-neg 陷阱（注意 hspice `.end` 后宽容，finesim `.inc` 非致命须用 undef-model）。
+
+### r1355（2026-11-27）non-Lite-500 R2 改造#11: SwitchChgDchVerif-001（candidate-runs-hspice + judge-直调 hybrid）
+- **verdict**: LIVE-REQ → reformed（r1354 Q1 桩体检 PASS de-risked 本轮直接执行）
+- **pattern**: candidate `switch_chg_dch_verif.py <netlist> <config> <out_dir>` builds tran testbench（.ic from 0 + step-PWL charge/hold/discharge/recharge + .measure FIND v(node) AT + trise/tfall）+ runs HSPICE **itself**（parse .lis -> report.json hspice_ran/charge_state/discharge_state/rise/fall）AND judge cond(n) independently re-runs HSPICE on B charge phase via `_run_hspice_charge` → 全 mislabeled [L0,L1], broken in SUT sandbox（no hspice=eval host -> candidate hspice_ran=F -> conds b-m fail + judge cond n crash）。**与 r1353 NmosAgeChar 区别**: 本 case judge 只在 B charge phase 独立重跑（cond n，1 个 deck），r1353 judge ref_run 全量 A+B（vtlin/idlin/idsat 比对，3 deck）；本 case 候选产 report 含结构化 charge_state/discharge_state，r1353 候选产 char_report 含器件指标。
+- **判据同原 b..n 一字迁移**（hspice_ran / charge_v>0.5vdd / discharge_v<0.5vdd / rise>0 / fall>0 / nodes / A-cross-input / judge indep hspice）。
+- **Q1 保真**: .75 EDASession hfhds201 hspice V-2023.12-SP1-1, 3-seed: ref candidate B(VDD=2.5) hspice_ran=T job-concluded grdecpwr_charge_v=2.5(>1.25✓f) grdecpwr_discharge_v=0.0036(<1.25✓g) charge_rise_time>0(✓h) discharge_fall_time>0(✓i) charge_state={GrDecPwr,net2,net3✓e}; A(VDD=3.3) grdecpwr_charge_v=3.3001(>1.65✓k) charge_state={GrDecPwr,net2✓j}; A!=B cross-input(node-set 3vs2✓l, charge_v 32% diff✓m); judge cond(n) indep hspice B charge vchg>0.5vdd✓。**physics REAL NOT fabricated**（B charge_v=VDD rail-accurate, discharge_v~mV ground-accurate; contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated GT）。
+- **非侵入包装**: `_check_static_impl` keep (a) zip+py_compile 一字不动 + **(sa/sb/sc) only-add** source-structure checks（subprocess+hspice 调用 / .tran+.measure testbench 构造 / .lis parse）+ `check_static` try/except 三元组 + `check_live(sess)` .75 upload submit.zip+4 netlist/config+live_driver.py -> driver 跑候选 A+B+B2 + judge indep hspice B charge -> JSON -> 断 b..n 同判据 + `(o)` 确定性 only-add + `check()` 兼容 + `__main__` 改 check_static。
+- **关键 driver fix**: LIVE_DRIVER 的 `judge_hspice_charge` 须用 `os.path.abspath(-i/-o)`——原 check.py `_run_hspice_charge` 用 tempfile 绝对路径，driver 用相对 run_dir + `cwd=run_dir` 会导致 `-i judgeB/chgB.sp` 在 cwd=judgeB 下双解析为 `judgeB/judgeB/chgB.sp` not-found -> jran=F（ref 首跑 cond n FAIL，修复后 18/18 PASS）。
+- **static-neg 3-distinct**: naive_empty(a 无 script)/naive_no_hspice_call(sa 源码缺 subprocess+hspice)/naive_no_measure(sb 源码缺 .measure)。
+- **live-neg 3-distinct static-pass/live-fail**:
+  - naive_print_expected（§4.9b）: 源码结构齐全（定义 build_testbench/run_hspice/parse_measures 含 subprocess+hspice+.tran+.measure+.lis 全模式）静态过 a/sa/sb/sc，但 main() 不调 run_hspice，runtime 伪造 report hspice_ran=F -> live-fail cond d。
+  - naive_core_deleted（§4.9c）: runs hspice 真跑（.lis 产 hspice_ran=T 过 d）但 parse_measures 核心删（regex 改 `__NEVER_MATCHES__`）charge_state 空 -> live-fail cond e。
+  - naive_hardcode_a: runs hspice 真跑但检测 B(vdd==2.5+net3) 覆盖 grdecpwr_charge_v=3.3=A 值 -> live-fail cond m（A==B charge_v）。
+- **§4.9 trio distinct{empty:a, print_expected:d, core_deleted:e} 3/3**。
+- **§5 七项全绿**:
+  - ① ref check_live PASS: .75 hfhds201 hspice V-2023.12-SP1-1, 18/18 exact。
+  - ② 3 static neg FAIL distinct{a,sa,sb} + 3 live-neg static-pass/live-fail distinct{d,e,m}（6 distinct ≥3）。
+  - ③ 3-seed 确定性: ref check_live PASS ×3 identical。
+  - ④ SKIP_RUN=1 deploy workdir clean no leak + ref check_static PASS。
+  - ⑤ sha 三方同步: case JSON `test` == 磁盘 `check.py` md5=`f2e5804a`；`judge_layers=[L0,L1,L2.live]`；3-way disk==JSON==HEAD。
+  - ⑥ 断言条数只增不减: 18 total（4 static a/sa/sb/sc + 14 live b..n+o，原 14，+4 only-add）。
+  - ⑦ check_live 不读 `reference/` GT：仅读 hidden B inputs（switch_cell_B.sp+verify_config_B.json，input 非 GT）+ in-code 判据常量；沙箱不含 jsonl/test/check.py。
+- **跨 session 碰撞（同 r1347 先例）**: 本轮写完 check.py 后 git pull 发现 concurrent shard-B bench-sync commit `6f570a0e5`（23:14:31）已同款 reform check.py+negatives+JSON（字节完全相同，共享 worktree auto-commit）；本轮独立 selftest（静态+live+3-seed+SKIP_RUN+sha sync）全绿确认正确性，补 super_intelligence_2035 tracking。live_eval_changes.tsv +1 行（repo_commit=6f570a0e5）。EDA-Flow-Bench HEAD=6f570a0e5（concurrent 已 push，无新 commit）。L2.live B nonlite 10→11。
+- **R2 累计进度（non-Lite-500）**: done 11/34（deck-mock ×2；judge-直调/hybrid ×9：BatchBsubHspice/IfElsePairFix/DffSetupHoldStimGen/PulseStimTbGen/FineSimDcConvFix/TimingMeasGen/SlicerDmMeasAdd/SwitchChgDchVerif；NmosAgeChar candidate-runs-hspice×1）；BLOCKED 1（SlicerSizeOpt-001 fabricated GT）；余 22 REQ 待改造。剩余 REQ 全为 candidate-runs-sim + judge-直调 hybrid。
