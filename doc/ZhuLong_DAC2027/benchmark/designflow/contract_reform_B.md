@@ -835,3 +835,17 @@ L2.live done 21→22；REQ 未改造 31-22=9 条（hspice-mock/finesim-mock GT-r
 **登记**：`live_eval_changes.tsv` +1 行（ts=2026-11-27T09:45+08:00, repo_commit=ea065f796c48）。同时 tsv 翻转 5 条已 done 但 verdict 未 flip 的（StrongarmFomSweep-001 新 + DelaySigma/PorCapSweep/CmlPvtAcReport/VwlpRefDeckSet stale）→ LIVE-REQ 9 / LIVE-REQ(done) 22。
 
 **.75 通路 OK**（r1320 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session shardB_r1320 用后 close）。自验通道：本地 Python `from eda_flow_judge import EDASession` → `sess.upload_text`(base64) 上传 candidate+A/B 资产，REF live PASS + CHEAT live FAIL 一次过零腐蚀。
+
+### r1327：SlicerFbTimeOpt/SpiceTbGen/StdLibCharTmpl 桩体检确认 REQ（只读 verdict，r1326 悬念收口）
+
+**背景**：r1326 末尾指示「R2 续改 3 条未改造 REQ（SlicerFbTimeOpt/SpiceTbGen/StdLibCharTmpl），3 条均须 §2.1 桩体检再判 REQ/OPT（R1 boilerplate 可能同 Vcc2scActDeckGen/VlshftParamOpt 误分类）」。本轮逐条 full-mock-body 读 check.py 验 boilerplate 准确性，**3 条全部 CONFIRM REQ**，r1326 误分类悬念证伪。
+
+**SlicerFbTimeOpt-001 → REQ 确认**：mock `_HSPICE_MOCK_SRC`（L141-236）`MOCK_OUTPUTS` dict 按 (4 widths+VVDD+vcm+temp+cap) `.param` 签名回放预录 .75 HSPICE .measure（t0/t1_feedbacktime+i_total）。Q2 漏洞在 cond (n)（L385-393）：L2 re-verify **只重跑 i_total**（`_override_deck(real src_sp, best_config)` → mock → `_grab(out,"i_total")` ±30%），**不复核 t0/t1_feedbacktime**（约束变量本身，cond f 仅查候选报告值 ≤limit）。候选可谎报 best_t0/best_t1≤60ps 通过 cond (f)，而该 config 真实 t0/t1>60ps——mock 对 t0/t1 re-verify 盲 ⇒ 假阳。另：shape-right-physics-wrong（正确 .param 签名 + garbage 拓扑）mock 按 .param 签名回放 GT 不读网表 ⇒ 亦假阳。real hspice 两路皆抓。Genuine Type A GT-replay-by-signature。**R1 boilerplate accurate after body-read**。
+
+**SpiceTbGen-001 → REQ 确认 + R1 reason CORRECTED**：R1 boilerplate「replays .75-captured GT keyed on signature」**不准确**——mock `_HSPICE_MOCK_SRC`（L86-174）实为 deck-driven **RANGE-SYNTHESIZER**（delay measures→1.0e-9 常量，param measures→`eval(expr with vdd)`），**无 `_MOCK_OUTPUTS`/GT dict，无 signature lookup**。conds (i)(j)(l)(m) 仅验范围（≥2 finite / 1 delay-range 1e-12..1e-8 / 1 voltage-range 0.5..1.3）。Q2：结构正确 testbench（.include dut.sp/.tran/≥2 .measure/.options/.temp/.print + B-net 引用）配 garbage stimulus/measure-points（trig v(a)=999 不可达）⇒ mock 永远吐 1e-9+vdd ⇒ PASS 假阳；real hspice 跑真实 dut_B.sp ⇒ measure=failed/no-crossing ⇒ cond (j) FAIL。**KEY DISTINCTION vs Vcc2scActDeckGen-REQ→OPT-downgrade**：那个 mock **重写 DUT netlist 为 model-free stub**（real hspice 也 conclude garbage，零物理增益）；此处 mock **原样跑候选 testbench 在真实 dut_B.sp** ⇒ real hspice 真做物理，抓 non-converging/garbage testbench。real hspice 有真实 L2 增益 ⇒ REQ（verdict 不变，reason 修正为 deck-driven-range-synthesizer）。
+
+**StdLibCharTmpl-001 → REQ 确认**：mock `HSPICE_MOCK_SRC`（L105-134）按 corner-签名字符串匹配（`.temp 85`+`vddb=1.5`+`tpd_inv_b` for B / `.temp 25`+`vdda=1.8`+`tpd_inv_a` for A）回放嵌入 `_EMBED_SIM{B,A}_MT0/LIS`（自称 .75 HSPICE V-2023.12-SP1-1 pre-gen）。mock **不读 .subckt 拓扑**。Q2：候选造 corner-签名对（.temp 85/.param vddb=1.5/.measure tran tpd_inv_b）但 garbage .subckt 网表（错 sizing/破拓扑）；cond (d) 只数 ≥2 .subckt（非内容），cond (e/f) 查 sig+measure-kinds；mock 按 corner-sig 字符串回放 GT 不顾拓扑 ⇒ conds (j)(k) tpd±15% PASS 假阳。real hspice 跑 garbage-topology deck ⇒ 错 tpd ⇒ cond (j)(k) FAIL。Genuine Type A GT-replay-by-signature（topology-blind keying），同已改造 26 条家族。**R1 boilerplate accurate after body-read**。
+
+**不改** check.py / cases / judge_layers（只读 verdict 确认）。**不进** `live_eval_changes.tsv`（无口径变更）。tsv 3 行更新 live_reason（mock-body 证据）+ check_live（R3 改造方案）+ round=2。
+
+**累计**：REQ 29（done 26，余 3 confirmed-REQ 待 R3 改造），OPT 19，NA 76，cross_shard 2，L2.live 26 不变。**R1 boilerplate 误分类悬念清零**——3 条全部真 REQ，下一轮起 R3 改造（≤6-8 条/轮，hspice/finesim 真跑，每条 §5 七项全勾）。
