@@ -5739,3 +5739,8 @@
 | 2026-11-27 | 2611.34635 | ZeroHero: Training Small Language Agents from Scratch | cs.AI | 收录 |
 | 2026-11-27 | 2611.34675 | RoboEvo$^2$: Recursive Robot Self-Improvement via Harness-Policy Co-Evolution | cs.RO | 收录 |
 | 2026-11-27 | 2611.34875 | How Much Do Coding Agents Over-Edit, and Why? An Empirical Study of Unneeded Edits in Repository-Level Agent Patches | cs.SE | 收录 |
+| 2026-11-28 | 2611.34472 | DiversePlace: Diversity-Seeking Curriculum Reinforcement Learning for Macro Placement | cs.LG | 收录 |
+| 2026-11-28 | 2611.32405 | CPU-Eval: Evaluating Large Language Models for CPU Hardware Code Generation | cs.AR | 收录 |
+| 2026-11-28 | 2611.33346 | NEVA: Natural-Language Co-Evolution and Validation of Microarchitectures | cs.AR | 收录 |
+| 2026-11-28 | 2611.34777 | When Every Rollout Fails: Splicing Learner-Conditioned Options into Long-Horizon Agent RL | cs.LG | 收录 |
+| 2026-11-28 | 2611.34813 | Solve Vision with Code: Coding Agents Are Stronger Visual Reasoners Than Video Models | cs.CV | 收录 |

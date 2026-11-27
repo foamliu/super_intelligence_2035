@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-28 00:0x · r275）**：作者 **419** 人（编号最大 **419**）· X 已核验 **164**（本轮 **+0**：DiversePlace 三位作者本人主页均无 x/twitter 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **189**（台账 #1–#189；本窗 **+1**：#189 Zhiyao Xie；今日 **1/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 21:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 +0）。本轮 **+3**：Zhiyao Xie 谢知遥（DiversePlace 资深作者，香港科技大学，A 级 `eezhiyao@ust.hk`〔本人主页 <https://zhiyaoxie.com/> 页内 `mailto:` 明文〕，X 未找到 ⇒ 已发信 #189）· Ling Pan（DiversePlace 末位，香港科技大学，A 级 `lingpan@ust.hk`〔本人主页 <https://ling-pan.github.io/> 页内明文 `lingpan [@] ust [DOT] hk` 还原〕，X 未找到 ⇒ 仅建档）· Wenrui Zhou（DiversePlace 一作，香港科技大学，本人主页 `200` 但无 `mailto:`/明文邮箱，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-27 21:0x · r274）**：作者 **416** 人（编号最大 **416**）· X 已核验 **164**（本轮 **+2**：`@jietang` 由本人主页 <https://keg.cs.tsinghua.edu.cn/jietang/> 外链 `twitter.com/jietang` + 代理抓 `x.com/jietang` `200` / 182,716 B，`og:title` = `jietang (@jietang) on X` ⇒ 双源；`@MichaelAuli` 由本人主页 <https://michaelauli.github.io/> 外链 `twitter.com/michaelauli` + 代理抓 `x.com/michaelauli` `200` / 168,407 B，`og:title` = `Michael Auli (@MichaelAuli) on X`、bio = `Research Scientist @FacebookAI` ⇒ 双源；Zhilin Yang 本人主页无 x/twitter 外链、`x.com/kimiyoung` 属他人 ⇒ 记「未找到 X」，不猜）· 已发信 **188**（台账 #1–#188；本窗 **+1**：#188 Jie Tang；今日 **4/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，较 00:2x 的 69 多 1 = 已知 Petar #187 回复；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Jie Tang 唐杰（P-Tuning 末位/通讯，中文，本人主页可见 `jietang at tsinghua . edu . cn` ⇒ A 级 ⇒ 已发信 #188）· Michael Auli（GLU 三作，英文，本人主页无邮箱、X 双源 ⇒ 仅建档）· Zhilin Yang（P-Tuning 五作，中文，本人主页 `200` 但无邮箱 / 无本人 X ⇒ 仅建档）。
 > **当前计数（2026-11-27 00:2x 补轮 · r273）**：作者 **413** 人（编号最大 **413**）· X 已核验 **162**（本轮 **+2**：`@PetarV_93` 由本人主页 <https://petar-v.com/> 外链 `x.com/PetarV_93` + 代理抓 `x.com/PetarV_93` `200` / 160,699 B，`og:title` = `Petar Veličković (@PetarV_93) / X` ⇒ 双源；`@gdb` 由本人博客 <https://blog.gregbrockman.com/> 外链 `x.com/gdb` + 代理抓 `x.com/gdb` `200` / 191,418 B，`og:title` = `Greg Brockman (@gdb) / X` ⇒ 双源；Mark Sandler 无本人 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **187**（台账 #1–#187；本窗 **+1**：#187 Petar Veličković；今日 **3/12**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **69** 封，与 00:00 持平；无新实质回信、无新退信；退信 **9**、本窗 **+0**）。本轮 **+3**：Petar Veličković（GAT 一作，英文〔判据=塞尔维亚姓名 + DeepMind/剑桥机构；塞语不在需母语清单 ⇒ 英文兜底〕，本人 Contact 页 `petarv at google dot com` 明文还原 ⇒ A 级 ⇒ 已发信 #187）· Greg Brockman（Gym 一作，英文，无公开邮箱 + X 双源 ⇒ 仅建档）· Mark Sandler（MobileNetV2 一作，英文，`marksandler.com` 实测 1&amp;1 停放页、无公开邮箱 ⇒ 仅建档）。
 
@@ -5868,3 +5869,42 @@
 | X 账号 | **未找到 X**（主页无 x/twitter 外链；`x.com/ZhilinYang` `404`、`x.com/kimiyoung` 经 `og:title` 为 `kim Young (@KimiYoung)` 他人账号 ⇒ 不登记） |
 | 状态 | **仅建档**（无邮箱、无本人 X；同论文已发通讯 Jie Tang #188，守「同一论文 ≤1」不另发） |
 | 备注 | 语言=中文(判据=华人姓名族属 + 清华大学)。研究方向：预训练语言模型 / 长上下文 / 知识增强。P-Tuning 的连续 prompt 与 XLNet 的排列式训练对 posttrain 的适配与长上下文实验均有参照价值；仅建档。 |
+
+### 417. Zhiyao Xie（谢知遥）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhiyao Xie（谢知遥，中文姓名 ⇒ `语言=中文`，判据=华人姓名族属 + 香港科技大学机构） |
+| 机构 | **香港科技大学（HKUST）** 电子与计算机工程系（助理教授；ML for EDA / 布局布线方向） |
+| 代表论文 | **DiversePlace: Diversity-Seeking Curriculum Reinforcement Learning for Macro Placement**（`2611.34472`，A 轨 2026-11-28，资深作者） |
+| 邮箱 | **A 级** `eezhiyao@ust.hk`（本人主页 <https://zhiyaoxie.com/> `HTTP 200` / 33,912 B，页内 <code>mailto:eezhiyao@ust.hk</code> 明文） |
+| 主页 | <https://zhiyaoxie.com/>（`200` / 33,912 B） |
+| X 账号 | **未找到 X**（主页无 x/twitter 外链；未猜 handle） |
+| 状态 | **已发信 #189**（2026-11-28 00:03:59 `SENT OK`；同论文只发本人，一作/末位仅建档） |
+| 备注 | 语言=中文(判据=华人姓名族属 + 港科大机构；未因论文英文判英文)。问题聚焦 DiversePlace 的质量门控多样性门限、HPWL 训练期 oracle 偏差、扩张时域课程与归档价值；对 designflow 判分与 zhulong 消融可直接借鉴。 |
+
+### 418. Ling Pan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ling Pan（中文姓名 ⇒ `语言=中文`，判据=华人姓名族属 + 香港科技大学机构） |
+| 机构 | **香港科技大学（HKUST）**（Tenure-Track Assistant Professor；主页自述） |
+| 代表论文 | **DiversePlace: Diversity-Seeking Curriculum Reinforcement Learning for Macro Placement**（`2611.34472`，A 轨 2026-11-28，末位） |
+| 邮箱 | **A 级** `lingpan@ust.hk`（本人主页 <https://ling-pan.github.io/> `HTTP 200`，页内明文 <code>lingpan [@] ust [DOT] hk</code> 还原） |
+| 主页 | <https://ling-pan.github.io/>（`200` / 21,610 B） |
+| X 账号 | **未找到 X**（主页无可提取 x/twitter 外链；未猜 handle） |
+| 状态 | **仅建档**（有 A 级邮箱；守「同一论文 ≤1」——同论文已发 #417，不重复打扰） |
+| 备注 | 语言=中文(判据=华人姓名族属 + 港科大机构)。研究方向：决策/强化学习。DiversePlace 的课程 PPO 与归档多样性对 zhulong / posttrain 的 RL 设计有参照价值。 |
+
+### 419. Wenrui Zhou
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenrui Zhou（中文姓名 ⇒ `语言=中文`，判据=华人姓名族属 + 香港科技大学机构） |
+| 机构 | **香港科技大学（HKUST）**（DiversePlace 一作；本人主页自述） |
+| 代表论文 | **DiversePlace: Diversity-Seeking Curriculum Reinforcement Learning for Macro Placement**（`2611.34472`，A 轨 2026-11-28，一作） |
+| 邮箱 | **未找到**（本人主页 <https://William030422.github.io/> `200` / 1,759,084 B 无可提取 `mailto:` / 明文邮箱；按纪律不猜） |
+| 主页 | <https://William030422.github.io/>（`200` / 1,759,084 B） |
+| X 账号 | **未找到 X**（主页无 x/twitter 外链；未猜 handle） |
+| 状态 | **仅建档**（无邮箱、无本人 X；同论文已发资深作者 #417，守「同一论文 ≤1」不另发） |
+| 备注 | 语言=中文(判据=华人姓名族属 + 港科大机构)。DiversePlace 一作；代码仓 <https://github.com/William030422/NIPS2026-DiversePlace>。仅建档。 |

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-28 · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; --ok:#1a7f37; --warn:#9a6700; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.72; font-size:15px; }
+  .wrap { max-width:980px; margin:0 auto; padding:30px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:26px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 7px; font-size:24px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:10px; font-size:13px; opacity:.92; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  h3.sec { color:var(--primary); border-bottom:2px solid #d8e3ef; padding-bottom:6px; margin:30px 0 16px; font-size:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:14px 0;
+          box-shadow:0 1px 3px rgba(0,0,0,.04); }
+  .card h2 { font-size:16.5px; margin:0 0 10px; color:var(--primary); line-height:1.5; }
+  table.kv { border-collapse:collapse; width:100%; font-size:14px; }
+  table.kv th, table.kv td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  table.kv th { width:112px; background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12.5px; background:#e8f0fe; color:#1a4d8f; }
+  .tag.sci { background:#eef7ee; color:#1a7f37; }
+  details { margin:10px 0 2px; border:1px solid #d8e3ef; border-radius:8px; padding:8px 12px; background:#fbfdff; }
+  details summary { cursor:pointer; font-weight:600; color:#1a4d8f; }
+  details.voice-ready { background:#faf7ff; border-color:#e2d6f7; }
+  details.voice-ready summary { color:#5b3a99; }
+  ul { margin:8px 0 4px 20px; padding:0; }
+  li { margin:4px 0; }
+  .small { font-size:13.5px; color:var(--muted); }
+  .ok { color:var(--ok); font-weight:600; }
+  .warn { color:var(--warn); font-weight:600; }
+  code { background:#f0f3f6; padding:1px 5px; border-radius:4px; font-size:13px; }
+  footer { margin-top:36px; padding-top:14px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-28</h1>
+  <div class="sub">🌅 00:00 首窗（新一天 A 轨额度重置）· 今日进度 <b>5 / 5</b> · 数据源 arXiv</div>
+  <div class="meta">生成时间：2026-11-28 00:0x CST ｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 452）｜ 作者网 419（X 已核验 164）｜ 作者信 189（实质回信 8 信 / 7 人 ≈4.3%）</div>
+</header>
+
+<div class="note">
+  <b>免责</b>：推荐 = <b>待读线索，非结论</b>；所有数字均为<b>论文作者自报、本线未复现</b>。标题照抄英文原题（不改写/不翻译），摘要为自写中文一句话。
+  本期 5 篇全部经 arXiv API <code>200</code> + <code>application/atom+xml</code> + 真实 <code>published</code> 校验，且 abs 页 <b>5/5 <code>200</code></b>。
+</div>
+
+<h3 class="sec">A 轨 · 今日推荐（5 / 5）</h3>
+
+<div class="card">
+  <h2>1 · DiversePlace: Diversity-Seeking Curriculum Reinforcement Learning for Macro Placement</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34472">DiversePlace: Diversity-Seeking Curriculum Reinforcement Learning for Macro Placement</a></td></tr>
+    <tr><th>中文一句话</th><td>宏单元布局的下游质量要等后续阶段才能测准，训练只能用<b>HPWL 这类快但有偏的 oracle</b>。DiversePlace 把「<b>质量受控的多样性</b>」做成显式目标：维护一个「HPWL 有竞争力但彼此显著不同」的紧凑归档，并用「质量门控多样性奖励 + 扩张布局时域」的课程 PPO 从零优化。ISPD2005 八个设计上 top-5/10/20 归档多样性一致提升，HPWL 持平或更低，且更省。</td></tr>
+    <tr><th>作者 / 机构</th><td>Wenrui Zhou · Jiashun Liu · Wenji Fang · Zhiyao Xie · Ling Pan（5 位；Zhiyao Xie / Ling Pan 本人主页为香港科技大学，其余摘要未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T14:39:59Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.LG</code> ｜ 🏷 <b>借鉴</b>（designflow 造题/判分 · zhulong 消融设计 · vision 后备）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34472">arXiv:2611.34472</a> ｜ 代码 <a href="https://github.com/William030422/NIPS2026-DiversePlace">William030422/NIPS2026-DiversePlace</a></td></tr>
+    <tr><th>推荐理由</th><td>它正面处理了我们做 EDA 任务 RL 时最痛的一点：<b>奖励代理（HPWL）与真实下游目标（布线/拥塞/时序）不一致</b>，且单一最优解会浪费可选项。可落地：① designflow 的 placement 类用例判分应能区分「HPWL 好但布线差」的解；② zhulong 消融可加「归档规模 / 质量门限」两轴。⚠️ 数字是 ISPD2005 结论，作者未报「归档最优解的下游布线圈长增益」，不能据此宣称多样性必然改善最终 PPA。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>2 · CPU-Eval: Evaluating Large Language Models for CPU Hardware Code Generation</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.32405">CPU-Eval: Evaluating Large Language Models for CPU Hardware Code Generation</a></td></tr>
+    <tr><th>中文一句话</th><td>VerilogEval 上 HDL 生成已普遍过 <b>90%</b>、区分度变小，于是作者从六个<b>真实已流片 CPU</b>（从小型嵌入式核到能跑 Linux 的乱序核）构造 <b>339 道</b> HDL 生成题，覆盖 SystemVerilog / Chisel / SpinalHDL。七个前沿 LLM 的平均 <b>pass@1 比 VerilogEval v2 Spec-to-RTL 低 45.14 个百分点</b>；且<b>子模块源码行数越多 pass@1 越低</b>、越少见 HDL 写法的 CPU pass@1 越低。</td></tr>
+    <tr><th>作者 / 机构</th><td>Yuisei Iwata · Yutaka Masuda · Tohru Ishihara（3 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-24（arXiv v1；<code>published=2026-11-24T11:07:23Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.AR</code> ｜ 🏷 <b>借鉴</b>（harness 评测 · posttrain L4 · zhulong 难度分层 · data 切分）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.32405">arXiv:2611.32405</a></td></tr>
+    <tr><th>推荐理由</th><td>直接回应 zhulong / posttrain 的「基准饱和」问题：分数不是越高越好，而是要看<b>是否还有区分度</b>。两条可落地：① harness / zhulong 报告 HDL 题须<b>按模块行数、按 HDL 种类分层</b>；② data 侧造题应按模块粒度控制单文件行数。⚠️ 339 题是作者新基准，「低 45.14 个点」是相对其七模型均值；摘要未给单模型逐项分数，引用时不得跨 harness 比较。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>3 · NEVA: Natural-Language Co-Evolution and Validation of Microarchitectures</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.33346">NEVA: Natural-Language Co-Evolution and Validation of Microarchitectures</a></td></tr>
+    <tr><th>中文一句话</th><td>现有 LLM 驱动的微架构搜索多在<b>演化 C++ 模拟器代码</b>，迫使模型去推理实现细节而非架构机制。NEVA 改为：从已发表研究里抽取「架构概念」成结构化知识库，指导<b>联合自然语言架构规格</b>的演化，并处理三件事——自然语言表示架构、硬件约束下验证候选、借诊断反馈协同各微架构组件。用 SPEC CPU2017/2026 等负载评测，「规格级演化」优于「代码级演化」；Claude Opus 5.5 下 NEVA 设计在 held-out 单核性能上比 Pythia-Mockingjay 基线最高 <b>+4.8%</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Khoi Le · Sayanti Jana · Matthew DeLorenzo · Jeyavijayan Rajendran · Paul Gratz（5 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-24（arXiv v1；<code>published=2026-11-24T19:32:45Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.AR</code> ｜ 🏷 <b>借鉴</b>（designflow 造题 · zhulong 消融 · data 概念库）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.33346">arXiv:2611.33346</a></td></tr>
+    <tr><th>推荐理由</th><td>把「<b>让 agent 在正确的抽象层工作</b>」讲清楚了：不是直接改代码，而是改自然语言规格、再用硬件约束校验。对 designflow 造微架构/HDL 题很有借鉴：题面可以是「规格 + 约束」，判分看规格到实现的保真。⚠️ 多核性能与基线无显著差异；EvoX 搜索<b>40 个候选 / 2.2 天 / API 列表价约 $320</b> ⇒ 成本很高，不能当成便宜可复跑的常规基线。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>4 · When Every Rollout Fails: Splicing Learner-Conditioned Options into Long-Horizon Agent RL</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34777">When Every Rollout Fails: Splicing Learner-Conditioned Options into Long-Horizon Agent RL</a></td></tr>
+    <tr><th>中文一句话</th><td>长程 agent 任务里，组内 RL（GRPO 类）经常遇到<b>整组全 0 奖励</b>（all-fail），拿不到策略梯度。SPLICE 不灌入强模型的完整轨迹，而是对每个全失败组：由提案模型在当前策略轨迹上选一个<b>拼接点</b>、生成若干有界选项，用<b>重复当前策略延续</b>估每个选项价值，把正估计转成「回报加权局部目标」再拟合策略。在 SWE-bench Verified 与 BrowseComp-Plus 上，四种设置均优于 GRPO 与全轨迹引导，比 GRPO 高 <b>2.8–9.8 个百分点</b>；对初始失败 SWE 任务，把 GRPO 的「毕业率」提高 <b>10.8 个百分点</b>，且降低提案模型算力。</td></tr>
+    <tr><th>作者 / 机构</th><td>Haowen Hou · Yicheng Liu · Zhen Huang · Jiaqi Wang（4 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T17:38:00Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.LG</code> ｜ 🏷 <b>借鉴</b>（posttrain self-play RL · harness 指标）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34777">arXiv:2611.34777</a></td></tr>
+    <tr><th>推荐理由</th><td>正中我们 posttrain 在真实 EDA 环境做 self-play RL 的痛点：<b>通过率低时 all-fail 组太多，组内优势全为 0</b>。SPLICE 的「局部拼接 + 重估价值」比「喂全轨迹」更省且更 on-policy。可落地：posttrain 预注册一个 SPLICE 对照臂，并在日志里单列 all-fail 组比例与毕业率。⚠️ 任务是 SWE / Deep Research，不是 EDA；奖励仍来自可验证判分，迁移到 EDA 需重新定义「选项」与「拼接点」。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>5 · Solve Vision with Code: Coding Agents Are Stronger Visual Reasoners Than Video Models</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34813">Solve Vision with Code: Coding Agents Are Stronger Visual Reasoners Than Video Models</a></td></tr>
+    <tr><th>中文一句话</th><td>「视频生成模型能原生地做视觉推理」被当作优点，但没人用<b>同条件</b>对比过「写程序」这条符号路线。作者把同一批任务、同输入/输出口径/评分器都给两方：视频模型去噪像素，编码 agent 则<b>写程序渲染答案视频</b>，再由未改动的规则评分器判分。在 <b>VBVR-Pro-Bench</b>（500 实例、5 类认知、符号真值）上，三个闭源 agent（Codex / Claude Code / Gemini CLI）得 <b>0.923 / 0.894 / 0.893</b>，各比最强视频模型高 <b>0.22 以上</b>；23 个可运行开源模型里最好 GLM-5 <b>0.572</b>。结论：<b>答案可由首帧+提示算出的任务，程序合成目前是更可靠的视觉推理路线</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Dezhi Luo · Fengyuan Yu · Haotian Zhang · … · Hokin Deng（共 14 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T18:01:22Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.CV</code> ｜ 🏷 <b>科普</b>（大众能懂：AI 写程序 vs AI 直接画）+ 借鉴（vision 评测臂）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34813">arXiv:2611.34813</a></td></tr>
+    <tr><th>推荐理由</th><td>给我们 vision 线一个可测试的新臂：<b>对「可计算」的视觉任务，让 agent 写程序解析/渲染，再用同一离线评分器判分</b>，与「VLM 直接读图」对比——这正好对应「不降级题目、同尺子、agent 当 SUT」的评测纪律。⚠️ 任务限定「答案可由首帧+提示算出」，不等于通用视觉理解；闭源 agent 分数不代表 2B 模型能复制；全部数字作者自报、未复现。</td></tr>
+  </table>
+</div>
+
+<details class="news-ready">
+<summary>📰 news_ready · 可发头条（1 条）</summary>
+<ul>
+  <li><b>大众标题</b>：让 AI「写程序画视频」，居然比视频大模型更会做视觉推理？</li>
+  <li><b>一句话事实</b>：研究者把同一批 500 个视觉推理任务，同条件交给视频生成模型和会写程序的编码 agent，用同一个评分器打分，编码 agent 普遍明显更高分。</li>
+  <li><b>可用数字</b>（均为作者自报、本线未复现，出处均为 arXiv <code>2611.34813</code> abs 摘要页）：
+    <ul>
+      <li><b>500</b> 个实例 / <b>5</b> 类认知任务（VBVR-Pro-Bench）</li>
+      <li>三个闭源编码 agent 得分 <b>0.923 / 0.894 / 0.893</b>，各比最强视频模型高 <b>&gt;0.22</b></li>
+      <li>23 个可运行开源模型中最好 <b>GLM-5 = 0.572</b></li>
+    </ul>
+  </li>
+  <li><b>配图</b>：暂缺（本线只核 abs 摘要，未下载 PDF 核图号；news 若要用图，须自行从 <a href="https://arxiv.org/abs/2611.34813">abs</a> / PDF 取图并标注出处）。</li>
+  <li><b>一手信源</b>：机构摘要区未列 · Dezhi Luo / Fengyuan Yu / Haotian Zhang 等（14 位）· <a href="https://arxiv.org/abs/2611.34813">arXiv:2611.34813</a></li>
+  <li><b>话题点</b>：大众默认「视频生成模型=懂世界」，这项研究给了一个反直觉且可量化的反例。</li>
+  <li><b>不适合发的理由</b>：任务限定「答案可由首帧+提示算出」，不代表通用视觉理解；高分来自闭源大模型 agent，不能外推为小模型能力；全部数字为作者自报。</li>
+</ul>
+</details>
+
+<details class="voice-ready">
+<summary>🗣 voice_ready · 研究者言论（本期 0 条）</summary>
+<ul><li><b>本期无</b>：X 经代理可达（<code>x.com</code> <code>200</code>），但本轮未发现同时满足「原文 + 链接 + ≤30 天 + 与本线相关」的顶级研究者言论；不硬凑、不用二手转述冒充原文。</li></ul>
+</details>
+
+<h3 class="sec">🅱 B 轨 · 经典论文（00:00 轮 · 第一百二十八轮 +3 → 452）</h3>
+<div class="card">
+  <ul>
+    <li><b>Generating Long Sequences with Sparse Transformers</b>（<a href="https://arxiv.org/abs/1904.10509">1904.10509</a>，2019-04-23，被引 <b>3,468</b>）— 注意力矩阵的<b>稀疏因子化</b>把复杂度从 O(n²) 降到 O(n√n)，配深层网络稳定化初始化、注意力重算省显存、快速注意力 kernel；用同一架构建模图像/音频/文本原始字节。是今天长上下文稀疏注意力的源头之一。归属：pretrain（长上下文）· vision · zhulong。</li>
+    <li><b>Zero-Shot Text-to-Image Generation（DALL·E）</b>（<a href="https://arxiv.org/abs/2102.12092">2102.12092</a>，2021-02-24，被引 <b>6,727</b>）— 用一个 transformer 自回归地把<b>文本 token 与图像 token 当单一数据流</b>联合建模，数据与规模足够时零样本可比专用文生图模型。是「统一 token 序列 + 自回归」多模态范式的标志性工作。归属：vision · pretrain · data。</li>
+    <li><b>MLP-Mixer: An all-MLP Architecture for Vision</b>（<a href="https://arxiv.org/abs/2105.01601">2105.01601</a>，2021-05-04，被引 <b>4,393</b>，NeurIPS 2021）— 证明<b>卷积与注意力都不是必需</b>：仅用两类 MLP（逐 patch 混合、跨 patch 混合）在大数据或现代正则下即可逼近同类精度。是「视觉骨干选型」的重要反例。归属：vision（编码器）· pretrain（架构选型）。</li>
+  </ul>
+  <p class="small">核验：arXiv API <code>200</code> + <code>application/atom+xml</code>（3 entries；<code>published</code> 逐字 <code>2019-04-23T19:29:47Z</code> / <code>2021-02-24T06:42:31Z</code> / <code>2021-05-04T16:17:21Z</code>；Sparse Transformer / DALL·E <code>comments</code> 为空，MLP-Mixer <code>comments</code> 为 v2–v4 修订说明）+ OpenAlex <code>3/3 200</code>（3,468 / 6,727 / 4,393，查询日 <b>2026-11-28</b>；MLP-Mixer type=conference-paper / NeurIPS）；三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>。⚠️ 候选 <code>2206.10658</code> 经 arXiv 实测为 ART 稠密检索论文、<code>2206.07682</code>（Emergent Abilities）<b>已在表内</b> ⇒ 均未收录，纠错如实记。</p>
+</div>
+
+<h3 class="sec">👥 作者关系网（00:00 轮 +3 → 419，X 仍 164）</h3>
+<div class="card">
+  <ul>
+    <li><b>#417 Zhiyao Xie 谢知遥</b>（香港科技大学 ECE；DiversePlace 资深作者；A 级 <code>eezhiyao@ust.hk</code>〔本人主页 <a href="https://zhiyaoxie.com/">zhiyaoxie.com</a> <code>200</code> / 33,912 B 页内 <code>mailto:</code> 明文〕；X 未找到）— <b>已发信 #189</b>。</li>
+    <li><b>#418 Ling Pan</b>（香港科技大学；DiversePlace 末位；A 级 <code>lingpan@ust.hk</code>〔本人主页 <a href="https://ling-pan.github.io/">ling-pan.github.io</a> <code>200</code> 页内明文 <code>lingpan [@] ust [DOT] hk</code>〕；X 未找到）— 仅建档（同论文已发 #417，守「同一论文 ≤1」）。</li>
+    <li><b>#419 Wenrui Zhou</b>（香港科技大学；DiversePlace 一作；本人主页 <a href="https://William030422.github.io/">200</a> 但无 <code>mailto:</code>/明文邮箱；X 未找到）— 仅建档，不猜地址。</li>
+  </ul>
+</div>
+
+<h3 class="sec">✉ 作者请教信（00:00 轮 +1 → 189，今日 1/12）</h3>
+<div class="card">
+  <ul>
+    <li><b>#189 Zhiyao Xie 谢知遥</b> — 中文 <b>248 汉字</b>；主题 <code>DiversePlace 的质量门控多样性、HPWL 偏差与归档价值：三个实现问题</code>；<code>SENT OK 00:03:59</code>；落款两行（<code>祝好，</code> / <code>Yang Liu</code>，其后无行）。</li>
+    <li class="small">抗模板：专属细节 = 质量门控的多样性奖励门限 / 扩张布局时域的课程 PPO / 归档里「HPWL 有竞争力但布线拥塞差」的解 / HPWL 作为训练期 oracle 的偏差；与近期中文信（#186 MAGE 状态检查点 / #188 P-Tuning 模板方差）开头句、三问句式零共用；正文不含项目名。</li>
+    <li class="small">地址等级：<b>A 级</b>（本人当前主页 <code>mailto:</code> 明文）；🚫 未用 PDF / 转发页 / 猜测地址。同论文只发 #417，一作 #419 与末位 #418 仅建档。</li>
+  </ul>
+</div>
+
+<h3 class="sec">📨 回信核验（IMAP 只读）</h3>
+<div class="card">
+  <ul>
+    <li>方法：<code>IMAP4_SSL('imap.yeah.net',993)</code> + <code>~/.hr_smtp</code>（不打印、不入 git）；<code>select INBOX readonly</code> + <code>BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)]</code>；<b>未改 <code>\Seen</code></b>、未点链接。</li>
+    <li>INBOX <b>70 封</b>（与 21:00 持平，<b>+0</b>）；<code>SINCE 25-Nov-2026</code> 11 封，最新为 Ultralytics 订阅；作者来信仍只有已知的 <b>#187 Petar Veličković 回复</b>（已落盘 <code>replies/1710.10903.md</code>）。</li>
+    <li><b>无新实质回信、无新退信</b>；累计实质 <b>8 信 / 7 人 ≈ 4.3%</b> · 自动 1 · 退信 9 · 无应答(&gt;14d) 32 · 未到期 139 ⇒ 8+1+9+32+139 = <b>189</b> ✔；送达口径 8/180 ≈ 4.4%（189 − 9 退信）。</li>
+    <li>口径不变：按「冷邮件正常量级」当观测信号，<b>不作成功判据</b>；0/低回信继续从「选题 / 问句是否太泛 / 是否发错人 / 地址是否有效」四方向诊断。</li>
+  </ul>
+</div>
+
+<h3 class="sec">🎯 对各线的可执行建议（6 线齐全，无建议显式写「无」）</h3>
+<div class="card">
+  <ul>
+    <li><b>pretrain</b>（1 条）：长上下文阶梯（32K→64K→128K）可把 <b>Sparse Transformers</b> 的「稀疏注意力因子化 O(n√n) + 注意力矩阵重算省显存 + 定制 kernel」列为对照臂，逐档记录<b>长度–显存–吞吐</b>三元曲线（不改主线配方，只加对照）。</li>
+    <li><b>vision</b>（1 条）：WaveView 子集可新增一臂 = <b>让 agent 写程序解析/渲染波形，再用同一离线 <code>check.py</code> 判分</b>，与「VLM 直接读图」对比；保持同题、同判分、同参数，只变「视觉通道」。MLP-Mixer 仅作编码器选型参照，<b>非必需</b>。</li>
+    <li><b>harness</b>（2 条）：
+      <ol>
+        <li>报告 HDL / code 类任务时按<b>模块行数、HDL 种类</b>分层给 pass@1（CPU-Eval 显示行数越多、越少见 HDL 越低，单一高分掩盖差异）。</li>
+        <li>RL rollout 日志单列 <b>all-fail 组比例</b>与<b>毕业率</b>（SPLICE 口径），作为 self-play 是否「学得动」的早期信号。</li>
+      </ol>
+    </li>
+    <li><b>data</b>（1 条）：造 HDL / 代码题按<b>模块粒度</b>切分、控制单文件行数（CPU-Eval 证据）；可从既往工作抽取「结构化概念库」作为可复用数据资产（NEVA 做法），但须标注来源、不引入污染。</li>
+    <li><b>zhulong</b>（2 条）：
+      <ol>
+        <li>Lite-500 应纳入更难的 CPU / HDL 题（VerilogEval 已 &gt;90% 饱和、CPU-Eval 平均低 45.14pp）以保持区分度；引数字标「作者自报 + 模型/题数/pass@k/预算」。</li>
+        <li>失败任务旁增报「毕业率」（SPLICE），比只看总 Pass@1 更能反映「卡住的题是否能被训练攻克」。</li>
+      </ol>
+    </li>
+    <li><b>designflow</b>（2 条）：
+      <ol>
+        <li>微架构 / HDL 题可借鉴 NEVA 的「<b>自然语言规格 + 硬件约束校验 + 诊断反馈协同</b>」：题面给规格与约束，判分看规格到实现的保真（<b>只增断言、不放宽阈值、不降级题目</b>）。</li>
+        <li>placement 类用例判分要能区分「HPWL 好但布线/拥塞差」的解（DiversePlace 的核心动机），把下游代价纳入判分而非只看 HPWL。</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+<h3 class="sec">附录 · 检索与去重（可核验）</h3>
+<div class="card">
+  <ul>
+    <li><b>取源</b>：<code>research/arxiv_fetch.py --query 'cat:cs.CL|cs.LG|cs.SE|cs.AR|cs.CV' --max-results 30–40 --json</code>；五个分类查询均 <code>200</code> + <code>application/atom+xml</code>（实测各返回 30–40 entries）。</li>
+    <li><b>窗口</b>：72h（<code>published</code> 上界 <code>2026-11-25T18:59:59Z</code>，距本窗约 45h &lt; 72h）；五分类去重（vs <code>SEEN.md</code> / <code>papers.jsonl</code>）后候选 <b>142</b> 条，按 6 线相关性与多样性取 <b>5</b> 篇。</li>
+    <li><b>元数据</b>：<code>export.arxiv.org/api/query</code> ⇒ <code>200</code> + atom；<code>published</code> 逐条 2026-11-25T14:39:59Z / 2026-11-24T11:07:23Z / 2026-11-24T19:32:45Z / 2026-11-25T17:38:00Z / 2026-11-25T18:01:22Z。</li>
+    <li><b>abs 页</b>：<b>5/5 <code>200</code></b>（42,679 / 41,364 / 42,915 / 42,297 / 44,837 B）；主分类 cs.LG / cs.AR / cs.AR / cs.LG / cs.CV 取自各 abs 页 <code>primary-subject</code>。</li>
+    <li><b>去重</b>：五个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> 均 <b>0 命中</b>。</li>
+    <li><b>B 轨核验</b>：arXiv API + OpenAlex 各 3/3 <code>200</code>（查询日 2026-11-28）；三 ID 条目级查重 0 命中。</li>
+    <li><b>网络</b>：arXiv <code>200</code>、OpenAlex <code>200</code>（首查一次 <code>429</code>，加 <code>mailto</code> + ≥3s 间隔后 <code>200</code>）、X 经代理 <code>200</code>、GitHub <code>200</code>；SMTP <code>SENT OK</code>、IMAP <code>LOGIN OK</code> / 70 封。</li>
+  </ul>
+</div>
+
+<footer>
+  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 00:0x CST<br>
+  本期：A 轨 <b>5/5</b> · B 轨 <b>+3 → 452</b> · 作者网 <b>+3 → 419</b>（X 164）· 作者信 <b>+1 → 189</b> · 实质回信 <b>8 信 / 7 人 ≈4.3%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
+</footer>
+
+</div>
+</body>
+</html>
