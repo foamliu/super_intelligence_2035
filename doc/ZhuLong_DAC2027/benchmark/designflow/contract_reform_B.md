@@ -1308,3 +1308,56 @@ de-risked）。
 fabricated_report:c, naive_core_deleted:e} 3-distinct.
 
 **DEBT:0 · WAITING:0**. EDA-Flow-Bench HEAD=9914d63d4. L2.live B nonlite 11→12.
+
+---
+
+## r1358 non-Lite-500 R2 桩体检轮 — InvOptSpec-001 Q1 PASS (de-risk next R2 wrap)
+
+**case**: EDA-Eval-DesignFlow-InvOptSpec-001 · **pattern = candidate-runs-hspice + judge-直调 hybrid**
+(同 r1345..r1357 族). candidate `inv_opt_spec_ref.py --config <cfg> --outdir <dir> --hspice <bin>`
+对 grid 8 个 W/L/M 点各建 HSPICE tran deck(CMOS inv, PMOS body→vdd, PULSE 20-80% edge,
+.measure tpd/ivdd/t_high/t_per) + 自身调 HSPICE(parse .mt0) → report.json(hspice_ran /
+n_grid / n_feasible / grid[] / best_design=min-idd feasible); judge 读候选 report.json 比
+内嵌 GT_A/GT_B 常量(conds e..p). **全 mislabeled [L0,L1]** → SUT 沙箱无 hspice ⇒ 候选
+hspice_ran=F ⇒ cond e FAIL + 后续 metric conds 全 None FAIL(broken case). **REQ 稳固
+confirmed**(R1b verdict 正确, 同 r1356 de-risk 流程).
+
+**Q1 语义保真实证(.75 EDASession hfhds201, hspice V-2023.12-SP1-1, session
+q1-nonlite-r1358, wall≈3.2s total)**: ref candidate real hspice 跑 A+B 两个 config:
+
+| 输入 | hspice_ran | n_grid | n_feasible | best idx/wp/mp | delay_ps | idd_ua | duty_pct | input_full_rise_s |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| A (vdd1.1, L60n, visible) | true | 8 | **6** | **1 / 2.0 / 1** | **15.04** | **10.9** | **49.97** | 3.333e-11 |
+| B (vdd1.0, L80n, HIDDEN) | true | 8 | **5** | **6 / 4.0 / 2** | **15.61** | **15.06** | 50.005 | 3.333e-11 |
+
+**与 check.py 内嵌 GT_A/GT_B 逐字段 EXACT match(4 sig figs)**:
+GT_A={n_grid8,n_feas6,best idx1/wp2.0/mp1/delay15.04/idd10.9/duty49.97,input_full_rise3.333e-11}
+GT_B={n_feas5,best idx6/wp4.0/mp2/delay15.61/idd15.06} ⇒ conds e/f/g/h/i/j/k/l/m/n(A) +
+o/p(B) 全 PASS 等价. **physics REAL NOT fabricated**(inv tpd 9-20ps @GHz, idd 10-15µA
+level-1 MOS VDD 1.0-1.1V, duty~50% sym rise/fall, 物理自洽; contrast SlicerSizeOpt-001
+r1352 BLOCKED 1000x fabricated GT — 本 case GT 是 ref 候选真跑 HSPICE 抓的真实值).
+
+**Q2 = NO(错的解法不会判过)**: 候选自身产 report.json, judge 比内嵌 GT.
+- 不跑 hspice ⇒ cond(e) hspice_ran=F ⇒ FAIL(first-fail=e).
+- 硬编 A 值给 B ⇒ cond(o) n_feasible B=5≠A=6 / best idx 6≠1 / wp 4.0≠2.0 / mp 2≠1 ⇒ FAIL;
+  cond(p) B delay 15.61≠A 15.04 / idd 15.06≠A 10.9 ⇒ FAIL(B HIDDEN, 候选无法预知 GT_B).
+- 伪造 report.json 全 GT ⇒ 须预知 HIDDEN B 的 n_feas5/idx6/delay15.61/idd15.06 ⇒ 不可行.
+⇒ 唯一 PASS 路径 = 真跑 HSPICE on A+B 产正确物理 = 合法解. REQ 稳固.
+
+**R2 wrap plan(de-risked, 下轮 r1359 直接执行, 同 r1357 Sram6tDcChar 模板)**:
+- `_check_static_impl` 保留 (a) zip+harness+report_A 一字不动 + **(sa/sb/sc) only-add**
+  候选源码结构检查(sa 含 subprocess+hspice 调用 / sb 含 .tran+.measure testbench 构造 /
+  sc 含 .mt0 parse);
+- `check_static` try/except 收口三元组;
+- `check_live(sess)` .75 上传 submit.zip + config_A + hidden config_B + live_driver.py →
+  driver 跑候选 A+B real hspice → 读 report.json → 断 b..p 同判据(hspice_ran / edge_conv /
+  n_grid / n_feas / best idx·wp·mp / delay±TOL / idd±TOL / duty±TOL / all-delay-parsed /
+  B cross-input n_feas·best·delay·idd) + `(q)` 确定性 only-add(A 重跑 best delay±1%);
+- `check()` 兼容 + `__main__` 改 check_static.
+- **live-neg**: cheat_hardcode_a(静态 sa/sb/sc + a..d 过, 但 B report 填 A_GT ⇒ cond o/p
+  live-FAIL) + cheat_no_run(候选不调 hspice, hspice_ran=F ⇒ cond e live-FAIL) — 2 distinct
+  live-neg first-fails {o, e}, 满足 §5.② ≥1 live-neg + §4.9 trio distinct.
+- **判据完全同原 b..p 一字迁移**(TOL_DELAY=0.5ps / TOL_IDD=0.05µA / TOL_DUTY=0.5% 原封).
+
+**零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动**(桩体检只读).
+DEBT:0. WAITING:0(不设等待§1.1).
