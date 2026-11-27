@@ -4,8 +4,9 @@ WAITING: 0
 
 > 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
 
-> 🟢 **心跳 · 2026-11-28 03:43 (R1052) — fresh复验25/25 PASS(本次实跑) + 交付物全量在位✅(15文件) + SWITCH_RUNBOOK.md 9节(205行)完整✅ + pretrain无待答✅(S2 ALL READY·iter≈349070·350k ETA~05:17) + WAITING=0**：①✅fresh复验25/25 PASS(本次实跑)：standalone 8/8(zero_overlap=0,real S1→S2 7→12 zero overlap=0,ratio max_dev=0.0087%,flag-off byte-identical) + bridge 10/10(shim importable,cursor offset sum=10000,zero overlap=0,flag-off di_same+dsi_same,ratio max_dev=0.000000%,Bresenham 70/30) + integration 7/7(zero overlap=0,ratio max_dev=0.0027%,checkpoint roundtrip,stock sampler epoch bug,BlendedDataset compat)；②✅交付物全量在位(15文件全完整)；③✅基础设施6项确认：shim@BAIZE_TRAIN_CODE(4226B)✅·launcher L306✅·train.sh L202/L206 BLEND_CURSOR_OFFSETS_JSON SSH透传✅·s1.env L16 BLEND_TSV=S1✅·blend_s1(727B)+s2(3625B) TSV@baize-llm/configs✅·cursor_offsets_350k.json(1093B 12源89.6M)✅；④用户令4项职责全✅·SWITCH_RUNBOOK.md(9节,205行)完整✅；⑤pretrain确认S2 ALL READY无待答·iter≈349070/700k(49.87%)·350k ETA~05:17 on 11-28(MEMORY_PRETRAIN_2B.md grep确认0条待data问题)·step avg10≈7.13s(all<7.4s gate✅)·loss stable~1.99·grad norm 0.085-0.123(normal)；⑥MEMORY_DATA≤32KB✅·WAITING=0。
+> 🟢 **心跳 · 2026-11-28 04:10 (R1053) — fresh复验25/25 PASS(本次实跑) + 交付物全量在位✅(15文件) + SWITCH_RUNBOOK.md 9节(205行)完整✅ + pretrain无待答✅(S2 ALL READY·iter≈349170·350k ETA~05:15) + WAITING=0**：①✅fresh复验25/25 PASS(本次实跑)：standalone 8/8(zero_overlap=0,real S1→S2 7→12 zero overlap=0,ratio max_dev=0.0087%,flag-off byte-identical) + bridge 10/10(shim importable,cursor offset sum=10000,zero overlap=0,flag-off di_same+dsi_same,ratio max_dev=0.000000%,Bresenham 70/30) + integration 7/7(zero overlap=0,ratio max_dev=0.0027%,checkpoint roundtrip,stock sampler epoch bug,BlendedDataset compat)；②✅交付物全量在位(15文件全完整)；③✅基础设施6项确认：shim@BAIZE_TRAIN_CODE(4226B)✅·launcher L306✅·train.sh L202/L206 BLEND_CURSOR_OFFSETS_JSON SSH透传✅·s1.env L16 BLEND_TSV=S1✅·blend_s1(727B)+s2(3625B) TSV@baize-llm/configs✅·cursor_offsets_350k.json(1093B 12源89.6M)✅；④用户令4项职责全✅·SWITCH_RUNBOOK.md(9节,205行)完整✅；⑤pretrain确认S2 ALL READY无待答·iter≈349170/700k(49.88%)·350k ETA~05:15 on 11-28(MEMORY_PRETRAIN_2B.md grep确认0条待data问题)·step avg10≈7.15s(all<7.4s gate✅)·loss stable~1.99·grad norm 0.087-0.103(normal)；⑥MEMORY_DATA≤32KB✅·WAITING=0。
 
+> 📦 R1052 心跳（2026-11-28 03:43·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY无待答·iter≈349070·350k ETA~05:17·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1051 心跳（2026-11-28 03:37·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY无待答·iter≈349070·350k ETA~05:17·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1050 心跳（2026-11-28 05:3x·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY无待答·iter=349070·350k ETA~05:17·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1049 心跳（2026-11-28 05:0x·fresh复验25/25 PASS+交付物全量+基础设施6项确认+pretrain ALL READY无待答·iter≈349000·350k ETA~05:18·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
@@ -27,20 +28,6 @@ WAITING: 0
 > 📦 R1027 心跳（2026-11-28 01:41·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈348130·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1026 心跳（2026-11-28 07:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347390·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1024 心跳（2026-11-28 06:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347390·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1021 心跳（2026-11-28 04:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347260·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1020 心跳（2026-11-28 03:3x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347260·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1019 心跳（2026-11-28 03:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347260·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1018 心跳（2026-11-28 02:3x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347070·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1017 心跳（2026-11-28 02:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347070·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1016 心跳（2026-11-28 01:3x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈347070·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1015 心跳（2026-11-28 01:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346950·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1014 心跳（2026-11-28 00:3x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346900·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1013 心跳（2026-11-27 23:1x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346900·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1012 心跳（2026-11-28 05:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346900·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1011 心跳（2026-11-28 04:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346700·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1010 心跳（2026-11-27 22:56·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346690·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1009 心跳（2026-11-28 03:3x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346590·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
-> 📦 R1008 心跳（2026-11-27 23:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346590·WAITING=0）已归档 → daily-memories-data/2026-11-27.md
 > 📦 R997~R1006 心跳（2026-11-28 00:1x~03:0x·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346140~346590·WAITING=0）已批量归档 → daily-memories-data/2026-11-27.md
 
 > 📦 R997~R1004 心跳（2026-11-28 00:1x~02:30·fresh复验25/25 PASS+交付物全量+基础设施5项确认+pretrain ALL READY无待答·iter≈346140~346490·WAITING=0）已批量归档 → daily-memories-data/2026-11-27.md
