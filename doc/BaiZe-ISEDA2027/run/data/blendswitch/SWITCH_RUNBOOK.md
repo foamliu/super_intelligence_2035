@@ -31,13 +31,19 @@ BaiZe 训练使用 **Megatron Bridge**（非标准 Megatron-LM），因此 data 
 
 ## 2. patch 怎么应用
 
-**不需要 `git apply`**。两个文件已经放在正确位置：
+**不需要 `git apply`，也不需要 `git pull`**。两个文件已经在共享 NFS 上的正确位置，
+`.29` 上的 pretrain 可直接访问：
 
-1. **`blend_hot_switch_bridge_compat.py`** → 已在 `code/BaiZe-ISEDA2027/`（与 `bridge_compat.py` 同目录）
-2. **`pretrain_launcher.py`** → **已修改**，在 `bridge_compat.apply_all_compat_shims()` 后
-   加了自动 import shim 的 try/except 块（第 302-310 行）
+1. **`blend_hot_switch_bridge_compat.py`** → `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py`
+   （与 `bridge_compat.py` 同目录，commit `3dbf056`）
+2. **`pretrain_launcher.py`** → `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py`
+   已修改：在 `bridge_compat.apply_all_compat_shims()`（第 300 行）后加了自动 import shim 的
+   try/except 块（第 302-310 行）
 
-pretrain agent **不需要额外操作**来应用 patch — 只要 `git pull` 拉到最新版即可。
+> ⚠️ **注意**：`BaiZe-ISEDA2027` 仓库的 Codeup 远端目前不可用（`Repository path not found`），
+> 无法 `git push` / `git fetch`。但文件在共享 NFS 上，**`.29` 可直接读取**。
+> pretrain **不要**在 `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/` 目录执行 `git pull`（会失败）。
+> 验证文件存在：`ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py`
 
 ## 3. `--blend-hot-switch` 开关怎么传
 
@@ -75,13 +81,17 @@ BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv"
 # 1. 等训练到 350k 步，自然 save checkpoint（每 2000 步一次，350k 是 2000 的倍数）
 # 2. 确认 350k checkpoint 已保存
 # 3. 停止训练进程
-# 4. git pull（拉到最新代码，含 shim + pretrain_launcher.py 修改）
-# 5. 设置环境变量：
+# 4. 验证 shim 文件在 NFS 上可读（不需要 git pull）：
+ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py
+# 5. 设置环境变量（在 s1.env 或 train.sh 启动前 export）：
 export BLEND_CURSOR_OFFSETS_JSON="/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json"
 # 6. 修改 BLEND_TSV 为 S2：
 export BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv"
 # 7. 从 350k checkpoint resume 启动训练（train.sh s1 --load ... 或等价方式）
 # 8. 观察前 100 步的 loss / ratio
+# 9. 确认日志中出现 "[blend-hot-switch] Bridge compat shim applied" 和
+#    "[blend-hot-switch] Applying cursor offsets" → shim 生效
+#    若出现 "[blend-hot-switch] Shim not found, skipping" → 文件未找到，检查 NFS 路径
 ```
 
 ## 6. 切换后前 100 步的预期行为
