@@ -322,26 +322,6 @@ EDA-Eval-DesignFlow-TbTriggerChainExtract-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	
 EDA-Eval-DesignFlow-TbTriggerChainExtract-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	retired (status=retired, excluded from build_jsonl); not in active benchmark pool — live-eval N/A	N/A	retired; excluded from build	r2-2026-11-27
 EDA-Eval-DesignFlow-Tcl2SkillTranspile-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=transpiler; check runs candidate python; 'skill' is the output language, not a tool invocation. no skill invocation (§2 NA)	N/A	no direct subprocess(real EDA bin); bin contextual only	r2-2026-11-27
 EDA-Eval-DesignFlow-TimingECO-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	L1-boundary grader(明示: 真 pt_shell 仅 GOLD 创建). tclsh source common_setup.tcl with B vars 验 OUT_PREFIX 参数化解析. deliverable=TimingECO 流程脚本(run cshell+编号 tcl+ECO 引擎), 正确性=流程结构+参数化非真实 ECO 时序结果. 属'写脚本/流程'(§2 NA).	N/A	test.py docstring: L1-boundary; tclsh common_setup B vars; cond i on OUT_PREFIX	r2-2026-11-27
-<<<<<<< HEAD
-EDA-Eval-DesignFlow-TmBusToggleAnalyze-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-TmBusToggleAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-TmDqSwitchAdaptRestore-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-TmPatternXref-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-ToolRcFormatMapQa-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-TqvVrefreshBuild-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-TripleJudgeWorker-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-UpfGen-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-UpfSupplyConnect-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-UserCmdLogMergeRunnerProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-UvmSramTbCodeReviewQA-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-UvmTbStructAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-UvsVerRegrCompareProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VCSMakefile-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-REQ	judge-direct-real-EDA: check() cond runs subprocess(['make','all',...]) on candidate Makefile, env hardcodes VCS_REAL=/apps/synopsys/SRB/vcs/R-2020.12/bin/vcs; no mock injection. ref must produce real vcs elaboration. locally broken without vcs (DrvqaGateNetlist/SimMakefileVCS pattern) -> migrate to check_live	pending R2 reform	test.py: subprocess(['make','all',...]) -> vcs; VCS_REAL real path; no mock	r2-2026-11-27
-EDA-Eval-DesignFlow-VcheckMacroAdd-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VcsBoostLinkFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VcsCompileErrorDiagnoseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-EDA-Eval-DesignFlow-VcsEquiv-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	TODO		N/A		r1-2026-11-27
-=======
 EDA-Eval-DesignFlow-TmBusToggleAnalyze-001-v2	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	pure static check (no subprocess); text/structure/regex assertion on candidate deliverable; no execution dependency (§2 NA)	N/A	no subprocess; pure static text/structure check	r2-2026-11-27
 EDA-Eval-DesignFlow-TmBusToggleAnalyze-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	retired (status=retired, excluded from build_jsonl); not in active benchmark pool — live-eval N/A	N/A	retired; excluded from build	r2-2026-11-27
 EDA-Eval-DesignFlow-TmDqSwitchAdaptRestore-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	judge runs candidate Python deliverable on hidden B via sys.executable; asserts output structure/values; no real EDA bin invoked (§2.1 rule2: tool-name-in-context ≠ real-run)	N/A	no direct subprocess(real EDA bin); candidate-Py-runner	r2-2026-11-27
@@ -360,7 +340,6 @@ EDA-Eval-DesignFlow-VcheckMacroAdd-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	pu
 EDA-Eval-DesignFlow-VcsBoostLinkFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	pure static check (no subprocess); text/structure/regex assertion on candidate deliverable; no execution dependency (§2 NA)	N/A	no subprocess; pure static text/structure check	r2-2026-11-27
 EDA-Eval-DesignFlow-VcsCompileErrorDiagnoseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	judge runs candidate Python deliverable on hidden B via sys.executable; asserts output structure/values; no real EDA bin invoked (§2.1 rule2: tool-name-in-context ≠ real-run)	N/A	no direct subprocess(real EDA bin); candidate-Py-runner	r2-2026-11-27
 EDA-Eval-DesignFlow-VcsEquiv-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	pure static check (no subprocess); text/structure/regex assertion on candidate deliverable; no execution dependency (§2 NA)	N/A	no subprocess; pure static text/structure check	r2-2026-11-27
->>>>>>> origin/main
 EDA-Eval-DesignFlow-VcsIpdSverilogFix-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	deliverable=gen_vcs_ipd_fix.py 生成器脚本, check 跑生成器(py_compile+on B spec)验输出 makefile 结构+3-seed 确定性. vcs 仅在生成器名/输出 makefile 上下文, check 不直调 vcs. 属'写脚本'(§2 NA).	N/A	test.py: subprocess sys.executable gen_py spec_b; vcs in gen name/output only	r2-2026-11-27
 EDA-Eval-DesignFlow-VcsMkfileSimDiagnoseProduce-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	vcs/verdi/simv 仅出现在 `make -n` 各目标展开串(dry parse, §2.1 rule2). deliverable=诊断 Makefile, check 验 make -n help/compile/sim/verdi/clean 目标解析+字面量, 不直调真工具.	N/A	test.py: make -n -f mk compile/sim/verdi/clean (dry-run parse)	r2-2026-11-27
 EDA-Eval-DesignFlow-VecRandfailDiagnose-001	A	non-lite	1	1	1	1	1	1	A	L0,L1	LIVE-NA	judge runs candidate Python deliverable on hidden B via sys.executable; asserts output structure/values; no real EDA bin invoked (§2.1 rule2: tool-name-in-context ≠ real-run)	N/A	no direct subprocess(real EDA bin); candidate-Py-runner	r2-2026-11-27
