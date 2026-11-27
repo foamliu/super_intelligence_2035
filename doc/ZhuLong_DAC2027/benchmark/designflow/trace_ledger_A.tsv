@@ -892,3 +892,4 @@ anner account not real design user, skip
 1795412877428_iuex0.messages.json	dechaoc	hfeg0pkn004	31	verification	case	EDA-Eval-DesignFlow-CmBusBitExpandProduce-001	2026-11-24 22:13	
 1795488475556_n24xd.messages.json	e0046913	hfeg0plg90	126	pnr_signoff	case	EDA-Eval-DesignFlow-CfgDefaultsResolve-001	2026-11-28 02:37	
 1795576157175_udqmf.messages.json	rose3wang	hfeg0plg90	169	digital	case	EDA-Eval-DesignFlow-EcoDummyTieoff-001	2026-11-28 03:26	
+1795681795132_71fpi	wellesc	hfeg0plg17	593	pnr_signoff	case	EDA-Eval-DesignFlow-NetlistFailCellPrune-001	2026-11-28 04:08	
