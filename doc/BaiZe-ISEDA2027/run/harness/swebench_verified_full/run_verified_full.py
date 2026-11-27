@@ -44,7 +44,7 @@ EVAL_LOG_ROOT = HERE / "logs" / "run_evaluation"
 
 ALL_HARNESSES = [
     "cline-patched", "codex", "opencode", "pi",
-    "claude-code", "hermes", "deepseek-harness",
+    "claude-code", "hermes", "deepseek-harness", "zhulong",
 ]
 DISPLAY = {"cline-patched": "cline"}
 

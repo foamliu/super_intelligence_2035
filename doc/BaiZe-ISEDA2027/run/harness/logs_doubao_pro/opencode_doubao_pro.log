@@ -1,1 +1,4 @@
-[verified-full 13:27:23] predict opencode: workers=1 pending=500 (serial)
+[verified-full 16:38:25] resume: loaded 60 existing results
+[verified-full 16:38:26] predict opencode: workers=4 pending=500 (parallel)
+[verified-full 16:39:49]   -> no-patch (patch=0B wall=82.9s)
+[verified-full 16:43:37]   -> no-patch (patch=0B wall=227.8s)

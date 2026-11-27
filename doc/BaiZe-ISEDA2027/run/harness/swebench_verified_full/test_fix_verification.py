@@ -1,71 +1,97 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""Test to verify the unicode method fix works in Python 2.7"""
-import sys
+"""Test to verify the CheckConstraint OR fix works correctly"""
 import os
-sys.path.insert(0, '/tmp/requests')
+import sys
+import django
+from django.conf import settings
+from django.db import models
+from django.db.models import Q, CheckConstraint
+from django.db.backends.sqlite3.schema import DatabaseSchemaEditor
+from django.db import connection
 
-import requests
+# Configure Django
+sys.path.insert(0, '/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/django')
 
-def test_unicode_method():
-    print("Testing fix for unicode HTTP method...")
-    
-    # Test with unicode method
-    files = {u'file': open(u'/usr/bin/diff', u'rb')}
-    
-    # This used to raise UnicodeDecodeError, now should work
-    try:
-        # We'll use a mock URL to avoid actual network call
-        from mock import Mock, patch
-        with patch('requests.adapters.HTTPAdapter.send') as mock_send:
-            mock_resp = Mock()
-            mock_resp.status_code = 200
-            mock_resp.raw = Mock()
-            mock_resp.headers = {}
-            mock_resp.elapsed = 0
-            mock_resp.history = []
-            mock_send.return_value = mock_resp
-            
-            response = requests.request(method=u'POST', url=u'http://httpbin.org/post', files=files)
-            print("✓ Success! Unicode method u'POST' works without UnicodeDecodeError")
-            
-            # Verify the method was converted to bytes
-            req = requests.Request(method=u'POST', url=u'http://httpbin.org/post', files=files)
-            prep = req.prepare()
-            
-            if sys.version_info[0] == 2:
-                assert isinstance(prep.method, str), "Method should be bytes (str type) in Python 2"
-                assert prep.method == 'POST', "Method should be 'POST'"
-                print("✓ Method correctly converted to byte string in Python 2")
-            else:
-                assert isinstance(prep.method, str), "Method should be str type in Python 3"
-                assert prep.method == 'POST', "Method should be 'POST'"
-                print("✓ Method remains str type in Python 3")
-                
-    except ImportError:
-        # Mock not available, just test that no error is raised when preparing the request
-        print("⚠️  Mock not available, testing request preparation only...")
-        session = requests.Session()
-        req = requests.Request(method=u'POST', url=u'http://httpbin.org/post', files=files)
-        prep = session.prepare_request(req)
-        print("✓ Request preparation with unicode method succeeds")
-        
-        if sys.version_info[0] == 2:
-            assert isinstance(prep.method, str), "Method should be bytes (str type) in Python 2"
-            assert prep.method == 'POST', "Method should be 'POST'"
-            print("✓ Method correctly converted to byte string in Python 2")
-        else:
-            assert isinstance(prep.method, str), "Method should be str type in Python 3"
-            assert prep.method == 'POST', "Method should be 'POST'"
-            print("✓ Method remains str type in Python 3")
-            
-    # Test with regular str method still works
-    req2 = requests.Request(method='POST', url=u'http://httpbin.org/post', files=files)
-    prep2 = req2.prepare()
-    assert prep2.method == 'POST', "Regular str method should still work"
-    print("✓ Regular str method 'POST' continues to work")
-    
-    print("\nAll tests passed! The fix works correctly.")
+settings.configure(
+    DEBUG=True,
+    DATABASES={
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    },
+    INSTALLED_APPS=[
+        'django.contrib.contenttypes',
+        'django.contrib.auth',
+    ],
+)
 
-if __name__ == "__main__":
-    test_unicode_method()
+django.setup()
+
+# Test model from the issue
+class TestConstraint(models.Model):
+    field_1 = models.IntegerField(blank=True, null=True)
+    flag = models.BooleanField(blank=False, null=False)
+    
+    class Meta:
+        app_label = 'app'
+        constraints = [
+            CheckConstraint(
+                check=Q(flag__exact=True, field_1__isnull=False) | Q(flag__exact=False,),
+                name='field_1_has_value_if_flag_set'
+            ),
+        ]
+
+print("Testing CheckConstraint SQL generation for OR condition...")
+
+with connection.schema_editor() as editor:
+    # Test the constraint SQL generation
+    constraint = TestConstraint._meta.constraints[0]
+    sql = constraint.constraint_sql(TestConstraint, editor)
+    
+    print(f"Generated constraint SQL: {sql}")
+    
+    # Check that there are no table prefixes in the CHECK clause
+    if 'new__app_testconstraint' in sql:
+        print("❌ FAILED: Table prefix found in constraint SQL")
+    elif 'app_testconstraint' in sql:
+        print("❌ FAILED: Table prefix found in constraint SQL")
+    else:
+        print("✅ SUCCESS: No table prefixes in constraint SQL")
+    
+    # Verify the SQL is correct
+    expected_substring = 'CHECK (("field_1" IS NOT NULL AND "flag" = 1) OR "flag" = 0)'
+    if expected_substring in sql:
+        print("✅ SUCCESS: Correct SQL generated")
+    else:
+        print(f"❌ FAILED: Expected substring not found: {expected_substring}")
+
+# Test with the new__ table name scenario (like SQLite _remake_table)
+print("\nTesting with new__ table prefix scenario...")
+from django.db.models.base import ModelBase
+new_meta_contents = {
+    'app_label': 'app',
+    'db_table': 'new__app_testconstraint',
+    'constraints': TestConstraint._meta.constraints,
+}
+new_meta = type("Meta", (), new_meta_contents)
+new_body = {
+    'field_1': models.IntegerField(blank=True, null=True),
+    'flag': models.BooleanField(blank=False, null=False),
+    'Meta': new_meta,
+    '__module__': TestConstraint.__module__,
+}
+NewTestConstraint = ModelBase('NewTestConstraint', TestConstraint.__bases__, new_body)
+
+with connection.schema_editor() as editor:
+    constraint = NewTestConstraint._meta.constraints[0]
+    sql = constraint.constraint_sql(NewTestConstraint, editor)
+    
+    print(f"Generated constraint SQL for new__ table: {sql}")
+    
+    # Check that there are no table prefixes
+    if 'new__app_testconstraint' in sql:
+        print("❌ FAILED: new__ table prefix found in constraint SQL")
+    else:
+        print("✅ SUCCESS: No new__ table prefix in constraint SQL")
+
+print("\nFix verified successfully!")
