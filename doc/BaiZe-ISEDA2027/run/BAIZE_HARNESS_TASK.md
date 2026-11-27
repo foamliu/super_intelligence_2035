@@ -1,6 +1,34 @@
 # BAIZE_HARNESS_TASK.md
 
-### 🆕 用户令 · 2026-11-25（A/B/C/D · doubao-pro 7way 重测 + agent-arena 签入 + dsh SDK 修复 + MM 停止）· ✅ 全部闭环
+### 🆕 用户令 · 2026-11-27（**重启后执行：opencode v1.19.6 + 7-way doubao-pro 评测**）· ⬜ 待执行
+
+> **背景**：harness agent 在执行令 F 期间失控——花大量时间 debug opencode v2.4 bug 而不降级。运维已 kill loop + cline，stash opencode 改动，opencode 回到 v1.19.6。**令 F/G/H 已被本令取代。**
+
+> **7-harness 版本**（已由运维固定，不要改）：
+> | Harness | 版本 | 说明 |
+> |:--|:--|:--|
+> | cline | 3.0.76 | checkpoint 已在源码关闭；`--compaction basic --thinking low` |
+> | codex | 0.172.0 | Responses API，config.toml 已设 `wire_api="responses"` |
+> | opencode | v1.19.6 | **不要升到 v2.4**——有 `tools.edit()` 不写磁盘 bug |
+> | claude-code | 2.1.332 | |
+> | hermes | git.e0dcc39 | |
+> | pi | 1.6.1 | |
+> | deepseek-harness | 0.2.2rc2 | SDK 持久化在 /nas_train/app.e0031982/harness_work/dsh_sdk |
+
+> **执行步骤**：
+> 1. 确认 gw_proxy 3 进程运行（9090/9091/9092）；不在则用 `launch_doubao_7way.sh` 重启
+> 2. 删除所有旧 `predictions_doubao_pro/` 文件 + `progress_doubao_pro_*.json`
+> 3. `bash harness/launch_doubao_7way.sh` 启动 7-way predict
+> 4. predict 完成后 eval + 报告（`gen_report_doubao_pro_7way.py`）
+> 5. 报告含版本号列，cline 显示为 zhulong(cline-patched)
+
+> **纪律**：
+> - **不要修 opencode 的 bug**——已降级 v1.19.6
+> - **不要 debug 版本问题**——版本已固定
+> - 一次只做一个任务
+> - 不碰 MM、不碰其他线
+
+### 🆕 用户令 · 2026-11-25（A/B/C/D · doubao-pro 7way + agent-arena + dsh SDK + MM 停止）· ✅ 全部闭环
 
 > **A**：停止 glm53 评测，改用 doubao-pro 重测全量 500×7 + 记录 token → **✅ 7/7 predict + eval COMPLETE**·Pass%(denominator=500): opencode64.6%·cline64.2%·hermes60.4%·cc59.4%·pi54.0%·codex43.6%·dsh26.0%·token sidecar ~53k lines
 > **B**：评测脚本签入 agent-arena 仓库 → **✅ 33 scripts committed** (commit a431e3c)·以后脚本权威源=agent-arena
