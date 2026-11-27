@@ -1182,7 +1182,7 @@ REQ 34 条（R1 22 + R1b 12）按家族改造（B 预算 ≤6–8 条/轮，§4 
   - ② 5 static neg FAIL **distinct** {b,c,h,f,l}=5-distinct（≥3）+ live-neg cheat_badinc **static-pass/live-fail** cond (k)。
   - ③ 3-seed 确定性: ref check_live PASS ×3 identical。
   - ④ SKIP_RUN=1 deploy workdir clean no leak + ref check_static PASS。
-  - ⑤ sha 三方同步: case JSON `test` == 磁盘 `check.py` md5=`2e2660f1`；`judge_layers=[L0,L1,L2.live]`。
+  - ⑤ sha 三方同步: case JSON `test` == 磁盘 `check.py` md5=`0d13fc95`；`judge_layers=[L0,L1,L2.live]`。
   - ⑥ 断言条数只增不减: 12 total（11 static + 1 L2.live，原 12，cond k 迁移不删不增）。
   - ⑦ check_live 不读 `reference/` GT：仅读 hidden B 输入 deck（input 非 GT）+ in-code 判据常量；沙箱不含 jsonl/test。
 - **跨 shard 落盘说明**: check.py+cheat_badinc.py+add_dm_meas_ref.py 经共享 worktree auto-commit 落 `4461e5197`（shard B bench hook 扫共享 worktree）；`98fcf1109` 补 JSON judge_layers+test sha sync + negative_selftest live-aware + empty.py true-empty。live_eval_changes.tsv +1 行（repo_commit=98fcf1109）。EDA-Flow-Bench HEAD=98fcf1109 pushed。
