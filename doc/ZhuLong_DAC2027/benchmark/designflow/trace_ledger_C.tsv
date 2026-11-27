@@ -1371,3 +1371,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795401987055_os60p	yinyus	hfeg0pkn004	323	physical_verify	parked		2026-11-27 02:48	r1254 peek: yinyus hspice stimulus PWL生成. D-domain spice scripting. parked
 1795237965362_zloqs	chengk	hfeg0pjn200	428	layout_aether	parked		2026-11-27 02:48	r1254 peek: chengk pylib代码文档化. doc-search. parked
 1795395353963_t0dhm.messages.json	felixw	hfeg0pkn004	399	physical_verify	case	EDA-Eval-DesignFlow-CalibreDrcRunsetPatch-001	2026-11-28 00:14	dedup-fix: r1451 re-claim was redundant; CalibreDrcRunsetPatch-001 (r1035 k=16) already covers felixw runset-patch slice; r1452 clears DEBT no double-mine
+1795758425756_56vki	xxchen	hfeg0plg56	1933	physical_verify	claimed		2026-11-28 01:56	
