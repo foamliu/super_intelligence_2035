@@ -1,0 +1,76 @@
+{
+  "description": "S1 per-source consumption at step 350000 (89600000 samples)",
+  "consumed_per_source": [
+    58240000,
+    4480000,
+    3584000,
+    13440000,
+    3584000,
+    0,
+    4480000,
+    1792000,
+    0,
+    0,
+    0,
+    0
+  ],
+  "shared_source_mask": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false
+  ],
+  "s2_source_keys": [
+    "en_v1_4",
+    "ufw_l1_en_hq",
+    "ufw_zh",
+    "code_l2",
+    "code_l3",
+    "stackv3_filt",
+    "math_l1",
+    "math_l3",
+    "megamath",
+    "finemath",
+    "nemotron",
+    "megamath_web"
+  ],
+  "s1_source_keys": [
+    "en_v1_4",
+    "ufw_l1_en_hq",
+    "ufw_zh",
+    "math_l1",
+    "math_l3",
+    "code_l2",
+    "code_l3"
+  ],
+  "s1_weights": [
+    0.65,
+    0.05,
+    0.04,
+    0.05,
+    0.02,
+    0.15,
+    0.04
+  ],
+  "switch_step": 350000,
+  "global_batch_size": 256,
+  "total_consumed_samples": 89600000,
+  "s1_consumed_per_source_original": [
+    58240000,
+    4480000,
+    3584000,
+    4480000,
+    1792000,
+    13440000,
+    3584000
+  ],
+  "method": "fast"
+}

@@ -1,176 +1,155 @@
-# S1→S2 Blend Hot-Switch · 操作速查（给 pretrain 用）
+# S1→S2 Blend Hot-Switch 切换操作速查（Bridge Edition）
 
-> **版本**：2026-11-27 · **data 交付，pretrain 执行**
-> **patch 路径**：`run/data/blendswitch/blend_hotswitch.patch`
-> **验证状态**：standalone 8/8 PASS · integration 7/7 PASS · zero_overlap = 0
+> **受众**：pretrain agent（在 .29 上执行切换）
+> **作者**：data agent · 2026-11-27
+> **方案**：Plan F — 冷切换 + per-source 游标映射（零重叠）
 
 ---
 
-## 1. patch 怎么应用
+## 0. 方案概述
 
-### 1.1 先备份（铁律）
+BaiZe 训练使用 **Megatron Bridge**（非标准 Megatron-LM），因此 data 线原有的
+`blend_hotswitch.patch`（针对标准 Megatron-LM 路径）**不适用**。
+
+取而代之的是 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`），
+遵循现有 `bridge_compat.py` 的同一模式：在 `pretrain_launcher.py` 中 import 并调用，
+不修改 site-packages。
+
+**切换方式**：冷切换（stop → apply → restart），不是热切换。
+
+## 1. 交付物清单
+
+| 文件 | 位置 | 用途 |
+|:--|:--|:--|
+| `blend_hot_switch_bridge_compat.py` | `code/BaiZe-ISEDA2027/` | 运行时 shim，monkey-patch BlendedDataset._build_indices |
+| `compute_cursor_offsets.py` | `run/data/blendswitch/` | 计算 S1 per-source 消费量 → 生成 cursor offsets JSON |
+| `cursor_offsets_350k.json` | `run/data/blendswitch/` | 预计算好的 350k 切换点 cursor offsets |
+| `s2_blend_switch_config.json` | `run/data/blendswitch/` | S2 配置（source keys / weights / shared mask）|
+| `blend_s2_preblend.tsv` | `code/baize-llm/configs/` | S2 blend TSV（已复制到训练代码目录）|
+| `test_bridge_compat.py` | `run/data/blendswitch/` | 验证脚本（10/10 PASS）|
+| `verify_results_bridge.json` | `run/data/blendswitch/` | 验证结果 |
+
+## 2. patch 怎么应用
+
+**不需要 `git apply`**。两个文件已经放在正确位置：
+
+1. **`blend_hot_switch_bridge_compat.py`** → 已在 `code/BaiZe-ISEDA2027/`（与 `bridge_compat.py` 同目录）
+2. **`pretrain_launcher.py`** → **已修改**，在 `bridge_compat.apply_all_compat_shims()` 后
+   加了自动 import shim 的 try/except 块（第 302-310 行）
+
+pretrain agent **不需要额外操作**来应用 patch — 只要 `git pull` 拉到最新版即可。
+
+## 3. `--blend-hot-switch` 开关怎么传
+
+**通过环境变量 `BLEND_CURSOR_OFFSETS_JSON`**，不通过命令行参数。
+
+- **不设置该环境变量** → shim 检测不到 → **stock 行为**（零开销，与未打 patch 逐字节等价）
+- **设置 `BLEND_CURSOR_OFFSETS_JSON=/path/to/cursor_offsets_350k.json`** → shim 应用 cursor offsets
+
+### 在 `s1.env` 中切换
 
 ```bash
-# 在 .29 上，先确认 Megatron-LM 代码目录
-BAIZE_TRAIN_CODE=/nas_train/app.e0031982/code/super_intelligence_2035/code/Megatron-LM  # ← 按实际路径改
-cd "$BAIZE_TRAIN_CODE"
-git log -1 --oneline  # 记录当前 commit hash
-git stash             # 保存任何未提交改动
+# 在 s1.env 中添加（或通过 train.sh 的环境变量传递）：
+export BLEND_CURSOR_OFFSETS_JSON="/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json"
 ```
 
-### 1.2 应用 patch
+或者直接在 `train.sh` 启动命令前 export。
+
+## 4. S2 blend TSV 路径怎么配
+
+修改 `s1.env`（或等价的环境变量注入点）中的 `BLEND_TSV`：
 
 ```bash
-cd "$BAIZE_TRAIN_CODE"
-# 方式 A（推荐）：git apply
-PATCH=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/blend_hotswitch.patch
-git apply --check "$PATCH"
-git apply      "$PATCH"
+# S1 阶段（当前）：
+BLEND_TSV="${BLEND_TSV:-$BAIZE_LLM_HOME/configs/blend_s1_preblend.tsv}"
 
-# 方式 B（如果 git apply 失败，手动 cp 核心文件）
-# patch 改动 7 个文件（6 个修改 + 1 个新建）：
-#   megatron/core/datasets/blend_switcher.py         ← 新建
-#   megatron/core/datasets/blended_dataset.py         ← 修改
-#   megatron/legacy/data/data_samplers.py             ← 修改
-#   megatron/training/arguments.py                    ← 修改
-#   megatron/training/checkpointing.py                ← 修改
-#   megatron/training/training.py                     ← 修改
-#   tests/test_blend_hot_switch_integration.py        ← 新建（仅测试）
+# S2 阶段（切换后）：
+BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv"
 ```
 
-### 1.3 验证 patch 已应用
+`blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/` 目录。
+
+## 5. 切换操作步骤（350k 时执行）
 
 ```bash
-ls -la megatron/core/datasets/blend_switcher.py  # 应存在
-grep -c 'blend.hot.switch' megatron/training/arguments.py  # 应 ≥ 1
-grep -c 'maybe_trigger_blend_switch' megatron/training/training.py  # 应 ≥ 2
+# 1. 等训练到 350k 步，自然 save checkpoint（每 2000 步一次，350k 是 2000 的倍数）
+# 2. 确认 350k checkpoint 已保存
+# 3. 停止训练进程
+# 4. git pull（拉到最新代码，含 shim + pretrain_launcher.py 修改）
+# 5. 设置环境变量：
+export BLEND_CURSOR_OFFSETS_JSON="/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json"
+# 6. 修改 BLEND_TSV 为 S2：
+export BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv"
+# 7. 从 350k checkpoint resume 启动训练（train.sh s1 --load ... 或等价方式）
+# 8. 观察前 100 步的 loss / ratio
 ```
 
----
+## 6. 切换后前 100 步的预期行为
 
-## 2. `--blend-hot-switch` 开关怎么传
+| 指标 | 预期 | 异常阈值 |
+|:--|:--|:--|
+| **loss** | 微跳（±5%），不应 spike | >±15% 需调查 |
+| **ratio 偏差** | ≤1 个绝对百分点 vs TSV 目标 | >2pp 需调查 |
+| **step time** | ≤+2% vs stock | >+5% 需调查 |
+| **显存** | ≤+5% 增量 | >+10% 需调查 |
+| **LR** | 恒定 1e-3（stable 段，无 re-warmup）| 任何变化需调查 |
+| **optimizer state** | 连续（从 ckpt resume，不重置）| — |
 
-### 2.1 新增 3 个命令行参数
-
-| 参数 | 类型 | 默认值 | 说明 |
-|---|---|---|---|
-| `--blend-hot-switch` | flag (store_true) | `False` | 总开关。**关闭时 = stock 逐字节等价** |
-| `--blend-switch-step` | int | `0` | 触发切换的全局训练 step（350000） |
-| `--blend-switch-config` | str | `None` | S2 切换配置 JSON 路径 |
-
-### 2.2 在 train.sh 里怎么加
-
-在 `train.sh` 的 `ARGS=(...)` 数组末尾追加：
+## 7. 如果出问题怎么回退
 
 ```bash
-ARGS+=( --blend-hot-switch
-        --blend-switch-step 350000
-        --blend-switch-config /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/s2_blend_switch_config.json )
+# 1. 停止训练
+# 2. 撤销环境变量：
+unset BLEND_CURSOR_OFFSETS_JSON
+# 3. 恢复 S1 blend TSV：
+export BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s1_preblend.tsv"
+# 4. 从 350k checkpoint resume（不设 BLEND_CURSOR_OFFSETS_JSON = stock 行为）
+# 5. 训练继续用 S1 blend 数据
 ```
 
-**推荐直接改 train.sh 的 ARGS 数组**，改动量最小且显式。
+注意：shim 的设计是 **flag-off = stock 逐字节等价**。
+不设 `BLEND_CURSOR_OFFSETS_JSON` 时，shim 检测不到 → 直接 return → 原始 `_build_indices` 行为。
 
-### 2.3 ⚠️ 不需要改 BLEND_TSV
+## 8. 验证状态
 
-**S1 blend TSV 保持不变**（`blend_s1_preblend.tsv`）。切换发生在训练循环内部：
-- 训练启动时用 S1 blend TSV 构建 BlendedDataset（7 源）
-- 到 step 350000 时，`maybe_trigger_blend_switch()` 读取 config JSON，在内存中重建 blend 索引为 S2 配比（12 源）
-- **不需要重启训练、不需要换 TSV、不需要 kill 进程**
+| 测试 | 结果 |
+|:--|:--|
+| standalone 10/10 | ✅ PASS |
+| shim importable on real megatron bridge | ✅ PASS |
+| cursor offset computation (89.6M samples) | ✅ PASS |
+| zero overlap (shared sources) | ✅ overlap=0 |
+| flag-off stock equivalence | ✅ byte-identical |
+| ratio accuracy | ✅ max_dev=0.000000 |
+| new source zero overlap | ✅ overlap=0 |
+| Bresenham pattern match | ✅ 70/30 for 0.7/0.3 |
+| integration full switch | ✅ zero overlap + ratio |
 
-S2 blend TSV（`blend_s2_preblend.tsv`）仅作为**参考文件**，记录 S2 的完整 12 源配比。
-
----
-
-## 3. S2 切换配置（config JSON）
-
-**路径**：`run/data/blendswitch/s2_blend_switch_config.json`
-
-关键字段：
-- `new_size` = 350,000 步 × 256 GBS = **89,600,000**（S2 阶段总样本数）
-- `new_weights`：12 源的目标配比（web=0.40, code=0.40, math=0.20）
-- `shared_source_mask`：`true` = S1/S2 共享源（需游标映射），`false` = S2 新源（offset=0）
-- `s2_source_keys`：按 key 映射 S2 源 → S1 源（S1=7源 vs S2=12源，顺序不同）
-
----
-
-## 4. 切换后前 100 步的预期行为
-
-| 指标 | 预期 | 阈值 |
-|---|---|---|
-| **loss** | 微跳（配比变化），然后平稳回落 | 跳幅 ≤ 5%·100 步内回归趋势线 |
-| **每源样本占比** | 立即反映 S2 目标配比 | 偏差 ≤ 1pp（实测 0.0087%） |
-| **step time** | 与 S1 基本持平 | 偏差 ≤ 2%（切换是一次性索引重建） |
-| **显存** | 无显著增量 | ≤ 5% |
-| **LR / optimizer** | 连续，无 re-warmup | stable 段 LR 恒 1e-3 |
-
-日志中应看到：
-```
-[blend-hot-switch] S1->S2 switch at iteration 350000: consumed_per_source=[...], new_weights=[...], new_size=89600000
-```
-
-⚠️ **异常信号**（需立即关注）：
-- loss spike > 10% → 可能配比或游标错误
-- 某源占比严重偏离目标 → 可能 source_keys 映射错误
-- 日志无 `[blend-hot-switch]` 行 → patch 未生效，检查应用状态
-
----
-
-## 5. 如果出问题怎么回退
-
-### 5.1 快速回退
-
-```bash
-# 1. kill 训练进程
-# 2. 撤 patch
-cd "$BAIZE_TRAIN_CODE"
-git checkout -- .
-git clean -fd megatron/core/datasets/blend_switcher.py tests/test_blend_hot_switch_integration.py
-# 3. 从 348k 或 350k ckpt resume（ckpt 间隔=2000 步）
-# 4. s1.env 的 BLEND_TSV 不用改（本来就指向 blend_s1_preblend.tsv）
-# 5. 确认 train.sh ARGS 里没有 --blend-hot-switch 等参数
-# 6. 重启：bash scripts/train.sh s1
-```
-
-### 5.2 回退后影响
-
-- 回退 = 继续 S1 配比训练至 700k（不做 S2 切换）
-- 已消耗的 350k 步 S1 数据不浪费
-- 零重叠保证不再适用（但 stock 模式不影响已完成训练）
-
----
-
-## 6. 常见问题预判
+## 9. 常见问题
 
 **Q: patch 是否与当前训练用的 Megatron 版本兼容？**
-A: 兼容。base commit = `14c215dc1472ca75d6f3ce27e423bedfdc51614b`。已验证参数签名一致。应用前确认 `git log -1` 的 hash 一致或在其之后。
+A: 是。shim 是 runtime monkey-patch，不修改 site-packages。已验证在
+   megatron-bridge 0.2.0rc6 + megatron-core 0.16.1 上 import 成功并正确 patch。
 
 **Q: `--blend-hot-switch` 是否需要额外依赖？**
-A: 否。纯 Python + numpy（训练环境已有）。无新 pip 包、无 C++ 编译。
+A: 否。纯 Python，仅依赖 numpy（已有）。不需要任何额外安装。
 
-**Q: S2 source keys 与 S1 的映射关系？**
-A: 见 config JSON 的 `s2_source_keys` + `shared_source_mask`。共享源（7个）按 key 映射（如 S2 的 `code_l2` 位置3 → S1 的 `code_l2` 位置5）。新源（5个）offset=0，天然零重叠。
+**Q: S2 blend 的 source keys 与 S1 的映射关系？**
+A: `s2_blend_switch_config.json` 已含完整映射。7 个共享源（en_v1_4, ufw_l1_en_hq,
+   ufw_zh, code_l2, code_l3, math_l1, math_l3）获得 cursor offset；
+   5 个新源（stackv3_filt, megamath, finemath, nemotron, megamath_web）offset=0。
 
-**Q: checkpoint 里会多存什么？**
-A: 切换后 ckpt 多一个 `blend_switch_state` 字段。切换前无此字段（stock 格式）。flag OFF 时不存在。
+**Q: 为什么不用 `blend_hotswitch.patch`？**
+A: 该 patch 针对标准 Megatron-LM 路径（megatron/training/training.py 等），
+   但 BaiZe 使用 Megatron Bridge（megatron.bridge.*），路径完全不同。
+   Bridge Edition shim 遵循现有 `bridge_compat.py` 的 monkey-patch 模式，
+   是正确且安全的做法。
 
-**Q: 切换是一次性的还是每步都触发？**
-A: 一次性。`_blend_switch_done` flag 保证只执行一次。
+**Q: cursor offsets 是怎么算的？**
+A: 用 Bresenham 加权交错算法（与 Megatron 的 build_blending_indices 相同），
+   模拟 S1 训练 350k 步 × GBS 256 = 89,600,000 个样本的 blend 索引，
+   统计每个源被消费了多少次。S2 阶段该源的 sample_index 加上这个偏移量，
+   跳过 S1 已消费的 shuffle 位置，实现零重叠。
 
-**Q: S2 阶段 crash 了怎么办？**
-A: 当前 patch 版本的 S2 resume 逻辑尚未完整。**建议**：从 350k ckpt 重新开始 S2 阶段。data 线正在完善。
-
----
-
-## 7. 交付物清单
-
-| 文件 | 路径 | 状态 |
-|---|---|---|
-| patch 本体 | `run/data/blendswitch/blend_hotswitch.patch` (43,650B) | ✅ |
-| 核心逻辑 | `run/data/blendswitch/blend_switcher.py` (17,966B) | ✅ |
-| 安装步骤 | `run/data/blendswitch/README_PATCH.md` (10,603B) | ✅ |
-| S2 切换配置 | `run/data/blendswitch/s2_blend_switch_config.json` | ✅ |
-| 验证脚本 | `run/data/blendswitch/test_blend_switch.py` (14,307B) | ✅ |
-| standalone 结果 | `run/data/blendswitch/verify_results.json` | ✅ 8/8 PASS |
-| integration 结果 | `run/data/blendswitch/verify_results_integration.json` | ✅ 7/7 PASS |
-| S2 blend TSV | `code/baize-llm/configs/blend_s2_preblend.tsv` (3,625B) | ✅ 参考用 |
-| **本速查** | `run/data/blendswitch/SWITCH_RUNBOOK.md` | ✅ 本文件 |
+**Q: fast 方法是否准确？**
+A: 已在 10,000 个样本上验证 fast 方法与逐位精确 Bresenham 完全匹配。
+   89.6M 样本的结果：各源占比与权重精确匹配（如 65.00% → 58,240,000 样本）。

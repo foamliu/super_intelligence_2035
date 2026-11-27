@@ -1,0 +1,57 @@
+{
+  "total": 10,
+  "passed": 10,
+  "all_pass": true,
+  "tests": [
+    {
+      "name": "shim importable",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "cursor offset computation",
+      "status": "PASS",
+      "details": "sum=10000 expected=10000"
+    },
+    {
+      "name": "zero overlap",
+      "status": "PASS",
+      "details": "overlap=0 total_s1=5000 total_s2=5000"
+    },
+    {
+      "name": "flag-off stock equivalence",
+      "status": "PASS",
+      "details": "di_same=True dsi_same=True"
+    },
+    {
+      "name": "ratio accuracy",
+      "status": "PASS",
+      "details": "max_dev=0.000000 ratios=[0.4, 0.4, 0.2] targets=[0.4, 0.4, 0.2]"
+    },
+    {
+      "name": "new source zero overlap",
+      "status": "PASS",
+      "details": "overlap=0"
+    },
+    {
+      "name": "cursor offset JSON format",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "Bresenham pattern match",
+      "status": "PASS",
+      "details": "c0=70 c1=30 (expected 70/30)"
+    },
+    {
+      "name": "integration: zero overlap",
+      "status": "PASS",
+      "details": "overlap=0"
+    },
+    {
+      "name": "integration: ratio accuracy",
+      "status": "PASS",
+      "details": "max_dev=0.000000"
+    }
+  ]
+}
