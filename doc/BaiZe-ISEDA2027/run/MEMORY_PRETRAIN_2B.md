@@ -1,4 +1,15 @@
-⚠️ S2切换失败已回退S1·训练健康iter=350490/700k(50.1%) step avg10≈7.04s(✅<7.4s gate)·loss~1.955·0NaN/0skip✅·LR re-warmup中(2.45e-4,ETA~2.5h回1e-3)·eval daemon运行中(PID 3535099)·350k eval RUNNING(~44min·llama-server PID 3601257 290%CPU active·results dir空=未完成)·S2待运维决定(patch 25/25 PASS·fail=executor GPU cleanup wait不足)·eval_next=360k·WAITING=0
+⚠️ S2切换失败已回退S1·训练健康iter=350540/700k(50.1%) step avg10≈7.02s(last5=6988/7029/7068/6998/7025ms·all<7.4s gate✅)·loss≈1.950(range1.949-1.961)·0NaN/0skip✅·LR=2.70e-4 re-warmup中(+5e-6/10step,ETA~2h回1e-3)·grad norm 0.067-0.070(normal✅)·350k eval RUNNING(~49min·llama-server PID 3601257 285%CPU·results dir空=未完成)·pre-eval step≈7.0s·.29 load=24.49·.12 load=22.35·GPU .29 8×98-100%/73693-74191MiB/57-64°C✅·GPU .12 8×79-100%/73763-74641MiB/54-62°C✅·train PID 2218437 alive(~67min)·BLEND_CURSOR_OFFSETS_JSON=""(S1 stock✅)·S2待运维决定(patch 25/25 PASS·fail=executor GPU cleanup wait不足·fix=加nvidia-smi poll until 0MiB)·S2 runbook已制定(见#3566)·eval_next=360k·WAITING=0
+> #3566（2026-11-28 06:50, 监控巡检+S2 runbook制定·训练健康iter=350540/700k(50.1%) step avg10≈7.02s(last5=6988/7029/7068/6998/7025ms·all<7.4s gate✅) loss≈1.950(range1.949-1.961) 0NaN/0skip✅·LR=2.70e-4 re-warmup中(+5e-6/10step,ETA~2h回1e-3)·grad norm 0.067-0.070(normal✅)·350k eval RUNNING(~49min·llama-server PID 3601257 285%CPU active·gguf_lmeval PID 3617896 alive·results dir空=未完成)·pre-eval step≈7.0s·.29 load=24.49·.12 load=22.35·GPU .29 8×98-100%/73693-74191MiB/57-64°C✅·GPU .12 8×79-100%/73763-74641MiB/54-62°C✅·train PID 2218437 alive(~67min)·BLEND_CURSOR_OFFSETS_JSON=""(S1 stock✅)·S2 runbook已制定(见下方)·S2待运维决定(patch/shim/cursor 25/25 PASS·fail=executor GPU cleanup wait不足·fix=加nvidia-smi poll until 0MiB)·eval_next=360k·WAITING=0）→ daily-memories/2026-11-28.md
+> **S2切换runbook（2026-11-27运维令要求·已读data交付物·含失败教训）**:
+> **data交付物已确认**:README_PATCH.md(集成状态8/8+7/7 PASS)·blend_switcher.py(416行·S1→S2 key映射)·blend_hotswitch.patch(新增blend_switcher.py+改blended_dataset.py/samplers.py/loaders.py)·s2_blend_switch_config.json(12源web40/code40/math20)·verify_results.json(8/8 PASS)·verify_results_integration.json(7/7 PASS)
+> **关键参数**:`--blend-hot-switch`默认关闭·关闭时与stock逐字节等价·S2 blend=`blend_s2_preblend.tsv`(已在configs/)·switch_step=350000·S1有7源→S2有12源(5个新源offset=0)
+> **计划步骤(原始)**:①等350k ckpt落盘→②kill两节点训练→③apply patch→④加`--blend-hot-switch`+S2 TSV→⑤从350k resume→⑥验证step/loss/ratio→⑦继续监控+L1评350k
+> **实际执行(05:18失败)**:步骤①②OK·步骤③patch已预装(shim)·步骤④S2配置已设·步骤⑤启动S2训练FATAL:`10.239.2.12 GPU非空闲`(executor kill .12后只等10s,未验GPU释放→pretrain_launcher GPU check fail)
+> **回退**:05:22 auto-rollback→unset BLEND_CURSOR_OFFSETS_JSON→BLEND_TSV=S1→setsid bash train.sh s1·05:42手动重启from 350k·训练稳定至今
+> **失败根因**:executor P4 kill .12后未等GPU memory释放(residual from killed S1 workers)·非patch/shim/cursor问题
+> **修复方案(retry时)**:executor P4后加`ssh 10.239.2.12 nvidia-smi --query-gpu=memory.used --format=csv,noheader` poll until all 0MiB(或<100MiB),timeout 120s,然后才启动S2训练
+> **retry就绪状态**:patch/shim/cursor all verified✅(data 25/25 PASS)·350k ckpt安全·S1训练健康·待运维决定是否retry S2
+> evidence: /tmp/s2_switch_execution.log(full timeline)·/tmp/baize_s2_switch_train.log(S2启动失败)·/tmp/baize_s2_rollback.log(回退)·/tmp/baize_s1_restart_350k.log(S1重启)
 > #3560（2026-11-28 05:50, ⚠️S2切换失败·S1手动恢复成功·训练iter=350030 step≈7.1s loss≈1.99 0NaN✅·LR re-warmup中·eval daemon待重启）→ daily-memories/2026-11-28.md
 > **S2切换事件全记录**:
 > ①05:18:26 350k ckpt确认✅·executor自动执行切换
