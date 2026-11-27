@@ -1,11 +1,12 @@
-🟢 监控巡检·S2切换ALL READY·训练健康iter=344510/700k(49.2%) step avg10≈7.60s(above gate·fluctuating 7.31-7.97s·NON-eval·daemon idle·0NaN/0skip✅)·latest ckpt=344000·340k eval DONE(60.13%✅)·350k ETA~05:36 on 11-28·eval_next=350k(=S2切换点)·S2切换ALL READY(7pt re-verified✅)·WAITING=0
-> #3513（2026-11-27 18:03, 监控巡检·训练健康iter=344510/700000(49.2%) step avg10≈7.60s(above gate·fluctuating·NON-eval·daemon idle)·GPU 8×90-100%·latest ckpt=344000(16:56)·350k ETA~05:36 on 11-28·S2切换ALL READY(7pt re-verified✅)·
-> 训练健康iter=344510(worker_log latest@18:02) loss≈1.99(worker_log lm_loss@344510·stable 1.981-2.005) step avg10≈7.60s(worker_log last10:7.31-7.97s·avg 7.60s·above 7.4s gate·fluctuating)·NON-eval-caused(daemon idle,no llama-server)·GPU .29 8×90-100%/74501-74959MiB✅·load .29=21.98/22.98/23.48·LR=1e-3 constant✅·grad norm=0.082-0.266 stable(1 transient spike 0.266@344460)·0NaN/0skip✅·
-> **step avg10≈7.60s above gate fluctuating**:worker_log last10=7.31-7.97s(avg 7.60s)·above 7.4s gate·NON-eval-caused(daemon idle)·training healthy(0NaN/0skip·loss stable 1.981-2.005·grad norm stable 0.08-0.27)·not flagging⚠️待运维(healthy+pattern fluctuating since #3493·trend stable not worsening)·if avg10 persistently >8.0s for 2+ consecutive rounds → will flag⚠️待运维·
-> **daemon idle**:autoqueue PID501728 alive(>21h),no llama-server·340k eval DONE(harness_avg=60.13%✅)·next eval=350k(10k boundary=S2切换点)·10k cadence✅(L99 `[ $((it % 10000)) -eq 0 ]`)·
-> **S2切换ALL READY**(7pt re-verified✅):①shim blend_hot_switch_bridge_compat.py EXISTS@BAIZE_TRAIN_CODE(4226B ls✅)·②train.sh L206 BLEND_CURSOR_OFFSETS_JSON in PYTORCH_ENV(grep✅)·③launcher L306 shim import(grep✅)·④cursor_offsets_350k.json 1093B 12源(7shared+5new·89.6M samples)·⑤blend_s2_preblend.tsv 3625B@configs(12源 web40/code40/math20)·⑥s1.env L16 BLEND_TSV=S1·⑦SWITCH_RUNBOOK.md@run/data/blendswitch/✅·
-> **350k ETA**:(350000-344510)×7.60s≈41724s≈11.6h→~05:36 on 11-28·350k=先冷切换(~10min)后L1 eval(CPU-only)·
-> **未碰训练/configs/.bak/daemon**(维护态铁律悍守)·evidence:worker_log tail(iter=344510 elapsed=7615ms loss=1.987 grad_norm=0.108 0skip/0NaN)·nvidia-smi 8×90-100%/74501-74959MiB·ps daemon idle(PID501728)·git fetch origin→up to date·MEMORY ≤32KB✅·
+🟢 监控巡检·S2切换ALL READY·训练健康iter=344610/700k(49.2%) step avg10≈7.62s(above gate·fluctuating 7.20-8.24s·2 spikes@8.2s·NON-eval·daemon idle·0NaN/0skip✅)·latest ckpt=344000·340k eval DONE(60.13%✅)·350k ETA~05:36 on 11-28·eval_next=350k(=S2切换点)·S2切换ALL READY(7pt re-verified✅)·WAITING=0
+> #3514（2026-11-27 18:15, 监控巡检·训练健康iter=344610/700000(49.2%) step avg10≈7.62s(above gate·fluctuating·2 spikes@8.2s·NON-eval·daemon idle)·GPU 8×93-100%·latest ckpt=344000(16:56)·350k ETA~05:36 on 11-28·S2切换ALL READY(7pt re-verified✅)·
+> 训练健康iter=344610(worker_log latest@18:15) loss≈1.984(worker_log lm_loss@344610·stable 1.981-2.014) step avg10≈7.62s(worker_log last10:7.20-8.24s·avg 7.62s·above 7.4s gate·fluctuating)·NON-eval-caused(daemon idle,no llama-server)·GPU .29 8×93-100%/74501-74959MiB✅·load .29=22.82/22.76/23.23·LR=1e-3 constant✅·grad norm=0.082-0.479(stable 0.08-0.11·transient spikes 0.479@344400/0.207@344590/0.201@344610)·0NaN/0skip✅·
+> **step avg10≈7.62s above gate fluctuating**:worker_log last10=7.20-8.24s(avg 7.62s)·above 7.4s gate·NON-eval-caused(daemon idle)·training healthy(0NaN/0skip·loss stable 1.981-2.014·grad norm stable 0.08-0.11 baseline)·2 spikes@8.24s/8.20s(344580/344590)but not persistent·not flagging⚠️待运维(healthy+pattern fluctuating since #3493·trend stable not worsening)·if avg10 persistently >8.0s for 2+ consecutive rounds → will flag⚠️待运维·
+> **daemon idle**:autoqueue PID501728 alive(~21.6h),no llama-server·340k eval DONE(harness_avg=60.13%✅)·next eval=350k(10k boundary=S2切换点)·10k cadence✅(L99 `[ $((it % 10000)) -eq 0 ]`)·
+> **S2切换ALL READY**(7pt re-verified✅):①shim blend_hot_switch_bridge_compat.py EXISTS@BAIZE_TRAIN_CODE(4226B ls✅)·②train.sh L207 BLEND_CURSOR_OFFSETS_JSON in PYTORCH_ENV(grep✅)·③launcher L306 shim import(grep✅)·④cursor_offsets_350k.json 1093B 12源(7shared+5new·89.6M samples)·⑤blend_s2_preblend.tsv 3625B@configs(12源 web40/code40/math20)·⑥s1.env L16 BLEND_TSV=S1·⑦SWITCH_RUNBOOK.md@run/data/blendswitch/✅·
+> **350k ETA**:(350000-344610)×7.62s≈41072s≈11.4h→~05:36 on 11-28·350k=先冷切换(~10min)后L1 eval(CPU-only)·ckpt path=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/·
+> **未碰训练/configs/.bak/daemon**(维护态铁律悍守)·evidence:worker_log tail(iter=344610 elapsed=7697ms loss=1.984 grad_norm=0.201 0skip/0NaN)·nvidia-smi 8×93-100%/74501-74959MiB·ps daemon idle(PID501728)·git fetch origin→up to date(2199c83578 data R965)·MEMORY ≤32KB✅·
+> 📦 #3513（2026-11-27 18:03, 监控巡检·iter=344510 step avg10≈7.60s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:36 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
 > 📦 #3512（2026-11-27 17:38, 监控巡检·iter≈344320 step avg10≈7.81s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:56 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
 > 📦 #3511（2026-11-27 17:28, 监控巡检·iter≈344258 step avg≈7.65s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:40 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
 > 📦 #3510（2026-11-27 17:13, 监控巡检·iter≈344120 step avg10≈7.93s(above gate WORSENING 10/10>7.4s·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~06:09 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
@@ -94,7 +95,7 @@
 - ⑤blend_s2_preblend.tsv: 在`code/baize-llm/configs/`(3625B, 12源 web40/code40/math20)
 
 **执行步骤**：
-1. 等350k ckpt落盘：`cat .../baize2b/checkpoints/latest_checkpointed_iteration.txt`=350000
+1. 等350k ckpt落盘：`cat /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt`=350000
 2. 记录现场：step time/loss/GPU util/两机load/训练PID
 3. kill训练：kill .29 + .12 的 torchrun+pretrain_launcher
 4. 改s1.env L16：`BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv"`(原S1行注释保留)
