@@ -61,6 +61,22 @@ export BLEND_CURSOR_OFFSETS_JSON="/nas_train/app.e0031982/code/super_intelligenc
 
 或者直接在 `train.sh` 启动命令前 export。
 
+> 🔴 **关键：`train.sh` SSH 透传**（pretrain #3479 发现并修复的 BLOCKER）
+>
+> BaiZe 训练跨双节点（.29 主 + .12 rank0 via SSH），`train.sh` 通过 `PYTORCH_ENV` 变量
+> 把环境变量透传到 .12。如果 `BLEND_CURSOR_OFFSETS_JSON` 不在 `PYTORCH_ENV` 中，
+> 则 rank0（.12）不会应用 cursor offsets → rank0 读 S1 数据 / rank1 读 S2 数据 →
+> **DDP 数据不一致 → 训练 garbage**。
+>
+> **pretrain 已修复**（`train.sh` L203-207，#3479）：
+> ```bash
+> PYTORCH_ENV="$PYTORCH_ENV BLEND_CURSOR_OFFSETS_JSON=${BLEND_CURSOR_OFFSETS_JSON:-}"
+> ```
+> 空值 = no-op（不影响当前 S1 训练）。切换前确认此行存在：
+> ```bash
+> grep -n 'BLEND_CURSOR_OFFSETS_JSON' /nas_train/app.e0031982/code/baize-llm/scripts/train.sh
+> ```
+
 ## 4. S2 blend TSV 路径怎么配
 
 修改 `s1.env`（或等价的环境变量注入点）中的 `BLEND_TSV`：
@@ -83,6 +99,8 @@ BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv"
 # 3. 停止训练进程
 # 4. 验证 shim 文件在 NFS 上可读（不需要 git pull）：
 ls -l /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py
+# 4b. 🔴 验证 train.sh SSH 透传行存在（否则 rank0/.12 不应用 cursor offsets）：
+grep -n 'BLEND_CURSOR_OFFSETS_JSON' /nas_train/app.e0031982/code/baize-llm/scripts/train.sh
 # 5. 设置环境变量（在 s1.env 或 train.sh 启动前 export）：
 export BLEND_CURSOR_OFFSETS_JSON="/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json"
 # 6. 修改 BLEND_TSV 为 S2：
@@ -92,6 +110,8 @@ export BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv"
 # 9. 确认日志中出现 "[blend-hot-switch] Bridge compat shim applied" 和
 #    "[blend-hot-switch] Applying cursor offsets" → shim 生效
 #    若出现 "[blend-hot-switch] Shim not found, skipping" → 文件未找到，检查 NFS 路径
+# 10. 🔴 确认 .12 (rank0) 日志也出现 "[blend-hot-switch] Applying cursor offsets"
+#     （若只有 .29 出现而 .12 没出现 → SSH 透传失败 → DDP 数据不一致 → 立即停训回退）
 ```
 
 ## 6. 切换后前 100 步的预期行为
@@ -133,6 +153,8 @@ export BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s1_preblend.tsv"
 | new source zero overlap | ✅ overlap=0 |
 | Bresenham pattern match | ✅ 70/30 for 0.7/0.3 |
 | integration full switch | ✅ zero overlap + ratio |
+| train.sh SSH passthrough | ✅ L203-207 (#3479, pretrain fixed) |
+| pretrain_launcher.py shim import | ✅ L302-310, commit 3dbf056 |
 
 ## 9. 常见问题
 
