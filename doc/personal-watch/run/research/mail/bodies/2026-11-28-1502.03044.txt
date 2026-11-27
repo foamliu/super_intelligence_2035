@@ -1,0 +1,14 @@
+Dear Professor Courville,
+
+Your 2015 paper on visual attention is the reference I return to when adapting multimodal models to chip-design artifacts such as waveform screenshots; I have three questions about the mechanism.
+
+The detail that matters is the split between soft attention, which takes an expectation over the 196 (14x14) annotation locations and trains by backpropagation, and hard attention, which samples one location and maximizes a variational lower bound. Our informative region is a thin, high-resolution plot surrounded by axis labels and legend text, so where the model looks matters as much as what it writes.
+
+1. In your ablations, did hard attention mainly sharpen localization, or also improve captions? We see much higher gradient variance and are unsure it is worth the cost.
+2. Did you use attention entropy or the maps to diagnose whether the decoder reads the plot rather than the title and tick labels? Did any attention regularizer help?
+3. With only tens of thousands of image-text pairs and a pretrained 2B vision-language backbone, would you still learn attention from scratch, or freeze the encoder and train only the attention and decoder?
+
+Thank you for the paper and any pointers.
+
+Best regards,
+Yang Liu

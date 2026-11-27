@@ -9,7 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
-**本轮快照**：累计 **452** 条（**第一百二十八轮 2026-11-28 00:0x +3 → 452**（B 轨补架构/多模态真空白）：Sparse Transformers `1904.10509`（**3,468**，2019 预印本；注意力矩阵稀疏因子化把 O(n²) 降到 **O(n√n)**，配深层稳定初始化 + 注意力重算省显存 + 快速注意力 kernel，同一架构建模图像/音频/文本原始字节）/ DALL·E · Zero-Shot Text-to-Image Generation `2102.12092`（**6,727**，2021 预印本；用一个 transformer 把文本 token 与图像 token 当**单一数据流自回归联合建模**，数据与规模足够时零样本可比专用文生图）/ MLP-Mixer `2105.01601`（**4,393**，NeurIPS 2021；仅两类 MLP（逐 patch 混合 + 跨 patch 混合）证明**卷积与注意力都非必需**，大数据或现代正则下逼近同类精度）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 `2019-04-23T19:29:47Z` / `2021-02-24T06:42:31Z` / `2021-05-04T16:17:21Z`；Sparse/DALL·E `comments` 为空，MLP-Mixer 为修订说明）+ OpenAlex 3/3 `200`（3,468 / 6,727 / 4,393，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**（⚠️ 候选 `2206.10658` 经 arXiv 实测为 ART 稠密检索、`2206.07682`〔Emergent Abilities〕已在表内 ⇒ 均弃）；覆盖轴 = 稀疏长序列注意力 / 统一 token 自回归多模态 / 全 MLP 视觉骨干；本轮归属：pretrain +3 · vision +3 · data +1 · zhulong +1 · posttrain +0 · harness +0 · designflow +0）
+**本轮快照**：累计 **455** 条（**第一百二十九轮 2026-11-28 03:0x +3 → 455**（B 轨补视觉注意力 / 阅读理解 / 点云真空白）：Show, Attend and Tell `1502.03044`（**10,308**，2015 预印本；软注意力在 **196（14×14）** 位置上取期望 + 硬注意力采样并最大化变分下界，可可视化注视显著物体，Flickr8k / Flickr30k / MS COCO SOTA）/ SQuAD `1606.05250`（**11,133**，EMNLP 2016；10 万+ 众包问题、答案必为原文片段，逻辑回归 F1 **51.0%** vs 简单基线 20%，人类 86.8%）/ PointNet `1612.00593`（**11,443**，CVPR 2017；直接消费点云并保持置换不变，统一分类 / 部件分割 / 语义解析）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2015-02-10T19:18:29Z` / `2016-06-16T16:36:00Z` / `2016-12-02T08:40:40Z`；abs `comments`：SQuAD = EMNLP 2016、PointNet = CVPR 2017、Show Attend 无）+ OpenAlex 3/3 `200`（10,308 / 11,133 / 11,443，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 视觉注意力 / 抽取式阅读理解与人类上限 / 置换不变集合编码；本轮归属：vision +2 · harness +1 · data +1 · pretrain +0 · posttrain +0 · zhulong +0 · designflow +0）
+**本轮快照（前一）**：累计 **452** 条（**第一百二十八轮 2026-11-28 00:0x +3 → 452**（B 轨补架构/多模态真空白）：Sparse Transformers `1904.10509`（**3,468**，2019 预印本；注意力矩阵稀疏因子化把 O(n²) 降到 **O(n√n)**，配深层稳定初始化 + 注意力重算省显存 + 快速注意力 kernel，同一架构建模图像/音频/文本原始字节）/ DALL·E · Zero-Shot Text-to-Image Generation `2102.12092`（**6,727**，2021 预印本；用一个 transformer 把文本 token 与图像 token 当**单一数据流自回归联合建模**，数据与规模足够时零样本可比专用文生图）/ MLP-Mixer `2105.01601`（**4,393**，NeurIPS 2021；仅两类 MLP（逐 patch 混合 + 跨 patch 混合）证明**卷积与注意力都非必需**，大数据或现代正则下逼近同类精度）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 `2019-04-23T19:29:47Z` / `2021-02-24T06:42:31Z` / `2021-05-04T16:17:21Z`；Sparse/DALL·E `comments` 为空，MLP-Mixer 为修订说明）+ OpenAlex 3/3 `200`（3,468 / 6,727 / 4,393，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**（⚠️ 候选 `2206.10658` 经 arXiv 实测为 ART 稠密检索、`2206.07682`〔Emergent Abilities〕已在表内 ⇒ 均弃）；覆盖轴 = 稀疏长序列注意力 / 统一 token 自回归多模态 / 全 MLP 视觉骨干；本轮归属：pretrain +3 · vision +3 · data +1 · zhulong +1 · posttrain +0 · harness +0 · designflow +0）
 **本轮快照（前一）**：累计 **449** 条（**第一百二十七轮 2026-11-27 21:0x +3 → 449**（B 轨补真空白）：LSSL / S4 `2110.13985`（**1,300**，NeurIPS 2021；线性连续时间状态空间层 `ẋ = Ax + Bu, y = Cx + Du` + 可训练结构化 `A`（HiPPO 式长程记忆），把 RNN / 时序卷积 / NDE 统一并推广到连续时间；长度 16,000 语音分类比此前方法 **+24** 个百分点）/ Gated Convolutional Networks / GLU `1612.08083`（**1,589**，2016 预印本；门控线性单元 `(X*W+b) ⊗ σ(X*V+c)`，堆叠卷积 + 门控并行打分，WikiText-103 SOTA、打分延迟比循环基线低一个数量级）/ GPT Understands, Too / P-Tuning `2103.10385`（**1,626**，OpenAlex 记 AI Open 2023；可训练连续 prompt 与离散模板拼接 + prompt encoder（LSTM/MLP）+ anchor，缩小不同离散模板间方差，LAMA / SuperGLUE 提升，冻结与微调、全监督与少样本均有效）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2021-10-26T19:44:53Z / 2016-12-23T20:32:33Z / 2021-03-18T17:13:50Z；S4 `comments` 逐字 `NeurIPS 2021`）+ OpenAlex 3/3 `200`（1,300 / 1,589 / 1,626，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**（注：候选 RTLLM 记 `2309.05076` 经 arXiv 实测为情感 agent 论文、真 ID `2308.05345` 已在表内 ⇒ 弃）；覆盖轴 = 长序列状态空间 / 门控卷积语言模型 / 连续 prompt 适配；本轮归属：pretrain +3 · posttrain +2 · harness +1 · zhulong +1 · data +1 · vision +1 · designflow +0）
 **本轮快照（前一）**：累计 **446** 条（**第一百二十六轮 2026-11-27 00:2x 补轮 +3 → 446**：OpenAI Gym `1606.01540`（**9,534**，2016 预印本；统一 `reset/step/reward/done` 环境接口 + 环境注册/版本化，把环境与 agent 解耦，成为后续 RL 与 agent 评测 harness 的公共接口约定）/ Graph Attention Networks `1710.10903`（**24,761**，ICLR 2018；掩码自注意力 + 多头在邻居上加权聚合，可归纳到未见图）/ MobileNetV2 `1801.04381`（**37,626**，CVPR 2018；倒残差 + 线性瓶颈，低算力视觉骨干）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2017-10-30T12:41:12Z / 2016-06-05T17:54:48Z / 2018-01-13T04:46:26Z）+ OpenAlex 3/3 `200`（查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = RL 环境接口 / 图注意力 / 高效视觉骨干；本轮归属：harness +2 · data +2 · pretrain +3 · vision +2 · posttrain +1 · designflow +1 · zhulong +0）
 **本轮快照（前一）**：累计 **443** 条（**第一百二十五轮 2026-11-27 00:0x +3 → 443**（B 轨转「补充/更正」补真空白）：MAGE `2412.07822`（**153**，2024 预印本；OpenAlex 记 `conference-paper` / source = DAC / `publication_year=2025`；**&lt;500 按「本领域权威 / EDA agent 标志性工作」收**：多智能体引擎 + 高温度候选采样 + Verilog-state checkpoint，作者自报 VerilogEval-Human v2 **95.7%**、比 Claude-3.5-sonnet 高 **23.3%**） / Neural Turing Machines `1410.5401`（**3,139**，2014 预印本；控制器 + 可寻址外部记忆矩阵，内容寻址与位置寻址的**可微读写**，学会 copy / repeat / 联想回忆与简单算法） / Hindsight Experience Replay `1707.01495`（**2,803**，NeurIPS 2017；把失败轨迹按**实际达成目标**重标注，使任意 off-policy RL 能从稀疏二值奖励学习）；核验：abs 3/3 `200`（42,024 / 39,527 / 44,446 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（153 / 3,139 / 2,803，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**；覆盖轴 = EDA 多智能体 + 状态检查点 / 外部可微记忆 / 稀疏奖励目标重标注；本轮归属：designflow +2 · zhulong +2 · harness +3 · posttrain +2 · pretrain +1 · data +0 · vision +0）
@@ -7851,3 +7852,48 @@
 | 与我们工作的关系 | **vision（主 · 编码器选型）**：提醒视觉编码器不必默认卷积或注意力；可作为 WaveView 视觉骨干的对照选项（非必需）。<br>**pretrain（次 · 架构合理性）**：为「架构选型对比」提供第三条基线（all-MLP）。<br>**posttrain / data / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-28**（第一百二十八轮 · 00:0x） |
 | 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2021-05-04T16:17:21Z`；abs `comments` 为 v2–v4 修订说明）；OpenAlex **`200`**（4,393 / 2021 / `conference-paper` / source = NeurIPS，查询日 2026-11-28）。两类 MLP 混合层、「卷积与注意力都非必需」取自摘要逐字；摘要无具体 Top-1 数字 ⇒ 本条不写未核数字。条目级查重：`2105.01601` 在 `PAPERS.md` **0 命中**。 |
+
+## 453. Show, Attend and Tell: Neural Image Caption Generation with Visual Attention
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Show, Attend and Tell: Neural Image Caption Generation with Visual Attention |
+| 作者（前 3） | Kelvin Xu · Jimmy Lei Ba · Ryan Kiros（arXiv / OpenAlex 逐字核；另 Kyunghyun Cho · Aaron C. Courville · Ruslan Salakhutdinov · Rich Zemel · Yoshua Bengio，共 8 位） |
+| 年份 | **2015**（arXiv API `published` 逐字 `2015-02-10T19:18:29Z`） |
+| 会议 / 期刊 | **arXiv 预印本**（abs 页无 `comments`；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **10,308**（OpenAlex `10.48550/arxiv.1502.03044`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1502.03044> ｜ `10.48550/arXiv.1502.03044` |
+| 一句话贡献 | 提出**基于注意力的图像描述模型**：既可用标准反向传播**确定性**训练（软注意力），也可通过最大化**变分下界**随机训练（硬注意力）；可视化显示模型在生成每个词时会自动把注视点移到对应显著物体上，并在 Flickr8k / Flickr30k / MS COCO 三个基准上验证注意力的有效性。 |
+| 与我们工作的关系 | **vision（主 · 视觉注意力）**：WaveView 波形图的信息区细长且被轴标签/图例包围，「模型看哪里」与「写出什么」同等重要；软/硬注意力的取舍、注意力图与熵都可直接作为诊断。<br>**pretrain（次 · 可解释性）**：注意力可视化作为多模态可解释性基线。<br>**posttrain / data / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百二十九轮 · 03:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2015-02-10T19:18:29Z`；abs `comments` 为空）；OpenAlex **`200`**（10,308 / 2015 / `preprint` / source = arXiv，查询日 2026-11-28）；ar5iv HTML `200`（192,682 B）核到解码器输入为 **196 × 512**、卷积顶层输出 **14×14**（故软注意力在 196 个位置上取期望），「软注意力反向传播 / 硬注意力变分下界 / 注视可视化」取自摘要逐字。条目级查重：`1502.03044` 在 `PAPERS.md` **0 命中**。 |
+
+## 454. SQuAD: 100,000+ Questions for Machine Comprehension of Text
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SQuAD: 100,000+ Questions for Machine Comprehension of Text |
+| 作者（前 3） | Pranav Rajpurkar · Jian Zhang · Konstantin Lopyrev（OpenAlex 逐字核；另 Percy Liang，共 4 位） |
+| 年份 | **2016**（arXiv API `published` 逐字 `2016-06-16T16:36:00Z`） |
+| 会议 / 期刊 | **EMNLP 2016**（abs `comments` 逐字 `To appear in Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing (EMNLP)`；OpenAlex `type=conference-paper`、DOI `10.18653/v1/d16-1264`） |
+| 被引数 | **11,133**（OpenAlex `10.18653/v1/d16-1264`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1606.05250> ｜ `10.48550/arXiv.1606.05250`（会场 DOI `10.18653/v1/d16-1264`） |
+| 一句话贡献 | 发布 **SQuAD**：10 万+ 条众包问题、答案**必为对应维基段落中的一段原文**；用依存/成分树分析所需推理类型，并给出强逻辑回归基线 **F1 51.0%**（简单基线 20%），而**人类 86.8%**——量化了当时机器阅读理解的差距。 |
+| 与我们工作的关系 | **harness（主 · 评测口径）**：抽取式答案 + **EM/F1** + 「人类上限」三件套，是判分可验证性与「差距归因」的经典范式；可迁移到 EDA 问答/定位类用例。<br>**data（次 · 众包标注）**：众包问题构造与答案片段约束，可作为造题时「答案必须可定位」的参照。<br>**pretrain / vision / posttrain / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百二十九轮 · 03:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-06-16T16:36:00Z`；abs `comments` 逐字为 EMNLP 2016）；OpenAlex **`200`**（11,133 / 2016 / `conference-paper` / source = EMNLP / DOI `10.18653/v1/d16-1264`，查询日 2026-11-28）；「10 万+ 问题 / 答案必为原文片段 / F1 51.0% vs 20% / 人类 86.8%」取自摘要逐字。条目级查重：`1606.05250` 在 `PAPERS.md` **0 命中**。 |
+
+## 455. PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation |
+| 作者（前 3） | Charles R. Qi · Hao Su · Kaichun Mo（OpenAlex 逐字核；另 Leonidas J. Guibas，共 4 位） |
+| 年份 | **2016**（arXiv API `published` 逐字 `2016-12-02T08:40:40Z`） |
+| 会议 / 期刊 | **CVPR 2017**（abs `comments` 逐字 `CVPR 2017`；OpenAlex `type=preprint`、source = arXiv ⇒ 会议以 abs `comments` 为准） |
+| 被引数 | **11,443**（OpenAlex `10.48550/arxiv.1612.00593`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1612.00593> ｜ `10.48550/arXiv.1612.00593` |
+| 一句话贡献 | 设计**直接消费点云**的神经网络 **PointNet**，尊重点的**置换不变性**，无需体素化或转多视图；以统一架构覆盖物体分类、部件分割、场景语义解析，并在实证上达到与当时 SOTA 相当或更好的效果，同时给出对输入扰动鲁棒性的分析。 |
+| 与我们工作的关系 | **vision（主 · 集合/几何编码）**：置换不变的集合编码提醒我们，若把版图/几何量当点集输入，编码器不应依赖任意排序。<br>**designflow（次）**：几何/点集类用例的输入表示可选点集而非栅格，便于保住位置精度。<br>**pretrain / posttrain / data / harness / zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百二十九轮 · 03:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-12-02T08:40:40Z`；abs `comments` 逐字 `CVPR 2017`）；OpenAlex **`200`**（11,443 / 2016 / `preprint` / source = arXiv，查询日 2026-11-28）；「直接消费点云 / 置换不变 / 分类-部件分割-语义解析统一架构 / 扰动鲁棒性分析」取自摘要逐字；摘要无具体分数 ⇒ 本条不写未核数字。条目级查重：`1612.00593` 在 `PAPERS.md` **0 命中**。 |

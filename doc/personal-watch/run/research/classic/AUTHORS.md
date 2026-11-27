@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-28 03:0x · r276）**：作者 **422** 人（编号最大 **422**）· X 已核验 **165**（本轮 **+1**：`@pranavrajpurkar` 由本人主页 <https://pranavrajpurkar.com/> `200` / 31,854 B 外链 + 代理抓 `x.com/pranavrajpurkar` `200` / 169,490 B，`og:title` = `Pranav Rajpurkar (@pranavrajpurkar) on X` ⇒ 双源；Aaron Courville 页面仅 Mila 机构账号、Kelvin Xu 页面无 x/twitter 外链 ⇒ 均记「未找到 X」，不猜）· 已发信 **190**（台账 #1–#190；本窗 **+1**：#190 Aaron Courville；今日 **2/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 00:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Aaron C. Courville（Show, Attend and Tell 资深作者，Mila / 蒙特利尔大学，A 级 `courvila@mila.quebec`〔MILA 官方人员页 `mailto:` 明文〕，X 未找到 ⇒ 已发信 #190）· Pranav Rajpurkar（SQuAD 一作，Harvard Medical School，主页无邮箱、X 双源 ⇒ 仅建档）· Kelvin Xu（Show, Attend and Tell 一作，Google DeepMind，A 级 `kelvinxx@google.com`〔本人主页 `mailto:` 明文〕，X 未找到 ⇒ 仅建档，守「同一论文 ≤1」）。
 > **当前计数（2026-11-28 00:0x · r275）**：作者 **419** 人（编号最大 **419**）· X 已核验 **164**（本轮 **+0**：DiversePlace 三位作者本人主页均无 x/twitter 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **189**（台账 #1–#189；本窗 **+1**：#189 Zhiyao Xie；今日 **1/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 21:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 +0）。本轮 **+3**：Zhiyao Xie 谢知遥（DiversePlace 资深作者，香港科技大学，A 级 `eezhiyao@ust.hk`〔本人主页 <https://zhiyaoxie.com/> 页内 `mailto:` 明文〕，X 未找到 ⇒ 已发信 #189）· Ling Pan（DiversePlace 末位，香港科技大学，A 级 `lingpan@ust.hk`〔本人主页 <https://ling-pan.github.io/> 页内明文 `lingpan [@] ust [DOT] hk` 还原〕，X 未找到 ⇒ 仅建档）· Wenrui Zhou（DiversePlace 一作，香港科技大学，本人主页 `200` 但无 `mailto:`/明文邮箱，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-27 21:0x · r274）**：作者 **416** 人（编号最大 **416**）· X 已核验 **164**（本轮 **+2**：`@jietang` 由本人主页 <https://keg.cs.tsinghua.edu.cn/jietang/> 外链 `twitter.com/jietang` + 代理抓 `x.com/jietang` `200` / 182,716 B，`og:title` = `jietang (@jietang) on X` ⇒ 双源；`@MichaelAuli` 由本人主页 <https://michaelauli.github.io/> 外链 `twitter.com/michaelauli` + 代理抓 `x.com/michaelauli` `200` / 168,407 B，`og:title` = `Michael Auli (@MichaelAuli) on X`、bio = `Research Scientist @FacebookAI` ⇒ 双源；Zhilin Yang 本人主页无 x/twitter 外链、`x.com/kimiyoung` 属他人 ⇒ 记「未找到 X」，不猜）· 已发信 **188**（台账 #1–#188；本窗 **+1**：#188 Jie Tang；今日 **4/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，较 00:2x 的 69 多 1 = 已知 Petar #187 回复；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Jie Tang 唐杰（P-Tuning 末位/通讯，中文，本人主页可见 `jietang at tsinghua . edu . cn` ⇒ A 级 ⇒ 已发信 #188）· Michael Auli（GLU 三作，英文，本人主页无邮箱、X 双源 ⇒ 仅建档）· Zhilin Yang（P-Tuning 五作，中文，本人主页 `200` 但无邮箱 / 无本人 X ⇒ 仅建档）。
 > **当前计数（2026-11-27 00:2x 补轮 · r273）**：作者 **413** 人（编号最大 **413**）· X 已核验 **162**（本轮 **+2**：`@PetarV_93` 由本人主页 <https://petar-v.com/> 外链 `x.com/PetarV_93` + 代理抓 `x.com/PetarV_93` `200` / 160,699 B，`og:title` = `Petar Veličković (@PetarV_93) / X` ⇒ 双源；`@gdb` 由本人博客 <https://blog.gregbrockman.com/> 外链 `x.com/gdb` + 代理抓 `x.com/gdb` `200` / 191,418 B，`og:title` = `Greg Brockman (@gdb) / X` ⇒ 双源；Mark Sandler 无本人 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **187**（台账 #1–#187；本窗 **+1**：#187 Petar Veličković；今日 **3/12**）· 实质回信 **7 位作者 / 8 封信**（≈4.3%；本窗 IMAP 只读再核：INBOX **69** 封，与 00:00 持平；无新实质回信、无新退信；退信 **9**、本窗 **+0**）。本轮 **+3**：Petar Veličković（GAT 一作，英文〔判据=塞尔维亚姓名 + DeepMind/剑桥机构；塞语不在需母语清单 ⇒ 英文兜底〕，本人 Contact 页 `petarv at google dot com` 明文还原 ⇒ A 级 ⇒ 已发信 #187）· Greg Brockman（Gym 一作，英文，无公开邮箱 + X 双源 ⇒ 仅建档）· Mark Sandler（MobileNetV2 一作，英文，`marksandler.com` 实测 1&amp;1 停放页、无公开邮箱 ⇒ 仅建档）。
@@ -5908,3 +5909,42 @@
 | X 账号 | **未找到 X**（主页无 x/twitter 外链；未猜 handle） |
 | 状态 | **仅建档**（无邮箱、无本人 X；同论文已发资深作者 #417，守「同一论文 ≤1」不另发） |
 | 备注 | 语言=中文(判据=华人姓名族属 + 港科大机构)。DiversePlace 一作；代码仓 <https://github.com/William030422/NIPS2026-DiversePlace>。仅建档。 |
+
+### 420. Aaron C. Courville
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Aaron C. Courville |
+| 机构 | **Mila – Quebec AI Institute / Université de Montréal** 教授（深度学习、生成模型） |
+| 代表论文 | **Show, Attend and Tell: Neural Image Caption Generation with Visual Attention**（`1502.03044`，B 轨 2026-11-28 收录，资深作者） |
+| 邮箱 | **A 级** `courvila@mila.quebec`（MILA 官方人员页 <https://mila.quebec/en/person/aaron-courville/> `HTTP 200` / 165,375 B 页内 `mailto:courvila@mila.quebec` 明文） |
+| 主页 | <https://mila.quebec/en/person/aaron-courville/>（`200` / 165,375 B） |
+| X 账号 | **未找到 X**（该页仅 Mila 机构账号 `@Mila_Quebec`，无本人 handle；未猜） |
+| 状态 | **已发信 #190**（2026-11-28 03:03:37 `SENT OK`） |
+| 备注 | 语言=英文(判据=英文姓名 + 加拿大机构；法语不属需全文母语清单，按判据兜底英文)。信内容 = 软注意力（196 位置期望、反向传播）vs 硬注意力（采样 + 变分下界）在细长高分辨率波形图上的取舍 / 注意力熵诊断 / 冻结编码器只训注意力与解码器。 |
+
+### 421. Pranav Rajpurkar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pranav Rajpurkar |
+| 机构 | **Harvard Medical School**（主页 schema 记 `Associate Professor of Biomedical Informatics`；X bio 仍写 `Assistant Professor` ⇒ 两源不一致，如实并列） |
+| 代表论文 | **SQuAD: 100,000+ Questions for Machine Comprehension of Text**（`1606.05250`，B 轨 2026-11-28 收录，一作） |
+| 邮箱 | **未找到**（本人主页 <https://pranavrajpurkar.com/> `200` / 31,854 B 未见可读邮箱；按纪律不猜） |
+| 主页 | <https://pranavrajpurkar.com/>（`200` / 31,854 B） |
+| X 账号 | **@pranavrajpurkar**（本人主页外链 + 代理抓 `x.com/pranavrajpurkar` `200` / 169,490 B，`og:title` = `Pranav Rajpurkar (@pranavrajpurkar) on X` ⇒ 双源） |
+| 状态 | **仅建档**（X 已核验；无 A 级公开邮箱 ⇒ 不发信） |
+| 备注 | 语言=英文(判据=英文姓名 + 美国机构)。SQuAD 的「答案必为原文片段 + EM/F1 + 人类上限」对我们 harness 的判分口径有参照价值；仅建档跟踪。 |
+
+### 422. Kelvin Xu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kelvin Xu |
+| 机构 | **Google DeepMind** 研究员（本人主页自述 LLM pre-training / Gemini 1.5 scaling laws；UC Berkeley EECS 博士） |
+| 代表论文 | **Show, Attend and Tell**（`1502.03044`，B 轨 2026-11-28 收录，一作） |
+| 邮箱 | **A 级** `kelvinxx@google.com`（本人主页 `mailto:` 明文；`http://kelvinxu.github.io/` `200` / 8,715 B；⚠️ `https://` 同域实测 404，按 http 版本核） |
+| 主页 | <http://kelvinxu.github.io/>（`200` / 8,715 B） |
+| X 账号 | **未找到 X**（主页无 x/twitter 外链；未猜） |
+| 状态 | **仅建档**（有 A 级邮箱；守「同一论文 ≤1」——同论文已发资深作者 #190，不重复打扰） |
+| 备注 | 语言=中文(判据=华人姓名族属；机构在美国，按姓名族属优先)。Show, Attend and Tell 一作；注意力机制 + 规模化预训练经验与 vision/pretrain 两线相关；仅建档。 |
