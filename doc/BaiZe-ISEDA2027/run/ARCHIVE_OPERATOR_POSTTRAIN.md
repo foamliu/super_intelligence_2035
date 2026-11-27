@@ -931,3 +931,24 @@ commit 前缀 `posttrain plan:`。
 
 
 ---
+
+### ARCHIVE - 2026-11-27 sglang order slimming (originals of 2026-11-15/16 seven closed orders)
+
+### 🔴 用户令 · 2026-11-16 22:0x（自建沙盒池/MCP，别再跟 zhulong 互相等）· ✅ 已闭合（wake628 全流程闭环）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：STEP1 verdict=共用 8090 池+-p2（`SandboxEndpointPool` 独占租借+asyncio.Queue 池满排队，`cap`=池总并发=4，不起新 MCP，同 workdir `t0002997_1..4`⇒与 run1-4 同口径可并入 5run mean）；run5 Pass@1=4.43%(7/158,exec44 行 VALID)+冒烟 PASS+`env_fingerprint.json` 在位(pool_mode=shared_8090_exclusive_queue/shared_with_zhulong=true/new_mcp=false)；5-run 收口 n=5 mean=6.84%±6.12% [18.99,4.43,2.53,3.80,4.43]% rca_status=CLEAN，McNemar chi2=13.5 p<0.001 vs 旧.17 3.04%±0.74%；报告§10/§8 5-run 同表+口径 caveat。需要时再读。
+
+
+### 📦 用户令 · 2026-11-16 20:5x（取消全局排队·8650–8670 端口池并行）· ✅ 已闭合（被 22:0x STEP1 取代）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：客户端不可重路由 code-gen（cline_mcp_settings.json 硬编码 8090、main.py 启动建池），8656–8670 均他人 daemon（t0002441_*）无可用 4 口独立池；改由 22:0x「共用 8090 池 + -p2」路径取代。需要时再读。
+
+### 📦 用户令 · 2026-11-16 18:3x（恢复「干净 5-run」· 已授权）· ✅ 已闭合（wake628）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：run5 完成 Pass@1=4.43%(7/158, exec44 行 VALID)；5-run 收口 n=5 mean=6.84%±6.12% [18.99,4.43,2.53,3.80,4.43]% rca_status=CLEAN，McNemar chi2=13.5 p<0.001 vs 旧.17 3.04%±0.74%；报告 §10/§8 已改 5-run 同表+口径 caveat。需要时再读。
+
+### 📦 用户令 · 2026-11-15 23:0x（停止盲跑·先查 trace/管线）· ✅ 已闭合（RCA 交付）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：run2/3/4「各仅 1 条 execution_result=0.0%」主因=管线 ws/no-ws 路径失配（抽取器 format_cline_cli_output.py:163 ws-only 无回退），非模型 collapse；rca_recover_extract.py 回补后干净 Pass@1 run2/3/4=4.43/2.53/3.80% exec43/28/35≫1，已接入链脚本自愈。报告 reports/report_posttrain_collapse_rca_zh.html。需要时再读。
+
+### 📦 用户令 · 2026-11-15 08:1x（158 评测改用 zhulong 方式·36.15 eda_fastmcp）· ✅ 已闭合（wake628 全流程闭环）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：36.15 zhulong 口径重测完成（PreToolUse 白名单 run_commands 禁用 + RAG + 沙盒 MCP）；cline 版本补齐(zhulong fork 3.0.29 / cline 3.0.51)；真 MCP 拒绝率(排除 run_commands)=6.3%；5-run mean=6.84%±6.12% rca_status=CLEAN；旧 .17 报告已加 PENDING-REMOTEST banner。需要时再读。
+
+> 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不猜不编、infra≠能力、失败分类由你自己提炼）。判断标准只有一条：**这条约束是为了「防止说谎」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主决定 SFT/RL 技术路线、超参与实验设计；结果说话。**
+
+### 📦 用户令 · 2026-11-14 23:4x（隧道怎么坏的·自己查清出报告）· ✅ 已闭合（wake507）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：隧道坏过现已恢复（最后通 20:41:50 / 首断 22:4x / 恢复 23:26 / 故障域=中继侧 / 非本线造成亦非本线修复）。报告 reports/report_infra_tunnel_postmortem_zh.html。需要时再读。
+
+### 📦 用户令 · 2026-11-14 21:5x（今晚自己出计划并直接执行）· ✅ 已闭合 → 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：POSTTRAIN_PLAN_NEXT.md 已填并执行；归因夜报 + A1/A3 两臂 40 题 + T6 归因表 + 补丁 dev 前后对比交付。需要时再读。
+
+---

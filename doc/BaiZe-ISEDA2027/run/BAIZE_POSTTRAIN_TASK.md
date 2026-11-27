@@ -1,8 +1,11 @@
 # BAIZE_POSTTRAIN_TASK.md
 
-### 🔴🔴🔴 增补用户令 · 2026-11-27 21:0x（**执行方案 D：隧道恢复前只做 4 件准备 · 覆盖 17:4x 令的「起 serve / 跑评测」两步**）
+### 🔴🔴🔴 增补用户令 · 2026-11-27 21:0x / 21:3x（**方案 D + sglang 升级令** · 覆盖 17:4x 令的「起 serve / 跑评测」两步）
 
-> **用户原话**：「posttrain 可否先把 Qwen3.5-2B 用 sglang 或 vllm 拉起来呢」→ 经核查 serve **已就位**，用户选定 **方案 D**：先只做「恢复 RAG + 预置 providers + 调并发重验 B1」，**等 `:3333` 隧道恢复后再定口径、再跑评测**。
+> **用户原话 ①**：「posttrain 可否先把 Qwen3.5-2B 用 sglang 或 vllm 拉起来呢」→ 经核查 serve **已就位**，用户选定 **方案 D**：先只做「恢复 RAG + 预置 providers + 调并发重验 B1」，**等 `:3333` 隧道恢复后再定口径、再跑评测**。
+>
+> **用户原话 ②**（21:3x）：「可以升级啊 之前CUDA-12.4是因为显卡驱动550太老，现在显卡和CUDA都已经升级了」⇒ **sglang 升级禁令解除**，改为 §二 **D5** 的可执行升级路径（CUDA 13 已就位 ⇒ `sglang[srt]>=0.5.16` 可行）。
+
 
 #### 一、已被验证的事实（不必重做，🚫 不要推翻重来）
 
@@ -10,25 +13,19 @@
    - GPU**5** `:8097`，`--served-model-name qwen3.5-2b-a5`，PID **417087**（ppid=1 setsid 抗断连），VRAM 5021 MiB；
    - 权重 `/nas_data/app.e0031982/models/Qwen3.5-2B`（**官方 bf16，非 Q4_K_M**）；venv `~/code/vllm_venv`（**持久，重启不丢**）；
    - **B1 身份四证 PASS** + **gen smoke PASS** ⇒ 证据 `run/baseline_A5_qwen35_2b_fp16_serve_b1.json`。
-2. **🚫 不要再装 sglang / 不要重建 venv**：vLLM 0.33.0 已原生支持 `Qwen3_5ForConditionalGeneration`；本机 sglang 仅 `verl_cu124_venv` 里的 **0.4.6**（py3.10+torch2.6+cu124），**不认该 hybrid 架构**，且 GPU0-3 的 root sglang 不可动。sglang 的独有优势只在「多轮工具 RL rollout」，与 A5 评测无关。
-3. **🔴 口径冲突已用实测证据解掉（不是争论，是数据）**：`baseline_A0_base_ragfix_run*_pertask.json` 显示 A0 实跑为 **全工具口径**——
-   `rag_queried_rate=0.9962`、`tool_call_count_mean=20.89`、`agent_loop_entry_rate=0.9683`，
-   `aggregate_tool_calls` 含 `run_code` **179** / `search_apis` **1044** / `get_api_details` **663** / `run_commands` 763 / `editor` 250。
-   ⇒ 17:4x 令 §3 写的「无 RAG / 无沙盒 MCP / 无 hook，与 A0_base 同口径」**与实测不符**；
-   ⇒ **A5 必须等口径裁定后再跑**（否则 A5 vs A0 是「模型+口径」双变量，违铁律 3）。
-4. **🔴 隧道未通时起 eval = 白烧**：评分链 `run_eval.py → run_on_sandbox.py → localhost:8664 ──:3333──→ 36.15`，
-   **即使生成期不给 run_code，判 Pass@1 仍要沙盒执行候选代码**（A0 逐题 `execution_status/error_types` 即沙盒产出）。
+2. **✅ sglang 升级已放开（用户 21:3x 令）**：旧结论「sglang 只能 0.4.6」的前提是**驱动 550 / CUDA 12.4 封顶**（`ARCHIVE_EXPERIMENTS_POSTTRAIN.md` L2222：`pip install "sglang[srt]>=0.5.16"` **需 CUDA 13.x**）。现驱动 **595.91.07 / CUDA runtime 13.2 / nvcc 13.1** ⇒ **sglang ≥0.5.16 路径成立**，按 §二 **D5** 执行。
+   - ⚠️ 但**不让 sglang 抢 A5 评测主路径**：A5 的 B1 四证 / serve 参数 / `-p 8` 口径已与 `~/code/vllm_venv`(vLLM 0.33.0) 绑定并落盘；中途换栈 = 口径要素变更，会把 A5 vs A0 的单变量对比搅浑（铁律 3）。
+   - ⇒ **分工**：**A5 评测 = vLLM（不换）**；**sglang 0.5.16+** 用于 ① 与 vLLM 的 TTFT/吞吐同尺对照（infra 数据）② 为后续 **verl 多轮工具 RL** 铺路（verl 0.9.1 需 sglang 0.5.x API；此前因 cu124 被迫钉 verl 0.4.0+sglang 0.4.6，而 verl 0.4.0 GRPO 有 `list_named_actors` 死锁）。
+3. **🔴 口径争议已有定论（wake864/865 审计；更正我 21:0x 的粗判）**：对 A0_base run（`2026_1121_212157`）取证 —— `pyAether_MCP_server`@`:18888` enabled（autoApprove 含 search_apis / run_code），**但系统 prompt = `eval_sys_prompt_template_no_sandbox.md` 只列 search_apis 系、明文「本场景无沙箱可实际执行」、不列 run_code** ⇒
+   **A0_base 实际口径 = 有 RAG（search_apis→:18888→:9003）+ 无沙盒 MCP（模型不调 run_code）+ 外部沙盒评分（run_eval→run_on_sandbox→:8664→36.15）**。
+   - ⚠️ **更正**：`baseline_A0_base_ragfix_run*_pertask.json` 的 `aggregate_tool_calls` 里 `run_code=179` 属 **ragfix 那一版**口径，**不可与 A0_base 混用**（21:0x 说「A0 全工具」是据此，结论改为按上一行定论）。
+   - ⇒ 17:4x 令「A5 = 无 RAG…与 A0_base 同口径」**自相矛盾**（「无 RAG」是对 A0_base 的误述）。**A5 须复刻「有 RAG + 无沙盒 MCP + 外部沙盒评分」才是单变量**；若坚持 A5 = 无 RAG，须同步补跑 `A0_norag` 基线 —— **仍需用户拍板**（D4.1）。
+4. **🔴 隧道未通起 eval = 白烧**：评分链 `run_eval → run_on_sandbox → :8664 ──:3333──→ 36.15`；**即使生成期不给 run_code，判 Pass@1 仍要沙盒执行**（A0 逐题 `execution_status/error_types` 即沙盒产出）。
 
-#### 二、本令任务（**D1–D3 现在做；D4 等隧道**）
+#### 二、本令任务（**D1 ✅ 已完成；D2–D3、D5 现在做；D4 等隧道**）
 
-- **D1 · 恢复 RAG `:9003`（CPU-only，不依赖隧道）**
-  ```bash
-  cd /home/app.e0031982/code/eda_fastmcp/kb
-  NO_PROXY=127.0.0.1,localhost nohup setsid /nas_data/app.e0031982/miniforge3/envs/py310/bin/uvicorn \
-      eda_api_recall:app --host 127.0.0.1 --port 9003 > /tmp/rag9003.log 2>&1 < /dev/null &
-  curl --noproxy '*' -s localhost:9003/health   # 期望 executor_ready=true、条数≈14019
-  ```
-  ⚠️ 必须 `NO_PROXY=127.0.0.1,localhost`（否则 http_proxy 把健康检查打到代理 ⇒ 永不 healthy）。
+- **D1 · 恢复 RAG `:9003`** ✅ **已由 wake865 完成**：PID 807174，`/health`=`{executor_ready:true, document_count:14019, pyAether:8984, skill:5035}`，`POST /recall` 烟测 OK（返回带 similarity、维度 2560）；同轮 `eda-mcp:18888` 也恢复（tools=search_apis / get_api_details / search_apis_by_keyword / run_code 全 ON）。
+  - **⚠️ 复现坑（已踩过，照抄）**：驱动升级后 py310 的 torch 能看到 CUDA ⇒ SentenceTransformer 自动抢 GPU0（root sglang 占满）→ **`torch.OutOfMemoryError` 直接崩**。修法 = **`CUDA_VISIBLE_DEVICES=` 置空强制 CPU** + `MODEL_PATH=/nas_data/userdata/feifan/Octen-Embedding-4B`（默认路径 `/nasdata/app.e0023936/...` 未挂载）。
 
 - **D2 · providers.json 预置 A5 profile（只写配置，🚫 不跑 eval）**
   - 在 `~/.cline/data/settings/providers.json` 增 `qwen3.5-2b-a5` → `baseUrl=http://localhost:8097/v1`、model=`qwen3.5-2b-a5`；
@@ -54,15 +51,33 @@
   3. 配 harness 指向 `qwen3.5-2b-a5@:8097`，跑 **1-run 冒烟** → 量尺无异常后再 **5-run**；
   4. 交付 6 件（见下「三、交付」）。
 
-#### 三、交付（不变，来自 17:4x + 11-22 令的三锚点）
+- **D5 · sglang 0.5.16+ 升级**（用户 21:3x 已放行；GPU4 空闲可用；🚫 不碰 GPU5 的 A5 serve）
+  - **S1 · 建独立 venv（🚫 绝不改 `~/code/vllm_venv`，A5 口径绑它）**
+    ```bash
+    df -h ~ | tail -1                                  # 先看盘，≥15GB 再开工
+    python3.12 -m venv ~/code/sglang_cu13_venv
+    ~/code/sglang_cu13_venv/bin/pip install -U pip
+    ~/code/sglang_cu13_venv/bin/pip install "sglang[srt]>=0.5.16"   # 需 CUDA 13.x（ARCHIVE_EXPERIMENTS_POSTTRAIN L2222）
+    ~/code/sglang_cu13_venv/bin/python -c "import torch,sglang;print(torch.__version__,torch.version.cuda,torch.cuda.is_available(),sglang.__version__)"
+    ```
+    预期 `cuda_avail=True`；**若自动拉到 cu12x 的 torch ⇒ 记录并显式装 cu130**（以实际日志为准，不猜）。
+  - **S2 · GPU4 起 Qwen3.5-2B sglang serve**：`CUDA_VISIBLE_DEVICES=4`、端口 **`:8096`**（SFT serve 已裁减，该口空着）、`--served-model-name qwen3.5-2b-sglang`、ctx 65536。
+    ⚠️ **flag 名以 `python -m sglang.launch_server --help` 实读为准**（各版 `--context-length` / `--mem-fraction-static` 命名会变）；**先 --help 再写启动脚本**。
+    验：`curl --noproxy '*' :8096/v1/models` + gen smoke（**用与 A5 b1 JSON 里同一条 prompt**，便于逐字对比输出）。
+  - **S3 · 与 vLLM 同尺对照（infra 数据 → EXPERIMENTS 或 `run/reports/report_sglang_vs_vllm_qwen35_2b_zh.html`，🚫 不入论文主表）**：同 prompt 集（≥20 条）、同 `max_tokens`、同 seed，报 **TTFT / decode tok/s / 总 wall**，各跑 3 次取中位数。
+  - **S4 · verl 可行性核查（只核查，🚫 不启动训练）**：在 S1 环境试 `pip install "verl>=0.9.1"`（需 sglang 0.5.x API），记录 `import verl` / `list_named_actors` 是否仍死锁 / 依赖冲突明细 → 落 EXPERIMENTS，作为「verl 0.4.0 GRPO 死锁 ⇒ 自写 loop」之外的第二条可能路径。
+  - **纪律**：🚫 不占 GPU5（A5 vLLM）/ GPU6（vision）/ GPU0-3（root）；🚫 不改 `providers.json` 里 A5 条目；sglang 起不来 ⇒ **如实记 infra 失败**（铁律 2），不得写成模型或架构结论。
 
-`baseline_A5_qwen35_2b_run<N>_pertask.json` ×5 + `baseline_A5_qwen35_2b_5run_summary.json` + `baseline_A0_vs_A5_paired_compare.json`；
+#### 三、交付
+
+同上方 11-22 锚点 3：`baseline_A5_qwen35_2b_run<N>_pertask.json` ×5 + `baseline_A5_qwen35_2b_5run_summary.json` + `baseline_A0_vs_A5_paired_compare.json`；
 判据 = B1 四证 / B3 judge 确定性 / A5 vs A0 逐题 McNemar+bootstrap（报 Δ 与 95% CI）/ 5-run mean±std / 双向解释。
 
 #### 四、纪律
 
 - 🚫 **隧道未通不起 eval**（会 158 题全 fail 白烧）；🚫 不改题面/`check.py`/`judge_layers`/超时/`-p`；
-- 🚫 不碰 GPU0-3（root sglang）与 GPU6/7（vision）；🚫 不 kill 别线进程；🚫 不装 sglang、不重建 venv；
+- 🚫 不碰 GPU0-3（root sglang）与 GPU6/7（vision）；🚫 不 kill 别线进程；🚫 **不改 `~/code/vllm_venv`**（A5 口径绑它）——sglang 只能装进**新建独立 venv**（D5.S1）；
+- ⚠️ **驱动升级后的新坑**：本机任何 CPU 服务（RAG / 嵌入模型）必须**显式 `CUDA_VISIBLE_DEVICES=` 置空**，否则会去抢 GPU0（root sglang 占满）⇒ `torch.OutOfMemoryError` 崩（wake865 实证）；
 - ✅ 每轮 MEMORY 心跳 + daily 一行；`git add -- <本线路径>`，不用 `-A`；
 - ✅ 口径/参数任何变更 ⇒ MEMORY 记「口径变更」一行，并在报告里显式标注口径六元组。
 
@@ -72,8 +87,8 @@
 
 > **用户原话**：「安排 posttrain 启动 A5，现在显卡驱动和 CUDA 都已升级，可以用 vllm/sglang 启动 Qwen3.5-2B 了，启动评测。」
 
-- **①重建推理环境 / ②起 serve** ✅ 已由 wake862/863 完成：vLLM **0.33.0** fp16 @ **GPU5 `:8097`**（`--served-model-name qwen3.5-2b-a5`），**B1 四证 + gen smoke PASS**；驱动 `595.91.07` / CUDA 13.1 的完整事实与命令见上方增补令 §一.1–.2 与 §二 D3。
-- **③跑评测 / ④交付 / ⑤判据** → **全部移交上方增补令**（口径待裁定，见其 §二 D4）；**🚫 `:3333` 隧道未通不得起 eval**（158 题会全 fail 白烧）。
+- **①重建推理环境 / ②起 serve** ✅ 已完成（详见上方增补令 §一.1：vLLM 0.33.0 fp16 @ GPU5 `:8097`，B1 四证 + gen smoke PASS）。
+- **③–⑤** → 移交上方增补令（口径待裁，见其 D4）；🚫 隧道未通不得起 eval。
 - **背景存档**：旧 `/tmp/vllm_venv`（0.7.3）被 2026-11-27 13:17 重启清空 ⇒ 现行用 `~/code/vllm_venv`（持久，重启不丢）。
 
 ---
@@ -82,15 +97,15 @@
 
 > **用户原话**：「把指令下发给 posttrain，让他写一份吧。」（针对 A0 能力对照报告的署名与执行主体）
 >
-> **原文已归档** → `ARCHIVE_OPERATOR_POSTTRAIN.md`「归档块 · 2026-11-27 增补令瘦身（11-22 运维令）」。本节按原文第 108 条允许的方式压缩，**三个关键锚点保留如下**。
+> **原文已归档** → `ARCHIVE_OPERATOR_POSTTRAIN.md`「归档块 · 2026-11-27 增补令瘦身（11-22 运维令）」；按原文第 108 条允许方式压缩，三锚点保留如下。
 
 - **P0-1 · A1 臂** ✅ wake728 收口：5-run = **4.56% ± 1.70%**；配对 Δ = **−38.73pp**（McNemar χ²=68.01，p=0.0）⇒ **SFT 显著退化**（诚实负结果，照写）。
-- **P1 · A0 深度报告** ✅ 已交付：`run/reports/report_posttrain_A0_capability_deepdive_zh.html`（posttrain 自撰署名、数字自算，非 ops 代拟稿）。
+- **P1 · A0 深度报告** ✅ 已交付：`run/reports/report_posttrain_A0_capability_deepdive_zh.html`（自撰署名、数字自算）。
 - **P0-2 · A5 臂**（未闭合 → 由 2026-11-27 增补令按「方案 D」执行）—— 三锚点：
   1. **A5 臂定义**：Qwen3.5-2B 原模型（非 SFT / 非 adapter）；`--served-model-name qwen3.5-2b-a5` @ **`:8097`**；158 题 / Pass@1 / 2500s / 单 trace / `-p 8 -n` / cline harness / 5-run。
   2. **预注册判据**：B1 身份四证（`/v1/models` id == requested == served）/ B3 judge 确定性（judge_sd=0，同臂两 run 差 < 2×judge_sd）/ 主判据 **A5 vs A0 逐题 McNemar + paired bootstrap**（报 Δ 与 95% CI）/ 5-run mean±std / 双向解释。
   3. **交付路径**：`baseline_A5_qwen35_2b_run<N>_pertask.json` ×5 + `baseline_A5_qwen35_2b_5run_summary.json` + `baseline_A0_vs_A5_paired_compare.json`。
-- **⚠️ 口径条款已作废待重裁**：本节原文「无 RAG / 无沙盒 MCP / 无 hook，与 A0_base 同口径」已被实测推翻（A0 实为全工具口径，见增补令 §一.3）⇒ **跑 A5 前必须以增补令 §二 D4 的裁定为准**。
+- **⚠️ 口径条款已作废待重裁**：本节原文「无 RAG / 无沙盒 MCP / 无 hook，与 A0_base 同口径」已被取证推翻（A0_base 实为「有 RAG + 无沙盒 MCP + 外部沙盒评分」，见增补令 §一.3）⇒ **跑 A5 前必须以增补令 §二 D4 的裁定为准**。
 
 ---
 
@@ -99,7 +114,7 @@
 > **用户原话**：「第一步需要把 baseline 做扎实，也就是 MiniCPM5-2B 作为 cline 底模后，能在 158 题得多少分，哪些地方出错。」
 
 - **结论**：A0（MiniCPM5-2B 原模型）5-run = **43.29% ± 3.92%**（退化检索口径）→ ragfix 复测 **45.06% ± 3.89%**（Δ=+1.77pp，McNemar p=0.735 **不显著**）；A1（SFT v39 step105）5-run = **4.56% ± 1.70%**，配对 Δ = −38.73pp（p=0.0）。里程碑报告 `reports/report_posttrain_baseline_nailed_zh.html`。
-- **五道验收项（B1–B5，后续任何臂复用）**：B1 身份四证（`/v1/models` id / serve args / ckpt 路径 + prompt 指纹，任一不一致 ⇒ 停跑）· B2 量尺一致性（原始抽取 vs `rca_recover_extract.py` 差值必须写进报告；历史偏差达 **+15pp**）· B3 judge 噪声（同 jsonl 重评 10 次，同臂两 run 差 < 2×judge_sd）· B4 执行确定性（10 题 × 10 次翻转率）· B5 逐题画像（pass 分布 / fail_mode 五分类 / 四指标，**必须用本模型自己的数据重做**）。
+- **五道验收项（B1–B5，后续任何臂复用）**：B1 身份四证（id / serve args / ckpt + prompt 指纹，任一不符 ⇒ 停跑）· B2 量尺一致性（原始 vs `rca_recover_extract.py` 差值必须入报告；历史偏差 **+15pp**）· B3 judge 噪声（同 jsonl 重评 10 次；同臂两 run 差 < 2×judge_sd）· B4 执行确定性（10 题×10 次翻转率）· B5 逐题画像（pass 分布 / fail_mode 五分类 / 四指标，**必须用本模型数据重做**）。
 - **臂与协议**：A0/A1 同尺 = 158 题 / Pass@1 / `-p 8 -n` / 2500s / 单 trace / 5-run / 同一抽取器与分类器；A2/A3（+RAG / +沙盒 MCP，36.15 口径）暂缓。
 - **交付物**：`baseline_<arm>_run<N>_pertask.json`、`reports/report_posttrain_baseline_nailed_zh.html`、MEMORY 顶部预注册（**跑完不许改判据**）。
 - 🚫 **仍生效的禁令**：不把 `3.04%` 说成 base（那是 SFT step105）；不把 `6.84%` 说成干净 5-run（混合口径，recovered 4-run = 3.80%±0.90%）；跨口径比较不标注不得进论文。
@@ -108,22 +123,16 @@
 
 > **规则（常驻）**：**GPU 4-5 = posttrain**，GPU 6-7 = vision；🚫 不碰 GPU 0-3（root sglang TP4）。迁移须「先起新卡 → 验端口 → 再 kill 旧卡」；GPU 6/7 移交 vision 后不得抢占。
 
-### 🔴 用户令 · 2026-11-16 22:0x（自建沙盒池/MCP，别再跟 zhulong 互相等）· ✅ 已闭合（wake628 全流程闭环）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：STEP1 verdict=共用 8090 池+-p2（`SandboxEndpointPool` 独占租借+asyncio.Queue 池满排队，`cap`=池总并发=4，不起新 MCP，同 workdir `t0002997_1..4`⇒与 run1-4 同口径可并入 5run mean）；run5 Pass@1=4.43%(7/158,exec44 行 VALID)+冒烟 PASS+`env_fingerprint.json` 在位(pool_mode=shared_8090_exclusive_queue/shared_with_zhulong=true/new_mcp=false)；5-run 收口 n=5 mean=6.84%±6.12% [18.99,4.43,2.53,3.80,4.43]% rca_status=CLEAN，McNemar chi2=13.5 p<0.001 vs 旧.17 3.04%±0.74%；报告§10/§8 5-run 同表+口径 caveat。需要时再读。
+### 📦 2026-11-15/16 七条已闭合令（沙盒池/端口池/5-run/量尺 RCA/36.15 口径/隧道/自定计划）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`「归档块 · 2026-11-27 sglang 令瘦身」
 
+- **沙盒池（11-16 22:0x）**：STEP1 定论 = 共用 8090 池 + `-p 2`（`SandboxEndpointPool` 独占租借+池满排队，`cap`=池总并发 4，同 workdir `t0002997_1..4`）⇒ run5 可并入 5-run mean。
+- **端口池（11-16 20:5x）**：8656–8670 均他人 daemon ⇒ 作废，走 8090 共用路径。
+- **5-run 收口（11-16 18:3x + 11-15 08:1x）**：n=5 mean=**6.84%±6.12%** [18.99,4.43,2.53,3.80,4.43]，`rca_status=CLEAN`，McNemar χ²=13.5 p<0.001 vs 旧 `.17` 3.04%±0.74%；36.15 zhulong 口径 = PreToolUse 白名单（禁 run_commands）+ RAG + 沙盒 MCP，MCP 拒绝率 6.3%；cline 3.0.51 / zhulong fork 3.0.29。
+- **量尺 RCA（11-15 23:0x）**：run2/3/4「1 条 execution_result」= **抽取器 ws/no-ws 失配**（`format_cline_cli_output.py:163`），非模型 collapse；`rca_recover_extract.py` 回补后 4.43/2.53/3.80%。
+- **隧道 postmortem（11-14 23:4x）**：故障域 = 中继侧，非本线造成亦非本线修复；报告 `reports/report_infra_tunnel_postmortem_zh.html`。
+- **11-14 21:5x**：`POSTTRAIN_PLAN_NEXT.md` 已填并执行（归因夜报 + A1/A3 各 40 题 + T6 归因表）。
 
-### 📦 用户令 · 2026-11-16 20:5x（取消全局排队·8650–8670 端口池并行）· ✅ 已闭合（被 22:0x STEP1 取代）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：客户端不可重路由 code-gen（cline_mcp_settings.json 硬编码 8090、main.py 启动建池），8656–8670 均他人 daemon（t0002441_*）无可用 4 口独立池；改由 22:0x「共用 8090 池 + -p2」路径取代。需要时再读。
-
-### 📦 用户令 · 2026-11-16 18:3x（恢复「干净 5-run」· 已授权）· ✅ 已闭合（wake628）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：run5 完成 Pass@1=4.43%(7/158, exec44 行 VALID)；5-run 收口 n=5 mean=6.84%±6.12% [18.99,4.43,2.53,3.80,4.43]% rca_status=CLEAN，McNemar chi2=13.5 p<0.001 vs 旧.17 3.04%±0.74%；报告 §10/§8 已改 5-run 同表+口径 caveat。需要时再读。
-
-### 📦 用户令 · 2026-11-15 23:0x（停止盲跑·先查 trace/管线）· ✅ 已闭合（RCA 交付）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：run2/3/4「各仅 1 条 execution_result=0.0%」主因=管线 ws/no-ws 路径失配（抽取器 format_cline_cli_output.py:163 ws-only 无回退），非模型 collapse；rca_recover_extract.py 回补后干净 Pass@1 run2/3/4=4.43/2.53/3.80% exec43/28/35≫1，已接入链脚本自愈。报告 reports/report_posttrain_collapse_rca_zh.html。需要时再读。
-
-### 📦 用户令 · 2026-11-15 08:1x（158 评测改用 zhulong 方式·36.15 eda_fastmcp）· ✅ 已闭合（wake628 全流程闭环）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：36.15 zhulong 口径重测完成（PreToolUse 白名单 run_commands 禁用 + RAG + 沙盒 MCP）；cline 版本补齐(zhulong fork 3.0.29 / cline 3.0.51)；真 MCP 拒绝率(排除 run_commands)=6.3%；5-run mean=6.84%±6.12% rca_status=CLEAN；旧 .17 报告已加 PENDING-REMOTEST banner。需要时再读。
-
-> 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」清理**：删除限制探索与创造力的禁令，保留全部**防伪底线**（不猜不编、infra≠能力、失败分类由你自己提炼）。判断标准只有一条：**这条约束是为了「防止说谎」还是「防止尝试」？** 前者保留，后者删除。**默认立场：你有权自主决定 SFT/RL 技术路线、超参与实验设计；结果说话。**
-
-### 📦 用户令 · 2026-11-14 23:4x（隧道怎么坏的·自己查清出报告）· ✅ 已闭合（wake507）→ 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：隧道坏过现已恢复（最后通 20:41:50 / 首断 22:4x / 恢复 23:26 / 故障域=中继侧 / 非本线造成亦非本线修复）。报告 reports/report_infra_tunnel_postmortem_zh.html。需要时再读。
-
-### 📦 用户令 · 2026-11-14 21:5x（今晚自己出计划并直接执行）· ✅ 已闭合 → 原文见 `ARCHIVE_OPERATOR_POSTTRAIN.md`；**结论**：POSTTRAIN_PLAN_NEXT.md 已填并执行；归因夜报 + A1/A3 两臂 40 题 + T6 归因表 + 补丁 dev 前后对比交付。需要时再读。
+> 🧹 **2026-11-15 去禁令化（常驻）**：只保留**防伪底线**（不猜不编、infra≠能力、失败分类自己提炼）；**你有权自主决定 SFT/RL 路线、超参与实验设计**。判断标准：这条约束是「防止说谎」还是「防止尝试」？
 
 ## 🎯 本线使命（常驻 · 2026-11-14 用户订正 · **每轮开始先读这一块**）
 
