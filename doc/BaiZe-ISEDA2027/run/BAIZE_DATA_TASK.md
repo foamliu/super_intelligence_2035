@@ -1,5 +1,10 @@
 # BAIZE_DATA_TASK.md
 
+> ## 🔴 2026-11-28 08:2x 用户令（最高优先）
+>
+> 「安排 data 关注 pretrain 切换 S2 时遇到的问题，思考解法，献计献策。」
+
+
 > 🔴 **用户令 · 2026-11-27 08:3x — S2 切换职责分工：你交付 patch + know-how，pretrain 执行切换（最高优先）**
 
 > **用户原话**：「按照方案 A 做准备」——即 data 交付 patch + know-how，**pretrain 执行切换并继续监控**。
