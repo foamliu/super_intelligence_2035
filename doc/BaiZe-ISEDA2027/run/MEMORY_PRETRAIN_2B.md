@@ -1,4 +1,4 @@
-🟢 监控巡检·训练健康iter=341940/700000(48.85%) loss≈1.967-1.990 step avg10=7308ms=7.31s(✅below 7.4s gate·stable·daemon idle·GPU 8×95-100%)·S2切换ALL READY(10-point✅ verified)·latest ckpt=340000·350k ETA~05:00 on 11-28·eval_next=350k(=S2切换点)·WAITING=0
+🟢 S2切换准备完成·data交付物全部审阅(README/switcher/config/cursor_offsets/shim/runbook/3级验证)·runbook已写入MEMORY§S2切换Runbook·无阻塞性问题·训练健康iter≈342k/700k(48.9%) step avg10≈7.31s(✅<7.4s)·latest ckpt=342000·350k ETA~05:00 on 11-28·eval_next=350k(=S2切换点)·WAITING=0
 > #3492（2026-11-27 12:34, 监控巡检·训练健康iter=341940/700000(48.85%) step avg10=7308ms=7.31s(✅below 7.4s gate·stable·daemon idle·GPU 8×95-100%)·S2切换ALL READY(10-point✅)·latest ckpt=340000·350k ETA~05:00 on 11-28·
 > 训练健康iter=341940/700000(48.85%) loss≈1.967-1.990(lr=1e-3,grad norm 0.081-0.125✅,one spike 0.341@341760 single-pt,0NaN/0skip✅)·step avg10=7308ms=7.31s(✅BELOW 7.4s gate·stable)·latest10:7419/7218/7223/7221/7325/7281/7320/7463/7305/7308ms·all<7.5s✅·GPU .29 8×95-100%/74501-74959MiB✅·load .29=25.44/26.13/25.90(224cores)·
 > **step avg10=7.31s STABLE**:all last 10 steps<7.5s✅·recovered from 11-26 night oscillation·NON-eval-caused(daemon idle,no llama-server)·autoqueue gate(step<7.4s)PASS→350k eval will proceed·
@@ -6,6 +6,12 @@
 > **S2切换ALL READY(10-point✅)**:①shim 4226B✅②train.sh L206 BLEND_CURSOR_OFFSETS_JSON passthrough✅③pretrain_launcher.py L306 shim import✅④cursor_offsets_350k.json✅(89.6M samples,7 shared+5 new sources)⑤blend_s2_preblend.tsv 3625B✅⑥s2_blend_switch_config.json✅⑦bridge 10/10✅⑧standalone 8/8✅⑨integration 7/7✅⑩SWITCH_RUNBOOK.md 182lines✅·s1.env BLEND_TSV=blend_s1_preblend.tsv✅(current S1,switch to S2 at 350k)·
 > **350k ETA**:iter=341940,remaining=8060 steps×7.31s≈58919s≈16.4h→~05:00 on 11-28·350k=eval+切换:先切换(冷切换~10min)后eval(CPU-only~76min,与S2训练并行)·latest ckpt=iter_0340000✅(BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/)·
 > **未碰训练/configs/.bak/daemon**(维护态铁律悍守)·evidence:worker_log tail(iter341940@12:34)·nvidia-smi 8×95-100%·ps daemon idle(PID501728)·10-point ls/grep all✅·MEMORY<32KB✅）
+> #3493（2026-11-27 13:0x, S2切换准备完成·data交付物全部审阅·runbook写入MEMORY§S2切换Runbook·无阻塞性问题·
+> **data交付物审阅**:①README_PATCH.md(10.6KB)②blend_switcher.py(416行)③s2_blend_switch_config.json(12源,7shared+5new)④cursor_offsets_350k.json(89.6M samples)⑤SWITCH_RUNBOOK.md(182行)⑥blend_hot_switch_bridge_compat.py(102行,runtime monkey-patch)⑦-⑩3级验证(standalone 8/8+integration 7/7+bridge 10/10 全PASS)+compute_cursor_offsets.py·
+> **关键理解**:冷切换(stop→改env→restart)·shim=runtime monkey-patch(不改site-packages)·触发=env var BLEND_CURSOR_OFFSETS_JSON(不设=stock零开销)·train.sh L203-207透传.12(#3479修复)·pretrain_launcher.py L302-310 try/except import·S1→S2 source mapping by key(7 shared cursor offset,5 new offset=0)·zero_overlap=0 at 3 levels·
+> **无阻塞**:GBS=256✅(s1.env L12)·switch_step=350000→consumed=89.6M✅·fast method 10k样本逐位匹配exact✅·S2 TSV 12源路径同S1(/nas_user+/nas_train)✅·S2 "SEED=5678"=sampler/Bresenham seed,不影响per-source document ordering,cursor offset仍保证零重叠·
+> **runbook写入MEMORY**§S2切换Runbook(L125-152):9步执行+5点切换前确认+2步回退·详版SWITCH_RUNBOOK.md(182行)·
+> **训练健康**:latest ckpt=iter_0342000·350k ETA~05:00 on 11-28·step avg10≈7.31s✅·daemon idle·未碰训练/configs/.bak/daemon(维护态铁律)·MEMORY<32KB✅）
 > #3491（2026-11-27 12:21, 监控巡检·训练健康iter=341830/700000(48.83%) step avg10=7346ms=7.35s(✅below 7.4s gate·stable·daemon idle·GPU 8×96-100%)·S2切换ALL READY(10-point verified on .29 this round)·latest ckpt=340000·350k ETA~05:00 on 11-28·
 > 训练健康iter=341830/700000(48.83%) loss≈1.972-1.994(lr=1e-3,grad norm 0.089-0.116✅,one spike 0.341@341760 single-pt,0NaN/0skip✅)·step avg10=7346ms=7.35s(✅BELOW 7.4s gate·stable)·latest10:7238/7300/7318/7394/7309/7402/7369/7284/7585/7263ms·all<7.6s✅(one spike 7585ms@341820 single-pt,next=7263ms✅)·GPU .29 8×96-100%/74501-74959MiB✅·load .29=25.60/25.40/25.53(224cores)·
 > **step avg10=7.35s STABLE**:all last 10 steps<7.6s✅·NON-eval-caused(daemon idle,no llama-server)·autoqueue gate(step<7.4s)PASS→350k eval will proceed·
@@ -72,12 +78,7 @@
 
 > 📦 #3444（2026-11-27 03:18, 监控巡检·step avg10=7.78s(>7.4s gate,WORSENING)·训练健康iter=337500·daemon idle·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
 
-> 📦 #3443（2026-11-27 03:02, 监控巡检·step avg10=7.57s(>7.4s gate)·训练健康iter=337380·daemon idle·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-
-> 📦 #3442（2026-11-27 02:53, 监控巡检·step avg10=7.61s(>7.4s gate,WORSENING)·训练健康iter=337310·daemon idle·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3440-#3441（2026-11-27 02:34-02:43, 监控巡检2轮·step avg10=7.49→7.52s(>7.4s gate,SLIGHTLY WORSENING)·daemon idle·训练健康iter=337170-337230·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3431–#3439（2026-11-27 00:55–02:27, 监控巡检9轮·step avg10=7.49-7.78s(>7.4s gate,oscillating WORSENING)·daemon idle·训练健康iter=336360-337100·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3430（2026-11-27 00:29, 330k eval DONE✅ harness_avg=57.50%·step-time三段:pre-eval>7.4s(80min w/o eval)→during-eval peaked 7.97s→post-eval recovering 7.19s·训练iter=336170·daemon idle·autoqueue 57/57ckpt·eval_next=340k）→ daily-memories/2026-11-27.md；需要时再读。
+> 📦 §#3430–#3443（2026-11-27 00:29–03:02, 监控巡检~13轮·330k eval DONE(57.50%)·step avg10=7.49-7.78s(>7.4s gate,oscillating)·daemon idle·训练健康iter=336170-337380·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
 > 📦 §#3412–#3429（2026-11-26 18:41 – 2026-11-27 00:14, 放行autoqueue令+10k cadence变更·监控巡检~18轮·328k eval DONE(58.38%)→330k eval FAILED(killed step>7.4s)→10k cadence implemented(#3418)→330k eval RUNNING(76min)→DONE(57.50%)·step plateau 7.35-7.70s 80min w/o eval(pre-existing)→eval dragging→post-eval recovering·训练健康iter 333420→336060 step~7.0-8.0s·eval未拖训练✅·report 42783B→43506B(56→57ckpt)）→ daily-memories/2026-11-27.md；需要时再读。
 > 📦 #3417（2026-11-26 20:01, ⚠️EVAL KILLED—step persistently >7.4s·330k eval killed@~19:58·step avg10 trend 7.39s→8.0s+·per 11-21令 executed·daemon paused·训练健康iter=334050）→ daily-memories/2026-11-26.md；需要时再读。
 > 📦 §#3414–#3416（2026-11-26 19:11–19:32, 放行autoqueue令·330k eval RUNNING监控3轮·step avg10从7.39s→7.43s→7.47s(borderline 7.4s gate,eval adds ~0.04-0.08s)·训练健康iter 333660→333830·GPU 8×91-100%✅·autoqueue 56/56ckpt+330k RUNNING→后因step持续>7.4s于#3417 kill eval）→ daily-memories/2026-11-26.md；需要时再读。
@@ -86,16 +87,7 @@
 > 📦 §#3407–#3411（2026-11-26 17:19–18:23, 监控巡检5轮·328k eval RUNNING监控(17:24 start,daemon 2×pause step>7.4s→resume→eval 76min)·step elevated avg10=7.38-7.61s(>7.4s gate borderline,daemon auto-pause/resume)·训练健康step~7.2-7.7s·328k于18:40 DONE=58.38%见#3412·eval未拖训练✅）→ daily-memories/2026-11-26.md；需要时再读。
 > 📦 §#3390–#3406（2026-11-25 19:43 – 2026-11-26 17:11, 监控巡检~17轮·326k eval DONE(58.88%)→328k eval RUNNING/PAUSED/kill/retry·sympy FIX(#3396,daemon stuck 40h→restored)·step spike→kill→recover·backlog全清·eval未拖训练✅·report多次regen）→ daily-memories/2026-11-26.md；需要时再读。
 
-> 📦 #3379-#3380（2026-11-25 16:40-17:08, 监控巡检·320k eval DONE harness_avg=54.62%·⚠️step time spike(320680-320750,7.64-8.14s,harness CPU争抢NOT eval-caused)→17:08已恢复avg=7.22s·报告修复regen→40882B(52/52ckpt)）→ daily-memories/2026-11-25.md；需要时再读。
-
-
-> 📦 #3381-#3382（2026-11-25 17:21-17:37, 监控巡检2轮·daemon idle无eval负载·训练健康iter321030-321160 step7.21-7.40s(all≤7.4s✅,1单点spike NOT sustained)·GPU 8×81-100%✅·load正常·报告=40882B(52/52ckpt)✅·research日报11-25已noted(长上下文温度校准/loop residual/TinyLlama对照/Llemma三源配比/phi-1.5 synthetic消融),无即时action）→ daily-memories/2026-11-25.md；需要时再读。
-
-> 📦 #3383-#3384（2026-11-25 18:05-18:12, 监控巡检2轮·daemon idle无eval负载·训练健康iter321400-321450 step7.19-7.22s(all<7.4s✅)·报告修复regen·GPU正常·load正常）→ daily-memories/2026-11-25.md；需要时再读。
-> 📦 #3385（2026-11-25 18:26, 监控巡检·daemon idle·autoqueue令持续履行·训练健康iter321580 step7.22s·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
-> 📦 #3386（2026-11-25 18:35, 监控巡检·daemon idle·autoqueue令持续履行(52/52ckpt)·322k NOT on disk·训练iter=321640 step7.29s·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
-> 📦 #3387（2026-11-25 18:52, 监控巡检·daemon idle·autoqueue令持续履行(52/52ckpt)·322k NOT on disk·训练iter=321790 step7.28s·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
-> 📦 #3388（2026-11-25 19:03, 监控巡检·daemon idle·autoqueue 52/52ckpt(10k-320k)✅·322k NOT on disk·训练iter=321880 step7.21s·报告40882B·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
+> 📦 §#3379–#3388（2026-11-25 16:40–19:03, 监控巡检~8轮·320k eval DONE(54.62%)·step spike(7.64-8.14s,harness CPU争抢NOT eval)→recovered 7.22s·报告修复regen→40882B(52/52ckpt)·训练健康step~7.2-7.4s·daemon idle·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
 
 > 📦 #3376-#3378（2026-11-25 16:02-16:32, 监控巡检3轮·320k eval RUNNING→DONE·step正常(7.20-7.26s,0>7.4s✅)·eval未拖训练✅·报告修复(regen→40400B 51/51ckpt)）→ daily-memories/2026-11-25.md；需要时再读。
 
@@ -126,6 +118,35 @@
 > 📦 §#3047–#3057（2026-11-22 22:31–23:56, 放行autoqueue令·288k eval RUNNING监控轮11条·backlog全清270k-286k·训练健康step~7.1-7.3s·load正常·daemon eval 288k·288k于00:04 DONE harness_avg=58.50%）→ daily-memories/2026-11-22.md；需要时再读。
 > 📦 §#2990–#3034（已归档，含 #3030 286k eval DONE·#3029-#2990 286k/284k/282k eval RUNNING监控轮）→ daily-memories/2026-11-22.md；需要时再读。
 > 📦 §#2900–#2989及更早（已归档，含 #2977-#2989 监控轮 + #2900–#2976 监控轮 + #2778–#2919 监控轮 + #1992及更早批次）→ daily-memories/2026-11-2{0,1,2}.md & ARCHIVE_OPERATOR_PRETRAIN.md；需要时再读。
+
+## S2 切换 Runbook（350k 时执行 · Plan F Bridge Edition 冷切换）
+
+> 详版：`run/data/blendswitch/SWITCH_RUNBOOK.md`(182行) · cursor offsets：`run/data/blendswitch/cursor_offsets_350k.json`
+> 方案：冷切换(stop→改env→restart) · shim=runtime monkey-patch(不改site-packages) · 触发=env var `BLEND_CURSOR_OFFSETS_JSON`(不设=stock零开销)
+
+**切换前确认(10-point已验证✅，切换前快速复验)**：
+- ①shim: `ls /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py`(4226B)
+- ②train.sh L203-207: `BLEND_CURSOR_OFFSETS_JSON`在PYTORCH_ENV(透传.12)
+- ③pretrain_launcher.py L302-310: shim import try/except
+- ④cursor_offsets_350k.json: 89.6M samples, 7 shared+5 new sources
+- ⑤blend_s2_preblend.tsv: 在`code/baize-llm/configs/`(3625B, 12源 web40/code40/math20)
+
+**执行步骤**：
+1. 等350k ckpt落盘：`cat .../baize2b/checkpoints/latest_checkpointed_iteration.txt`=350000
+2. 记录现场：step time/loss/GPU util/两机load/训练PID
+3. kill训练：kill .29 + .12 的 torchrun+pretrain_launcher
+4. 改s1.env L16：`BLEND_TSV="$BAIZE_LLM_HOME/configs/blend_s2_preblend.tsv"`(原S1行注释保留)
+5. 设env：`export BLEND_CURSOR_OFFSETS_JSON="/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json"`
+6. 从350k resume：`bash /nas_train/app.e0031982/code/baize-llm/scripts/train.sh s1`
+7. 🔴验证shim生效：.29日志出现`[blend-hot-switch] Bridge compat shim applied`+`Applying cursor offsets` · **.12日志也必须出现**`Applying cursor offsets`(否则SSH透传失败→DDP数据不一致→立即kill回退)
+8. 前100步观察：loss微跳±5%✅(>±15%调查)·ratio偏差≤1pp✅(>2pp调查)·step≤+2%·LR恒定1e-3
+9. L1 eval 350k：CPU-only(daemon autoqueue 10k边界，与S2训练并行)
+
+**回退(patch失败/loss spike/NaN/step>>7.4s)**：
+1. kill训练 → `unset BLEND_CURSOR_OFFSETS_JSON` → s1.env恢复`BLEND_TSV=.../blend_s1_preblend.tsv`
+2. 从350k ckpt用原S1配置resume → 标`⚠️待运维处理`
+
+**纪律**：切换后恢复维护态(不再自行重启)·切换前后step/loss/GPU必须记录·cursor offsets由data验证(3级25/25 PASS)不需重验
 
 WAITING: 0
 
