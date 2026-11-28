@@ -4035,3 +4035,12 @@
 | 2026-11-28 | 联想成全球首家在部分 Win11 商用电脑预装 ChatGPT 的 PC 厂商，企业每席位最高 100 美元额度 | IT之家 `1/033/777` | news（第 363 轮 · §5） | https://www.ithome.com/1/033/777.htm |
 | 2026-11-28 | 一目科技战略升级：基于触觉感知构建机器人灵巧操作生态 YIMU xEco（估值过百亿，企业口径） | 量子位 `513101` | news（第 363 轮 · §6） | https://www.qbitai.com/2026/11/513101.html |
 | 2026-11-28 | 千里科技印奇：智驾业务将聚焦两至三家头部车企，从车型定义阶段参与开发 | IT之家 `1/033/753` | news（第 363 轮 · §6） | https://www.ithome.com/1/033/753.htm |
+| 2026-11-28 | Anthropic 发布 Claude Ship（beta）：Claude 审查 PR、修复 CI、按 YAML 策略批准合并（PR 合并量 3 个月翻倍 / 回滚 -40%，厂商自报） | 雷峰网 | news（第 364 轮 · §1） | https://www.leiphone.com/category/ai/iWUKWuRp4AmJ6dZE.html |
+| 2026-11-28 | 三星 One UI 9.5 Beta 曝光 36 项 Galaxy AI 功能，预计 Galaxy S27 独占 | IT之家 `1/033/822` | news（第 364 轮 · §1） | https://www.ithome.com/1/033/822.htm |
+| 2026-11-28 | 微软取消在 Edge 右键菜单加 Copilot 摘要 / 引用 / 翻译的计划（路线图 RM497135） | IT之家 `1/033/810` | news（第 364 轮 · §1） | https://www.ithome.com/1/033/810.htm |
+| 2026-11-28 | DeepMind 提出 Cooperative RSI：AI 自组织分工并改写研发流程；模拟实验中 100 个 Agent 发现评分漏洞并传播 | 雷峰网 | news（第 364 轮 · §1） | https://www.leiphone.com/category/ai/12hVnzl8xc2Hblwx.html |
+| 2026-11-28 | OpenAI 与 AMD 合作：模型改写旗舰 GPU RTL 取得约 14% PPA 改进，Jalapeño 乘法器面积 -15% / 延迟两周期→一周期 | 雷峰网 | news（第 364 轮 · §1） | https://www.leiphone.com/category/ai/9tAw4Cw8AcxtFzUm.html |
+| 2026-11-28 | Axios：OpenAI 与 Anthropic 内部对未发布模型安全分歧，担心隐藏推理与监测失灵（超 24 位知情人士） | 雷峰网 | news（第 364 轮 · §2） | https://www.leiphone.com/category/ai/IMi92BFX4KU0R8uh.html |
+| 2026-11-28 | 「iPod 之父」法德尔：OpenAI 曾邀乔纳森·艾维打造实体 AI 设备，因拿不到 iPhone 情境数据 | IT之家 `1/033/824` | news（第 364 轮 · §5） | https://www.ithome.com/1/033/824.htm |
+| 2026-11-28 | MicroLED 光互连芯片公司「闪科光联」完成数千万元天使轮融资（商汤国香等领投） | 雷峰网 | news（第 364 轮 · §5） | https://www.leiphone.com/category/ai/ilqJyKclWkhaWIps.html |
+| 2026-11-28 | RoboScience 发布 GenSight：同一 Video DiT 统一视频生成与 4D 稠密感知（FVD 较 Cosmos3-Nano -67.6%，作者自报） | 雷峰网 | news（第 364 轮 · §6） | https://www.leiphone.com/category/ai/yVUjZ1Pgo80vJ5T0.html |
