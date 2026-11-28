@@ -3,18 +3,23 @@
 WAITING: 0
 
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
+> 🔧 **S2 献计献策（08:2x 用户令）**：S2 第三次崩溃根因 = **NCCL "Duplicate GPU detected"**，非 data 问题，详见下方 R1117 心跳。
 
-> ✅ **心跳 · 2026-11-28 12:55 (R1116) — 方案 C fresh 全量复验 PASS · S2 已运行（pretrain 启动 PID 2353255）· 25/25 tests PASS · 180 shards · BLEND 14,020B inline · 5/5 .done · E2BIG+EMFILE 均已消除**：
-> - **S2 训练状态**：✅ **pretrain_launcher.py 运行中**（PID 2353255, started ~12:30）· 使用 S2 pre-blend TSV · `--train-data-path` inline 14,020B（<100KB 阈值，@file 机制未触发——Plan B 从根上解决了 E2BIG）· GPU 0% util（可能仍在 data loading/init 阶段）· data 不启动训练（pretrain 职责）
-> - **方案 A 补丁（fresh grep 确认）**：`baize-llm/scripts/train.sh` L99-108 BLEND>100KB→写文件+`@filepath` ✅ · `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py` L284-285 `_elem.startswith('@')` + `os.path.isfile` ✅ · flag-off=stock 零回归（当前 BLEND=14KB 走原路径，patch 作为安全网存在）
-> - **方案 B pre-blend（fresh ls 确认 5/5）**：stackv3_filt 16 .bin (.done elapsed=4293s/1.1h) ✅ / megamath_web 16 .bin (.done elapsed=2798s/0.7h) ✅ / nemotron 16 .bin (.done elapsed=1865s/0.5h) ✅ / megamath_pb 16 .bin (.done elapsed=425s/0.1h) ✅ / finemath 16 .bin (.done elapsed=106s) ✅ — 全部 .done + MANIFEST.json
-> - **TSV（fresh gen_blend --verify）**：`blend_s2_preblend.tsv` 3515B · 12 源 · 5 新源指向 pre-blend 目录 · **180 shards / weight_sum=1.000000 / BLEND=14,020B inline (远<100KB, 无 E2BIG 无需 @file)** ✅
-> - **Blendswitch tests（fresh 重跑全 PASS）**：test_blend_switch.py 8/8 PASS (zero_overlap=0 / ratio max_dev=0.0000%) · test_bridge_compat.py 10/10 PASS · test_blend_hot_switch_integration.py 7/7 PASS → **25/25 PASS**
-> - **EMFILE 已消除**：13,847 shards × 2 FD ≈ 27,694 FD → 现在 180 shards × 2 = 360 FD，远低于任何 ulimit
-> - **方案 C 交付清单（全部 ✅）**：① A 补丁已应用+验证 ② B pre-blend 5/5 .done ③ TSV 更新 180 shards/BLEND=14KB ④ 25/25 tests PASS ⑤ E2BIG+EMFILE 均已消除 ⑥ S2 已由 pretrain 启动（data 不启动训练）
-> - **无遗留任务** · WAITING=0
+> ✅ **心跳 · 2026-11-28 12:58 (R1117) — 方案 C data 侧全量 PASS · S2 再次崩溃（NCCL Duplicate GPU, 非 data 问题）· 献计献策已附**：
+> - **S2 训练状态**：❌ **S2 再次崩溃** · pretrain 于 12:30 启动 PID 2353255（S2 weights 0.021875=en_v1_4/16）· torchrun workers 于 **12:38:17 全部 SIGTERM** · 崩溃根因 = `NCCL error: Duplicate GPU detected : rank 5 and rank 13 both on CUDA device 97000`（master_log L318）· worker_log 同报 rank 14/6 + rank 15/7 · PID 2353255 仍为僵尸（ppid=1, etimes=1689s, stat=Ssl, 720MiB GPU mem）
+> - **🔴 根因分析（献计献策）**：.29 上有 **9 个僵尸 pretrain_launcher.py 进程** 分属 2 次失败启动：① PID 3922243 组（~10:51 启动, S1 weights 0.040625, etimes=7289s, 5 进程, 各 720MiB）② PID 2353255 组（~12:30 启动, S2 weights 0.021875, 4 进程, 各 720MiB）→ GPU 0/3/4/6 各 1455MiB + GPU 7 729MiB → 新 torchrun 的 rank 映射到已有僵尸进程占用的 GPU → NCCL 检测到同一 GPU 上 2 个 rank → `ncclInvalidUsage` → barrier 失败 → 全部 SIGTERM
+> - **🔧 建议 pretrain 的修复步骤**（data 不执行，仅建议）：
+>   1. **杀僵尸**：`pkill -9 -f pretrain_launcher` 在 .29 和 .12 **两节点都执行**
+>   2. **验 GPU 干净**：`nvidia-smi --query-gpu=memory.used --format=csv,noheader` 全部应 ≤4 MiB
+>   3. **重试 S2 启动**：与之前相同命令（`BLEND_TSV=blend_s2_preblend.tsv` + `BLEND_CURSOR_OFFSETS_JSON=...cursor_offsets_350k.json` + `setsid bash scripts/train.sh s1`）
+>   4. **可选加固**：train.sh 启动前加 `pkill -9 -f pretrain_launcher 2>/dev/null; sleep 3` 确保无残留
+> - **方案 A 补丁（fresh grep 确认）**：`train.sh` L99-108 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L284-285 `@` 前缀检测 ✅ · 当前 BLEND=14KB 走原路径（patch 作为安全网）
+> - **方案 B pre-blend 5/5 .done ✅**：stackv3_filt(4293s) / megamath_web(2798s) / nemotron(1865s) / megamath_pb(425s) / finemath(106s)
+> - **TSV**：`blend_s2_preblend.tsv` 3623B · 12 源 · 180 shards / weight_sum=1.000000 / BLEND=14,020B inline ✅
+> - **Blendswitch 25/25 PASS** · **E2BIG+EMFILE 均已消除**（180×2=360 FD）
+> - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
 
-> 📦 R1115 心跳（2026-11-28 12:45·方案C fresh全量复验PASS·25/25 tests·180 shards·5/5 .done·S2未运行·等pretrain启动）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1116 心跳（2026-11-28 12:55·方案C fresh全量复验PASS·25/25 PASS·180 shards·5/5 .done·误报S2运行中(实际已崩溃)）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1093–R1112 心跳（2026-11-28 10:06–13:0x·方案C交付+多轮fresh复验·25/25 PASS·180 shards·5/5 .done·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1092 心跳（2026-11-28 09:38·方案C执行中·A补丁两半已应用+验证·B 3/5 DONE+2/5 running·auto_tsv watcher运行中·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1091 心跳（2026-11-28 09:26·方案C执行中·A补丁两半已应用+验证·B 2/5 DONE+3/5 running·auto_tsv watcher已设·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
@@ -92,11 +97,11 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        方案C全部完成 — A补丁已应用+验证 + B 5/5 pre-blend DONE + TSV已修正(13847→180 shards, BLEND 3.5KB) + blendswitch 25/25 PASS · 等 pretrain 启动 S2
-已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁;✅方案A补丁已应用(train.sh+pretrain_launcher.py两份副本);✅方案B 5/5 pre-blend DONE;✅TSV已修正(180 shards/3515B);✅EMFILE已消除(180×2=360FD)
-当前动作:     R1114:fresh全量复验(25/25 PASS + gen_blend --verify 180shards/weight_sum=1.0 + 5/5 .done+MANIFEST + GPU全idle) → commit+push
-下一步:       ①等pretrain启动S2(180 shards/3.5KB BLEND，inline无需@file) ②配合切换/EMFILE排查答疑 ③持续blendswitch复验
-阻塞:         无(data侧方案C全部交付完成;TSV已修正+验证通过;等pretrain启动S2)
+PHASE:        方案C全部完成 — A补丁已应用+验证 + B 5/5 pre-blend DONE + TSV 180 shards/BLEND 14KB + blendswitch 25/25 PASS · S2 崩溃(NCCL Duplicate GPU, 非 data 问题) · 献计献策已附
+已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁;✅方案A补丁已应用(train.sh+pretrain_launcher.py);✅方案B 5/5 pre-blend DONE;✅TSV已修正(180 shards/3623B);✅EMFILE已消除(180×2=360FD);✅S2 NCCL崩溃根因分析+修复建议(9僵尸进程→pkill+验GPU+重试)
+当前动作:     R1117:S2 NCCL Duplicate GPU 崩溃根因分析+献计献策 → commit+push
+下一步:       ①等pretrain清理僵尸+重试S2 ②配合切换答疑 ③持续blendswitch复验
+阻塞:         无(data侧方案C全部交付完成;S2崩溃=NCCL Duplicate GPU=pretrain侧问题;建议pkill僵尸+验GPU+重试)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付)→WAITING=0
 未完成指令:   无(全部用户令已交付)→WAITING=0
