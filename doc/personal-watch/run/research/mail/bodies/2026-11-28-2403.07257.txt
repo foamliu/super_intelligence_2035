@@ -1,0 +1,16 @@
+Qiang Xu 教授，您好：
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。
+
+我读了您的《The Dawn of AI-Native EDA: Opportunities and Challenges of Large Circuit Models》，很受启发。我们正在做面向 EDA 的 agent 评测，最认同文中“从 AI4EDA 转向 AI-native EDA”的判断，也对把 functional spec、RTL、netlist、physical layout 统一到多模态 large circuit models 的路线很感兴趣。
+
+想请教三个问题：
+
+1. 这四类数据在 LCM 预训练中的配比与对齐怎么做？实际项目里哪类数据最缺、对下游任务影响最大？
+2. 如果 benchmark 要保留多模态形态（图 / 版图 / 波形）而不退化成纯文本题，判分接口应如何设计，才能既可复现又不泄漏答案？
+3. shift-left 的收益能否用最小实验量化（例如 PPA 或迭代轮次）？您会推荐怎样的可复现实验设置？
+
+感谢您抽时间阅读，期待您的指点。
+
+祝好，
+Yang Liu

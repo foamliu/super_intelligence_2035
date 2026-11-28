@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-28 21:0x · r288）**：作者 **440** 人（编号最大 **440**）· X 已核验 **169**（本轮 **+1**：`@jeffdonahue` 由本人主页外链 `twitter.com/jeffdonahue` + 代理抓 `x.com/jeffdonahue` `200` / 185,727 B，`og:title` = `Jeff Donahue (@jeffdonahue) on X`、bio = `Research Scientist working on Omni (Veo) @DeepMind` ⇒ 双源；Qiang Xu / Mingxuan Yuan 无可核本人 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **196**（台账 #1–#196；本窗 **+1**：#196 Qiang Xu；今日 **8/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **71** 封，较 18:00 +1 = ChatGPT 营销订阅；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Qiang Xu（CUHK CSE，Dawn / LLM4EDA 作者，A 级 `qxu@cse.cuhk.edu.hk`〔本人主页反爬明文还原〕，X 未找到 ⇒ 已发信 #196）· Jeff Donahue（Google DeepMind，BigGAN 二作，无 A 级邮箱〔主页 JS 混淆〕，X `@jeffdonahue` 双源 ⇒ 仅建档）· Mingxuan Yuan（华为，LLM4EDA / Dawn 作者，B 级 `yuan.mingxuan@huawei.com`〔论文 contact 单源〕，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 18:0x · r286）**：作者 **437** 人（编号最大 **437**）· X 已核验 **168**（本轮 **+0**：Blocklove 个人页仅有 GitHub / Google Scholar / LinkedIn 外链、无 x/twitter；Karri 的 NYU 页与 Hessel 均无可核本人 X ⇒ 一律记「未找到 X」，不猜）· 已发信 **195**（台账 #1–#195；本窗 **+1**：#195 Jason Blocklove；今日 **7/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **70** 封，与 15:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Jason Blocklove（NYU Tandon ECE，Chip-Chat 一作，A 级 `jason.blocklove@nyu.edu`〔本人主页 `200` / 41,251 B 明文〕，X 未找到 ⇒ 已发信 #195）· Ramesh Karri（NYU Tandon ECE，硬件安全 / Chip-Chat 资深作者，A 级 `rkarri@nyu.edu`〔NYU 官方人员页 `200` / 147,330 B 明文〕，X 未找到 ⇒ 仅建档）· Matteo Hessel（Google DeepMind，Rainbow 一作，无公开邮箱，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 15:0x · r284）**：作者 **434** 人（编号最大 **434**）· X 已核验 **168**（本轮 **+0**：三位 EDA 学者页均无本人 x/twitter 外链，UIUC 页仅有院系账号 `@eceILLINOIS` ⇒ 记「未找到 X」，不猜）· 已发信 **194**（台账 #1–#194；本窗 **+1**：#194 Tsung-Wei Huang；今日 **6/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **70** 封，与 12:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：「Tsung-Wei Huang」（UW-Madison ECE，OpenTimer 一作，A 级 `tsung-wei.huang@wisc.edu`〔本人主页明文 `Contact: tsung-wei.huang at wisc dot edu`〕，X 未找到 ⇒ 已发信 #194）· Yiran Chen（Duke ECE，EDA / 存储，A 级 `yiran.chen@duke.edu`〔Duke ECE 目录页 `200` 明文〕，X 未找到 ⇒ 仅建档）· Deming Chen（UIUC ECE，FPGA / EDA，A 级 `dchen@illinois.edu`〔UIUC ECE 目录页 `200` 明文〕，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 12:0x · r282）**：作者 **431** 人（编号最大 **431**）· X 已核验 **168**（本轮 **+0**：三位 EDA 学者页均无本人 x/twitter 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **193**（台账 #1–#193；本窗 **+1**：#193 Tsung-Yi Lin；今日 **5/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **70** 封，与 09:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Martin D. F. Wong（EDA 物理设计，UIUC，A 级 `mdfwong@illinois.edu`〔ECE 人员页明文〕，X 未找到 ⇒ 仅建档）· Robert Wille（EDA / 量子设计自动化，TUM，A 级 `robert.wille@tum.de`〔团队页明文〕，X 未找到 ⇒ 仅建档）· Jiang Hu（物理设计 / ML-for-EDA，Texas A&M，A 级 `jianghu@tamu.edu`〔CESG 页明文〕，X 未找到 ⇒ 仅建档）。
@@ -6149,3 +6150,42 @@
 | X 账号 | **未找到 X**（无可核本人主页外链；不猜） |
 | 状态 | **仅建档**（无 A 级邮箱 ⇒ 不硬写信） |
 | 备注 | 语言=英文(判据=无可靠母语判据，英文兜底)。value-based RL 组合与分布式 RL 架构两篇的一作/三作，对 posttrain 的 RL 消融设计与 harness 的多任务口径有参照价值。 |
+
+### 438. Qiang Xu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Qiang Xu（拼音姓名；中文汉字写法未从一手页面取到 ⇒ 不写汉字） |
+| 机构 | **The Chinese University of Hong Kong**（CSE；个人主页自述 Associate Professor） |
+| 代表论文 | **The Dawn of AI-Native EDA**（B 轨 **#473**，作者按字母序 + 论文 contact 列名）· **LLM4EDA**（B 轨 **#472**，co-author） |
+| 邮箱 | **A 级** `qxu@cse.cuhk.edu.hk`（本人主页 <https://www.cse.cuhk.edu.hk/~qxu/> 实测 `HTTP 200` / 9,571 B，页内反爬写法 `qxu AT cse.cuhk.edu.hk` 还原） |
+| 主页 | <https://www.cse.cuhk.edu.hk/~qxu/>（`200` / 9,571 B） |
+| X 账号 | **未找到 X**（该页无本人 x/twitter 外链；不猜） |
+| 状态 | **已发信**（#196，2026-11-28 21:03:56；同一作者仅 1 封） |
+| 备注 | 语言=中文(判据=拼音姓名 + 香港中文大学)。可靠计算 / 可信硬件 / EDA 方向；Dawn 论文的官方 contact 之一，对 designflow 的「多模态电路表示如何落到可判分 benchmark」与 zhulong 的评测分层有直接参考价值。 |
+
+### 439. Jeff Donahue
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jeff Donahue（英文姓名族属） |
+| 机构 | **Google DeepMind**（本人主页：Research Scientist at DeepMind London；X bio 自述 Omni / Veo @DeepMind） |
+| 代表论文 | **BigGAN**（B 轨 **#471**，二作；arXiv `1809.11096`） |
+| 邮箱 | **未定位明文**（本人主页邮箱为 JS 混淆，页面仅显示 `Please enable Javascript to view`；不绕过、不猜测；无 A 级邮箱 ⇒ 不发信） |
+| 主页 | <https://jeffdonahue.com/>（`HTTP 200` / 9,674 B） |
+| X 账号 | **`@jeffdonahue`**（双源：① 本人主页外链 `twitter.com/jeffdonahue`；② 代理抓 `x.com/jeffdonahue` `200` / 185,727 B，`og:title` = `Jeff Donahue (@jeffdonahue) on X`、`og:description` = `Research Scientist working on Omni (Veo) @DeepMind …`） |
+| 状态 | **仅建档**（无 A 级邮箱；X 可跟踪） |
+| 备注 | 语言=英文(判据=英文姓名 + 美/英机构)。生成模型与视频 / 多模态方向；BigGAN 的 truncation trick 对 vision 线合成波形数据的保真-多样性权衡有参照价值。 |
+
+### 440. Mingxuan Yuan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingxuan Yuan（拼音姓名；中文汉字写法未从一手页面取到 ⇒ 不写汉字） |
+| 机构 | **华为**（依据：论文 contact 邮箱域 `@huawei.com`；具体部门与职称未从一手页面核到 ⇒ 不写） |
+| 代表论文 | **LLM4EDA**（B 轨 **#472**，co-author）· **The Dawn of AI-Native EDA**（B 轨 **#473**，作者按字母序 + 论文 contact 列名） |
+| 邮箱 | **B 级** `yuan.mingxuan@huawei.com`（来源：arXiv abs `comments` 的论文 contact，2026-11-28 逐字核；**未在个人主页二次复核 ⇒ 仅 B 级、不发信**） |
+| 主页 | **未找到**（未定位可核个人主页） |
+| X 账号 | **未找到 X**（无主页外链；不猜） |
+| 状态 | **仅建档**（B 级地址、无 A 级 ⇒ 不发信；守「同一论文 ≤1」） |
+| 备注 | 语言=中文(判据=拼音姓名 + 华为中国机构；具体母语未从个人页面复核)。LLM-for-EDA 的工业界作者，对 designflow / zhulong 的「从论文分类到可执行评测」映射有参考价值。 |

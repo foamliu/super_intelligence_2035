@@ -46,8 +46,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-28</h1>
-  <div class="sub">🌆 今日进度 <b>5 / 5</b>（A 轨满，守「宁少勿凑」）· 18:00 晚报：B 轨 / 作者网 / 作者信 / 回信核验已收口 · 数据源 arXiv</div>
-  <div class="meta">生成时间：2026-11-28 18:0x CST（r286 更新）｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 470）｜ 作者网 437（X 已核验 168）｜ 作者信 195（实质回信 8 信 / 7 人 ≈4.1%）</div>
+  <div class="sub">🌙 今日进度 <b>5 / 5</b>（A 轨满，守「宁少勿凑」）· 21:00 收口：B 轨 / 作者网 / 作者信 / 回信核验已完成 · 数据源 arXiv</div>
+  <div class="meta">生成时间：2026-11-28 21:0x CST（r288 更新）｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 473）｜ 作者网 440（X 已核验 169）｜ 作者信 196（实质回信 8 信 / 7 人 ≈4.1%）</div>
 </header>
 
 <div class="note">
@@ -276,6 +276,22 @@
   <p class="small">18:00 B 轨补充（对应 posttrain / designflow / harness，不计入上表 6 线）：<b>Rainbow</b> 的逐项消融提示 RL 臂要报「每个组件的边际贡献」而非只报总分；<b>IMPALA</b> 提示异步 rollout 必须报轨迹陈旧度并做 off-policy 校正，否则与同步基线不可比；<b>Chip-Chat</b> 提示 benchmark 的 testbench / golden 必须由题面方提供、显式拒绝候选自带 checker。三者均为经典 / 标志性工作，<b>不是</b>「已验证可迁移到 EDA」的结论。</p>
 </div>
 
+<h3 class="sec">🕘 21:00 时窗（r288 · A 轨仍满 5/5 ⇒ 0 新收；B 轨 / 作者网 / 发信 / 回信照做）</h3>
+<div class="card">
+  <ul>
+    <li><b>A 轨 0 新收</b>：今日已收满 <b>5/5</b>（00:00 窗），守「宁少勿凑」，本窗不检索、不凑第 6 篇。</li>
+    <li><b>B 轨 +3 → 473</b>（补生成模型 / LLM-for-EDA 综述 / AI-native EDA 方向三处真空白）：
+      <b>Large Scale GAN Training for High Fidelity Natural Image Synthesis（BigGAN）</b>（<a href="https://arxiv.org/abs/1809.11096">1809.11096</a>，2018-09-28，被引 <b>5,601</b>）— 最大规模 GAN + 正交正则化 ⇒ truncation trick 在保真度与多样性间可调；ImageNet 128×128 IS <b>166.5</b> / FID <b>7.4</b>（此前最佳 52.52 / 18.6）。归属：vision（主 · 合成波形 / 图像数据的保真-多样性权衡）· data（次 · 生成式增广基线）。<br>
+      <b>LLM4EDA: Emerging Progress in Large Language Models for Electronic Design Automation</b>（<a href="https://arxiv.org/abs/2401.12224">2401.12224</a>，2023-12-28，被引 <b>118</b>，<b>&lt;500 按「本领域权威 / LLM-for-EDA 分类综述」收</b>）— 把 LLM 在 EDA 的应用分为 assistant chatbot / HDL 与脚本生成 / HDL 验证与分析三类，并给出逻辑综合、物理设计、多模态特征对齐等方向。归属：designflow（主 · 任务分层，须含验证类）· harness（生成 vs 验证分开报）· posttrain（数据形态分列）· zhulong（任务类型 × 验证反馈消融轴）。<br>
+      <b>The Dawn of AI-Native EDA: Opportunities and Challenges of Large Circuit Models</b>（<a href="https://arxiv.org/abs/2403.07257">2403.07257</a>，2024-03-12，OpenAlex 记 Science China Information Sciences，被引 <b>100</b>，<b>&lt;500 按「本领域权威 / LLM-for-EDA 方向性论文」收</b>）— 主张 AI4EDA → AI-native EDA，用多模态 large circuit models 统一 functional spec / RTL / netlist / layout，推动 shift-left 与 PPA 的非增量式改进。归属：designflow（主 · 多模态题面不降级）· zhulong（主 · shift-left 量化）· vision（多模态表示）· pretrain/data（多模态配比）。</li>
+    <li><b>作者网 +3 → 440</b>（X 已核验 <b>169</b>，+1）：<b>#438 Qiang Xu</b>（CUHK CSE，Dawn / LLM4EDA 作者；A 级 <code>qxu@cse.cuhk.edu.hk</code>〔本人主页反爬明文还原〕，X 未找到）— <b>已发信 #196</b>；<b>#439 Jeff Donahue</b>（Google DeepMind，BigGAN 二作；无 A 级邮箱〔主页 JS 混淆〕，X <code>@jeffdonahue</code> 双源）— 仅建档；<b>#440 Mingxuan Yuan</b>（华为，LLM4EDA / Dawn 作者；B 级 <code>yuan.mingxuan@huawei.com</code>〔论文 contact 单源〕，X 未找到）— 仅建档。</li>
+    <li><b>作者信 +1 → 196</b>（今日 <b>8/12</b>）：<b>#196 Qiang Xu</b> — 中文 <b>202 汉字</b>；主题 <code>关于《The Dawn of AI-Native EDA》多模态电路表示与 benchmark 判分的几个问题</code>；<code>SENT OK 21:03:56</code>；问题 = 四类数据在 LCM 预训练中的配比与对齐 / benchmark 保留多模态形态时判分接口如何不泄题 / shift-left 收益如何用 PPA 或迭代轮次做最小可复现量化；落款两行（<code>祝好，</code> / <code>Yang Liu</code>，其后无行）；正文不含项目名、不报雇主。</li>
+    <li><b>回信核验</b>（IMAP 只读）：INBOX <b>71 封</b>（较 18:00 +1 = ChatGPT 营销订阅，非作者邮件）；<code>SINCE 26-Nov-2026</code> 8 封；<code>SINCE 28-Nov-2026</code> 1 封（即 ChatGPT）；<b>无新实质回信、无新退信</b>。累计实质 <b>8 信 / 7 人 ≈4.1%</b> · 自动 1 · 退信 9 · 无应答(&gt;14d) 32 · 未到期 146 ⇒ 8+1+9+32+146 = <b>196</b> ✔；送达口径 8/187 ≈ 4.3%。</li>
+  </ul>
+  <p class="small">核验：arXiv API <code>200</code> + <code>application/atom+xml</code>（<code>published</code> 逐字 <code>2018-09-28T15:38:49Z</code> / <code>2023-12-28T15:09:14Z</code> / <code>2024-03-12T02:26:30Z</code>；<code>updated</code> <code>2019-02-25T21:32:06Z</code> / <code>2023-12-28T15:09:14Z</code> / <code>2024-05-01T10:43:36Z</code>）+ abs 页 <code>3/3 200</code>（41,711 / 42,933 / 51,205 B）+ OpenAlex <code>3/3 200</code>（5,601 / 118 / 100，查询日 2026-11-28）；三 ID 条目级查重 <b>0 命中</b>。</p>
+  <p class="small">21:00 B 轨补充（对应 vision / designflow / zhulong / data，不计入上表 6 线）：<b>BigGAN</b> 提示合成数据要同时报保真度与多样性，truncation 参数须入报告；<b>LLM4EDA</b> 提示 benchmark 需覆盖「HDL 验证与分析」而不只造生成题；<b>Dawn of AI-Native EDA</b> 提示题面应保留 spec / RTL / netlist / layout 四类模态，shift-left 收益要用 PPA 或迭代轮次量化。三者均为经典 / 方向性工作，<b>不是</b>「已验证可迁移到 EDA」的结论。</p>
+</div>
+
 <h3 class="sec">📝 晚报变更说明（AM → PM）</h3>
 <div class="card">
   <ul>
@@ -323,14 +339,14 @@
     <li><b>元数据</b>：<code>export.arxiv.org/api/query</code> ⇒ <code>200</code> + atom；<code>published</code> 逐条 2026-11-25T14:39:59Z / 2026-11-24T11:07:23Z / 2026-11-24T19:32:45Z / 2026-11-25T17:38:00Z / 2026-11-25T18:01:22Z。</li>
     <li><b>abs 页</b>：<b>5/5 <code>200</code></b>（42,679 / 41,364 / 42,915 / 42,297 / 44,837 B）；主分类 cs.LG / cs.AR / cs.AR / cs.LG / cs.CV 取自各 abs 页 <code>primary-subject</code>。</li>
     <li><b>去重</b>：五个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> 均 <b>0 命中</b>。</li>
-    <li><b>B 轨核验</b>（本日六窗合计 18 条）：00:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>；03:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Show Attend / SQuAD / PointNet）；06:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（GELU / Dreamer / XGBoost）；09:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Gumbel-Softmax / WGAN / DDPG）；12:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Rethinking Generalization / SSD / GroupNorm）；15:00 窗 arXiv abs 2/2 <code>200</code> + OpenAlex 3/3 <code>200</code>（AlphaZero / DQN 2013 / OpenTimer，arXiv API 多次 <code>429</code> ⇒ abs 页核 <code>1712.01815</code>）；18:00 窗 arXiv API + abs 页 + OpenAlex 各 3/3 <code>200</code>（Rainbow / IMPALA / Chip-Chat；查询日 2026-11-28）；十八个 ID 条目级查重均 0 命中。</li>
+    <li><b>B 轨核验</b>（本日六窗合计 18 条）：00:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>；03:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Show Attend / SQuAD / PointNet）；06:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（GELU / Dreamer / XGBoost）；09:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Gumbel-Softmax / WGAN / DDPG）；12:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Rethinking Generalization / SSD / GroupNorm）；15:00 窗 arXiv abs 2/2 <code>200</code> + OpenAlex 3/3 <code>200</code>（AlphaZero / DQN 2013 / OpenTimer，arXiv API 多次 <code>429</code> ⇒ abs 页核 <code>1712.01815</code>）；18:00 窗 arXiv API + abs 页 + OpenAlex 各 3/3 <code>200</code>（Rainbow / IMPALA / Chip-Chat；查询日 2026-11-28）；21:00 窗 arXiv API + abs 页 + OpenAlex 各 3/3 <code>200</code>（BigGAN / LLM4EDA / Dawn of AI-Native EDA；查询日 2026-11-28）；二十一个 ID 条目级查重均 0 命中。</li>
     <li><b>网络</b>：arXiv <code>200</code>、OpenAlex <code>200</code>（首查一次 <code>429</code>，加 <code>mailto</code> + ≥3s 间隔后 <code>200</code>）、X 经代理 <code>200</code>、GitHub <code>200</code>；SMTP <code>SENT OK</code>、IMAP <code>LOGIN OK</code> / 70 封。</li>
   </ul>
 </div>
 
 <footer>
-  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 18:0x CST（r286 更新）<br>
-  本期（r275 + r276 + r278 + r280 + r282 + r284 + r286）：A 轨 <b>5/5</b> · B 轨 <b>+21 → 470</b> · 作者网 <b>+21 → 437</b>（X 168）· 作者信 <b>+7 → 195</b> · 实质回信 <b>8 信 / 7 人 ≈4.1%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
+  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 21:0x CST（r288 更新）<br>
+  本期（r275 + r276 + r278 + r280 + r282 + r284 + r286 + r288）：A 轨 <b>5/5</b> · B 轨 <b>+24 → 473</b> · 作者网 <b>+24 → 440</b>（X 169）· 作者信 <b>+8 → 196</b> · 实质回信 <b>8 信 / 7 人 ≈4.1%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
 </footer>
 
 </div>

@@ -8128,3 +8128,48 @@
 | 与我们工作的关系 | **designflow（主 · 造题形态与判分）**：这是「spec → RTL」真实工作形态的早期证据，直接支撑「不要为易跑而把题降级成纯文本」；同时它的「对话迭代 + 人工把关」形态提示 benchmark 应把**测试/判分与候选生成分离**，防止被测系统自写判分。<b>动作</b>：RTL 题的 `check.py` 与 testbench 必须由题面方提供（golden），并显式拒绝候选自带 checker。<br>**zhulong（次 · 任务类型选择）**：spec→RTL / RTL 修 bug / 约束脚本三类任务的难度与可判性不同，报告须分列。<br>**harness（次 · 成本口径）**：对话轮次与 token 预算应作为报告的固定字段。<br>**posttrain（次 · 错误反馈）**：把编译/仿真错误回灌给模型是有效交互手段，但须防泄漏。<br>**pretrain / vision / data**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-28**（第一百三十四轮 · 18:0x） |
 | 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2023-05-22T17:13:33Z` / `updated` `2023-11-14T05:10:51Z`；primary `cs.LG`；abs `comments` 逐字见上）+ abs 页 **`200`**（44,643 B，`citation_title` / `citation_date` `2023/05/22` / `citation_author` 逐字）+ OpenAlex **`200`**（419 / 2023 / `conference-paper` / source = MLCAD，查询日 2026-11-28）。「8 位累加器微处理器 / SkyWater 130nm shuttle / 首个全 AI 写 HDL 流片 / 挑战与机会」取自摘要逐字。条目级查重：`2305.13243` 在 `PAPERS.md` **0 独立条目**（仅在 #287 ChatEDA 的核验行被作关联引用）。 |
+
+## 471. Large Scale GAN Training for High Fidelity Natural Image Synthesis（BigGAN）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Large Scale GAN Training for High Fidelity Natural Image Synthesis |
+| 作者（前 3） | Andrew Brock · Jeff Donahue · Karen Simonyan（abs `citation_author` 逐字核；共 3 位） |
+| 年份 | **2018**（arXiv API `published` 逐字 `2018-09-28T15:38:49Z`；`updated` `2019-02-25T21:32:06Z`） |
+| 会议 / 期刊 | **arXiv 预印本**（abs 无 comments 字段；OpenAlex `type=preprint`、source = arXiv；未据未核信息写会议名） |
+| 被引数 | **5,601**（OpenAlex `10.48550/arxiv.1809.11096`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1809.11096> ｜ `10.48550/arXiv.1809.11096` |
+| 一句话贡献 | 在**迄今最大规模**上训练 GAN 并研究大尺度特有的不稳定性；发现对生成器加**正交正则化**后可启用简单的 **truncation trick** —— 通过降低生成器输入方差，在**样本保真度与多样性**之间做细粒度权衡；修改后的 **BigGAN** 在 ImageNet **128×128** 上取得 **IS 166.5 / FID 7.4**，超过此前最佳 **IS 52.52 / FID 18.6**（摘要逐字）。 |
+| 与我们工作的关系 | **vision（主 · 波形 / 图像数据的生成与质量评估）**：truncation trick 把「保真 vs 多样」做成可调旋钮，直接对应波形图 / 版图截图增强时的**合成数据质量-覆盖权衡**；评估口径应同时报 fidelity 与 diversity，不能只报单一分数。<b>动作</b>：若用生成样本扩充 WaveView / 版图数据，报告须写清 truncation 设置与多样性覆盖，并单独验证是否引入分布偏移。<br>**data（次 · 合成数据配方）**：正交正则化的稳定性技巧可作为大规模生成式数据增广的可复现基线。<br>**pretrain / posttrain / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十五轮 · 21:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2018-09-28T15:38:49Z` / `updated` `2019-02-25T21:32:06Z`；primary `cs.LG`；无 comments）+ abs 页 **`200`**（41,711 B，`citation_title` / `citation_date` `2018/09/28` / `citation_author` 逐字）+ OpenAlex **`200`**（5,601 / 2018 / `preprint` / source = arXiv，查询日 2026-11-28）。「最大规模 / 正交正则化 / truncation trick / IS 166.5 / FID 7.4 / 52.52 / 18.6」取自摘要逐字。条目级查重：`1809.11096` 在 `PAPERS.md` **0 命中**。 |
+
+## 472. LLM4EDA: Emerging Progress in Large Language Models for Electronic Design Automation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | LLM4EDA: Emerging Progress in Large Language Models for Electronic Design Automation |
+| 作者（前 3） | Ruizhe Zhong · Xingbo Du · Shixiong Kai（abs `citation_author` 逐字核；另 Zhentao Tang / Siyuan Xu / Hui-Ling Zhen / Jianye Hao / Qiang Xu / Mingxuan Yuan / Junchi Yan，共 10 位） |
+| 年份 | **2023**（arXiv API `published` 逐字 `2023-12-28T15:09:14Z`；`updated` `2023-12-28T15:09:14Z`） |
+| 会议 / 期刊 | **arXiv 预印本**（abs `comments` 逐字 `15 pages, 4 figures`；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **118**（OpenAlex `10.48550/arxiv.2401.12224`，查询日 **2026-11-28**；**<500 ⇒ 按「本领域权威 / LLM-for-EDA 分类综述」收**：三类任务划分 + 持续维护的 Awesome-LLM4EDA 仓库，被后续 LLM4EDA 工作反复引用） |
+| arXiv / DOI | <https://arxiv.org/abs/2401.12224> ｜ `10.48550/arXiv.2401.12224` |
+| 一句话贡献 | 系统梳理 LLM 在 EDA 中的应用，分为 **① assistant chatbot、② HDL 与脚本生成、③ HDL 验证与分析** 三类；并给出未来方向：**逻辑综合、物理设计、电路多模态特征提取与对齐**；配套维护 `https://github.com/Thinklab-SJTU/Awesome-LLM4EDA`（摘要逐字）。 |
+| 与我们工作的关系 | **designflow（主 · 题面分层）**：三类任务（chatbot / HDL 与脚本生成 / HDL 验证与分析）可直接映射为 benchmark 的任务分层；「HDL 验证与分析」提示要包含**验证类**而不只造生成类题。<b>动作</b>：Lite-500 的任务分布报告按这三类（+ 逻辑综合 / 物理设计）分列通过率，避免通用高分掩盖验证类短板。<br>**harness（次 · 评测分类）**：报告应区分「生成」与「验证/分析」两种能力，判分后端不同。<br>**posttrain（次 · 领域适配）**：三类任务的 SFT / RL 数据形态不同，需分别统计。<br>**zhulong（次 · 消融轴）**：把「任务类型 × 是否含验证反馈」作为消融轴。<br>**vision（次 · 多模态电路表示）**：综述把电路多模态对齐列为开放方向，可作为 WaveView 类工作的动机引用。<br>**pretrain / data**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十五轮 · 21:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` / `updated` 均逐字 `2023-12-28T15:09:14Z`；primary `cs.AR`；abs `comments` 逐字 `15 pages, 4 figures`）+ abs 页 **`200`**（42,933 B，`citation_title` / `citation_date` `2023/12/28` / `citation_author` 逐字）+ OpenAlex **`200`**（118 / 2024 / `preprint` / source = arXiv，查询日 2026-11-28）。「三类任务 / 逻辑综合 / 物理设计 / 多模态特征提取与对齐 / Awesome-LLM4EDA」取自摘要逐字。条目级查重：`2401.12224` 在 `PAPERS.md` **0 命中**。 |
+
+## 473. The Dawn of AI-Native EDA: Opportunities and Challenges of Large Circuit Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Dawn of AI-Native EDA: Opportunities and Challenges of Large Circuit Models |
+| 作者（前 3） | Lei Chen · Yiqi Chen · Zhufei Chu（abs `citation_author` 逐字核；另 Wenji Fang 等，共 39 位，作者按字母序；arXiv abs `comments` 逐字给出 contact：`qxu@cse…`, `gluo@pku…`, `yuan.mingxuan@huawei…`） |
+| 年份 | **2024**（arXiv API `published` 逐字 `2024-03-12T02:26:30Z`；`updated` `2024-05-01T10:43:36Z`） |
+| 会议 / 期刊 | **OpenAlex `type=article`、source = Science China Information Sciences**（查询日 2026-11-28；arXiv abs 无 venue 字样，仅有作者联系信息 ⇒ 期刊归属以 OpenAlex 单源记，**未据以写卷期页码**） |
+| 被引数 | **100**（OpenAlex `10.48550/arxiv.2403.07257`，查询日 **2026-11-28**；**<500 ⇒ 按「本领域权威 / LLM-for-EDA 方向性论文」收**：39 位 EDA / AI 学者联合提出 AI-native EDA 与 large circuit models 路线） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.07257> ｜ `10.48550/arXiv.2403.07257` |
+| 一句话贡献 | 主张 EDA 从 **AI4EDA**（把通用视觉 / 文本 / 图模型搬到电路）转向 **AI-native EDA**（把 AI 放进设计流程核心）；关键是多模态电路表示学习与 **large circuit models（LCMs）**——统一并抽取 **functional specifications / RTL designs / circuit netlists / physical layouts** 的语义与结构，以推动 **shift-left** 与 PPA 的非增量式改进（摘要逐字）。 |
+| 与我们工作的关系 | **designflow（主 · 多模态题面不能降级）**：论文把四类电路数据（spec / RTL / netlist / layout）并列为 LCM 的输入，直接支撑「题面应保留图 / 版图 / 波形形态、不得退化成纯文本」的红线。<b>动作</b>：造题与判分按这四类数据分别标注所需模态，并在报告中统计「多模态题」占比。<br>**zhulong（主 · 评测分层与 shift-left 量化）**：把 shift-left 收益写成可核对的 PPA / 迭代轮次指标，而不是只报单点 pass 率。<br>**vision（次 · 多模态表示）**：明确将版图 / 波形等物理模态纳入统一表示，是 WaveView 工作的上游动机。<br>**pretrain / data（次 · 多模态配比）**：若做多模态继续预训练，四类数据的配比与对齐应作为显式超参记录。<br>**posttrain / harness（次）**：任务应按「是否需要跨模态证据」分层统计。 |
+| 首次收录 | **2026-11-28**（第一百三十五轮 · 21:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2024-03-12T02:26:30Z` / `updated` `2024-05-01T10:43:36Z`；primary `cs.AR`；39 位作者按字母序，contact 逐字见上）+ abs 页 **`200`**（51,205 B，`citation_title` / `citation_date` `2024/03/12` / `citation_author` 逐字）+ OpenAlex **`200`**（100 / 2024 / `article` / source = Science China Information Sciences，查询日 2026-11-28）。「AI4EDA → AI-native EDA / LCMs / spec-RTL-netlist-layout / shift-left / PPA」取自摘要逐字。条目级查重：`2403.07257` 在 `PAPERS.md` **0 命中**。 |
