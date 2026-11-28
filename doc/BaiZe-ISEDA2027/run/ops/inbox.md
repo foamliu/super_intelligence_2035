@@ -1,5 +1,65 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 294 -->
+<!-- RUN_ID: 295 -->
+## RUN_ID 295 — **拉起已死的 harness loop（2026-11-28 09:0x · 用户令）**
+
+> **用户令**：「启动一个已经死掉的 loop 有啥风险，已经不能更坏了」
+> **依据**：RUN_ID 294 已确认 `baize_harness_loop` 进程数=0、日志文件不存在、`MEMORY_HARNESS.md` mtime 停在 11-27 16:41。
+> **动作**：仅启动，不 kill 任何进程、不改任何配置、不动任何文件。
+> **前置**：先复查确认仍为 0 个；若已有 1 个在跑则**不启动**（避免双实例）。
+
+```bash
+set -u
+LOOP=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+echo "[0] exec_host=$(hostname)  date=$(date '+%F %T')"
+echo
+
+echo "== A. 前置复查 =="
+if [ ! -f "$LOOP" ]; then echo "ABORT: loop 脚本不存在 $LOOP"; echo "=== DONE 295 (ABORT) ==="; exit 9; fi
+echo "  script: $(stat -c '%s B  %y' "$LOOP")"
+N=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)
+echo "  existing_loop_count=$N"
+if [ "$N" -gt 0 ]; then
+  echo "SKIP: 已有 loop 在跑，不重复启动"
+  ps -eo pid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-160
+  echo "=== DONE 295 (SKIPPED) ==="; exit 0
+fi
+echo "  确认无 loop → 可以启动"
+echo
+
+echo "== B. 启动 =="
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run || { echo "ABORT cd"; exit 9; }
+setsid bash "$LOOP" > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+NEWPID=$!
+echo "  launched PID=$NEWPID"
+sleep 15
+echo
+
+echo "== C. 启动后核验 =="
+echo "  PID $NEWPID alive=$(kill -0 "$NEWPID" 2>/dev/null && echo YES || echo NO)"
+echo "  loop_count_now=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)"
+ps -eo pid,ppid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-160
+echo
+
+echo "== D. 日志（前 40 行，确认真的在推进）=="
+if [ -f /tmp/baize_harness_loop.log ]; then
+  echo "  log size=$(stat -c '%s' /tmp/baize_harness_loop.log) B"
+  head -n 40 /tmp/baize_harness_loop.log | cut -c1-200
+else
+  echo "  WARN 日志未生成"
+fi
+echo
+
+echo "== E. 等 60s 再确认未秒退 =="
+sleep 60
+echo "  after60s_alive=$(kill -0 "$NEWPID" 2>/dev/null && echo YES || echo NO)"
+echo "  after60s_count=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)"
+tail -n 15 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-200
+echo
+
+echo "（只启动，未 kill / 未改配置 / 未动文件）"
+echo "=== DONE 295 | $(date '+%F %T') ==="
+```
+
 ## RUN_ID 294 — **检查 harness agent loop 是否还在（只读 · 2026-11-28 09:0x）**
 
 > **用户令**：「安排 .29 的 ops 中继看看 harness agent loop 是否还在」
