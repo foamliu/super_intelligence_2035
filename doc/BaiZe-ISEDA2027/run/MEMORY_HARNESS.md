@@ -32,9 +32,9 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        opencode v1.19.6 predict中(93/500)·zhulong 12w predict中(121/500)·6-harness eval循环(hermes eval中→pi待)·opencode/zhulong eval-watcher等待predict完成
+PHASE:        opencode v1.19.6 predict中(104/500,ETA~23:30)·zhulong 12w predict中(134/500,ETA~00:00)·6-harness eval循环(hermes eval中→pi待)·opencode/zhulong eval-watcher等待predict完成
 已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·opencode 0-patch根因修复✅(commit f154c8ba50)·6-harness predict全500✅·cline-patched eval DONE(355/499=71.1%)·claude-code eval DONE(273/500=54.6%)·codex eval DONE(289/497=58.1%)·deepseek eval DONE(200/490=40.8%)·opencode+zhulong eval-watcher已启动(PID1816539/1816542)
-当前动作:     opencode 8w predict 93/500(ETA~23:00)·zhulong 12w predict 121/500(ETA~24:00)·6-harness eval循环 run_eval_all_8w.sh(PID4157025):cline✅→cc✅→codex✅→deepseek✅→hermes eval中(PID2362943)→pi待·资源自检PASS(load26.7/224,mem180G/2015G,topCPU=容器内pytest313%=3核·远低于8000%kill线)
+当前动作:     opencode 8w predict 104/500(ETA~23:30)·zhulong 12w predict 134/500(ETA~00:00)·6-harness eval循环 run_eval_all_8w.sh(PID4157025):cline✅→cc✅→codex✅→deepseek✅→hermes eval中(PID2362943)→pi待·资源自检PASS(load14.3/224,mem178G/2015G,topCPU=pretrain199%=2核·harness最高opencode17.5%·远低于8000%kill线)
 下一步:       hermes/pi eval自循环完成(~16:00)→opencode eval(watcher PID1816539在predict完成后自动触发)→zhulong eval(watcher PID1816542)→8路eval全齐(ETA~03:00 Nov29)→gen_report_doubao_pro_7way.py生成最终8路对比HTML报告(含版本列,cline显示zhulong(cline-patched))
 阻塞:         无
 ERROR_COUNT:  0
@@ -42,7 +42,7 @@ ERROR_COUNT:  0
 
   🔧 opencode 0-patch根因(已修复): OpencodeDriver代码为v2.4.1编写(无--dir),但v1.19.6需要--dir<workdir>才能编辑目标repo文件。修复=加回--dir(commit f154c8ba50)。smoke test验证:astropy__astropy-12907产生502B patch。
   SWE-bench Verified Pass% (doubao-pro 上一轮v1.18.27, 保留对照): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
-  SWE-bench Verified Pass% (doubao-pro 本轮v1.19.6, eval进行中): cline-patched355/499=71.1%·codex289/497=58.1%·cc273/500=54.6%·deepseek200/490=40.8%·hermes/pi eval中·opencode93/500 predict中·zhulong121/500 predict中
+  SWE-bench Verified Pass% (doubao-pro 本轮v1.19.6, eval进行中): cline-patched355/499=71.1%·codex289/497=58.1%·cc273/500=54.6%·deepseek200/490=40.8%·hermes/pi eval中·opencode104/500 predict中·zhulong134/500 predict中
 
 ## 启动说明（首次唤醒）
 
