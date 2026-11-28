@@ -1615,3 +1615,212 @@ To https://github.com/foamliu/super_intelligence_2035.git
 （只读：未 kill / 未重启 / 未改文件）
 === DONE 296 | 2026-11-28 09:10:33 ===
 ```
+
+---
+
+## RUN_ID 297 · 2026-11-28 09:55:34 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T') who=$(whoami)"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+L=/tmp/baize_harness_loop.log
+echo
+echo "== A. loop 进程（pid / cwd / etime）=="
+pids=$(pgrep -f 'baize_harness_loop.sh' 2>/dev/null | tr '\n' ' ')
+echo "  loop_pids=[$pids] count=$(pgrep -fc 'baize_harness_loop.sh' 2>/dev/null || echo 0)"
+for p in $pids; do
+  echo "    pid=$p cwd=$(readlink /proc/$p/cwd) start=$(ps -o lstart= -p $p 2>/dev/null) etime=$(ps -o etime= -p $p 2>/dev/null) stat=$(ps -o stat= -p $p 2>/dev/null)"
+done
+echo
+echo "== B. cline 子进程（有则在真干活）=="
+pgrep -af 'cline' 2>/dev/null | cut -c1-180 | head -8
+echo "  cline_count=$(pgrep -fc 'cline' 2>/dev/null || echo 0)"
+echo
+echo "== C. loop 日志（尾 30 行）=="
+ls -l --time-style=+%F_%T /tmp/baize_harness_loop.log* 2>/dev/null
+tail -n 30 "$L" 2>/dev/null | cut -c1-220
+echo
+echo "== D. 关键计数（判定空转）=="
+for pat in 'wake up' 'invoking cline' 'cline returned' '无可用 LLM 候选' 'llm_pick: command not found' 'SKIP cline' 'push OK' 'push FAILED' 'WAITING=1' 'WAITING=0'; do
+  echo "  [$pat] = $(grep -c -- "$pat" "$L" 2>/dev/null || echo 0)"
+done
+echo "  --- 最近 5 次 wake ---"
+grep -E '\[loop\].*wake up' "$L" 2>/dev/null | tail -5
+echo "  --- 最近 6 条 push ---"
+grep -E '\[push\]' "$L" 2>/dev/null | tail -6
+echo
+echo "== E. 最近 push 时间 / WAITING / 关键文件 mtime =="
+if [ -f /tmp/baize_harness_last_push ]; then
+  ts=$(cat /tmp/baize_harness_last_push 2>/dev/null)
+  echo "  last_push_epoch=$ts -> $(date -d @$ts '+%F %T' 2>/dev/null) age_min=$(( ( $(date +%s) - ts ) / 60 ))"
+else
+  echo "  /tmp/baize_harness_last_push 不存在"
+fi
+grep -n '^WAITING' "$RUN/MEMORY_HARNESS.md" 2>/dev/null || echo "  WAITING 行缺失"
+ls -l --time-style=+%F_%T "$RUN/MEMORY_HARNESS.md" "$RUN/BAIZE_HARNESS_TASK.md" 2>/dev/null
+echo
+echo "== F. 负载（>HARNESS_LOAD_MAX=120 会 SKIP cline）=="
+echo "  load=$(cat /proc/loadavg) nproc=$(nproc 2>/dev/null)"
+echo
+echo "== G. git 状态 =="
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd "$(git -C "$RUN" rev-parse --show-toplevel)"
+git log -1 --format='  HEAD %h %ad %s' --date=iso
+echo "  dirty=$(git status --porcelain | wc -l) ahead_behind=$(git rev-list --left-right --count HEAD...origin/main 2>/dev/null)"
+echo
+echo "== H. harness 进度证据 =="
+H="$RUN/harness/swebench_verified_full"
+ls -ld --time-style=+%F_%T "$H/predictions_doubao_pro" 2>/dev/null || echo "  predictions_doubao_pro MISSING"
+if [ -d "$H/predictions_doubao_pro" ]; then ls -l --time-style=+%F_%T "$H/predictions_doubao_pro" | head -12; fi
+for f in "$RUN"/harness/logs_doubao_pro/*.log; do [ -f "$f" ] && echo "  $(stat -c '%y %sB' "$f") $(basename "$f")"; done
+echo "  --- opencode 日志尾部 ---"
+tail -n 6 "$RUN/harness/logs_doubao_pro/opencode_doubao_pro.log" 2>/dev/null | cut -c1-200
+echo "  --- 最新 harness 报告 ---"
+ls -lt --time-style=+%F_%T "$RUN"/harness/reports/*.html 2>/dev/null | head -4
+echo
+echo "== I. 最近 24h 本线改动 top10 =="
+find "$RUN" -maxdepth 2 -type f -mmin -1440 -printf '%TY-%Tm-%Td_%TH:%TM %p\n' 2>/dev/null | sort -r | head -10
+echo
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 297 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap12 date=2026-11-28 09:55:34 who=app.e0031982
+
+== A. loop 进程（pid / cwd / etime）==
+  loop_pids=[3498993 ] count=1
+    pid=3498993 cwd=/nas_train/app.e0031982/code/super_intelligence_2035 start=Sat Nov 28 08:56:36 2026 etime=      58:57 stat=Ss
+
+== B. cline 子进程（有则在真干活）==
+2854433 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+2854514 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/
+3041408 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --cline-hub-daemon --cwd /nas_train/app.e0031982 --host 127.0.0.1 --port 25463 --pathname /hub
+  cline_count=3
+
+== C. loop 日志（尾 30 行）==
+-rw-r--r-- 1 app.e0031982 app.adm 7710 2026-11-28_09:41:49 /tmp/baize_harness_loop.log
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+fatal: Unable to create '/nas_train/app.e0031982/code/super_intelligence_2035/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+fatal: Unable to create '/nas_train/app.e0031982/code/super_intelligence_2035/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+fatal: Unable to create '/nas_train/app.e0031982/code/super_intelligence_2035/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+[push] nothing of ours to commit.
+To https://github.com/foamliu/super_intelligence_2035.git
+   14f932711e..0383227cc3  main -> main
+[push] push OK.
+[loop] 2026-11-28 09:41:49 WAITING=1 (async task running) → sleep 900s
+
+== D. 关键计数（判定空转）==
+  [wake up] = 4
+  [invoking cline] = 4
+  [cline returned] = 4
+  [无可用 LLM 候选] = 4
+  [llm_pick: command not found] = 4
+  [SKIP cline] = 0
+0
+  [push OK] = 4
+  [push FAILED] = 0
+0
+  [WAITING=1] = 4
+  [WAITING=0] = 0
+0
+  --- 最近 5 次 wake ---
+[loop] 2026-11-28 08:56:37 wake up, invoking cline ...
+[loop] 2026-11-28 09:11:40 wake up, invoking cline ...
+[loop] 2026-11-28 09:26:42 wake up, invoking cline ...
+[loop] 2026-11-28 09:41:45 wake up, invoking cline ...
+  --- 最近 6 条 push ---
+[push] nothing of ours to commit.
+[push] push OK.
+[push] 2026-11-28 09:41:45 push interval reached, syncing ...
+[push] ahead=1 behind=0
+[push] nothing of ours to commit.
+[push] push OK.
+
+== E. 最近 push 时间 / WAITING / 关键文件 mtime ==
+  last_push_epoch=1795830109 -> 2026-11-28 09:41:49 age_min=13
+3:WAITING: 1
+-rw-r----- 1 app.e0031982 app.adm 29733 2026-11-27_16:41:03 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_HARNESS_TASK.md
+-rw-r----- 1 app.e0031982 app.adm  4141 2026-11-27_16:41:14 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+
+== F. 负载（>HARNESS_LOAD_MAX=120 会 SKIP cline）==
+  load=11.92 10.32 11.19 14/5983 3637312 nproc=224
+
+== G. git 状态 ==
+  HEAD fb2309858f 2026-11-28 09:54:52 +0800 ops RUN_ID 297: harness loop 健康体检（只读·用户令）
+  dirty=208 ahead_behind=0	0
+
+== H. harness 进度证据 ==
+drwxr-x--- 2 app.e0031982 app.adm 466944 2026-11-28_08:13:03 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_doubao_pro
+total 143472
+-rw-r----- 1 app.e0031982 app.adm     2283 2026-11-26_12:02:09 claude-code__astropy__astropy-12907.json
+-rw-r----- 1 app.e0031982 app.adm     2546 2026-11-26_12:03:27 claude-code__astropy__astropy-13033.json
+-rw-r----- 1 app.e0031982 app.adm     2683 2026-11-26_12:04:24 claude-code__astropy__astropy-13236.json
+-rw-r----- 1 app.e0031982 app.adm     5427 2026-11-26_12:06:33 claude-code__astropy__astropy-13398.json
+-rw-r----- 1 app.e0031982 app.adm      978 2026-11-26_12:09:27 claude-code__astropy__astropy-13453.json
+-rw-r----- 1 app.e0031982 app.adm     1334 2026-11-26_12:11:02 claude-code__astropy__astropy-13579.json
+-rw-r----- 1 app.e0031982 app.adm     1269 2026-11-26_12:11:52 claude-code__astropy__astropy-13977.json
+-rw-r----- 1 app.e0031982 app.adm     1354 2026-11-26_12:14:43 claude-code__astropy__astropy-14096.json
+-rw-r----- 1 app.e0031982 app.adm     1346 2026-11-26_12:16:08 claude-code__astropy__astropy-14182.json
+-rw-r----- 1 app.e0031982 app.adm      850 2026-11-26_12:16:45 claude-code__astropy__astropy-14309.json
+-rw-r----- 1 app.e0031982 app.adm      921 2026-11-26_12:17:49 claude-code__astropy__astropy-14365.json
+  2026-11-27 18:06:26.513131376 +0800 43718B claude-code_doubao_pro.log
+  2026-11-26 10:12:55.408022300 +0800 40796B claude-code_doubao_pro_rerun2.log
+  2026-11-26 10:12:55.364662270 +0800 29311B claude-code_doubao_pro_rerun3.log
+  2026-11-26 10:12:55.506122843 +0800 29311B claude-code_doubao_pro_rerun.log
+  2026-11-27 18:06:26.515265685 +0800 43742B cline-patched_doubao_pro.log
+  2026-11-26 10:12:55.426519999 +0800 2730B cline-patched_doubao_pro_rerun.log
+  2026-11-27 18:06:26.450891920 +0800 43796B codex_doubao_pro.log
+  2026-11-27 18:06:26.520106732 +0800 43096B deepseek-harness_doubao_pro.log
+  2026-11-26 10:12:55.518016826 +0800 33949B deepseek-harness_doubao_pro_rerun.log
+  2026-11-27 18:06:26.456073690 +0800 43434B hermes_doubao_pro.log
+  2026-11-27 18:06:26.516714770 +0800 259B opencode_doubao_pro.log
+  2026-11-26 13:05:26.605381696 +0800 752B opencode_doubao_pro_rerun.log
+  2026-11-27 18:06:26.460901170 +0800 43751B pi_doubao_pro.log
+  2026-11-27 17:11:42.783013200 +0800 30378B zhulong_doubao_pro.log
+  --- opencode 日志尾部 ---
+[verified-full 16:38:25] resume: loaded 60 existing results
+[verified-full 16:38:26] predict opencode: workers=4 pending=500 (parallel)
+[verified-full 16:39:49]   -> no-patch (patch=0B wall=82.9s)
+[verified-full 16:43:37]   -> no-patch (patch=0B wall=227.8s)
+  --- 最新 harness 报告 ---
+-rw-r--r-- 1 app.e0031982 app.adm 24908 2026-11-26_10:12:55 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/reports/report_harness_adapter_0pass_rootcause_zh.html
+-rw-r--r-- 1 app.e0031982 app.adm 19975 2026-11-26_10:12:55 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/reports/report_harness_glm53_7x300_zh.html
+
+== I. 最近 24h 本线改动 top10 ==
+2026-11-28_09:55 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/inbox.md
+2026-11-28_09:40 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_DATA.md
+2026-11-28_09:21 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/daily-memories-data/2026-11-28.md
+2026-11-28_09:16 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+2026-11-28_09:10 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/outbox.md
+2026-11-28_09:10 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id.12
+2026-11-28_09:10 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops/.last_run_id
+2026-11-28_08:53 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/convert_idx_format.py
+2026-11-28_08:32 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md
+2026-11-28_08:25 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+
+（只读：未 kill / 未重启 / 未改任何文件）
+=== DONE 297 | 2026-11-28 09:55:35 ===
+```
