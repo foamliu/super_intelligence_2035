@@ -2956,3 +2956,88 @@ DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecate
 350000（只读：未 kill / 未重启 / 未改任何文件）
 === DONE 301 | 2026-11-28 12:03:55 ===
 ```
+
+---
+
+## RUN_ID 302 · 2026-11-28 12:04:41 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+echo "[0] host=$(hostname) date=$(date '+%F %T')"
+W=/tmp/baize_s1_baize2b_worker.log
+ls -l --time-style=+%F_%T "$W" /tmp/baize_s1_baize2b_master.log 2>/dev/null
+echo "--- worker tail 12 ---"
+tail -n 12 "$W" 2>/dev/null | cut -c1-220
+echo "--- 最近 5 条 iter ---"
+grep -E 'iteration[ =]|iter[ =]' "$W" 2>/dev/null | tail -5 | cut -c1-220
+echo "--- nan_hits=$(grep -ci 'nan' "$W" 2>/dev/null || echo 0)  skip_hits=$(grep -ci 'skip' "$W" 2>/dev/null || echo 0)  blend_switch_hits=$(grep -ci 'blend.hot.switch' "$W" 2>/dev/null || echo 0) ---"
+echo "=== DONE 302 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] host=whag0pgpuap12 date=2026-11-28 12:04:41
+-rw-r--r-- 1 app.e0031982 app.adm 10239 2026-11-28_10:57:50 /tmp/baize_s1_baize2b_master.log
+-rw-r--r-- 1 app.e0031982 app.adm 62760 2026-11-28_11:00:37 /tmp/baize_s1_baize2b_worker.log
+--- worker tail 12 ---
+[rank10]: socketPollConnect: connect to 10.239.8.12<48213> returned Connection refused, exceeded error retry count after 35 attempts
+[rank9]: Traceback (most recent call last):
+[rank9]:   File "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py", line 113, in <module>
+[rank9]:     torch.distributed.barrier()
+[rank9]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/c10d_logger.py", line 81, in wrapper
+[rank9]:     return func(*args, **kwargs)
+[rank9]:   File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 4811, in barrier
+[rank9]:     work = group.barrier(opts=opts)
+[rank9]: torch.distributed.DistBackendError: NCCL error in: /pytorch/torch/csrc/distributed/c10d/NCCLUtils.cpp:77, remote process exited or there was a network error, NCCL version 2.27.3
+[rank9]: ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+[rank9]: Last error:
+[rank9]: socketPollConnect: connect to 10.239.8.12<48213> returned Connection refused, exceeded error retry count after 35 attempts
+--- 最近 5 条 iter ---
+--- nan_hits=0
+0  skip_hits=0
+0  blend_switch_hits=0
+0 ---
+=== DONE 302 | 2026-11-28 12:04:41 ===
+```
+
+---
+
+## RUN_ID 302 · 2026-11-28 12:04:42 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "[0] host=$(hostname) date=$(date '+%F %T')"
+W=/tmp/baize_s1_baize2b_worker.log
+ls -l --time-style=+%F_%T "$W" /tmp/baize_s1_baize2b_master.log 2>/dev/null
+echo "--- worker tail 12 ---"
+tail -n 12 "$W" 2>/dev/null | cut -c1-220
+echo "--- 最近 5 条 iter ---"
+grep -E 'iteration[ =]|iter[ =]' "$W" 2>/dev/null | tail -5 | cut -c1-220
+echo "--- nan_hits=$(grep -ci 'nan' "$W" 2>/dev/null || echo 0)  skip_hits=$(grep -ci 'skip' "$W" 2>/dev/null || echo 0)  blend_switch_hits=$(grep -ci 'blend.hot.switch' "$W" 2>/dev/null || echo 0) ---"
+echo "=== DONE 302 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] host=whag0pgpuap29 date=2026-11-28 12:04:42
+-rw-r--r-- 1 app.e0031982 app.adm 157602 2026-11-28_12:04:41 /tmp/baize_s1_baize2b_master.log
+-rw-r--r-- 1 app.e0031982 app.adm  99934 2026-11-28_11:59:53 /tmp/baize_s1_baize2b_worker.log
+--- worker tail 12 ---
+whag0pgpuap29:1107188:1154816 [1] NCCL INFO Channel 01/1 : 0[0] -> 9[1] [receive] via NET/IB/2/Shared
+whag0pgpuap29:1107193:1154818 [4] NCCL INFO Channel 01/1 : 0[0] -> 12[4] [receive] via NET/IB/6/Shared
+whag0pgpuap29:1107200:1154815 [6] NCCL INFO Channel 05/1 : 0[0] -> 14[6] [receive] via NET/IB/7/Shared
+whag0pgpuap29:1107203:1154814 [7] NCCL INFO Channel 05/1 : 0[0] -> 15[7] [receive] via NET/IB/9/Shared
+whag0pgpuap29:1107195:1154817 [5] NCCL INFO Channel 01/1 : 0[0] -> 13[5] [receive] via NET/IB/8/Shared
+whag0pgpuap29:1107193:1154818 [4] NCCL INFO Channel 05/1 : 0[0] -> 12[4] [receive] via NET/IB/6/Shared
+whag0pgpuap29:1107188:1154816 [1] NCCL INFO Channel 05/1 : 0[0] -> 9[1] [receive] via NET/IB/2/Shared
+whag0pgpuap29:1107192:1154819 [3] NCCL INFO Channel 01/1 : 0[0] -> 11[3] [receive] via NET/IB/3/Shared
+whag0pgpuap29:1107195:1154817 [5] NCCL INFO Channel 05/1 : 0[0] -> 13[5] [receive] via NET/IB/8/Shared
+whag0pgpuap29:1107192:1154819 [3] NCCL INFO Channel 05/1 : 0[0] -> 11[3] [receive] via NET/IB/3/Shared
+INFO:megatron.core.timers:(min, max) time across ranks (ms):
+    load-checkpoint ................................: (4843.52, 4844.01)
+--- 最近 5 条 iter ---
+--- nan_hits=0
+0  skip_hits=0
+0  blend_switch_hits=8 ---
+=== DONE 302 | 2026-11-28 12:04:42 ===
+```
