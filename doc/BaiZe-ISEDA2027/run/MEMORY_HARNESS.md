@@ -32,15 +32,16 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-27令·重启后执行 opencode v1.19.6 + 7-way doubao-pro 评测
-已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·opencode旧v1.18.x数据清空✅·harness脚本归档到baize-llm/scripts/harness✅
-当前动作:     opencode v1.19.6全量重跑中·55/500已完成·并行度=8·zhulong(无policy)评测启动中·0/500·其余6路已完成无重跑
-下一步:       opencode跑完500题（约11.5小时，28日凌晨2:30前完成）→ opencode完成后自动将zhulong并行度从4提升至12worker，zhulong预计总耗时缩短至约12小时 → 统一eval → 生成8路对比报告
-阻塞:         无
+PHASE:        11-27令·opencode v1.19.6 predict DONE(0-patch)·zhulong 12w predict中·6-harness eval中
+已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·opencode v1.19.6全量500题predict DONE(0-patch⚠️)·harness脚本归档✅·8way报告生成器加版本列✅·cline-patched eval DONE(355/500=71.0%)
+当前动作:     zhulong 12-worker predict 29/500进行中(resumed from 26)·6-harness eval循环中(claude-code 2/6)·opencode eval=0patch无需eval·已kill stale opencode进程(PID3803645)·已重启zhulong从8w→12w
+下一步:       6-harness eval跑完(~2.5h)→zhulong predict跑完(~10h)→zhulong eval→生成最终8路对比报告(含版本列)
+阻塞:         无（⚠️ opencode v1.19.6 全量500题0-patch=工具接口无法编辑文件，Pass%=0.0%；上一轮v1.18.27为64.6%；按指令不debug版本问题，如实报告）
 ERROR_COUNT:  0
  体积: TASK~26KB / MEMORY≈5KB
 
-  SWE-bench Verified Pass% (doubao-pro 上一轮, 保留对照): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
+  SWE-bench Verified Pass% (doubao-pro 上一轮v1.18.27, 保留对照): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
+  ⚠️ opencode v1.19.6 重跑结果: 0/500 patches (全量0-patch, Pass%=0.0%) — v1.19.6工具接口无法编辑文件，非infra非能力，为版本行为；按11-27令不debug版本问题
 
 ## 启动说明（首次唤醒）
 

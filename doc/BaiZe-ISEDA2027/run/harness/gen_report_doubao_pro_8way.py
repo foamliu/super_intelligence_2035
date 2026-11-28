@@ -16,6 +16,16 @@ ROUND = os.environ.get("ROUND", "R2811")
 
 HARNESSES = ["cline-patched", "codex", "opencode", "claude-code", "pi", "hermes", "deepseek-harness", "zhulong"]
 DISPLAY = {"cline-patched": "cline", "deepseek-harness": "deepseek"}
+VERSIONS = {
+    "cline-patched": "3.0.76 (zhulong-patched)",
+    "codex": "0.172.0",
+    "opencode": "v1.19.6",
+    "claude-code": "2.1.332",
+    "pi": "1.6.1",
+    "hermes": "git.e0dcc39",
+    "deepseek-harness": "0.2.2rc2",
+    "zhulong": "cline-native (无policy)",
+}
 
 def disp(h):
     return DISPLAY.get(h, h)
@@ -61,6 +71,7 @@ for h in HARNESSES:
     rows.append({
         "harness": disp(h),
         "harness_code": h,
+        "version": VERSIONS.get(h, "?"),
         "predict": predict_n,
         "remaining": remaining,
         "empty": empty_n,
@@ -82,6 +93,7 @@ main_rows = ""
 for i, r in enumerate(rows_sorted, 1):
     main_rows += (
         f"<tr><td>{i}</td><td><strong>{esc(r['harness'])}</strong></td>"
+        f"<td>{esc(r['version'])}</td>"
         f"<td class='pass' style='font-weight:bold'>{r['resolved']}/500</td>"
         f"<td style='font-size:1.35em;font-weight:bold;color:#27ae60'>{r['pass_pct']:.1f}%</td></tr>\n"
     )
@@ -134,14 +146,14 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 <h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 8 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
-<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
+<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>版本</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
 {main_rows}</tbody></table>
 <div class="note"><p>分母恒 500。Pass% = resolved/500。未跑完的路按已 resolved 数 / 500 计算，不含未跑题的假设。每个格子只写一个数字。</p></div>
 
 <h2>1. Predict 进度</h2>
 <table><thead><tr><th>Harness</th><th>Predict/500</th><th>剩余</th><th>Empty patch</th><th>状态</th></tr></thead><tbody>
 {pred_rows}</tbody></table>
-<div class="note"><p>Empty = 模型已 attempt 但未生成 patch（能力不足，非 infra）。剩余 = 尚未 attempt 的题数。opencode 模型 doubao-pro 无法通过 opencode 工具接口编辑文件，0-patch 为最终结果。</p></div>
+<div class="note"><p>Empty = 模型已 attempt 但未生成 patch（能力不足，非 infra）。剩余 = 尚未 attempt 的题数。opencode v1.19.6 全量 500 题 0-patch（工具接口无法编辑文件），Pass%=0.0% 为最终结果。cline = zhulong(cline-patched) 3.0.76。</p></div>
 
 <h2>2. 待跑 / 待重跑清单</h2>
 <h3>待跑（backlog · predict &lt; 500）</h3>

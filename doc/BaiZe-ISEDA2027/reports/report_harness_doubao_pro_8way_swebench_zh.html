@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SWE-bench Verified · 8 路横评报告</title>
+<style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}h3{color:#2874a6;margin-top:20px}table{border-collapse:collapse;width:100%;margin:15px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#2980b9;color:white}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}code{background:#f0f0f0;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>SWE-bench Verified · 8 路横评报告</h1>
+<div class="info">
+<p><strong>模型</strong>：doubao-seed-2.0-pro-cloud　|　<strong>8 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek / zhulong</p>
+<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-28 11:29（R2812）</p>
+</div>
+
+<h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 8 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
+<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>版本</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
+<tr><td>1</td><td><strong>cline</strong></td><td>3.0.76 (zhulong-patched)</td><td class='pass' style='font-weight:bold'>355/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>71.0%</td></tr>
+<tr><td>2</td><td><strong>codex</strong></td><td>0.172.0</td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
+<tr><td>3</td><td><strong>opencode</strong></td><td>v1.19.6</td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
+<tr><td>4</td><td><strong>claude-code</strong></td><td>2.1.332</td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
+<tr><td>5</td><td><strong>pi</strong></td><td>1.6.1</td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
+<tr><td>6</td><td><strong>hermes</strong></td><td>git.e0dcc39</td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
+<tr><td>7</td><td><strong>deepseek</strong></td><td>0.2.2rc2</td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
+<tr><td>8</td><td><strong>zhulong</strong></td><td>cline-native (无policy)</td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
+</tbody></table>
+<div class="note"><p>分母恒 500。Pass% = resolved/500。未跑完的路按已 resolved 数 / 500 计算，不含未跑题的假设。每个格子只写一个数字。</p></div>
+
+<h2>1. Predict 进度</h2>
+<table><thead><tr><th>Harness</th><th>Predict/500</th><th>剩余</th><th>Empty patch</th><th>状态</th></tr></thead><tbody>
+<tr><td><strong>cline</strong></td><td>500/500</td><td>0</td><td>1</td><td>✅ 满量</td></tr>
+<tr><td><strong>codex</strong></td><td>500/500</td><td>0</td><td>3</td><td>✅ 满量</td></tr>
+<tr><td><strong>opencode</strong></td><td>500/500</td><td>0</td><td>500</td><td>✅ 满量</td></tr>
+<tr><td><strong>claude-code</strong></td><td>500/500</td><td>0</td><td>0</td><td>✅ 满量</td></tr>
+<tr><td><strong>pi</strong></td><td>500/500</td><td>0</td><td>0</td><td>✅ 满量</td></tr>
+<tr><td><strong>hermes</strong></td><td>500/500</td><td>0</td><td>3</td><td>✅ 满量</td></tr>
+<tr><td><strong>deepseek</strong></td><td>500/500</td><td>0</td><td>10</td><td>✅ 满量</td></tr>
+<tr><td><strong>zhulong</strong></td><td>29/500</td><td>471</td><td>0</td><td>⏳ 进行中</td></tr>
+</tbody></table>
+<div class="note"><p>Empty = 模型已 attempt 但未生成 patch（能力不足，非 infra）。剩余 = 尚未 attempt 的题数。opencode v1.19.6 全量 500 题 0-patch（工具接口无法编辑文件），Pass%=0.0% 为最终结果。cline = zhulong(cline-patched) 3.0.76。</p></div>
+
+<h2>2. 待跑 / 待重跑清单</h2>
+<h3>待跑（backlog · predict &lt; 500）</h3>
+<table><tr><th>Harness</th><th>剩余题数</th></tr>
+<tr><td><strong>zhulong</strong></td><td>471</td></tr>
+</table>
+
+<h3>待重跑（infra 失败）</h3>
+<table><tr><th>Harness</th><th>题目</th></tr>
+<tr><td><strong>cline</strong></td><td>astropy__astropy-13398</td></tr>
+<tr><td><strong>cline</strong></td><td>django__django-10554</td></tr>
+<tr><td><strong>cline</strong></td><td>django__django-11734</td></tr>
+<tr><td><strong>cline</strong></td><td>django__django-12663</td></tr>
+<tr><td><strong>cline</strong></td><td>django__django-15280</td></tr>
+<tr><td><strong>cline</strong></td><td>django__django-15629</td></tr>
+<tr><td><strong>cline</strong></td><td>django__django-15695</td></tr>
+<tr><td><strong>cline</strong></td><td>django__django-16661</td></tr>
+<tr><td><strong>cline</strong></td><td>django__django-16950</td></tr>
+<tr><td><strong>cline</strong></td><td>psf__requests-6028</td></tr>
+<tr><td><strong>cline</strong></td><td>sympy__sympy-13878</td></tr>
+<tr><td><strong>cline</strong></td><td>sympy__sympy-14248</td></tr>
+<tr><td><strong>cline</strong></td><td>sympy__sympy-22456</td></tr>
+</table>
+
+<div class="note"><p>429/quota：当前无 429 阻塞题。其余失败题 = 能力不足（tests fail / 空 patch），非 infra，不需重跑。</p></div>
+
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
+BaiZe Harness · R2812 · 2026-11-28 11:29<br>SWE-bench Verified 500 · 8-way
+</p></body></html>
