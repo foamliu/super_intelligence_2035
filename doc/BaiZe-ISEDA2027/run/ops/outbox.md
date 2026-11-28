@@ -2203,3 +2203,182 @@ Everything up-to-date
 （写操作仅限：kill 本线 loop / 重启 .29 loop / 删 stale lock+gc.log）
 === DONE 298 | 2026-11-28 10:02:28 ===
 ```
+
+---
+
+## RUN_ID 298 · 2026-11-28 10:00:58 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T') who=$(whoami)"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+LOOP=$RUN/baize_harness_loop.sh
+GIT=/nas_train/app.e0031982/code/super_intelligence_2035
+LOG=/tmp/baize_harness_loop.log
+H=$(hostname)
+echo
+echo "== A. 前置：脚本版本 / 语法 =="
+echo "  mtime=$(stat -c '%y' "$LOOP" 2>/dev/null)"
+echo "  llm_pick_occurrences=$(grep -c 'llm_pick' "$LOOP" 2>/dev/null || echo 0)  (期望=1，仅注释)"
+grep -n 'llm_pick' "$LOOP" 2>/dev/null | cut -c1-170
+echo "  cline_call:"; grep -n 'cline -c' "$LOOP" 2>/dev/null | cut -c1-200
+bash -n "$LOOP" && echo "  bash -n OK" || { echo "ABORT: 语法错误"; echo "=== DONE 298 (ABORT) ==="; exit 9; }
+echo
+echo "== B. 清 stale git 锁（仅当无活跃 git 且锁龄>300s）=="
+cd "$GIT" || { echo "ABORT cd"; exit 9; }
+if [ -f .git/index.lock ]; then
+  age=$(( $(date +%s) - $(stat -c %Y .git/index.lock) ))
+  echo "  index.lock age=${age}s size=$(stat -c %s .git/index.lock)"
+  if [ "$age" -gt 300 ] && [ "$(pgrep -x git | wc -l)" -eq 0 ]; then
+    rm -f .git/index.lock && echo "  removed stale index.lock"
+  else
+    echo "  KEEP (fresh lock or active git: $(pgrep -x git | tr '\n' ' '))"
+  fi
+else
+  echo "  no index.lock"
+fi
+if [ -f .git/gc.log ]; then head -3 .git/gc.log; rm -f .git/gc.log; echo "  removed gc.log"; else echo "  no gc.log"; fi
+echo
+echo "== C. 停旧 loop（精确 PID + 兜底）=="
+OLD=$(pgrep -f 'baize_harness_loop.sh' 2>/dev/null | tr '\n' ' ')
+echo "  old_pids=[$OLD]"
+for p in $OLD; do kill -9 "$p" 2>/dev/null && echo "  killed $p"; done
+sleep 2
+echo "  alive_after_kill=$(pgrep -fc 'baize_harness_loop.sh' 2>/dev/null || echo 0)"
+echo
+echo "== D. 单实例：只 .29 起 loop =="
+if [ "$(hostname -I | grep -c '10.239.2.29')" -gt 0 ]; then
+  echo "  host=.29 -> START"
+  mv -f "$LOG" "$LOG.old.$(date +%H%M%S)" 2>/dev/null
+  cd "$RUN" || exit 9
+  setsid bash "$LOOP" > "$LOG" 2>&1 < /dev/null &
+  NEWPID=$!
+  echo "  launched PID=$NEWPID"
+  sleep 20
+  echo "  alive_20s=$(kill -0 "$NEWPID" 2>/dev/null && echo YES || echo NO)"
+  echo "  loop_count=$(pgrep -fc 'baize_harness_loop.sh' 2>/dev/null || echo 0)"
+  ps -eo pid,ppid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-150
+else
+  echo "  host=$H -> KEEP STOPPED (single-instance on .29)"
+fi
+echo
+echo "== E. 90s 后四证 =="
+sleep 70
+echo "  --- 新日志头 20 行 ---"
+head -n 20 "$LOG" 2>/dev/null | cut -c1-220
+echo "  --- 判定（期望：1>=1 / 2=0 / 3=0 / 4>=1 / 5>=1）---"
+echo "  proof1_loop_procs=$(pgrep -fc 'baize_harness_loop.sh' 2>/dev/null || echo 0)"
+echo "  proof2_llm_pick_err=$(grep -c 'llm_pick: command not found' "$LOG" 2>/dev/null || echo 0)"
+echo "  proof3_no_llm_skip=$(grep -c '无可用 LLM 候选' "$LOG" 2>/dev/null || echo 0)"
+echo "  proof4_invoking=$(grep -c 'invoking cline' "$LOG" 2>/dev/null || echo 0)"
+echo "  proof5_cline_procs=$(ps -eo args | grep '[c]line ' | grep -c 'glm-5.2' || echo 0)"
+ps -eo pid,ppid,etime,args | grep '[c]line ' | grep 'glm-5.2' | cut -c1-170
+echo
+echo "== F. 日志尾部 =="
+tail -n 15 "$LOG" 2>/dev/null | cut -c1-220
+echo
+echo "== G. git 状态（不清脏文件）=="
+git -C "$GIT" log -1 --format='  HEAD %h %ad %s' --date=iso
+echo "  dirty=$(git -C "$GIT" status --porcelain | wc -l)  ahead_behind=$(git -C "$GIT" rev-list --left-right --count HEAD...origin/main 2>/dev/null)"
+git -C "$GIT" status --porcelain | awk '{print $2}' | cut -d/ -f1-3 | sort | uniq -c | sort -rn | head -8
+echo
+echo "（写操作仅限：kill 本线 loop / 重启 .29 loop / 删 stale lock+gc.log）"
+echo "=== DONE 298 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap29 date=2026-11-28 10:00:58 who=app.e0031982
+
+== A. 前置：脚本版本 / 语法 ==
+  mtime=2026-11-28 09:16:29.842285770 +0800
+  llm_pick_occurrences=1  (期望=1，仅注释)
+124:        # 2026-11-28 用户令：移除 llm_rotate.sh / llm_pick 额度轮换，直接用脚本内配好的 MODEL/CLINE_KEY
+  cline_call:
+132:          "${taskline[@]}" cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+  bash -n OK
+
+== B. 清 stale git 锁（仅当无活跃 git 且锁龄>300s）==
+  no index.lock
+warning: There are too many unreachable loose objects; run 'git prune' to remove them.
+  removed gc.log
+
+== C. 停旧 loop（精确 PID + 兜底）==
+  old_pids=[4066583 ]
+  killed 4066583
+  alive_after_kill=0
+0
+
+== D. 单实例：只 .29 起 loop ==
+  host=.29 -> START
+  launched PID=299357
+  alive_20s=YES
+  loop_count=2
+ 299357  299327       00:20 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+ 299369  299357       00:20 cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02
+
+== E. 90s 后四证 ==
+  --- 新日志头 20 行 ---
+[loop] 2026-11-28 10:01:00 wake up, invoking cline ...
+[2m[thinking] [0m[2mThe[0m[2m user has[0m[2m shared a very[0m[2m large task document[0m[2m (BAIZE[0m[2m_HARNESS_TASK[0m[2m.md).[0m[2m Let[0m[2m me understand[0m[2m what they're[0m[2m asking. Actual
+
+Wait[0m[2m, let me re[0m[2m-read. The entire[0m[2m content[0m[2m appears[0m[2m to be the BA[0m[2mIZE_HARNESS[0m[2m_TASK.md file.[0m[2m There's no actual[0m[2m user question beyond[0m[2m sharing[0m[2
+
+Actually[0m[2m, I think the[0m[2m user is showing[0m[2m me this[0m[2m task file and expects[0m[2m me to act as[0m[2m the harness agent —[0m[2m to[0m[2m read the task[0m[2m, understand the current[0m
+
+But[0m[2m wait[0m[2m — there's no[0m[2m explicit "[0m[2muser[0m[2m_input" tag or[0m[2m mode indicator[0m[2m in[0m[2m this message. The[0m[2m message is just the[0m[2m raw[0m[2m content of the task
+
+Given[0m[2m the context ([0m[2mthis is a coding[0m[2m agent environment[0m[2m, the[0m[2m working[0m[2m directory is the run[0m[2m/ folder[0m[2m,[0m[2m and the content[0m[2m is the harness[0m[2m task
+1. Read[0m[2m and[0m[2m understand the current state[0m[2m of the harness task[0m[2m
+2. Check[0m[2m on[0m[2m the progress[0m[2m of the running[0m[2m evaluation[0m[2m
+3. Take[0m[2m appropriate action based[0m[2m on the operator[0m[2m instructions
+
+Let me[0m[2m start by gathering context[0m[2m —[0m[2m reading the MEMORY[0m[2m_HARNESS.md[0m[2m file[0m[2m and[0m[2m checking the current state[0m[2m of things[0m[2m.[0m[2m Let me also[0m[2m check
+
+Actually[0m[2m, I should be[0m[2m careful. Let[0m[2m me look[0m[2m at the actual files[0m[2m to[0m[2m understand the current state[0m[2m before[0m[2m doing[0m[2m anything. Let[0m[2m me read MEMORY[0m
+
+Let me start[0m[2m by gathering context in[0m[2m parallel:[0m[2m
+-[0m[2m Read MEMORY_HAR[0m[2mNESS.md
+  --- 判定（期望：1>=1 / 2=0 / 3=0 / 4>=1 / 5>=1）---
+  proof1_loop_procs=2
+  proof2_llm_pick_err=0
+0
+  proof3_no_llm_skip=0
+0
+  proof4_invoking=1
+  proof5_cline_procs=2
+ 299369  299357       01:30 cline -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5.2 -k 02_088EE9051AAE4BF0ABF
+1800276 1475330    01:37:31 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --aut
+
+== F. 日志尾部 ==
+[2m[thinking] [0m[2mSo[0m[2m the predictions are all[0m[2m flat files[0m[2m in a single directory[0m[2m (not per[0m[2m-harness subdirectories[0m[2m). The files[0m[2m are named like[0m[2m `[0m[2m<harn
+The predictions are flat files prefixed by harness name. Let me count per-harness and find the progress files and launch script.
+[36m[run_commands][0m bash -c 'cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_fu...
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+   [90m⎿ [0m[2m500 pi     500 opencode     500 hermes     500 deepseek-harness     500 codex... (+2 more)[0m
+[2m[thinking] [0m[2mNow[0m[2m I have a[0m
+
+== G. git 状态（不清脏文件）==
+  HEAD 4ec7c75204 2026-11-28 10:02:28 +0800 ops-relay[12]: result @ 2026-11-28 10:02:28
+  dirty=208  ahead_behind=0	0
+    197 doc/BaiZe-ISEDA2027/run
+      1 test_simple.py
+      1 test_random_order_aggregation.py
+      1 test_named_tuple_range.py
+      1 test_formfield_callback.py
+      1 test_fix2.py
+      1 test_auth_form.py
+      1 doc/BaiZe-ISEDA2027/Xmodel-LM
+
+（写操作仅限：kill 本线 loop / 重启 .29 loop / 删 stale lock+gc.log）
+=== DONE 298 | 2026-11-28 10:02:33 ===
+```
