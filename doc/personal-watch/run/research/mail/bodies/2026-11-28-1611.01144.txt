@@ -1,0 +1,14 @@
+Dear Dr. Poole,
+
+I am Yang Liu, a researcher working on LLM agents and EDA automation; you can find my work at https://foamliu.github.io/. I have been revisiting your Gumbel-Softmax paper: replacing a non-differentiable categorical sample with a differentiable Gumbel-Softmax sample that can be smoothly annealed back to a categorical distribution is exactly the kind of trick we are considering for discrete decisions in chip-design agents (tool choice, pass choice, configuration choice).
+
+I have three concrete questions:
+
+1. In your structured-output experiments, how sensitive were results to the annealing schedule for tau? Is there a practical rule (e.g., exponential decay tied to validation likelihood) that held across tasks?
+2. When the categorical variables are high-dimensional and sparse (e.g., a config vector with a few active options), did the straight-through variant outperform the soft relaxation, and under what temperature?
+3. For semi-supervised classification, the speedup you report: does it come mainly from replacing REINFORCE-style score-function gradients, or from better gradient variance? That distinction would tell us whether to use it in an on-policy RL loop.
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

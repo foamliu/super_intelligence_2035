@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-28 09:0x · r280）**：作者 **428** 人（编号最大 **428**）· X 已核验 **168**（本轮 **+1**：`@poolio` 由本人 Stanford 主页 <https://cs.stanford.edu/~poole/> `200` / 63,366 B 外链 `twitter.com/poolio` + 代理抓 `x.com/poolio` `200` / 199,993 B，`og:title` = `Ben Poole (@poolio) / X` ⇒ 双源；Jason Cong / Sung Kyu Lim 未找到本人 X ⇒ 不猜、不计入）· 已发信 **192**（台账 #1–#192；本窗 **+1**：#192 Ben Poole；今日 **4/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 06:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Ben Poole（Gumbel-Softmax 三作，Google DeepMind，A 级 `benmpoole@gmail.com`〔本人 Stanford 主页明文〕，X `@poolio` 双源 ⇒ 已发信 #192）· Jason Cong 丛京生（EDA / FPGA 学者，UCLA，A 级 `cong@cs.ucla.edu`〔UCLA 官方人员页明文〕，X 未找到 ⇒ 仅建档）· Sung Kyu Lim 임성규（EDA 3D-IC 学者，USC〔2025-08 自 Georgia Tech 转〕，A 级 `limsung@usc.edu`〔本人旧主页明示 `Please contact me at`〕，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 06:0x · r278）**：作者 **425** 人（编号最大 **425**）· X 已核验 **167**（本轮 **+2**：`@tqchenml` 由本人主页 <https://tqchen.com/> `200` / 6,008 B 页内 `Twitter : @tqchenml` 外链 + 代理抓 `x.com/tqchenml` `200` / 186,301 B，`og:title` = `Tianqi Chen (@tqchenml) on X`、bio = `AssocProf @CarnegieMellon … Creator of @XGBoostProject` ⇒ 双源；`@mo_norouzi` 由本人主页 <https://norouzi.github.io/> `200` / 23,647 B 外链 `twitter.com/mo_norouzi` + 代理抓 `x.com/mo_norouzi` `200` / 198,504 B，`og:title` = `Mohammad Norouzi (@mo_norouzi) on X`、bio = `Founder and CEO at Ideogram` ⇒ 双源；`@guestrin` 仅 X 页 `og:title` + bio 自述 `Co-author of XGBoost` 单源、本人主页无 X 外链 ⇒ **待核、不计入**）· 已发信 **191**（台账 #1–#191；本窗 **+1**：#191 Tianqi Chen；今日 **3/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 03:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Tianqi Chen 陈天奇（XGBoost 一作，CMU，A 级 `tqchen@cmu.edu`〔本人主页 `Email : tqchen at cmu dot edu` 还原〕，X `@tqchenml` 双源 ⇒ 已发信 #191）· Carlos Guestrin（XGBoost 末位，Stanford，A 级 `guestrin@stanford.edu`〔本人 contact 页明文〕，X `@guestrin` 单源待核 ⇒ 仅建档，守「同一论文 ≤1」）· Mohammad Norouzi（Dreamer 末位，Google DeepMind / Ideogram，主页无公开邮箱，X `@mo_norouzi` 双源 ⇒ 仅建档）。
 > **当前计数（2026-11-28 03:0x · r276）**：作者 **422** 人（编号最大 **422**）· X 已核验 **165**（本轮 **+1**：`@pranavrajpurkar` 由本人主页 <https://pranavrajpurkar.com/> `200` / 31,854 B 外链 + 代理抓 `x.com/pranavrajpurkar` `200` / 169,490 B，`og:title` = `Pranav Rajpurkar (@pranavrajpurkar) on X` ⇒ 双源；Aaron Courville 页面仅 Mila 机构账号、Kelvin Xu 页面无 x/twitter 外链 ⇒ 均记「未找到 X」，不猜）· 已发信 **190**（台账 #1–#190；本窗 **+1**：#190 Aaron Courville；今日 **2/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 00:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Aaron C. Courville（Show, Attend and Tell 资深作者，Mila / 蒙特利尔大学，A 级 `courvila@mila.quebec`〔MILA 官方人员页 `mailto:` 明文〕，X 未找到 ⇒ 已发信 #190）· Pranav Rajpurkar（SQuAD 一作，Harvard Medical School，主页无邮箱、X 双源 ⇒ 仅建档）· Kelvin Xu（Show, Attend and Tell 一作，Google DeepMind，A 级 `kelvinxx@google.com`〔本人主页 `mailto:` 明文〕，X 未找到 ⇒ 仅建档，守「同一论文 ≤1」）。
 > **当前计数（2026-11-28 00:0x · r275）**：作者 **419** 人（编号最大 **419**）· X 已核验 **164**（本轮 **+0**：DiversePlace 三位作者本人主页均无 x/twitter 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **189**（台账 #1–#189；本窗 **+1**：#189 Zhiyao Xie；今日 **1/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 21:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 +0）。本轮 **+3**：Zhiyao Xie 谢知遥（DiversePlace 资深作者，香港科技大学，A 级 `eezhiyao@ust.hk`〔本人主页 <https://zhiyaoxie.com/> 页内 `mailto:` 明文〕，X 未找到 ⇒ 已发信 #189）· Ling Pan（DiversePlace 末位，香港科技大学，A 级 `lingpan@ust.hk`〔本人主页 <https://ling-pan.github.io/> 页内明文 `lingpan [@] ust [DOT] hk` 还原〕，X 未找到 ⇒ 仅建档）· Wenrui Zhou（DiversePlace 一作，香港科技大学，本人主页 `200` 但无 `mailto:`/明文邮箱，X 未找到 ⇒ 仅建档）。
@@ -5989,3 +5990,42 @@
 | X 账号 | **@mo_norouzi**（本人主页外链 `twitter.com/mo_norouzi` + 代理抓 `x.com/mo_norouzi` `200` / 198,504 B，`og:title` = `Mohammad Norouzi (@mo_norouzi) on X`、bio = `Founder and CEO at Ideogram` ⇒ 双源；⚠️ 身份已从学界转业界，当前机构以 bio 为准） |
 | 状态 | **仅建档**（X 已核验；无 A 级公开邮箱 ⇒ 不发信） |
 | 备注 | 语言=英文(判据=伊朗姓名 + 美国/加拿大机构；波斯语不在需全文母语清单)。Dreamer 的潜空间想象 + 解析梯度反传与 posttrain/zhulong 的 model-based RL 对照相关；仅建档跟踪。 |
+
+### 426. Ben Poole
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ben Poole（英文姓名 ⇒ 信按英文写） |
+| 机构 | **Google DeepMind**（research scientist，lead the GenMedia 3D team，San Francisco）；PhD Stanford（导师 Surya Ganguli）；曾任职 Google Brain / Intel Research Pittsburgh / NYU CNS |
+| 代表论文 | **Categorical Reparameterization with Gumbel-Softmax**（`1611.01144`，B 轨 2026-11-28 收录，三作） |
+| 邮箱 | **A 级** `benmpoole@gmail.com`（本人 Stanford 主页 <https://cs.stanford.edu/~poole/> `200` / 63,366 B 页内 `Email` 明文） |
+| 主页 | <https://cs.stanford.edu/~poole/>（`200` / 63,366 B；页内自述 `research scientist at Google DeepMind`、`GenMedia 3D team`、`PhD at Stanford`） |
+| X 账号 | **@poolio**（本人主页外链 `twitter.com/poolio` + 代理抓 `x.com/poolio` `200` / 199,993 B，`og:title` = `Ben Poole (@poolio) / X` ⇒ 双源） |
+| 状态 | **已发信 #192**（2026-11-28 09:0x `SENT OK`） |
+| 备注 | 语言=英文(判据=英文姓名 + 美国机构)。Gumbel-Softmax 的「离散采样可微化 + 退火温度」与 posttrain 的离散动作/离散潜变量、designflow 的离散设计选择直接相关；仅发一封，守「同一论文 ≤1」（同论文 Eric Jang / Shixiang Gu 不再发）。 |
+
+### 427. Jason Cong（丛京生）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jason Cong（丛京生） |
+| 机构 | **University of California, Los Angeles（UCLA）**（Chancellor's Professor, Computer Science；VAST lab 负责人） |
+| 代表论文 | EDA / FPGA / 可定制计算长期工作（代表方向：FPGA 延迟最优技术映射、高层综合、加速器与可定制计算）；**本轮 B 轨未收其具体论文，故不写 arXiv ID，避免臆造** |
+| 邮箱 | **A 级** `cong@cs.ucla.edu`（UCLA 官方人员页 <https://samueli.ucla.edu/people/jason-jingsheng-cong/> `200` / 119,128 B 页内明文） |
+| 主页 | <https://samueli.ucla.edu/people/jason-jingsheng-cong/>（`200` / 119,128 B） |
+| X 账号 | **未找到 X**（UCLA 人员页无 x/twitter 外链；`x.com/jasoncong` 同名他人未采信 ⇒ 不猜） |
+| 状态 | **仅建档**（有 A 级邮箱；本轮不发信，留作 EDA 关系网节点） |
+| 备注 | 语言=中文(判据=华人姓名族属「Jason Cong / 丛京生」+ 美国机构；姓名族属优先于机构)。EDA 方向顶级学者，对 designflow（题目与判分工业级合理性）、zhulong（EDA 流程消融设计）、harness（工具链口径）均有参照价值。 |
+
+### 428. Sung Kyu Lim（임성규）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sung Kyu Lim（임성규） |
+| 机构 | **University of Southern California（USC）**（2025-08 自 Georgia Tech 转；原 Georgia Tech ECE 教授，3D 系统 / 单片 3D IC 方向） |
+| 代表论文 | 3D IC / 单片 3D（monolithic 3D）/ 物理设计长期工作；**本轮 B 轨未收其具体论文，故不写 arXiv ID，避免臆造** |
+| 邮箱 | **A 级** `limsung@usc.edu`（本人旧主页 <https://limsk.ece.gatech.edu/> `200` / 748 B 明示 `I moved to Los Angeles in August 2025 to join USC. Please contact me at limsung@usc.edu.`） |
+| 主页 | <https://sites.usc.edu/limsk/>（`200` / 87,566 B；旧站 <https://limsk.ece.gatech.edu/> 为迁移提示页） |
+| X 账号 | **未找到 X**（USC 新站与旧迁移页均无 x/twitter 外链；未猜） |
+| 状态 | **仅建档**（有 A 级邮箱；本轮不发信，留作 EDA 3D-IC 关系网节点） |
+| 备注 | 语言=한국어(判据=韩文姓名族属 `Sung Kyu Lim / 임성규` + 韩国出身；机构在美国，按姓名族属优先)。3D-IC / 物理设计方向顶级学者，对设计flow 的真实工艺约束题面、zhulong 的 flow 消融有参照价值。 |

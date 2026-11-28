@@ -9,7 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
-**本轮快照**：累计 **458** 条（**第一百三十轮 2026-11-28 06:0x +3 → 458**（B 轨补激活 / 世界模型 / 表格 ML 真空白）：GELU `1606.08415`（**10,723**，2016 预印本；`xΦ(x)` 按输入数值加权、而非像 ReLU 那样按符号门控，视觉 / NLP / 语音任务上均优于 ReLU/ELU）/ Dream to Control / Dreamer `1912.01603`（**2,750**，ICLR 2020；在学到的世界模型紧凑潜空间里展开想象轨迹，把状态值的解析梯度反传回去，20 个视觉控制任务上数据效率 / 计算时间 / 最终性能更优）/ XGBoost `1603.02754`（**14,912**，KDD 2016；稀疏感知算法 + 加权分位草图做近似树学习，并从缓存访问 / 数据压缩 / 分片层面扩展到十亿级样本）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-06-27T19:20:40Z` / `2019-12-03T18:57:16Z` / `2016-03-09T01:11:51Z`；abs `comments` 逐字：GELU = `Trimmed version of 2016 draft`、Dreamer = `9 pages, 12 figures`、XGBoost = `KDD'16 changed all figures to type1`）+ OpenAlex 3/3 `200`（10,723 / 2,750 / 14,912，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 激活函数 / 潜空间世界模型 RL / 表格树提升系统；本轮归属：pretrain +1 · posttrain +1 · zhulong +1 · vision +2 · data +1 · harness +1 · designflow +1）
+**本轮快照**：累计 **461** 条（**第一百三十一轮 2026-11-28 09:0x +3 → 461**（B 轨补离散重参数化 / 生成对抗 / 连续控制真空白）：Categorical Reparameterization with Gumbel-Softmax `1611.01144`（**6,997**，2016 预印本；用可微的 Gumbel-Softmax 采样替代不可微的类别采样，且可平滑退火回类别分布，在结构化输出预测与含类别隐变量的无监督生成上优于当时梯度估计器，并显著加速半监督分类）/ Wasserstein GAN `1701.07875`（**7,050**，2017 预印本；用 Earth-Mover/Wasserstein 距离替代 JS 散度训练 GAN，提升稳定性、缓解模式坍塌，并给出可用于调试与超参搜索的有意义学习曲线）/ Continuous control with deep reinforcement learning（DDPG）`1509.02971`（**18,429**，2015 预印本，`10 pages + supplementary`；把 DQN 思想搬到连续动作域：基于确定性策略梯度的 actor-critic、model-free，同一套算法/网络/超参解决 20+ 模拟物理任务，多数任务可直接从原始像素端到端学习）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-11-03T19:48:08Z` / `2017-01-26T21:10:29Z` / `2015-09-09T23:01:36Z`；DDPG `comments` 逐字 `10 pages + supplementary`）+ OpenAlex 3/3 `200`（6,997 / 7,050 / 18,429，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 离散变量重参数化 / 稳定生成对抗训练 / 连续动作 model-free RL；本轮归属：posttrain +2 · vision +1 · designflow +1 · pretrain +1 · data +0 · harness +0 · zhulong +0）
+**本轮快照（前一）**：累计 **458** 条（**第一百三十轮 2026-11-28 06:0x +3 → 458**（B 轨补激活 / 世界模型 / 表格 ML 真空白）：GELU `1606.08415`（**10,723**，2016 预印本；`xΦ(x)` 按输入数值加权、而非像 ReLU 那样按符号门控，视觉 / NLP / 语音任务上均优于 ReLU/ELU）/ Dream to Control / Dreamer `1912.01603`（**2,750**，ICLR 2020；在学到的世界模型紧凑潜空间里展开想象轨迹，把状态值的解析梯度反传回去，20 个视觉控制任务上数据效率 / 计算时间 / 最终性能更优）/ XGBoost `1603.02754`（**14,912**，KDD 2016；稀疏感知算法 + 加权分位草图做近似树学习，并从缓存访问 / 数据压缩 / 分片层面扩展到十亿级样本）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-06-27T19:20:40Z` / `2019-12-03T18:57:16Z` / `2016-03-09T01:11:51Z`；abs `comments` 逐字：GELU = `Trimmed version of 2016 draft`、Dreamer = `9 pages, 12 figures`、XGBoost = `KDD'16 changed all figures to type1`）+ OpenAlex 3/3 `200`（10,723 / 2,750 / 14,912，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 激活函数 / 潜空间世界模型 RL / 表格树提升系统；本轮归属：pretrain +1 · posttrain +1 · zhulong +1 · vision +2 · data +1 · harness +1 · designflow +1）
 **本轮快照（前一）**：累计 **455** 条（**第一百二十九轮 2026-11-28 03:0x +3 → 455**（B 轨补视觉注意力 / 阅读理解 / 点云真空白）：Show, Attend and Tell `1502.03044`（**10,308**，2015 预印本；软注意力在 **196（14×14）** 位置上取期望 + 硬注意力采样并最大化变分下界，可可视化注视显著物体，Flickr8k / Flickr30k / MS COCO SOTA）/ SQuAD `1606.05250`（**11,133**，EMNLP 2016；10 万+ 众包问题、答案必为原文片段，逻辑回归 F1 **51.0%** vs 简单基线 20%，人类 86.8%）/ PointNet `1612.00593`（**11,443**，CVPR 2017；直接消费点云并保持置换不变，统一分类 / 部件分割 / 语义解析）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2015-02-10T19:18:29Z` / `2016-06-16T16:36:00Z` / `2016-12-02T08:40:40Z`；abs `comments`：SQuAD = EMNLP 2016、PointNet = CVPR 2017、Show Attend 无）+ OpenAlex 3/3 `200`（10,308 / 11,133 / 11,443，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 视觉注意力 / 抽取式阅读理解与人类上限 / 置换不变集合编码；本轮归属：vision +2 · harness +1 · data +1 · pretrain +0 · posttrain +0 · zhulong +0 · designflow +0）
 **本轮快照（前一）**：累计 **452** 条（**第一百二十八轮 2026-11-28 00:0x +3 → 452**（B 轨补架构/多模态真空白）：Sparse Transformers `1904.10509`（**3,468**，2019 预印本；注意力矩阵稀疏因子化把 O(n²) 降到 **O(n√n)**，配深层稳定初始化 + 注意力重算省显存 + 快速注意力 kernel，同一架构建模图像/音频/文本原始字节）/ DALL·E · Zero-Shot Text-to-Image Generation `2102.12092`（**6,727**，2021 预印本；用一个 transformer 把文本 token 与图像 token 当**单一数据流自回归联合建模**，数据与规模足够时零样本可比专用文生图）/ MLP-Mixer `2105.01601`（**4,393**，NeurIPS 2021；仅两类 MLP（逐 patch 混合 + 跨 patch 混合）证明**卷积与注意力都非必需**，大数据或现代正则下逼近同类精度）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 `2019-04-23T19:29:47Z` / `2021-02-24T06:42:31Z` / `2021-05-04T16:17:21Z`；Sparse/DALL·E `comments` 为空，MLP-Mixer 为修订说明）+ OpenAlex 3/3 `200`（3,468 / 6,727 / 4,393，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**（⚠️ 候选 `2206.10658` 经 arXiv 实测为 ART 稠密检索、`2206.07682`〔Emergent Abilities〕已在表内 ⇒ 均弃）；覆盖轴 = 稀疏长序列注意力 / 统一 token 自回归多模态 / 全 MLP 视觉骨干；本轮归属：pretrain +3 · vision +3 · data +1 · zhulong +1 · posttrain +0 · harness +0 · designflow +0）
 **本轮快照（前一）**：累计 **449** 条（**第一百二十七轮 2026-11-27 21:0x +3 → 449**（B 轨补真空白）：LSSL / S4 `2110.13985`（**1,300**，NeurIPS 2021；线性连续时间状态空间层 `ẋ = Ax + Bu, y = Cx + Du` + 可训练结构化 `A`（HiPPO 式长程记忆），把 RNN / 时序卷积 / NDE 统一并推广到连续时间；长度 16,000 语音分类比此前方法 **+24** 个百分点）/ Gated Convolutional Networks / GLU `1612.08083`（**1,589**，2016 预印本；门控线性单元 `(X*W+b) ⊗ σ(X*V+c)`，堆叠卷积 + 门控并行打分，WikiText-103 SOTA、打分延迟比循环基线低一个数量级）/ GPT Understands, Too / P-Tuning `2103.10385`（**1,626**，OpenAlex 记 AI Open 2023；可训练连续 prompt 与离散模板拼接 + prompt encoder（LSTM/MLP）+ anchor，缩小不同离散模板间方差，LAMA / SuperGLUE 提升，冻结与微调、全监督与少样本均有效）；核验：arXiv API `200` + `application/atom+xml`（3 entries，`published` 逐字 2021-10-26T19:44:53Z / 2016-12-23T20:32:33Z / 2021-03-18T17:13:50Z；S4 `comments` 逐字 `NeurIPS 2021`）+ OpenAlex 3/3 `200`（1,300 / 1,589 / 1,626，查询日 2026-11-27）；三 ID 条目级查重 **0 命中**（注：候选 RTLLM 记 `2309.05076` 经 arXiv 实测为情感 agent 论文、真 ID `2308.05345` 已在表内 ⇒ 弃）；覆盖轴 = 长序列状态空间 / 门控卷积语言模型 / 连续 prompt 适配；本轮归属：pretrain +3 · posttrain +2 · harness +1 · zhulong +1 · data +1 · vision +1 · designflow +0）
@@ -7944,3 +7945,48 @@
 | 与我们工作的关系 | **data（主 · 表格 / 结构化特征基线）**：EDA 里大量表格特征（时序 / 功耗 / 良率统计）可用树提升做**强基线**，避免一上来就上大模型。<br>**harness（次 · 基线口径）**：树模型是廉价、可复现的基线，用来界定「LLM / agent 到底加了什么」。<br>**designflow（次 · 特征与可解释归因）**：用例的数值特征可先用树模型做可解释归因。<br>**pretrain / posttrain / vision / zhulong**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-28**（第一百三十轮 · 06:0x） |
 | 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-03-09T01:11:51Z`、`updated` `2016-06-10T23:23:51Z`；`comments` 逐字 `KDD'16 changed all figures to type1`；primary `cs.LG`）+ OpenAlex **`200`**（14,912 / 2016 / `preprint` / source = arXiv，查询日 2026-11-28）。「稀疏感知算法 / 加权分位草图 / 缓存访问-压缩-分片 / 十亿级样本」取自摘要逐字；摘要无具体分数 ⇒ 不写未核数字。条目级查重：`1603.02754` 在 `PAPERS.md` **0 命中**。 |
+
+## 459. Categorical Reparameterization with Gumbel-Softmax
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Categorical Reparameterization with Gumbel-Softmax |
+| 作者（前 3） | Eric Jang · Shixiang Gu · Ben Poole（arXiv 逐字核，共 3 位） |
+| 年份 | **2016**（arXiv API `published` 逐字 `2016-11-03T19:48:08Z`；v5 `updated` `2017-08-05T22:45:19Z`） |
+| 会议 / 期刊 | **arXiv 预印本**（abs `comments` 为空；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **6,997**（OpenAlex `10.48550/arxiv.1611.01144`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1611.01144> ｜ `10.48550/arXiv.1611.01144` |
+| 一句话贡献 | 提出 **Gumbel-Softmax** 梯度估计器：用一个**可微**的 Gumbel-Softmax 分布采样替代对类别分布**不可微**采样的做法，且该分布可**平滑退火**回类别分布；在结构化输出预测与含类别隐变量的无监督生成任务上优于当时的梯度估计器，并在半监督分类上带来大幅加速。摘要未给具体数值 ⇒ 本条不写未核分数。 |
+| 与我们工作的关系 | **posttrain（主 · 离散动作 / 离散潜变量 RL）**：EDA 里大量决策是离散的（选工具、选 pass、选配置），Gumbel-Softmax 提供了 REINFORCE 之外的一条低方差可微梯度路径，可作为离散动作策略臂对照。<br>**designflow（次 · 离散设计选择的可微建模）**：需要把离散选项嵌进可微目标时，可参照其退火温度调度。<br>**pretrain（次 · 离散潜变量）**：若做离散 latent / VQ 类建模，可作重参数化备选。<br>**data / harness / zhulong / vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十一轮 · 09:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-11-03T19:48:08Z`、`updated` `2017-08-05T22:45:19Z`；`comments` 为空；primary `stat.ML`）+ OpenAlex **`200`**（6,997 / 2016 / `preprint` / source = arXiv，查询日 2026-11-28）。「可微 Gumbel-Softmax 采样 / 平滑退火回类别分布 / 结构化输出预测与类别隐变量生成 / 半监督分类加速」取自摘要逐字；摘要无具体数值 ⇒ 不写未核数字。条目级查重：`1611.01144` 在 `PAPERS.md` **0 命中**。 |
+
+## 460. Wasserstein GAN
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Wasserstein GAN |
+| 作者（前 3） | Martin Arjovsky · Soumith Chintala · Léon Bottou（arXiv 逐字核，共 3 位） |
+| 年份 | **2017**（arXiv API `published` 逐字 `2017-01-26T21:10:29Z`；v3 `updated` `2017-12-06T20:01:54Z`） |
+| 会议 / 期刊 | **arXiv 预印本**（abs `comments` 为空；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **7,050**（OpenAlex `10.48550/arxiv.1701.07875`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1701.07875> ｜ `10.48550/arXiv.1701.07875` |
+| 一句话贡献 | 提出 **WGAN**：以 **Earth-Mover / Wasserstein 距离**替代传统 GAN 的 JS 散度训练；报告可**提升学习稳定性、消除模式坍塌**，并给出**可用于调试与超参搜索的有意义学习曲线**，同时用大量理论说明其优化问题与其它分布距离的深层联系。摘要未给具体数值 ⇒ 本条不写未核分数。 |
+| 与我们工作的关系 | **vision（主 · 生成模型训练稳定性）**：波形图/版图类生成若用对抗训练，WGAN 的「损失曲线可作调试信号」是可借鉴的诊断口径。<br>**posttrain（次 · 训练稳定性诊断）**：把「损失值本身有信息量」的思路借到 RL / 后训练监控上。<br>**pretrain（次 · 训练诊断）**：同上，作为不稳定性的早期信号。<br>**data / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十一轮 · 09:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2017-01-26T21:10:29Z`、`updated` `2017-12-06T20:01:54Z`；primary `stat.ML`，另 `cs.LG`）+ OpenAlex **`200`**（7,050 / 2017 / `preprint` / source = arXiv，查询日 2026-11-28）。「Earth-Mover/Wasserstein 距离 / 稳定性 / 模式坍塌 / 有意义学习曲线 / 与其它距离的理论联系」取自摘要逐字；摘要无具体数值 ⇒ 不写未核数字。条目级查重：`1701.07875` 在 `PAPERS.md` **0 命中**。 |
+
+## 461. Continuous control with deep reinforcement learning（DDPG）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Continuous control with deep reinforcement learning |
+| 作者（前 3） | Timothy P. Lillicrap · Jonathan J. Hunt · Alexander Pritzel（arXiv 逐字核；另 Nicolas Heess / Tom Erez / Yuval Tassa / David Silver / Daan Wierstra，共 8 位） |
+| 年份 | **2015**（arXiv API `published` 逐字 `2015-09-09T23:01:36Z`；v4 `updated` `2019-07-05T10:47:27Z`） |
+| 会议 / 期刊 | **arXiv 预印本**（abs `comments` 逐字 `10 pages + supplementary`；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **18,429**（OpenAlex `10.48550/arxiv.1509.02971`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1509.02971> ｜ `10.48550/arXiv.1509.02971` |
+| 一句话贡献 | **DDPG** 把 Deep Q-Learning 的思想迁到**连续动作域**：提出基于**确定性策略梯度**的 **actor-critic、model-free** 算法；用**同一套学习算法、网络架构与超参**稳健求解 **20+** 个模拟物理任务（含 cartpole swing-up、灵巧操作、足式运动、驾驶），性能可与**能访问动力学及其导数**的规划算法竞争，且多数任务可**直接从原始像素端到端**学习。摘要未给具体数值 ⇒ 本条不写未核分数。 |
+| 与我们工作的关系 | **posttrain（主 · 连续动作 RL 基线）**：是 actor-critic / off-policy 连续控制的标准基线，「同一超参跨任务」的口径可直接对照我们的 RL 臂。<br>**zhulong（次 · 成本与超参口径）**：其「同一套超参跨多任务」的写法值得参照。<br>**vision（次 · 像素端到端）**：直接从原始像素学策略，与波形图/截图输入相关。<br>**pretrain / data / harness / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十一轮 · 09:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2015-09-09T23:01:36Z`、`updated` `2019-07-05T10:47:27Z`；`comments` 逐字 `10 pages + supplementary`；primary `cs.LG`）+ OpenAlex **`200`**（18,429 / 2015 / `preprint` / source = arXiv，查询日 2026-11-28）。「确定性策略梯度 actor-critic / model-free / 20+ 任务 / 同一算法-架构-超参 / 与全知规划器可比 / 原始像素端到端」取自摘要逐字；摘要无具体数值 ⇒ 不写未核数字。条目级查重：`1509.02971` 在 `PAPERS.md` **0 命中**。 |
