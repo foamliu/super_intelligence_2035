@@ -2586,3 +2586,89 @@ To https://github.com/foamliu/super_intelligence_2035.git
 （只读：未 kill / 未重启 / 未改任何文件）
 === DONE 299 | 2026-11-28 11:08:09 ===
 ```
+
+---
+
+## RUN_ID 300 · 2026-11-28 11:09:10 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "== A. pretrain loop / cline 进程树 =="
+ps -eo pid,ppid,stat,etime,pcpu,args | grep -E '[b]aize_pretrain_loop|[b]aize_s2_switch|[s]2_switch_executor' | cut -c1-170
+P=$(pgrep -f 'cline.*cline_pretrain' | head -1)
+echo "  pretrain_cline_pid=$P"
+if [ -n "$P" ]; then
+  echo "  ppid=$(ps -o ppid= -p $P) etime=$(ps -o etime= -p $P) stat=$(ps -o stat= -p $P) cpu=$(ps -o pcpu= -p $P) wchan=$(cat /proc/$P/wchan 2>/dev/null)"
+  echo "  parent_chain:"; ps -o pid,ppid,args -p $(ps -o ppid= -p $P | tr -d ' ') 2>/dev/null | cut -c1-160
+fi
+echo
+echo "== B. pretrain loop 日志（尾 30 行）=="
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -n 30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "== C. 关键计数 =="
+L=/tmp/baize_pretrain_loop.log
+for pat in 'wake up' 'invoking cline' 'cline returned' '无可用 LLM 候选' 'llm_pick' 'S2' 'torchrun' 'E2BIG' 'Argument list too long'; do
+  echo "  [$pat] = $(grep -c -- "$pat" "$L" 2>/dev/null || echo 0)"
+done
+echo
+echo "== D. 最近 6 条非空日志 =="
+grep -v '^$' "$L" 2>/dev/null | tail -6 | cut -c1-200
+echo
+echo "== E. 关键文件 mtime / WAITING =="
+ls -l --time-style=+%F_%T "$RUN/MEMORY_PRETRAIN_2B.md" "$RUN/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+grep -n '^WAITING' "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null || echo '  WAITING 行缺失'
+echo
+echo "== F. S2 executor / launch 日志 =="
+ls -l --time-style=+%F_%T /tmp/s2_switch_execution.log /tmp/baize_s2_launch.log /tmp/baize_s2_switch_train.log 2>/dev/null
+tail -n 6 /tmp/s2_switch_execution.log 2>/dev/null | cut -c1-200
+echo
+echo "== G. GPU =="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 300 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap12 date=2026-11-28 11:09:10
+== A. pretrain loop / cline 进程树 ==
+  pretrain_cline_pid=
+
+== B. pretrain loop 日志（尾 30 行）==
+
+== C. 关键计数 ==
+  [wake up] = 0
+  [invoking cline] = 0
+  [cline returned] = 0
+  [无可用 LLM 候选] = 0
+  [llm_pick] = 0
+  [S2] = 0
+  [torchrun] = 0
+  [E2BIG] = 0
+  [Argument list too long] = 0
+
+== D. 最近 6 条非空日志 ==
+
+== E. 关键文件 mtime / WAITING ==
+-rw-r--r-- 1 app.e0031982 app.adm 30770 2026-11-28_08:32:34 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md
+-rw-r--r-- 1 app.e0031982 app.adm 33286 2026-11-28_08:25:09 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+184:WAITING: 0
+
+== F. S2 executor / launch 日志 ==
+-rw-r--r-- 1 app.e0031982 app.adm 4036 2026-11-28_08:06:45 /tmp/baize_s2_launch.log
+
+== G. GPU ==
+0, 0 %, 1455 MiB
+1, 0 %, 4 MiB
+2, 0 %, 4 MiB
+3, 0 %, 1455 MiB
+4, 0 %, 4 MiB
+5, 0 %, 4 MiB
+6, 0 %, 729 MiB
+7, 0 %, 4 MiB
+（只读：未 kill / 未重启 / 未改任何文件）
+=== DONE 300 | 2026-11-28 11:09:10 ===
+```
