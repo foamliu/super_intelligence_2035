@@ -4,7 +4,7 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部完成 + DRY=1 端到端验证 PASS** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。
 
-> ✅ **心跳 · 2026-11-28 11:51 (R1107) — 方案 C 全部交付 + fresh re-verify 全 PASS · 25/25 tests · DRY=1 S2 180 shards inline 无 E2BIG 无 EMFILE · 5/5 .done + MANIFEST · .12 GPU 8×0% idle · 等 pretrain git pull + 启动 S2**：
+> ✅ **心跳 · 2026-11-28 12:0x (R1108) — 方案 C 全部交付 + ops 独立复验确认 · 25/25 tests · DRY=1 S2 180 shards inline 无 E2BIG 无 EMFILE · 5/5 .done + MANIFEST · .12 GPU 8×0% idle · 等 pretrain git pull + 启动 S2**：
 > - **DRY=1（fresh 11:50 实跑）**：`BLEND_TSV=configs/blend_s2_preblend.tsv BLEND_CURSOR_OFFSETS_JSON=.../cursor_offsets_350k.json DRY=1 bash scripts/train.sh s1 --dry-run` → "blend 就绪：180 个 shard" · weight_sum=1.000000 · inline `--train-data-path`（无 @file / 无 E2BIG）✅
 > - **blendswitch tests（fresh 11:51 重跑）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio dev=0.0000%) · test_blend_hot_switch_integration.py 7/7 PASS · test_bridge_compat.py 10/10 PASS = **25/25 PASS** ✅
 > - **5/5 .done + MANIFEST.json（fresh 确认）**：stackv3_filt(16 .bin/1.73TB) / megamath_web(16/812GB) / nemotron(16) / megamath_pb(16) / finemath(16) — 全部有 .done + MANIFEST.json ✅
