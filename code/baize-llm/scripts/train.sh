@@ -254,7 +254,7 @@ export PYTHONPATH
   echo "  blend=$(echo "$BLEND" | wc -w | awk '{print $1/2}') shards"
 } >> "$TLOG"
 
-ulimit -n 65536 2>/dev/null || true
+ulimit -n 1048576 2>/dev/null || true
 
 # Export NCCL/PyTorch env vars for BOTH single-node and multi-node paths.
 # 2026-10-27 fix: single-node path was missing these exports → NCCL Error 1
@@ -277,7 +277,7 @@ else
   REMOTE_ARGS="$(q "${ARGS[@]}")"
   log "rank0 @ ${MASTER_IP}（后台 ssh）"
   ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes "$MASTER_IP" \
-      "ulimit -n 65536 && cd $BAIZE_TRAIN_CODE && export PYTHONPATH=$PYTHONPATH && \
+      "ulimit -n 1048576 && cd $BAIZE_TRAIN_CODE && export PYTHONPATH=$PYTHONPATH && \
        export $NCCL_ENV && export $PYTORCH_ENV && \
        $PY/torchrun --nnodes=2 --node_rank=0 --nproc_per_node=$NPROC_PER_NODE \
          --master_addr=$MASTER_IP --master_port=$MASTER_PORT \
