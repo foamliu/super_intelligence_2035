@@ -169,9 +169,28 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-27 08:3x（**S2 切换准备：350k 时执行 blend hot-switch，由你操作**）· 用户直令 · 最高优先 · 未完成
+### 🔴 用户令 · 2026-11-28 16:1x（**Review S2 训练状态，只读汇报，什么都不要动**）· 用户直令 · 最高优先 · 未完成
 
-> **用户原话**：「按照方案 A 做准备」——即 data 交付 patch + know-how，**pretrain 执行切换并继续监控**。
+> **用户原话**：「安排 pretrain 和 data review 一下训练状态，什么都不要动，只通过记忆汇报发现。」
+
+**背景**：运维已直接完成 S2 切换（不加 cursor offset shim，纯 S2 blend 冷切换从 350k ckpt resume）。训练已在 16 卡上跑起来：iter 350040/700k，step ~7.0s，loss ~1.55，0 NaN/0 skip，GPU 16×100%/~75GB。
+
+**你要做的（只读，不动任何东西）**：
+
+1. **确认训练健康**：读 worker log / master log / nvidia-smi，确认：
+   - step time 稳定（<7.4s gate）
+   - loss 无异常突跳（S2 切换后 loss 从 ~1.97 降到 ~1.55 是正常的——code/math 数据 loss 天然更低，不是模型退化）
+   - 0 NaN / 0 skip
+   - 16 卡 GPU 全满载
+   - LR re-warmup 进度正常
+2. **确认 S2 blend 生效**：从启动命令或 worker log 确认数据路径是 S2 的 12 源（web40:code40:math20），不是 S1 的 7 源
+3. **确认无 cursor offset shim**：`BLEND_CURSOR_OFFSETS_JSON` 未设置（纯 S2 blend，不带 cursor offset——data 的方案 D+E：换 SEED + 新源天然零重叠）
+4. **在 MEMORY 心跳汇报**：把上述 3 项确认结果写进 MEMORY 心跳第一行，标 `S2 RUNNING · 只读 review`，保持 `WAITING=0`
+5. **🚫 绝对禁止**：不 kill 进程、不重启训练、不改 train.sh/configs/.bak/blend TSV、不启动 eval、不碰 daemon
+
+---
+
+### ✅ 用户令 · 2026-11-27 08:3x（**S2 切换准备：350k 时执行 blend hot-switch，由你操作**）· 用户直令 · 最高优先 · 已完成（运维直接执行）
 
 **背景（必读）**：
 - 训练当前 iter ≈ 340k/700k，**350k 切换点 ETA ≈ 11-28 06:00**（约 18h 后）
