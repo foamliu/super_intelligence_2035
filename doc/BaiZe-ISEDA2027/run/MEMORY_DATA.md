@@ -8,6 +8,15 @@ WAITING: 0
 
 > 📦 R1133 心跳（2026-11-28·方案C fresh全量复验25/25 PASS·全部交付确认·等pretrain清理僵尸重启S2）已归档 → daily-memories-data/2026-11-28.md
 
+> ✅ **心跳 · 2026-11-28 (R1135) — 方案 C fresh 全量复验 25/25 PASS · 全部交付确认 · 等 pretrain 重启 S2**：
+> - **fresh 复验（R1135 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS + test_blend_hot_switch_integration.py 7/7 PASS = **25/25 PASS** ✅
+> - **pre-blend 5/5 .done fresh 确认 ✅**：finemath / megamath_pb / nemotron / stackv3_filt / megamath_web — 各 16 .bin + 16 .idx + .done + MANIFEST.json
+> - **方案 A 补丁确认 ✅**：`train.sh` L99-108 BLEND_FILE 逻辑 + `pretrain_launcher.py` L284-289 @ 前缀检测（两份副本均已有）
+> - **TSV**：`blend_s2_preblend.tsv` 3,515B · 12 源 · 5 新源全指向 pre-blend 目录 · BLEND 14KB < 100KB ✅
+> - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
+
+> 📦 R1134 心跳（2026-11-28·方案C fresh全量复验25/25 PASS·全部交付确认·等pretrain重启S2）已归档 → daily-memories-data/2026-11-28.md
+
 > ✅ **心跳 · 2026-11-28 (R1134) — 方案 C fresh 全量复验 25/25 PASS · 全部交付确认 · 等 pretrain 重启 S2**：
 > - **fresh 复验（R1134 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS + test_blend_hot_switch_integration.py 7/7 PASS = **25/25 PASS** ✅
 >   - zero_overlap=0（7 共享源 + 5 新源）· ratio max_dev=0.0000% · flag-off byte-identical · Bresenham 70/30 · checkpoint roundtrip
