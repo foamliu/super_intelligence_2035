@@ -2,18 +2,19 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1163) — S2 OOM 方案 v2（live 监控数据加入）· `S2_OOM_MEMORY_PLAN.md` v2 · 推荐 E（nw=2+禁mmap）继续跑**：
-> - **当前训练状态**（step 350260 = S2 第 260 步）：0 OOM / 0 NaN / step=6.9-7.2s ✅ / 吞吐~565K ✅ / loss=1.51-1.55 ✅
-> - **live 监控**（data agent 在 .12/.29 部署 5s 采样 `/tmp/s2_mem_monitor*.csv`）：
->   - AnonPages 增长率**持续衰减**：1.1 GB/step（step 120）→ 0.44（step 200）→ **0.24-0.30**（step 260）
->   - 当前 AnonPages：.12=628GB / .29=626GB · MemFree：.12=~1250GB / .29=~1175GB
->   - COW 饱和模型：预计 step 500-1000 增长率降至 <0.1 GB/step → 平台期 ~700-815 GB → **大概率不崩**
-> - **v2 推荐**：继续跑 E（nw=2+禁mmap），不停训。如 AnonPages >1,500GB 则降 nw=1→0
-> - **v1→v2 变更**：v1 推荐 D+（nw=0，确定不崩但 step~14s ETA 56 天）；v2 发现 E 实测 step=7.0s（达标！），且 COW 减速 → 改推 E
-> - **交付物**：`run/data/blendswitch/S2_OOM_MEMORY_PLAN.md`（v2，26KB：crash 归因 + live 监控曲线 + 8 方案对比表 + 推荐 + 交接块 + 告警阈值表）
-> - data 侧未改训练配置/未启动训练/未 kill 进程 · 监控脚本 `/tmp/s2_mem_monitor*.sh` 持续运行 · WAITING=0
+> 🔧 **心跳 · 2026-11-28 (R1164) — S2 内存实验 v3（data 主导）· 方案 E 达标 · S2 可做 · 待 2000 步正式验收**：
+> - **用户令**（20:0x）：data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）；step ≤7.4s 硬指标
+> - **纠正模型**：旧模型 S1=1,039GB **高估 1.56×**（S1 实测 666GB，ops 探针 RUN_ID 291）；.idx 因子 0.79× 非 1.5×
+> - **S2 config E（nw=2+no_mmap）live 实测**（step ~320）：
+>   - step=6.9-7.2s ✅（≤7.4s）· 吞吐~565K ✅（vs S1 600K，-6%）· 0 OOM ✅ · 0 NaN ✅ · loss=1.50-1.55 ✅
+>   - AnonPages：.12=630GB / .29=632GB · MemAvail：.12=1,164GB / .29=1,202GB · swap si/so=0（无活跃换页）
+>   - **AnonPages 已平台化**：增长率 0.81→0.25→**0.02** GB/step（step 85→200→320）
+>   - COW 衰减模型：平台期 ~667GB（与 S1 666GB 吻合）· headroom 1,386GB → **不会 OOM**
+> - **结论：方案 E 达标，S2 可做**。未采用方案 D（用户驳回）。待 step 2000 正式验收（ETA ~3h）后交付 pretrain 长跑
+> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v3（31KB：纠正模型 + 实验记录表 + COW 衰减拟合 + 新结论 + 交接块）
+> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor_29.csv`（.29）· WAITING=0
 
-> 📦 R1162 心跳（S2 OOM 方案 v1 · 推荐 D+）已被 v2 覆盖 → 见上
+> 📦 R1163 心跳（S2 OOM 方案 v2 · 推荐 E 继续 · step 260 · AnonPages 减速中）已被 v3 覆盖 → 见上
 
 > 📦 R1161 心跳（S2 CRASHED · 只读 review · 4 项 fresh PASS）已归档 → daily-memories-data/2026-11-28.md
 
