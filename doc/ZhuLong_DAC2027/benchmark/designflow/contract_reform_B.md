@@ -1918,3 +1918,11 @@ to sess not in SUT sandbox。EDA-Flow-Bench HEAD=`bde0084e1`。
 7. check_live 不读 reference/ GT 仅读 hidden B（vwlp_pumpcore_B.sp+sim_config_B.json）+ visible A 输入 + judge-side indep hspice rerun（GT computed live）。
 
 **落盘**：EDA-Flow-Bench HEAD=8738ec52a pushed（case JSON judge_layers [L0,L1]->[L0,L1,L2.live] + test field + test_rationale 14->18 + k_check=18 + self_verify）；super_intelligence_2035 tracking（live_eval_changes.tsv +1 行 + review_nonlite_B.tsv VwlpPumpReport-001 row round r1384->r1385 R2 DONE + 本节 + MEMORY 心跳）。**REQ done 26->27，derisked 1->0（r1384 桩体检 consumed），pending 7->6，BLOCKED 1（SlicerSizeOpt-001）**。L2.live B nonlite 26->27。DEBT:0。WAITING:0（不设等待§1.1）。
+
+## r1406 (2026-11-28 23:13) 6ksw6→HierFlattenCSV-001 合成交付
+- fresh 池重建: .75 ssh_eda_search_20261128_223314/summary.tsv, B 域 keyword 精筛 200 候选, 4-shard 台账并集 4465 dedup by $6(short 列, 修正上轮 $5 host 列误用).
+- 选 1795675676675_6ksw6 (e0048306@hfeg0plg88 mc435, cand_B.tsv host 字段 stale).
+- deepread: cd_inst_hier.il hierarchy 展平到叶子 + CSV 导出. gotcha: 按名开 schematic view 非 master/symbol; visited+depth 防环.
+- case EDA-Eval-DesignFlow-HierFlattenCSV-001 (characterization, L1 judge-run, LIVE-NA, judge=[L0,L1]). candidate hier_flatten.py. 17 断言(a,b,sa,c..p). §4.9 trio distinct first-fail(d/e/f): symbol_reader/no_flatten/no_cycle_guard.
+- 自验: ref 17/17 PASS + neg_selftest OK + SKIP_RUN framework accepts.
+- DEBT=0. WAITING:0.
