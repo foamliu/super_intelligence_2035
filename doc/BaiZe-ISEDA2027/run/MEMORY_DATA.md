@@ -6,39 +6,21 @@ WAITING: 0
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 崩溃根因链已查明 — **首次 12:10 崩溃 = shim bug（已修复）**，后续崩溃 = 僵尸进程导致 NCCL Duplicate GPU。
 > 🔧 **shim bug 已修复（12:12）**：旧版 `_patched_build_indices` 访问 `self.dataset_index`，但 `_build_indices()` 在 `__init__` 中 **先于** `self.dataset_index` 赋值调用 → AttributeError。修复：改用 `result[0]`/`result[1]`（`_orig_build_indices` 返回值）。两份 shim 已同步。
 
-> ✅ **心跳 · 2026-11-28 (R1131) — 方案 C fresh 全量复验 18/18 PASS · 全部交付确认 · 等 pretrain 清理僵尸+重启 S2**：
-> - **fresh 复验（R1131 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS = **18/18 PASS** ✅
->   - zero_overlap=0（7 共享源 + 5 新源）· ratio max_dev=0.0000% · flag-off byte-identical
-> - **gen_blend --verify**：180 shards / weight_sum=1.000000 / 12 源全部指向 pre-blend 目录 / BLEND=14,020B < 100KB ✅
-> - **pre-blend 5/5 .done fresh 确认 ✅**：finemath(106s) / megamath_pb(425s) / nemotron(1865s) / stackv3_filt(4293s) / megamath_web(2798s) — 各 16 .bin + 16 .idx + MANIFEST.json
-> - **TSV**：`blend_s2_preblend.tsv` 12 源 · 180 shards · BLEND=14,020B inline ✅
-> - **方案 A 补丁 fresh grep 确认**：`train.sh` L99-108 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L284-289 `@` 前缀检测（两份副本 `code/BaiZe-ISEDA2027/` L284-289 + `code/baize-llm/pretrain/` L284-289 均已应用）✅ · 当前 BLEND=14KB 走原路径（patch 作为安全网）
-> - **S2 崩溃根因链**：首次 12:10 crash = shim bug（已修复，改用 `result[0]`/`result[1]`）；后续 13:57 crash = 9 僵尸进程导致 NCCL Duplicate GPU
-> - **🔴 pretrain 需做的（data 不执行）**：① 两节点 `pkill -9 -f pretrain_launcher` ② `nvidia-smi` 确认全 ≤4MiB ③ 重启 S2（命令见 SWITCH_RUNBOOK.md §5）④ 验证日志出现 `[blend-hot-switch] Applying cursor offsets` + `Cursor offsets applied`
+> ✅ **心跳 · 2026-11-28 (R1132) — 方案 C fresh 全量复验 25/25 PASS · 全部交付确认 · 等 pretrain 清理僵尸+重启 S2**：
+> - **fresh 复验（R1132 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS + test_blend_hot_switch_integration.py 7/7 PASS = **25/25 PASS** ✅
+>   - zero_overlap=0（7 共享源 + 5 新源）· ratio max_dev=0.0000% · flag-off byte-identical · Bresenham 70/30 · checkpoint roundtrip
+> - **gen_blend --json**：180 shards / weight_sum=1.000000 / 12 源全部指向 pre-blend 目录 / BLEND=14,019B (13.7KB) < 100KB ✅
+> - **pre-blend 5/5 .done fresh 确认 ✅**：finemath(106s) / megamath_pb(425s) / nemotron(1865s) / stackv3_filt(4293s) / megamath_web(2798s) — 各 16 .bin + 16 .idx + .done + MANIFEST.json
+> - **TSV**：`blend_s2_preblend.tsv` 12 源 · 180 shards · 5 新源全部指向 pre-blend 目录 · BLEND=14,019B inline ✅
+> - **方案 A 补丁 fresh grep 确认**：`train.sh` L99-108 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L285 `@` 前缀检测（两份副本均已应用）✅ · 当前 BLEND=14KB 走原路径（patch 作为安全网）
+> - **pre-blend 也解决 EMFILE**：pretrain MEMORY 记录 S2 首次 crash=EMFILE（13,847 shards×2 FD≈27,694/rank > .29 hard limit 65536）→ pre-blend 后 180 shards×16 workers≤2880 FD/node << `ulimit -n 1048576` ✅
+> - **S2 崩溃根因链**：首次 09:29 crash=EMFILE（已由 pre-blend 解决）；12:10 crash=shim bug（已修复）；13:57 crash=9 僵尸进程导致 NCCL Duplicate GPU
+> - **🔴 pretrain 需做的（data 不执行）**：① 两节点 `pkill -9 -f pretrain_launcher` ② `nvidia-smi` 确认全 ≤4MiB ③ 重启 S2（命令见 SWITCH_RUNBOOK.md §5）④ 验证日志出现 `[blend-hot-switch] Applying cursor offsets`
 > - **/nas_user 余量**：39TB（67% used）> 5TB 红线 ✅
-> - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
+> - **pretrain 无待答问题** · **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
 
-> 📦 R1121~R1123 心跳（2026-11-28 15:0x~16:0x·方案C fresh全量复验18/18 PASS·等pretrain清理9僵尸）已归档 → daily-memories-data/2026-11-28.md
-
-> 📦 R1117~R1119 心跳（2026-11-28 12:58~13:16·方案C全量PASS·S2 NCCL Duplicate GPU崩溃·9僵尸分析+修复建议·fresh复验10/10 PASS）已归档 → daily-memories-data/2026-11-28.md
-> - **S2 训练状态**：❌ **S2 再次崩溃** · pretrain 于 12:30 启动 PID 2353255（S2 weights 0.021875=en_v1_4/16）· torchrun workers 于 **12:38:17 全部 SIGTERM** · 崩溃根因 = `NCCL error: Duplicate GPU detected : rank 5 and rank 13 both on CUDA device 97000`（master_log L318）· worker_log 同报 rank 14/6 + rank 15/7 · PID 2353255 仍为僵尸（ppid=1, etimes=1689s, stat=Ssl, 720MiB GPU mem）
-> - **🔴 根因分析（献计献策）**：.29 上有 **9 个僵尸 pretrain_launcher.py 进程** 分属 2 次失败启动：① PID 3922243 组（~10:51 启动, S1 weights 0.040625, etimes=7289s, 5 进程, 各 720MiB）② PID 2353255 组（~12:30 启动, S2 weights 0.021875, 4 进程, 各 720MiB）→ GPU 0/3/4/6 各 1455MiB + GPU 7 729MiB → 新 torchrun 的 rank 映射到已有僵尸进程占用的 GPU → NCCL 检测到同一 GPU 上 2 个 rank → `ncclInvalidUsage` → barrier 失败 → 全部 SIGTERM
-> - **🔧 建议 pretrain 的修复步骤**（data 不执行，仅建议）：
->   1. **杀僵尸**：`pkill -9 -f pretrain_launcher` 在 .29 和 .12 **两节点都执行**
->   2. **验 GPU 干净**：`nvidia-smi --query-gpu=memory.used --format=csv,noheader` 全部应 ≤4 MiB
->   3. **重试 S2 启动**：与之前相同命令（`BLEND_TSV=blend_s2_preblend.tsv` + `BLEND_CURSOR_OFFSETS_JSON=...cursor_offsets_350k.json` + `setsid bash scripts/train.sh s1`）
->   4. **可选加固**：train.sh 启动前加 `pkill -9 -f pretrain_launcher 2>/dev/null; sleep 3` 确保无残留
-> - **方案 A 补丁（fresh grep 确认）**：`train.sh` L99-108 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L284-285 `@` 前缀检测 ✅ · 当前 BLEND=14KB 走原路径（patch 作为安全网）
-> - **方案 B pre-blend 5/5 .done ✅**：stackv3_filt(4293s) / megamath_web(2798s) / nemotron(1865s) / megamath_pb(425s) / finemath(106s)
-> - **TSV**：`blend_s2_preblend.tsv` 3623B · 12 源 · 180 shards / weight_sum=1.000000 / BLEND=14,020B inline ✅
-> - **Blendswitch 25/25 PASS** · **E2BIG+EMFILE 均已消除**（180×2=360 FD）
-> - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
-
-> 📦 R1116 心跳（2026-11-28 12:55·方案C fresh全量复验PASS·25/25 PASS·180 shards·5/5 .done·误报S2运行中(实际已崩溃)）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1093–R1112 心跳（2026-11-28 10:06–13:0x·方案C交付+多轮fresh复验·25/25 PASS·180 shards·5/5 .done·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1092 心跳（2026-11-28 09:38·方案C执行中·A补丁两半已应用+验证·B 3/5 DONE+2/5 running·auto_tsv watcher运行中·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1091 心跳（2026-11-28 09:26·方案C执行中·A补丁两半已应用+验证·B 2/5 DONE+3/5 running·auto_tsv watcher已设·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1090 心跳（2026-11-28 09:2x·方案C执行中·A补丁两半已应用+验证·B 2/5 DONE+3/5 running·auto_tsv watcher已设·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1121~R1131 心跳（2026-11-28 12:58~16:0x·方案C fresh全量复验18~25/25 PASS·S2崩溃根因链查明·shim bug修复·等pretrain清理僵尸）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1090–R1131 心跳（2026-11-28 09:2x~16:0x·方案C执行→交付→多轮fresh复验·25/25 PASS·S2崩溃根因链查明(EMFILE+shim bug+僵尸NCCL)·shim bug修复·等pretrain清理僵尸重启S2）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1089 心跳（2026-11-28 09:0x·方案C执行中·A补丁已应用(误报launcher已patch)·B 2/5 DONE+3/5 running·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1088 心跳（2026-11-28 08:4x·方案C执行中·A补丁已应用·B 5源后台运行·idx转换修复·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1084 心跳（2026-11-28 07:10·fresh复验25/25 PASS+交付物+RUNBOOK全量+pretrain无待答·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
