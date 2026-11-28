@@ -1,7 +1,6 @@
 # 深读笔记 — 1795757723958_2nc86 (felixw@hfeg0pin004, mc214, physical_verify)
 
-> **状态**：preliminary peek（user-msg + keyword profile 级，2026-11-28 r1531 选料轮）。
-> 下轮 r1532 须补 full assistant-tool-call deepread（取 2nc86.messages.json 解析 assistant 工具链 + 最终交付件）后方可合成。
+> **状态**：✅ full deepread 完成（r1532，取 messages.json 解析 152 msgs assistant 工具链 + 真实交付件 SKILL.md 550 行）→ 已合成 case `EDA-Eval-DesignFlow-CalibreLvsRunsetBuilder-001` 落盘 + 自验全绿。
 
 ## 0. Trace 身份
 - session_file: `1795757723958_2nc86.messages.json`（152 msgs, 656KB）
