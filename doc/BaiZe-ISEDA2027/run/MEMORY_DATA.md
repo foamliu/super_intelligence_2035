@@ -4,7 +4,14 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部完成 + DRY=1 端到端验证 PASS** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。
 
-> ✅ **心跳 · 2026-11-28 11:01 (R1099) — 方案 C fresh 全量复验 PASS + .done 标记补全 · 等 pretrain 启动 S2**：
+> ✅ **心跳 · 2026-11-28 11:06 (R1100) — 方案 C fresh 复验 PASS · DRY=1 S2 180 shards inline 无 E2BIG · 5/5 .done 确认 · pretrain 无待答 · 等 pretrain 启动 S2**：
+> - **DRY=1（fresh）**：`BLEND_TSV=configs/blend_s2_preblend.tsv DRY=1 bash scripts/train.sh s1 --dry-run` → "blend 就绪：180 个 shard" · weight_sum=1.000000 · inline `--train-data-path`（无 @file / 无 E2BIG）✅
+> - **5/5 .done（fresh 确认）**：stackv3_filt(elapsed=4293s) / megamath_web(2798s) / nemotron(1865s) / megamath_pb(425s) / finemath(106s) — 全部有 .done + MANIFEST.json + 16 .bin ✅
+> - **TSV（fresh 确认）**：blend_s2_preblend.tsv 12 源 · 5 新源指向 pre-blend 目录 · 180 shards · BLEND ~14KB（远 <128KB 限制）✅
+> - **pretrain**：S1 已停 · 350k ckpt 完好 · 两节点 16×GPU 全 idle（0% util / 0-1455MiB）· pretrain 有「立刻执行 S2 切换」令但尚未启动 · pretrain 已确认 data 交付物（无待答）
+> - **无遗留任务** · WAITING=0
+
+> 📦 R1099 心跳（2026-11-28 11:01·方案C fresh全量复验PASS+.done标记补全·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
 > - **A 补丁（fresh 确认）**：
 >   - `code/baize-llm/scripts/train.sh` L99-113 ✅ BLEND >100KB 时写文件 `blend_runtime.txt`，ARGS 传 `@$BLEND_FILE`
 >   - `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py` L284-289 ✅ `@` 前缀 + `os.path.isfile` 检测 → 从文件加载 BLEND
@@ -101,8 +108,8 @@ WAITING: 0
 ```
 PHASE:        方案C全部完成 — A补丁已应用+验证 + B 5/5 pre-blend DONE + TSV已修正(13847→180 shards, BLEND 14KB) + blendswitch All PASS · 等pretrain启动S2
 已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁(fix_arg_too_long.patch);✅方案A补丁已应用(train.sh+pretrain_launcher.py);✅方案B 5/5 pre-blend DONE;✅TSV已修正+gen_blend验证(180 shards/14019B BLEND)
-当前动作:     R1099:fresh全量复验(DRY=1 --dry-run S2 180 shards inline + flag-off S1 100 shards + blendswitch 25/25 PASS) + .done标记补全 → commit+push
-下一步:       ①pretrain用更新后TSV启动S2(180 shards/14KB BLEND，无需blend_runtime.txt) ②配合切换答疑 ③持续blendswitch复验
+当前动作:     R1100:fresh复验(DRY=1 S2 180 shards inline 无E2BIG + 5/5 .done确认 + pretrain无待答) → commit+push
+下一步:       ①等pretrain启动S2(180 shards/14KB BLEND，inline无需@file) ②配合切换答疑 ③持续blendswitch复验
 阻塞:         无(data侧方案C全部交付完成;TSV已修正+验证通过;等pretrain启动S2)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付)→WAITING=0
