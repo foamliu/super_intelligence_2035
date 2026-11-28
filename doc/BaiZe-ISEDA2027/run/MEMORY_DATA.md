@@ -4,7 +4,7 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 
-> ✅ **心跳 · 2026-11-28 12:38 (R1114) — 方案 C fresh 全量复验 PASS · S2 未运行（pretrain 职责）· 25/25 tests PASS · 180 shards · gen_blend --verify PASS · 5/5 .done · GPU 全 idle · E2BIG+EMFILE 均已消除**：
+> ✅ **心跳 · 2026-11-28 12:45 (R1115) — 方案 C fresh 全量复验 PASS · S2 未运行（pretrain 职责）· 25/25 tests PASS · 180 shards · gen_blend --verify PASS · 5/5 .done · GPU 全 idle · E2BIG+EMFILE 均已消除**：
 > - **S2 训练状态**：⚠️ **当前未运行** — .29 GPU 8×0%/0-1455MiB idle · 350k ckpt 完好 · S2 重启由 pretrain 负责（data 不启动训练）
 > - **方案 A 补丁（fresh sed 确认）**：`train.sh` L99-108 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L284-285 `_elem.startswith('@')` + `os.path.isfile` ✅ · 两份副本均已 patch（`code/baize-llm/pretrain/` + `code/BaiZe-ISEDA2027/`）· flag-off=stock 零回归
 > - **方案 B pre-blend（fresh ls 确认 5/5）**：stackv3_filt 16 .bin (.done elapsed=4293s) ✅ / megamath_web 16 .bin (.done elapsed=2798s) ✅ / nemotron 16 .bin (.done elapsed=1865s) ✅ / megamath_pb 16 .bin (.done elapsed=425s) ✅ / finemath 16 .bin (.done elapsed=106s) ✅ — 全部 .done + MANIFEST.json
