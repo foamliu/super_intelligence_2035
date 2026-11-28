@@ -4,12 +4,13 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部完成（A 补丁已应用+验证 + B 5/5 pre-blend DONE + TSV 已更新+验证）** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。
 
-> ✅ **心跳 · 2026-11-28 10:1x (R1094) — 方案 C 全部完成 + fresh 复验全 PASS · 等 pretrain 启动 S2**：
-> - **A 补丁**：`train.sh` L101/108/110/113 ✅ + `pretrain_launcher.py` L285 (两份: `code/BaiZe-ISEDA2027/` + `code/baize-llm/pretrain/` 均 `@`+`isfile` fix) ✅
-> - **B pre-blend**：5/5 `.done` 全在 · 5 源各 16 .bin ✅ (stackv3_filt/megamath_web/nemotron/megamath_pb/finemath)
-> - **TSV**：`blend_s2_preblend.tsv` 3515B · 5 行指向 pre-blend 目录 · BLEND 14KB < 100KB ✅
-> - **blendswitch**：test_blend_switch.py fresh 重跑 25/25 PASS (zero_overlap=0, ratio max_dev=0.0000%)
-> - **pretrain**：用户 10:1x 令「立刻执行 S2 切换」· S1 已停 · 350k ckpt 完好 · .12 GPU 全 idle（pretrain 尚未启动 S2）
+> ✅ **心跳 · 2026-11-28 11:0x (R1095) — 方案 C 全部完成 + TSV 修正 + fresh 复验全 PASS · 等 pretrain 启动 S2**：
+> - **A 补丁**：`train.sh` L98-108 ✅ (BLEND >100KB 写文件 `@filepath`) + `baize-llm/pretrain/pretrain_launcher.py` L284-285 ✅ (`@`+`isfile` fix)
+> - **B pre-blend**：5/5 `.done` 全在 · 5 源各 16 .bin + MANIFEST.json ✅ (stackv3_filt 8189→16 / megamath_web 4950→16 / nemotron 193→16 / megamath_pb 348→16 / finemath 64→16)
+> - **TSV**（本次修正）：`blend_s2_preblend.tsv` 3623B · 5 行路径改为 pre-blend 目录 · gen_blend --json 验证：180 shards / weight_sum=1.0 / BLEND 14,019B (13.69KB) < 100KB ✅
+>   - ⚠️ **R1094 心跳有误**：此前声称「TSV 3515B · 5 行指向 pre-blend 目录」但实际文件仍指向原始 tokenized 目录（13,847 shards / 2.64MB BLEND）。本轮已修正：5 源路径改为 pre-blend 目录，BLEND 从 2.64MB 降至 14KB。
+> - **blendswitch**：test_blend_switch.py fresh 重跑 All tests pass: True (zero_overlap=0, ratio max_dev=0.0000%)
+> - **pretrain**：用户 10:1x 令「立刻执行 S2 切换」· S1 已停 · 350k ckpt 完好 · 两节点 GPU 全 idle（pretrain 尚未启动 S2）
 > - **无遗留任务** · WAITING=0
 
 > 📦 R1093 心跳（2026-11-28 10:06·方案C全部完成·A补丁已应用+验证·B 5/5 pre-blend DONE·TSV更新(13847→180 shards,14KB)·blendswitch 25/25 PASS）已归档 → daily-memories-data/2026-11-28.md
@@ -89,11 +90,11 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        方案C全部完成 — A补丁已应用+验证 + B 5/5 pre-blend DONE + TSV已更新(13847→180 shards, BLEND 14KB) + blendswitch 25/25 PASS · 等pretrain启动S2
-已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅25/25 PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁(fix_arg_too_long.patch);✅方案A补丁已应用(train.sh+pretrain_launcher.py);✅方案B 5/5 pre-blend DONE;✅TSV已更新+gen_blend验证(180 shards/14KB)
-当前动作:     R1093:方案C全部完成→A补丁已应用+验证→B 5/5 pre-blend DONE→TSV已更新(13847→180 shards)→gen_blend --verify PASS→blendswitch 25/25 PASS→commit+push
+PHASE:        方案C全部完成 — A补丁已应用+验证 + B 5/5 pre-blend DONE + TSV已修正(13847→180 shards, BLEND 14KB) + blendswitch All PASS · 等pretrain启动S2
+已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁(fix_arg_too_long.patch);✅方案A补丁已应用(train.sh+pretrain_launcher.py);✅方案B 5/5 pre-blend DONE;✅TSV已修正+gen_blend验证(180 shards/14019B BLEND)
+当前动作:     R1095:TSV修正(5源路径改为pre-blend目录)→gen_blend --json验证(180 shards/weight_sum=1.0/BLEND 14KB)→blendswitch All PASS→commit+push
 下一步:       ①pretrain用更新后TSV启动S2(180 shards/14KB BLEND，无需blend_runtime.txt) ②配合切换答疑 ③持续blendswitch复验
-阻塞:         无(data侧方案C全部交付完成;TSV已更新+验证通过;等pretrain启动S2)
+阻塞:         无(data侧方案C全部交付完成;TSV已修正+验证通过;等pretrain启动S2)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付)→WAITING=0
 ERROR_COUNT:  0
