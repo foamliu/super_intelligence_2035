@@ -1004,3 +1004,116 @@ LISTEN 0      5          127.0.0.1:9092       0.0.0.0:*    users:(("python3",pid
 （只读：未 kill / 未重启 / 未改配置）
 === DONE 294 | 2026-11-28 08:53:17 ===
 ```
+
+---
+
+## RUN_ID 294 · 2026-11-28 08:53:29 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "[0] exec_host=$(hostname)  date=$(date '+%F %T')"
+echo
+
+echo "== A. harness loop 进程 =="
+ps -eo pid,ppid,etime,stat,rss,args | grep -E '[b]aize_harness_loop' | cut -c1-180
+echo "  loop_count=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)"
+echo
+
+echo "== B. harness 的 cline 进程（loop 派生的）=="
+ps -eo pid,ppid,etime,stat,rss,args | grep -E '[c]line ' | grep -iE 'harness' | cut -c1-180
+echo "  (空=当前没有 cline 在跑)"
+echo
+
+echo "== C. 所有 cline 进程（含别线，用于分辨）=="
+ps -eo pid,ppid,etime,rss,args | grep -E '[c]line --data-dir' | cut -c1-200
+echo
+
+echo "== D. harness loop 日志尾部 =="
+for f in /tmp/baize_harness_loop.log /tmp/baize_harness.log; do
+  if [ -f "$f" ]; then
+    echo "--- $f  [$(stat -c '%y  %s B' "$f")]"
+    tail -n 20 "$f" | cut -c1-200
+  fi
+done
+echo
+
+echo "== E. harness 相关其他日志 =="
+ls -lt /tmp/*harness* 2>/dev/null | head -8 | awk '{print $6, $7, $8, $9}'
+echo
+
+echo "== F. MEMORY_HARNESS 状态 =="
+grep -nE '^WAITING' "$RUN/MEMORY_HARNESS.md" 2>/dev/null
+echo "  mtime: $(stat -c '%y' "$RUN/MEMORY_HARNESS.md" 2>/dev/null)"
+echo "  size:  $(stat -c '%s' "$RUN/MEMORY_HARNESS.md" 2>/dev/null) B"
+echo
+
+echo "== G. opencode / 7-way 评测进程（harness 的任务对象）=="
+ps -eo pid,etime,args | grep -E '[o]pencode|[s]webench|predict|launch_doubao' | cut -c1-170 | head -12
+echo "  (空=harness 的评测任务当前无进程)"
+echo
+
+echo "== H. gw_proxy（harness 依赖的 9090/9091/9092）=="
+ss -ltnp 2>/dev/null | grep -E ':909[0-2]' | cut -c1-140 || echo "  ss 不可用"
+ps -eo pid,etime,args | grep -E '[g]w_proxy' | cut -c1-140 | head -5
+echo
+
+echo "== I. harness 相关文件 mtime（判断是否在动）=="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+ls -l --time-style=+%F_%T "$R/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md" 2>/dev/null | awk '{print $6, $7}'
+ls -lt --time-style=+%F_%T "$R/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/" 2>/dev/null | head -5 | awk '{print $6, $7, $8}'
+echo
+
+echo "（只读：未 kill / 未重启 / 未改配置）"
+echo "=== DONE 294 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap12  date=2026-11-28 08:53:30
+
+== A. harness loop 进程 ==
+  loop_count=0
+0
+
+== B. harness 的 cline 进程（loop 派生的）==
+1347998 1943222       26:30 Sl   34876 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligen
+1348096 1347998       26:30 Sl   424488 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/c
+  (空=当前没有 cline 在跑)
+
+== C. 所有 cline 进程（含别线，用于分辨）==
+1347998 1943222       26:30 34876 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA20
+1348096 1347998       26:30 424524 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_20
+
+== D. harness loop 日志尾部 ==
+
+== E. harness 相关其他日志 ==
+
+== F. MEMORY_HARNESS 状态 ==
+3:WAITING: 1
+  mtime: 2026-11-27 16:41:14.553910280 +0800
+  size:  4141 B
+
+== G. opencode / 7-way 评测进程（harness 的任务对象）==
+  68092    17:59:58 opencode
+ 997794  1-23:29:46 opencode -s ses_e32ba4e8dffeBI590zks0BsxCR
+1347998       26:30 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_intelligence_2035/d
+1348096       26:30 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super_
+3273090       00:00 grep -E [o]pencode|[s]webench|predict|launch_doubao
+  (空=harness 的评测任务当前无进程)
+
+== H. gw_proxy（harness 依赖的 9090/9091/9092）==
+ 341580 42-09:52:31 python3 /nas_train/app.e0031982/harness_work/gw_proxy_dsh.py
+
+== I. harness 相关文件 mtime（判断是否在动）==
+2026-11-27_16:41:14 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+  
+2026-11-28_08:22:12 test_min_count_fix.py 
+2026-11-28_08:22:12 test_dateformat_y.py 
+2026-11-28_08:22:12 test_alter_together_optimization.py 
+2026-11-28_08:22:11 verify_fix.py 
+
+（只读：未 kill / 未重启 / 未改配置）
+=== DONE 294 | 2026-11-28 08:53:30 ===
+```
