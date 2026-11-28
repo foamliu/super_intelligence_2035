@@ -2,18 +2,18 @@
 
 WAITING: 0
 
-> ✅ **心跳 · 2026-11-28 (R1159) — S2 CRASHED · 只读 review · 4 项 fresh 重新确认 PASS · ⚠️ S2 已于 18:09:11 崩溃（DataLoader worker crash .29 rank13），两节点全 idle，latest ckpt=iter_0350000（920 步 S2 进度未保存）· pre-crash 状态健康**：
-> - **① S2 blend TSV ✅**（R1159 python3 实测）：`code/baize-llm/configs/blend_s2_preblend.tsv` · **12 源** · **prop sum=1.0000000000000002**（≈1.0）· **web=0.40/code=0.40/math=0.20** · **180 shards**（11 pre-blend 源×16 .bin + ufw_zh×4 .bin = 176+4=180，find 逐目录实测确认）· SEED=5678 grep TSV/py/json=0 match✅ · SEED=1234 grep TSV=2 match✅
+> ✅ **心跳 · 2026-11-28 (R1160) — S2 CRASHED · 只读 review · 4 项 fresh 重新确认 PASS · ⚠️ S2 已于 18:09:11 崩溃（DataLoader worker crash .29 rank13），两节点全 idle，latest ckpt=iter_0350000（920 步 S2 进度未保存）· pre-crash 状态健康**：
+> - **① S2 blend TSV ✅**（R1160 python3 实测）：`code/baize-llm/configs/blend_s2_preblend.tsv` · **12 源** · **prop sum=1.0000000000000002**（≈1.0）· **web=0.40/code=0.40/math=0.20** · **180 shards**（11 pre-blend 源×16 .bin + ufw_zh×4 .bin = 176+4=180，find 逐目录实测确认）· SEED=5678 grep TSV/py/json=0 match✅ · SEED=1234 grep TSV=2 match✅
 > - **② 零重叠方案（同 SEED=1234 + 新源天然零重叠，无 cursor offset shim）✅**：
 >   - **同 SEED=1234 = 零重叠 ✅**（📌 2026-11-28 用户纠错）：同 seed → 同 shuffle_index 排列 → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。**换 SEED 反而破坏零重叠**。
 >   - **新源天然零重叠 ✅**：5 新源（stackv3_filt/megamath/finemath/nemotron/megamath_web）S1 未消费→overlap=0（test real_s1_s2_source_mapping 各新源 `S1=0/overlap=0` 实测确认）
 >   - **cursor offset shim ✅ 未启用**：`BLEND_CURSOR_OFFSETS_JSON=`（空字符串）→ 纯 S2 冷切换（pretrain MEMORY #3581 直接读 /proc/PID/environ 确认）
->   - **SEED=5678 残留精查**（R1159 grep 实测）：TSV=0 match✅ · blendswitch/*.py=0 match✅ · blendswitch/*.json=0 match✅
-> - **③ blendswitch 验证 fresh PASS ✅**（R1159 本次重跑 miniforge3 py310/numpy2.2.6）：standalone **8/8 PASS**(`All tests pass: True`) + integration **7/7 PASS**(`7/7 passed. All: True`) · zero_overlap=0 · ratio max_dev=0.0087%(standalone)/0.0027%(integration) · flag-off byte-identical · real S1→S2 7→12 mapping zero overlap=0 · verify_results*.json 已 git checkout HEAD 还原为提交版（git status clean 确认）
-> - **④ 训练状态 ⚠️ S2 CRASHED**（pretrain MEMORY #3582 @18:15）：**崩溃前**（@17:58）训练健康✅ iter=350920/700k(50.13%) · step~7043ms all<7.4s✅ · loss~1.500 · 0NaN/0skip✅ · **崩溃**：18:09:11 DataLoader worker crash .29 rank13 → 两节点 torchrun exit → 全 idle · latest ckpt=iter_0350000 · S2 重启 = pretrain 职责
+>   - **SEED=5678 残留精查**（R1160 grep 实测）：TSV=0 match✅ · blendswitch/*.py=0 match✅ · blendswitch/*.json=0 match✅
+> - **③ blendswitch 验证 fresh PASS ✅**（R1160 本次重跑 system python3 3.10.12/numpy2.2.6）：standalone **8/8 PASS**(`All tests pass: True`) + integration **7/7 PASS**(`7/7 passed. All: True`) · zero_overlap=0 · ratio max_dev=0.0000%(standalone Test8)/0.0027%(integration) · flag-off byte-identical · real S1→S2 7→12 mapping zero overlap=0 · verify_results*.json 已 git checkout HEAD 还原为提交版（git status clean 确认）
+> - **④ 训练状态 ⚠️ S2 CRASHED**（pretrain MEMORY #3582 @18:15 + #3583 @18:3x）：**崩溃前**（@17:58）训练健康✅ iter=350920/700k(50.13%) · step~7043ms all<7.4s✅ · loss~1.500 · 0NaN/0skip✅ · **崩溃**：18:09:11 DataLoader worker crash .29 rank13(pid 3983423 SIGKILL) → 两节点 torchrun exit → 全 idle · latest ckpt=iter_0350000(920步S2未保存) · **S2 至今未重启**（pretrain #3583 确认两节点全 idle）· S2 重启 = pretrain 职责
 > - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · 仅重跑 test（结果已还原）+ 更新本 MEMORY 心跳 · WAITING=0
 >
-> 📦 R1158 心跳（S2 CRASHED · 4 项 fresh 确认 PASS · verify_results 已还原）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1159 心跳（S2 CRASHED · 4 项 fresh 确认 PASS · verify_results 已还原）已归档 → daily-memories-data/2026-11-28.md
 
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 崩溃根因链已查明 — **首次 12:10 崩溃 = shim bug（已修复）**，后续崩溃 = 僵尸进程导致 NCCL Duplicate GPU。
