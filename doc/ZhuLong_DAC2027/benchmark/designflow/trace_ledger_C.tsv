@@ -1382,3 +1382,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795593886132_tnxc7.messages.json	adaml	hfhds201	150	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoSocketBridge-001	2026-11-28 07:12	
 1795660572732_r3c4o	carlhe	hfeg0plg47	100	physical_verify	case	EDA-Eval-DesignFlow-CronKillVirtuosoAudit-001	2026-11-28 07:34	
 1795571289156_1kfpb	wenjiel	hfeg0plg77	384	layout_virtuoso	case	EDA-Eval-DesignFlow-LayoutNonUniformScale-001	2026-11-28 07:57	
+1795505164479_jbr4z.messages.json	e0029495	hfeg0pkn003	643	layout_virtuoso	case	EDA-Eval-DesignFlow-AdjacentRectMergeColor-001	2026-11-28 08:23	
