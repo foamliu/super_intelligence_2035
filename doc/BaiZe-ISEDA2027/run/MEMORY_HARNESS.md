@@ -32,16 +32,16 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-27令·opencode v1.19.6 predict DONE(0-patch)·zhulong 12w predict中·6-harness eval中
-已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·opencode v1.19.6全量500题predict DONE(0-patch⚠️)·harness脚本归档✅·8way报告生成器加版本列✅·cline-patched eval DONE(355/500=71.0%)
-当前动作:     zhulong 12-worker predict 29/500进行中(resumed from 26)·6-harness eval循环中(claude-code 2/6)·opencode eval=0patch无需eval·已kill stale opencode进程(PID3803645)·已重启zhulong从8w→12w
-下一步:       6-harness eval跑完(~2.5h)→zhulong predict跑完(~10h)→zhulong eval→生成最终8路对比报告(含版本列)
-阻塞:         无（⚠️ opencode v1.19.6 全量500题0-patch=工具接口无法编辑文件，Pass%=0.0%；上一轮v1.18.27为64.6%；按指令不debug版本问题，如实报告）
+PHASE:        opencode v1.19.6 0-patch根因已修复(驱动缺--dir)·opencode 8w全量重跑中·zhulong 12w predict中·6-harness eval中
+已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·cline-patched eval DONE(355/500=71.0%)·opencode 0-patch根因诊断+修复✅(commit f154c8ba50,pushed)
+当前动作:     opencode 8-worker全量500题重跑中(1/500,smoke test 502B patch✅)·zhulong 12-worker predict 62/500·6-harness eval循环中(codex eval中,cline-patched+claude-code已完)
+下一步:       opencode predict完成(~5h@8w)→opencode eval→zhulong predict完成(~8h)→zhulong eval→生成最终8路对比报告(含版本列)
+阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~26KB / MEMORY≈5KB
 
+  🔧 opencode 0-patch根因(已修复): OpencodeDriver代码为v2.4.1编写(无--dir),但v1.19.6需要--dir<workdir>才能编辑目标repo文件。修复=加回--dir(commit f154c8ba50)。smoke test验证:astropy__astropy-12907产生502B patch。
   SWE-bench Verified Pass% (doubao-pro 上一轮v1.18.27, 保留对照): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
-  ⚠️ opencode v1.19.6 重跑结果: 0/500 patches (全量0-patch, Pass%=0.0%) — v1.19.6工具接口无法编辑文件，非infra非能力，为版本行为；按11-27令不debug版本问题
 
 ## 启动说明（首次唤醒）
 
