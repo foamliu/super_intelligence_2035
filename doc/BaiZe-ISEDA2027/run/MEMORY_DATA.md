@@ -4,15 +4,17 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部完成 + DRY=1 端到端验证 PASS** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。
 
-> ✅ **心跳 · 2026-11-28 11:16 (R1102) — 方案 C re-verify 全 PASS · 25/25 tests · DRY=1 S2 180 shards inline 无 E2BIG · 5/5 .done · 等 pretrain 启动 S2**：
+> ✅ **心跳 · 2026-11-28 11:25 (R1103) — 方案 C fresh re-verify 全 PASS · 25/25 tests · DRY=1 S2 180 shards inline 无 E2BIG · 5/5 .done · EMFILE 分析：train.sh 已含 ulimit · 等 pretrain 启动 S2**：
 > - **DRY=1（fresh）**：`BLEND_TSV=configs/blend_s2_preblend.tsv DRY=1 bash scripts/train.sh s1 --dry-run` → "blend 就绪：180 个 shard" · weight_sum=1.000000 · inline `--train-data-path`（无 @file / 无 E2BIG）✅
-> - **blendswitch tests（fresh 重跑）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio dev=0.00%) · test_blend_hot_switch_integration.py 7/7 PASS · test_bridge_compat.py 10/10 PASS ✅
-> - **5/5 .done（fresh 确认）**：stackv3_filt(elapsed=4293s) / megamath_web(2798s) / nemotron(1865s) / megamath_pb(425s) / finemath(106s) — 全部有 .done + MANIFEST.json + 16 .bin ✅
+> - **blendswitch tests（fresh 重跑）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio dev=0.0000%) · test_blend_hot_switch_integration.py 7/7 PASS · test_bridge_compat.py 10/10 PASS ✅
+> - **5/5 .done（fresh 确认）**：stackv3_filt(16 .bin) / megamath_web(16) / nemotron(16) / megamath_pb(16) / finemath(16) — 全部有 .done + MANIFEST.json ✅
 > - **TSV（fresh 确认）**：blend_s2_preblend.tsv 3515B · 12 源 · 5 新源指向 pre-blend 目录 · 180 shards · BLEND <100KB（走 inline，无 E2BIG）✅
-> - **A 补丁（fresh 确认）**：train.sh L99-113 ✅ + pretrain_launcher.py L284-289 ✅ · flag-off = stock 零回归
+> - **A 补丁（fresh 确认）**：train.sh L98-113（E2BIG fix: BLEND>100KB→@file）+ L257/L280（ulimit -n 1048576 两节点）✅ · pretrain_launcher.py L284-290（@ 前缀读取）✅ · flag-off = stock 零回归
+> - **EMFILE 分析**（pretrain MEMORY 提到 S2 第2次尝试遇 EMFILE）：train.sh **已有** `ulimit -n 1048576`（L257 本机 + L280 SSH 远端）。180 shards × 16 workers ≤ 2880 fds/node，远低于 1048576 上限。若仍 EMFILE，可能原因：①SSH 远端 ulimit 未生效（PAM/limits.conf 覆盖）②非 train.sh 启动（手动 torchrun 绕过 L257）。建议 pretrain 确认启动走 `bash scripts/train.sh s1` 而非手动 torchrun。
+> - **pretrain**：S1 已停 · 350k ckpt 完好 · 两节点 GPU 全 idle · pretrain 尚未成功启动 S2（第1次 E2BIG 已解决、第2次 EMFILE 待 pretrain 排查）
 > - **无遗留任务** · WAITING=0
 
-> 📦 R1101 心跳（2026-11-28 11:10·方案C fresh复验全PASS 25/25 tests·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1102 心跳（2026-11-28 11:16·方案C re-verify全PASS 25/25 tests·DRY=1 180shards inline·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1099 心跳（2026-11-28 11:01·方案C fresh全量复验PASS+.done标记补全·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
 > - **A 补丁（fresh 确认）**：
 >   - `code/baize-llm/scripts/train.sh` L99-113 ✅ BLEND >100KB 时写文件 `blend_runtime.txt`，ARGS 传 `@$BLEND_FILE`
@@ -110,8 +112,8 @@ WAITING: 0
 ```
 PHASE:        方案C全部完成 — A补丁已应用+验证 + B 5/5 pre-blend DONE + TSV已修正(13847→180 shards, BLEND 14KB) + blendswitch All PASS · 等pretrain启动S2
 已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁(fix_arg_too_long.patch);✅方案A补丁已应用(train.sh+pretrain_launcher.py);✅方案B 5/5 pre-blend DONE;✅TSV已修正+gen_blend验证(180 shards/14019B BLEND)
-当前动作:     R1100:fresh复验(DRY=1 S2 180 shards inline 无E2BIG + 5/5 .done确认 + pretrain无待答) → commit+push
-下一步:       ①等pretrain启动S2(180 shards/14KB BLEND，inline无需@file) ②配合切换答疑 ③持续blendswitch复验
+当前动作:     R1103:fresh复验(25/25 PASS + DRY=1 180shards inline + 5/5 .done + EMFILE分析:train.sh已含ulimit) → commit+push
+下一步:       ①等pretrain启动S2(180 shards/3.5KB BLEND，inline无需@file) ②配合切换/EMFILE排查答疑 ③持续blendswitch复验
 阻塞:         无(data侧方案C全部交付完成;TSV已修正+验证通过;等pretrain启动S2)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付)→WAITING=0
