@@ -2031,3 +2031,175 @@ total 143472
 （只读：未 kill / 未重启 / 未改任何文件）
 === DONE 297 | 2026-11-28 09:55:41 ===
 ```
+
+---
+
+## RUN_ID 298 · 2026-11-28 10:01:12 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T') who=$(whoami)"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+LOOP=$RUN/baize_harness_loop.sh
+GIT=/nas_train/app.e0031982/code/super_intelligence_2035
+LOG=/tmp/baize_harness_loop.log
+H=$(hostname)
+echo
+echo "== A. 前置：脚本版本 / 语法 =="
+echo "  mtime=$(stat -c '%y' "$LOOP" 2>/dev/null)"
+echo "  llm_pick_occurrences=$(grep -c 'llm_pick' "$LOOP" 2>/dev/null || echo 0)  (期望=1，仅注释)"
+grep -n 'llm_pick' "$LOOP" 2>/dev/null | cut -c1-170
+echo "  cline_call:"; grep -n 'cline -c' "$LOOP" 2>/dev/null | cut -c1-200
+bash -n "$LOOP" && echo "  bash -n OK" || { echo "ABORT: 语法错误"; echo "=== DONE 298 (ABORT) ==="; exit 9; }
+echo
+echo "== B. 清 stale git 锁（仅当无活跃 git 且锁龄>300s）=="
+cd "$GIT" || { echo "ABORT cd"; exit 9; }
+if [ -f .git/index.lock ]; then
+  age=$(( $(date +%s) - $(stat -c %Y .git/index.lock) ))
+  echo "  index.lock age=${age}s size=$(stat -c %s .git/index.lock)"
+  if [ "$age" -gt 300 ] && [ "$(pgrep -x git | wc -l)" -eq 0 ]; then
+    rm -f .git/index.lock && echo "  removed stale index.lock"
+  else
+    echo "  KEEP (fresh lock or active git: $(pgrep -x git | tr '\n' ' '))"
+  fi
+else
+  echo "  no index.lock"
+fi
+if [ -f .git/gc.log ]; then head -3 .git/gc.log; rm -f .git/gc.log; echo "  removed gc.log"; else echo "  no gc.log"; fi
+echo
+echo "== C. 停旧 loop（精确 PID + 兜底）=="
+OLD=$(pgrep -f 'baize_harness_loop.sh' 2>/dev/null | tr '\n' ' ')
+echo "  old_pids=[$OLD]"
+for p in $OLD; do kill -9 "$p" 2>/dev/null && echo "  killed $p"; done
+sleep 2
+echo "  alive_after_kill=$(pgrep -fc 'baize_harness_loop.sh' 2>/dev/null || echo 0)"
+echo
+echo "== D. 单实例：只 .29 起 loop =="
+if [ "$(hostname -I | grep -c '10.239.2.29')" -gt 0 ]; then
+  echo "  host=.29 -> START"
+  mv -f "$LOG" "$LOG.old.$(date +%H%M%S)" 2>/dev/null
+  cd "$RUN" || exit 9
+  setsid bash "$LOOP" > "$LOG" 2>&1 < /dev/null &
+  NEWPID=$!
+  echo "  launched PID=$NEWPID"
+  sleep 20
+  echo "  alive_20s=$(kill -0 "$NEWPID" 2>/dev/null && echo YES || echo NO)"
+  echo "  loop_count=$(pgrep -fc 'baize_harness_loop.sh' 2>/dev/null || echo 0)"
+  ps -eo pid,ppid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-150
+else
+  echo "  host=$H -> KEEP STOPPED (single-instance on .29)"
+fi
+echo
+echo "== E. 90s 后四证 =="
+sleep 70
+echo "  --- 新日志头 20 行 ---"
+head -n 20 "$LOG" 2>/dev/null | cut -c1-220
+echo "  --- 判定（期望：1>=1 / 2=0 / 3=0 / 4>=1 / 5>=1）---"
+echo "  proof1_loop_procs=$(pgrep -fc 'baize_harness_loop.sh' 2>/dev/null || echo 0)"
+echo "  proof2_llm_pick_err=$(grep -c 'llm_pick: command not found' "$LOG" 2>/dev/null || echo 0)"
+echo "  proof3_no_llm_skip=$(grep -c '无可用 LLM 候选' "$LOG" 2>/dev/null || echo 0)"
+echo "  proof4_invoking=$(grep -c 'invoking cline' "$LOG" 2>/dev/null || echo 0)"
+echo "  proof5_cline_procs=$(ps -eo args | grep '[c]line ' | grep -c 'glm-5.2' || echo 0)"
+ps -eo pid,ppid,etime,args | grep '[c]line ' | grep 'glm-5.2' | cut -c1-170
+echo
+echo "== F. 日志尾部 =="
+tail -n 15 "$LOG" 2>/dev/null | cut -c1-220
+echo
+echo "== G. git 状态（不清脏文件）=="
+git -C "$GIT" log -1 --format='  HEAD %h %ad %s' --date=iso
+echo "  dirty=$(git -C "$GIT" status --porcelain | wc -l)  ahead_behind=$(git -C "$GIT" rev-list --left-right --count HEAD...origin/main 2>/dev/null)"
+git -C "$GIT" status --porcelain | awk '{print $2}' | cut -d/ -f1-3 | sort | uniq -c | sort -rn | head -8
+echo
+echo "（写操作仅限：kill 本线 loop / 重启 .29 loop / 删 stale lock+gc.log）"
+echo "=== DONE 298 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap12 date=2026-11-28 10:01:12 who=app.e0031982
+
+== A. 前置：脚本版本 / 语法 ==
+  mtime=2026-11-28 09:16:29.842285770 +0800
+  llm_pick_occurrences=1  (期望=1，仅注释)
+124:        # 2026-11-28 用户令：移除 llm_rotate.sh / llm_pick 额度轮换，直接用脚本内配好的 MODEL/CLINE_KEY
+  cline_call:
+132:          "${taskline[@]}" cline -c "$CWD" --auto-approve true -m "$MODEL" -k "$CLINE_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+  bash -n OK
+
+== B. 清 stale git 锁（仅当无活跃 git 且锁龄>300s）==
+  no index.lock
+head: cannot open '.git/gc.log' for reading: No such file or directory
+  removed gc.log
+
+== C. 停旧 loop（精确 PID + 兜底）==
+  old_pids=[3498993 ]
+  killed 3498993
+  alive_after_kill=0
+0
+
+== D. 单实例：只 .29 起 loop ==
+  host=whag0pgpuap12 -> KEEP STOPPED (single-instance on .29)
+
+== E. 90s 后四证 ==
+  --- 新日志头 20 行 ---
+[loop] 2026-11-28 08:56:37 wake up, invoking cline ...
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh: line 133: llm_pick: command not found
+[loop] 2026-11-28 08:56:37 !!! 无可用 LLM 候选 → 跳过本轮 cline
+[loop] 2026-11-28 08:56:37 cline returned (exit 0), checking git sync ...
+[push] 2026-11-28 08:56:37 push interval reached, syncing ...
+Auto packing the repository in background for optimum performance.
+See "git help gc" for manual housekeeping.
+warning: The last gc run reported the following. Please correct the root cause
+and remove .git/gc.log
+Automatic cleanup will not be performed until the file is removed.
+
+warning: There are too many unreachable loose objects; run 'git prune' to remove them.
+
+[push] ahead=1 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-11-28 08:56:40 WAITING=1 (async task running) → sleep 900s
+[loop] 2026-11-28 09:11:40 wake up, invoking cline ...
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh: line 133: llm_pick: command not found
+  --- 判定（期望：1>=1 / 2=0 / 3=0 / 4>=1 / 5>=1）---
+  proof1_loop_procs=0
+0
+  proof2_llm_pick_err=5
+  proof3_no_llm_skip=5
+  proof4_invoking=5
+  proof5_cline_procs=0
+0
+
+== F. 日志尾部 ==
+[loop] 2026-11-28 09:56:49 cline returned (exit 0), checking git sync ...
+[push] 2026-11-28 09:56:49 push interval reached, syncing ...
+Auto packing the repository in background for optimum performance.
+See "git help gc" for manual housekeeping.
+warning: The last gc run reported the following. Please correct the root cause
+and remove .git/gc.log
+Automatic cleanup will not be performed until the file is removed.
+
+warning: There are too many unreachable loose objects; run 'git prune' to remove them.
+
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-11-28 09:56:52 WAITING=1 (async task running) → sleep 900s
+
+== G. git 状态（不清脏文件）==
+  HEAD a512f8f94e 2026-11-28 10:00:49 +0800 ops RUN_ID 298: fix harness loop (restart .29 + 4-proof) [repair empty-inbox commit]
+  dirty=208  ahead_behind=0	0
+    197 doc/BaiZe-ISEDA2027/run
+      1 test_simple.py
+      1 test_random_order_aggregation.py
+      1 test_named_tuple_range.py
+      1 test_formfield_callback.py
+      1 test_fix2.py
+      1 test_auth_form.py
+      1 doc/BaiZe-ISEDA2027/Xmodel-LM
+
+（写操作仅限：kill 本线 loop / 重启 .29 loop / 删 stale lock+gc.log）
+=== DONE 298 | 2026-11-28 10:02:28 ===
+```
