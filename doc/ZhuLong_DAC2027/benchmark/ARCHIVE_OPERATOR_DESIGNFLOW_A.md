@@ -906,3 +906,25 @@ r1553 轮 MEMORY 瘦身：MEMORY 超 32KB(32400B)，将 7 条早期 fullscan-验
 → r1552 详块见 daily_A_2026-11-28.md §r1552（teeth-guard 监控轮·只读·scan=124400 不变 ~20min, SimMakefileVCS neg_selftest OK. 9 项全绿. A-pure 池枯竭第 14 次. A 三线收口不变）
 → r1551 详块见 daily_A_2026-11-28.md §r1551（**teeth-guard 监控轮·只读·0 改判分·0 改 case**. scan=124400(r1550, 11min 前)不变无新 dir, shard_A_new=0. fullscan 常驻令: 124400 仅 11min 未达 ~85min 重扫 criterion, 待下轮(老化 ~85min ≈ 14:14)重扫. TotemSC-001 neg_selftest OK(REF PASS+6 neg FAIL distinct{c,d,f,h}). 9 项全绿. A-pure 池枯竭第 13 次独立确认. A 三线收口不变）
 → r1550 详块见 daily_A_2026-11-28.md §r1550（**fullscan 用户令再执行轮·真正重跑 ssh_eda_search_20261128_124400**. 698 机/20 并行/5.6min/DONE 12:49:39. summary_stats 刷新(mc10=5384/mc30=4120/A_pool=4426). A 域 fresh=6 但**6 全 C 域漂移**(jingy@hfeg0pkn001 DRC/LVS/Virtuoso/pyAether layout, **drc→rc 子串误匹配** A 过滤词), 0 genuine A. 覆盖窗→11-28 11:40:51. A-pure 池枯竭第 12 次独立确认(47min 窗仅 C 域新料). DEBT: drc→rc 子串误匹配 fix 需 word-boundary. 9 项全绿. A 三线收口不变）
+
+
+## 归档块 · 2026-11-28 r1571 瘦身 · A1（MEMORY_DESIGNFLOW_A.md r1564-r1568/r1556-r1558/r1569-short-dup verbatim 搬迁）
+
+### r1569-short-dup
+→ r1569 详块见 daily_A_2026-11-28.md §r1569（**fullscan 常驻令·真重跑 ssh_eda_search_20261128_164430 + 1 genuine A deepread(case DEBT r1570)·0 改判分·0 改 case**. 用户令 #1 真重跑 164430(setsid 后台 698 机 ~6min DONE 16:50). #2 summary_stats 刷新(mc10=5416/mc30=4152/A_pool=3198, scansync OK). #3 A 域 fresh=2(1 genuine A xweiw jkxu DDR5 verilog sim monitor-error debug + 1 C/D-drift aq7t7 schematic/aether/pex), 覆盖窗 15:14→16:46. #4 claim xweiw→deepread(3 bugs+1feat, 笔记 trace_deepreads/), case DEBT r1570(脚本重建+合成 rpt 树+check, 质量优先). Digital-010 neg_selftest OK. 9 项全绿. 用户令 4 项全闭合. A 三线收口不变）
+### r1568
+→ r1568 详块见 daily_A_2026-11-28.md §r1568（**fullscan 常驻令·teeth-guard 监控轮·只读·0 改判分·0 改 case**. scan=160229(r1567, 22min 前)不变无新 dir, summary_stats 反映 160229, 160229 老化 22min < ~85min criterion 未重扫. DFTTestmaxFlow-001 neg_selftest OK(NEG_RC=0+REF PASS+4 static-neg FAIL distinct{a,g,i,l}+live-neg static PASS, 轮换自 r1567 AgingWindowAudit-001). 9 项全绿. A-pure 池枯竭第 29 次独立确认. A 三线收口不变）
+### r1567
+→ r1567 详块见 daily_A_2026-11-28.md §r1567（**fullscan 常驻令·真正重跑 ssh_eda_search_20261128_160229 + 1 新 case 交付**. 698 机/20 并行/~6min/DONE 16:08/total_rows=58746/sessions=11135. summary_stats 刷新(mc10=5413/mc30=4148/A_pool=3197). A 域 fresh=3 但 2 D-drift(8lcjv/rg6di)+1 genuine A(3ca58). claim 3ca58→deepread→交付 EDA-Eval-DesignFlow-AgingWindowAudit-001(digital L1, aging_window_audit.py, 12 断言, 2 组隐藏 B). 自验 ref PASS+neg_selftest OK+SKIP_RUN=1 合法. 台账 3ca58 mark→case, covered 548→549. 9 项全绿. A 三线收口不变）
+### r1566
+→ r1566 详块见 daily_A_2026-11-28.md §r1566（**fullscan 常驻令·teeth-guard 监控轮·只读·0 改判分·0 改 case**. scan=143143(r1558, 76min 前)不变无新 dir, summary_stats 反映 143143, 143143 老化 76min < ~85min criterion 未重扫. SimMakefileVCS-001 neg_selftest OK(NEG_RC=0+REF PASS+4 static-neg FAIL distinct{b,e,f,g}+live-neg static PASS, 轮换自 r1565 TotemSC-001). 9 项全绿. A-pure 池枯竭第 28 次独立确认. A 三线收口不变）
+### r1565
+→ r1565 详块见 daily_A_2026-11-28.md §r1565（**fullscan 常驻令·teeth-guard 监控轮·只读·0 改判分·0 改 case**. scan=143143(r1558, ~70min 前)不变无新 dir, summary_stats 反映 143143, 143143 老化 70min < ~85min criterion 未重扫. TotemSC-001 neg_selftest OK(NEG_RC=0+REF PASS+6 neg FAIL distinct{c,d,f,h}+4 distinct labels, 轮换自 r1564 VpsRegrErrorEngineer). 9 项全绿. A-pure 池枯竭第 27 次独立确认. A 三线收口不变）
+### r1564
+→ r1564 详块见 daily_A_2026-11-28.md §r1564（**fullscan 常驻令·teeth-guard 监控轮·只读·0 改判分·0 改 case**. scan=143143(r1558, ~62min 前)不变无新 dir, summary_stats 反映 143143, 143143 老化 62min < ~85min criterion 未重扫. VpsRegrErrorEngineer-001 neg_selftest OK(NEG_RC=0+4 static-neg FAIL distinct{fake_empty,fake_fabricate,fake_core_deleted,naive_hardcode_a}+ref check_static PASS, 轮换自 r1563 DrvqaGateNetlist). 9 项全绿. A-pure 池枯竭第 26 次独立确认. A 三线收口不变）
+### r1558
+→ r1558 详块见 daily_A_2026-11-28.md §r1558（**fullscan 常驻令·真正重跑 ssh_eda_search_20261128_143143**. 698 机/20 并行/~6min/DONE 14:37:23. summary_stats 刷新(mc10=5401/mc30=4140/A_pool=3195). A 域 fresh=4 但 0 genuine A: wcvrm=host-partial-probe 已在 OLD+C 域 / ed2ia=D waveview / 3jwzo=D waveview / 7tl3w=C drc. 覆盖窗→11-28 14:27:36. A-pure 池枯竭第 20 次独立确认(42min 窗仅 C/D 新料). 9 项全绿. A 三线收口不变）
+### r1557
+→ r1557 详块见 daily_A_2026-11-28.md §r1557（**fullscan 常驻令·teeth-guard 监控轮·只读·0 改判分·0 改 case**. scan=134942(r1555, ~26min 前)不变无新 dir, summary 三项匹配 summary_stats, 无 orchestrator. scan 老化 26min < ~85min 重扫 criterion, 未重扫. VCSMakefile-001 neg_selftest OK(4 static-neg FAIL distinct{d,e,h}+live-neg static PASS, 轮换自 r1556 AsyncFifoSim). 9 项全绿. A-pure 池枯竭第 19 次独立确认. A 三线收口不变）
+### r1556
+→ r1556 详块见 daily_A_2026-11-28.md §r1556（**fullscan 常驻令·teeth-guard 监控轮·只读·0 改判分·0 改 case**. scan=134942(r1555, ~17min 前)不变无新 dir, summary 三项匹配 summary_stats, 无 orchestrator. scan 老化 17min < ~85min 重扫 criterion, 未重扫. AsyncFifoSim-001 neg_selftest OK(REF PASS+3 static-neg FAIL distinct{c,o,d}+live-neg static PASS, 轮换自 r1555 DFTTestmaxFlow). 9 项全绿. A-pure 池枯竭第 18 次独立确认. A 三线收口不变）
