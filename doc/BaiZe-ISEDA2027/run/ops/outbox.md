@@ -1240,3 +1240,125 @@ To https://github.com/foamliu/super_intelligence_2035.git
 （只启动，未 kill / 未改配置 / 未动文件）
 === DONE 295 | 2026-11-28 08:57:49 ===
 ```
+
+---
+
+## RUN_ID 295 · 2026-11-28 08:56:37 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+set -u
+LOOP=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+echo "[0] exec_host=$(hostname)  date=$(date '+%F %T')"
+echo
+
+echo "== A. 前置复查 =="
+if [ ! -f "$LOOP" ]; then echo "ABORT: loop 脚本不存在 $LOOP"; echo "=== DONE 295 (ABORT) ==="; exit 9; fi
+echo "  script: $(stat -c '%s B  %y' "$LOOP")"
+N=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)
+echo "  existing_loop_count=$N"
+if [ "$N" -gt 0 ]; then
+  echo "SKIP: 已有 loop 在跑，不重复启动"
+  ps -eo pid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-160
+  echo "=== DONE 295 (SKIPPED) ==="; exit 0
+fi
+echo "  确认无 loop → 可以启动"
+echo
+
+echo "== B. 启动 =="
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run || { echo "ABORT cd"; exit 9; }
+setsid bash "$LOOP" > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+NEWPID=$!
+echo "  launched PID=$NEWPID"
+sleep 15
+echo
+
+echo "== C. 启动后核验 =="
+echo "  PID $NEWPID alive=$(kill -0 "$NEWPID" 2>/dev/null && echo YES || echo NO)"
+echo "  loop_count_now=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)"
+ps -eo pid,ppid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-160
+echo
+
+echo "== D. 日志（前 40 行，确认真的在推进）=="
+if [ -f /tmp/baize_harness_loop.log ]; then
+  echo "  log size=$(stat -c '%s' /tmp/baize_harness_loop.log) B"
+  head -n 40 /tmp/baize_harness_loop.log | cut -c1-200
+else
+  echo "  WARN 日志未生成"
+fi
+echo
+
+echo "== E. 等 60s 再确认未秒退 =="
+sleep 60
+echo "  after60s_alive=$(kill -0 "$NEWPID" 2>/dev/null && echo YES || echo NO)"
+echo "  after60s_count=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)"
+tail -n 15 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-200
+echo
+
+echo "（只启动，未 kill / 未改配置 / 未动文件）"
+echo "=== DONE 295 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap12  date=2026-11-28 08:56:37
+
+== A. 前置复查 ==
+  script: 8808 B  2026-11-26 10:36:49.054467158 +0800
+  existing_loop_count=0
+0
+/tmp/tmp.h8MszLndUs: line 11: [: 0
+0: integer expression expected
+  确认无 loop → 可以启动
+
+== B. 启动 ==
+  launched PID=3498993
+
+== C. 启动后核验 ==
+  PID 3498993 alive=YES
+  loop_count_now=1
+3498993 3498982       00:15 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+
+== D. 日志（前 40 行，确认真的在推进）==
+  log size=941 B
+[loop] 2026-11-28 08:56:37 wake up, invoking cline ...
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh: line 133: llm_pick: command not found
+[loop] 2026-11-28 08:56:37 !!! 无可用 LLM 候选 → 跳过本轮 cline
+[loop] 2026-11-28 08:56:37 cline returned (exit 0), checking git sync ...
+[push] 2026-11-28 08:56:37 push interval reached, syncing ...
+Auto packing the repository in background for optimum performance.
+See "git help gc" for manual housekeeping.
+warning: The last gc run reported the following. Please correct the root cause
+and remove .git/gc.log
+Automatic cleanup will not be performed until the file is removed.
+
+warning: There are too many unreachable loose objects; run 'git prune' to remove them.
+
+[push] ahead=1 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-11-28 08:56:40 WAITING=1 (async task running) → sleep 900s
+
+== E. 等 60s 再确认未秒退 ==
+  after60s_alive=YES
+  after60s_count=1
+[loop] 2026-11-28 08:56:37 cline returned (exit 0), checking git sync ...
+[push] 2026-11-28 08:56:37 push interval reached, syncing ...
+Auto packing the repository in background for optimum performance.
+See "git help gc" for manual housekeeping.
+warning: The last gc run reported the following. Please correct the root cause
+and remove .git/gc.log
+Automatic cleanup will not be performed until the file is removed.
+
+warning: There are too many unreachable loose objects; run 'git prune' to remove them.
+
+[push] ahead=1 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-11-28 08:56:40 WAITING=1 (async task running) → sleep 900s
+
+（只启动，未 kill / 未改配置 / 未动文件）
+=== DONE 295 | 2026-11-28 08:57:52 ===
+```
