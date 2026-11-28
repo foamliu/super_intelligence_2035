@@ -105,13 +105,35 @@
 
 **根因**：S2 的 180 shard / 81 GB .idx 超出 pre-blend 安全包络（S1 验证过的是 100 shard / 67 GB .idx）。fork-COW 破页率从 S1 的 <5% 升至 ~12%，叠加 mmap page cache 压力，在 920 步处耗尽 2TB RAM + 8GB swap → OOM-kill。
 
+**关于"再 pre-blend 合并"（方案 A0）**：进一步合并 180→12 shard **不解决 OOM**——.idx 总量（81 GB）由文档数决定，与 shard 数无关；COW 破页率取决于索引内存而非 shard 数（代码依据见 §2 方案 A0）。
+
 ---
 
 ## 2. 候选方案对比
 
+### 方案 A0｜再 pre-blend 合并（180→N）
+
+> 回应用户令方案 A：能否把 180 shard 进一步合并到更少？
+
+| 项 | 值 |
+|:---|:---|
+| 原理 | 用 `pre_blend.py` 把每源 16 shard 合并为 1-2 shard → 180→12 或 180→24 |
+| N=12（1 shard/源） | 每 shard .bin 0.3-1.4TB；.idx 合并后总量不变 |
+| N=24（2 shard/源） | 每 shard .bin 0.15-0.7TB；.idx 合并后总量不变 |
+| **对 .idx 总量的影响** | **无**（.idx ∝ 文档数，与 shard 数无关；Megatron `build_blended_indices` 的 `dataset_index`/`dataset_sample_index` 大小由 sample 数决定，非 shard 数） |
+| **对 per-rank 索引内存的影响** | **无**（81.13 GB .idx → 122 GB/rank 不变） |
+| **对 COW 破页率的影响** | **无**（COW ∝ 索引内存 × 步数，与 shard 数无关） |
+| 对 page cache 的影响 | 极小（mmap 区域 180→12，减少 file handle / VMA 元数据，但 .bin 总量不变 → page cache 工作集不变） |
+| 耗时 | 重跑 `pre_blend.py` 全 12 源 ≈ 4-6h（stackv3_filt 1.9TB 需 ~2-4h NFS I/O） |
+| 对吞吐影响 | 无（训练时读取的数据量不变） |
+| 结论 | **不解决 OOM**——COW 破页根因是索引内存（81 GB .idx），与 shard 数无关。合并仅减少 file handle 开销（边际收益） |
+| 可验证判据 | 50 步 smoke：仍会在 ~920 步 OOM（与当前行为一致） |
+
+> **代码依据**：Megatron `blended_dataset.py:41-110` 的 `build_blended_indices` 生成 `dataset_index`（shape=[num_datasets, num_samples]，int64）和 `dataset_sample_index`（shape=[num_samples]，int64）。`num_samples` 由 blend 配比和各源文档数决定，与 shard 数无关。`.idx` 文件的 `sizes`(int32)+`pointers`(int64) 按**文档**存储，合并 shard 只是把多个小数组拼接为一个大数组，总元素数不变。
+
 ### 方案 A｜禁用 mmap（`BAIZE_NO_MMAP_BIN_FILES=1`）
 
-> ⚠️ **澄清**：S2 的 5 个新源**已经 pre-blend 完成**（每源 16 shard，共 80 shard）。S2 的 180 shard = 11 pre-blend 源 × 16 + ufw_zh × 4。pre-blend 已做过了，shard 数无法再降。真正的方案 A 是禁用 mmap。
+> ⚠️ **澄清**：S2 的 5 个新源**已经 pre-blend 完成**（每源 16 shard，共 80 shard）。S2 的 180 shard = 11 pre-blend 源 × 16 + ufw_zh × 4。方案 A0 证明进一步合并不解决 OOM；真正的方案 A 是禁用 mmap。
 
 | 项 | 值 |
 |:---|:---|
@@ -163,6 +185,7 @@
 
 | 方案 | 改动量 | 吞吐代价 | 预计崩溃步数 | 根治？ | 推荐度 |
 |:---|:---|---|:---|:---|:---|
+| A0（再 pre-blend 180→12） | 重跑 4-6h | 0% | ~920（不变） | ❌ 不解决 | ⭐ |
 | A（禁 mmap） | 1 行 | ≤2% | 2,000-5,000 | ❌ 延后 | ⭐⭐ |
 | B（spawn+persistent） | 2 env | 不确定 | **立即 OOM** | ❌ 不可行 | 🚫 |
 | C-nw=4 | 1 行 | ~20% | ~1,840 | ❌ 延后 | ⭐⭐ |
