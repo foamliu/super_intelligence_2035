@@ -1,5 +1,28 @@
 # BAIZE_VISION_TASK.md
 
+### 🔴 用户令 · 2026-11-28 21:3x（**把 `.17` 的 ops 中继启动起来**）
+
+> **用户原话**（逐字）：「安排 vision 把 .17 的ops中继启动起来」
+>
+> **背景**：BaiZe 的 ops 中继 `ops_relay.sh` 目前只跑在 `.29`（`ops/.last_run_id`）与 `.12`（`ops/.last_run_id.12`）；`.17`（10.252.32.17，vision + posttrain 同机）**没有中继**，运维无法通过 `run/ops/inbox.md` 在 `.17` 上执行探针。
+>
+> **要做的**：
+> 1. 在本机（`.17`）找 `ops_relay.sh`：先 `find / -name ops_relay.sh 2>/dev/null`；没有就从 `.29` 的 `<repo>/doc/BaiZe-ISEDA2027/run/ops_relay.sh` 拷一份（git 仓库里没有这个脚本，只在机器上）。
+> 2. **必须用独立 state 文件**（如 `ops/.last_run_id.17`），否则会和 `.29`/`.12` 抢同一个 `.last_run_id` → 重复执行同一条命令。脚本若不支持，就在**本机副本**上加环境变量/参数（不入库）。
+> 3. 启动：
+>    ```bash
+>    cd /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+>    setsid bash ops_relay.sh > /tmp/baize_ops_relay_17.log 2>&1 < /dev/null &
+>    ```
+> 4. **验收（贴原始输出）**：
+>    - `pgrep -af '^bash ops_relay.sh'` → 有 1 个 ppid=1 的守护
+>    - `/tmp/baize_ops_relay_17.log` 出现轮询/fetch，且**无** `No such file` / `Permission denied`
+>    - `run/ops/outbox.md` 新增一段，首行 `host=` 是 `.17` 的主机名
+>    - `ops/.last_run_id.17` 数值推进（从 RUN_ID 302 起即可）
+> 5. **推送**：outbox 用本线既有的 `vision_line_commit.sh` 隔离提交，🚫 `git add -A`。
+> 6. **交付**：`MEMORY_VISION.md` 顶部一条（脚本路径 · PID · state 文件 · 首次执行 hostname · log 路径）+ 确认 `.29`/`.12` 的 `.last_run_id*` 未被影响。
+
+
 ### 🔴 用户令 · 2026-11-24 14:3x（合成波形数据调研 + SFT/RL 路线探索）
 
 > **背景**：P1 GRPOv2 = 负结果（0.6667 < 0.70，McNemar p=1.0），P2 真题复测在 36.15 跑（resumable）。在等 P2 结果的同时，**开辟新路线：用 EDA 环境合成波形数据，生成大规模 SFT/RL 训练集，以继续强化 2B MLLM 读懂波形图的能力。**
