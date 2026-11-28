@@ -2111,4 +2111,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795505655921_uttab	t0002805	hfhds206	219	done	MeasDeckHierGenProduce-001	2026-11-28 16:36	D case landed: spec-JSON .MEAS deck gen + hier signal-name resolver (N-suffix inversion/PreEq=Eq alias/inverse_only/combined SapEn&SanEn/digital placeholder/occurrence); gen_meas_deck.py(spec)->{meas_deck.sp,report.json}; 18 conds a-r; 6 neg all FAIL {c,d,g,n,i,g}; ref PASS; test sha 8b468fa2 3-way sync; LIVE-NA judge[L0,L1]	
 1794117940808_gy1mi.messages.json	shaoli	hfeg0plg86	113	schematic_netlist	case	EDA-Eval-DesignFlow-SpfLineDiffProduce-001	2026-11-28 17:06	
 1795769060793_gl8mn	yinyus	hfeg0pfn134	451	schematic_netlist	case	EDA-Eval-DesignFlow-NicapCellPlanProduce-001	2026-11-28 17:48	nicap-create skill: CSV(nicapType,nc,nr)->nicap cell planner (cellname/cap/text2/symbol/placement); 0.5->5fF bug; NEW user
-1795480920609_s21dt	krisluo	hfeg0pkn002	151	schematic_netlist	claimed		2026-11-28 18:06	
+1795480920609_s21dt	krisluo	hfeg0pkn002	151	schematic_netlist	case	EDA-Eval-DesignFlow-FzcpFnDeckGenProduce-001	2026-11-28 18:34	
