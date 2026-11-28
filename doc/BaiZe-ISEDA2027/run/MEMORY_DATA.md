@@ -6,23 +6,13 @@ WAITING: 0
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 崩溃根因链已查明 — **首次 12:10 崩溃 = shim bug（已修复）**，后续崩溃 = 僵尸进程导致 NCCL Duplicate GPU。
 > 🔧 **shim bug 已修复（12:12）**：旧版 `_patched_build_indices` 访问 `self.dataset_index`，但 `_build_indices()` 在 `__init__` 中 **先于** `self.dataset_index` 赋值调用 → AttributeError。修复：改用 `result[0]`/`result[1]`（`_orig_build_indices` 返回值）。两份 shim 已同步。
 
-> 📦 R1133~R1135 心跳（2026-11-28·方案C fresh全量复验25/25 PASS·全部交付确认·等pretrain清理僵尸重启S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1134 心跳（2026-11-28·方案C fresh全量复验25/25 PASS·全部交付确认·等pretrain清理僵尸重启S2）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1133~R1137 心跳（2026-11-28·方案C fresh全量复验25/25 PASS·全部交付确认·等pretrain清理僵尸重启S2）已归档 → daily-memories-data/2026-11-28.md
 
-> ✅ **心跳 · 2026-11-28 (R1137) — 方案 C fresh 全量复验 25/25 PASS · 全部交付物在位确认 · 等 pretrain 重启 S2**：
-> - **fresh 复验（R1137 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS + test_blend_hot_switch_integration.py 7/7 PASS = **25/25 PASS** ✅
-> - **gen_blend --json --verify**：shards_total=180 / weight_sum=1.0 / blocked=false · BLEND=14,019B (13.7KB) < 100KB ✅
-> - **pre-blend 5/5 .done 确认 ✅**：finemath(16bin/36G) / megamath_pb(16bin/245G) / nemotron(16bin/733G) / stackv3_filt(16bin/1.8T) / megamath_web(16bin/815G) — 各 16 .bin + 16 .idx + .done + MANIFEST.json
-> - **方案 A 补丁确认 ✅**：`train.sh` L99-108 BLEND_FILE 逻辑 + `pretrain_launcher.py` L284-285 @ 前缀检测（两份副本 baize-llm/pretrain/ + BaiZe-ISEDA2027/ 均已有）
-> - **TSV**：`blend_s2_preblend.tsv` 3,515B · 12 源 · 5 新源全指向 pre-blend 目录 · BLEND 14KB < 100KB ✅
-> - **/nas_user 余量**：39TB（67% used）> 5TB 红线 ✅
-> - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
-
-> ✅ **心跳 · 2026-11-28 (R1136) — 方案 C fresh 全量复验 25/25 PASS · 全部交付物在位确认 · 等 pretrain 重启 S2**：
-> - **fresh 复验（R1136 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS + test_blend_hot_switch_integration.py 7/7 PASS = **25/25 PASS** ✅
+> ✅ **心跳 · 2026-11-28 (R1138) — 方案 C fresh 全量复验 25/25 PASS · 全部交付物在位确认 · 等 pretrain 重启 S2**：
+> - **fresh 复验（R1138 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS + test_blend_hot_switch_integration.py 7/7 PASS = **25/25 PASS** ✅
 > - **gen_blend --json --verify**：shards_total=180 / weight_sum=1.0 / blocked=false · BLEND ~14KB < 100KB ✅
-> - **pre-blend 5/5 .done 确认 ✅**：finemath / megamath_pb / nemotron / stackv3_filt / megamath_web — 各 16 .bin + .done + MANIFEST.json
-> - **方案 A 补丁确认 ✅**：`train.sh` L98-113 BLEND_FILE 逻辑 + `pretrain_launcher.py` L281-292 @ 前缀检测（两份副本均已有）
+> - **pre-blend 5/5 .done 确认 ✅**：finemath(16bin/106s) / megamath_pb(16bin/425s) / nemotron(16bin/1865s) / stackv3_filt(16bin/4293s) / megamath_web(16bin/2798s) — 各 16 .bin + 16 .idx + .done
+> - **方案 A 补丁确认 ✅**：`train.sh` L98-108 BLEND_FILE 逻辑 + `pretrain_launcher.py` L282-292 @ 前缀检测（`code/BaiZe-ISEDA2027/pretrain_launcher.py`）
 > - **TSV**：`blend_s2_preblend.tsv` 3,515B · 12 源 · 5 新源全指向 pre-blend 目录 · BLEND 14KB < 100KB ✅
 > - **/nas_user 余量**：39TB（67% used）> 5TB 红线 ✅
 > - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
