@@ -1819,3 +1819,40 @@ to sess not in SUT sandbox。EDA-Flow-Bench HEAD=`bde0084e1`。
 **零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动**（桩体检只读；本轮唯一落盘 = 恢复误删的 hidden/params_B.json，在 EDA-Flow-Bench repo）。review_nonlite_B.tsv SAoptPwrDly 行 check_live + live_evidence 填 Q1 实证。
 
 **§5 状态**：Q1 PASS（① 待 R2 wrap 时 ref check_live PASS 验证 ② 待 R2 neg ③ 待 R2 3-seed ④ 待 R2 SKIP_RUN ⑤ 待 R2 sha sync ⑥ 待 R2 only-add ⑦ 待 R2）。REQ done 23（不变），derisked 0→1（本条），pending 10→9，BLOCKED 1。
+
+## r1379 — SAoptPwrDly-001 R2 改造#25（non-Lite-500，candidate-runs-hspice + judge-直调 hybrid）
+
+**任务**：non-Lite-500 R2 改造#25（2026-11-28 用户令「non-Lite-500 实跑评估改造」，最高优先；r1378 Q1 桩体检 PASS de-risked 直接执行，同 r1369 OtaAutoTune / r1377 VihTripTune 模板）。
+
+**模式**：candidate `sa_opt.py <params.json> <opt_report.json>` 读 params（baseline+vdd+temp+vref+vswing+power_target_uA+grid 4 维），对 288-pt grid（inwidth×itailwidth×pmoswidth×nmoswidth）每点 gen HSPICE tran deck（StrongARM SA + .measure cur_avg/dly）+ `subprocess.run([HSPICE, deck])` 自身调 hspice + parse .mt0 → opt_report_{A,B}.json（best params + sweep_log 288 entries）；judge cond(e/h) ALSO 独立重跑 HSPICE on candidate best_A/best_B params 比 cur<=target + cond(f/i) 独立 Pareto（full 288-pt grid re-run）比 dly<=1.6×Pareto → 全 mislabeled `[L0,L1]`，broken in SUT（no hspice ⇒ candidate sa_opt.py run fails ⇒ cond c first-fail + conds d-l fail + judge cond e/f/h/i crash）。候选自身依赖 hspice ⇒ 静态层无法跑候选，(c-l) 全迁移 check_live（.75 real hspice）。
+
+**判据同原 a-l 一字迁移**（PARETO_RATIO=1.6 / n_designs≥20 / sweep_log≥20 distinct / 6 required keys / cross-input A≠B 原封）。
+
+**Q1 保真**（r1378 .75 hfhds201 hspice V-2023.12-SP1-1，wall~115s，288×2=576 hspice runs；本轮 r1379 ref check_live 复验 PASS 3-seed identical）：cand A 288 designs 153 conv 64 feasible **BEST_A dly=31.65ps cur=76.51uA** params(2u/12u/8u/4u)；cand B 288 designs 173 conv 34 feasible **BEST_B dly=19.75ps cur=215.0uA** params(2u/11u/3u/5u)；**judge indep Pareto==cand best**（cur_a=76.51 dly_a=31.65 pareto_a=31.65 / cur_b=215.0 dly_b=19.75 pareto_b=19.75，cand 找到真最优）；cross-input A_best!=B_best TRUE；physics REAL（B higher vdd/power⇒faster 19.75 vs 31.65ps，NOT fabricated，contrast SlicerSizeOpt-001 r1352 BLOCKED 1000×）。
+
+**Q2 错误解法不会判过**（CONFIRMED）：`cheat_hardcode_a_run`（identical best A+B，n_designs=1）FAILS cond j cross-input A_best==B_best + cond k n_designs<20；`naive_core_deleted`（fabricate baseline best n_designs=1）FAILS cond e/f/h/i/k/l（baseline 未优化，Pareto ratio>1.6，n<20）。
+
+**非侵入包装**：
+- `_check_static_impl` keep (a) zip+sa_opt.py + (b) py_compile 一字不动；
+- `(sa/sb/sc)` only-add 源码结构检查（sa subprocess+hspice 调用 / sb .tran+.meas StrongARM deck 构造 / sc `$DATA1`/.mt0 parse）；
+- `check_static` try/except 三元组；
+- `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201：upload submit.zip + params_A(A visible) + corner.lib + params_B(B hidden) + `live_driver.py` → driver cand A + B + judge indep hspice `_run_hspice_point` best_A（cond e/f）+ best_B（cond h/i）+ 独立 Pareto full-grid re-run A/B（cond f/i）→ `live_result.json`（robust against huge sweep_log stdout overflow，driver 额外写文件 not just print）→ JSON → 断 c-l 同判据；
+- `check()` 兼容 + `__main__` 改 check_static；
+- live-neg = `naive_core_deleted`（cond e/f/h/i/k/l first-fail=e，baseline 未优化）+ `cheat_hardcode_a_run`（cond j/k/l first-fail=j，cross-input A==B）2 distinct。
+
+**static-neg 5-distinct**：naive_empty(a) / naive_syntax(b) / naive_print_expected(sa) / naive_no_measure(sb) / naive_no_mt0(sc)。**§4.9 trio distinct** {empty:a, print_expected:sa, core_deleted:e}。
+
+**§5 7/7**：
+- ① ref check_live PASS .75 hfhds201 hspice V-2023.12-SP1-1，cand A 288 designs BEST_A dly=31.65ps cur=76.51uA + cand B 288 designs BEST_B dly=19.75ps cur=215.0uA + judge indep Pareto==cand best；
+- ② 5 static neg FAIL distinct {a,b,sa,sb,sc} + 2 live-neg FAIL distinct {e=core_deleted, j=hardcode_a_run}（static-pass/live-fail）；
+- ③ 3-seed ref check_live PASS ×3 md5 `9c65ecd47a11` identical（separate sessions per check_live，避免 NFS stale-file cross-run collision）；
+- ④ SKIP_RUN=1 deploy workdir clean（leak 自检通过）+ ref check_static PASS；
+- ⑤ judge_layers `[L0,L1]→[L0,L1,L2.live]` JSON test sha `08833cdb6ba43494014df7cfb37bc7a11449b5b9` 3-way sync（disk==JSON==HEAD）；
+- ⑥ 断言 12→15 only-add（5 static a/b/sa/sb/sc + 10 live c-l，sa/sb/sc only-add）阈值原封 PARETO_RATIO=1.6/n_designs≥20/6 required keys 不变；
+- ⑦ check_live 不读 reference/ GT，仅读 hidden B input（params_B.json）+ visible A input（params_A.json）+ corner.lib（输入非 GT），cond e/f/h/i GT 由 .75 indep hspice 现算（judge-直调）。
+
+**LATENT FIX（r1378 已落盘）**：hidden/params_B.json 在 commit 66be40ff2 被误删，r1378 从 bdfa05318 恢复（commit bdc5197f2）。
+
+**跨 session 碰撞**（同 r1347/r1355/r1367/r1377 先例）：check.py + negative/ + negative_selftest.py 由 concurrent bench-sync commit `2aa34248d`（shard D 11:00:46）落盘 byte-identical；本轮 commit `1b2f7b153`（EDA-Flow-Bench）仅 sync case JSON（judge_layers [L0,L1]→[L0,L1,L2.live] + test field sha + test_rationale 12→15 + k_check=15）。本轮独立 selftest（静态 + live + 3-seed + SKIP_RUN + sha sync）全绿确认正确性。
+
+**落盘**：EDA-Flow-Bench HEAD=`1b2f7b153` pushed（case JSON sync）；super_intelligence_2035 tracking（live_eval_changes.tsv 行已在 r1379 11:11 写 + review_nonlite_B.tsv round r1378→r1379 + 本节 + MEMORY 心跳）。live_eval_changes.tsv B 行=24（== nonlite REQ done 24）。**REQ done 23→24，derisked 1→0，pending 9→8，BLOCKED 1（SlicerSizeOpt-001）**。L2.live B nonlite 23→24。DEBT:0。WAITING:0（不设等待§1.1）。
