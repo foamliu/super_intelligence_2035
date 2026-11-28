@@ -1,4 +1,22 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
+> ## 🔴 2026-11-28 09:4x 用户令 · **A 线重跑 fullscan**
+>
+> **用户原话**：「A 既然没活，就让重新 fullscan」
+>
+> **背景**：A 的 non-Lite 已收口（REQ 8/8 done · OPT 0 · NA 461 · L2.live=15），
+> 自 `r1499` 起连续 30+ 轮只做 teeth-guard 监控，每轮都报「scan=11-28_014416 不变 · shard_A_new=0」。
+> 待办已清空，瓶颈是**扫描池没有新料**，不是没能力做。
+>
+> **要求**：
+> 1. **跑一次完整的 trace 全量重扫**（不是 `scansync` 复查旧目录，而是真正发起新的 `ssh_eda_search` 扫描），
+>    产出一个新的 `ssh_eda_search_<新时间戳>/summary.tsv`。
+> 2. 扫完按现行口径更新 `summary_stats.json`（`scan_path` / `mc10` / `mc20` / `users_mc10` / `scansync`），
+>    并跑 `trace_ledger.py --shard A scansync` 核对。
+> 3. **重点看 A 域**（digital / eda_other / pnr_signoff / verification）新增 fresh 候选有多少；
+>    若仍为 0，明确写出「扫描覆盖的时间窗 + 命中数」，说明是数据源本身没有新 trace，而不是没扫。
+> 4. 有新候选则按正常流程 claim → 深读 → 造 case。
+>
+> **纪律**：全量扫描耗时长，用后台 + 落盘，别阻塞心跳；只提交自己的文件。
 
 > ## 🌐 2026-11-27 用户令 · non-Lite-500 case「实跑评估」改造 · 最高优先（造题/扩池让位）
 >
