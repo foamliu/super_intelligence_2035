@@ -121,7 +121,7 @@ if backlog:
         backlog_html += f"<tr><td><strong>{esc(r['harness'])}</strong></td><td>{r['remaining']}</td></tr>\n"
     backlog_html += "</table>\n"
 else:
-    backlog_html = "<p>无（全部 7 路已 eval 完成）。未达 500 的 predict 差额为 infra 失败（quota-block / git fetch 失败等），属正常收尾。</p>\n"
+    backlog_html = "<p>无（全部 8 路已 eval 完成）。未达 500 的 predict 差额为 infra 失败（quota-block / git fetch 失败等），属正常收尾。</p>\n"
 
 rerun = []
 for r in rows:
@@ -139,16 +139,16 @@ else:
 HTML = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SWE-bench Verified · doubao-pro 7 路横评报告</title>
+<title>SWE-bench Verified · doubao-pro 8 路横评报告</title>
 <style>body{{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}}h1{{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}}h2{{color:#1a5276;margin-top:30px;border-left:5px solid #2980b9;padding-left:10px}}table{{border-collapse:collapse;width:100%;margin:15px 0}}th,td{{border:1px solid #ddd;padding:8px 12px;text-align:left}}th{{background:#2980b9;color:white}}tr:nth-child(even){{background:#ecf0f1}}.pass{{color:#27ae60;font-weight:bold}}.fail{{color:#e74c3c}}.note{{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:15px 0}}.info{{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:15px 0}}code{{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:0.9em}}</style></head><body>
-<h1>SWE-bench Verified · doubao-pro 7 路横评报告</h1>
+<h1>SWE-bench Verified · doubao-pro 8 路横评报告</h1>
 <div class="info">
-<p><strong>模型</strong>：doubao-seed-2.0-pro-cloud　|　<strong>7 路</strong>：zhulong(cline-patched) / codex / opencode / claude-code / pi / hermes / deepseek</p>
+<p><strong>模型</strong>：doubao-seed-2.0-pro-cloud　|　<strong>8 路</strong>：zhulong(cline-patched) / codex / opencode / claude-code / pi / hermes / deepseek / zhulong(no policy)</p>
 <p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：{NOW}（{ROUND}）</p>
 <p><strong>cline 配置</strong>：compaction=basic · thinking=low · checkpoint=off（cline 3.0.51 无 checkpoint 功能，旧版 cline-checkpoint-off ELF 已废弃）</p>
 </div>
 
-<h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 7 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
+<h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 8 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
 <table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>版本</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
 {main_rows}</tbody></table>
 <div class="note"><p>分母恒 500。Pass% = resolved/500。未跑完的路按已 resolved 数 / 500 计算。</p></div>
@@ -165,7 +165,7 @@ HTML = f"""<!DOCTYPE html>
 {rerun_html}
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · {ROUND} · {NOW}<br>SWE-bench Verified 500 · doubao-pro 7-way
+BaiZe Harness · {ROUND} · {NOW}<br>SWE-bench Verified 500 · doubao-pro 8-way
 </p></body></html>"""
 
 os.makedirs(REPORT_DIR, exist_ok=True)
