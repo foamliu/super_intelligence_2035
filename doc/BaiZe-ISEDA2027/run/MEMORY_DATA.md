@@ -4,15 +4,20 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部完成（A 补丁已应用+验证 + B 5/5 pre-blend DONE + TSV 已更新+验证）** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。
 
-> ✅ **心跳 · 2026-11-28 11:0x (R1095) — 方案 C 全部完成 + TSV 修正 + fresh 复验全 PASS · 等 pretrain 启动 S2**：
-> - **A 补丁**：`train.sh` L98-108 ✅ (BLEND >100KB 写文件 `@filepath`) + `baize-llm/pretrain/pretrain_launcher.py` L284-285 ✅ (`@`+`isfile` fix)
-> - **B pre-blend**：5/5 `.done` 全在 · 5 源各 16 .bin + MANIFEST.json ✅ (stackv3_filt 8189→16 / megamath_web 4950→16 / nemotron 193→16 / megamath_pb 348→16 / finemath 64→16)
-> - **TSV**（本次修正）：`blend_s2_preblend.tsv` 3623B · 5 行路径改为 pre-blend 目录 · gen_blend --json 验证：180 shards / weight_sum=1.0 / BLEND 14,019B (13.69KB) < 100KB ✅
->   - ⚠️ **R1094 心跳有误**：此前声称「TSV 3515B · 5 行指向 pre-blend 目录」但实际文件仍指向原始 tokenized 目录（13,847 shards / 2.64MB BLEND）。本轮已修正：5 源路径改为 pre-blend 目录，BLEND 从 2.64MB 降至 14KB。
-> - **blendswitch**：test_blend_switch.py fresh 重跑 All tests pass: True (zero_overlap=0, ratio max_dev=0.0000%)
-> - **pretrain**：用户 10:1x 令「立刻执行 S2 切换」· S1 已停 · 350k ckpt 完好 · 两节点 GPU 全 idle（pretrain 尚未启动 S2）
+> ✅ **心跳 · 2026-11-28 11:2x (R1096) — 方案 C fresh 全量复验 PASS · 等 pretrain 启动 S2**：
+> - **A 补丁（已应用 + fresh 确认）**：
+>   - `code/baize-llm/scripts/train.sh` L99-108 ✅ BLEND >100KB 时写文件 `blend_runtime.txt`，ARGS 传 `@$BLEND_FILE`
+>   - `code/BaiZe-ISEDA2027/pretrain_launcher.py` L284-289 ✅ `@` 前缀 + `os.path.isfile` 检测 → 从文件加载 BLEND
+>   - flag-off = stock：BLEND <100KB 走原路径，零回归
+> - **B pre-blend（5/5 .done + fresh 确认）**：
+>   - stackv3_filt 16 .bin + MANIFEST.json ✅ / megamath_web 16 .bin + MANIFEST.json ✅ / nemotron 16 .bin + MANIFEST.json ✅ / megamath_pb 16 .bin + MANIFEST.json ✅ / finemath 16 .bin + MANIFEST.json ✅
+> - **TSV（已更新 + fresh gen_blend 验证）**：`blend_s2_preblend.tsv` 3515B · 5 源路径指向 pre-blend 目录 · gen_blend --json：**180 shards / weight_sum=1.000016 / BLEND 14,019B (13.7KB) < 100KB ✅**
+> - **blendswitch（fresh 重跑）**：test_blend_switch.py All tests pass: True · zero_overlap=0 / ratio max_dev=0.0000% / 7 shared + 5 new sources all zero overlap
+> - **pretrain**：S1 已停 · 350k ckpt 完好 · 两节点 GPU 全 idle · 用户令「立刻执行 S2 切换」· pretrain 尚未启动 S2
 > - **无遗留任务** · WAITING=0
 
+> 📦 R1095 心跳（2026-11-28 11:0x·方案C全部完成+TSV修正+fresh复验全PASS·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1094 心跳（2026-11-28 10:1x·方案C fresh复验全PASS·A补丁两份launcher均验+B 5/5 .done+TSV 3515B+blendswitch 25/25 PASS）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1093 心跳（2026-11-28 10:06·方案C全部完成·A补丁已应用+验证·B 5/5 pre-blend DONE·TSV更新(13847→180 shards,14KB)·blendswitch 25/25 PASS）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1092 心跳（2026-11-28 09:38·方案C执行中·A补丁两半已应用+验证·B 3/5 DONE+2/5 running·auto_tsv watcher运行中·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1091 心跳（2026-11-28 09:26·方案C执行中·A补丁两半已应用+验证·B 2/5 DONE+3/5 running·auto_tsv watcher已设·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
