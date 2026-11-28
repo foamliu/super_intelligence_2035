@@ -1,4 +1,18 @@
 # BAIZE_DATA_TASK.md
+> ## 🔴 2026-11-28 10:2x 用户令 · **走方案 C（A 立即解锁 + B 后台 pre-blend）**
+>
+> **用户原话**（逐字）：「安排 data 走 方案 C」
+>
+> 依据你自己的 `S2_E2BIG_DIAGNOSIS.md` §2 方案 C：**立即应用方案 A 补丁解除 E2BIG，同时后台并行跑方案 B pre-blend。**
+>
+> **要做的**：
+> 1. **方案 A（立即）**：把 `fix_arg_too_long.patch` 交给 pretrain 应用，并**主动跟进确认已应用 + `DRY=1 bash train.sh s1` 验证通过**（你是补丁作者，pretrain 是执行方）。
+> 2. **方案 B（后台并行）**：按 §2 方案 B 的 5 条 `pre_blend.py` 命令开工，优先级 `stackv3_filt`(8192→16, 1.8TB, 2-4h) 最高——
+>    它最耗时，先起它；其余 4 个源并行或排队。⚠️ 重活必须 `setsid nice -n 19` 后台 + 落盘 + `.done` 标记，**不许阻塞自己的唤醒**。
+> 3. **B 完成后**：更新 `blend_s2_preblend.tsv` 指向 pre-blend 目录，重新生成 blend 验证（shard 数应从 13,847 降到 ~192、BLEND < 100KB）。
+> 4. **不要**自行启动/重启训练（那是 pretrain 的事）。
+>
+> **交付**：A 已应用并验证的证据 + B 各源进度/耗时/`.done` + 更新后的 TSV 与验证结果。
 
 > ## 🔴 2026-11-28 08:2x 用户令（最高优先）
 >
