@@ -1,6 +1,28 @@
 # BAIZE_DATA_TASK.md
 
 # BAIZE_DATA_TASK.md
+> ## 🔴 2026-11-28 19:0x 用户令 · **data 想 S2 的 DataLoader 内存/崩溃怎么办（最高优先）**
+>
+> **用户原话**（逐字）：「让data想想怎么办」
+>
+> **背景**：S2 16:06 起跑、**18:09 崩**，`.29` rank13 的 DataLoader worker 被 **SIGKILL**（OOM 嫌疑）。配置 `code/baize-llm/configs/common.env:72-79` = `nw=8` / `fork` / `persistent_workers=0` / `mmap enabled`；S2 blend = **12 源 180 shard**（S1 是 7 源 100 shard，当年「pre-blend 后 fork 安全」只在 S1 规模验过），仅 **920 步（≈1.8h）** 后崩。
+>
+> **你要做的（只写方案与研究：🚫 不改训练 / 不重启 / 不 kill）**：
+>
+> **1. 定量归因（必须有数字）**：实测现 TSV 每个源的 shard 数/单 shard 字节/总字节 → 估 page cache 与每 worker 的索引+RSS 占用 → 建一个「跑到第几步会撞上 2TB RAM / 8G swap」的粗模型，看是否落在 920 步附近。假设要写清（workers/rank、每 rank 继承内存、page cache 回收行为），结论给区间不给单点。
+>
+> **2. 给 ≥3 个候选方案，每个都要有代价与可验证判据**：
+> - **A｜再 pre-blend 合并**：180 → N（给 N、每 shard token 量、预计索引/page-cache 规模、耗时、对吞吐影响）
+> - **B｜`BAIZE_DATALOADER_START_METHOD=spawn` + `BAIZE_PERSISTENT_WORKERS=1`**：引用 10-27 #806 实测（spawn 每 worker RSS −79%），给启动开销、NCCL 风险、50 步 smoke 判据
+> - **C｜降 nw**（8→4→2→0）：给吞吐代价（历史 nw=0 ≈ 308K tok/s vs nw=8 ≈ 613K）
+> - **D（可选）**：blend 层限流（小 shard 合并 / 收窄 mmap 面 / `BAIZE_NO_MMAP_BIN_FILES=1`）
+>
+> **3. 推荐顺序 + 验收标准**：例如「B 先 50 步 smoke（0 OOM / 0 NaN / step ≤7.4s / 吞吐 ≥500K）→ 16 卡 resume 跑 5k 步（0 OOM / step ≤7.4s / 零重叠与 SEED=1234 不回归）」，并给回滚路径。
+>
+> **4. 交接块**：给 pretrain 可直接复制执行的环境变量/命令（谁执行、判据、失败回滚），**你自己不启动训练**。
+>
+> **5. 交付**：`run/data/blendswitch/S2_OOM_MEMORY_PLAN.md`（估算表 + 方案对比表 + 推荐 + 复现命令）+ `MEMORY_DATA.md` 顶部一条。⏱ 本轮唤醒内给出，不挂后台。
+
 
 > 📌 **纠错（2026-11-28 用户指正）：不换 SEED 才能保证零重叠**
 
