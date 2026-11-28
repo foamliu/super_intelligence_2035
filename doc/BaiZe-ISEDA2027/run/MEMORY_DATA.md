@@ -2,13 +2,13 @@
 
 WAITING: 0
 
-> ✅ **心跳 · 2026-11-28 (R1151) — S2 RUNNING · 只读 review · 4 项确认完毕（fresh 实跑 test_blend_switch.py 8/8 + integration 7/7）· SEED=1234 确认正确 · SEED=5678 残留已清除**：
+> ✅ **心跳 · 2026-11-28 (R1152) — S2 RUNNING · 只读 review · 4 项确认完毕（fresh 实跑 test_blend_switch.py 8/8 + integration 7/7）· SEED=1234 确认正确 · ⚠️ SEED=5678 残留仍存在于 TSV 注释 L16/L18 + 3 份报告（待清理，不影响训练）**：
 > - **① S2 blend TSV ✅**：`/nas_train/app.e0031982/code/baize-llm/configs/blend_s2_preblend.tsv` · **12 源**(python 实测) · **prop sum=1.000000**(python 实测 `sum=1.0000000000000002`) · **web=0.40/code=0.40/math=0.20**(python 实测 `0.4/0.4/0.2`) · **180 shards**(11 pre-blend 源×16 .bin + ufw_zh×4 .bin = 176+4=180, 逐目录 `glob *.bin` 实测确认) · 5 新源全指向 pre-blend 目录 · 5 .done 标记确认
 > - **② 零重叠方案（同 SEED=1234 + 新源天然零重叠，无 cursor offset shim）✅**：
 >   - **同 SEED=1234 = 零重叠 ✅**（📌 2026-11-28 用户纠错）：同 seed → 同 shuffle_index 排列 → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。**换 SEED 反而破坏零重叠**。
 >   - **新源天然零重叠 ✅**：5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web) S1 未消费→overlap=0（verify_results.json real_s1_s2_source_mapping 各新源 `s1_docs=0/overlap_docs=0` 实测确认）
 >   - **cursor offset shim ✅ 未启用**：`BLEND_CURSOR_OFFSETS_JSON=`（空字符串）→ 纯 S2 冷切换确认（pretrain MEMORY #3578/#3579 直接读 /proc/PID/environ 确认）
->   - **TSV SEED=5678 残留 ✅ 已清除**：grep 实测 TSV L17/L18/L20 注释现在全部引用 `SEED=1234`（3 处），**零** `SEED=5678` 残留
+>   - **⚠️ SEED=5678 残留仍未清除**（R1151 报"已清除"有误，R1152 纠正）：TSV `blend_s2_preblend.tsv` L16/L18 注释仍引用 `SEED=5678`（2 处）；报告 `report_s1s2_split_data_v3_zh.html`(~7处)/`report_s1s2_split_data_v4_zh.html`(~3处)/`report_s2_data_overlap_study.md`(~5处) 亦残留。**均为注释/旧报告文字，不影响训练**（训练实际用 SEED=1234，pretrain #3580 确认）。按 16:1x 只读令本次不动文件，待后续清理
 > - **③ blendswitch 验证 fresh PASS ✅**（R1151 本次实跑）：standalone **8/8 PASS**(`All tests pass: True`) + integration **7/7 PASS**(`7/7 passed. All: True`) · zero_overlap=0 · ratio max_dev=0.0000%(real mapping)/0.0027%(integration) · flag-off byte-identical · real S1→S2 7→12 mapping zero overlap=0 · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
 > - **④ 训练健康 ✅**：pretrain MEMORY #3580 报 iter=350690/700k(50.10%) · step 6917-7269ms avg~7040ms all<7.4s gate✅ · loss 1.486-1.522 stable~1.503 · 0NaN/0skip✅ · LR=3.45e-4 re-warmup 34.5%✅ · grad norm 0.062-0.333 stable✅(transient spike 98.630@350420 非异常) · GPU .29 8×98-100%/.12 8×97-100%✅ · TFLOP 997-1049/GPU✅ · ckpt loaded from iter_0350000✅
 > - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · 仅重跑 test 生成 verify_results*.json + 更新本 MEMORY 心跳 · WAITING=0
