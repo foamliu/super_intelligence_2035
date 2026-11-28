@@ -1,4 +1,19 @@
-🔴 S1训练已停止(用户令2026-11-28 09:2x「立刻把S1训练停下」)·训练已于07:55:32被SIGTERM杀死(.29 PID 2234180 torchrun→8 worker SIGTERM→正常退出·.12 PID 1932348 torchrun已确认死亡)·停止前最后iter=351100/700k loss=1.968627E+00 step=6904.6ms grad_norm=0.081 0NaN/0skip✅·最新可用ckpt=350000(iter_0350000/ 32 .distcp文件完整✅ latest_checkpointed_iteration.txt=350000)·两节点GPU全idle(.29 8×0%/0MiB/25°C✅·.12 8×0%/0-4MiB/25-27°C✅)·无训练/eval/daemon进程残留·daemon已停(最后日志07:51:08)·🚫未重启S1(遵守用户令)·340k eval=60.12%(new high!)·350k eval=58.25%·report 44435B/58ckpt·WAITING=1
+> ## 🔴 2026-11-28 10:1x 用户令 · **立刻执行 S2 切换**
+>
+> **用户原话**（逐字）：「你来直接执行 S2 切换」
+>
+> S1 已停、16 卡全空、350k ckpt 完好。**现在直接启动 S2**：
+>
+> ```bash
+> cd /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm
+> export BLEND_TSV=$PWD/configs/blend_s2_preblend.tsv
+> export BLEND_CURSOR_OFFSETS_JSON=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json
+> setsid bash scripts/train.sh s1 > /tmp/baize_s2_launch.log 2>&1 < /dev/null &
+> ```
+>
+> 启动后验证：两节点 shim 生效（`grep -i 'blend.hot.switch'`）、iter 从 350k 续、NaN=0、step ≤7.4s。
+> **本轮这是唯一动作**，不许再写「待运维决定」。
+🔴 S1训练已停止(用户令2026-11-28 09:2x「立刻把S1训练停下」)·训练已于07:55:32被SIGTERM杀死(.29 PID 2234180 torchrun→8 worker SIGTERM→正常退出·.12 PID 1932348 torchrun已确认死亡)·停止前最后iter=351100/700k loss=1.968627E+00 step=6904.6ms grad_norm=0.081 0NaN/0skip✅·最新可用ckpt=350000(iter_0350000/ 32 .distcp文件完整✅ latest_checkpointed_iteration.txt=350000)·两节点GPU全idle(.29 8×0%/0MiB/25°C✅·.12 8×0%/0-4MiB/25-27°C✅)·无训练/eval/daemon进程残留·daemon已停(最后日志07:51:08)·🚫未重启S1(遵守用户令)·340k eval=60.12%(new high!)·350k eval=58.25%·report 44435B/58ckpt·WAITING: 0
 > 📦 #3566（2026-11-28 06:50, 监控巡检+S2 runbook制定·350k eval RUNNING·step7.02s<gate✅·S2 runbook已制定）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3567（2026-11-28 06:57, 监控巡检+归档瘦身·350k eval RUNNING·step7.04s<gate✅·MEMORY归档#3540-#3558(32446B→28246B✅)）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3568（2026-11-28 07:14, 350k eval DONE harness_avg=58.25%·340k eval DONE=60.12%·训练健康iter=350770）→ daily-memories/2026-11-28.md；需要时再读。
