@@ -81,6 +81,8 @@
 **check() 返回 {'pass':bool,'detail':str} 严格契约** (非 tuple, 避 r1661 隐患)。
 
 ## 状态
-- DEBT: 1 plan 落盘，下轮 r1672 按 plan 合成 HybridConnPathRepairProduce-001
+- ✅ r1672 合成收口: HybridConnPathRepairProduce-001 落库 (cases/D/ + assets/ + reference/ + hidden/spec_B.json + hidden_manifest.json)
+- 自验: REF self-test PASS 16/16 (a-p 全 Y); negative_selftest 6 neg 全 FAIL, §4.9 trio {empty:c, print_only:d, core_deleted:e} 3-distinct; SKIP_RUN=1 eval/run_one.sh 框架接受 (workdir clean no-leak, infra_fail=0, hook_blocks=0, FAIL only from no submit.zip); test sha 31469b04 disk==JSON sync
 - .75 eda_flow MCP open_session(r1671_D) 秒级 + ssh→hfeg0pkn003 scp 取回 732KB/146msgs 直读成功
-- ledger: ywyc1 claimed (domain=schematic_netlist)
+- ledger: ywyc1 → case EDA-Eval-DesignFlow-HybridConnPathRepairProduce-001 (covered 683→684)
+- live_eval_review_nonlite_D.tsv 追加 LIVE-NA 行 (505→506)
