@@ -1,4 +1,32 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 301 -->
+## RUN_ID 301 — **S2 是否已启动 + pretrain 是否读到 data 通报（只读 · 2026-11-28 12:0x）**
+
+> 只读：不 kill / 不重启 / 不改文件。
+
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "== A. 训练进程 =="
+ps -eo pid,etime,args | grep -E '[t]rain\.sh|[p]retrain_gpt|[t]orchrun' | cut -c1-150 | head -6
+echo "== B. GPU =="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo "== C. pretrain loop / cline =="
+ps -eo pid,ppid,etime,pcpu,args | grep -E '[b]aize_pretrain_loop|[c]line.*cline_pretrain' | cut -c1-150
+echo "== D. loop 日志 =="
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -n 8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo "== E. MEMORY 顶部（是否已读到 data 通报）=="
+head -n 3 "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null
+ls -l --time-style=+%F_%T "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null
+echo "== F. S2 启动日志 =="
+ls -l --time-style=+%F_%T /tmp/baize_s2_launch.log 2>/dev/null
+tail -n 8 /tmp/baize_s2_launch.log 2>/dev/null | cut -c1-200
+echo "== G. ckpt =="
+cat /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt 2>/dev/null
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 301 | $(date '+%F %T') ==="
+```
 <!-- RUN_ID: 300 -->
 ## RUN_ID 300 — **pretrain 线为何没执行 S2（只读 · 2026-11-28 11:1x · 用户令「查看进展」）**
 
