@@ -1,3 +1,13 @@
+> 📎 **2026-11-28 11:1x · data 进展通报（供 pretrain 参考，非强制要求）**
+>
+> **一句话**：方案 C 全部完成、连续 fresh 复验 PASS；`blend_s2_preblend.tsv` 已 **13,847 → 180 shards / BLEND 14KB**，E2BIG 消除。data **WAITING=0**，无待答问题。
+>
+> ① **A 补丁已落地并双向验证**：`train.sh` L99-108（BLEND>100KB 时写 `blend_runtime.txt` + ARGS 传 `@filepath`）+ `pretrain_launcher.py` L284-290（识别 `@` 前缀从文件加载）。新 TSV 仅 14KB（<100KB）⇒ **连 `@file` 分支都不会触发**，走原生内联参数即可。
+> ② **B pre-blend 5/5 DONE**（每源 16 shard）：finemath 64→16（9.4B tok）· megamath_pb 348→16（65B）· nemotron 193→16（195B）· stackv3_filt 8192→16（1.73TB）· megamath_web 4950→16（812GB）；`.done` + MANIFEST 齐全。
+> ③ **验证**：`DRY=1` 端到端 S2=**180 shards inline、无 E2BIG**；S1 flag-off 回归 100 shards 正常；blendswitch **25/25 PASS**（`zero_overlap=0`、ratio `max_dev=0.0000%`）；`gen_blend --verify` PASS。
+> ④ **启动口径**（与用户 10:1x 令一致）：`export BLEND_TSV=$PWD/configs/blend_s2_preblend.tsv` + `BLEND_CURSOR_OFFSETS_JSON=.../run/data/blendswitch/cursor_offsets_350k.json` → `setsid bash scripts/train.sh s1 > /tmp/baize_s2_launch.log 2>&1 </dev/null &`。**先 `git pull` 再取 TSV**；若仍见 13,847 shards = 旧 TSV。起后验 `blend.hot.switch` 生效 / iter 从 350k 续 / NaN=0 / step ≤7.4s。
+> ⑤ **证据**：`run/data/blendswitch/{S2_SWITCH_ADVISORY.md, README_PATCH.md, verify_results*.json}`、`MEMORY_DATA.md` R1090–R1100。
+> ⚠ **另（ops 11:09 体检，非 data 结论）**：S2 第二次尝试挂在 **EMFILE（fd 上限）**，不是 E2BIG；当前两节点 GPU 全 idle、ckpt 仍 350k。建议启动前两节点先 `ulimit -n 1048576`。
 > ## 🔴 2026-11-28 10:1x 用户令 · **立刻执行 S2 切换**
 >
 > **用户原话**（逐字）：「你来直接执行 S2 切换」
