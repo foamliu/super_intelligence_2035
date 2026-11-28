@@ -1387,3 +1387,5 @@ agccr					parked	CalibreOverlapArea-001	2026-11-28 09:01	Q&A only, not design_fl
 gu7pf					case	CalibreOverlapArea-001	2026-11-28 09:01	
 1789483238511_j0q3u	ivyli	hfeg0plg79	339	physical_verify	case	EDA-Eval-DesignFlow-DanglingDrcDeckGen-001	2026-11-28 09:21	
 1795692167207_rc5ny	lenali	hfeg0pkn003	484	physical_verify	case	EDA-Eval-DesignFlow-ArgusDrcCompareSort-001	2026-11-28 10:03	
+1795776137825_7kizj	xxchen	hfeg0plg56	1054	physical_verify	parked		2026-11-28 10:12	drcpv PyQt GUI bug-fix, software-eng not physical_verify design_flow; pivoted to 0gj9q
+1789526016713_0gj9q	e0020134	hfeg0plg79	763	layout_aether	case	EDA-Eval-DesignFlow-AetherCellInstPatternBuild-001	2026-11-28 10:26	
