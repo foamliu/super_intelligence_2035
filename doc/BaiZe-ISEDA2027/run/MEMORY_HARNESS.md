@@ -1,7 +1,7 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
-> 🆕 **用户令 · 2026-11-27 — 重启后执行：opencode 降级到 v1.19.6 + 继续 7-way 评测**
+> ✅ **用户令 · 2026-11-27 — 重启后执行：opencode 降级到 v1.19.6 + 8-way doubao-pro 评测** · ✅ 已闭环（02:13 Nov29 全8路eval+报告生成+commit完成）
 >
 > **背景**：harness agent 在执行令 F 期间失控——花大量时间 debug opencode v2.4 的 `tools.edit()` bug 而不执行降级指令（令 G/H）。运维已手动 kill harness loop + cline 进程，stash opencode 仓库改动，opencode 回到 v1.19.6。
 >
@@ -32,21 +32,21 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        7路eval DONE✅·zhulong eval RUNNING(359/494,ETA~01:47)·final_report_watch等zhulong_eval退出→自动gen_report·全自动衔接无需干预
-已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅(HEAD c618499abc,源码确认v1.19.6,v2.4.x tags在HEAD之后)·harness脚本归档✅·8way报告生成器加版本列✅·opencode 0-patch根因修复✅(commit f154c8ba50)·6-harness predict全500✅·🔧parse_eval路径bug修复✅·7路eval DONE✅(cline312/cc316/codex220/dsh224/hermes300/pi331/opencode321)·opencode predict 500/500✅·pi_reparse_watch(157685)已退出✅·opencode_eval_watch(1816539)已退出✅(eval done 01:07:42,eval_doubao_pro_opencode.json已写)·final_report_watch运行中(PID3467142,等zhulong_eval)
-当前动作:     7路eval已出正确值(pi331/500=66.2%·opencode321/500=64.2%·cc316/500=63.2%·cline312/500=62.4%·hermes300/500=60.0%·dsh224/500=44.8%·codex220/500=44.0%)·zhulong eval RUNNING(PID1507156,359/494 report.json,workers8,rate~12/min,ETA~01:47)·2watcher在岗(zhulong_eval1816542[eval中]/final_report3467142[等zhulong_eval,opencode_eval已退出✅,pi_reparse已退出✅])·资源自检PASS(load31.89/224~14%,mem avail1032G,本线无>8000%进程)·opencode=v1.19.6✅(HEAD c618499abc)·gw_proxy3进程在岗✅·harness loop在岗(PID299357)✅
-下一步:       zhulong eval完成(~01:47)→eval自动调parse_eval→写eval_doubao_pro_zhulong.json→zhulong_eval_watch退出·final_report_watch检测zhulong_eval退出→检查全8路eval JSON→gen_report最终8路HTML报告(含版本列,cline显示zhulong(cline-patched))+commit→ETA~01:55 Nov29
+PHASE:        8路eval+报告 ALL DONE✅·等下一令·WAITING=1
+已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅(7→8路标签修复commit 4ab377953b)·opencode 0-patch根因修复✅(commit f154c8ba50)·🔧parse_eval路径bug修复✅·全8路predict+eval DONE✅·zhulong eval DONE✅(02:13,resolved=325/failed=162/infra=7)·final 8-way HTML报告生成+commit✅(44f693f090,02:13:34)
+当前动作:     全8路eval完成·最终8路HTML报告已生成+commit(44f693f090)·gen_report脚本7→8路标签修复已commit(4ab377953b)·待push·资源自检PASS(load~25/224~11%,mem avail710G)·harness loop在岗(PID299357)✅
+下一步:       push commits→更新MEMORY→待运维下一令
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~26KB / MEMORY≈6KB
-  🔔 心跳 2026-11-29 01:36: 资源自检PASS(load31.89/224~14%,mem avail1032G,本线无>8000%进程)·7路eval DONE✅(pi331/opencode321/cc316/cline312/hermes300/dsh224/codex220)·zhulong eval RUNNING(PID1507156,359/494 report.json,workers8,rate~12/min,ETA~01:47)·opencode=v1.19.6✅(HEAD c618499abc,源码确认,v2.4.x tags在HEAD之后)·gw_proxy3✅·harness loop(PID299357)·2watcher在岗(zhulong_eval1816542[eval中]/final_report3467142[等zhulong_eval])·opencode_eval已退出✅·pi_reparse已退出✅·全自动衔接无需干预·ETA~01:55 Nov29最终8路HTML报告·WAITING=1(30min后再查)
+  🔔 心跳 2026-11-29 02:14: 8路eval ALL DONE✅·最终8路HTML报告已生成+commit(44f693f090)·SWE-bench Verified Pass%(resolved/500): pi331=66.2%·zhulong(no policy)325=65.0%·opencode321=64.2%·cc316=63.2%·cline-patched312=62.4%·hermes300=60.0%·dsh224=44.8%·codex220=44.0%·gen_report标签7→8路修复commit 4ab377953b·资源自检PASS·harness loop(PID299357)·待push+待下一令·WAITING=1
   🔔 心跳 2026-11-29 01:14: 资源自检PASS·opencode eval DONE✅(01:07,resolved=321)·zhulong predict 499/500✅→eval RUNNING 120/494·详见上条心跳
   🔔 心跳 2026-11-29 00:52: opencode eval RUNNING(495/499)→DONE 01:07 resolved=321·zhulong predict 492→499/500✅→eval RUNNING 120/494
 
   🔧 parse_eval路径bug(已修复): run_verified_full.py:43 EVAL_LOG_ROOT原为logs/run_evaluation,但swebench实际写入logs/evaluation。旧路径只有kimi/glm53模型目录,parse_eval的fallback glob `*/<iid>/report.json`误用旧模型结果→所有eval JSON结果错误。修复:EVAL_LOG_ROOT改为logs/evaluation。已重解析5路(cline/cc/codex/dsh/hermes),pi eval在跑(用旧代码),pi_reparse_watch(PID157685)待pi eval完成后自动重解析。opencode/zhulong eval-watcher将启动新Python进程,自动用修复后代码。
   🔧 opencode 0-patch根因(已修复): OpencodeDriver代码为v2.4.1编写(无--dir),但v1.19.6需要--dir<workdir>才能编辑目标repo文件。修复=加回--dir(commit f154c8ba50)。smoke test验证:astropy__astropy-12907产生502B patch。
   SWE-bench Verified Pass% (doubao-pro 上一轮v1.18.27, 保留对照): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
-  SWE-bench Verified Pass% (doubao-pro 本轮v1.19.6, eval重解析后正确值, Pass%=resolved/500): pi331/500=66.2%·opencode321/500=64.2%·cc316/500=63.2%·cline312/500=62.4%·hermes300/500=60.0%·dsh224/500=44.8%·codex220/500=44.0%·zhulong eval RUNNING(120/494,ETA~01:30)
+  SWE-bench Verified Pass% (doubao-pro 本轮v1.19.6, 全8路eval DONE, Pass%=resolved/500): pi331/500=66.2%·zhulong(no policy)325/500=65.0%·opencode321/500=64.2%·cc316/500=63.2%·cline-patched312/500=62.4%·hermes300/500=60.0%·dsh224/500=44.8%·codex220/500=44.0%
   ⚠️ 旧eval JSON值(已被覆盖,记录供对比): cline355/499·cc273/500·codex289/497·dsh200/490·hermes0/497——均为kimi旧结果被误用,非doubao-pro真实值
 
 ## 启动说明（首次唤醒）
