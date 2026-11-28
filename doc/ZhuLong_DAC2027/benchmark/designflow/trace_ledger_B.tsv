@@ -1776,3 +1776,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794389183890_4q987	wellesc	hfeg0plg17	482	characterization	case	EDA-Eval-DesignFlow-VlibXtolCmp-001	2026-11-28 19:27	r1398: 造题. trace 4q987 VerilogLibVerifiy verify_cell.py $isunknown 内联 + gx/doreal + FAIL_GX + make_report.py 汇总, 依赖完整 VerilogLibVerifiy 项目树不可便携 -> 提取纯 Python 比较器 cellcmp.py (X 容忍 + inout z->cond + FAIL_GX 防假 PASS + TIMEOUT + 分类汇总), A/B 双输入覆盖五类, check.py 15 断言 L1 judge-run, 已 reference 16/16 + naive 7/16 验证
 1787659708187_6l1c8	wellesc	hfeg0plg17	780	characterization	case	EDA-Eval-DesignFlow-WfCmpAdaptLogic-001	2026-11-28 19:57	
 1795595688030_1wuoc	jasonxu	hfeg0plg93	296	spice_sim	claimed		2026-11-28 20:05	
+1787821402941_1qva5.messages.json	wellesc	hfeg0plg17	639	spice_sim	parked		2026-11-28 20:12	dup_of_WfCmpAdaptLogic_001_sibling_6l1c8
