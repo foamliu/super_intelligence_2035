@@ -672,3 +672,192 @@ ckpt_mtime=2026-11-28 05:18:17.145762320 +0800
 （未重启 S1 · 未动别线 · 未改配置）
 === DONE 292 | 2026-11-28 08:01:47 ===
 ```
+
+---
+
+## RUN_ID 293 · 2026-11-28 08:06:04 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+LLM_HOME=/nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm
+BI=/nas_train/app.e0031982/code/BaiZe-ISEDA2027
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+TRAIN_SH=$LLM_HOME/scripts/train.sh
+S2_TSV=$LLM_HOME/configs/blend_s2_preblend.tsv
+CURSOR=$RUN/data/blendswitch/cursor_offsets_350k.json
+SHIM=$BI/blend_hot_switch_bridge_compat.py
+CKPTDIR=$BI/nemo_experiments/baize2b/checkpoints
+
+echo "[0] exec_host=$(hostname)  date=$(date '+%F %T')"
+echo
+
+echo "== A. 前置核验（缺一即 abort，绝不回退 S1）=="
+FAIL=0
+for f in "$TRAIN_SH" "$S2_TSV" "$CURSOR" "$SHIM"; do
+  if [ -f "$f" ]; then echo "  OK   $(stat -c '%s B  %y' "$f")  $f"; else echo "  MISS $f"; FAIL=1; fi
+done
+CK=$(cat "$CKPTDIR/latest_checkpointed_iteration.txt" 2>/dev/null)
+echo "  latest_ckpt=$CK"
+[ -d "$CKPTDIR/iter_0${CK}" ] && echo "  OK   ckpt dir iter_0${CK}" || { echo "  MISS ckpt dir"; FAIL=1; }
+echo "  shim_import=$(cd "$BI" && /nas_train/app.e0031982/miniforge3/envs/py310/bin/python -c 'from blend_hot_switch_bridge_compat import apply_blend_cursor_offset_shim; print("SHIM_OK")' 2>&1 | tail -1)"
+echo
+
+echo "== B. 确认 16 卡全空 =="
+echo "-- .29 --"; nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null
+echo "-- .12 --"
+timeout 60 ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no app.e0031982@10.239.2.12 \
+  "nvidia-smi --query-gpu=index,memory.used --format=csv,noheader" 2>&1 | sed 's/^/  .12| /'
+echo "  残留进程 .29=$(ps -eo args= | grep -cE '[t]rain\.sh s1|[p]retrain_launcher|[t]orchrun')"
+echo
+
+if [ "$FAIL" != "0" ]; then
+  echo "ABORT: 前置不全，未启动任何训练"
+  echo "=== DONE 293 (ABORTED) | $(date '+%F %T') ==="
+  exit 9
+fi
+
+echo "== C. 启动 S2（从 350k resume，S2 TSV + cursor offsets）=="
+cd "$LLM_HOME" || { echo "ABORT cd failed"; exit 9; }
+export BLEND_TSV="$S2_TSV"
+export BLEND_CURSOR_OFFSETS_JSON="$CURSOR"
+echo "  BLEND_TSV=$BLEND_TSV"
+echo "  BLEND_CURSOR_OFFSETS_JSON=$BLEND_CURSOR_OFFSETS_JSON"
+setsid bash "$TRAIN_SH" s1 > /tmp/baize_s2_launch.log 2>&1 < /dev/null &
+NEWPID=$!
+echo "  S2 launch PID=$NEWPID"
+echo
+
+echo "== D. 启动后 60s 存活检查 =="
+sleep 60
+if kill -0 "$NEWPID" 2>/dev/null; then echo "  PID $NEWPID ALIVE after 60s OK"; else echo "  PID $NEWPID DIED <60s"; fi
+echo "  launcher .29=$(ps -eo args= | grep -cE '[p]retrain_launcher')"
+timeout 60 ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no app.e0031982@10.239.2.12 \
+  "echo .12_launcher=\$(ps -eo args= | grep -cE '[p]retrain_launcher')" 2>&1 | sed 's/^/  .12| /'
+echo "-- launch log tail --"
+tail -n 25 /tmp/baize_s2_launch.log 2>/dev/null | cut -c1-210
+echo
+
+echo "== E. GPU 占用（应看到两节点都在吃显存）=="
+nvidia-smi --query-gpu=index,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo
+
+echo "== F. 等 240s 再看训练是否进入 step =="
+sleep 240
+echo "-- worker log --"
+tail -n 6 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-215
+echo "-- shim 生效证据 (双节点) --"
+echo "  .29: $(grep -ci 'blend.hot.switch' /tmp/baize_s1_baize2b_worker.log 2>/dev/null) 行"
+grep -i 'blend.hot.switch' /tmp/baize_s1_baize2b_worker.log 2>/dev/null | tail -3 | cut -c1-200
+timeout 60 ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no app.e0031982@10.239.2.12 \
+  "echo '  .12: '\$(grep -ci 'blend.hot.switch' /tmp/baize_s1_baize2b_master.log 2>/dev/null) 行; grep -i 'blend.hot.switch' /tmp/baize_s1_baize2b_master.log 2>/dev/null | tail -3 | cut -c1-200" 2>&1 | sed 's/^/  .12| /'
+echo
+
+echo "== G. 健康判据 =="
+IT=$(tail -20 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | grep -oP 'iteration\s+\K\d+' | tail -1)
+LS=$(tail -20 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | grep -oP 'lm loss:\s+\K[\d.E+]+' | tail -1)
+ST=$(tail -20 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | grep -oP 'elapsed time per iteration \(ms\):\s+\K[\d.]+' | tail -1)
+NN=$(tail -20 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | grep -oP 'nan iterations:\s+\K\d+' | tail -1)
+echo "  iter=$IT  loss=$LS  step_ms=$ST  nan=$NN"
+echo "  (期望: iter>=350000 resume 起点, nan=0, step<=7400ms)"
+echo "  S2_PID=$NEWPID"
+echo
+echo "（未启动 S1 · 未动别线 · 未改配置）"
+echo "=== DONE 293 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap29  date=2026-11-28 08:06:04
+
+== A. 前置核验（缺一即 abort，绝不回退 S1）==
+  OK   14778 B  2026-11-27 10:08:59.034326875 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/scripts/train.sh
+  OK   3625 B  2026-11-25 09:09:38.184548002 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/configs/blend_s2_preblend.tsv
+  OK   1093 B  2026-11-27 09:25:19.735170452 +0800  /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json
+  OK   4226 B  2026-11-27 09:21:29.370543534 +0800  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/blend_hot_switch_bridge_compat.py
+  latest_ckpt=350000
+  OK   ckpt dir iter_0350000
+  shim_import=SHIM_OK
+
+== B. 确认 16 卡全空 ==
+-- .29 --
+0, 0 MiB
+1, 0 MiB
+2, 0 MiB
+3, 0 MiB
+4, 0 MiB
+5, 0 MiB
+6, 0 MiB
+7, 0 MiB
+-- .12 --
+  .12| 0, 0 MiB
+  .12| 1, 0 MiB
+  .12| 2, 0 MiB
+  .12| 3, 0 MiB
+  .12| 4, 0 MiB
+  .12| 5, 0 MiB
+  .12| 6, 4 MiB
+  .12| 7, 4 MiB
+  残留进程 .29=1
+
+== C. 启动 S2（从 350k resume，S2 TSV + cursor offsets）==
+  BLEND_TSV=/nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/configs/blend_s2_preblend.tsv
+  BLEND_CURSOR_OFFSETS_JSON=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/blendswitch/cursor_offsets_350k.json
+  S2 launch PID=428912
+
+== D. 启动后 60s 存活检查 ==
+  PID 428912 DIED <60s
+  launcher .29=1
+  .12| .12_launcher=0
+-- launch log tail --
+[2026-11-28 08:06:09] WARN: launcher 无 --max-position-embeddings（训练不受影响，RoPE 逐位置计算）；导出 HF config 时必须写 max_position_embeddings=1048576，由 scripts/check_rope.py 把�
+[2026-11-28 08:06:10] TensorBoard 已在运行 pid=2571921（端口 6006）
+--- TensorBoard @ 2026-11-28 08:06:10 ---
+  host/port : whag0pgpuap29 / 6006 (bind 0.0.0.0)
+  pid       : 2571921
+  logdir    : /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments
+  listen    : LISTEN 0 128 0.0.0.0:6006 0.0.0.0:* 
+  http      : 200
+  events    :
+      2026-11-28 07:55      615562  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1795815979.whag0pgpuap29.2245446.0
+      2026-11-28 05:30       14596  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1795814828.whag0pgpuap29.780408.0
+      2026-11-28 05:18    50221762  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1795157328.whag0pgpuap29.2601340.0
+      2026-11-20 01:22     9728818  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1794982260.whag0pgpuap29.3800664.0
+      2026-11-18 13:56       45844  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1794980435.whag0pgpuap29.1801089.0
+  log tail  :
+      NOTE: Using experimental fast data loading logic. To disable, pass
+          "--load_fast=false" and report issues on GitHub. More details:
+          https://github.com/tensorflow/tensorboard/issues/4784
+      
+      TensorBoard 2.20.0 at http://0.0.0.0:6006/ (Press CTRL+C to quit)
+[2026-11-28 08:06:10] rank0 @ 10.239.2.12（后台 ssh）
+[2026-11-28 08:06:20] rank1 @ whag0pgpuap29（前台）
+[2026-11-28 08:06:20] 结束：worker_rc=126 master_rc=126
+[2026-11-28 08:06:20] 日志：/tmp/baize_s1_baize2b_worker.log / /tmp/baize_s1_baize2b_master.log ；摘要：/tmp/baize_s1_baize2b.log
+  | /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/scripts/train.sh: line 282: /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun: Argument list too long
+
+== E. GPU 占用（应看到两节点都在吃显存）==
+0, 0 MiB
+1, 0 MiB
+2, 0 MiB
+3, 0 MiB
+4, 0 MiB
+5, 0 MiB
+6, 0 MiB
+7, 0 MiB
+
+== F. 等 240s 再看训练是否进入 step ==
+-- worker log --
+/nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/scripts/train.sh: line 282: /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun: Argument list too long
+-- shim 生效证据 (双节点) --
+  .29: 0 行
+  .12|   .12: 0 行
+
+== G. 健康判据 ==
+  iter=  loss=  step_ms=  nan=
+  (期望: iter>=350000 resume 起点, nan=0, step<=7400ms)
+  S2_PID=428912
+
+（未启动 S1 · 未动别线 · 未改配置）
+=== DONE 293 | 2026-11-28 08:11:07 ===
+```

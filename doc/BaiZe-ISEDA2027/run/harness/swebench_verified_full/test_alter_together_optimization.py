@@ -1,5 +1,9 @@
 
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('django'))
+
 # Import only what we need to avoid circular imports
 from django.db.migrations.operations.models import AlterUniqueTogether, AlterIndexTogether
 from django.db.migrations.optimizer import MigrationOptimizer

@@ -15,34 +15,29 @@ from django.db import connections
 def test_postgresql_extra_args():
     """Test that extra arguments are passed before dbname"""
     conn_params = {
-        'database': 'testdb',
-        'user': 'testuser',
-        'host': 'postgres',
-        'port': '5432',
+        'NAME': 'testdb',
+        'USER': 'testuser',
+        'HOST': 'postgres',
+        'PORT': '5432',
     }
 
     extra_args = ['-c', 'select * from some_table;']
 
-    with patch('subprocess.run') as mock_run, patch('os.environ.copy', return_value={}):
-        mock_run.return_value = MagicMock(returncode=0)
-        DatabaseClient.runshell_db(conn_params, extra_args)
-        
-        call_args = mock_run.call_args
-        actual_args = call_args[0][0]
-        
-        # Check that args are in the correct order: psql options + extra args + dbname
-        expected_args = ['psql', '-U', 'testuser', '-h', 'postgres', '-p', '5432', '-c', 'select * from some_table;', 'testdb']
-        
-        print("Testing PostgreSQL extra args order...")
-        if actual_args == expected_args:
-            print(f"✓ Command line args: {' '.join(actual_args)} (correct)")
-            print("✓ Extra args are placed before dbname as expected")
-            return True
-        else:
-            print(f"✗ Command line args mismatch:")
-            print(f"  Expected: {' '.join(expected_args)}")
-            print(f"  Got:      {' '.join(actual_args)}")
-            return False
+    actual_args, env = DatabaseClient.settings_to_cmd_args_env(conn_params, extra_args)
+    
+    # Check that args are in the correct order: psql options + extra args + dbname
+    expected_args = ['psql', '-U', 'testuser', '-h', 'postgres', '-p', '5432', '-c', 'select * from some_table;', 'testdb']
+    
+    print("Testing PostgreSQL extra args order...")
+    if actual_args == expected_args:
+        print(f"✓ Command line args: {' '.join(actual_args)} (correct)")
+        print("✓ Extra args are placed before dbname as expected")
+        return True
+    else:
+        print(f"✗ Command line args mismatch:")
+        print(f"  Expected: {' '.join(expected_args)}")
+        print(f"  Got:      {' '.join(actual_args)}")
+        return False
 
 
 def test_dbshell_command_passes_args():
