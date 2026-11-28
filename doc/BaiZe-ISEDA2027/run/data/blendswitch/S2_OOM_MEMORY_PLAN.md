@@ -16,29 +16,29 @@
 |:-----|---:|---:|---:|
 | 源数 | 7 | 12 | +5（+71%） |
 | shard 数 | 100 | 180 | +80（+80%） |
-| .bin 总量 | 13.17 TB | 17.02 TB | +3.85 TB（+29%） |
-| .idx 总量 | 66.59 GB | 81.13 GB | +14.54 GB（+22%） |
+| .bin 总量 | 13.17 TB | 15.86 TB | +2.69 TB（+20%） |
+| .idx 总量 | 66.59 GB | 75.55 GB | +8.96 GB（+13%） |
 | mmap 区域/node（64 workers） | 6,400 | 11,520 | +5,120（+80%） |
 
-**实测命令**：`for dir in <12 S2 source dirs>; do find "$dir" -name '*.bin' | wc -l; find "$dir" -name '*.bin' -exec du -sb {} + | awk '{s+=$1} END{print s}'; done`（逐目录实测，2026-11-28 19:0x）
+**实测命令**：`for dir in <12 S2 source dirs>; do find "$dir" -name '*.idx' -exec du -sbL {} + | awk '{s+=$1} END{print s}'; done`（逐目录实测，2026-11-28 19:0x，`-L` 跟随 ufw_zh 的 symlink）
 
 ### 1.2 S2 逐源 .bin/.idx 明细
 
 | 源 | prop | shards | .bin (GB) | .idx (GB) | 类别 | S1/S2 |
 |:---|---:|---:|---:|---:|:---|:---|
-| en_v1_4 | 0.35 | 16 | 8,948.3 | 50.76 | web | 共享 |
-| ufw_l1_en_hq | 0.03 | 16 | 600.6 | 2.90 | web | 共享 |
-| ufw_zh | 0.02 | 4 | 451.0 | 2.62 | web | 共享 |
-| code_l2 | 0.18 | 16 | 1,685.8 | 5.34 | code | 共享 |
-| code_l3 | 0.05 | 16 | 514.5 | 1.62 | code | 共享 |
-| stackv3_filt | 0.17 | 16 | 1,903.2 | 6.57 | code | **新源** |
-| math_l1 | 0.025 | 16 | 657.7 | 1.72 | math | 共享 |
-| math_l3 | 0.015 | 16 | 311.8 | 1.63 | math | 共享 |
-| megamath_pb | 0.028 | 16 | 259.9 | 1.90 | math | **新源** |
-| finemath | 0.005 | 16 | 37.6 | 0.13 | math | **新源** |
-| nemotron | 0.067 | 16 | 781.7 | 3.80 | math | **新源** |
-| megamath_web | 0.060 | 16 | 872.4 | 2.13 | math | **新源** |
-| **合计** | **1.00** | **180** | **17,024.5** | **81.13** | | |
+| en_v1_4 | 0.35 | 16 | 8,333.8 | 47.27 | web | 共享 |
+| ufw_l1_en_hq | 0.03 | 16 | 559.4 | 2.70 | web | 共享 |
+| ufw_zh | 0.02 | 4 | 420.1 | 2.44 | web | 共享 |
+| code_l2 | 0.18 | 16 | 1,570.0 | 4.97 | code | 共享 |
+| code_l3 | 0.05 | 16 | 479.2 | 1.51 | code | 共享 |
+| stackv3_filt | 0.17 | 16 | 1,772.5 | 6.12 | code | **新源** |
+| math_l1 | 0.025 | 16 | 612.6 | 1.60 | math | 共享 |
+| math_l3 | 0.015 | 16 | 290.4 | 1.52 | math | 共享 |
+| megamath_pb | 0.028 | 16 | 242.0 | 1.77 | math | **新源** |
+| finemath | 0.005 | 16 | 35.0 | 0.12 | math | **新源** |
+| nemotron | 0.067 | 16 | 728.0 | 3.54 | math | **新源** |
+| megamath_web | 0.060 | 16 | 812.5 | 1.98 | math | **新源** |
+| **合计** | **1.00** | **180** | **15,855.3** | **75.55** | | |
 
 ### 1.3 内存粗模型（per node = .29，2TB RAM + 8GB swap）
 
@@ -54,28 +54,29 @@
 
 | | S1 | S2 |
 |:---|---:|---:|
-| .idx 合计 | 66.59 GB | 81.13 GB |
-| × 1.5（含 shuffle_index） | **99.9 GB/rank** | **121.7 GB/rank** |
+| .idx 合计 | 66.59 GB | 75.55 GB |
+| × 1.5（含 shuffle_index） | **99.9 GB/rank** | **113.3 GB/rank** |
 
 **per node 总账**（8 ranks × 8 workers = 64 workers）：
 
 | 组成 | S1 | S2 |
 |:---|---:|---:|
-| 索引内存（8 ranks × per-rank） | 799 GB | 974 GB |
+| 索引内存（8 ranks × per-rank） | 799 GB | 907 GB |
 | 训练开销（8 ranks × 25 GB） | 200 GB | 200 GB |
 | Python/PyTorch 开销（8 ranks × 5 GB） | 40 GB | 40 GB |
-| **base RSS 合计** | **1,039 GB** | **1,214 GB** |
-| **可用 headroom**（2,048+8-base） | **1,017 GB** | **842 GB** |
+| **base RSS 合计** | **1,039 GB** | **1,147 GB** |
+| **可用 headroom**（2,048+8-base） | **1,017 GB** | **909 GB** |
 
 **COW 破页临界点**：
 
 | COW 破页率 | S1 总 RSS | S1 状态 | S2 总 RSS | S2 状态 |
 |---:|---:|:---|---:|:---|
-| 5% | 1,359 GB | ✅ | 1,603 GB | ✅ |
-| 10% | 1,678 GB | ✅ | 1,992 GB | ✅（临界！） |
-| 12% | — | ✅ | 2,116 GB | ❌ **OOM** |
-| 15% | 1,998 GB | ✅（临界） | 2,382 GB | ❌ OOM |
-| 20% | 2,318 GB | ❌ OOM | 2,771 GB | ❌ OOM |
+| 5% | 1,359 GB | ✅ | 1,510 GB | ✅ |
+| 10% | 1,678 GB | ✅ | 1,872 GB | ✅ |
+| 12% | — | ✅ | 2,017 GB | ✅（临界！） |
+| 13% | — | ✅ | 2,090 GB | ❌ **OOM** |
+| 15% | 1,998 GB | ✅（临界） | 2,235 GB | ❌ OOM |
+| 20% | 2,318 GB | ❌ OOM | 2,597 GB | ❌ OOM |
 
 > COW 破页率 = worker 触发 COW copy 的索引页占 per-rank 索引总量的百分比。
 > 64 workers × per-rank-index × COW% = COW 总增量。
@@ -91,21 +92,21 @@
 **pre-blend 修复后**（#832, 100 shard S1）：索引骤小 → COW 可忽略 → nw=8 fork 安全 → 350k 步 0 OOM
 
 **S2 回归分析**：
-- S2 新增 5 源 80 shard → 索引 +22%、shard +80% → COW 破页率从 S1 的 <5% 上升至 ~12%
-- S2 headroom 比 S1 少 175 GB（842 vs 1,017 GB）→ 临界点从 ~15% 降至 ~12%
+- S2 新增 5 源 80 shard → 索引 +13%、shard +80% → COW 破页率从 S1 的 <5% 上升至 ~13%
+- S2 headroom 比 S1 少 108 GB（909 vs 1,017 GB）→ 临界点从 ~15% 降至 ~12.4%
 - COW 破页率随步数线性增长（每步 worker 访问更多索引页 → 触发更多 COW）
 - **估算崩溃区间：800–1,200 步**（实测 920 步落在区间内 ✅）
   - 下界（800 步）：假设 COW 增长率较高（更多随机访问）
   - 上界（1,200 步）：假设 COW 增长率较低（page cache 回收有效）
-  - 实测 920 步 → COW 破页率 ≈ 12-13%
+  - 实测 920 步 → COW 破页率 ≈ 12-13%（临界点 ~12.4%）
 
 **辅助因素**：mmap enabled → 180 shard × 64 worker = 11,520 mmap 区域 → page cache 工作集增大 → 压缩 headroom → 加速触底
 
 ### 1.5 结论
 
-**根因**：S2 的 180 shard / 81 GB .idx 超出 pre-blend 安全包络（S1 验证过的是 100 shard / 67 GB .idx）。fork-COW 破页率从 S1 的 <5% 升至 ~12%，叠加 mmap page cache 压力，在 920 步处耗尽 2TB RAM + 8GB swap → OOM-kill。
+**根因**：S2 的 180 shard / 75.55 GB .idx 超出 pre-blend 安全包络（S1 验证过的是 100 shard / 67 GB .idx）。fork-COW 破页率从 S1 的 <5% 升至 ~13%，叠加 mmap page cache 压力，在 920 步处耗尽 2TB RAM + 8GB swap → OOM-kill。
 
-**关于"再 pre-blend 合并"（方案 A0）**：进一步合并 180→12 shard **不解决 OOM**——.idx 总量（81 GB）由文档数决定，与 shard 数无关；COW 破页率取决于索引内存而非 shard 数（代码依据见 §2 方案 A0）。
+**关于"再 pre-blend 合并"（方案 A0）**：进一步合并 180→12 shard **不解决 OOM**——.idx 总量（75.55 GB）由文档数决定，与 shard 数无关；COW 破页率取决于索引内存而非 shard 数（代码依据见 §2 方案 A0）。
 
 ---
 
@@ -121,12 +122,12 @@
 | N=12（1 shard/源） | 每 shard .bin 0.3-1.4TB；.idx 合并后总量不变 |
 | N=24（2 shard/源） | 每 shard .bin 0.15-0.7TB；.idx 合并后总量不变 |
 | **对 .idx 总量的影响** | **无**（.idx ∝ 文档数，与 shard 数无关；Megatron `build_blended_indices` 的 `dataset_index`/`dataset_sample_index` 大小由 sample 数决定，非 shard 数） |
-| **对 per-rank 索引内存的影响** | **无**（81.13 GB .idx → 122 GB/rank 不变） |
+| **对 per-rank 索引内存的影响** | **无**（75.55 GB .idx → 113 GB/rank 不变） |
 | **对 COW 破页率的影响** | **无**（COW ∝ 索引内存 × 步数，与 shard 数无关） |
 | 对 page cache 的影响 | 极小（mmap 区域 180→12，减少 file handle / VMA 元数据，但 .bin 总量不变 → page cache 工作集不变） |
 | 耗时 | 重跑 `pre_blend.py` 全 12 源 ≈ 4-6h（stackv3_filt 1.9TB 需 ~2-4h NFS I/O） |
 | 对吞吐影响 | 无（训练时读取的数据量不变） |
-| 结论 | **不解决 OOM**——COW 破页根因是索引内存（81 GB .idx），与 shard 数无关。合并仅减少 file handle 开销（边际收益） |
+| 结论 | **不解决 OOM**——COW 破页根因是索引内存（75.55 GB .idx），与 shard 数无关。合并仅减少 file handle 开销（边际收益） |
 | 可验证判据 | 50 步 smoke：仍会在 ~920 步 OOM（与当前行为一致） |
 
 > **代码依据**：Megatron `blended_dataset.py:41-110` 的 `build_blended_indices` 生成 `dataset_index`（shape=[num_datasets, num_samples]，int64）和 `dataset_sample_index`（shape=[num_samples]，int64）。`num_samples` 由 blend 配比和各源文档数决定，与 shard 数无关。`.idx` 文件的 `sizes`(int32)+`pointers`(int64) 按**文档**存储，合并 shard 只是把多个小数组拼接为一个大数组，总元素数不变。
@@ -140,7 +141,7 @@
 | 原理 | 关闭 .bin mmap → worker 用 `_FileBinReader`（open+seek+readinto）→ 无 page cache 累积 → 释放 ~200-400 GB page cache → headroom 回升 |
 | 改动 | `common.env` 设 `BAIZE_NO_MMAP_BIN_FILES=1`（1 行） |
 | 代价 | per-read I/O 略增（open+seek vs mmap 随机访问），但每步数据量仅 ~8.4 MB，与 ~7s 计算重叠 |
-| 预期效果 | headroom 从 842 GB → ~1,100-1,200 GB → COW 临界点从 12% → ~15-17% → **可能延后崩溃但不消除根因** |
+| 预期效果 | headroom 从 909 GB → ~1,150-1,250 GB → COW 临界点从 13% → ~16-18% → **可能延后崩溃但不消除根因** |
 | 可验证判据 | 50 步 smoke：0 OOM / 0 NaN / step ≤7.4s / 吞吐 ≥500K tok/s |
 | 风险 | COW 破页仍在累积，只是慢一些；可能延后到 2,000-5,000 步再崩 |
 | 回滚 | `BAIZE_NO_MMAP_BIN_FILES=0` 恢复 |
@@ -151,9 +152,9 @@
 |:---|:---|
 | 原理 | spawn 创建全新进程（不继承父进程内存）→ **消除 fork-COW** → RSS 不随步数累积 |
 | 历史依据 | #806（2026-10-27）实现 + 静态验证；设计于 628-小-shard 时代（.idx ~6 GB） |
-| ⚠️ 关键问题 | spawn 下每个 worker **独立加载索引** → per-worker RSS ≈ 122 GB → 64 workers × 122 = **7,808 GB >> 2TB** |
+| ⚠️ 关键问题 | spawn 下每个 worker **独立加载索引** → per-worker RSS ≈ 113 GB → 64 workers × 113 = **7,232 GB >> 2TB** |
 | ⚠️ 详细证明 | 见 §6 附录：spawn 仅在 nw≤1 时可行（976 GB），而 nw=1 吞吐≈nw=0（无 overlap 收益） |
-| 结论 | **spawn 不适用于 S2 规模**（81 GB .idx 太大） |
+| 结论 | **spawn 不适用于 S2 规模**（75.55 GB .idx 太大） |
 | 回滚 | 设 `BAIZE_DATALOADER_START_METHOD=`（空=fork）|
 
 ### 方案 C｜降 nw（8→4→2→0）
@@ -245,7 +246,7 @@
 
 ```bash
 # === S2 OOM 修复（2026-11-28 data agent 建议）===
-# 根因：180 shard + 81 GB .idx → fork-COW 破页率 ~12% → 920 步 OOM
+# 根因：180 shard + 75.55 GB .idx → fork-COW 破页率 ~13% → 920 步 OOM
 # 修复：nw=0（确定不崩）+ 禁 mmap（回收 page cache）
 export BAIZE_NUM_WORKERS="${BAIZE_NUM_WORKERS:-0}"        # 8→0：消除 worker 子进程 → 无 COW → 无 OOM
 export BAIZE_NO_MMAP_BIN_FILES="${BAIZE_NO_MMAP_BIN_FILES:-1}"  # 0→1：禁 mmap → 无 page cache 累积
@@ -281,7 +282,7 @@ bash code/baize-llm/scripts/train.sh s2
 
 ```bash
 # 如 nw=0 仍崩（极低概率）：
-# 1. 检查是否 .idx 内存本身就超 2TB（8 ranks × 122 GB = 976 GB，应 < 2TB）
+# 1. 检查是否 .idx 内存本身就超 2TB（8 ranks × 113 GB = 907 GB，应 < 2TB）
 # 2. 换回 S1 blend：改 train.sh 中 BLEND_FILE 指向 blend_s1_preblend.tsv
 # 3. 从 iter_0350000 resume S1
 # 4. 上报 data agent 进一步分析
@@ -304,15 +305,15 @@ bash code/baize-llm/scripts/train.sh s2
 
 | 维度 | #806 设计时代（628 shard） | S2（180 shard pre-blend） |
 |:---|---:|---:|
-| .idx 总量 | ~6 GB | 81.13 GB |
-| per-rank 索引内存（×1.5） | ~9 GB | 122 GB |
-| spawn per-worker RSS | ~9 GB | **122 GB** |
-| 64 workers × per-worker | 576 GB ✅ | **7,808 GB ❌** |
-| 32 workers (nw=4) | 288 GB ✅ | **3,904 GB ❌** |
-| 8 workers (nw=1) | 72 GB ✅ | **976 GB ✅（但吞吐≈nw=0）** |
+| .idx 总量 | ~6 GB | 75.55 GB |
+| per-rank 索引内存（×1.5） | ~9 GB | 113 GB |
+| spawn per-worker RSS | ~9 GB | **113 GB** |
+| 64 workers × per-worker | 576 GB ✅ | **7,232 GB ❌** |
+| 32 workers (nw=4) | 288 GB ✅ | **3,616 GB ❌** |
+| 8 workers (nw=1) | 72 GB ✅ | **907 GB ✅（但吞吐≈nw=0）** |
 
 > spawn 消除 COW，但代价是每个 worker 独立加载全部索引 → 内存 = nw × per-rank-index。
-> S2 的 81 GB .idx 使 spawn 仅在 nw≤1 时可行，而 nw=1 的吞吐接近 nw=0（无 overlap 收益）。
+> S2 的 75.55 GB .idx 使 spawn 仅在 nw≤1 时可行，而 nw=1 的吞吐接近 nw=0（无 overlap 收益）。
 > **结论：spawn 不适用于 S2 规模**。
 
 ---
@@ -342,7 +343,7 @@ done
 
 # 2. 内存模型复现
 python3 -c "
-idx_total = 81.13e9  # S2 .idx total bytes
+idx_total = 75.55e9  # S2 .idx total bytes
 mem_per_rank = idx_total * 1.5  # .idx + shuffle_index
 base_rss = mem_per_rank * 8 + 25e9*8 + 5e9*8  # 8 ranks
 headroom = (2048+8)*1e9 - base_rss
@@ -363,7 +364,7 @@ for pct in [5, 10, 12, 15, 20]:
 | 假设 | 依据 | 不确定性 |
 |:---|:---|:---|
 | 索引内存 = .idx × 1.5 | .idx 含 sizes(int32)+pointers(int64)；内存额外含 shuffle_index(int64) | ±20% |
-| COW 破页率 ~12%@920 步 | 由崩溃步数反推 + S1 未崩（<5%）| ±3% |
+| COW 破页率 ~13%@920 步 | 由崩溃步数反推 + S1 未崩（<5%）| ±3% |
 | nw=0 吞吐 308K | #805 实测 | ±10%（S2 blend 不同可能略变） |
 | nw=4 吞吐 450-500K | 线性插值（308K@0, 613K@8） | ±15% |
 | 训练开销 25 GB/rank | 2B bf16 模型 + FP8 优化器 + 激活 | ±5 GB |

@@ -2,10 +2,10 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1162) — S2 OOM 内存方案已交付 · `S2_OOM_MEMORY_PLAN.md` · 推荐 D+（禁 mmap + nw=0）**：
-> - **根因**（定量）：S2 = 12 源 180 shard / 81.13 GB .idx（vs S1 = 7 源 100 shard / 66.59 GB .idx，+22%）→ per-rank 索引内存 122 GB × 8 ranks = 974 GB + 训练开销 240 GB = base RSS 1,214 GB → headroom 仅 842 GB（vs S1 的 1,017 GB）→ fork-COW 破页率 ~12%（@920 步）→ 2,116 GB > 2,048 GB → OOM-kill
+> 🔧 **心跳 · 2026-11-28 (R1162) — S2 OOM 内存方案已交付（数字已用 fresh 实测校正）· `S2_OOM_MEMORY_PLAN.md` · 推荐 D+（禁 mmap + nw=0）**：
+> - **根因**（定量，fresh 实测 `du -sbL`）：S2 = 12 源 180 shard / **75.55 GB .idx**（vs S1 = 7 源 100 shard / 66.59 GB .idx，+13%）→ per-rank 索引内存 113 GB × 8 ranks = 907 GB + 训练开销 240 GB = base RSS 1,147 GB → headroom 仅 909 GB（vs S1 的 1,017 GB）→ fork-COW 破页率 ~13%（@920 步）→ 2,090 GB > 2,048 GB → OOM-kill
 > - **崩溃步数模型**：估算区间 800-1,200 步（实测 920 步落在区间内 ✅）；COW 破页率随步数线性增长，与 nw 正相关
-> - **方案对比**：A0（再 pre-blend 180→12）**不解决 OOM**（.idx ∝ 文档数≠shard 数）⭐ ｜ A（禁 mmap）延后不根治 ⭐⭐ ｜ B（spawn）**S2 规模不可行**（64 workers × 122 GB = 7,808 GB >> 2TB）🚫 ｜ C-nw=0 确定**不崩**但吞吐 308K（-50%）⭐⭐⭐ ｜ **D+（禁 mmap + nw=0）确定不崩 ⭐⭐⭐⭐**
+> - **方案对比**：A0（再 pre-blend 180→12）**不解决 OOM**（.idx ∝ 文档数≠shard 数）⭐ ｜ A（禁 mmap）延后不根治 ⭐⭐ ｜ B（spawn）**S2 规模不可行**（64 workers × 113 GB = 7,232 GB >> 2TB）🚫 ｜ C-nw=0 确定**不崩**但吞吐 308K（-50%）⭐⭐⭐ ｜ **D+（禁 mmap + nw=0）确定不崩 ⭐⭐⭐⭐**
 > - **推荐**：D+ 先跑起来（不崩 > 快但崩），后台再试 nw=4+禁mmap 提速；回滚路径完备
 > - **交付物**：`run/data/blendswitch/S2_OOM_MEMORY_PLAN.md`（估算表 + 方案对比表 + 推荐 + 复现命令 + 交接块）
 > - **交接**：pretrain 改 `common.env` 设 `BAIZE_NUM_WORKERS=0` + `BAIZE_NO_MMAP_BIN_FILES=1` → DRY 验证 → 从 350k ckpt resume → 50 步 smoke（0 OOM/0 NaN/step ≤14s/吞吐 ≥280K）
