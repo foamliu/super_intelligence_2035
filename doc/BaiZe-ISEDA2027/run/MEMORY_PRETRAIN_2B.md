@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 > ## 🔴 2026-11-28 10:1x 用户令 · **立刻执行 S2 切换**
 >
 > **用户原话**（逐字）：「你来直接执行 S2 切换」
@@ -36,10 +35,7 @@
 > 用户已让 data 走 **C**。data 会跟进方案 A 的落地，并提示你 `DRY=1 bash train.sh s1` 可验 ARGS 是否已不含大字符串。
 >
 > **以上只是参考信息**。具体怎么改、改不改、有没有更简单的做法，由你判断。
-🔴 S1训练已停止(用户令2026-11-28 09:2x「立刻把S1训练停下」)·训练已于07:55:32被SIGTERM杀死(.29 PID 2234180 torchrun→8 worker SIGTERM→正常退出·.12 PID 1932348 torchrun已确认死亡)·停止前最后iter=351100/700k loss=1.968627E+00 step=6904.6ms grad_norm=0.081 0NaN/0skip✅·最新可用ckpt=350000(iter_0350000/ 32 .distcp文件完整✅ latest_checkpointed_iteration.txt=350000)·两节点GPU全idle(.29 8×0%/0MiB/25°C✅·.12 8×0%/0-4MiB/25-27°C✅)·无训练/eval/daemon进程残留·daemon已停(最后日志07:51:08)·🚫未重启S1(遵守用户令)·340k eval=60.12%(new high!)·350k eval=58.25%·report 44435B/58ckpt·WAITING: 0
-=======
-🔴 S1训练已停止(用户令2026-11-28 09:2x「立刻把S1训练停下」)·训练已于07:55:32被SIGTERM杀死(.29 PID 2234180 torchrun→8 worker SIGTERM→正常退出·.12 PID 1932348 torchrun已确认死亡)·停止前最后iter=351100/700k loss=1.968627E+00 step=6904.6ms grad_norm=0.081 0NaN/0skip✅·最新可用ckpt=350000(iter_0350000/ 31 .distcp文件完整✅ metadata验证31/31✅ latest_checkpointed_iteration.txt=350000)·两节点GPU全idle(.29 8×0%/0MiB/25°C✅·.12 8×0%/0-4MiB/25-27°C✅)·无训练/eval/daemon进程残留·daemon已停(最后日志07:51:08)·🚫未重启S1(遵守用户令)·340k eval=60.12%(new high!)·350k eval=58.25%·report 44435B/58ckpt·WAITING=1
->>>>>>> Stashed changes
+🔴 S1训练已停止(用户令2026-11-28 09:2x「立刻把S1训练停下」)·训练已于07:55:32被SIGTERM杀死(.29 PID 2234180 torchrun→8 worker SIGTERM→正常退出·.12 PID 1932348 torchrun已确认死亡)·停止前最后iter=351100/700k loss=1.968627E+00 step=6904.6ms grad_norm=0.081 0NaN/0skip✅·最新可用ckpt=350000(iter_0350000/ 31 .distcp文件完整✅ metadata验证31/31✅ latest_checkpointed_iteration.txt=350000)·两节点GPU全idle(.29 8×0%/0MiB/25°C✅·.12 8×0%/0-4MiB/25-27°C✅)·无训练/eval/daemon进程残留·daemon已停(最后日志07:51:08)·🚫未重启S1(遵守用户令)·340k eval=60.12%(new high!)·350k eval=58.25%·report 44435B/58ckpt·WAITING: 0
 > 📦 #3566（2026-11-28 06:50, 监控巡检+S2 runbook制定·350k eval RUNNING·step7.02s<gate✅·S2 runbook已制定）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3567（2026-11-28 06:57, 监控巡检+归档瘦身·350k eval RUNNING·step7.04s<gate✅·MEMORY归档#3540-#3558(32446B→28246B✅)）→ daily-memories/2026-11-28.md；需要时再读。
 > 📦 #3568（2026-11-28 07:14, 350k eval DONE harness_avg=58.25%·340k eval DONE=60.12%·训练健康iter=350770）→ daily-memories/2026-11-28.md；需要时再读。
