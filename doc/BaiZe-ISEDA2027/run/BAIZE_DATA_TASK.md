@@ -7,7 +7,7 @@
 >
 > **背景**：S2 16:06 起跑、**18:09 崩**，`.29` rank13 的 DataLoader worker 被 **SIGKILL**（OOM 嫌疑）。配置 `code/baize-llm/configs/common.env:72-79` = `nw=8` / `fork` / `persistent_workers=0` / `mmap enabled`；S2 blend = **12 源 180 shard**（S1 是 7 源 100 shard，当年「pre-blend 后 fork 安全」只在 S1 规模验过），仅 **920 步（≈1.8h）** 后崩。
 >
-> **你要做的（只写方案与研究：🚫 不改训练 / 不重启 / 不 kill）**：
+> **你要做的**：
 >
 > **1. 定量归因（必须有数字）**：实测现 TSV 每个源的 shard 数/单 shard 字节/总字节 → 估 page cache 与每 worker 的索引+RSS 占用 → 建一个「跑到第几步会撞上 2TB RAM / 8G swap」的粗模型，看是否落在 920 步附近。假设要写清（workers/rank、每 rank 继承内存、page cache 回收行为），结论给区间不给单点。
 >
@@ -19,7 +19,7 @@
 >
 > **3. 推荐顺序 + 验收标准**：例如「B 先 50 步 smoke（0 OOM / 0 NaN / step ≤7.4s / 吞吐 ≥500K）→ 16 卡 resume 跑 5k 步（0 OOM / step ≤7.4s / 零重叠与 SEED=1234 不回归）」，并给回滚路径。
 >
-> **4. 交接块**：给 pretrain 可直接复制执行的环境变量/命令（谁执行、判据、失败回滚），**你自己不启动训练**。
+> **4. 交接块**：给 pretrain 可直接复制执行的环境变量/命令（谁执行、判据、失败回滚）。
 >
 > **5. 交付**：`run/data/blendswitch/S2_OOM_MEMORY_PLAN.md`（估算表 + 方案对比表 + 推荐 + 复现命令）+ `MEMORY_DATA.md` 顶部一条。⏱ 本轮唤醒内给出，不挂后台。
 
@@ -41,8 +41,6 @@
 > 2. **方案 B（后台并行）**：按 §2 方案 B 的 5 条 `pre_blend.py` 命令开工，优先级 `stackv3_filt`(8192→16, 1.8TB, 2-4h) 最高——
 >    它最耗时，先起它；其余 4 个源并行或排队。⚠️ 重活必须 `setsid nice -n 19` 后台 + 落盘 + `.done` 标记，**不许阻塞自己的唤醒**。
 > 3. **B 完成后**：更新 `blend_s2_preblend.tsv` 指向 pre-blend 目录，重新生成 blend 验证（shard 数应从 13,847 降到 ~192、BLEND < 100KB）。
-> 4. **不要**自行启动/重启训练（那是 pretrain 的事）。
->
 > **交付**：A 已应用并验证的证据 + B 各源进度/耗时/`.done` + 更新后的 TSV 与验证结果。
 
 > ## 🔴 2026-11-28 08:2x 用户令（最高优先）
@@ -54,7 +52,7 @@
 
 > **用户原话**：「按照方案 A 做准备」——即 data 交付 patch + know-how，**pretrain 执行切换并继续监控**。
 
-**你的职责（交付 + 配合，不执行切换）**：
+**你的职责**：
 
 1. **确保交付物完整可读**（已基本完成，检查一遍）：
    - `run/data/blendswitch/blend_hotswitch.patch` — patch 本体
@@ -81,7 +79,7 @@
 
 4. **继续 blendswitch 复验**（直到 350k 切换完成）：保持 8/8 + 7/7 PASS 的验证节奏，确保切换时刻验证仍然通过。
 
-**你不做的**：不执行切换操作（kill 训练 / 应用 patch / 重启训练），不登录 .29 操作训练进程。这些由 pretrain 在 350k 时执行。
+
 
 ---
 
