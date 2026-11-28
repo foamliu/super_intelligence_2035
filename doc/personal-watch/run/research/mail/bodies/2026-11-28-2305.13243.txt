@@ -1,0 +1,18 @@
+Dear Jason,
+
+I am Yang Liu, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/.
+
+I read your Chip-Chat study with great interest, especially the case where an engineer and an LLM co-designed an 8-bit accumulator-based microprocessor and sent it to a SkyWater 130nm shuttle. We are building agent benchmarks for EDA flows, and your study is one of the few that reports what actually happens when an LLM drives a real design flow end to end.
+
+Three questions, each of which would directly change how we design tasks and judges:
+
+1. In your conversation loop, did the model see simulator or synthesis errors? Roughly what fraction of its Verilog failed at elaboration, at simulation, and at synthesis, and which error class dominated?
+
+2. Who wrote the testbench and golden vectors? Would the design still count as correct if the model had authored its own checker, and how did you guard against that?
+
+3. In hindsight, which part of the flow is best suited to a benchmark: spec-to-RTL, RTL bug fixing, or constraint/script generation? What is the cheapest signal that separates "compiles" from "functionally right"?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

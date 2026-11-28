@@ -46,8 +46,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-28</h1>
-  <div class="sub">🌅 00:00 首窗（新一天 A 轨额度重置）· 今日进度 <b>5 / 5</b> · 09:00 / 12:00 时窗已补 B 轨 / 作者网 / 发信 · 数据源 arXiv</div>
-  <div class="meta">生成时间：2026-11-28 12:0x CST（r282 更新）｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 464）｜ 作者网 431（X 已核验 168）｜ 作者信 193（实质回信 8 信 / 7 人 ≈4.1%）</div>
+  <div class="sub">🌆 今日进度 <b>5 / 5</b>（A 轨满，守「宁少勿凑」）· 18:00 晚报：B 轨 / 作者网 / 作者信 / 回信核验已收口 · 数据源 arXiv</div>
+  <div class="meta">生成时间：2026-11-28 18:0x CST（r286 更新）｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 470）｜ 作者网 437（X 已核验 168）｜ 作者信 195（实质回信 8 信 / 7 人 ≈4.1%）</div>
 </header>
 
 <div class="note">
@@ -260,6 +260,33 @@
   <p class="small">15:00 B 轨补充（对应 posttrain / vision / designflow，不计入上表 6 线）：<b>AlphaZero</b> 提示 self-play 的前提是<b>环境能给出可验证胜负信号</b>，EDA 任务应先由 <code>check.py</code> 造二值判分再开 RL；<b>DQN 2013</b> 提示经验回放 + 目标网络是端到端 RL 的稳定化标配，报告须写清；<b>OpenTimer</b> 是时序题<b>离线可复跑的判分后端</b>，可避免用 mock 桩伪造物理量。三者均为经典基线，<b>不是</b>「已验证可迁移到 EDA」的结论。</p>
 </div>
 
+<h3 class="sec">🕕 18:00 时窗（r286 · 晚报 · A 轨仍满 5/5 ⇒ 0 新收；B 轨 / 作者网 / 发信 / 回信照做）</h3>
+<div class="card">
+  <ul>
+    <li><b>A 轨 0 新收</b>：今日已收满 <b>5/5</b>（00:00 窗），守「宁少勿凑」，本窗不检索、不凑第 6 篇。</li>
+    <li><b>B 轨 +3 → 470</b>（补 value-based RL 组合 / 分布式 RL 架构 / 对话式 LLM 硬件设计三处真空白）：
+      <b>Rainbow: Combining Improvements in Deep Reinforcement Learning</b>（<a href="https://arxiv.org/abs/1710.02298">1710.02298</a>，2017-10-06，abs <code>comments</code> 逐字 <code>Under review as a conference paper at AAAI 2018</code>，被引 <b>443</b>，<b>&lt;500 按「方法论常青」收</b>）— 把 DQN 六项改进（Double Q-learning / prioritized replay / dueling networks / multi-step returns / distributional RL / noisy nets）合成为单一 agent，Atari 2600 上数据效率与最终性能双 SOTA，并给出逐项消融。归属：posttrain（主 · value-based RL 组合与消融）· harness（多任务统一口径）· zhulong（数据效率 vs 最终性能分开报）。<br>
+      <b>IMPALA: Scalable Distributed Deep-RL with Importance Weighted Actor-Learner Architectures</b>（<a href="https://arxiv.org/abs/1802.01561">1802.01561</a>，2018-02-05，被引 <b>1,983</b>）— 解耦 acting 与 learning + <b>V-trace</b> off-policy 校正，可扩到数千台机器而不牺牲数据效率；单套参数在 DMLab-30 与 Atari-57 多任务上以更少数据超过此前 agent，并出现任务间正迁移。归属：posttrain（主 · 分布式 rollout / off-policy 校正）· harness（单策略多任务）· zhulong（吞吐与数据效率同报）。<br>
+      <b>Chip-Chat: Challenges and Opportunities in Conversational Hardware Design</b>（<a href="https://arxiv.org/abs/2305.13243">2305.13243</a>，2023-05-22，MLCAD 2023，被引 <b>419</b>，<b>&lt;500 按「本领域权威 / LLM-for-EDA 标志性工作」收</b>）— 工程师与对话式 LLM 共同设计 <b>8 位累加器微处理器</b>，送 <b>SkyWater 130nm shuttle</b> 流片，作者称首个全 AI 写 HDL 的芯片；系统总结该过程的挑战与机会。归属：designflow（主 · 题面形态与判分分离、防候选自写 checker）· zhulong（任务类型与成本口径）· harness（对话轮次 / token 预算）。</li>
+    <li><b>作者网 +3 → 437</b>（X 已核验 <b>168</b>，+0）：<b>#435 Jason Blocklove</b>（NYU Tandon ECE，Chip-Chat 一作；A 级 <code>jason.blocklove@nyu.edu</code>〔本人主页明文〕，X 未找到）— <b>已发信 #195</b>；<b>#436 Ramesh Karri</b>（NYU Tandon ECE，硬件安全 / Chip-Chat 资深作者；A 级 <code>rkarri@nyu.edu</code>〔NYU 官方人员页明文〕，X 未找到）— 仅建档（守「同一论文 ≤1」）；<b>#437 Matteo Hessel</b>（Google DeepMind，Rainbow 一作 / IMPALA 三作；无公开邮箱、无可核主页〔两路 <code>404</code>〕、X 未找到）— 仅建档。</li>
+    <li><b>作者信 +1 → 195</b>（今日 <b>7/12</b>）：<b>#195 Jason Blocklove</b> — 英文 <b>198 词</b>；主题 <code>Chip-Chat case study: verification loop, testbench provenance, and what is worth benchmarking</code>；<code>SENT OK 18:04:56</code>；问题 = 对话回路里模型是否看到仿真/综合报错、elaboration / simulation / synthesis 三类错误占比 / testbench 与 golden vectors 归属、模型自写 checker 是否仍算对 / spec→RTL vs 修 bug vs 约束脚本哪类适合做 benchmark、区分「能编译」与「功能对」的最便宜信号；落款两行（<code>Best regards,</code> / <code>Yang Liu</code>，其后无行）；正文不含项目名、不报雇主。</li>
+    <li><b>回信核验</b>（IMAP 只读）：INBOX <b>70 封</b>（与 15:00 持平，<b>+0</b>）；<code>SINCE 26-Nov-2026</code> 7 封；<code>SINCE 28-Nov-2026</code> <b>0 封</b>；<b>无新实质回信、无新退信</b>。累计实质 <b>8 信 / 7 人 ≈4.1%</b> · 自动 1 · 退信 9 · 无应答(&gt;14d) 32 · 未到期 145 ⇒ 8+1+9+32+145 = <b>195</b> ✔；送达口径 8/186 ≈ 4.3%。</li>
+  </ul>
+  <p class="small">核验：arXiv API <code>200</code> + <code>application/atom+xml</code>（<code>published</code> 逐字 <code>2017-10-06T07:45:46Z</code> / <code>2018-02-05T18:47:30Z</code> / <code>2023-05-22T17:13:33Z</code>；<code>updated</code> <code>2017-10-06</code>〔仅 v1〕/ <code>2018-06-28T06:54:39Z</code> / <code>2023-11-14T05:10:51Z</code>；IMPALA 无 <code>comments</code>，Chip-Chat <code>comments</code> 逐字见上）+ abs 页 <code>3/3 200</code>（41,858 / 44,369 / 44,643 B）+ OpenAlex <code>3/3 200</code>（443 / 1,983 / 419，查询日 2026-11-28）；三 ID 条目级查重 <b>0 命中</b>（<code>2305.13243</code> 仅出现在 #287 ChatEDA 核验行）。</p>
+  <p class="small">18:00 B 轨补充（对应 posttrain / designflow / harness，不计入上表 6 线）：<b>Rainbow</b> 的逐项消融提示 RL 臂要报「每个组件的边际贡献」而非只报总分；<b>IMPALA</b> 提示异步 rollout 必须报轨迹陈旧度并做 off-policy 校正，否则与同步基线不可比；<b>Chip-Chat</b> 提示 benchmark 的 testbench / golden 必须由题面方提供、显式拒绝候选自带 checker。三者均为经典 / 标志性工作，<b>不是</b>「已验证可迁移到 EDA」的结论。</p>
+</div>
+
+<h3 class="sec">📝 晚报变更说明（AM → PM）</h3>
+<div class="card">
+  <ul>
+    <li><b>A 轨</b>：仍为 <b>5/5</b>，<b>未新增</b>第 6 篇（守「宁少勿凑」）⇒ 推荐正文无变动；页头由「🌅 早报」改为「🌆 晚报」并更新计数。</li>
+    <li><b>B 轨</b>：由 467 → <b>470</b>（+3：Rainbow / IMPALA / Chip-Chat），附录与 footer 同步更新。</li>
+    <li><b>作者网 / 作者信</b>：434 → <b>437</b>；194 → <b>195</b>（#195 Jason Blocklove，英文 198 词，<code>SENT OK 18:04:56</code>）。</li>
+    <li><b>回信</b>：INBOX 70 持平，<b>0 新实质 / 0 新退信</b>；累计分账随发信数 +1 重算为 195。</li>
+    <li><b>news_ready / voice_ready</b>：本窗各 <b>0</b>（A 轨无新收；三位作者无可核本人 X 原文，宁缺勿滥）。</li>
+  </ul>
+</div>
+
 <h3 class="sec">🎯 对各线的可执行建议（6 线齐全，无建议显式写「无」）</h3>
 <div class="card">
   <ul>
@@ -296,14 +323,14 @@
     <li><b>元数据</b>：<code>export.arxiv.org/api/query</code> ⇒ <code>200</code> + atom；<code>published</code> 逐条 2026-11-25T14:39:59Z / 2026-11-24T11:07:23Z / 2026-11-24T19:32:45Z / 2026-11-25T17:38:00Z / 2026-11-25T18:01:22Z。</li>
     <li><b>abs 页</b>：<b>5/5 <code>200</code></b>（42,679 / 41,364 / 42,915 / 42,297 / 44,837 B）；主分类 cs.LG / cs.AR / cs.AR / cs.LG / cs.CV 取自各 abs 页 <code>primary-subject</code>。</li>
     <li><b>去重</b>：五个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> 均 <b>0 命中</b>。</li>
-    <li><b>B 轨核验</b>（本日五窗合计 15 条）：00:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>；03:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Show Attend / SQuAD / PointNet）；06:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（GELU / Dreamer / XGBoost）；09:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Gumbel-Softmax / WGAN / DDPG）；12:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Rethinking Generalization / SSD / GroupNorm）；15:00 窗 arXiv abs 2/2 <code>200</code> + OpenAlex 3/3 <code>200</code>（AlphaZero / DQN 2013 / OpenTimer，arXiv API 多次 <code>429</code> ⇒ abs 页核 <code>1712.01815</code>；查询日 2026-11-28）；十五个 ID 条目级查重均 0 命中。</li>
+    <li><b>B 轨核验</b>（本日六窗合计 18 条）：00:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>；03:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Show Attend / SQuAD / PointNet）；06:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（GELU / Dreamer / XGBoost）；09:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Gumbel-Softmax / WGAN / DDPG）；12:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Rethinking Generalization / SSD / GroupNorm）；15:00 窗 arXiv abs 2/2 <code>200</code> + OpenAlex 3/3 <code>200</code>（AlphaZero / DQN 2013 / OpenTimer，arXiv API 多次 <code>429</code> ⇒ abs 页核 <code>1712.01815</code>）；18:00 窗 arXiv API + abs 页 + OpenAlex 各 3/3 <code>200</code>（Rainbow / IMPALA / Chip-Chat；查询日 2026-11-28）；十八个 ID 条目级查重均 0 命中。</li>
     <li><b>网络</b>：arXiv <code>200</code>、OpenAlex <code>200</code>（首查一次 <code>429</code>，加 <code>mailto</code> + ≥3s 间隔后 <code>200</code>）、X 经代理 <code>200</code>、GitHub <code>200</code>；SMTP <code>SENT OK</code>、IMAP <code>LOGIN OK</code> / 70 封。</li>
   </ul>
 </div>
 
 <footer>
-  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 15:1x CST（r284 更新）<br>
-  本期（r275 + r276 + r278 + r280 + r282 + r284）：A 轨 <b>5/5</b> · B 轨 <b>+18 → 467</b> · 作者网 <b>+18 → 434</b>（X 168）· 作者信 <b>+6 → 194</b> · 实质回信 <b>8 信 / 7 人 ≈4.1%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
+  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 18:0x CST（r286 更新）<br>
+  本期（r275 + r276 + r278 + r280 + r282 + r284 + r286）：A 轨 <b>5/5</b> · B 轨 <b>+21 → 470</b> · 作者网 <b>+21 → 437</b>（X 168）· 作者信 <b>+7 → 195</b> · 实质回信 <b>8 信 / 7 人 ≈4.1%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
 </footer>
 
 </div>

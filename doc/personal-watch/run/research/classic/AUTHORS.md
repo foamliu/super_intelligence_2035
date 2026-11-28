@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-28 18:0x · r286）**：作者 **437** 人（编号最大 **437**）· X 已核验 **168**（本轮 **+0**：Blocklove 个人页仅有 GitHub / Google Scholar / LinkedIn 外链、无 x/twitter；Karri 的 NYU 页与 Hessel 均无可核本人 X ⇒ 一律记「未找到 X」，不猜）· 已发信 **195**（台账 #1–#195；本窗 **+1**：#195 Jason Blocklove；今日 **7/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **70** 封，与 15:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Jason Blocklove（NYU Tandon ECE，Chip-Chat 一作，A 级 `jason.blocklove@nyu.edu`〔本人主页 `200` / 41,251 B 明文〕，X 未找到 ⇒ 已发信 #195）· Ramesh Karri（NYU Tandon ECE，硬件安全 / Chip-Chat 资深作者，A 级 `rkarri@nyu.edu`〔NYU 官方人员页 `200` / 147,330 B 明文〕，X 未找到 ⇒ 仅建档）· Matteo Hessel（Google DeepMind，Rainbow 一作，无公开邮箱，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 15:0x · r284）**：作者 **434** 人（编号最大 **434**）· X 已核验 **168**（本轮 **+0**：三位 EDA 学者页均无本人 x/twitter 外链，UIUC 页仅有院系账号 `@eceILLINOIS` ⇒ 记「未找到 X」，不猜）· 已发信 **194**（台账 #1–#194；本窗 **+1**：#194 Tsung-Wei Huang；今日 **6/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **70** 封，与 12:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：「Tsung-Wei Huang」（UW-Madison ECE，OpenTimer 一作，A 级 `tsung-wei.huang@wisc.edu`〔本人主页明文 `Contact: tsung-wei.huang at wisc dot edu`〕，X 未找到 ⇒ 已发信 #194）· Yiran Chen（Duke ECE，EDA / 存储，A 级 `yiran.chen@duke.edu`〔Duke ECE 目录页 `200` 明文〕，X 未找到 ⇒ 仅建档）· Deming Chen（UIUC ECE，FPGA / EDA，A 级 `dchen@illinois.edu`〔UIUC ECE 目录页 `200` 明文〕，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 12:0x · r282）**：作者 **431** 人（编号最大 **431**）· X 已核验 **168**（本轮 **+0**：三位 EDA 学者页均无本人 x/twitter 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **193**（台账 #1–#193；本窗 **+1**：#193 Tsung-Yi Lin；今日 **5/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **70** 封，与 09:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Martin D. F. Wong（EDA 物理设计，UIUC，A 级 `mdfwong@illinois.edu`〔ECE 人员页明文〕，X 未找到 ⇒ 仅建档）· Robert Wille（EDA / 量子设计自动化，TUM，A 级 `robert.wille@tum.de`〔团队页明文〕，X 未找到 ⇒ 仅建档）· Jiang Hu（物理设计 / ML-for-EDA，Texas A&M，A 级 `jianghu@tamu.edu`〔CESG 页明文〕，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 09:0x · r280）**：作者 **428** 人（编号最大 **428**）· X 已核验 **168**（本轮 **+1**：`@poolio` 由本人 Stanford 主页 <https://cs.stanford.edu/~poole/> `200` / 63,366 B 外链 `twitter.com/poolio` + 代理抓 `x.com/poolio` `200` / 199,993 B，`og:title` = `Ben Poole (@poolio) / X` ⇒ 双源；Jason Cong / Sung Kyu Lim 未找到本人 X ⇒ 不猜、不计入）· 已发信 **192**（台账 #1–#192；本窗 **+1**：#192 Ben Poole；今日 **4/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 06:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Ben Poole（Gumbel-Softmax 三作，Google DeepMind，A 级 `benmpoole@gmail.com`〔本人 Stanford 主页明文〕，X `@poolio` 双源 ⇒ 已发信 #192）· Jason Cong 丛京生（EDA / FPGA 学者，UCLA，A 级 `cong@cs.ucla.edu`〔UCLA 官方人员页明文〕，X 未找到 ⇒ 仅建档）· Sung Kyu Lim 임성규（EDA 3D-IC 学者，USC〔2025-08 自 Georgia Tech 转〕，A 级 `limsung@usc.edu`〔本人旧主页明示 `Please contact me at`〕，X 未找到 ⇒ 仅建档）。
@@ -6109,3 +6110,42 @@
 | X 账号 | **未找到 X**（仅院系账号 `@eceILLINOIS`；不猜本人 handle） |
 | 状态 | **仅建档**（有 A 级邮箱；本轮无对应已收录论文 ⇒ 不硬写信，留作 FPGA / EDA 关系网节点） |
 | 备注 | 语言=中文(判据=拼音姓名族属「Deming Chen」+ 美国机构；姓名族属优先于机构)。FPGA / EDA / 硬件加速方向，对 designflow 的 FPGA 类题面、zhulong 的流程消融有参照价值。 |
+
+### 435. Jason Blocklove
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jason Blocklove（英语姓名族属 ⇒ 英文信） |
+| 机构 | **New York University**（Tandon School of Engineering, Electrical and Computer Engineering；博士生） |
+| 代表论文 | **Chip-Chat: Challenges and Opportunities in Conversational Hardware Design**（MLCAD 2023，**一作**，B 轨 **#470**）· 维护 `JBlocklove/LLMs-for-EDA-Tutorial` |
+| 邮箱 | **A 级** `jason.blocklove@nyu.edu`（本人主页 <https://jasonblocklove.com/> 实测 `HTTP 200` / 41,251 B，页内明文 `mailto:`） |
+| 主页 | <https://jasonblocklove.com/>（`200` / 41,251 B） |
+| X 账号 | **未找到 X**（个人页外链只有 GitHub / Google Scholar / LinkedIn / ORCID；不猜） |
+| 状态 | **已发信**（2026-11-28 18:0x CST，经典论文请教信第 195 封，英文）· X 待 follow（需登录态） |
+| 备注 | 语言=英文(判据=英文姓名 + 美国机构)。三问直指 designflow：① Chip-Chat 的验证回路里 LLM 是否看到仿真/综合报错、各类错误（elaboration / simulation / synthesis）占比；② testbench 与 golden vectors 由谁写、若由模型自写 checker 是否仍算「对」；③ 哪类任务（spec→RTL / RTL 修 bug / 约束脚本）最适合做 benchmark，以及区分「能编译」与「功能对」的最便宜信号。 |
+
+### 436. Ramesh Karri
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ramesh Karri（印度姓名族属 ⇒ 英文信） |
+| 机构 | **New York University**（Tandon School of Engineering, Electrical and Computer Engineering；教授） |
+| 代表论文 | **Chip-Chat**（MLCAD 2023，资深作者，B 轨 **#470**）· 硬件安全 / 可信 IC 方向（本轮未逐条核具体论文，故不写 arXiv ID） |
+| 邮箱 | **A 级** `rkarri@nyu.edu`（NYU Tandon 官方人员页 <https://engineering.nyu.edu/faculty/ramesh-karri> 实测 `HTTP 200` / 147,330 B，页内明文） |
+| 主页 | <https://engineering.nyu.edu/faculty/ramesh-karri>（`200` / 147,330 B） |
+| X 账号 | **未找到 X**（该页无本人 x/twitter 外链；不猜） |
+| 状态 | **仅建档**（有 A 级邮箱；同论文已向一作 Blocklove 发信 ⇒ 守「同一论文 ≤1」，不再发） |
+| 备注 | 语言=英文(判据=印度姓名 + 美国机构)。硬件安全 / 可信硬件方向，对 designflow 的「防泄题 / 反作弊」题面与 zhulong 的安全类消融有参照价值。 |
+
+### 437. Matteo Hessel
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Matteo Hessel（意大利姓名族属；机构在英国 ⇒ 按 SPEC「母语称谓 + 英文正文」可，但本轮仅建档不发） |
+| 机构 | **Google DeepMind**（research scientist） |
+| 代表论文 | **Rainbow: Combining Improvements in Deep Reinforcement Learning**（2017，**一作**，B 轨 **#468**）· **IMPALA**（2018，三作，B 轨 **#469**） |
+| 邮箱 | **无公开邮箱**（DeepMind 未公开个人地址；本轮未找到可核本人主页，故不发信） |
+| 主页 | **未找到可核主页**（`matteoh.github.io` / `mtthss.github.io` 实测均 `404`） |
+| X 账号 | **未找到 X**（无可核本人主页外链；不猜） |
+| 状态 | **仅建档**（无 A 级邮箱 ⇒ 不硬写信） |
+| 备注 | 语言=英文(判据=无可靠母语判据，英文兜底)。value-based RL 组合与分布式 RL 架构两篇的一作/三作，对 posttrain 的 RL 消融设计与 harness 的多任务口径有参照价值。 |
