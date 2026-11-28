@@ -1775,5 +1775,6 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795768254133_e9m7f	e0029308	hfeg0plg57	684	spice_sim	parked		2026-11-28 19:27	r1398: deliverable=Auto_Check.py (3000+行 tkinter GUI 多窗口队列/进度条/动画 app, e0029308/hfeg0plg57 同一项目 4 sibling sessions e9m7f/ybu94/mymt8/hyep6 全部 GUI 开发). spice/hspice 仅是工具的目标 domain, 实际工作是 Python GUI/队列逻辑. 无 headless 可判分 spice artifact (无 deck+golden 对), 依赖 display+用户交互+项目 Final_*.lib/CDL/Verilog 不可便携. 非 portable spice_sim artifact -> parked
 1794389183890_4q987	wellesc	hfeg0plg17	482	characterization	case	EDA-Eval-DesignFlow-VlibXtolCmp-001	2026-11-28 19:27	r1398: 造题. trace 4q987 VerilogLibVerifiy verify_cell.py $isunknown 内联 + gx/doreal + FAIL_GX + make_report.py 汇总, 依赖完整 VerilogLibVerifiy 项目树不可便携 -> 提取纯 Python 比较器 cellcmp.py (X 容忍 + inout z->cond + FAIL_GX 防假 PASS + TIMEOUT + 分类汇总), A/B 双输入覆盖五类, check.py 15 断言 L1 judge-run, 已 reference 16/16 + naive 7/16 验证
 1787659708187_6l1c8	wellesc	hfeg0plg17	780	characterization	case	EDA-Eval-DesignFlow-WfCmpAdaptLogic-001	2026-11-28 19:57	
-1795595688030_1wuoc	jasonxu	hfeg0plg93	296	spice_sim	claimed		2026-11-28 20:05	
+1795595688030_1wuoc	jasonxu	hfeg0plg93	296	spice_sim	case	EDA-Eval-DesignFlow-DlybiasMt0PostTrim-001	2026-11-28 20:26	
 1787821402941_1qva5.messages.json	wellesc	hfeg0plg17	639	spice_sim	parked		2026-11-28 20:12	dup_of_WfCmpAdaptLogic_001_sibling_6l1c8
+1795503987230_4kjs0.messages.json	e0044480	hfeg0plg54	192	spice_sim	claimed		2026-11-28 20:26	
