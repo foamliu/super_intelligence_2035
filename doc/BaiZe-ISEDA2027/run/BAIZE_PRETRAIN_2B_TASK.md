@@ -9,7 +9,7 @@
 >
 > **你要做的**：
 >
-> **1. 两节点各采一次内存全景**（`.29` 本机 + `ssh .12`，只读）：
+> **1. 两节点各采一次内存全景**（`.29` 本机 + `ssh .12`）：
 > ```bash
 > free -g
 > grep -E 'MemTotal|MemAvailable|SwapTotal|SwapFree|SReclaimable|Slab|Mapped|Dirty|Writeback' /proc/meminfo
@@ -20,7 +20,7 @@
 > ```
 > 两机分别记：RAM used/avail、**swap used/free**、page cache、Slab、cgroup `memory.events` 里的 **`oom_kill` 计数**。
 >
-> **2. 顺手取 18:09 崩溃的铁证**（只读，不动训练）：
+> **2. 顺手取 18:09 崩溃的铁证**：
 > ```bash
 > dmesg -T | grep -iE 'killed process|Out of memory|oom-kill' | tail -30
 > journalctl -k --since '2026-11-28 17:50' --until '2026-11-28 18:15' | grep -iE 'oom|killed process'
@@ -83,7 +83,7 @@
 
 > **用户原话**：「pretrain：放行 autoqueue」
 
-**背景**：2026-11-20 14:4x 用户令要求「训练已由运维拉起，只许监控，禁止重启/杀进程」，你据此在维护态下**保守 hold 了 eval**，导致 **270k（iter_0270000）与 272k（iter_0272000）两个万整数评测点积压未评**（L1 仍停在 260k=59.00%，26/27 完成）。
+**背景**：此前在维护态下**保守 hold 了 eval**，导致 **270k（iter_0270000）与 272k（iter_0272000）两个万整数评测点积压未评**（L1 仍停在 260k=59.00%，26/27 完成）。
 
 **一、授权范围（仅限 eval，不涉训练）**
 - ✅ **放行 autoqueue**：对所有**已落盘的万整数 ckpt**（270k / 272k，以及此后每新落盘的 274k / 276k …）**立即启动 L1 评测并刷新报告**。
@@ -208,28 +208,6 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### ✅ 用户令 · 2026-11-28 16:1x（**Review S2 训练状态，只读汇报，什么都不要动**）· 用户直令 · 最高优先 · 已完成
-
-> **用户原话**：「安排 pretrain 和 data review 一下训练状态，什么都不要动，只通过记忆汇报发现。」
-
-**背景**：运维已直接完成 S2 切换（不加 cursor offset shim，纯 S2 blend 冷切换从 350k ckpt resume）。训练已在 16 卡上跑起来：iter 350040/700k，step ~7.0s，loss ~1.55，0 NaN/0 skip，GPU 16×100%/~75GB。
-
-**你要做的（只读，不动任何东西）**：
-
-1. **确认训练健康**：读 worker log / master log / nvidia-smi，确认：
-   - step time 稳定（<7.4s gate）
-   - loss 无异常突跳（S2 切换后 loss 从 ~1.97 降到 ~1.55 是正常的——code/math 数据 loss 天然更低，不是模型退化）
-   - 0 NaN / 0 skip
-   - 16 卡 GPU 全满载
-   - LR re-warmup 进度正常
-2. **确认 S2 blend 生效**：从启动命令或 worker log 确认数据路径是 S2 的 12 源（web40:code40:math20），不是 S1 的 7 源
-3. **确认无 cursor offset shim**：`BLEND_CURSOR_OFFSETS_JSON` 未设置（纯 S2 blend，不带 cursor offset——data 的方案 D+E：换 SEED + 新源天然零重叠）
-4. **在 MEMORY 心跳汇报**：把上述 3 项确认结果写进 MEMORY 心跳第一行，标 `S2 RUNNING · 只读 review`，保持 `WAITING=0`
-
-> **结果（18:3x）**：只读 review 已完成（#3574–#3582 共 7+ 轮）。3 项全 PASS（崩溃前）：①健康（iter=350920 step~7043ms<7.4s loss~1.50 0NaN/0skip）②S2 blend 12源180 shards ③无 cursor offset shim。**S2 于 18:09:11 崩溃**：DataLoader worker 被 SIGKILL on .29 rank13 → .29 exit → .12 NCCL timeout 608s → .12 exit。SSH 验证两节点全 idle、无进程、ckpt=350000（920 步 S2 未保存）。🚫 未动训练/配置/daemon。**更正（19:1x 运维核对）：不存在「令文冲突」**——08:1x 要求的是「S2 切换必须完成、不退回 S1」，16:06 起跑即已达成；16:1x 的「不重启」仅限该轮只读 review 且已标 ✅ 收口；11-20「只许监控」已作废。
-
----
-
 ### ✅ 用户令 · 2026-11-27 08:3x（**S2 切换准备：350k 时执行 blend hot-switch，由你操作**）· 用户直令 · 最高优先 · 已完成（运维直接执行）
 
 **背景（必读）**：
@@ -283,10 +261,6 @@
 ---
 
 > 📦 §2026-11-25 10:2x（L1 评测持续下降排查 · NOT 真下降 · #3349 已完成）→ `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-25」节。
-
----
-
-> 📦 **用户令 · 2026-11-20 14:4x（维护状态：只许监控，禁止重启/杀进程）** — **已作废**（2026-11-28 用户令接管 S2 切换，且 08:1x 令明确「绝不退回 S1」「GPU 非空闲就杀死占用进程」）。本条与 S2 令冲突，不再生效。
 
 ---
 
