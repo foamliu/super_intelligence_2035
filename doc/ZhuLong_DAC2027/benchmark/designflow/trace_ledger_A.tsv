@@ -898,4 +898,4 @@ anner account not real design user, skip
 wf513					parked		2026-11-28 05:01	Aether-dependent (emyInitAether/dmExportNetlist), non-self-contained; /proj original netlist unreadable; only sub-task=netlist semantic-equivalence checker (weak trace-faithful, assistant internal verify not user intent). Parked per §3.
 1795830818571_z8i5q.messages.json	guangmingz	hfeg0pkn004	60	digital	case	EDA-Eval-DesignFlow-VsimDeletionAudit-001	2026-11-28 11:16	Perl vsim sim-driver deletion-forensics; case DEBT next round (script perm-denied from .75, extract from trace tool_results)
 1795849638342_3ca58	tongfanl	hfeg0pkn005	28	digital	case	EDA-Eval-DesignFlow-AgingWindowAudit-001	2026-11-28 16:24	
-1795853542908_xweiw	jkxu	hfhds206	143	verification	deepread		2026-11-28 17:03	r1569 fullscan 164430 fresh; 3 bugs+1feat; case DEBT r1570 (script rebuild from trace + synth rpt tree)
+1795853542908_xweiw	jkxu	hfhds206	143	verification	case	EDA-Eval-DesignFlow-MonErrorAuditFix-001	2026-11-28 17:27	r1569 fullscan 164430 fresh; 3 bugs+1feat; case DEBT r1570 (script rebuild from trace + synth rpt tree)
