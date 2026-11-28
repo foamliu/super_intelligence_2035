@@ -896,4 +896,4 @@ anner account not real design user, skip
 1793347860638_8mepo	wellesc	hfeg0pkn004	337	pnr_signoff	case	EDA-Eval-DesignFlow-FmLibGen-001	2026-11-28 04:42	
 1795168050680_wf513	wellesc	hfeg0plg17	947	digital	claimed		2026-11-28 04:51	
 wf513					parked		2026-11-28 05:01	Aether-dependent (emyInitAether/dmExportNetlist), non-self-contained; /proj original netlist unreadable; only sub-task=netlist semantic-equivalence checker (weak trace-faithful, assistant internal verify not user intent). Parked per §3.
-1795830818571_z8i5q.messages.json	guangmingz	hfeg0pkn004	60	digital	deepread		2026-11-28 10:39	Perl vsim sim-driver deletion-forensics; case DEBT next round (script perm-denied from .75, extract from trace tool_results)
+1795830818571_z8i5q.messages.json	guangmingz	hfeg0pkn004	60	digital	case	EDA-Eval-DesignFlow-VsimDeletionAudit-001	2026-11-28 11:16	Perl vsim sim-driver deletion-forensics; case DEBT next round (script perm-denied from .75, extract from trace tool_results)

@@ -42,5 +42,11 @@
 **真实性**：trace_source 完整（user/host/session_file/mc=60/real_task_summary=vsim 删除点取证）。A 档 trace-faithful：prompt 用 guangmingz 原话「分析全部涉及删除文件的地方 并带上删除文件的绝对路径 / 分析是否检查文件存在再删除」。
 
 ## 状态
-- ledger: claimed → deepread (r1540)
-- case: DEBT（下一轮交付，需先从 trace 重建 vsim 脚本附件）
+- ledger: claimed → deepread (r1540) → **case (r1541)**
+- case: **DELIVERED r1541** = `EDA-Eval-DesignFlow-VsimDeletionAudit-001` (digital, L1 produce-task, judge_layers=[L0,L1])
+  - r1541 从 messages.json tool_results 重建 vsim.pl 附件(1781 行/59754B, msg[5] lines1-1233 + msg[8] lines1234-1781)
+  - 交付物 = `deletion_audit.py`: 解析 vsim.pl 枚举所有 rm/unlink/rmdir 删除点(line/kind/target/sub/e_guarded) + 由命令参数解析 run_dir($CWD/$log/$reg.$byte_$freq) + 判定 -s/-u 顶层删除分支
+  - 隐藏 B = 不同 vsim -s 命令参数(proj/reg/log/byte/freq/cwd 全异, 共 3 组验证 run_dir 动态解析防硬编码)
+  - 11 断言, k_check==k_rationale==11; 真跑候选=subprocess 跑 deletion_audit.py 解析 JSON 结构
+  - 自验: ref check PASS + 3 negatives(空壳/print硬编码/删核心)全 FAIL(distinct reasons) + judge-layout sim PASS + SKIP_RUN=1 结构合法
+  - covered 547→548
