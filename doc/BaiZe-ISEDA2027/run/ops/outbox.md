@@ -2672,3 +2672,141 @@ echo "=== DONE 300 | $(date '+%F %T') ==="
 （只读：未 kill / 未重启 / 未改任何文件）
 === DONE 300 | 2026-11-28 11:09:10 ===
 ```
+
+---
+
+## RUN_ID 300 · 2026-11-28 11:09:13 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "== A. pretrain loop / cline 进程树 =="
+ps -eo pid,ppid,stat,etime,pcpu,args | grep -E '[b]aize_pretrain_loop|[b]aize_s2_switch|[s]2_switch_executor' | cut -c1-170
+P=$(pgrep -f 'cline.*cline_pretrain' | head -1)
+echo "  pretrain_cline_pid=$P"
+if [ -n "$P" ]; then
+  echo "  ppid=$(ps -o ppid= -p $P) etime=$(ps -o etime= -p $P) stat=$(ps -o stat= -p $P) cpu=$(ps -o pcpu= -p $P) wchan=$(cat /proc/$P/wchan 2>/dev/null)"
+  echo "  parent_chain:"; ps -o pid,ppid,args -p $(ps -o ppid= -p $P | tr -d ' ') 2>/dev/null | cut -c1-160
+fi
+echo
+echo "== B. pretrain loop 日志（尾 30 行）=="
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -n 30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "== C. 关键计数 =="
+L=/tmp/baize_pretrain_loop.log
+for pat in 'wake up' 'invoking cline' 'cline returned' '无可用 LLM 候选' 'llm_pick' 'S2' 'torchrun' 'E2BIG' 'Argument list too long'; do
+  echo "  [$pat] = $(grep -c -- "$pat" "$L" 2>/dev/null || echo 0)"
+done
+echo
+echo "== D. 最近 6 条非空日志 =="
+grep -v '^$' "$L" 2>/dev/null | tail -6 | cut -c1-200
+echo
+echo "== E. 关键文件 mtime / WAITING =="
+ls -l --time-style=+%F_%T "$RUN/MEMORY_PRETRAIN_2B.md" "$RUN/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+grep -n '^WAITING' "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null || echo '  WAITING 行缺失'
+echo
+echo "== F. S2 executor / launch 日志 =="
+ls -l --time-style=+%F_%T /tmp/s2_switch_execution.log /tmp/baize_s2_launch.log /tmp/baize_s2_switch_train.log 2>/dev/null
+tail -n 6 /tmp/s2_switch_execution.log 2>/dev/null | cut -c1-200
+echo
+echo "== G. GPU =="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 300 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap29 date=2026-11-28 11:09:13
+== A. pretrain loop / cline 进程树 ==
+1475330       1 Ss    7-20:42:37  0.0 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+  pretrain_cline_pid=1800276
+  ppid=1475330 etime=   02:44:15 stat=Sl cpu=40.8 wchan=ep_poll
+  parent_chain:
+    PID    PPID COMMAND
+1475330       1 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+
+== B. pretrain loop 日志（尾 30 行）==
+-rw-r----- 1 app.e0031982 app.adm 87465156 2026-11-28_11:09:14 /tmp/baize_pretrain_loop.log
+2. Edit[0m[2m train.sh line[0m[2m 280: `"[0m[2mulimit -n[0m[2m 65536[0m[2m && cd ...[0m[2m`[0m[2m → `"[0m[2mulimit -H[0m[2mn 10485[0m[2m76 2[0m[2m>/dev/null;[0m[2m ulimit -n
+3. Restart[0m[2m S2[0m[2m
+
+Let me read the[0m[2m exact lines to edit[0m[2m.[0m[2m
+
+Actually, I realize[0m[2m I need[0m[2m to be careful[0m[2m.[0m[2m The MEMORY[0m[2m line 38 says[0m[2m the[0m[2m 09:2[0m[2mx user[0m[2m command was[0m[2m "stop[0m[2m S1" and[0m[
+
+But wait[0m[2m - the[0m[2m 09:2x[0m[2m command says "停[0m[2m了之后不要自己[0m[2m重启 S1"[0m[2m (don't restart[0m[2m S1).[0m[2m The[0m[2m 10:1[0m[2mx says[0m[2m "直接
+
+But[0m[2m the 09[0m[2m:2x also[0m[2m says "本轮这是[0m[2m唯一动作" ([0m[2mthis round[0m[2m,[0m[2m this[0m[2m is the only action[0m[2m). Does[0m[2m this mean I[0m[2m shoul
+
+OK[0m[2m, let me just[0m[2m proceed with fixing[0m[2m S[0m[2m2 and restarting it[0m[2m. The user[0m[2m's latest command[0m[2m (10:1[0m[2mx) is to[0m[2m start S2.[0m[2m
+
+Actually, I need[0m[2m to reconsider[0m[2m. The user's[0m[2m CURRENT input is the[0m[2m task book,[0m[2m which has the[0m[2m 09:2x[0m[2m "stop S1[0m[2m" command[0m[2m at the top.[0m
+
+I[0m[2m think what[0m[2m happened is:
+1[0m[2m. The user[0m[2m gave the[0m[2m 08[0m[2m:1x command[0m[2m (start[0m[2m S2)
+2[0m[2m. I stopped[0m[2m S1,[0m[2m started S2,[0m[2m S2 crashed[0m[2m
+3. The[0m[2m user gave the[0m[2m 09:2x[0m[2m command (stop S[0m[2m1 - maybe[0m[2m they saw S2[0m[2m running and[0m[2m thought it was S[0m[2m1)[0m[2m
+4. I confirmed[0m[2m S1 was stopped[0m[2m, updated[0m[2m MEMORY
+5.[0m[2m The user gave the[0m[2m 10:1[0m[2mx command (start[0m[2m S2 directly)[0m[2m
+6. I started[0m[2m S2 again[0m[2m, it crashed again[0m[2m (EMFILE)[0m[2m
+7. Context[0m[2m was compacted[0m[2m
+8. Now the[0m[2m agent loop is waking[0m[2m me up again[0m[2m with the task book[0m[2m
+
+So[0m[2m the[0m[2m 10:1x[0m[2m is still[0m[2m the active[0m[2m command. I[0m[2m need to fix[0m[2m S[0m[2m2 and restart it[0m[2m.
+
+But wait -[0m[2m looking[0m[2m at the task book[0m[2m,[0m[2m the 09:[0m[2m2x is at[0m[2m the TOP ([0m[2mmost recent in[0m[2m the task book).[0m[2m The 10:[0m[2m1x is in[0m[2m the
+
+Actually, looking at[0m
+
+== C. 关键计数 ==
+  [wake up] = 1711
+  [invoking cline] = 1685
+  [cline returned] = 916
+  [无可用 LLM 候选] = 0
+0
+  [llm_pick] = 0
+0
+  [S2] = 6572
+  [torchrun] = 2612
+  [E2BIG] = 133
+  [Argument list too long] = 11
+
+== D. 最近 6 条非空日志 ==
+6. I started[0m[2m S2 again[0m[2m, it crashed again[0m[2m (EMFILE)[0m[2m
+7. Context[0m[2m was compacted[0m[2m
+8. Now the[0m[2m agent loop is waking[0m[2m me up again[0m[2m with the task book[0m[2m
+So[0m[2m the[0m[2m 10:1x[0m[2m is still[0m[2m the active[0m[2m command. I[0m[2m need to fix[0m[2m S[0m[2m2 and restart it[0m[2m.
+But wait -[0m[2m looking[0m[2m at the task book[0m[2m,[0m[2m the 09:[0m[2m2x is at[0m[2m the TOP ([0m[2mmost recent in[0m[2m the task book).[0m[2m The 10:[0m[2m1x is in[0m[2m the
+Actually, looking at[0m[2m the MEMORY line[0m
+
+== E. 关键文件 mtime / WAITING ==
+-rw-r--r-- 1 app.e0031982 app.adm 30770 2026-11-28_08:32:34 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md
+-rw-r--r-- 1 app.e0031982 app.adm 33286 2026-11-28_08:25:09 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+184:WAITING: 0
+
+== F. S2 executor / launch 日志 ==
+-rw-r----- 1 app.e0031982 app.adm 4327 2026-11-28_08:06:20 /tmp/baize_s2_launch.log
+-rw-r----- 1 app.e0031982 app.adm 2430 2026-11-28_05:19:17 /tmp/baize_s2_switch_train.log
+-rw-r----- 1 app.e0031982 app.adm 3684 2026-11-28_05:22:27 /tmp/s2_switch_execution.log
+[2026-11-28 05:22:11]   [2026-11-28 05:19:15] blend 就绪：13847 个 shard（权重+前缀对）
+[2026-11-28 05:22:11]   [2026-11-28 05:19:15] WARN: launcher 无 --max-position-embeddings（训练不受影响，RoPE 逐位置计算）；导出 HF config 时必须写 max_position_embeddings=104857
+[2026-11-28 05:22:11]   [2026-11-28 05:19:17] FATAL: 10.239.2.12 GPU 非空闲（vision 在跑？铁律：不抢）
+[2026-11-28 05:22:11] ROLLBACK: killing+restarting with S1
+[2026-11-28 05:22:27] ROLLBACK done PID=756629
+[2026-11-28 05:22:27] ===== FAILED — ROLLED BACK =====
+
+== G. GPU ==
+0, 0 %, 0 MiB
+1, 0 %, 0 MiB
+2, 0 %, 0 MiB
+3, 0 %, 0 MiB
+4, 0 %, 0 MiB
+5, 0 %, 0 MiB
+6, 0 %, 0 MiB
+7, 0 %, 0 MiB
+（只读：未 kill / 未重启 / 未改任何文件）
+=== DONE 300 | 2026-11-28 11:09:15 ===
+```
