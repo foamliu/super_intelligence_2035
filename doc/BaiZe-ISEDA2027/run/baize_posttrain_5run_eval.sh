@@ -11,6 +11,11 @@ set -uo pipefail
 
 EDA_BASE="${EDA_BASE:-/nas_data/app.e0031982/code/eda_fastmcp}"
 PROVIDERS_JSON="$HOME/.cline/data/settings/providers.json"
+CLINE_MCP_SETTINGS="$HOME/.cline/data/settings/cline_mcp_settings.json"
+# wipe-resistant master: HOME 周期性 snapshot 回退会清空 ~/.cline/data/settings/，
+# 导致 cline worker 无 pyAether_MCP_server -> search_apis/get_api_details/run_code 全判 unavailable。
+# 每次跑前用 NFS master 回补（wake874 A1 write_files triage 根因修复）。
+CLINE_MCP_SETTINGS_MASTER="$(dirname "$0")/cline_mcp_settings.master.json"
 VENV_PYTHON="${VENV_PYTHON:-$EDA_BASE/.venv/bin/python}"
 RESULTS_DIR="${RESULTS_DIR:-/nas_data/app.e0031982/posttrain_5run_eval}"
 # 评测侧 benchmark：框架 config.yaml 的 HEAD 默认指向 SkipperTcl（非 pyAether），
@@ -61,6 +66,17 @@ cfg = {'version':1,'lastUsedProvider':'openai-compatible','providers':{'openai-c
 json.dump(cfg, open('$PROVIDERS_JSON','w'), indent=2)
 "
   echo "[run $run_n] providers.json → $ENDPOINT / $MODEL"
+
+  # 1b. 确保 cline MCP 配置在位（抗 HOME-wipe，wake874 根因修复）
+  mkdir -p "$(dirname "$CLINE_MCP_SETTINGS")"
+  if [[ -f "$CLINE_MCP_SETTINGS_MASTER" ]]; then
+    if [[ ! -f "$CLINE_MCP_SETTINGS" ]] || ! diff -q "$CLINE_MCP_SETTINGS_MASTER" "$CLINE_MCP_SETTINGS" >/dev/null 2>&1; then
+      cp "$CLINE_MCP_SETTINGS_MASTER" "$CLINE_MCP_SETTINGS"
+      echo "[run $run_n] cline_mcp_settings.json restored from master (pyAether_MCP_server :18888/sse)"
+    fi
+  else
+    echo "[run $run_n] WARNING: master $CLINE_MCP_SETTINGS_MASTER missing — MCP tools may be unavailable!"
+  fi
 
   # 2. Code generation (PYTHON env var required: system lacks bare 'python')
   echo "[run $run_n] code-gen starting..."

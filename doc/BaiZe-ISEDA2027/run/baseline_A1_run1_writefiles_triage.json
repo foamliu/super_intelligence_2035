@@ -1,0 +1,3333 @@
+{
+  "generated_for": "A1_qwen35_2b run1 (2026-11-28 18:34 batch)",
+  "summary": {
+    "total_tasks": 158,
+    "has_code": 68,
+    "no_code": 90,
+    "pass_count": 2,
+    "pass_rate": 0.012658227848101266
+  },
+  "aggregate_tool_calls": {
+    "format_raw_task": 1,
+    "submit_and_exit": 61,
+    "read_files": 150,
+    "run_commands": 299,
+    "editor": 145,
+    "search_apis": 124,
+    "abort": 27,
+    "foundartive_prompt_interact": 1,
+    "list": 17,
+    "list_files": 11,
+    "edit": 2,
+    "list_and_read": 1,
+    "accept_run": 1,
+    "think": 1,
+    "search_apis_by_keyword": 10,
+    "list_dir": 2,
+    "educate": 1,
+    "write_files": 4,
+    "create_and_exit": 1,
+    "search_codebase": 1,
+    "edit_files": 2,
+    "search_files": 1,
+    "status": 6,
+    "print_statement": 1,
+    "edit_all": 1,
+    "urgy": 1,
+    "list_dir_files": 1,
+    "writer": 1,
+    "fix_function_name": 5,
+    "complete_code_generation": 6
+  },
+  "aggregate_rejected_tools": {
+    "search_apis": 131,
+    "foundartive_prompt_interact": 1,
+    "list": 19,
+    "list_files": 12,
+    "edit": 2,
+    "list_and_read": 1,
+    "create_files": 1,
+    "accept_run": 1,
+    "think": 1,
+    "search_apis_by_keyword": 10,
+    "list_dir": 2,
+    "create_or_create_file": 1,
+    "educate": 1,
+    "write_files": 4,
+    "$": 1,
+    "edit\\n\\n格式": 1,
+    "create_and_exit": 1,
+    "search_codebase": 1,
+    "edit_files": 2,
+    "search_files": 1,
+    "print_statement": 1,
+    "edit_all": 1,
+    "urgy": 1,
+    "list_dir_files": 1,
+    "writer": 1
+  },
+  "aggregate_reject_reasons": {
+    "unavailable-tool": 199
+  },
+  "run_commands_hook_blocked": 1519,
+  "editor_schema_errors": 56,
+  "class_counts": {
+    "other": 24,
+    "d_submit_text_only": 6,
+    "c_capability": 66,
+    "b_path_or_schema": 44,
+    "a_protocol_incompat_mcp": 16,
+    "pass": 2
+  },
+  "class_legend": {
+    "a_protocol_incompat_mcp": "no code; MCP tools rejected as unavailable; never reached editor",
+    "a_protocol_incompat_writefiles": "no code; write_files rejected as unavailable; never reached editor",
+    "b_path_or_schema": "editor used but no code landed (path/schema)",
+    "d_submit_text_only": "submit_and_exit text, no editor code",
+    "c_capability": "code emitted but failed (logic/API misuse) -- genuine gap",
+    "pass": "passed",
+    "other": "uncategorized"
+  },
+  "per_task": [
+    {
+      "task_id": "EDA-Eval-PyAether-001",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-002",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "d_submit_text_only"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-003",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AssertionError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-004",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "ImportError"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-005",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "foundartive_prompt_interact": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-006",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-007",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-008",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-009",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-010",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "d_submit_text_only"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-011",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-012",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-013",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-014",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "TypeError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-015",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-016",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-017",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-018",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-019",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "TypeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-020",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-021",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list_files": 1,
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-022",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "edit": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-023",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "TypeError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-024",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-025",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 2,
+        "list_files": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-026",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-027",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AssertionError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-028",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "Unknown Failure"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-029",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 2,
+        "list_and_read": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-030",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-031",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-032",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "TypeError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1,
+        "create_files": 1,
+        "list_files": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-033",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "d_submit_text_only"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-034",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-035",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-036",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-037",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 5,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-038",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-039",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 4,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 4,
+        "list": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-040",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-041",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-042",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-043",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-044",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "accept_run": 1,
+        "search_apis": 2,
+        "think": 1,
+        "list_files": 1,
+        "search_apis_by_keyword": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-045",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-046",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1,
+        "search_apis_by_keyword": 2
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-047",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 5,
+      "search_apis_calls": 3,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 3,
+        "list": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-048",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "IndentationError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-049",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-050",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "TypeError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-051",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "timeout"
+      ],
+      "error_types": [
+        "Generation timeout"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-052",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 3,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {
+        "search_apis": 5
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-053",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-054",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-055",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-056",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-057",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-058",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-059",
+      "has_code": true,
+      "pass_rate": 1.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1,
+        "list_dir": 1
+      },
+      "class": "pass"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-060",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-061",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-062",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-063",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-064",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-065",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-066",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "d_submit_text_only"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-067",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 2,
+        "list": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-068",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-069",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-070",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-071",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-072",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis_by_keyword": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-073",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1,
+        "create_or_create_file": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-074",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-075",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-076",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 3,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 3
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-077",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-078",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis_by_keyword": 1,
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-079",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1,
+        "list_files": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-080",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {
+        "educate": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-081",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-082",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-083",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 3,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 3,
+        "search_apis_by_keyword": 1,
+        "list_dir": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-084",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1,
+        "search_apis_by_keyword": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-085",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list_files": 1
+      },
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-086",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1,
+        "list": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-087",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 1,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1,
+        "write_files": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-088",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 4,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 4
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-089",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list": 1,
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-090",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-091",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-092",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-093",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-094",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 4,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 4,
+        "list": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-095",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-096",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "d_submit_text_only"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-097",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 1,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "$": 1,
+        "write_files": 1,
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-098",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-099",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-100",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "ImportError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {
+        "search_apis": 2,
+        "edit\\n\\n格式": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-101",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-102",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-103",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 4,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 5,
+        "list_files": 3,
+        "search_apis_by_keyword": 1,
+        "create_and_exit": 1,
+        "search_codebase": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-104",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list_files": 1,
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-105",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-106",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-107",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 3,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis_by_keyword": 1,
+        "search_apis": 3,
+        "list": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-108",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-109",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 2,
+        "edit": 1,
+        "edit_files": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-110",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-111",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-112",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-113",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 3,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 3
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-114",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-115",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-116",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-117",
+      "has_code": true,
+      "pass_rate": 1.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [],
+      "editor_calls": 4,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_files": 1
+      },
+      "class": "pass"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-118",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 3,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 3
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-119",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-120",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "d_submit_text_only"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-121",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "print_statement": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-122",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "TypeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-123",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-124",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 5,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 5
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-125",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-126",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-127",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-128",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-129",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 6,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 1,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "write_files": 1,
+        "edit_files": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-130",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-131",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AssertionError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-132",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-133",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-134",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-135",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 4,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 1,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "list": 3,
+        "search_apis": 2,
+        "list_files": 1,
+        "write_files": 1,
+        "edit_all": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-136",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 5,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-137",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-138",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-139",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 5,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 5,
+        "list": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-140",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list_files": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-141",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-142",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-143",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "ModuleNotFoundError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {
+        "search_apis": 2,
+        "list": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-144",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-145",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "ModuleNotFoundError"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-146",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "list": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-147",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 4,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-148",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "NameError"
+      ],
+      "editor_calls": 2,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-149",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 1,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-150",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 3,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "b_path_or_schema"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-151",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "AttributeError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-152",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-153",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 1,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis": 1
+      },
+      "class": "a_protocol_incompat_mcp"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-154",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "Unknown Failure"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {
+        "search_apis_by_keyword": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-155",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 4,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 2
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-156",
+      "has_code": false,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "fail"
+      ],
+      "error_types": [
+        "Generation fail"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 0,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 0,
+      "mcp_rejections": {},
+      "class": "other"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-157",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 0,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 2,
+      "mcp_rejections": {
+        "search_apis": 3,
+        "list": 1
+      },
+      "class": "c_capability"
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-158",
+      "has_code": true,
+      "pass_rate": 0.0,
+      "gen_status": [
+        "success"
+      ],
+      "error_types": [
+        "SyntaxError"
+      ],
+      "editor_calls": 9,
+      "search_apis_calls": 2,
+      "get_api_details_calls": 0,
+      "write_files_calls": 0,
+      "submit_calls": 1,
+      "mcp_rejections": {
+        "search_apis": 3,
+        "urgy": 1,
+        "list_dir_files": 1,
+        "writer": 1
+      },
+      "class": "c_capability"
+    }
+  ],
+  "raw_trace_snippets": [
+    {
+      "label": "search_apis rejected",
+      "start_line": 159,
+      "lines": [
+        "[search_apis] {\"description\":\"Search for pyAether emyBoxF and emyPointF...",
+        "   â¿ error: {\"error\":\"Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'. Available tools: read_files, run_commands, editor, submit_and_exit.\"}",
+        "[search_apis] {\"description\":\"Search for pyAether SWIG type constructio...",
+        "   â¿ error: {\"error\":\"Tool call search_apis was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'search_apis'. Available tools: read_files, run_commands, editor, submit_and_exit.\"}",
+        "[run_commands] echo \"ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only read and write inside the provide...",
+        "   â¿ ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only...",
+        "[run_commands] echo \"ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only read and write inside the provide..."
+      ]
+    },
+    {
+      "label": "write_files rejected",
+      "start_line": 11684,
+      "lines": [
+        "[write_files] {\"files\":\"[{\\\"path\\\": \\\"/home/app.e0031982/eda_code_eval/...",
+        "   â¿ error: {\"error\":\"Tool call write_files was rejected before execution: AI_NoSuchToolError: Model tried to call unavailable tool 'write_files'. Available tools: read_files, run_commands, editor, submit_and_exit.\"}",
+        ":",
+        " List   让我直接[T \"\"\"uple",
+        "通过[INFO] [worker-3] 任务 EDA-Eval-PyAether-082 处理完毕，准备下一个",
+        "[float   终端, import命令 float py创建]])文件A ->ether： List",
+        ""
+      ]
+    },
+    {
+      "label": "run_commands hook-blocked",
+      "start_line": 68,
+      "lines": [
+        "",
+        "[run_commands] echo \"ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only read and write inside the provide...",
+        "   â¿ ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only...",
+        "[read_files] {\"files\":[{\"path\":\"/home/app.e0031982/eda_code_eval/2026_...",
+        "   â¿ ok",
+        "[run_commands] echo \"ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only read and write inside the provide...",
+        "   â¿ ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only..."
+      ]
+    },
+    {
+      "label": "editor schema error",
+      "start_line": 187,
+      "lines": [
+        "[editor] {\"file_path\":\"/home/app.e0031982/eda_code_eval/2026_1128_...",
+        "   â¿ error: {\"error\":\"â Invalid input: expected string, received undefined\\n  â at path\\nâ Invalid input: expected string, received undefined\\n  â at new_text\"}",
+        "遇到审计权限无法访问外部目录。让我考虑使用已知的工具来查看技能文档：",
+        "",
+        "[run_commands] echo \"ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only read and write inside the provide...",
+        "   â¿ ACCESS RESTRICTED: outside the sandbox workspace or not allowed. You may only...",
+        ""
+      ]
+    },
+    {
+      "label": "model gives up -> submit",
+      "start_line": 57,
+      "lines": [
+        "[submit_and_exit] {\"summary\":\"根据任务要求，创建函数 get_date_from_timestamp 实现 Unix 时...",
+        "   â¿ Submission recorded (verified): 根据任务要求，创建函数 get_date_from_timestamp 实现 Unix 时间戳到年月日的转换。该函数会验证 inp...",
+        "[INFO] [worker-3] 任务 EDA-Eval-PyAether-002 成功完成",
+        "",
+        "[INFO] [worker-3] 任务耗时: 13 秒",
+        "[read_files] {\"files\":[{\"path\":\"/home/app.e0031982/eda_code_eval/2026_...",
+        "   â¿ ok"
+      ]
+    }
+  ],
+  "fairness_A0_vs_A1": {
+    "A0_base_ragfix_run1": {
+      "model": "MiniCPM5-2B",
+      "endpoint": ":8098",
+      "eval_dir": "/home/app.e0031982/eda_code_eval/2026_1124_224911",
+      "aggregate_tool_calls": {
+        "search_apis": 1044,
+        "run_commands": 763,
+        "get_api_details": 663,
+        "read_files": 260,
+        "editor": 250,
+        "run_code": 179,
+        "search_apis_by_keyword": 168,
+        "submit_and_exit": 139,
+        "search_api_details": 2,
+        "pytorch_MCP_server__search_apis": 2,
+        "pyAther_MCP_server__search_apis": 1,
+        "list_dir": 1
+      },
+      "aggregate_reject_reasons": {
+        "other-type-error": 19,
+        "unavailable-tool": 9
+      },
+      "rag_queried_rate": 0.9937,
+      "tool_call_count_mean": 21.9747,
+      "cline_mcp_settings_present": true
+    },
+    "A1_qwen35_2b_run1": {
+      "model": "Qwen3.5-2B",
+      "endpoint": ":8097",
+      "aggregate_tool_calls": {
+        "format_raw_task": 1,
+        "submit_and_exit": 61,
+        "read_files": 150,
+        "run_commands": 299,
+        "editor": 145,
+        "search_apis": 124,
+        "abort": 27,
+        "foundartive_prompt_interact": 1,
+        "list": 17,
+        "list_files": 11,
+        "edit": 2,
+        "list_and_read": 1,
+        "accept_run": 1,
+        "think": 1,
+        "search_apis_by_keyword": 10,
+        "list_dir": 2,
+        "educate": 1,
+        "write_files": 4,
+        "create_and_exit": 1,
+        "search_codebase": 1,
+        "edit_files": 2,
+        "search_files": 1,
+        "status": 6,
+        "print_statement": 1,
+        "edit_all": 1,
+        "urgy": 1,
+        "list_dir_files": 1,
+        "writer": 1,
+        "fix_function_name": 5,
+        "complete_code_generation": 6
+      },
+      "aggregate_reject_reasons": {
+        "unavailable-tool": 199,
+        "by_tool": {
+          "search_apis": 131,
+          "foundartive_prompt_interact": 1,
+          "list": 19,
+          "list_files": 12,
+          "edit": 2,
+          "list_and_read": 1,
+          "create_files": 1,
+          "accept_run": 1,
+          "think": 1,
+          "search_apis_by_keyword": 10,
+          "list_dir": 2,
+          "create_or_create_file": 1,
+          "educate": 1,
+          "write_files": 4,
+          "$": 1,
+          "edit\\n\\n格式": 1,
+          "create_and_exit": 1,
+          "search_codebase": 1,
+          "edit_files": 2,
+          "search_files": 1,
+          "print_statement": 1,
+          "edit_all": 1,
+          "urgy": 1,
+          "list_dir_files": 1,
+          "writer": 1
+        }
+      },
+      "run_commands_hook_blocked": 1519,
+      "editor_schema_errors": 56,
+      "rag_queried_rate": 0.0,
+      "cline_mcp_settings_present": false
+    },
+    "same_caliber_check": {
+      "prompt_template": "eval_sys_prompt_template_no_sandbox.md (both)",
+      "harness": "run_cline_script.sh -p 8 -n (both)",
+      "hook": "PreToolUse sandbox hook (both)",
+      "benchmark": "EDA-Eval-PyAether 158 (both)",
+      "toolset_A0": "core + MCP(pyAether_MCP_server: search_apis/get_api_details/search_apis_by_keyword/run_code)",
+      "toolset_A1": "core only (MCP MISSING: cline_mcp_settings.json wiped)",
+      "verdict": "CALIBER MISMATCH (infra regression, not model): A1 lost MCP tools because ~/.cline/data/settings/cline_mcp_settings.json was wiped by 2026-11-28 HOME snapshot rollback (wake870). A0 (Nov 24) had the file -> MCP callable -> 45.06%. Single-variable design broken by missing MCP config, NOT by base-model capability."
+    }
+  },
+  "root_cause": "A1 run1 1.27% is dominated by an INFRA/PROTOCOL regression, not by Qwen3.5-2B capability: cline MCP settings (~/.cline/data/settings/cline_mcp_settings.json) was wiped by 2026-11-28 HOME snapshot rollback (wake870). run_cli.sh:109 copies it per-worker with `cp ... || true`, so silent skip left A1 workers with NO pyAether_MCP_server -> search_apis/get_api_details/run_code all rejected as unavailable (131 search_apis + 12 get_api_details + 10 search_apis_by_keyword + 4 write_files). no_sandbox.md prompt instructs model to use search_apis/get_api_details, so Qwen3.5-2B followed the prompt calling a non-existent tool. A0 (Nov 24, pre-wipe) had the file -> MCP callable (1044 search_apis/663 get_api_details/179 run_code, rag_queried_rate=0.9937) -> 45.06%. Fix = restore cline_mcp_settings.json then re-run A1."
+}

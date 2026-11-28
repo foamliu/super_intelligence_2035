@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "pyAether_MCP_server": {
+      "url": "http://127.0.0.1:18888/sse",
+      "type": "sse",
+      "disabled": false,
+      "autoApprove": ["search_apis", "get_api_details", "search_apis_by_keyword", "run_code"]
+    }
+  }
+}
