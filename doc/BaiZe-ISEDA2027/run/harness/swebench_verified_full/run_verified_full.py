@@ -40,7 +40,7 @@ WORKDIRS = Path(f"/dev/shm/harness_verified_full{WORKDIR_TAG}/workdirs")
 PROXY = "http://172.19.92.25:13128"
 TIMEOUT_RUN = 1800
 TIMEOUT_EVAL = 1800
-EVAL_LOG_ROOT = HERE / "logs" / "run_evaluation"
+EVAL_LOG_ROOT = HERE / "logs" / "evaluation"  # fixed: swebench writes here (was "run_evaluation")
 
 ALL_HARNESSES = [
     "cline-patched", "codex", "opencode", "pi",

@@ -32,17 +32,19 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        opencode v1.19.6 predict中(104/500,ETA~23:30)·zhulong 12w predict中(134/500,ETA~00:00)·6-harness eval循环(hermes eval中→pi待)·opencode/zhulong eval-watcher等待predict完成
-已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·opencode 0-patch根因修复✅(commit f154c8ba50)·6-harness predict全500✅·cline-patched eval DONE(355/499=71.1%)·claude-code eval DONE(273/500=54.6%)·codex eval DONE(289/497=58.1%)·deepseek eval DONE(200/490=40.8%)·opencode+zhulong eval-watcher已启动(PID1816539/1816542)
-当前动作:     opencode 8w predict 104/500(ETA~23:30)·zhulong 12w predict 134/500(ETA~00:00)·6-harness eval循环 run_eval_all_8w.sh(PID4157025):cline✅→cc✅→codex✅→deepseek✅→hermes eval中(PID2362943)→pi待·资源自检PASS(load14.3/224,mem178G/2015G,topCPU=pretrain199%=2核·harness最高opencode17.5%·远低于8000%kill线)
-下一步:       hermes/pi eval自循环完成(~16:00)→opencode eval(watcher PID1816539在predict完成后自动触发)→zhulong eval(watcher PID1816542)→8路eval全齐(ETA~03:00 Nov29)→gen_report_doubao_pro_7way.py生成最终8路对比HTML报告(含版本列,cline显示zhulong(cline-patched))
+PHASE:        🔧parse_eval路径bug已修复+5路eval已重解析✅·pi eval中(PID2946085,ETA~16:00)·opencode predict中(124/500,ETA~23:00)·zhulong predict中(150/500,ETA~21:00)·eval-watcher等待predict完成
+已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·opencode 0-patch根因修复✅(commit f154c8ba50)·6-harness predict全500✅·🔧parse_eval路径bug修复✅(run_evaluation→evaluation)·5路eval重解析✅(cline/cc/codex/dsh/hermes)·pi_reparse_watch已启动(PID157685)
+当前动作:     🔧parse_eval路径bug已修复(run_verified_full.py:43 EVAL_LOG_ROOT run_evaluation→evaluation,旧路径只有kimi/glm53结果被fallback glob误用)·5路eval JSON已用正确doubao-pro结果覆盖·pi eval运行中(PID2946085,用旧代码,pi_reparse_watch将在完成后自动重解析)·opencode predict 124/500(8w,log→/tmp/opencode_predict.log)·zhulong predict 150/500(12w,adaptive concurrency)·资源自检PASS(load27.5/224,mem179G/2015G,topCPU=opencode22.6%=0.2核·远低于8000%kill线)
+下一步:       pi eval完成(~16:00)→pi_reparse_watch自动重解析→opencode eval(watcher PID1816539在predict完成后自动触发,用已修复代码)→zhulong eval(watcher PID1816542)→8路eval全齐(ETA~00:00 Nov29)→gen_report_doubao_pro_7way.py生成最终8路对比HTML报告(含版本列,cline显示zhulong(cline-patched))
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~26KB / MEMORY≈6KB
 
+  🔧 parse_eval路径bug(已修复): run_verified_full.py:43 EVAL_LOG_ROOT原为logs/run_evaluation,但swebench实际写入logs/evaluation。旧路径只有kimi/glm53模型目录,parse_eval的fallback glob `*/<iid>/report.json`误用旧模型结果→所有eval JSON结果错误。修复:EVAL_LOG_ROOT改为logs/evaluation。已重解析5路(cline/cc/codex/dsh/hermes),pi eval在跑(用旧代码),pi_reparse_watch(PID157685)待pi eval完成后自动重解析。opencode/zhulong eval-watcher将启动新Python进程,自动用修复后代码。
   🔧 opencode 0-patch根因(已修复): OpencodeDriver代码为v2.4.1编写(无--dir),但v1.19.6需要--dir<workdir>才能编辑目标repo文件。修复=加回--dir(commit f154c8ba50)。smoke test验证:astropy__astropy-12907产生502B patch。
   SWE-bench Verified Pass% (doubao-pro 上一轮v1.18.27, 保留对照): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
-  SWE-bench Verified Pass% (doubao-pro 本轮v1.19.6, eval进行中): cline-patched355/499=71.1%·codex289/497=58.1%·cc273/500=54.6%·deepseek200/490=40.8%·hermes/pi eval中·opencode104/500 predict中·zhulong134/500 predict中
+  SWE-bench Verified Pass% (doubao-pro 本轮v1.19.6, eval重解析后正确值): cline312/499=62.5%·cc316/500=63.2%·hermes300/497=60.4%·codex220/497=44.3%·dsh224/490=45.7%·pi eval中·opencode124/500 predict中·zhulong150/500 predict中
+  ⚠️ 旧eval JSON值(已被覆盖,记录供对比): cline355/499·cc273/500·codex289/497·dsh200/490·hermes0/497——均为kimi旧结果被误用,非doubao-pro真实值
 
 ## 启动说明（首次唤醒）
 
