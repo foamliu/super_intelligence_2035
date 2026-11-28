@@ -2,15 +2,15 @@
 
 WAITING: 0
 
-> ✅ **心跳 · 2026-11-28 (R1141) — S2 RUNNING · 只读 review · 4 项确认完毕（fresh 实跑）· SEED 纠错已应用**：
-> - **① S2 blend TSV ✅**：`blend_s2_preblend.tsv` 12 源 · prop sum=1.000000 · web=0.40/code=0.40/math=0.20 · 180 shards(11×16+ufw_zh×4) · BLEND~14KB<100KB · 训练命令 per-shard 权重与 TSV prop 一致(已逐源核对)
+> ✅ **心跳 · 2026-11-28 (R1142) — S2 RUNNING · 只读 review · 4 项确认完毕（fresh 实跑）· SEED 纠错已应用**：
+> - **① S2 blend TSV ✅**：`blend_s2_preblend.tsv` 3,805B · 12 源 · prop sum=1.000000(实测) · web=0.40/code=0.40/math=0.20 · 180 shards(11×16+ufw_zh×4=176+4=180 实测) · 训练命令 per-shard 权重与 TSV prop 逐源核对一致(en_v1_4:0.021875×16=0.35✅ / finemath:0.000313×16≈0.005✅ / nemotron:0.004188×16≈0.067✅ / megamath_web:0.003750×16=0.060✅ 等)
 > - **② 零重叠方案（同 SEED=1234 + 新源天然零重叠，无 cursor offset shim）✅**：
->   - **同 SEED=1234 = 零重叠 ✅**（📌 2026-11-28 用户纠错）：同 seed → 同 shuffle_index 排列 → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。PID 1322376 `--seed 1234`（=S1 同 seed）确认正确。**换 SEED 反而破坏零重叠**（会生成全新排列，从头读可能读到 S1 已消费样本）。
->   - **新源天然零重叠 ✅**：5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web)在 blend 中且在训练命令 --train-data-path 中确认，S1 未消费→overlap=0
->   - **cursor offset shim ✅ 未启用**：纯 S2 冷切换，无 shim
->   - **SEED=5678 旧建议已清除**：TSV 注释已修正 · R1140 心跳中「D 换 SEED 未生效→存在文档重叠」的警告已撤销（那是基于错误理解的误报）
-> - **③ blendswitch 验证 25/25 PASS ✅**（R1141 fresh 实跑）：standalone 8/8 + integration 7/7 + bridge 10/10 · zero_overlap=0 · ratio max_dev=0.0087%(standalone)/0.0027%(integration) · flag-off byte-identical · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
-> - **④ 训练健康 ✅**：PID 1322376 alive etimes≈2185s(~36min) · `--seed 1234` 确认 · pretrain MEMORY 报 iter>350k/700k step~7.0s loss~1.55 0NaN/0skip · GPU .29+.12 16×98-100%
+>   - **同 SEED=1234 = 零重叠 ✅**（📌 2026-11-28 用户纠错）：同 seed → 同 shuffle_index 排列 → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。PID 1322376 `--seed 1234`（=S1 同 seed）确认正确（CLI arg 实测）。**换 SEED 反而破坏零重叠**。
+>   - **新源天然零重叠 ✅**：5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web)在训练命令 --train-data-path 中确认，S1 未消费→overlap=0
+>   - **cursor offset shim ✅ 未启用**：`/proc/1322376/environ` 实测 `BLEND_CURSOR_OFFSETS_JSON=`（空字符串）→ shim 不生效 → 纯 S2 冷切换确认
+>   - **SEED=5678 旧建议已清除**：TSV L18-20 注释已修正 · 旧警告已撤销
+> - **③ blendswitch 验证 25/25 PASS ✅**（R1142 fresh 实跑）：standalone 8/8 + integration 7/7 + bridge 10/10 · zero_overlap=0 · ratio max_dev=0.0087%(standalone)/0.0027%(integration) · flag-off byte-identical · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
+> - **④ 训练健康 ✅**：PID 1322376 alive etimes≈2693s(~45min) · `--seed 1234` 确认 · pretrain MEMORY 报 iter>350k/700k step~7.0s loss~1.55 0NaN/0skip · GPU .29+.12 16×98-100%
 > - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · WAITING=0
 > - 📌 **SEED=5678 残留**：data 线文件（TSV/报告/MEMORY）已全部修正或标注撤销；`MEMORY_PRETRAIN_2B.md` L48 仍提「换SEED」（待 pretrain 线清理）
 
