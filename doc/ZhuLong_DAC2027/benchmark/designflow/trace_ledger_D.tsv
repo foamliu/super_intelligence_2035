@@ -2104,3 +2104,5 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795603952071_8j9pp	shaoyou	hfeg0pkn001	169	schematic_netlist	case	EDA-Eval-DesignFlow-InstMasterLibCellReportProduce-001	2026-11-28 14:35	
 1795691875979_4no25	yu23z	hfeg0pkn002	309	schematic_netlist	parked		2026-11-28 14:50	wrong-domain C layout: opening intent=layout path width edit from ruler (版图窗口选中Path width改ruler长度), only 2 user_inputs both layout; keyword profile (aether+cellview+pyaether) misclassified D
 1795679057700_cmp5v	vincentz	hfeg0plg58	249	analog_context	case	EDA-Eval-DesignFlow-NoiseTrendDeckRunsimProduce-001	2026-11-28 15:09	
+1795399536488_k5x28	beartang	hfhds201	261	schematic_netlist	parked		2026-11-28 15:28	wrong-domain C: 一键连线并打孔=layout wire(M1)+via(M1->M2) on metal layers via-defs LICONGC, pyaether dbOpenCV/leGuiCrtWire/aeCreateRect layout ops, not schematic/netlist; drc+dbopencv+aether keyword weak D signal
+1795525118226_o06r5	hairuizh	hfeg0pkn001	218	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistDepCopyProduce-001	2026-11-28 15:53	
