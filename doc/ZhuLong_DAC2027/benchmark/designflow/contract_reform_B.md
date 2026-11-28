@@ -1783,3 +1783,39 @@ a/b/sa/e/g（含 2 live-neg）③ 3-seed det md5 d61a72c0c（r1376）④ SKIP_RU
 workdir clean ⑤ sha `f72516da` 3-way sync（disk==HEAD==JSON）⑥ 14→17 conds
 only-add sa/sb/sc 阈值原封 ⑦ check_live no read reference/ hidden-B uploaded
 to sess not in SUT sandbox。EDA-Flow-Bench HEAD=`bde0084e1`。
+
+## r1378 — SAoptPwrDly-001 Q1 桩体检 PASS（non-Lite-500，candidate-runs-hspice + judge-直调 hybrid，de-risk next R2 wrap）
+
+**任务**：non-Lite-500 R2 桩体检#25（2026-11-28 用户令「non-Lite-500 实跑评估改造」，最高优先）。SAoptPwrDly-001（spice_sim，StrongARM power-constrained delay optimizer）。
+
+**发现并修复 latent breakage**：`hidden/EDA-Eval-DesignFlow-SAoptPwrDly-001/params_B.json` 在 commit `66be40ff2`（feat(B): add JitterTieRerun-001）中被误删（疑似 `git add -A` sweep 副作用）⇒ check.py 在 `shutil.copy(HIDDEN_DIR/params_B.json)` 处 crash，case 静态即坏。本轮从 `bdfa05318` 恢复 params_B.json（一字不动）。
+
+**case pattern = candidate-runs-hspice + judge-直调 hybrid**（同 r1359 InvOptSpec / r1369 OtaAutoTune 族）：
+- candidate `sa_opt.py <params.json> <opt_report.json>` 读 params（baseline+vdd+temp+vref+vswing+power_target_uA+grid 4 维），对 288-pt grid（inwidth×itailwidth×pmoswidth×nmoswidth）每点 gen HSPICE tran deck（StrongARM SA + .measure cur_avg/dly）+ `subprocess.run(["hspice", sp])` 自身调 Hspice + parse .mt0 → opt_report.json（baseline/power_target_uA/n_designs_run/n_feasible/best{params,cur_uA,dly_ps}/sweep_log）。
+- judge `_run_hspice_point(workdir, params)` + `_pareto_best(workdir, params_file)` **独立重跑 HSPICE** 验证候选 best 点功率达标（cond e/h）+ 计算 Pareto 最优比 60%（cond f/i）。
+- 全 mislabeled `[L0,L1]`（judge_layers_now=[L0,L1]），broken in SUT sandbox（no hspice ⇒ candidate sa_opt.py run fails ⇒ cond c first-fail + conds d-l fail + judge cond e/f/h/i crash）。
+
+**判据同原 a-l 一字迁移**（power_target_uA / Pareto 60% / n_designs≥20 / sweep_log≥20 distinct / cross-input A≠B 原封）。
+
+**REQ 稳固 confirmed**（R1 verdict 正确）。
+
+**Q1 保真实证**（.75 EDASession hfhds201 hspice V-2023.12-SP1-1，session q1-nonlite-r1378 closed，wall~115s = 57.6s/A + 57.3s/B，288×2=576 hspice runs）：
+- A（vdd=1.0/temp=45/vref=0.5/vswing=0.05/target=80uA/grid 4×6×4×3=288）：n_converged=153 n_feasible=64，**BEST_A dly=31.65ps cur=76.51uA**（<=80uA✓e）params={inwidth=2u, itailwidth=12u, pmoswidth=8u, nmoswidth=4u}；cur_range 37.02–257.80uA。
+- B（vdd=1.1/temp=85/vref=0.55/vswing=0.04/target=220uA/grid 4×6×4×3=288）：n_converged=173 n_feasible=34，**BEST_B dly=19.75ps cur=215.00uA**（<=220uA✓h）params={inwidth=2u, itailwidth=11u, pmoswidth=3u, nmoswidth=5u}；cur_range 183.10–940.80uA。
+- **cross-input A_best != B_best**：TRUE（params differ: itailwidth 12u vs 11u / pmoswidth 8u vs 3u / nmoswidth 4u vs 5u）⇒ cond (j) anti-hardcode 守卫有效。
+- **physics REAL NOT fabricated**：B（vdd 1.1V + power budget 220uA，更大电流）⇒ 更快 dly 19.75ps vs A 31.65ps（vdd 1.0V + 80uA），物理自洽（更强驱动→更快翻转）；cur uA 级、dly ps 级合理 level-1 MOS StrongARM；cur_range 跨度合理（off-design 点功率溢出）。contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated。
+
+**Q2 错误解法不会判过**（CONFIRMED）：
+- `naive_hardcode_a.py` 硬编 A 的真 best（inwidth=2u/itailwidth=12u/pmoswidth=8u/nmoswidth=4u, cur=76.5uA, dly=31.7ps, n_designs=1）—— 注意：硬编值**正是 A 的真实 best**（Q1 实证 76.51uA/31.65ps），所以 cheat 在 A 上能骗过 cond e（功率达标）。但 cheat 对 B 也产**同一组 params** ⇒ cond (j) A_best==B_best **FAIL**（cross-input guard catches hardcode）+ cond (k) n_designs_run=1<20 **FAIL**（无搜索证据）。
+- no-sim / fabricate-report ⇒ cond (c) sa_opt.py exit≠0 / 无 opt_report first-fail。
+- 因此 cheat 不会判过，REQ 稳固。
+
+**R2 wrap plan**（de-risked，下轮 r1379 直接执行，同 r1359 InvOptSpec / r1369 OtaAutoTune 模板）：
+- `_check_static_impl` keep (a) zip + sa_opt.py + py_compile 一字不动 + **(sa/sb/sc) only-add** 源码结构检查（sa 候选源码含 `subprocess`+`hspice` 调用 / sb 含 `.tran`+`.measure` StrongARM deck 构造 反 `.probe` 糊弄 / sc 含 `.mt0` `$DATA1` parse）+ `check_static` try/except 三元组；
+- `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201：upload submit.zip + params_A（A visible）+ params_B（B hidden）+ `live_driver.py` → driver 跑候选 A + B + B2(determinism) + judge indep hspice `_run_hspice_point` best_A（cond e/f）+ best_B（cond h/i）→ `live_result.json` → 断 a-l 同判据（power_target_uA / Pareto 60% / n_designs≥20 / sweep_log≥20 distinct / cross-input A≠B 原封）+ `(m)` determinism only-add；
+- `check()` 兼容 + `__main__` 改 check_static；
+- live-neg = `cheat_no_run`（cond c first-fail）+ `cheat_hardcode_a`（cond j/k cross-input）2 distinct。
+
+**零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动**（桩体检只读；本轮唯一落盘 = 恢复误删的 hidden/params_B.json，在 EDA-Flow-Bench repo）。review_nonlite_B.tsv SAoptPwrDly 行 check_live + live_evidence 填 Q1 实证。
+
+**§5 状态**：Q1 PASS（① 待 R2 wrap 时 ref check_live PASS 验证 ② 待 R2 neg ③ 待 R2 3-seed ④ 待 R2 SKIP_RUN ⑤ 待 R2 sha sync ⑥ 待 R2 only-add ⑦ 待 R2）。REQ done 23（不变），derisked 0→1（本条），pending 10→9，BLOCKED 1。
