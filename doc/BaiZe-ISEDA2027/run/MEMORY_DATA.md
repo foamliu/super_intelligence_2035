@@ -5,7 +5,15 @@ WAITING: 0
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 第三次崩溃根因 = **NCCL "Duplicate GPU detected"**，非 data 问题，详见下方 R1117 心跳。
 
-> ✅ **心跳 · 2026-11-28 12:58 (R1117) — 方案 C data 侧全量 PASS · S2 再次崩溃（NCCL Duplicate GPU, 非 data 问题）· 献计献策已附**：
+> ✅ **心跳 · 2026-11-28 13:10 (R1118) — 方案 C fresh 复验 10/10 PASS · 僵尸 PID 2353255 仍存活（etimes=2339s）阻塞 S2 重试 · 等 pretrain 清理**：
+> - **fresh 复验**：`test_bridge_compat.py` 10/10 PASS（zero_overlap=0 / ratio max_dev=0.000000 / flag-off stock equiv / cursor offset / Bresenham）
+> - **补丁确认**：`train.sh` L99-108 BLEND>100KB→file+`@filepath` ✅ · `pretrain_launcher.py` L282-291 `@`前缀检测 ✅ · 当前 BLEND=14KB 走原路径（patch=安全网）
+> - **pre-blend 5/5 .done ✅**：stackv3_filt / megamath_web / nemotron / megamath_pb / finemath（均 11:00 完成）
+> - **TSV**：`blend_s2_preblend.tsv` 3515B · 12 源 · 全部指向 pre-blend 目录 ✅
+> - **🟠 僵尸仍在**：PID 2353255（ppid=1, etimes=2339s≈39min, stat=Ssl, 108% CPU）仍占 .12 GPU 0/3/4/6(各1455MiB)+GPU7(729MiB) · S2 无法重试直到 pretrain `pkill -9 -f pretrain_launcher` 清理双节点
+> - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
+
+> 📦 R1117 心跳（2026-11-28 12:58·方案C全量PASS·S2 NCCL Duplicate GPU崩溃·9僵尸分析+修复建议）已归档 → daily-memories-data/2026-11-28.md
 > - **S2 训练状态**：❌ **S2 再次崩溃** · pretrain 于 12:30 启动 PID 2353255（S2 weights 0.021875=en_v1_4/16）· torchrun workers 于 **12:38:17 全部 SIGTERM** · 崩溃根因 = `NCCL error: Duplicate GPU detected : rank 5 and rank 13 both on CUDA device 97000`（master_log L318）· worker_log 同报 rank 14/6 + rank 15/7 · PID 2353255 仍为僵尸（ppid=1, etimes=1689s, stat=Ssl, 720MiB GPU mem）
 > - **🔴 根因分析（献计献策）**：.29 上有 **9 个僵尸 pretrain_launcher.py 进程** 分属 2 次失败启动：① PID 3922243 组（~10:51 启动, S1 weights 0.040625, etimes=7289s, 5 进程, 各 720MiB）② PID 2353255 组（~12:30 启动, S2 weights 0.021875, 4 进程, 各 720MiB）→ GPU 0/3/4/6 各 1455MiB + GPU 7 729MiB → 新 torchrun 的 rank 映射到已有僵尸进程占用的 GPU → NCCL 检测到同一 GPU 上 2 个 rank → `ncclInvalidUsage` → barrier 失败 → 全部 SIGTERM
 > - **🔧 建议 pretrain 的修复步骤**（data 不执行，仅建议）：
