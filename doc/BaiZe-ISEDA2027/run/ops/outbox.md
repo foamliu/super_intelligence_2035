@@ -1,6 +1,33 @@
 
 ---
 
+## RUN_ID 302 · 2026-11-28 22:15:30 · host=`s0pgpuap12` · exit=0
+
+**命令**
+```bash
+echo "[0] host=$(hostname) date=$(date '+%F %T')"
+W=/tmp/baize_s1_baize2b_worker.log
+ls -l --time-style=+%F_%T "$W" /tmp/baize_s1_baize2b_master.log 2>/dev/null
+echo "--- worker tail 12 ---"
+tail -n 12 "$W" 2>/dev/null | cut -c1-220
+echo "--- 最近 5 条 iter ---"
+grep -E 'iteration[ =]|iter[ =]' "$W" 2>/dev/null | tail -5 | cut -c1-220
+echo "--- nan_hits=$(grep -ci 'nan' "$W" 2>/dev/null || echo 0)  skip_hits=$(grep -ci 'skip' "$W" 2>/dev/null || echo 0)  blend_switch_hits=$(grep -ci 'blend.hot.switch' "$W" 2>/dev/null || echo 0) ---"
+echo "=== DONE 302 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] host=s0pgpuap12 date=2026-11-28 22:15:31
+--- worker tail 12 ---
+--- 最近 5 条 iter ---
+--- nan_hits=0  skip_hits=0  blend_switch_hits=0 ---
+=== DONE 302 | 2026-11-28 22:15:32 ===
+```
+
+
+---
+
 ## RUN_ID 291 · 2026-11-25 08:37:11 · host=`whag0pgpuap12` · exit=0
 
 **命令**
