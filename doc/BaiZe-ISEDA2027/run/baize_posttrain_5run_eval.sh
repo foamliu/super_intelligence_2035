@@ -13,6 +13,10 @@ EDA_BASE="${EDA_BASE:-/nas_data/app.e0031982/code/eda_fastmcp}"
 PROVIDERS_JSON="$HOME/.cline/data/settings/providers.json"
 VENV_PYTHON="${VENV_PYTHON:-$EDA_BASE/.venv/bin/python}"
 RESULTS_DIR="${RESULTS_DIR:-/nas_data/app.e0031982/posttrain_5run_eval}"
+# 评测侧 benchmark：框架 config.yaml 的 HEAD 默认指向 SkipperTcl（非 pyAether），
+# 且 patch_config 的旧→新 benchmark 替换串在该框架上不匹配（no-op）。
+# 故显式 --benchmark 锁定 pyAether 158 题（与 A0_base_ragfix 同一份 158 任务集）。
+BENCHMARK="${BENCHMARK:-/nas_data/app.e0031982/code/EDA-Eval-Framework/benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl}"
 
 ENDPOINT=""; MODEL=""; LABEL=""; RUN_NUM=""; RUN_ALL=0; DRY_RUN=0
 
@@ -111,7 +115,7 @@ json.dump(cfg, open('$PROVIDERS_JSON','w'), indent=2)
   # (assemble needs tqdm, which only the venv has, not system python3).
   echo "[run $run_n] sandbox eval starting..."
   local eval_marker="$run_dir/.eval_start"; touch "$eval_marker"
-  PYTHON="$VENV_PYTHON" "$VENV_PYTHON" scripts/run_eval.py --generations "$jsonl" > "$run_dir/eval.log" 2>&1
+  PYTHON="$VENV_PYTHON" "$VENV_PYTHON" scripts/run_eval.py --generations "$jsonl" --benchmark "$BENCHMARK" > "$run_dir/eval.log" 2>&1
   echo "[run $run_n] eval done (rc=$?) $(date '+%F %T')"
 
   # 6. Copy final report — run_eval.py writes to
