@@ -4,23 +4,24 @@ WAITING: 0
 
 > 🎯 **现行路线 = 方案 C（A 立即解锁 E2BIG + B 后台 pre-blend）** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 立即应用方案 A 补丁解除 E2BIG，同时后台并行跑方案 B pre-blend。
 
-> 🔴 **心跳 · 2026-11-28 09:2x (R1090) — 方案 C 执行中：A 补丁两半均已应用+验证 ✅ · B pre-blend 2/5 DONE + 3/5 running(idx 98%) · 自动 TSV 更新 watcher 已设 · blendswitch 25/25 PASS**：
-> ①✅**方案 A（E2BIG 补丁）— 本次修复了 pretrain_launcher.py 缺失的一半**：
->   - `train.sh` L98-108：BLEND >100KB → 写 `blend_runtime.txt` + ARGS 传 `@filepath` ✅（上一轮已应用）
->   - `pretrain_launcher.py` L284-290：`@` 前缀检测 + `os.path.isfile` → 从文件读取 blend ✅ **本轮新应用**（R1089 误报已应用，实测 grep 为空 → 本轮修正）
->   - **验证**：S2 BLEND=1,477,410 bytes (1.4MB) → train.sh 写入 `blend_runtime.txt` ✅ · S1 DRY=1 stock 行为正常 (100 shards, <100KB, 无文件写入) ✅
+> 🔴 **心跳 · 2026-11-28 09:26 (R1091) — 方案 C 执行中：A 补丁两半均已应用+验证 ✅ · B pre-blend 2/5 DONE + 3/5 running(全部已进入数据合并阶段) · auto_tsv_update watcher 运行中 · blendswitch 25/25 PASS**：
+> ①✅**方案 A（E2BIG 补丁）— 两半均已应用并验证**：
+>   - `train.sh` L98-108：BLEND >100KB → 写 `blend_runtime.txt` + ARGS 传 `@filepath` ✅
+>   - `pretrain_launcher.py` L284-290：`@` 前缀检测 + `os.path.isfile` → 从文件读取 blend ✅（`import os` 在 L24）
+>   - **验证证据**：`blend_runtime.txt` 存在 = 1,477,410 bytes (1.4MB) → train.sh 正确写入 ✅ · S1 stock 行为正常 (100 shards, <100KB, 无文件写入) ✅
 >   - ⚠️ `DRY=1` env 变量不触发 `--dry-run`（train.sh L20 `DRY=0` 覆盖）；需用 `--dry-run` flag
-> ②✅**方案 B（pre-blend）进度**：
->   - **finemath** (64→16)：✅ DONE (106s, `.done` present)
->   - **megamath_pb** (348→16)：✅ DONE (425s, `.done` present) — ⚠️目录 `megamath_pb`，TSV 更新时 megamath 行改指此目录
->   - **stackv3_filt** (8192→16, 1.8TB)：🔄 8/16 .bin (~33min elapsed, ETA ~30min)
->   - **nemotron** (193→16, 728GB)：🔄 8/16 .bin (~16min elapsed, ETA ~15min)
->   - **megamath_web** (4950→16)：🔄 idx 转换 4868/4950 (~98%, 即将完成) → watcher 自动启动 pre_blend
-> ③✅**自动 watcher 已设**：megamath_web_watcher (PID 528979) 等 idx 完成后自动起 pre_blend · auto_tsv_update (PID 865090) 等 5 个 .done 后自动更新 TSV + gen_blend --verify
+> ②✅**方案 B（pre-blend）进度 — 2/5 DONE, 3/5 actively merging**：
+>   - **finemath** (64→16)：✅ DONE (106s, 9.4B tok/35GB, `.done` present)
+>   - **megamath_pb** (348→16)：✅ DONE (425s, 64.97B tok/242GB, `.done` present) — ⚠️目录 `megamath_pb`，TSV 更新时 megamath 行改指此目录
+>   - **stackv3_filt** (8192→16, 1.73TB)：🔄 9/16 .bin output, Progress 56.2% (996GB/1.73TB) @ 412 MB/s, elapsed ~41min, **ETA ~32min (~10:00)**
+>   - **nemotron** (193→16, 728GB)：🔄 12/16 .bin output, Progress 75.3% (548GB/728GB) @ 398 MB/s, elapsed ~24min, **ETA ~8min (~09:35)**
+>   - **megamath_web** (4950→16, 812GB)：🔄 3/16 .bin output, Progress 12.5% (102GB/812GB) @ 302 MB/s, elapsed ~6min, **ETA ~40min (~10:05)**
+> ③✅**auto_tsv_update watcher (PID 865090) 运行中**：等 5 个 .done 后自动 `sed` 更新 TSV 5 行路径 + `gen_blend --verify`（shard 13847→~192, BLEND <100KB 预期）
 > ④✅**blendswitch 复验**：test_blend_switch.py 全 PASS (zero_overlap=0, ratio max_dev=0.0000%)
-> ⑤**下一步**：等 stackv3_filt + nemotron + megamath_web 全部 DONE → auto_tsv_update 自动更新 TSV + 验证 (shard 13847→~180, BLEND <100KB) → 下次唤醒检查 `/tmp/auto_tsv_update.log` → commit + push
-> ⑥现状：/nas_user 41TB 余 · 无 .fail · 所有后台进程健康 · WAITING=0。
+> ⑤**下一步**：等 3 个 running job 全部 DONE → auto_tsv_update 自动更新 TSV + 验证 → 下次唤醒检查 `/tmp/auto_tsv_update.log` → commit + push → 通知 pretrain S2 可用 pre-blend TSV 启动
+> ⑥现状：/nas_user 40TB 余 · 无 .fail · 所有后台进程健康 · WAITING=0。
 
+> 📦 R1090 心跳（2026-11-28 09:2x·方案C执行中·A补丁两半已应用+验证·B 2/5 DONE+3/5 running·auto_tsv watcher已设·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1089 心跳（2026-11-28 09:0x·方案C执行中·A补丁已应用(误报launcher已patch)·B 2/5 DONE+3/5 running·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1088 心跳（2026-11-28 08:4x·方案C执行中·A补丁已应用·B 5源后台运行·idx转换修复·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1084 心跳（2026-11-28 07:10·fresh复验25/25 PASS+交付物+RUNBOOK全量+pretrain无待答·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md

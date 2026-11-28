@@ -95,9 +95,22 @@ fi
 BLEND="$(cat "$BLENDFILE")"; rm -f "$BLENDFILE"
 log "blend 就绪：$(echo "$BLEND" | wc -w | awk '{print $1/2}') 个 shard（权重+前缀对）"
 
+# ---------- E2BIG fix: write BLEND to file if too long for argv ----------
+BLEND_FILE=""
+if [ "$(printf '%s' "$BLEND" | wc -c)" -gt 100000 ]; then
+  BLEND_FILE="$BAIZE_TRAIN_CODE/blend_runtime.txt"
+  printf '%s' "$BLEND" > "$BLEND_FILE"
+  log "blend 字符串 >100KB，写入文件: $BLEND_FILE ($(wc -c < "$BLEND_FILE") bytes)"
+fi
+
 # ---------- 组装 launcher 参数 ----------
+if [ -n "$BLEND_FILE" ]; then
+  _TDP="@$BLEND_FILE"
+else
+  _TDP="$BLEND"
+fi
 ARGS=( --arch "$ARCH" --name "$NAME" --dir "$EXP_ROOT"
-       --tokenizer-path "$TOKENIZER" --train-data-path "$BLEND"
+       --tokenizer-path "$TOKENIZER" --train-data-path "$_TDP"
        --tensor-parallel "$TP"
        --train-iters "$ITERS" --global-batch-size "$GBS"
        --micro-batch-size "$MBS" --seq-length "$SEQ"
