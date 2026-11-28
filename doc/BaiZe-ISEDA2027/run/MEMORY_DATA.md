@@ -2,15 +2,20 @@
 
 WAITING: 0
 
-> 🎯 **现行路线 = F 自定义改造（per-source 游标映射）** · **🔴 Bridge Edition 重大更新（2026-11-27）**：原 `blend_hotswitch.patch` 针对标准 Megatron-LM，但 BaiZe 用 **Megatron Bridge**（pip 包）→ 改用 **runtime monkey-patch shim**（`blend_hot_switch_bridge_compat.py`，同 `bridge_compat.py` 模式）· 已修改 `pretrain_launcher.py`（第302-310行加 try/import shim）· 切换方式 = **冷切换**（stop→apply→restart）· 开关 = 环境变量 `BLEND_CURSOR_OFFSETS_JSON`（不设=stock 零开销）· cursor_offsets_350k.json 已预计算（89.6M samples，7共享源+5新源）· Bridge Edition 验证 **10/10 PASS**（含 shim 真实 import 成功）· 零重叠 = 0 · SWITCH_RUNBOOK.md 已更新为 Bridge Edition · `blend_s2_preblend.tsv` 已复制到 `code/baize-llm/configs/`
+> 🎯 **现行路线 = 方案 C（A 立即解锁 E2BIG + B 后台 pre-blend）** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 立即应用方案 A 补丁解除 E2BIG，同时后台并行跑方案 B pre-blend。
 
-> 🔴 **心跳 · 2026-11-28 09:0x (R1086) — S2切换综合分析完成·献计献策已交付·3问题诊断+3解法+风险矩阵·S1已停·16卡空·350k ckpt完好·WAITING=0**：
-> ①✅**用户令执行**：「关注pretrain切换S2时遇到的问题，思考解法，献计献策」→ 交付 `S2_SWITCH_ADVISORY.md`(综合分析)；
-> ②✅**3个独立问题诊断**：(1)GPU释放时序(05:18第1次失败·executor P4未查.12 GPU·已修复P4b dual-node poll·rollback路径仍缺GPU poll建议加固) (2)E2BIG(08:06第2次失败·13847 shard→2.64MB超MAX_ARG_STRLEN·补丁已交付`fix_arg_too_long.patch`) (3)5个未pre-blend源(根因之根·13847 shard中13747来自未pre-blend源·影响I/O性能+NFS压力)；
-> ③✅**献计献策3路线**：A(立即~15min)应用E2BIG补丁+DRY验证+重试S2 · B(并行~2-6h)pre-blend 5源各→16 shard·shard总数13847→192·改善I/O · C(~10min)executor rollback路径加GPU poll避免crash重演；
-> ④✅**推荐路径**=A+C先解除阻塞+B后台并行优化 · cursor_offsets不需重算(新源offset=0) · /nas_user需≥3TB余量做pre-blend；
-> ⑤✅**结论**：两次失败均非data交付物缺陷(shim/cursor/TSV 25/25 PASS全绿) · 应用E2BIG补丁后即可重试S2切换；
-> ⑥现状：S1已停 · 16卡全0MiB · 350k ckpt完好(4.2G) · 等pretrain/ops应用补丁后重试S2 · WAITING=0。
+> 🔴 **心跳 · 2026-11-28 08:4x (R1088) — 方案 C 执行中：A 补丁已应用+验证通过 · B pre-blend 5源全部后台运行中 · 发现4源.idx格式需转换（已写convert_idx_format.py修复）**：
+> ①✅**方案 A（E2BIG 补丁）已应用**：`train.sh` 第98-113行加 BLEND>100KB→@file 逻辑；`pretrain_launcher.py` 第284-290行加 @file 读取逻辑；`DRY=1` 验证：S2 BLEND=1.44MB>100KB→触发@file写入✅，S1 BLEND<100KB→inline✅，@file读取逻辑单测PASS✅；
+> ②✅**方案 B（pre-blend）后台运行中**：5源全部 `setsid nice -n 19` 后台运行——
+>   - stackv3_filt(1.8TB,8192→16,排除3 truncated)→running 0.5%→ETA~70min
+>   - finemath(36GB,64→16)→idx转换DONE(60s)→pre_blend待启动
+>   - megamath(243GB,348→16)→idx转换54/348→ETA~6min
+>   - megamath_web(813GB,4950→16)→idx转换306/4950→ETA~80min
+>   - nemotron(728GB,193→16)→idx转换16/193→ETA~20min
+> ③⚠️**发现4源.idx格式不兼容**：megamath_tokenize.py 等写入的是文本格式(仅token count)，非Megatron MMapIndexedDataset二进制格式(MMIDIDX magic)；已编写 `convert_idx_format.py` 扫描.bin中的EOD token(id=129280)重建文档边界并写入正确.idx；finemath已转换完成验证通过(MMIDIDX magic✅,104680 docs/shard✅)；
+> ④✅**stackv3_filt 3 truncated shards**：stackv3_s01649/stackv3_s01749/stackv3_s01817 .bin文件截断，已用--exclude排除；
+> ⑤下一步：等4源idx转换完成→启动finemath/megamath/megamath_web/nemotron pre_blend→全部完成后更新blend_s2_preblend.tsv指向pre-blend目录→重新生成blend验证(shard 13847→~192)；
+> ⑥现状：S1已停 · 16卡全0MiB · 350k ckpt完好 · WAITING=0。
 
 > 📦 R1084 心跳（2026-11-28 07:10·fresh复验25/25 PASS+交付物+RUNBOOK全量+pretrain无待答·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1082 心跳（2026-11-28 06:30·fresh复验25/25 PASS+交付物+RUNBOOK全量+S1健康iter=350210·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
