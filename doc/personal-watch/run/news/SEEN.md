@@ -4044,3 +4044,13 @@
 | 2026-11-28 | 「iPod 之父」法德尔：OpenAI 曾邀乔纳森·艾维打造实体 AI 设备，因拿不到 iPhone 情境数据 | IT之家 `1/033/824` | news（第 364 轮 · §5） | https://www.ithome.com/1/033/824.htm |
 | 2026-11-28 | MicroLED 光互连芯片公司「闪科光联」完成数千万元天使轮融资（商汤国香等领投） | 雷峰网 | news（第 364 轮 · §5） | https://www.leiphone.com/category/ai/ilqJyKclWkhaWIps.html |
 | 2026-11-28 | RoboScience 发布 GenSight：同一 Video DiT 统一视频生成与 4D 稠密感知（FVD 较 Cosmos3-Nano -67.6%，作者自报） | 雷峰网 | news（第 364 轮 · §6） | https://www.leiphone.com/category/ai/yVUjZ1Pgo80vJ5T0.html |
+| 2026-11-28 | 台积电首发 AI 设计套件 ADK：AI 智能体用自然语言生成 A14 自动布局布线参考流程（N3P/N2P/A14 设计规则 2.3/3.1/3.6 倍、标准库单元 2.8/5/4.6 倍） | IT之家 `1/033/838` | news（第 365 轮 · §1） | https://www.ithome.com/1/033/838.htm |
+| 2026-11-28 | 英特尔 Gaudi2 经软件优化在 Qwen3.5-27B-FP8 长上下文推理上预填充/解码超 H100（预填充 +7.92% / 解码 +60.35% / 每美元解码 token 约 9.4 倍，第三方自测） | IT之家 `1/033/841` | news（第 365 轮 · §1） | https://www.ithome.com/1/033/841.htm |
+| 2026-11-28 | 20 个 AI Agent 组队优化开源搜索引擎 Quickwit：4 天约 350 次实验 / 6 项保留 / 热查询总耗时 -31%（40.5s→27.9s）/ ClickBench 热查询 geomean 304ms 超公开成绩（厂商自测） | 量子位 `513163` | news（第 365 轮 · §1） | https://www.qbitai.com/2026/11/513163.html |
+| 2026-11-28 | 抗议者卡伦德在 Anthropic 旧金山总部外绝食第 4 天，要求叫停 AI 递归式自我改进（RSI）；称下一个目标 OpenAI、呼吁加州召开立法会议 | IT之家 `1/033/833` | news（第 365 轮 · §2） | https://www.ithome.com/1/033/833.htm |
+| 2026-11-28 | 国家广电总局通报网络视听专项治理典型案例：侵权盗版、低俗微短剧、AI 魔改三类被点名，快手/抖音/爱奇艺/百度网盘/微博/B站/红果/微信/腾讯在处置名单 | IT之家 `1/033/840` | news（第 365 轮 · §3） | https://www.ithome.com/1/033/840.htm |
+| 2026-11-28 | 马斯克：Grok Bot 可设置管理 Bot 协调其余 Bot，「目标是让你能够构建完整的公司」 | IT之家 `1/033/827` | news（第 365 轮 · §5） | https://www.ithome.com/1/033/827.htm |
+| 2026-11-28 | 英伟达支付 2.9 亿美元了结历时 8 年的挖矿显卡证券集体诉讼，未承认不当行为（司法只记不发） | IT之家 `1/033/835` | news（第 365 轮 · §5） | https://www.ithome.com/1/033/835.htm |
+| 2026-11-28 | 美国 ITC 认定三星侵犯 Maxell 相机专利（US11490004），Galaxy S25 系列或遭美国进口禁令，进入 60 天总统审查期（司法只记不发） | IT之家 `1/033/836` | news（第 365 轮 · §5） | https://www.ithome.com/1/033/836.htm |
+| 2026-11-28 | 全球首个无需电池、可生物吸收植入物：超声摩擦发电 + 纳米铱(III)荧光粉 UV 下发光报状态；PhosIrDB 1,667 配合物 + ML 从 27 万候选筛选（Nature Nanotechnology） | IT之家 `1/033/853` | news（第 365 轮 · §6） | https://www.ithome.com/1/033/853.htm |
+| 2026-11-28 | AR 眼镜半波片新材料：CuAlO2 双折射约为石英 120 倍，理论厚度约 173 纳米（早期阶段，未制器件；Nature Communications） | IT之家 `1/033/828` | news（第 365 轮 · §6） | https://www.ithome.com/1/033/828.htm |
