@@ -3041,3 +3041,46 @@ INFO:megatron.core.timers:(min, max) time across ranks (ms):
 0  blend_switch_hits=8 ---
 === DONE 302 | 2026-11-28 12:04:42 ===
 ```
+
+---
+
+## RUN_ID 302 · 2026-11-28 15:35:48 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+echo "[0] host=$(hostname) date=$(date '+%F %T')"
+W=/tmp/baize_s1_baize2b_worker.log
+ls -l --time-style=+%F_%T "$W" /tmp/baize_s1_baize2b_master.log 2>/dev/null
+echo "--- worker tail 12 ---"
+tail -n 12 "$W" 2>/dev/null | cut -c1-220
+echo "--- 最近 5 条 iter ---"
+grep -E 'iteration[ =]|iter[ =]' "$W" 2>/dev/null | tail -5 | cut -c1-220
+echo "--- nan_hits=$(grep -ci 'nan' "$W" 2>/dev/null || echo 0)  skip_hits=$(grep -ci 'skip' "$W" 2>/dev/null || echo 0)  blend_switch_hits=$(grep -ci 'blend.hot.switch' "$W" 2>/dev/null || echo 0) ---"
+echo "=== DONE 302 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] host=whag0pgpuap12 date=2026-11-28 15:35:48
+-rw-r--r-- 1 app.e0031982 app.adm 33689 2026-11-28_15:28:06 /tmp/baize_s1_baize2b_master.log
+-rw-r--r-- 1 app.e0031982 app.adm 33785 2026-11-28_15:28:07 /tmp/baize_s1_baize2b_worker.log
+--- worker tail 12 ---
+[rank10]: torch.distributed.DistBackendError: NCCL error in: /pytorch/torch/csrc/distributed/c10d/NCCLUtils.cpp:77, invalid usage (run with NCCL_DEBUG=WARN for details), NCCL version 2.27.3
+[rank10]: ncclInvalidUsage: This usually reflects invalid usage of NCCL library.
+[rank10]: Last error:
+[rank10]: Duplicate GPU detected : rank 10 and rank 2 both on CUDA device 40000
+[rank8]:[W1128 15:28:06.491471174 ProcessGroupNCCL.cpp:1538] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stab
+W1128 15:28:07.144000 2690347 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2690444 closing signal SIGTERM
+W1128 15:28:07.145000 2690347 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2690446 closing signal SIGTERM
+W1128 15:28:07.145000 2690347 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2690448 closing signal SIGTERM
+W1128 15:28:07.146000 2690347 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2690450 closing signal SIGTERM
+W1128 15:28:07.146000 2690347 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2690451 closing signal SIGTERM
+W1128 15:28:07.146000 2690347 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2690453 closing signal SIGTERM
+W1128 15:28:07.147000 2690347 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 2690455 closing signal SIGTERM
+--- 最近 5 条 iter ---
+--- nan_hits=0
+0  skip_hits=0
+0  blend_switch_hits=0
+0 ---
+=== DONE 302 | 2026-11-28 15:35:48 ===
+```
