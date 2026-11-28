@@ -774,3 +774,184 @@ WAITING: 0 (r1202 Lite-500-fix 第130轮: stalest-latest-ts defensive re-verify 
 > **轮(r1465) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1466，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
 
 > **轮(r1466) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1469，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK · 记 shard A 新扫描 ssh_eda_search_20261128_013325 启动(raw.tsv 已出, summary.tsv pending) · 0 改动. 被 r1469 新扫描发布 supersede. 原文见 archive]
+
+
+## 归档批次 r1484 (2026-11-28)
+
+> **轮(r1477) 选料轮+deepread · claim vjlni+deepread · DEBT 1 未合成 · 0 改动 cases · 2026-11-28.** task card 求 1 case; non-Lite-502 live eval 改造已全收口(review=502/502 REQ1 done)，造题让位解除，回归造新题. .75 reach OK(eda_flow open_session 秒级, hfhds201). 选料: summary.tsv(ssh_eda_search_20261128_014416) C-domain mc≥100 dedup by session → 60 候选, cross-check 全 4 shard ledger(C 1380 条) → 18 fresh; 508od/junxu(疑D-shard schematic), xxz7c/ijh76/m6imc(junxu netlist/hspice 重 D-shard), 7kizj/6z0ga(xxchen drcpv族 saturated skip), wf513(wellesc verilog netlist 抽取→D-shard), hht3e/6l1c8/6iq8v/wb03t(wellesc sim 重 D-shard), as67p/tef8l/ci2w1/e9m7f/ybu94(sim/schematic 重 D-shard), j7cyb(oshen LVS analysis 暂缓); **0gj9q(e0020134 mc763 aether:3764) 经深读=m60gy 同用户同天同 Fast Channel 任务=AetherBridgeClient-001 重复 ⇒ 排除**; 选 **vjlni(e0020134@hfeg0plg86 mc1164 drc:1417+aether:932+lvs:620, layout_aether+physical_verify)**=m60gy 后续任务(建 NAND2 cell + schematic + layout + DRC + LVS), 非 Fast Channel 协议重复. claim vjlni(covered 572 不变, deepread). .75 ssh hfeg0plg86 fetchable(PATH-FIX 子目录), scp 1.4MB/655msgs. trace 深读(全流程): Phase0 侦察(hrz_test/TECHLIB 1154层, ntn/ptn pcell w0.82u l0.176u, 层 NW/NSD/PSD/PC/CT/CPP/M1/M2/V1, Spnand2CSx1 参考); Phase1 schematic(dbCrtInst 放 2xntn+2xptn, dbCreateSchPinEx 放 A/B/Y/VDD/VSS, dbCrtSchWire+emyLine.addToNet 连线, NAND2 逻辑 Y=!(A&B) PMOS并/NMOS串, 踩坑 19 自动net→精确触端子坐标+addToNet); Phase2 layout(dbCrtRect 各层矩形+14 via+prBoundary+dbCrtLabel pin label); Phase3 DRC+LVS(leGuiRunCalibreDRC 提交 LSF 队列 pv, 输出 /proj/drcqa/V0_AIRouting/ver/{drc,lvs}/<lib>/<cell>/), **LVS=INCORRECT**(只提取 2 port VSS/VDD, pcell 未 RECOGNIZE GATE 退化为 1 端子黑盒, pin label 未对准 M1), trace 在 msg654「jixu」截断 LVS 未修. **关键决策**: 655msgs>600 且多阶段 L2/L3 ⇒ 按 TASK §3 本轮 deepread + DEBT, 下轮合成. deepread note 落 designflow/trace_deepreads/vjlni_nand2_drc_lvs.md(含 case 设计候选 A=LVS 诊断报告生成器[L0/L1 LIVE-NA 推荐]/B=NAND2 DRC checker/C=L2.live 真跑 + 不撞论证). ledger mark vjlni→deepread. cases/C=645 不变, L2.live=21 不变, non-Lite-502 review 全收口不变, live_eval_changes.tsv 不变. 0 改动 cases/C, 0 改动 check.py. NEXT: 下轮交付 vjlni case(候选 A: LVS 诊断报告生成器, 纯 Python 自包含, ≥12 断言, hidden B 不同 netlist, 4-5 neg). 📦 体积: MEMORY ~33KB. WAITING: 0.
+
+> **轮(r1476) 交付轮 · DrcDeckPrune-001 落盘 [L0,L1] · 24ap1→case · 2026-11-28.** task card 求 1 case. 选料: cross-check C ledger fresh C-domain, summary.tsv mc15-400 dedup by session → 40 候选, cross-check ledger → 多条 fresh; 选 24ap1(kenwang@hfeg0plg54 mc387 drc:1967+calibre:88)=Calibre DRC rule deck 按 target .ev 裁剪 produce-task, .75 reach OK(eda_flow open_session 秒级), plg54 ssh fetchable(PATH-FIX 子目录路径). trace 真实流程(291msgs): 用户整理 18万行/8.7MB DRC deck, 只保留 1_1_1_DBC_H280.ev 对应 rule, 删多余 rule code + 未用 layer 定义, 保留全部 drawing layer; assistant 读 .drc/.ev 结构(LAYER MAP/LAYER/drawing/derived/rule block/INCLUDE)后因 python locale 问题改 awk/shell 写裁剪脚本, 产出 35H_DBC_H280_ONLY.drc(268KB). **关键抽象决策**: 8.7MB deck 无法 ship → 抽成纯 Python 文本处理题(LIVE-NA, L0/L1), 自包含 representative deck(~110行: 8 drawing + 4 非drawing + 6 derived + 5 rule + 2 INCLUDE), 核心算法=derived layer 传递依赖闭包(从 target rule body 引用出发→展开 derived expr→迭代 fixpoint). 交付 EDA-Eval-DesignFlow-DrcDeckPrune-001: 自包含 drc_prune.py(parse deck→categorize→closure→prune) + check.py(14 断言 sha256=05a57404 9367B, **独立重新实现** closure 复算逐 layer 比对, 不 import reference; B 主判 + A cross-input 反硬编码) + 5 negative(empty_stub c3/print_only c4/copy_all c6/core_deleted c8/keep_all_layers c9 全 distinct) + negative_selftest. visible A: deck_A.drc+1_1_1_DBC_H280.ev+prompt.txt; hidden B: deck_B.drc+2_1_FS_H300.ev(不同 layer 族 NW/AA/GT/M0/M1/V0 + 不同 target 族 FS_H300 vs DBC_H280). 自验全绿: REF check.py PASS 14/14 + negative_selftest OVERALL_RC=0(5 neg 全 FAIL distinct c3/c4/c6/c8/c9) + §4.9 trio distinct(empty→c3/print→c4/core-deleted→c8) + SKIP_RUN eval/run_one.sh 框架接受(attachments 全部署, workdir leak 自检通过, judge_layers [L0,L1]) + build_jsonl.py --shard C 重建 C.jsonl 640 active 本 case 入列. ledger mark 24ap1→case(covered 571→572). cases/C 644→645, L2.live 21 不变(本 case [L0,L1] LIVE-NA), non-Lite-502 review 全收口不变, live_eval_changes.tsv 不变. 📦 体积: MEMORY ~33KB. WAITING: 0.
+
+> **轮(r1475) 交付轮 · ViaMetalOptGdsGen-001 落盘 [L0,L1] · js4n1→case · 2026-11-28.** task card 求 1 case. 选料: cross-check C ledger fresh C-domain, js4n1(e0024852@hfhds201 mc545 physical_verify)=SRAM bitcell DTCO 过孔/金属宽度 GDS 优化变体生成器 produce-task, .75 直 fetchable(无 SSH rotation friction). trace 真实流程: pyAether 读 bitcell GDS(CH252_HD_Bitcell_FS_pin.gds), 扫 via 层(V0D/V0G/V1)候选尺寸 + M1 金属候选宽度, 每候选做 DRC(enclosure/space/pitch), OK 导变体 GDS + report; 踩坑(dbGdsOut fromMemory=True/独立库名/tech 层名映射)直接写进 prompt 提示被测避免. **关键抽象决策**: pyAether+GDS 二进制无法离线判分 → 抽成纯 Python shape-spec 驱动优化器(layout=JSON 轴对齐矩形按 layer 分组, 扫候选→几何 DRC→写变体 layout JSON + report.json), 保留真实 DRC 语义与变体生成逻辑但 GDS 读写换 JSON, L0/L1 静态可判 LIVE-NA. 交付 EDA-Eval-DesignFlow-ViaMetalOptGdsGen-001: 自包含 via_metal_optimizer.py(7157B) + check.py(17 断言 sha256=547da6ec 11824B, **独立重新实现**几何 DRC 复算逐变体重算期望 verdict 比对, 不 import reference) + 5 negative(empty_stub/print_only/naive_no_drc/hardcode_a/no_variant_files) + negative_selftest. visible A: spec_A.json+base_A.json(19 形状)+gen_base.py+prompt.txt; hidden B: spec_B.json+base_B.json(23 形状, pitch 70 vs 60/width 36 vs 30). A vs B verdict 差异(A 15OK/7SKIP, B 15OK/4SKIP)防 hardcode. 自验全绿: REF check.py self-test OVERALL PASS 17/17 + negative_selftest OVERALL_RC=0(5 neg 全 FAIL, 4 distinct first-fail c4/c5/c8/c10, §4.9 trio 3-distinct empty→c4/print→c5/naive→c8) + SKIP_RUN eval/run_one.sh 框架接受(attachments 全部署, workdir leak 自检通过, judge_layers [L0,L1]) + build_jsonl.py --shard C 重建 C.jsonl 639 active 本 case 入列. ledger mark js4n1→case(covered 570→571). cases/C 643→644(639 active+5 retired), L2.live 21 不变(本 case [L0,L1] LIVE-NA), non-Lite-502 review 全收口不变, live_eval_changes.tsv 不变. 📦 体积: MEMORY ~33KB. WAITING: 0.
+
+> **轮(r1474) 交付轮 · AetherBridgeClient-001 落盘 [L0,L1] · m60gy→case · 2026-11-28.** task card 求 1 case. 选料: cross-check 全 4 shard ledger(4636) 找 fresh C-domain, m60gy(e0020134@hfeg0plg86 mc1164 layout_aether)=Aether Fast Channel 文件桥客户端 produce-task, 非 drcpv 族(PATH-FIX 后 fetchable). 交付 EDA-Eval-DesignFlow-AetherBridgeClient-001: 自包含 aether_bridge_client.py(format_request/parse_response/BridgeClient.call) + check.py(15 断言, mock bridge 线程, hidden B 嵌 check.py 不同 seq/payload 防 hardcode) + 4 negative(empty_stub/print_only/naive_no_poll/core_deleted) + negative_selftest + assets(prompt.txt+aether_bridge_spec.md+hidden_manifest). 协议来自真实 trace: REQ<seq>+code → chan_req, OUT<seq><STATUS>+output+RETURN:value → chan_out, 1s 轮询 seq 匹配. 自验全绿: REF check_static PASS + negative_selftest OVERALL_RC=0(4 neg 全 FAIL distinct primaries 0struct/1frame/12pollwait/5parse_ok_pong) + §4.9 trio 3-distinct(empty→0struct/print→1frame/core→5parse) + SKIP_RUN eval/run_one.sh 框架接受(attachments 全部署, workdir leak 自检通过, judge_layers [L0,L1]). 补登 r1473 漏的 ledger mark 4iv57→case. ledger mark m60gy→case(covered 568→570). cases/C 642→643, L2.live 21 不变(本 case [L0,L1]), non-Lite-502 review 全收口不变, live_eval_changes.tsv 不变(本 case 非live改造). 📦 体积: MEMORY ~32KB. WAITING: 0.
+
+> **轮(r1473) 交付轮 · SchematicStripeFix-001 落盘 [L0,L1] · DEBT 清账 · 2026-11-28.** r1472 DEBT(4iv57 deepread)本轮交付: EDA-Eval-DesignFlow-SchematicStripeFix-001(xxchen@hfeg0plg56 mc1229 physical_verify, DRC pattern tool schematic 示意图修复+stripe_deg renderer 增强). 自包含 representative 包 schematic_pkg/{_prims,renderer,figures}.py + gen_schematic.py(cfg_A); 4 fix=SPACE_DIFFERENT_DIRECTION 长短边反转/SPACE_UPON_WIDTH 标签越界/MUST_COVER 高亮错序/NO_OVERLAP 双 45°; renderer stripe_deg 三处(rect/poly/ring). check.py 12 断言(L0/L1 纯 Python, 不需 L2.live), hidden cfg_B 嵌 check.py(与 cfg_A 数值不同防 hardcode). 自验全绿: REF check_static PASS + negative_selftest OVERALL_RC=0(empty_stub/print_only/naive_sed/hardcode_a 4 neg 全 FAIL, 主失败 2/6/4/10 distinct) + §4.9 trio distinct(empty→c2/print→c6/删核心→c4) + SKIP_RUN eval/run_one.sh 框架接受(attachments 全部署, judge_layers [L0,L1]). 真实 .75 _prims.py API 对齐(实测 RECT/POLY/RING stripe_deg 默认 45 不写键). ledger mark 4iv57→case(covered 568/case 568). cases/C 641→642, L2.live 21 不变(本 case [L0,L1]), non-Lite-502 review 全收口不变. 📦 体积: MEMORY ~32KB. WAITING: 0. PATH-FIX(r1470)复用成功: cline sessions 子目录路径 fetch 4iv57 OK(.75 reach OK, eda_flow open_session 秒级); 新扫描(ssh_eda_search_20261128_014416, sessions 9245→11063)扫 C-pure top50 候选 cross-check ledger → 多条 fresh(4iv57/20fct/0gj9q/bf4yc/wyrs2/fjcqx/x3t64/jbr4z); tckme 排除(=PowerFill task 撞 PowerFill-001); 选 4iv57=xxchen DRC_pattern_tool schematic 示意图修复 produce-task(用户列 8 bug 收敛 4 fix: SPACE_DIFFERENT_DIRECTION 长短边反转/SPACE_UPON_WIDTH 标签越界/MUST_COVER 高亮盖错位/NO_OVERLAP 需双方向条纹); 核心增强=renderer 新增 stripe_deg 参数(RECT/POLY/RING 三处 _prims.py + renderer.py 3 处 stripe 路径, 45"/" 与 135"\"); 纯 Python 无 Qt/calibre ⇒ [L0,L1] 静态可验; agent 真实验证全 PASS(_verify_browse_logic 1478/_verify_svg_stripes 12/_check_stripe_pixels 9/_trace_label_boxes 0); trace 1036msgs>600 ⇒ 本轮 deepread + DEBT, 下轮 r1473 交付 EDA-Eval-DesignFlow-SchematicStripeFix-001; deepread note 落 designflow/trace_deepreads/4iv57_schematic_stripe_fix.md(含 12 断言草案 + 4 neg + case 设计 + 不撞 SpacePlugMerge/CalibreRuleSuffixXform 论证). covered 567→568, cases/C 641 不变, L2.live 21 不变, non-Lite-502 review 全收口不变. r1471 已交付(CalibreRuleSuffixXform-001). 📦 体积: MEMORY ~32KB. WAITING: 0.
+
+> **轮(r1473) 交付轮 · SchematicStripeFix-001 落盘 [L0,L1] · DEBT 清账 · 2026-11-28.** r1472 DEBT(4iv57 deepread)本轮交付: EDA-Eval-DesignFlow-SchematicStripeFix-001(xxchen@hfeg0plg56 mc1229 physical_verify, DRC pattern tool schematic 示意图修复+stripe_deg renderer 增强). 自包含 representative 包 schematic_pkg/{_prims,renderer,figures}.py + gen_schematic.py(cfg_A); 4 fix=SPACE_DIFFERENT_DIRECTION 长短边反转/SPACE_UPON_WIDTH 标签越界/MUST_COVER 高亮错序/NO_OVERLAP 双 45°; renderer stripe_deg 三处(rect/poly/ring). check.py 12 断言(L0/L1 纯 Python, 不需 L2.live), hidden cfg_B 嵌 check.py(与 cfg_A 数值不同防 hardcode). 自验全绿: REF check_static PASS + negative_selftest OVERALL_RC=0(empty_stub/print_only/naive_sed/hardcode_a 4 neg 全 FAIL, 主失败 2/6/4/10 distinct) + §4.9 trio distinct(empty→c2/print→c6/删核心→c4) + SKIP_RUN eval/run_one.sh 框架接受(attachments 全部署, judge_layers [L0,L1]). 真实 .75 _prims.py API 对齐(实测 RECT/POLY/RING stripe_deg 默认 45 不写键). ledger mark 4iv57→case(covered 568/case 568). cases/C 641→642, L2.live 21 不变(本 case [L0,L1]), non-Lite-502 review 全收口不变. 📦 体积: MEMORY ~32KB. WAITING: 0.
+
+> **轮(r1470) 选料轮+PATH-FIX · claim xza9c+deepread · 0 改动 cases · 2026-11-28.** PATH-FIX 突破: cline sessions 在子目录 `/home/<u>/.cline/data/sessions/<epoch_id>/<epoch_id>.messages.json` 非 flat file — r1469 stop-loss 误判根因(路径错非 rotation); 用正确子目录路径 fetch 全部"rotated"候选成功; .75 reach OK; xza9c(jaychen FRESH USER mc827 drc:2078+calibre:574)=Calibre DRC rule _CHENXING 后缀转换 produce-task → claim(covered 566→567)+deepread; DEBT 下轮交付(r1471 已清账). 原文见上版心跳. + 选料突破: cline sessions 在**子目录** `/home/<u>/.cline/data/sessions/<epoch_id>/<epoch_id>.messages.json` 非 flat file — r1469 stop-loss 误判根因(路径错非 rotation); 用正确子目录路径 fetch 全部"rotated"候选成功(wf513/j7cyb/xza9c 全 fetchable); .75 reach OK(hfhds201); wf513(wellesc)=verilog netlist 抽取→D-shard 交出(非 C); j7cyb(oshen mc869 LVS)=LVS log 分析偏 analysis 暂缓; **xza9c(jaychen FRESH USER mc827 drc:2078+calibre:574)=Calibre DRC rule 文件 _CHENXING 后缀转换 produce-task**(8 类变换: 全局衍生层 suffix + local var 保护 + case-insensitive + PRIMARY ONLY keyword + local dotted + LAYER +20000 + LAYER ref propagation + RULE block name) → claim(covered 566→567)+deepread; DEBT 下轮交付 EDA-Eval-DesignFlow-CalibreRuleSuffixXform-001; cases/C=640 不变/L2.live=21 不变/non-Lite-502 review 全收口不变. NEXT: 下轮交付 CalibreRuleSuffixXform-001(自包含 representative rule file ~250 行 + 16 断言 + 4 neg + L1 static). WAITING: 0.
+
+> **轮(r1468) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1470，2026-11-28）。**[摘要: 交付轮 · 56vki deepread → EDA-Eval-DesignFlow-SpacePlugMerge-001 落盘 · L2.live 20→21 · 16 断言 · 4 neg · .75 E2E verified. 原文见 archive]
+
+> **轮(r1469) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1470，2026-11-28）。**[摘要: 选料轮 · stop-loss 复确认(fresh candidate rotated 不可 fetch) · ** 被 r1470 PATH-FIX 推翻: 路径错非 rotation** · 0 改动. 原文见 archive]
+
+> **轮(r1469) 选料轮 · stop-loss 复确认 · 新扫描发布但 fresh candidate rotated 不可 fetch · 0 改动 · 2026-11-28.** task card 求新 case; r1468 交付 56vki→SpacePlugMerge-001. 本轮: (1) **.75 reach OK**: eda_flow MCP open_session(r1469-peekC) 秒级 + run_commands hostname=hfhds201 RC=0 wall 26ms, hspice/finesim/hspice64/calibre/calibredrv 全在 PATH(/apps/synopsys/SRB/... + /apps/mentor/calibre/2020.1_36/aoi_cal_2020.1_36.18); (2) **新扫描发布确认**: summary_stats.json updated_at=2026-11-28 01:54, scan_dir=ssh_eda_search_20261128_014416, sessions 9245→11063(+1818), shard_C_new=880, mc10 池 5374, ledger stats covered 566/parked 808/池 5374/剩余可做≈4073; (3) **peek 全 C-domain high-mc**(summary.tsv awk C-domain kw + mc≥30): top6 全 consumed — 508od(junxu mc2514, 疑 D-shard schematic)/sjzm0(parked r1254)/1hkwu(case VirtuosoCliDaemonInlineFix)/56vki(r1468 case SpacePlugMerge-001)/ukkn7(C ledger 已 case ERCFilter-001 + A/B/D parked)/sstk3(case Decoder38StructGen); x4b0p(2 cases PDKQA+CalVcoEnvWorkaround); aneeo(parked+case ResReport-001); qikhb(parked asset too large); (4) **recent(Nov24-28) fresh ledger-hit=0 候选识别**(peek3.py sf 1794xx/1795xx + C-domain pv≥15): j7cyb(oshen lvs:5127+analog:3533+drc:1195+.cdl:203+.spi:198+.gds:190, physical_verify LVS-heavy, oshen 96 sessions)/xza9c(jaychen FRESH USER 仅 3 sessions, drc:2078+calibre:574+pex:47+cmos:97+pdk:36, pure DRC/PEx)/x3t64(wenhanz aether:3541+pyaether:2332+drc:561+oadesign:309, layout_aether, wenhanz 24 sessions); 6z0ga/7kizj(xxchen saturated drcpv族 skip); (5) **fetch BLOCKED by rotation**: xza9c 试 pkn005/plg16/plg53 全 "No such file"; j7cyb 试 pbn17 不通; x3t64 试 plg91/plg85/plg97 全 "No such file"; 4iv57(xxchen Nov27 1795745321483)试 plg56 亦 rotated; vjlni/m60gy(e0020134 Nov4 drc:1417+lvs:620+aether:932, ledger-fresh)试 7 hosts 全 rotated(Nov4 太旧); **结论**: scan 发现历史 session 元数据但文件已从 summary-listed replica hosts 轮换, 须找用户真实 home login node(非 replica)才能 fetch; (6) **stop-loss 复确认**: r1468 56vki exception 已交付, 本轮新 fresh fetchable produce-task C-domain non-saturated candidate 未取到(rotation + 40min budget), stop-loss 维持; (7) cases/C=640 不变/L2.live=21 不变/non-Lite-502 review=502/502 全收口不变/live_eval_changes.tsv 不变; (8) 0 改动 cases/C, 0 改动 check.py. NEXT: 对 j7cyb/xza9c/x3t64 找用户真实 home login node 重新 fetch deepread, 或待用户令/新扫描. 📦 体积: MEMORY ~32KB. WAITING: 0.
+
+> **轮(r1467) 选料轮 · stop-loss 收窄 · 找到 fresh non-techlib C-domain 候选 56vki · claim + deepread · 2026-11-28.** task card 求新 case; r1466 记 shard A 新扫描 ssh_eda_search_20261128_013325 summary.tsv 未发布, 本轮复验已发布(Nov 28 01:44, 37862 行, 较旧 52377 少~14k, 6 hosts unreachable 含 .75 自身+no-route, 无活跃扫描进程, 另有更新扫描 dir 20261128_014416 出现). 本轮: (1) **.75 reach OK**: eda_flow MCP open_session(r1467-probe) 秒级 + run_commands hostname=hfhds201 RC=0 wall 30ms, hspice/finesim/hspice64/calibre/calibredrv 全在 PATH; (2) **peek 新池 C-domain high-mc**: summary.tsv awk mc≥30 + C-domain 关键词 → top 候选; cross-check ledger: 508od(junxu mc2514 virtuoso/schematic, 疑 D-shard 未 claim)/sjzm0(parked r1254 skill-dev)/1hkwu(case VirtuosoCliDaemonInlineFix)/56vki(xxchen mc1933 drc:7183 FRESH)/sstk3(case Decoder38StructGen)/x4b0p(case PDKQA seeded); (3) **56vki 深读**: 1362msgs, xxchen 在 DRC_pattern_tool/0.7/drcpv_develop 合并 space_PLUG 进 space 函数加 {forbidden_inside} 开关 + GUI bool 勾选 + skill 整合; 关键发现 **drcpv tool 在 .75**(xxchen 在 hfhds201 有 home, /home/xxchen/workspace/DRC_pattern_tool/0.7/drcpv_develop mtime Nov 27 18:26=POST-merge); space.py L110-121+L463-550 实现 forbidden_inside(三拼写兼容 + PLUG_GOOD_ROOT/BAD_ONLY_ROOT 追加 good 9,10 + bad-only 101-105); gdspy 纯 Python 不依赖 calibre 许可 → L2.live 可跑; verify script temp_script_run/_verify_space_merge.py 完整端到端(run_cfg 调 qa_pattern_tool + pat_nums + spec_split/area/overlap_area gdspy.boolean, 3 段 check: ①default==baseline gds_norm_sha ②switch on→good[9,10]+bad[101-105] ③bad-only 真违反+err_mark 4001); (4) **case 设计草案**(deepread note): EDA-Eval-DesignFlow-SpacePlugMerge-001, L2.live, hidden B 不同 layer/value/params, ≥8 断言, negatives 4 种, judge_layers [L0,L1,L2.live]; (5) **claim 56vki**(covered 565→566) + deepread note 落 designflow/trace_deepreads/56vki_space_plug_merge.md; (6) **stop-loss 收窄**: r1241 rationale「fresh C-domain produce-task 全 techlib-dep stdcell-layout 族」被 56vki 推翻 → 收窄到「fresh stdcell-layout techlib-dep 族」, 56vki 是 fresh non-techlib(DRC pattern tool/gdspy); (7) 0 改动 cases/C, 0 改动 check.py. DEBT: 1 deepread(56vki 1362msgs>600, 下一轮交付 SpacePlugMerge-001, TASK §3). 📦 体积: MEMORY ~30.9KB. WAITING: 0.
+
+> **轮(r1463) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1464，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
+
+> **轮(r1464) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1465，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
+
+> **轮(r1462) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1463，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
+
+> **轮(r1461) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1462，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
+
+> **轮(r1460) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1461，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK(hfhds201 112ms 全工具在PATH) · cases/C=639/L2.live=20 不变 · non-Lite-502 review 全收口 · 0 改动. 原文见 archive]
+
+> **轮(r1458/r1459) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1460，2026-11-28）。**[摘要: 监控轮(2 代) · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
+
+> **轮(r1456) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1457，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
+
+> **轮(r1455) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1456，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
+
+> **轮(r1453) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1461，2026-11-28）。**[摘要: 监控轮 · stop-loss 维持 · .75 reach OK + 全态稳定 · 0 改动. 原文见 archive]
+
+> **轮(r1452) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1454，2026-11-28）。**[摘要: dedup-fix · t0dhm DEBT 清账(撞 r1035 CalibreDrcRunsetPatch-001 已存在, ledger deepread→case) · 池尽 0 fresh · 0 改动. 原文见 archive]
+
+> **轮(r1451) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1454，2026-11-28）。**[摘要: 选料轮 · t0dhm deepread(calibre DRC runset, 28.9MB/338msgs) + DEBT(r1452 合成, 已 dedup 清账) · covered 564→565. 原文见 archive]
+
+> **轮(r1449) tech-fix 收口 + re-verify · OaLayoutM1RectEdit-001 check_live 真通 · 2026-11-27.** r1447/r1448 记 techLoadFile 法实为 BLOCKED(techLoadFile 在 .75 sandbox 返 False); paul.liu f554b5fe7 改 techSetTechLibName 挂预编译 tech.db 但未同步 case JSON. 本轮: case JSON re-sync sha 33a2b476 + eda_flow_judge 端到端 re-verify(REF PASS M1_BBOX=[0,0,3,3] / CHEAT FAIL [0,0,99,99]) + negative_selftest RC=0 + SKIP_RUN clean. §5 7/7 全绿. 原文见 archive.
+
+> **轮(r1450) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1469，2026-11-28）。**[摘要: 监控轮 · non-Lite-502 review 全收口复验(502/502 全填) · .75 reach OK · cases/C=639/L2.live=20 不变 · MEMORY 体积治理 r1426-r1441 16 代批量归档 · 0 改动. 原文见 archive]
+
+> **轮(r1448) 监控轮+独立确认 · non-Lite-502 review 全收口 · 0 改动 · 2026-11-27.** 独立 eda_flow probe 复验 OaLayoutM1RectEdit-001 blocker 可解(dbCreateLib+techfile+M1 rect 实测 PASS, 推翻 r1417 "aeCreateDesign=False cannot create" 误判); reform 完整性抽查全 PASS(sha sync/judge_layers/live-neg/no-reference-read). 不碰 concurrent r1447 产物. 原文见 archive.
+
+> **轮(r1447) LIVE-REQ-done · OaLayoutM1RectEdit-001 [L0,L1]→[L0,L1,L2.live] · 2026-11-27.** 唯一 BLOCKED LIVE-REQ 收口: 非侵入 wrapper(check→_check_static_impl 原封 + check_static/check_live/check compat; 12 static conds 不变). check_live 在 .75 建 OA layout(018um_PDK techfile), exec 候选, reopen verify M1 rect bbox=(0,0,3,3). 4 个坑修复: (1) stale lib.defs → dbSwitchLibDefsPath(WD); (2) aeOpenDesign signature flaky → 5-variant shim+emyString; (3) 二次 emyInitAether 重置 registry → no-op shim; (4) flaky worker → retry x3. live-neg cheat_wrong_size(99x99) static 12/12 PASS live FAIL. §5 全绿(REF PASS x3 + neg FAIL + static PASS + sha sync a37d221e + 12 断言 + no reference/ read). review_nonlite_C.tsv 标 LIVE-REQ-done, live_eval_changes.tsv 登记. L2.live 19→20, REQ done 0→1. WAITING: 0.
+
+> **轮(r1445) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1446，2026-11-27）。**[摘要: contract-sweep 复扫 639 C cases(nested-func 修复后)→116 BAD; 逐条 success-path 分类→18 real-BROKEN+5 NONE false-pos; 并发 shardA/shardB sweep 已修全部 17 simple/variable-tuple/bare-return case→我的批量 fix 冗余(0 diff vs HEAD); 余 1 DEBT PexFlowRunLogDiag-001(strategy-2 待办, r1446 收口). 0 改动落盘. 原文见 archive]
+
+> **轮(r1444) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1445，2026-11-27）。**[摘要: NA抽验 SpfLayerCoupleCapAnalyze-001 LIVE-NA SOUND + 契约修复#1 str→True + #2 DRCLogTeardown tuple→True; 发现系统性 contract debt 125 cases old-style check(). 原文见 archive]
+
+
+
+> **轮(r1442) 监控轮+NA抽验 · .75 reach OK + 全态稳定 · 止损维持 · 2026-11-27.** 续 r1430-r1441 十二代抽验后轮换 layout_virtuoso CLI-batch 子域 runcand-oracle 条: (1) .75 reach OK(hfhds201, 全工具在PATH, wall 137ms); (2) review_nonlite_C.tsv=503(R1 全收口 492 NA+10 PREEXISTING+0 BROKEN); (3) NA抽验 BatchGdsCdlCli-001 verdict sound(subprocess 仅跑候选脚本不调真 EDA, GT hidden config 纯Python oracle, Q2 不被骗 cross-input guard B2, 4neg全FAIL distinct, gold PASS 16/16); (4) cases/C=639 不变/L2.live=19, ledger stats 稳定(covered 564/parked 808/池 4529), stop-loss 维持; (5) 0 改动.
+
+> **轮(r1426–r1441, 共 16 轮) 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1450，2026-11-27）。**[摘要: 监控+NA抽验序列(16 轮) · 每轮 .75 reach OK(hfhds201, 全工具在PATH, wall 20-238ms) + 逐轮抽验 1-3 NA 条 verdict sound(runcand-oracle/static-parse/runcand-default/mock-faithful/gdspy-faithful/mock-record 族, subprocess 只跑候选脚本+py_compile/perl -c 不调真 EDA, GT 纯Python oracle, Q2 不被骗 cross-input guard, 4-7neg全FAIL distinct, gold PASS) + review_nonlite_C.tsv 全收口(492 NA+10 PREEXISTING+0 BROKEN) + cases/C=639 不变/L2.live=19 + ledger stats 稳定(covered 564/parked 808/池 4529) + stop-loss 维持 + 0 改动. 原文见 archive]
+
+> **轮(r1419–r1423, 共 5 轮) 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1420-r1426，2026-11-27）。**[摘要: 监控序列(5 轮) · 每轮 .75 reach OK(hfhds201, 全工具在PATH, wall 28-187ms) + review_nonlite_C.tsv=503(R1 全收口 492 LIVE-NA + 10 PREEXISTING + 0 BROKEN) + cases/C=639 不变/L2.live=19 + ledger stats 稳定(covered 564/parked 808/池 4529) + stop-loss 维持 + 0 改动. 原文见 archive]
+
+
+
+> **轮(r1418) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1421，2026-11-27）。**[摘要: 修正 r1417 4 false-positive BROKEN-stub(DummyDeckMaskDiag/DrcExactWaiver/DrcVsDrmRuleAudit/LibPinManifest) — runtime 用 reference/check.py 非 case JSON test 字段; 4 case test 字段同步 ref/check.py; 0 scoring 改动. 原文见 archive]
+
+
+
+> **轮(r1417) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1421，2026-11-27）。**[摘要: non-Lite-502 R1 静态重判收口 — 492 LIVE-NA + 10 PREEXISTING + 0 BROKEN; 5 种 faithful 模式(runcand-oracle/static-parse/runcand-default/mock-faithful/gdspy-faithful); 与 Lite-137 REQ9 差异: non-lite 492 无 static-pass/live-fail gap ⇒ 0 REQ. 原文见 archive]
+
+
+
+> **轮(r1416) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1420，2026-11-27）。**[摘要: 监控轮 · .75 reach OK(hfhds201, hspice/finesim/hspice64/calibre/calibredrv 全在 PATH, wall 26ms) + review_C.tsv=138(R2 全收口 REQ9/OPT3/NA125, check_live yes=9) + cases/C=639 不变/L2.live=19 + ledger stats 稳定(covered 564/parked 808/claimed 0/池 4529) + stop-loss 维持 + 0 改动. 原文见 archive]
+
+
+
+> **轮(r1414-r1415, 共 2 轮) 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1416，2026-11-27）。**[摘要: 监控序列(2 轮) · 每轮 .75 reach 复验 OK(hfhds201, hspice/finesim/hspice64/calibre/calibredrv 全在 PATH, wall 153-180ms) + review_C.tsv=138(R2 全收口 REQ9/OPT3/NA125, check_live yes=9) + cases/C=639 不变/L2.live=19 + ledger stats 稳定(covered 564/parked 808/claimed 0/池 4529, 快照 2026-11-26 17:25 sessions=9245) + stop-loss 维持(summary_stats.json scan_date 2026-11-24/total_rows 52377/shard_mc C=10 未变, fresh produce-task 全 techlib-dep stdcell-layout 族) + 0 改动. 原文见 archive]
+
+
+
+> **轮(r1409-r1413, 共 4 轮) 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1415，2026-11-27）。**[摘要: 监控序列(4 轮) · 每轮 .75 reach 复验 OK(hfhds201, hspice/finesim/hspice64/calibre/calibredrv 全在 PATH, wall 144-167ms) + review_C.tsv=138(R2 全收口 REQ9/OPT3/NA125, check_live yes=9) + cases/C=639 不变/L2.live=19 + ledger stats 稳定(covered 564/parked 808/claimed 0/池 4529, 快照 2026-11-26 17:25 sessions=9245) + stop-loss 维持(summary_stats.json scan_date 2026-11-24/total_rows 52377/shard_mc C=10 未变, fresh produce-task 全 techlib-dep stdcell-layout 族) + 0 改动. 原文见 archive]
+
+> **轮(r1401-r1408, 共 8 轮) 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1409，2026-11-27）。**[摘要: 监控序列(8 轮) · 每轮 .75 reach 复验 OK(hfhds201, hspice/finesim/hspice64/calibre/calibredrv 全在 PATH, wall 28-163ms) + review_C.tsv=138(R2 全收口 REQ9/OPT3/NA125, check_live yes=9) + cases/C=639 不变/L2.live=19 + ledger stats 稳定(covered 564/parked 808/claimed 0/池 4529, 快照 2026-11-26 17:25 sessions=9245) + stop-loss 维持(summary_stats.json scan_date 2026-11-24/total_rows 52377/shard_mc C=10 未变, fresh produce-task 全 techlib-dep stdcell-layout 族) + 0 改动. 原文见 archive]
+
+
+
+> **轮(r1399) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1429，2026-11-27）。**[摘要: 监控轮 · .75 reach OK(hfhds201, 全工具在PATH, wall 29ms) + review_C.tsv=138(R2 全收口 REQ9/OPT3/NA125) + cases/C=639 不变/L2.live=19 + ledger stats 稳定 + stop-loss 维持 + 0 改动. 原文见 archive]
+
+
+
+> **轮(r1255/r1256/r1258) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1259，2026-11-27）。**[摘要: techlib-shipping 探针序列 · path(a) pyAether techfile 导出阻塞(techGetTechFile 全 None) · path(b) .oa 打包>40min · 定位 techlib 源=hfeg0pkn002 V0_NCG_HF_Aether · 止损维持. 原文见 archive]
+
+
+
+> **轮(r1254) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1256，2026-11-27）。**[摘要: stop-loss 重审轮 · 真实 peek 14 high-mc fresh C-domain 候选 · 修正止损 rationale(fresh produce-task 全 techlib-dep stdcell-layout 族) · park 9 新 · covered 564/parked 807 · 原文见 archive]
+
+> **轮(r1253) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1254，2026-11-27）。**[摘要: 监控轮 闭合态复验 无 actionable 产出. 原文见 archive]
+
+> **轮(r1246–r1252, 共 7 轮) 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1253/r1252/r1251/r1249，2026-11-27）。**[摘要: 监控序列(7 轮 r1246-r1252) · 闭合态复验 · 无 actionable 产出. 原文见 archive]
+
+
+
+> **轮(r1244) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1254，2026-11-27）。**[摘要: k-vs-check.py cross-verify 收口 4 k-stale L2.live(HierSearchDFS/DummyDeck/PyLibApiDocGen/TrMatchHelperGen 补 [L2.live]), 仅 metadata, 0 scoring 改动, 19/19 L2.live k==count DEBT 闭合. 原文见 archive]
+
+> **轮(r1243) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1249，2026-11-27）。**[摘要: k-vs-check.py cross-verify 抽样 19 L2.live, 修 4 case k-stale(FindCircuitByPath/HierJump/PortPropagate/PowerFillMergeGen 15→16 补 [L2.live]), 仅 metadata, 0 scoring 改动. DEBT 在 r1244 闭合. 原文见 archive]
+
+> **轮(r1242) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1244，2026-11-27）。**[摘要: §4.6 test_rationale 全量审计 639/639 PASS + 修 9 case(2 L2.live k-stale[AetherHiliteCmd 11→12/TopPinLabelExtract 12→15] + 4 format + 3 numbering typo), 仅 metadata, 0 scoring 改动. 原文见 archive]
+
+> **轮(r1241) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1244，2026-11-27）。**[摘要: mc5-20 扩池实测无效→正式止损(3rd 0-case) + §4.6 test_rationale audit 9 L2.live REQ 全PASS(k14-20). 原文见 archive]
+
+> **轮(r1239) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1244，2026-11-27）。**[摘要: dry-pool u03z0+qikhb 双 park, 0 case. 原文见 archive]
+
+> **轮(r1238) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1242，2026-11-27）。**[摘要: RectSizeSchematicFix-001 交付 (xxchen drcpv RECTANGLE_SIZE 可视化修复题, draw_rectangle_size 参数化, 18条件/12独立, 5neg distinct, §4.9 trio 3-distinct, jl=[L0,L1]). 原文见 archive]
+
+> **轮(r1237) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1255，2026-11-27）。**[摘要: LIVE R2.2 收口 — 3 skipper OPT(DummyMeas/GDSBump2/PGLayout) gap-analysis+Q1实证闭合不升 L2.live; R2 全收口 REQ9/OPT3/NA125. 原文见 archive]
+
+> **轮(r1240) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1242，2026-11-27）。**[摘要: dry-pool 4 fresh C-domain leads (3oryk/e7fik/1x7j0/6878r) 全 park, 0 case; mid-band mc142-150 100% debug/analysis/doc-Q&A 无 produce-task. 原文见 archive]
+
+> **轮(r1236) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1237，2026-11-26）。**[摘要: PowerFill-001 升 L2.live (calibredrv_mock R2.1 收口第3条): 非侵入包装 13静态+7 live; check_live live_7 抓 hardcode-B auto_pgfill_cells; .75 real==mock topcell/cellcount/bbox; ref PASS 7/7; live-neg static PASS+live_7 FAIL; sha 5003c8f9; jl [L0,L1]->[L0,L1,L2.live] commit 2f6bc45c7]
+
+> **轮(r1235) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1236，2026-11-26）。**[摘要:  2026-11-26. 冻结已解除（2026-11-26 20:5x）。本轮交付 R2.1 第 2 条：DummyDeck-001（calibredrv_mock 家族）从 OPT 升 REQ。非侵入包装（CONTRACT_REFORM_GUIDE §3）：原 check → `_check_stati...]
+
+> **轮(r1234) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1236，2026-11-26）。**[摘要:  冻结解除后首交付 · 2026-11-26. 冻结已解除（2026-11-26 20:5x 用户裁定：designflow 主线/zhulong 辅线/不设等待，随时改 check.py/cases 只需 live_eval_changes.tsv 登记）。本轮交付 R2.1 首条：DummyQA-001（ru...]
+
+> **轮(r1233) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1236，2026-11-26）。**[摘要:  2026-11-26. 冻结窗口仍活（zhulong r3' PID1498010 327/500=65.4% ETA~00:11 Nov-27，run/MEMORY_ZHULONG.md 缺=未收口，§1.1 🚫 改 check.py/cases/*.json）。本轮纯只读复验 R1 收口质量：(1) tsv...]
+
+> **轮(r1232) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1236，2026-11-26）。**[摘要:  推翻 r1231 corrupted-transfer 结论 · 冻结窗口只读 .75 探针 · 2026-11-26. 冻结窗口仍活（zhulong r3' PID1498010 298/500=59.6% ETA~00:11 Nov-27，run/MEMORY_ZHULONG.md 缺=未收口，§1.1 🚫...]
+
+> **轮(r1230) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1236，2026-11-26）。**[摘要:  冻结窗口只读 · 2026-11-26. 冻结窗口仍活（zhulong r3' PID1498010 14:24 起跑 ETA~00:08 Nov-27，run/MEMORY_ZHULONG.md 缺=未收口，§1.1 🚫 改 check.py/cases/*.json）。本轮只读双产出：(1) R2 设计...]
+
+> **轮(r1229) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1231，2026-11-26）。**[摘要: R2-prep .75 真工具可达性探针 4/4 PRESENT+FUNCTIONAL（calibre/calibredrv/rules_syntax_checker v2020.1_36.18 + skipper v2020.06.sp3）；tiny GDSII calibredrv peek vs mock 逐字一致 ⇒ Q1=yes 实证。原文见 archive]
+
+> **轮(r1228) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1231，2026-11-26）。**[摘要: R1 只读审视 lite-137 全量收口: REQ=6(done)/OPT=6/NA=125; 16 T2 全降 NA; 6 fake-tool桩全 faithful; 0 spice_mock∩C。原文见 archive]
+
+> **轮(r1227) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1228，2026-11-26）。**[摘要:· 2026-11-26.** 扫 mc 15-200 C-domain fresh 池 (summary.tsv), 对照 4-shard 台账(4589 sessions) dedup → 取 2slkf(e0039786@hfhds2]
+
+> **轮(r1226) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1228，2026-11-26）。**[摘要:· 2026-11-26.** 按 r1225 deepread 设计合成 (iwrr4 deepread ETA 交付). trace iwrr4(xydou@hfeg0plg69 mc483 calibre:1460/drc:1009 ]
+
+> **轮(r1225) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1228，2026-11-26）。**[摘要:· 2026-11-26.** 扫 mc≥10 C-domain fresh 池 (summary_20261124_023802): 取 400 dedup cand → 对照 4-shard 台账(4585 sessions)+deep]
+
+> **轮(r1224) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1228，2026-11-26）。**[摘要:· 2026-11-26.** 扫 mc>=20 C-domain fresh 池 (summary_20261124_023802, 52378 行). 4ybw1(yan1zh mc701 drc:1796/lvs:1587/aethe]
+
+> **轮(r1223) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1228，2026-11-26）。**[摘要:· 2026-11-26.** 扫 mc5-60 C-domain fresh 池. sstk3(junxu mc1605 hfeg0pkn005): 用户用 virtuoso-cli skill + stdcells_am 标准单元库做 ]
+
+> **轮(r1222) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1228，2026-11-26）。**[摘要:· 2026-11-26.** 扫 mc 5-100 C-domain fresh 池 (r1220 续): 1787 dedup cands → 319 fresh (对照 4-shard 台账 4576). 深读 top3 候选: 6n]
+
+> **轮(r1221) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1289，2026-11-27）。**[摘要: P1 5 C-shard pilot case 复验全绿 (FindCircuitByPath/HierJump/HierSearchDFS/PortPropagate/PyLibApiDocGen), judge_layers=[L0,L1,L2.live]+check_live, .75 L2.live 实跑 5/5 PASS, P1 C 侧 7/7 闭合. 原文见 archive]
+
+> **轮(r1220) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1221，2026-11-26）。**[摘要: 0-case dry-pool scan. eda_flow .75 验可达. 扫 summary.tsv C-domain 4500 cands, 对照 4-shard 台账 4585 sessions: mc≥100 全饱和 (0 fresh / 700+ checked). 修 freshness suffix bug. j26fe 深读→D-domain. 下轮扫 mc5-100. 原文见 archive]
+
+> **轮(r1214) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1215，2026-11-26）。**[摘要: CONTRACT P2 第8条/收口 — AetherHiliteCmd-001 转 L2.live (C-owned TRUE 最后 1 条). strategy-1 check_live (AST 收两文件 pyAether alias Call ∪ class 子类化 RequestCB ∪ 14 MANDATED_LIVE_APIS → .75 hasattr+callable 探针, 14/14 callable). 非侵入包装 (原 check 无 return→None 归一 PASS) + test 字段同步 + judge_layers=[L0,L1,L2.live]. 自验 gold E2E L0+L1+L2.live 全绿 + teeth-test + neg 3-distinct + §4.9 trio 3-distinct. 附修 negative_selftest leak. C 15/629 L2.live, P2 主线收口. 原文见 archive]
+
+> **轮(r1215) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1216，2026-11-26）。**[摘要: INFRA RESTORE + 造新题选料启动. restored designflow/trace_ledger.py (被 shard-D r1444 d4dd7d3a0f 误删, 从 d4dd7d3a0f^ 逐字恢复 1247 行). eda_flow 验 .75 可达. xxchen rrpe6 mc703 rotated off 4 replica host → parked, note 5 newer on-disk session (54cwt/1x17n/u03z0/qikhb/4bz6d) 作下轮 lead. 原文见 archive]
+
+> **轮(r1213) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1214，2026-11-26）。**[摘要: CONTRACT P2 第7条 — RnodeScatterScript-001 转 L2.live. strategy-1 check_live (AST 收 candidate _pa() helper alias.attr Call ∪ MANDATED_LIVE_APIS=20 attrs → .75 hasattr+callable 探针). 20 mandated APIs 全 callable 预探. teeth-test candidate 调 nonexistent dbCrtLabelFake 被 check_live FAIL. negative_selftest 4 neg ALL-FAIL distinct cond1/cond3/cond14/cond5, §4.9 trio {empty→cond1,print→cond3,core→cond5}=3-distinct. 附修 negative_selftest leak (原 check __main__ 无条件 print PASS → 改 check_static 三元组 + sys.exit(1) on FAIL) + assets dir 命名不一致对齐. C 14/629 L2.live. 原文见 archive]
+
+> **轮(r1212) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1213，2026-11-26）。**[摘要: CONTRACT P2 第6条 — WheelZoom-001 转 L2.live. strategy-1 check_live (AST 收 candidate _pa() helper alias.attr Call ∪ bindkey-command 字符串字面量 regex \bae\.<ident>\( ∪ 7 MANDATED_LIVE_APIS → .75 hasattr+callable 探针). 7 mandated APIs 全 callable 预探. teeth-test candidate 调 nonexistent aeSetBindKeyFake 被 check_live FAIL. negative_selftest 6 neg ALL-FAIL distinct d/f/g/m/i/h, §4.9 trio {empty→d,print→f,core→g}=3-distinct. 附修 negative_selftest leak (check compat 返回 bool 不 raise → 改调 _check_static_impl). C 14/629 L2.live. 原文见 archive]
+
+> **轮(r1170–r1203, 共 28 条 Lite-500-fix defensive re-verify 监控轮) 已批量归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1291，2026-11-27）。**[摘要: Lite-500-fix 第98–131轮 · stalest-latest-ts defensive re-verify 序列 · 多数 0-fix TRUE-GREEN (L0-L5=111111) · 期间 CAUGHT+FIXED 的 REAL false-green: r1189 DrcPairWaiveClassify(neg-distinctness 名 vs first-fail label)/r1190 DdgoaDeviceAudit(§4.9a crash no-teeth)/r1191 NetHierTrace/r1194 DrcDeckOptimize+InnovusFpLogDiag(§4.9 trio 缺型)/r1196 EncloseSide1PatternGen+DrcPcellBatchConvert-v2(missing refzip)/r1198 DRCPatPlacePlan(§4.9c core-deleted neg MISSING)/r1180-r1182 RNodePlan/RtextChkPlan/GdsLayerAreaMeasure/AdjViaSelect(missing refzip)/r1186 AutoViaPF+CalibreLvsRepDiag/r1187 MVValueCmp/r1177 SkillFlowAnalyzer · cross_shard P0 逐步 2→1(InvTripDelay RESOLVED by B; OpampChar re-flagged B) · C 137/137 真绿收口. 原文见 archive]
+
+> **轮(r1163-WAITING-DETAIL) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1164，2026-11-25）。**[摘要: Lite-500-fix 第91轮 WAITING 行明细 DummyQA-001 + LVSLogFilter-001 完整 L0-L5 验证明细 (07:10 cohort), 原文见 archive]
+
+> **轮(r1162-WAITING-DETAIL) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1163，2026-11-25）。**[摘要: Lite-500-fix 第90轮 WAITING 行明细 HeadlessLatchSkillGen-001 + StrongARMComp-001 完整 L0-L5 验证明细 (06:15 cohort 收尾), 原文见 archive]
+
+> **轮(r1161-WAITING-DETAIL) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1162，2026-11-25）。**[摘要: Lite-500-fix 第89轮 WAITING 行明细 DrcPatternReportComposer-001 + DrcWaiveDeckGen-001 完整 L0-L5 验证明细, 原文见 archive]
+
+> **轮(r1149-WAITING-DETAIL) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1150，2026-11-25）。**[摘要: r1149 第77轮 WAITING 行明细 ChkSaveHistDedup-001 + RsCalcShortDiag-001 完整 L0-L5 验证明细, 原文见 archive]
+
+> **轮(r1147-WAITING-DETAIL) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1148，2026-11-25）。**[摘要: r1147 第75轮 WAITING 行明细 RTextChkPlan-001 + SchHierDescentReport-001 完整 L0-L5 验证明细, 原文见 archive]
+
+> **轮(r1010-r1077 及更早, 共 143 条归档指针) 已批量搬迁至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1135，2026-11-25）。**[摘要: 各轮 0-case/1-case judge-contract-fix / spot-check / Lite-fix re-verify 摘要, 原文见 archive]
+
+> **轮(r1096-r1113) 已归档至 ARCHIVE_OPERATOR_DESIGNFLOW_C.md（归档批次 r1097-r1114，2026-11-25）。**[摘要: Lite-500-fix 第24-41轮 · 0-fix defensive monitoring + L3-distinctness scan · r1104 6 条假绿→真绿 (3 root shim + EncloseSide1PatternGen runner) · r1107 1 P1 闭合 DrcPcellBatchConvert-v2 · r1113 1 L3-verify hardening DRCHierLossAudit · r1115 2 P1 caught+fixed ERCFilter/FindCircuitByPath · 多轮 2-case fresh spot-check REF PASS+neg all-FAIL-distinct · cross_shard 逐步 RESOLVED · 详见 ARCHIVE 各轮]
+
+
