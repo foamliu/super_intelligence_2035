@@ -1893,3 +1893,28 @@ to sess not in SUT sandbox。EDA-Flow-Bench HEAD=`bde0084e1`。
 **零落盘改动**（桩体检只读）：未碰 `reference/*/check.py` / `cases/*.json` / `judge_layers` / `live_eval_changes.tsv`；仅 `live_eval_review_nonlite_B.tsv` NetlistTranDeck-001 行 col14(check_live)+col16(round r1→r1380) + 本节 + MEMORY 心跳。
 
 **进度**：nonlite REQ done 24 不变（桩体检不增 done），derisked 0→1（NetlistTranDeck r1381 待 wrap），pending 9→8（含本条 derisked），BLOCKED 1（SlicerSizeOpt-001）。L2.live 24 不变。DEBT:0。WAITING:0（不设等待§1.1）。
+
+## r1385 — VwlpPumpReport-001 R2 改造#27（non-Lite-500，candidate-runs-hspice + judge-直调 hybrid）
+
+**任务**：non-Lite-500 R2 改造#27（2026-11-28 用户令「non-Lite-500 实跑评估改造」，最高优先，r1384 Q1 桩体检 PASS de-risked 直接执行）。VwlpPumpReport-001（spice_sim，Vwlp 字线开关泵核 6 节电路报告生成器）。同 r1377 VihTripTune / r1371 JitterTieRerun 模板（candidate-runs-hspice + judge-直调 hybrid）。
+
+**case pattern**：candidate `vwlp_pump_report.py <netlist.sp> <sim_config.json> <out_dir>` 对每 PVT corner 建 .tran deck（.include netlist + vvdd + vpass pulse + .temp + .param dvto + .measure v_net2_pumped/t_pass_start/t_pass_end/v_vwlp_steady/v_vwlp_base_steady）+ 自身调 HSPICE（parse .lis -> report.json 6 sections hspice_ran/n_corners/sec1..sec6）；judge cond m/n ALSO 独立重跑 HSPICE on B corner0 比 v_net2_pumped 5%。全 13 条 (b..n) 依 HSPICE。eval host 无 hspice => 候选无法跑 => cond b/d first-fail + conds e-n fail + judge cond m/n crash（broken，mislabeled [L0,L1]）。候选自身依赖 hspice => 静态层无法跑候选，(b..n) 全迁移 check_live。
+
+**非侵入包装**：`_check_static_impl` keep (a) zip+py_compile 一字不动 + (sa/sb/sc) only-add 源码结构检查（subprocess+hspice / .tran+.measure v_net2_pumped/t_pass deck / .lis v_net2_pumped= parse）+ `check_static` try/except 三元组 + `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201：upload submit.zip+vwlp_pumpcore_A.sp(A visible)+sim_config_A.json+hidden/vwlp_pumpcore_B.sp(B hidden)+sim_config_B.json+live_driver.py -> driver 跑候选 B+A+B2(determinism) + judge indep hspice B corner0 cond m/n -> JSON -> 断 b..n 同判据（TOL 5% / gain>0.1 / cross-input diff>0.05 原封）+ (o) determinism repB==repB2 v_net2_pumped(tt) 一致 only-add + `check()` 兼容 + `__main__`->check_static。14->18 conds 只增不减（sa/sb/sc 静态 + o 确定性 only-add），阈值 5%/0.1/0.05 原封。
+
+**Q1 保真实证**（.75 hspice V-2023.12-SP1-1@hfhds201，3-seed）：ref check_live PASS x3 identical — B v_net2_pumped tt_25/ss_m40=1.95 EXACT==Ohm divider 2.6*30/40，ff_130=2.1232（PMOS mp_pass leakage @130C ff via r_imp 15k raises net2 above passive divider）；v_vwlp_steady tt_25=2.5671（PASS direct-conduction pulls vwlp up），v_vwlp_base_steady=1.95（baseline no-PASS=divider）；cond g direct_cond_gain=0.617>0.1；A tt v_net2_pumped=2.4583 EXACT==2.95*40/48；cond k cross-input A/B diff 0.5083>0.05；cond m judge indep reverify B corner0 concluded v_net2_pumped=1.95；cond n cand 1.95 vs reverify 0.000%<5%；cond o repB==repB2 1.95 identical。**physics REAL NOT fabricated**（contrast SlicerSizeOpt-001 r1352 BLOCKED 1000× fabricated）。
+
+**Q2 cheats fail distinct**：cheat_no_run->d（no .lis，hspice never run），cheat_hardcode_a->k（B tt_pumped==A 2.4583，cross-input guard）。§4.9 trio{empty:a, print_expected:sa, core_deleted(cheat_no_run):d} 3-distinct。
+
+**negatives 重构**（旧 flat 5 删 → 新 5）：naive_empty(a)/naive_print_expected(sa)/naive_no_measure(sc) static + cheat_no_run(d)/cheat_hardcode_a(k) live。cheat_hardcode_a 由 ref 脚本 + tt_25 v_net2_pumped 覆写 A_NET2=2.4583 生成（real hspice run, .lis 真, 仅 tt_pumped 字段造假）。
+
+**§5 7/7 全绿**：
+1. ref check_live PASS hfhds201 hspice V-2023.12-SP1-1 3-seed identical；
+2. 3 static neg FAIL distinct{a,sa,sc} + 2 live-neg static-pass/live-fail distinct{d,k}；
+3. 3-seed ref check_live PASS x3 identical；
+4. SKIP_RUN=1 deploy workdir clean no-leak + ref check_static PASS；
+5. judge_layers=[L0,L1,L2.live] JSON test sha `1e46761cf9` 3-way sync disk==JSON；
+6. 断言 14->18 only-add（4 static a/sa/sb/sc + 14 live b..n+o）阈值 5%/0.1/0.05 原封；
+7. check_live 不读 reference/ GT 仅读 hidden B（vwlp_pumpcore_B.sp+sim_config_B.json）+ visible A 输入 + judge-side indep hspice rerun（GT computed live）。
+
+**落盘**：EDA-Flow-Bench HEAD=8738ec52a pushed（case JSON judge_layers [L0,L1]->[L0,L1,L2.live] + test field + test_rationale 14->18 + k_check=18 + self_verify）；super_intelligence_2035 tracking（live_eval_changes.tsv +1 行 + review_nonlite_B.tsv VwlpPumpReport-001 row round r1384->r1385 R2 DONE + 本节 + MEMORY 心跳）。**REQ done 26->27，derisked 1->0（r1384 桩体检 consumed），pending 7->6，BLOCKED 1（SlicerSizeOpt-001）**。L2.live B nonlite 26->27。DEBT:0。WAITING:0（不设等待§1.1）。
