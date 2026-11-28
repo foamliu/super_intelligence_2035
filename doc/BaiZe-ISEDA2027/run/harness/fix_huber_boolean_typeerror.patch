@@ -1,0 +1,20 @@
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index abc123..def456 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -285,7 +285,12 @@ class HuberRegressor(BaseEstimator, RegressorMixin):
+         X : array-like, shape (n_samples, n_features)
+             Training vector, where n_samples is the number of samples and
+             n_features is the number of features.
++
++        y : array-like, shape (n_samples,)
++            Target vector relative to X.
++
+         """
+-        X, y = check_X_y(X, y, accept_sparse=['csr'], y_numeric=True)
++        # Convert boolean inputs to float to avoid TypeError when applying '-' operator
++        X, y = check_X_y(X, y, accept_sparse=['csr'], y_numeric=True,
++                        dtype=[np.float64, np.float32])
+ 
+         sample_weight = _check_sample_weight(sample_weight, X)
+ 

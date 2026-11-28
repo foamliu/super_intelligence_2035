@@ -1,0 +1,12 @@
+
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+         # The vocabulary has been filtered to non-zero only
+         for tk, pk, qk in zip(sum_matches.sum(axis=1).A.ravel(),
+                               n_c, n_k):
+-            s += tk / np.sqrt(pk * qk) if tk != 0. else 0.
++            s += np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+     s /= np.sqrt(n_samples * (n_samples - 1) / 2.)
+     return s
+ 

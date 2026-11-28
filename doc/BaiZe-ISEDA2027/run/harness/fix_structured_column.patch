@@ -1,0 +1,48 @@
+diff --git a/astropy/table/table.py b/astropy/table/table.py
+index abc123..def456 100644
+--- a/astropy/table/table.py
++++ b/astropy/table/table.py
+@@ -660,21 +660,6 @@ class Table:
+         for col, name, def_name, dtype in zip(data, names, def_names, dtype):
+-            # Structured ndarray gets viewed as a mixin unless already a valid
+-            # mixin class or a Column instance
+-            if (isinstance(col, np.ndarray) and len(col.dtype) > 1 and
+-                    not isinstance(col, (Column, MaskedColumn)) and
+-                    not self._add_as_mixin_column(col)):
+-                import warnings
+-                warnings.warn(
+-                    "In future versions of astropy (>=5.2), structured arrays "
+-                    "added to a Table will be kept as Column objects instead "
+-                    "of being converted to NdarrayMixin. To maintain the "
+-                    "current behavior explicitly wrap your array in "
+-                    "NdarrayMixin, or to opt in to the future behavior wrap "
+-                    "it in Column.",
+-                    FutureWarning
+-                )
+-                col = col.view(NdarrayMixin)
+ 
+             if isinstance(col, (Column, MaskedColumn)):
+                 col = self.ColumnClass(name=(name or col.info.name or def_name),
+@@ -1269,21 +1254,6 @@ class Table:
+             if not hasattr(value, 'dtype') and not self._add_as_mixin_column(value):
+                 value = np.asarray(value)
+ 
+-            # Structured ndarray gets viewed as a mixin (unless already a valid
+-            # mixin class or a Column instance).
+-            if (isinstance(value, np.ndarray) and len(value.dtype) > 1 and
+-                    not isinstance(value, (Column, MaskedColumn)) and
+-                    not self._add_as_mixin_column(value)):
+-                import warnings
+-                warnings.warn(
+-                    "In future versions of astropy (>=5.2), structured arrays "
+-                    "added to a Table will be kept as Column objects instead "
+-                    "of being converted to NdarrayMixin. To maintain the "
+-                    "current behavior explicitly wrap your array in "
+-                    "NdarrayMixin, or to opt in to the future behavior wrap "
+-                    "it in Column.",
+-                    FutureWarning
+-                )
+-                value = value.view(NdarrayMixin)
+ 
+             # Make new column and assign the value.  If the table currently
+             # has no rows (len=0) of the value is already a Column then

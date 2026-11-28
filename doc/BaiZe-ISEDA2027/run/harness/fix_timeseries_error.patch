@@ -1,0 +1,26 @@
+diff --git a/astropy/timeseries/core.py b/astropy/timeseries/core.py
+index abc123..def456 100644
+--- a/astropy/timeseries/core.py
++++ b/astropy/timeseries/core.py
+@@ -72,18 +72,18 @@ class BaseTimeSeries(QTable):
+             plural = "s" if len(required_columns) > 1 else ""
+             if not self._required_columns_relax and len(self.colnames) == 0:
+                 raise ValueError(
+                     f"{self.__class__.__name__} object is invalid - expected"
+-                    f" '{required_columns[0]}' as the first column{plural} but time"
++                    f" {as_scalar_or_list_str(required_columns)} as the first column{plural} but time"
+                     " series has no columns"
+                 )
+             elif self.colnames[: len(required_columns)] != required_columns:
+                 raise ValueError(
+                     f"{self.__class__.__name__} object is invalid - expected"
+-                    f" '{required_columns[0]}' as the first column{plural} but found"
+-                    f" '{self.colnames[0]}'"
++                    f" {as_scalar_or_list_str(required_columns)} as the first column{plural} but found"
++                    f" {as_scalar_or_list_str(self.colnames[:len(required_columns)])}"
+                 )
+ 
+         if (
+             self._required_columns_relax and self._required_columns == self.colnames[: len(self._required_columns)]
+         ):
+             self._required_columns_relax = False

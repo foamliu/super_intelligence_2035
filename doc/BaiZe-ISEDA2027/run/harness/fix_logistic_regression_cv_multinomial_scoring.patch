@@ -1,0 +1,18 @@
+diff --git a/sklearn/linear_model/logistic.py b/sklearn/linear_model/logistic.py
+index abc123..def456 100644
+--- a/sklearn/linear_model/logistic.py
++++ b/sklearn/linear_model/logistic.py
+@@ -919,7 +919,12 @@ def _log_reg_scoring_path(X, y, train, test, Cs=10, fit_intercept=True,
+         elif multi_class == 'multinomial':
+             w = np.hstack((coefs[:, :-1], coefs[:, -1][:, np.newaxis]))
+ 
+-    log_reg = LogisticRegression(fit_intercept=fit_intercept)
++    log_reg = LogisticRegression(
++        fit_intercept=fit_intercept,
++        multi_class=multi_class,
++        penalty=penalty,
++        solver=solver,
++        intercept_scaling=intercept_scaling)
+     log_reg.classes_ = classes_
+ 
+     for w, C in zip(coefs, Cs):
