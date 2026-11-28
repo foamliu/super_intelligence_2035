@@ -1,4 +1,73 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 297 -->
+## RUN_ID 297 — **harness agent loop 健康体检（只读 · 2026-11-28 09:5x · 用户令）**
+
+> **用户令**：「用 .29 的 ops 中继再看一下 harness agent loop 的健康情况」
+> **性质**：只读体检（不 kill / 不重启 / 不改任何文件）。.29 与 .12 各自出一份本机结果。
+
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T') who=$(whoami)"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+L=/tmp/baize_harness_loop.log
+echo
+echo "== A. loop 进程（pid / cwd / etime）=="
+pids=$(pgrep -f 'baize_harness_loop.sh' 2>/dev/null | tr '\n' ' ')
+echo "  loop_pids=[$pids] count=$(pgrep -fc 'baize_harness_loop.sh' 2>/dev/null || echo 0)"
+for p in $pids; do
+  echo "    pid=$p cwd=$(readlink /proc/$p/cwd) start=$(ps -o lstart= -p $p 2>/dev/null) etime=$(ps -o etime= -p $p 2>/dev/null) stat=$(ps -o stat= -p $p 2>/dev/null)"
+done
+echo
+echo "== B. cline 子进程（有则在真干活）=="
+pgrep -af 'cline' 2>/dev/null | cut -c1-180 | head -8
+echo "  cline_count=$(pgrep -fc 'cline' 2>/dev/null || echo 0)"
+echo
+echo "== C. loop 日志（尾 30 行）=="
+ls -l --time-style=+%F_%T /tmp/baize_harness_loop.log* 2>/dev/null
+tail -n 30 "$L" 2>/dev/null | cut -c1-220
+echo
+echo "== D. 关键计数（判定空转）=="
+for pat in 'wake up' 'invoking cline' 'cline returned' '无可用 LLM 候选' 'llm_pick: command not found' 'SKIP cline' 'push OK' 'push FAILED' 'WAITING=1' 'WAITING=0'; do
+  echo "  [$pat] = $(grep -c -- "$pat" "$L" 2>/dev/null || echo 0)"
+done
+echo "  --- 最近 5 次 wake ---"
+grep -E '\[loop\].*wake up' "$L" 2>/dev/null | tail -5
+echo "  --- 最近 6 条 push ---"
+grep -E '\[push\]' "$L" 2>/dev/null | tail -6
+echo
+echo "== E. 最近 push 时间 / WAITING / 关键文件 mtime =="
+if [ -f /tmp/baize_harness_last_push ]; then
+  ts=$(cat /tmp/baize_harness_last_push 2>/dev/null)
+  echo "  last_push_epoch=$ts -> $(date -d @$ts '+%F %T' 2>/dev/null) age_min=$(( ( $(date +%s) - ts ) / 60 ))"
+else
+  echo "  /tmp/baize_harness_last_push 不存在"
+fi
+grep -n '^WAITING' "$RUN/MEMORY_HARNESS.md" 2>/dev/null || echo "  WAITING 行缺失"
+ls -l --time-style=+%F_%T "$RUN/MEMORY_HARNESS.md" "$RUN/BAIZE_HARNESS_TASK.md" 2>/dev/null
+echo
+echo "== F. 负载（>HARNESS_LOAD_MAX=120 会 SKIP cline）=="
+echo "  load=$(cat /proc/loadavg) nproc=$(nproc 2>/dev/null)"
+echo
+echo "== G. git 状态 =="
+cd /nas_train/app.e0031982/code/super_intelligence_2035 2>/dev/null || cd "$(git -C "$RUN" rev-parse --show-toplevel)"
+git log -1 --format='  HEAD %h %ad %s' --date=iso
+echo "  dirty=$(git status --porcelain | wc -l) ahead_behind=$(git rev-list --left-right --count HEAD...origin/main 2>/dev/null)"
+echo
+echo "== H. harness 进度证据 =="
+H="$RUN/harness/swebench_verified_full"
+ls -ld --time-style=+%F_%T "$H/predictions_doubao_pro" 2>/dev/null || echo "  predictions_doubao_pro MISSING"
+if [ -d "$H/predictions_doubao_pro" ]; then ls -l --time-style=+%F_%T "$H/predictions_doubao_pro" | head -12; fi
+for f in "$RUN"/harness/logs_doubao_pro/*.log; do [ -f "$f" ] && echo "  $(stat -c '%y %sB' "$f") $(basename "$f")"; done
+echo "  --- opencode 日志尾部 ---"
+tail -n 6 "$RUN/harness/logs_doubao_pro/opencode_doubao_pro.log" 2>/dev/null | cut -c1-200
+echo "  --- 最新 harness 报告 ---"
+ls -lt --time-style=+%F_%T "$RUN"/harness/reports/*.html 2>/dev/null | head -4
+echo
+echo "== I. 最近 24h 本线改动 top10 =="
+find "$RUN" -maxdepth 2 -type f -mmin -1440 -printf '%TY-%Tm-%Td_%TH:%TM %p\n' 2>/dev/null | sort -r | head -10
+echo
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 297 | $(date '+%F %T') ==="
+```
 <!-- RUN_ID: 296 -->
 ## RUN_ID 296 — **重启 harness agent loop（llm_rotate 已移除 · 2026-11-28 09:2x 用户令）**
 
