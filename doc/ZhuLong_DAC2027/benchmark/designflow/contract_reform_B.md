@@ -1856,3 +1856,40 @@ to sess not in SUT sandbox。EDA-Flow-Bench HEAD=`bde0084e1`。
 **跨 session 碰撞**（同 r1347/r1355/r1367/r1377 先例）：check.py + negative/ + negative_selftest.py 由 concurrent bench-sync commit `2aa34248d`（shard D 11:00:46）落盘 byte-identical；本轮 commit `1b2f7b153`（EDA-Flow-Bench）仅 sync case JSON（judge_layers [L0,L1]→[L0,L1,L2.live] + test field sha + test_rationale 12→15 + k_check=15）。本轮独立 selftest（静态 + live + 3-seed + SKIP_RUN + sha sync）全绿确认正确性。
 
 **落盘**：EDA-Flow-Bench HEAD=`1b2f7b153` pushed（case JSON sync）；super_intelligence_2035 tracking（live_eval_changes.tsv 行已在 r1379 11:11 写 + review_nonlite_B.tsv round r1378→r1379 + 本节 + MEMORY 心跳）。live_eval_changes.tsv B 行=24（== nonlite REQ done 24）。**REQ done 23→24，derisked 1→0，pending 9→8，BLOCKED 1（SlicerSizeOpt-001）**。L2.live B nonlite 23→24。DEBT:0。WAITING:0（不设等待§1.1）。
+
+## r1380 — NetlistTranDeck-001 Q1 桩体检 PASS（non-Lite-500，candidate-runs-hspice + judge-reads-report，de-risk next R2 wrap）
+
+**任务**：non-Lite-500 R2 桩体检#26（2026-11-28 用户令「non-Lite-500 实跑评估改造」，最高优先）。NetlistTranDeck-001（spice_sim，tran testbench generator + HSPICE 真跑测 tpd）。本轮接续 r1379 SAoptPwrDly-001 wrap DONE，对下一条 TODO REQ 做桩体检 de-risk。
+
+**case pattern = candidate-runs-hspice + judge-reads-report**（同 r1345..r1379 族，本条 candidate tb_gen.py 自身调 hspice tran testbench + parse .lis/.mt0 tpd，judge 读候选 result.json 比 GOLDEN_B_TPD_SEC；judge 不独立重跑 hspice，HSPICE const in check.py 未使用）：
+- candidate `tb_gen.py <netlist> <outdir>` 解析 .SUBCKT 端口分类（power/output/signal-input）+ 生成 tb.sp（pwl 驱动信号输入，dc 电源，.tran，.measure tran tpd）+ 自身调 HSPICE（`subprocess.run([hspice, deck, "-o", prefix])` + parse .lis/.mt0 tpd）→ result.json（hspice_ran/n_inputs/tpd/tpd_sec/subckt/ports）。
+- judge cond(g) hspice_ran==true + cond(h) n_inputs==3 + conds(i-n) tb.sp 结构（instantiate nand3 / pwl a,b,c / dc vdd,gnd / .tran / .measure tran tpd）+ cond(o) .lis/.mt0 含 tpd（独立 hspice 真跑证明）+ cond(p/q) tpd_sec 数值+合理范围（1e-13..1e-8）+ cond(r) tpd_sec vs GOLDEN_B_TPD_SEC 3.74911e-11 ±10%（cross-input guard 击穿硬编 A 4.77812e-11）。
+- → 全 mislabeled `[L0,L1]`（judge_layers_now=L0,L1），broken in SUT（no hspice ⇒ candidate hspice_ran=F ⇒ cond g first-fail + conds o/r fail）。
+
+**REQ 稳固 confirmed**（R1b verdict 正确）。
+
+**Q1 保真实证**（.75 EDASession hfhds201 hspice V-2023.12-SP1-1，session q1-nl-netlisttran-r1380 closed，wall~0.6s/cand）：
+上传 check.py + tb_gen.py + nand3.sp（hidden B）+ nand2.sp（visible A）经 `write_file(content=base64)`（b64 纯 ASCII 无 `$` 安全）。**初次 pasted-b64 有 4-char 多余**致 line 78 `"m","tb.sp` 缺空格 + line 83 `proof=False` 多 4 空格 indentation corruption → 用 `fixer.py`（btoa 上传，纯 ASCII）replace 修复后 **md5 `76ce8758` byte-identical 到 repo reference check.py**，AST OK（教训：长 b64 字符串 paste 易引入多余 char；btoa() in-execute 生成 + write_file decode 可靠；nand3.sp/tb_gen.py/fixer.py 走 btoa 通道均干净）。
+- ref candidate real hspice on B（nand3）→ result.json hspice_ran=T / n_inputs=3 / tpd=37.4911 / **tpd_sec=3.74911e-11 EXACT match GOLDEN_B_TPD_SEC** 3.74911e-11（ratio 0.000%）+ hsp.lis/hsp.mt0 with tpd。
+- cand A（nand2）→ tpd_sec=4.77812e-11 == hidden_manifest tpd_A（cross-input 27% diff anti-hardcode）。
+- 3-seed determinism：s1/s2/s3 tpd_sec=3.74911e-11 identical。
+- **check.py submit.zip . → PASS 18/18**（strongest Q1 evidence：case genuinely L2，ref+real hspice physics correct）。
+
+**physics REAL NOT fabricated**：NAND3 3-series-NMOS tpd 37.5ps / NAND2 2-series tpd 47.8ps @ VDD=5V level-1 Shichman-Hodges MOS，物理自洽（contrast SlicerSizeOpt-001 r1352 BLOCKED 1000× fabricated）。
+
+**Q2=NO**（错的解法不会判过）：3 cheats FAIL distinct first-fail —
+- `cheat_no_run`（hspice_ran=F）→ cond **g** first-fail；
+- `cheat_print_expected`（correct B tpd_sec=3.74911e-11 but no .lis）→ cond **o** first-fail（no hsp output with tpd，独立证明有牙）；
+- `cheat_hardcode_a`（A tpd 4.77812e-11 + fake hsp.lis with tpd）→ cond **r** first-fail（ratio 27.4%>10% cross-input golden guard）。
+
+**R2 wrap plan**（de-risked，next round r1381 direct execute，same template as r1359 InvOptSpec / r1363 InstCurrentMeasGen candidate-runs-hspice + judge-reads-report）：
+- `_check_static_impl` keep (a) zip+py_compile 一字不动；
+- `(sa/sb/sc)` only-add source-structure checks（候选源码含 subprocess+hspice / 含 .tran+.measure tran tpd deck / 含 .lis/.mt0 parse）；
+- `check_static` try/except 三元组；
+- `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201：upload submit.zip + nand3.sp（B hidden）+ nand2.sp（A visible）+ `live_driver.py` → driver 跑候选 B+A+B2（determinism）real hspice → JSON → 断 a..r 同判据（GOLDEN_B_TPD_SEC 3.74911e-11 / TOL 10% 原封）+ (s) determinism only-add；
+- `check()` 兼容 + `__main__`→check_static；
+- live-neg = `cheat_no_run`（cond g）+ `cheat_hardcode_a`（cond r）2 distinct。
+
+**零落盘改动**（桩体检只读）：未碰 `reference/*/check.py` / `cases/*.json` / `judge_layers` / `live_eval_changes.tsv`；仅 `live_eval_review_nonlite_B.tsv` NetlistTranDeck-001 行 col14(check_live)+col16(round r1→r1380) + 本节 + MEMORY 心跳。
+
+**进度**：nonlite REQ done 24 不变（桩体检不增 done），derisked 0→1（NetlistTranDeck r1381 待 wrap），pending 9→8（含本条 derisked），BLOCKED 1（SlicerSizeOpt-001）。L2.live 24 不变。DEBT:0。WAITING:0（不设等待§1.1）。
