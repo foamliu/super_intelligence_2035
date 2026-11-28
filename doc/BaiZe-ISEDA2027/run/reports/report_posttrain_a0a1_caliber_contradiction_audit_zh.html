@@ -124,7 +124,33 @@ ul{margin:6px 0 6px 20px;padding:0}li{margin:3px 0}
 <tr><td>任务书</td><td><code>run/BAIZE_POSTTRAIN_TASK.md</code>（39896 B；L58/L82-97/L111-112/L160-163 矛盾点）</td></tr>
 <tr><td>MEMORY</td><td><code>run/MEMORY_POSTTRAIN.md</code>（41469 B；L8/11/15/35/68 矛盾点）</td></tr>
 <tr><td>本上报件</td><td><code>reports/report_posttrain_a0a1_caliber_contradiction_audit_zh.html</code></td></tr>
+<tr><td>A1 run1 final_report（§九 取证）</td><td><code>posttrain_5run_eval/A1_qwen35_2b/run1/final_report.json</code>（total_correct=2/158=1.27%, gen success=72/fail=85/timeout=1）</td></tr>
+<tr><td>A0 per-task 逐题（§九 N1 取证）</td><td><code>run/baseline_A0_base_ragfix_run{1..5}_pertask.json</code>（每题 outcome/pass_count/fail_mode/tool_calls 完整在盘）</td></tr>
+<tr><td>infra 健康实测（§九 N6）</td><td><code>curl :8097/v1/models</code>(id=qwen3.5-2b-a5) / :3333 OPEN / :8664 OPEN / <code>curl :9003/health</code>(executor_ready=true)</td></tr>
 </tbody></table>
 
-<div class="foot">本上报件由 BaiZe post-train agent 响应 2026-11-28 08:4x/09:0x 用户令撰写并署名。所有口径以 09:0x 用户令为唯一标尺；所有数字来自落盘 JSON（45.06%±3.89% 经 <code>baseline_A0_base_ragfix_5run_summary.json</code> 复核）。任务书为运维只读件，§六 仅上报待改正项；MEMORY 侧勘误已同步（§七）。生成时间 2026-11-28。</div>
+<h2>§九 增补：wake871 后新增矛盾 / 困惑（2026-11-28 21:xx · 本唤醒复核）</h2>
+<div class="warn"><b>背景</b>：本件初版交付于 2026-11-28 17:24（§二–§八）。其后 wake871（20:3x–21:1x）完成 A1 run1 评分并暴露若干<b>新</b>矛盾/困惑，特此增补上报。所有数字均经本唤醒从落盘 JSON 复核。</div>
+
+<div class="cards">
+<div class="card"><div class="k">A1 run1 smoke（量尺修正后）</div><div class="v">1.27%</div><div class="u">2/158 · code-gen 命中 72/158</div></div>
+<div class="card"><div class="k">A1 Generation fail（无码）</div><div class="v">85/158</div><div class="u">主因=write_files 被 cline 拒</div></div>
+<div class="card"><div class="k">A0 per-task 逐题数据</div><div class="v">完整在盘</div><div class="u">5 run × 158 题 ⇒ 逐题配对可行</div></div>
+<div class="card"><div class="k">infra 健康</div><div class="v">全 UP</div><div class="u">serve/隧道/沙盒/RAG</div></div>
+</div>
+
+<table>
+<thead><tr><th>#</th><th>矛盾 / 困惑</th><th>取证</th><th>性质与裁决建议</th></tr></thead>
+<tbody>
+<tr><td>N1</td><td><b>A0 45.06% 可复现性 / 配对可行性</b>（澄清 wake871 BLOCKER）<br>wake871 曾判「A0 评于已消失 t0002997 框架 + buggy 抽取器 + JSONL 丢 ⇒ 不可复现、不可与 A1 直接配对」。</td><td>本唤醒复核：① <code>baseline_A0_base_ragfix_run{1..5}_pertask.json</code>（175KB/个）<b>完整在盘</b>，含每题 outcome/pass_count/fail_mode/tool_calls；5-run summary 含全 158 题 × 5 run pass 计数 ⇒ <b>逐题配对可行</b>。② 量尺抽取器 bug 只漏抽 <code>ws/&lt;func&gt;.py</code>，而 A0(MiniCPM5) 写 <code>pyAether_code</code> 命中旧抽取器 ⇒ <b>bug 未影响 A0</b>（wake871 自述「A0 抽取路径与结果完全不变」）。</td><td><span class="tag t-ok">部分澄清</span> 45.06% 数字本身可靠、逐题配对可行；wake871 BLOCKER 的「不可配对」结论<b>过慎</b>。但仍有真实口径 caveat（见 N3）。建议：A0 无需因「抽取器 bug」重跑；是否因「框架差异」重跑见 N3。</td></tr>
+<tr><td>N2</td><td><b>A1 工具协议不兼容（write_files）破坏「唯一自变量=基座模型」</b><br>定案要求 A1 vs A0 唯一差别=模型。但 A1 run1=1.27%，code-gen 命中仅 72/158(45.6%)，85 题「Generation fail」（无码）。</td><td>A1 run1 <code>final_report.json</code>：total_correct=2/158，generation success=72 / fail=85 / timeout=1。trace 取证（wake871）：Qwen3.5-2B 频发原生 <code>write_files</code> 工具调用，被 cline harness 拒绝（cline 无此工具）→ 模型转而 <code>submit_and_exit</code> 交文本摘要，或写无效 <code>ws</code> 目录路径 → 无可抽取代码。A0(MiniCPM5) <b>不发</b> write_files。</td><td><span class="tag t-bad">实质矛盾</span> A1 低分含「工具协议适配度」成分，<b>非纯基模能力</b>，威胁定案单变量设计。待用户裁决：(a) 视为模型能力一部分（Qwen3.5 不遵循 cline 工具协议=能力不足，照跑 5-run）；(b) 修 harness/prompt 引导 Qwen3.5 用 editor 写码（但改口径 vs A0，需同步重定义 A0 或新开 A1' 臂）；(c) 其他。<b>在裁决前不建议盲跑 A1 run2-5</b>（避免在可能需改口径的 setup 上空跑 4 run × 数小时）。</td></tr>
+<tr><td>N3</td><td><b>A0 vs A1 框架口径不一致</b><br>A0 评于 t0002997 框架（benchmark v20260311_fixed，该框架副本已被 HOME-wipe 清空）；A1 评于 nas_data 框架（EDA-Eval-pyAether-158）。</td><td>两 benchmark 同 158 task_id 但 <b>10 题 test 有差异</b>（未证实同 lineage，wake871 取证）。A0 原始 code-gen JSONL 已丢（HOME/tmp wipe），不可在 nas_data 框架重评。</td><td><span class="tag t-warn">口径 caveat</span> 逐题配对时这 10 题可能因 test 不同而翻转。建议：配对检验主表用全 158 题 + 标注 caveat；敏感性分析在共同 148 题子集上重做 McNemar/bootstrap。若用户要求严格同框架，则需在 nas_data 框架+fixed 抽取器上<b>重跑 A0 5-run</b>（重启 GPU4:8098 base serve + 重装 minicpm5 parser，~数小时）。</td></tr>
+<tr><td>N4</td><td><b>A1 final_report.model_name = zhulong_deepseek_v32</b>（陈旧 config tag）</td><td><code>posttrain_5run_eval/A1_qwen35_2b/run1/final_report.json</code> model_name=zhulong_deepseek_v32；权威身份=curl /v1/models id=<code>qwen3.5-2b-a5</code>（B1 PASS）。</td><td><span class="tag t-warn">复发性困惑</span> 与 A0 同病（A0 5-run summary 亦此 tag）。建议框架侧修 config.yaml 默认 tag；报告引用身份一律以 curl B1 为准。</td></tr>
+<tr><td>N5</td><td><b>served-model-name 仍为 qwen3.5-2b-a5</b>（未随 A5→A1 改名）</td><td>curl :8097/v1/models → id=qwen3.5-2b-a5（root=Qwen3.5-2B）。记录层已标「A1(原 A5)」。</td><td><span class="tag t-warn">命名</span> 重命名需重启 serve（非急需，会中断 A1 评测）。复现须知：served-name=<code>a5</code> 即 A1。建议 5-run 收口后、若需长期 serve 再改名 a1。</td></tr>
+<tr><td>N6</td><td><b>当前可推进性</b></td><td>本唤醒实测：A1 serve :8097 UP（B1 PASS）/ 隧道 :3333 OPEN / 沙盒 :8664 OPEN / RAG :9003 UP（executor_ready, 8984 api_descriptions）⇒ 评分链 infra 就绪。</td><td><span class="tag t-ok">infra 就绪</span> 唯一待决策= N2/N3 的口径裁决。裁决后路径：①若 (a)→A1 run2-5→5run summary→A0_vs_A1 配对（全 158 + 148 子集敏感性）；②若 (b)→先改 harness/prompt+冒烟+重定义口径再跑。</td></tr>
+</tbody></table>
+
+<div class="note"><b>本唤醒结论</b>：定案口径（A0=A0_base_ragfix has-RAG / A1=Qwen3.5-2B 同口径唯一差=模型）本身正确且 agent 已先于定案独立印证（§五）。<b>新增的关键困惑是 N2</b>：A1(Qwen3.5-2B) 与 cline harness 存在工具协议不兼容（write_files），使「唯一自变量=模型」在执行层被打破——A1 的低分混杂了「工具协议适配度」而非纯基模能力。这是定案落地时未曾预见的执行层矛盾，<b>需用户拍板处置口径</b>后才能继续 A1 5-run。N1/N3 为配对的 caveat（可标注/敏感性分析，未必需重跑）。N4/N5 为命名/标签困惑（已知，可后续修）。</div>
+
+<div class="foot">本上报件由 BaiZe post-train agent 响应 2026-11-28 08:4x/09:0x 用户令撰写并署名。所有口径以 09:0x 用户令为唯一标尺；所有数字来自落盘 JSON（45.06%±3.89% 经 <code>baseline_A0_base_ragfix_5run_summary.json</code> 复核；A1 1.27% 经 <code>posttrain_5run_eval/A1_qwen35_2b/run1/final_report.json</code> 复核）。任务书为运维只读件，§六 仅上报待改正项；MEMORY 侧勘误已同步（§七）。初版 2026-11-28 17:24；§九 增补（wake871 后新增矛盾）2026-11-28 21:xx。</div>
 </div></body></html>
