@@ -861,3 +861,146 @@ echo "=== DONE 293 | $(date '+%F %T') ==="
 （未启动 S1 · 未动别线 · 未改配置）
 === DONE 293 | 2026-11-28 08:11:07 ===
 ```
+
+---
+
+## RUN_ID 294 · 2026-11-28 08:53:17 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "[0] exec_host=$(hostname)  date=$(date '+%F %T')"
+echo
+
+echo "== A. harness loop 进程 =="
+ps -eo pid,ppid,etime,stat,rss,args | grep -E '[b]aize_harness_loop' | cut -c1-180
+echo "  loop_count=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)"
+echo
+
+echo "== B. harness 的 cline 进程（loop 派生的）=="
+ps -eo pid,ppid,etime,stat,rss,args | grep -E '[c]line ' | grep -iE 'harness' | cut -c1-180
+echo "  (空=当前没有 cline 在跑)"
+echo
+
+echo "== C. 所有 cline 进程（含别线，用于分辨）=="
+ps -eo pid,ppid,etime,rss,args | grep -E '[c]line --data-dir' | cut -c1-200
+echo
+
+echo "== D. harness loop 日志尾部 =="
+for f in /tmp/baize_harness_loop.log /tmp/baize_harness.log; do
+  if [ -f "$f" ]; then
+    echo "--- $f  [$(stat -c '%y  %s B' "$f")]"
+    tail -n 20 "$f" | cut -c1-200
+  fi
+done
+echo
+
+echo "== E. harness 相关其他日志 =="
+ls -lt /tmp/*harness* 2>/dev/null | head -8 | awk '{print $6, $7, $8, $9}'
+echo
+
+echo "== F. MEMORY_HARNESS 状态 =="
+grep -nE '^WAITING' "$RUN/MEMORY_HARNESS.md" 2>/dev/null
+echo "  mtime: $(stat -c '%y' "$RUN/MEMORY_HARNESS.md" 2>/dev/null)"
+echo "  size:  $(stat -c '%s' "$RUN/MEMORY_HARNESS.md" 2>/dev/null) B"
+echo
+
+echo "== G. opencode / 7-way 评测进程（harness 的任务对象）=="
+ps -eo pid,etime,args | grep -E '[o]pencode|[s]webench|predict|launch_doubao' | cut -c1-170 | head -12
+echo "  (空=harness 的评测任务当前无进程)"
+echo
+
+echo "== H. gw_proxy（harness 依赖的 9090/9091/9092）=="
+ss -ltnp 2>/dev/null | grep -E ':909[0-2]' | cut -c1-140 || echo "  ss 不可用"
+ps -eo pid,etime,args | grep -E '[g]w_proxy' | cut -c1-140 | head -5
+echo
+
+echo "== I. harness 相关文件 mtime（判断是否在动）=="
+R=/nas_train/app.e0031982/code/super_intelligence_2035
+ls -l --time-style=+%F_%T "$R/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md" 2>/dev/null | awk '{print $6, $7}'
+ls -lt --time-style=+%F_%T "$R/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/" 2>/dev/null | head -5 | awk '{print $6, $7, $8}'
+echo
+
+echo "（只读：未 kill / 未重启 / 未改配置）"
+echo "=== DONE 294 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap29  date=2026-11-28 08:53:17
+
+== A. harness loop 进程 ==
+  loop_count=0
+0
+
+== B. harness 的 cline 进程（loop 派生的）==
+1800276 1475330       28:18 Sl   525084 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --a
+  (空=当前没有 cline 在跑)
+
+== C. 所有 cline 进程（含别线，用于分辨）==
+1800276 1475330       28:18 525348 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run --auto-approve true -m glm-5
+
+== D. harness loop 日志尾部 ==
+--- /tmp/baize_harness_loop.log  [2026-11-27 08:33:21.444205469 +0800  26367606 B]
+[push] ahead=0 behind=0
+warning: adding embedded git repository: doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/sympy_fix
+hint: You've added another git repository inside your current repository.
+hint: Clones of the outer repository will not contain the contents of
+hint: the embedded repository and will not know how to obtain it.
+hint: If you meant to add a submodule, use:
+hint: 
+hint: 	git submodule add <url> doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/sympy_fix
+hint: 
+hint: If you added this path by mistake, you can remove it from the
+hint: index with:
+hint: 
+hint: 	git rm --cached doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/sympy_fix
+hint: 
+hint: See "git help submodule" for more information.
+[push] committed.
+To https://github.com/foamliu/super_intelligence_2035.git
+   7255c7655f..b117372d21  main -> main
+[push] push OK.
+[loop] 2026-11-27 08:33:21 WAITING=1 (async task running) → sleep 900s
+
+== E. harness 相关其他日志 ==
+Nov 27 08:33 /tmp/baize_harness_loop.log
+Nov 27 08:33 /tmp/baize_harness_last_push
+Nov 27 08:33 /tmp/baize_harness_llm_idx
+Nov 26 05:56 /tmp/harness_resource_guard.last_action.last_ts
+Nov 26 05:56 /tmp/harness_resource_guard.log
+Nov 25 12:11 /tmp/harness_check.py
+Nov 23 12:19 /tmp/harness_route_counts.py
+Nov 23 08:39 /tmp/update_harness_memory.py
+
+== F. MEMORY_HARNESS 状态 ==
+3:WAITING: 1
+  mtime: 2026-11-27 16:41:14.553910280 +0800
+  size:  4141 B
+
+== G. opencode / 7-way 评测进程（harness 的任务对象）==
+ 769492  3-12:45:24 /home/app.e0016372/.nvm/versions/node/v26.13.1/lib/node_modules/@opencode/cli/bin/opencode.exe serve --service
+3803645    22:09:43 opencode
+3834898       00:00 grep -E [o]pencode|[s]webench|predict|launch_doubao
+  (空=harness 的评测任务当前无进程)
+
+== H. gw_proxy（harness 依赖的 9090/9091/9092）==
+LISTEN 0      5          127.0.0.1:9090       0.0.0.0:*    users:(("python3",pid=3990243,fd=3))         
+LISTEN 0      5          127.0.0.1:9091       0.0.0.0:*    users:(("python3",pid=3990288,fd=3))         
+LISTEN 0      5          127.0.0.1:9092       0.0.0.0:*    users:(("python3",pid=3990275,fd=3))         
+3990243  1-20:52:05 python3 /nas_train/app.e0031982/harness_work/gw_proxy.py
+3990275  1-20:52:04 python3 /nas_train/app.e0031982/harness_work/gw_proxy.py
+3990288  1-20:52:03 python3 /nas_train/app.e0031982/harness_work/gw_proxy_dsh.py
+
+== I. harness 相关文件 mtime（判断是否在动）==
+2026-11-27_16:41:14 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+  
+2026-11-28_08:22:12 test_min_count_fix.py 
+2026-11-28_08:22:12 test_dateformat_y.py 
+2026-11-28_08:22:12 test_alter_together_optimization.py 
+2026-11-28_08:22:11 verify_fix.py 
+
+（只读：未 kill / 未重启 / 未改配置）
+=== DONE 294 | 2026-11-28 08:53:17 ===
+```
