@@ -1,5 +1,64 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 295 -->
+<!-- RUN_ID: 296 -->
+## RUN_ID 296 — **诊断 harness loop 的 `llm_pick` 缺失（只读 · 2026-11-28 09:1x）**
+
+> **用户令**：「你用 ops 中继排查一下 harness 的问题」；补充「harness 应该是在 .29 机器上」
+> **已知**：RUN_ID 295 在 **`.12`** 上拉起 loop，日志报 `line 133: llm_pick: command not found`，
+> 遂每轮「跳过 cline」、`WAITING=1`、sleep 900s ⇒ agent 从未运行 ⇒ **MEMORY 不更新**。
+> **本块目标**：查清 `llm_rotate.sh`（`llm_pick` 定义处）到底在哪台机器、是否还存在，以及 loop 该在哪台跑。
+> **只读**：不 kill / 不重启 / 不改文件。
+
+```bash
+set -u
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "[0] exec_host=$(hostname)  ips=$(hostname -I 2>/dev/null)  date=$(date '+%F %T')"
+echo
+
+echo "== A. loop 脚本第 45-52 行（llm_rotate.sh 加载处）=="
+sed -n '45,52p' "$RUN/baize_harness_loop.sh" 2>/dev/null
+echo
+
+echo "== B. llm_rotate.sh 是否存在 =="
+ls -l "$RUN/llm_rotate.sh" 2>&1
+echo "  exist_test: $([ -f "$RUN/llm_rotate.sh" ] && echo YES || echo NO)"
+echo
+
+echo "== C. 全机搜 llm_rotate*（本机）=="
+timeout 60 find /nas_train/app.e0031982 -maxdepth 6 -name 'llm_rotate*' -not -path '*/.git/*' 2>/dev/null | head -10
+echo "  --- /tmp ---"
+ls -l /tmp/llm_* 2>/dev/null | head -5
+echo "  --- PATH 中 ---"
+command -v llm_pick 2>&1 || echo "  llm_pick 不在 PATH"
+echo
+
+echo "== D. 两节点对比（.29 / .12 互相 ssh）=="
+for h in 10.239.2.29 10.239.2.12; do
+  echo "--- $h ---"
+  timeout 30 ssh -n -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=no app.e0031982@$h \
+    "echo host=\$(hostname); echo -n 'llm_rotate='; [ -f $RUN/llm_rotate.sh ] && echo YES || echo NO; echo -n 'loop_procs='; pgrep -fc baize_harness_loop 2>/dev/null || echo 0" 2>&1 | sed 's/^/    /'
+done
+echo
+
+echo "== E. 当前两节点 harness loop 进程 =="
+for h in 10.239.2.29 10.239.2.12; do
+  echo "--- $h ---"
+  timeout 30 ssh -n -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=no app.e0031982@$h \
+    "ps -eo pid,ppid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-150" 2>&1 | sed 's/^/    /'
+done
+echo
+
+echo "== F. 本机 loop 日志（最近 30 行）=="
+tail -n 30 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-190
+echo
+
+echo "== G. hit：loop 脚本对 llm_pick 的依赖与兜底 =="
+grep -n 'llm_rotate\|llm_pick\|LLM_KEY\|CLINE_KEY' "$RUN/baize_harness_loop.sh" | cut -c1-170
+echo
+
+echo "（只读：未 kill / 未重启 / 未改文件）"
+echo "=== DONE 296 | $(date '+%F %T') ==="
+```
+
 ## RUN_ID 295 — **拉起已死的 harness loop（2026-11-28 09:0x · 用户令）**
 
 > **用户令**：「启动一个已经死掉的 loop 有啥风险，已经不能更坏了」
