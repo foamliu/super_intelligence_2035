@@ -1407,3 +1407,7 @@ gu7pf					case	CalibreOverlapArea-001	2026-11-28 09:01
 1795663112280_gccyq.messages.json					parked		2026-11-28 22:30	cross-domain verification (xrun Verilog gate-level sim debug dut.v vs gld.v); drc/lvs kw from drcpa project-name + simlib_LVS.sv lib filename inflation not real DRC/LVS -> shard A
 1795757723958_2nc86.messages.json	felixw	hfeg0pin004	214	physical_verify	case	EDA-Eval-DesignFlow-CalibreLvsRunsetBuilder-001	2026-11-28 23:47	
 1795766696431_tzlwj	stivens	hfeg0plg91	229	layout_aether	case	EDA-Eval-DesignFlow-DrcCoordExtractFlow-001	2026-11-29 00:17	
+1795769028097_x8iwg	ziyuny	hfeg0pnd001	229	physical_verify	parked		2026-11-29 00:34	LVS analysis report produce-task; input files /rundata/ddgoa perm-denied for e0031982, assets need trace reconstruction; session cluttered w/ skill-rename; deferred
+1795744576567_lzy92	shanliny	hfeg0pkn005	229	physical_verify	parked		2026-11-29 00:34	PEX batch debug; 60+ throwaway debug scripts; env-debugging dominant; not clean produce-task
+1794983929216_w4hlp	jcgu	hfeg0pin003	231	physical_verify	parked		2026-11-29 00:34	porting_flow GUI launcher iteration; no deterministic deliverable; GUI script hard to check
+1795092542726_o1hsg	ziyuny	hfeg0pnd001	229	layout_aether	claimed		2026-11-29 00:34	
