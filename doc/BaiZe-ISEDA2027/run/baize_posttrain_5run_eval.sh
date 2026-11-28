@@ -9,10 +9,10 @@
 #   bash baize_posttrain_5run_eval.sh --endpoint http://127.0.0.1:8096/v1 --model minicpm5-2b-sft-v39-final --label step105 --run-all
 set -uo pipefail
 
-EDA_BASE="/home/app.e0031982/code/eda_fastmcp"
+EDA_BASE="${EDA_BASE:-/nas_data/app.e0031982/code/eda_fastmcp}"
 PROVIDERS_JSON="$HOME/.cline/data/settings/providers.json"
-VENV_PYTHON="$EDA_BASE/.venv/bin/python"
-RESULTS_DIR="/tmp/posttrain_5run_eval"
+VENV_PYTHON="${VENV_PYTHON:-$EDA_BASE/.venv/bin/python}"
+RESULTS_DIR="${RESULTS_DIR:-/nas_data/app.e0031982/posttrain_5run_eval}"
 
 ENDPOINT=""; MODEL=""; LABEL=""; RUN_NUM=""; RUN_ALL=0; DRY_RUN=0
 
