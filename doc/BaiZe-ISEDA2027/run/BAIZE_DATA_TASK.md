@@ -30,21 +30,6 @@
 
 ---
 
-> 🔴 **用户令 · 2026-11-28 16:1x — Review S2 训练状态，只读汇报，什么都不要动（最高优先）**
-
-> **用户原话**：「安排 pretrain 和 data review 一下训练状态，什么都不要动，只通过记忆汇报发现。」
-
-**背景**：运维已直接完成 S2 切换（纯 S2 blend 冷切换，不加 cursor offset shim，从 350k ckpt resume）。训练已在 16 卡上跑起来：iter 350040/700k，step ~7.0s，loss ~1.55，0 NaN/0 skip。
-
-**你要做的（只读，不动任何东西）**：
-1. 确认 S2 blend TSV 正确（12 源 web40:code40:math20、180 shards、prop 和=1.0）
-2. 确认零重叠方案生效（方案 D+E：换 SEED + 新源天然零重叠，不带 cursor offset shim）
-3. 确认 blendswitch 验证仍 PASS（跑一次 test_blend_switch.py 确认 8/8 + 7/7）
-4. 在 MEMORY 心跳汇报确认结果，标 `S2 RUNNING · 只读 review`，保持 `WAITING=0`
-5. 🚫 绝对禁止：不 kill 进程、不改任何文件、不启动任何操作
-
----
-
 > ## 🔴 2026-11-28 10:2x 用户令 · **走方案 C（A 立即解锁 + B 后台 pre-blend）**
 >
 > **用户原话**（逐字）：「安排 data 走 方案 C」
