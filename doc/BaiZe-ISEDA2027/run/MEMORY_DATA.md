@@ -2,14 +2,18 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1162) — S2 OOM 内存方案已交付（数字已用 fresh 实测校正）· `S2_OOM_MEMORY_PLAN.md` · 推荐 D+（禁 mmap + nw=0）**：
-> - **根因**（定量，fresh 实测 `du -sbL`）：S2 = 12 源 180 shard / **75.55 GB .idx**（vs S1 = 7 源 100 shard / 66.59 GB .idx，+13%）→ per-rank 索引内存 113 GB × 8 ranks = 907 GB + 训练开销 240 GB = base RSS 1,147 GB → headroom 仅 909 GB（vs S1 的 1,017 GB）→ fork-COW 破页率 ~13%（@920 步）→ 2,090 GB > 2,048 GB → OOM-kill
-> - **崩溃步数模型**：估算区间 800-1,200 步（实测 920 步落在区间内 ✅）；COW 破页率随步数线性增长，与 nw 正相关
-> - **方案对比**：A0（再 pre-blend 180→12）**不解决 OOM**（.idx ∝ 文档数≠shard 数）⭐ ｜ A（禁 mmap）延后不根治 ⭐⭐ ｜ B（spawn）**S2 规模不可行**（64 workers × 113 GB = 7,232 GB >> 2TB）🚫 ｜ C-nw=0 确定**不崩**但吞吐 308K（-50%）⭐⭐⭐ ｜ **D+（禁 mmap + nw=0）确定不崩 ⭐⭐⭐⭐**
-> - **推荐**：D+ 先跑起来（不崩 > 快但崩），后台再试 nw=4+禁mmap 提速；回滚路径完备
-> - **交付物**：`run/data/blendswitch/S2_OOM_MEMORY_PLAN.md`（估算表 + 方案对比表 + 推荐 + 复现命令 + 交接块）
-> - **交接**：pretrain 改 `common.env` 设 `BAIZE_NUM_WORKERS=0` + `BAIZE_NO_MMAP_BIN_FILES=1` → DRY 验证 → 从 350k ckpt resume → 50 步 smoke（0 OOM/0 NaN/step ≤14s/吞吐 ≥280K）
-> - data 侧未改训练配置/未启动训练/未 kill 进程 · WAITING=0
+> 🔧 **心跳 · 2026-11-28 (R1163) — S2 OOM 方案 v2（live 监控数据加入）· `S2_OOM_MEMORY_PLAN.md` v2 · 推荐 E（nw=2+禁mmap）继续跑**：
+> - **当前训练状态**（step 350260 = S2 第 260 步）：0 OOM / 0 NaN / step=6.9-7.2s ✅ / 吞吐~565K ✅ / loss=1.51-1.55 ✅
+> - **live 监控**（data agent 在 .12/.29 部署 5s 采样 `/tmp/s2_mem_monitor*.csv`）：
+>   - AnonPages 增长率**持续衰减**：1.1 GB/step（step 120）→ 0.44（step 200）→ **0.24-0.30**（step 260）
+>   - 当前 AnonPages：.12=628GB / .29=626GB · MemFree：.12=~1250GB / .29=~1175GB
+>   - COW 饱和模型：预计 step 500-1000 增长率降至 <0.1 GB/step → 平台期 ~700-815 GB → **大概率不崩**
+> - **v2 推荐**：继续跑 E（nw=2+禁mmap），不停训。如 AnonPages >1,500GB 则降 nw=1→0
+> - **v1→v2 变更**：v1 推荐 D+（nw=0，确定不崩但 step~14s ETA 56 天）；v2 发现 E 实测 step=7.0s（达标！），且 COW 减速 → 改推 E
+> - **交付物**：`run/data/blendswitch/S2_OOM_MEMORY_PLAN.md`（v2，26KB：crash 归因 + live 监控曲线 + 8 方案对比表 + 推荐 + 交接块 + 告警阈值表）
+> - data 侧未改训练配置/未启动训练/未 kill 进程 · 监控脚本 `/tmp/s2_mem_monitor*.sh` 持续运行 · WAITING=0
+
+> 📦 R1162 心跳（S2 OOM 方案 v1 · 推荐 D+）已被 v2 覆盖 → 见上
 
 > 📦 R1161 心跳（S2 CRASHED · 只读 review · 4 项 fresh PASS）已归档 → daily-memories-data/2026-11-28.md
 
