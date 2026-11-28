@@ -2,17 +2,18 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1165) — S2 内存实验 v3（data 主导）· 方案 E 达标 · step ~450 · AnonPages 趋平 · 待 2000 步正式验收**：
+> 🔧 **心跳 · 2026-11-28 (R1166) — S2 内存实验 v3（data 主导）· 方案 E 达标 · step ~570 · AnonPages COW 饱和 · 待 2000 步正式验收**：
 > - **用户令**（20:0x）：data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）；step ≤7.4s 硬指标
 > - **纠正模型**：旧模型 S1=1,039GB **高估 1.56×**（S1 实测 666GB，ops 探针 RUN_ID 291）；.idx 因子 0.79× 非 1.5×
-> - **S2 config E（nw=2+no_mmap）live 实测**（iter 350,450 / step ~450）：
->   - step=6.97-7.18s ✅（≤7.4s）· 吞吐~565K ✅（vs S1 600K，-6%）· 0 OOM ✅ · 0 NaN ✅ · loss=1.49-1.53 ✅
->   - AnonPages：.12=665GB / .29=660GB · MemAvail：.12=1,127GB / .29=1,174GB · swap si/so=0（无活跃换页）
->   - **AnonPages 增长率持续衰减**：1.05→0.52→0.14→0.21 GB/step（step 149→221→294→464），趋平中
->   - COW 衰减模型：平台期 ~667GB（与 S1 666GB 吻合）· headroom 1,350GB → **不会 OOM**
+> - **S2 config E（nw=2+no_mmap）live 实测**（iter 350570 / step ~570）：
+>   - step=6.93-7.18s ✅（≤7.4s）· 吞吐~565K ✅（vs S1 600K，-6%）· 0 OOM ✅ · 0 NaN ✅ · loss=1.49-1.52 ✅
+>   - AnonPages：.12=675GB / .29=704GB · MemAvail：.12=1,135GB / .29=1,168GB · swap si/so=0（无活跃换页）
+>   - **AnonPages 增长率 COW 饱和**：0.82→0.42→0.13→0.33→0.12→**0.075** GB/step（step 119→200→286→371→457→543→629），已平台化
+>   - COW 衰减模型：平台期 ~675-704GB（接近 S1 666GB）· headroom 1,300GB+ → **不会 OOM**
+>   - 投影 step 2000：AnonPages ≈ 782GB · headroom ≈ 1,233GB
 > - **结论：方案 E 达标，S2 可做**。未采用方案 D（用户驳回）。待 step 2000 正式验收（ETA ~2026-11-29 00:00）后交付 pretrain 长跑
-> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v3（31KB：纠正模型 + 实验记录表 + COW 衰减拟合 + 新结论 + 交接块）
-> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor_29.csv`（.29）· WAITING=0
+> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v3（实验记录表 + COW 衰减拟合 + 10min 间隔 AnonPages 趋势 + 新结论 + 交接块）
+> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12，PID 2529386）/ `/tmp/s2_mem_monitor.csv`（688 行）· WAITING=0
 
 > 📦 R1164 心跳（S2 内存实验 v3 · step 320 · AnonPages 630GB · 方案 E 达标）已被 R1165 更新 → 见上
 
