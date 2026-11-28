@@ -131,13 +131,14 @@ def run_zhulong(instance, workdir, timeout):
     data_dir = os.environ.get(
         "CLINE_DATA_DIR", "/nas_train/app.e0031982/harness_work/cline_harness_data")
     _seed_cline_data_dir(data_dir)
-    ZHULONG_BIN = ["/usr/bin/bun", "run", "/nas_train/app.e0031982/harness/eda_platform/apps/cli/src/index.ts"]
+    _bun = shutil.which("bun") or os.path.expanduser("~/.bun/bin/bun")
+    ZHULONG_BIN = [_bun, "run", "/nas_train/app.e0031982/harness/eda_platform/apps/cli/src/index.ts"]
     def run_zhulong_impl(self, instance, workdir, timeout=3600):
         cmd = ZHULONG_BIN + ["-c", str(workdir), "--data-dir", data_dir,
                "-P", "openai-compatible", "-m", UNIFIED_MODEL, "-k", DUMMY_KEY,
                "--auto-approve", "true",
                "--compaction", "basic",
-               "--thinking", "low",
+               "--thinking", "none",
                "--json", instance["problem_statement"]]
         r = _run(cmd, workdir, timeout, env={
             "OPENAI_API_KEY": DUMMY_KEY,

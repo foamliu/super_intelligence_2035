@@ -274,11 +274,28 @@ class OpencodeDriver:
         return shutil.which("opencode") is not None
 
     def run(self, instance: dict, workdir: Path, timeout: int = 3600) -> DriverResult:
+        # Strip GitHub URLs from problem statement — doubao-pro sees the URL
+        # and wastes turns trying to fetch it via opencode's built-in web tool
+        # instead of reading/editing local files.  (2026-11-28 fix)
+        # Also add explicit instruction to EDIT existing files (not create new
+        # ones in /tmp/) — the model tends to write fix scripts to /tmp/ which
+        # are outside the git workdir and not captured as patches.
+        import re
+        ps = re.sub(r'https?://github\.com/\S+',
+                    '[URL removed - use local files]',
+                    instance["problem_statement"])
+        ps = ("IMPORTANT INSTRUCTIONS FOR THE AGENT:\n"
+              "1. Do NOT fetch any URLs. All code is already available as local files.\n"
+              "2. You MUST edit the EXISTING source files in the current directory to apply your fix.\n"
+              "3. Do NOT create new files in /tmp/ or any location outside the current directory.\n"
+              "4. Use the write/edit tool to modify existing files directly.\n"
+              "5. Your changes will be captured via git diff, so only edit files in this directory.\n\n"
+              + ps)
         cmd = [
             "opencode", "run",
             "--model", OPENCODE_MODEL,
             "--auto",
-            instance["problem_statement"],
+            ps,
         ]
         r = _run(cmd, workdir, timeout)
         r.harness = self.name
