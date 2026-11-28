@@ -1403,5 +1403,5 @@ gu7pf					case	CalibreOverlapArea-001	2026-11-28 09:01
 1795694029415_ly6i9.messages.json	yu23z	hfeg0plg89	354	layout_aether	case	EDA-Eval-DesignFlow-PathWidthFromRuler-001	2026-11-28 14:43	
 1795571157514_x3t64.messages.json	wenhanz	hfeg0plg91	663	layout_aether	parked		2026-11-28 14:57	env-debugging dominant: 200+ msgs pyAether lib deps (boost1.70/Qt5/libstdc++/OA missing), produce-task (invLx2 DRC prediction) thin & buried; complex multi-turn not clean single-turn deliverable; r1495 peek
 1795847256367_7tl3w	xxchen	hfeg0plg56	1467	physical_verify	parked		2026-11-28 22:16	xxchen plg56 brainstorming cline-agent workflow/skill design (AGENTS.md/skills/rep.sh HTML 升级为主动引导+填写工作台), drc/.gds/calibre kw 来自 project context 非真实 DRC produce-task, 同 6z0ga/7kizj/h8gjq 族非 physical_verify
-1795228793423_gohxq.messages.json	felixw	hfeg0pin004	29	physical_verify	claimed		2026-11-28 22:30	
+1795228793423_gohxq.messages.json	felixw	hfeg0pin004	29	physical_verify	case	EDA-Eval-DesignFlow-CalibreDrcRunsetBlankDiag-001	2026-11-28 22:49	
 1795663112280_gccyq.messages.json					parked		2026-11-28 22:30	cross-domain verification (xrun Verilog gate-level sim debug dut.v vs gld.v); drc/lvs kw from drcpa project-name + simlib_LVS.sv lib filename inflation not real DRC/LVS -> shard A
