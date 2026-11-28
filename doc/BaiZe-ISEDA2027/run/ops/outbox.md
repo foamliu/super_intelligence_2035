@@ -2382,3 +2382,104 @@ DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecate
 （写操作仅限：kill 本线 loop / 重启 .29 loop / 删 stale lock+gc.log）
 === DONE 298 | 2026-11-28 10:02:33 ===
 ```
+
+---
+
+## RUN_ID 299 · 2026-11-28 11:08:03 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+GIT=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "== A. pretrain S2 =="
+ps -eo pid,ppid,etime,args | grep -E '[t]rain\.sh|[p]retrain_gpt|[t]orchrun' | cut -c1-160 | head -8
+ls -l --time-style=+%F_%T /tmp/baize_s2_launch.log /tmp/baize_s1_baize2b_worker.log 2>/dev/null
+echo "  --- s2_launch tail ---"; tail -n 12 /tmp/baize_s2_launch.log 2>/dev/null | cut -c1-200
+echo "  --- worker tail ---"; tail -n 4 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-200
+echo "  blend_hot_switch_hits=$(grep -c 'blend.hot.switch' /tmp/baize_s1_baize2b_worker.log 2>/dev/null || echo 0)"
+echo "  latest_ckpt=$(cat /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt 2>/dev/null)"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used,temperature.gpu --format=csv,noheader 2>/dev/null | head -8
+echo
+echo "== B. harness =="
+ps -eo pid,ppid,etime,args | grep '[b]aize_harness_loop' | cut -c1-140
+ps -eo pid,ppid,etime,args | grep '[c]line ' | grep 'glm-5.2' | cut -c1-160
+tail -n 8 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-200
+ls -l --time-style=+%F_%T "$RUN/MEMORY_HARNESS.md"
+echo
+echo "== C. posttrain A5 =="
+curl -s -m 3 -o /dev/null -w "  8097=%{http_code}\n" http://127.0.0.1:8097/v1/models 2>/dev/null || echo "  8097 DOWN"
+curl -s -m 3 -o /dev/null -w "  tunnel3333=%{http_code}\n" http://127.0.0.1:3333 2>/dev/null || echo "  tunnel3333 DOWN"
+ps -eo pid,etime,args | grep -E '[5]run_eval|[r]un_cline_script|[b]aize_posttrain' | cut -c1-140 | head -6
+echo
+echo "== D. zhulong thermo =="
+ps -eo pid,etime,args | grep -E '[r]un_batch.sh|[r]un_one.sh' | cut -c1-140 | head -5
+echo
+echo "== E. git =="
+cd "$GIT" && git log -1 --format='  HEAD %h %ad %s' --date=iso
+echo "  dirty=$(git status --porcelain | wc -l) ahead_behind=$(git rev-list --left-right --count HEAD...origin/main 2>/dev/null)"
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 299 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap12 date=2026-11-28 11:08:03
+== A. pretrain S2 ==
+-rw-r--r-- 1 app.e0031982 app.adm 62760 2026-11-28_11:00:37 /tmp/baize_s1_baize2b_worker.log
+-rw-r--r-- 1 app.e0031982 app.adm  4036 2026-11-28_08:06:45 /tmp/baize_s2_launch.log
+  --- s2_launch tail ---
+  events    :
+      2026-11-28 07:55      615562  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1795815979.whag0pgpuap29.2245446.0
+      2026-11-28 05:30       14596  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1795814828.whag0pgpuap29.780408.0
+      2026-11-28 05:18    50221762  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1795157328.whag0pgpuap29.2601340.0
+      2026-11-20 01:22     9728818  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1794982260.whag0pgpuap29.3800664.0
+      2026-11-18 13:56       45844  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1794980435.whag0pgpuap29.1801089.0
+  log tail  :
+[2026-11-28 08:06:35] rank0 @ 10.239.2.12（后台 ssh）
+[2026-11-28 08:06:45] rank1 @ whag0pgpuap12（前台）
+[2026-11-28 08:06:45] 结束：worker_rc=126 master_rc=126
+[2026-11-28 08:06:45] 日志：/tmp/baize_s1_baize2b_worker.log / /tmp/baize_s1_baize2b_master.log ；摘要：/tmp/baize_s1_baize2b.log
+  | /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/scripts/train.sh: line 282: /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun: Argument list too long
+  --- worker tail ---
+[rank9]: torch.distributed.DistBackendError: NCCL error in: /pytorch/torch/csrc/distributed/c10d/NCCLUtils.cpp:77, remote process exited or there was a network error, NCCL version 2.27.3
+[rank9]: ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+[rank9]: Last error:
+[rank9]: socketPollConnect: connect to 10.239.8.12<48213> returned Connection refused, exceeded error retry count after 35 attempts
+  blend_hot_switch_hits=0
+0
+  latest_ckpt=350000
+0, 0 %, 1455 MiB, 28
+1, 0 %, 4 MiB, 26
+2, 0 %, 4 MiB, 26
+3, 0 %, 1455 MiB, 28
+4, 0 %, 4 MiB, 27
+5, 0 %, 4 MiB, 25
+6, 0 %, 729 MiB, 29
+7, 0 %, 4 MiB, 26
+
+== B. harness ==
+
+warning: There are too many unreachable loose objects; run 'git prune' to remove them.
+
+[push] ahead=0 behind=0
+[push] nothing of ours to commit.
+Everything up-to-date
+[push] push OK.
+[loop] 2026-11-28 09:56:52 WAITING=1 (async task running) → sleep 900s
+-rw-r----- 1 app.e0031982 app.adm 4141 2026-11-27_16:41:14 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+
+== C. posttrain A5 ==
+  8097=000
+  8097 DOWN
+  tunnel3333=000
+  tunnel3333 DOWN
+
+== D. zhulong thermo ==
+
+== E. git ==
+  HEAD 5e05bc8dba 2026-11-28 11:07:54 +0800 ops RUN_ID 299: all-line read-only status (pretrain S2 / harness / posttrain / zhulong)
+  dirty=212 ahead_behind=0	0
+（只读：未 kill / 未重启 / 未改任何文件）
+=== DONE 299 | 2026-11-28 11:08:05 ===
+```
