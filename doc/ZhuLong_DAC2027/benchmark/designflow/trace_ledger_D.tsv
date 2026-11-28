@@ -2098,3 +2098,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795598993855_jao1y	jiashengz	hfeg0pkn004	251	schematic_netlist	case	EDA-Eval-DesignFlow-SchWireAuditProduce-001	2026-11-28 11:57	
 1795138106729_dkeeq	xuebaok	hfeg0pkn004	254	schematic_netlist	parked		2026-11-28 12:07	wrong-domain: LPDDR6 vsim/verdi/SV monitor+genvector script flow = verification/eda_other (A), not D; verilog tokens masked verification; r1653 cross-domain miss
 1795510095533_8havr	jiashengz	hfeg0pkn004	248	schematic_netlist	case	EDA-Eval-DesignFlow-NetNameConsistAuditProduce-001	2026-11-28 12:20	r1653 mainline; netlist652+schematic274+aether222+pyaether71, jiashengz known D user new session, FRESH
+1795670295949_1zrj5	fxian	hfeg0plg74	326	schematic_netlist	case	EDA-Eval-DesignFlow-BitlineLeakDeckAssembleProduce-001	2026-11-28 12:46	
