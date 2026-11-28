@@ -3,10 +3,12 @@
 >
 > **用户原话**（逐字）：「加一条 pretrain 的职责：监控 S2 的训练，如果崩溃需要跟 data 协调后把训练修好。总之：pretrain 为预训练的健康负责！」
 >
+> **修正（2026-11-28 19:3x 用户令）**：「让它自己解决，遇到问题可以读取 data 记忆作为参考。」
+>
 > **一句话：pretrain 为预训练的健康负责。**
 > - **监控 S2**：step / loss / NaN·skip / GPU 利用率 / iter 推进，异常第一时间发现。
-> - **崩溃处置**：**先与 data 协调**（数据配比 / shard / DataLoader / OOM / 内存侧原因），共同定位根因，然后**把训练修好并拉起来**，直到恢复健康推进。
-> - **收口记录**：MEMORY 记「崩溃时刻 · 根因 · data 协同结论 · 修复项 · 重启命令 · 验收五项（iter 续上 / step ≤7.4s / loss 正常 / 0 NaN / 0 skip）」。
+> - **崩溃处置**：**自己定位、自己修、自己拉起**（数据配比 / shard / DataLoader / OOM / 内存侧都在你的范围）；需要时读 data 线的 `MEMORY_DATA.md` 与 `run/data/blendswitch/` 作参考，**不用等 data、不用协商**。直到恢复健康推进。
+> - **收口记录**：MEMORY 记「崩溃时刻 · 根因 · 参考来源（可含 data MEMORY / blendswitch 文档）· 修复项 · 重启命令 · 验收五项（iter 续上 / step ≤7.4s / loss 正常 / 0 NaN / 0 skip）」。
 
 
 
