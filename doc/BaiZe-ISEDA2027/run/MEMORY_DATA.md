@@ -6,8 +6,10 @@ WAITING: 0
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 崩溃根因链已查明 — **首次 12:10 崩溃 = shim bug（已修复）**，后续崩溃 = 僵尸进程导致 NCCL Duplicate GPU。
 > 🔧 **shim bug 已修复（12:12）**：旧版 `_patched_build_indices` 访问 `self.dataset_index`，但 `_build_indices()` 在 `__init__` 中 **先于** `self.dataset_index` 赋值调用 → AttributeError。修复：改用 `result[0]`/`result[1]`（`_orig_build_indices` 返回值）。两份 shim 已同步。
 
-> ✅ **心跳 · 2026-11-28 (R1133) — 方案 C fresh 全量复验 25/25 PASS · 全部交付确认 · 等 pretrain 清理僵尸+重启 S2**：
-> - **fresh 复验（R1133 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS + test_blend_hot_switch_integration.py 7/7 PASS = **25/25 PASS** ✅
+> 📦 R1133 心跳（2026-11-28·方案C fresh全量复验25/25 PASS·全部交付确认·等pretrain清理僵尸重启S2）已归档 → daily-memories-data/2026-11-28.md
+
+> ✅ **心跳 · 2026-11-28 (R1134) — 方案 C fresh 全量复验 25/25 PASS · 全部交付确认 · 等 pretrain 重启 S2**：
+> - **fresh 复验（R1134 本次实跑）**：test_blend_switch.py All PASS + test_bridge_compat.py 10/10 PASS + test_blend_hot_switch_integration.py 7/7 PASS = **25/25 PASS** ✅
 >   - zero_overlap=0（7 共享源 + 5 新源）· ratio max_dev=0.0000% · flag-off byte-identical · Bresenham 70/30 · checkpoint roundtrip
 > - **gen_blend --json --verify**：180 shards / weight_sum=1.000000 / 12 源 / BLEND=14,019B (13.7KB) < 100KB / blocked=False ✅
 > - **pre-blend 5/5 .done fresh 确认 ✅**：finemath / megamath_pb / nemotron / stackv3_filt / megamath_web — 各 16 .bin + 16 .idx + .done + MANIFEST.json
@@ -20,7 +22,7 @@ WAITING: 0
 > - **MEMORY_DATA.md** 26.7KB < 32KB ✅ · **pretrain 无待答问题** · **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
 
 > 📦 R1132 心跳（2026-11-28·方案C fresh全量复验25/25 PASS·全部交付确认·等pretrain清理僵尸重启S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1121~R1131 心跳（2026-11-28 12:58~16:0x·方案C fresh全量复验18~25/25 PASS·S2崩溃根因链查明·shim bug修复·等pretrain清理僵尸）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1121~R1133 心跳（2026-11-28 12:58~16:0x·方案C fresh全量复验18~25/25 PASS·S2崩溃根因链查明·shim bug修复·等pretrain清理僵尸）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1090–R1131 心跳（2026-11-28 09:2x~16:0x·方案C执行→交付→多轮fresh复验·25/25 PASS·S2崩溃根因链查明(EMFILE+shim bug+僵尸NCCL)·shim bug修复·等pretrain清理僵尸重启S2）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1089 心跳（2026-11-28 09:0x·方案C执行中·A补丁已应用(误报launcher已patch)·B 2/5 DONE+3/5 running·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1088 心跳（2026-11-28 08:4x·方案C执行中·A补丁已应用·B 5源后台运行·idx转换修复·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
