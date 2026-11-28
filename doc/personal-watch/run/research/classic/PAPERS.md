@@ -9,6 +9,7 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **464** 条（**第一百三十二轮 2026-11-28 12:0x +3 → 464**（B 轨补泛化理论 / 单阶段检测 / 归一化真空白）：Understanding deep learning requires rethinking generalization `1611.03530`（**4,949**，ICLR 2017；SOTA 卷积网络可拟合随机标签与随机噪声输入，显式正则化不改变定性结论，两层网络参数数超过数据点即具完美有限样本表达能力）/ SSD `1512.02325`（**34,378**，ECCV 2016；单次前向 + 多层特征图不同尺度 default boxes，VOC2007 test 300×300 **72.1% mAP @ 58 FPS** on Titan X）/ Group Normalization `1803.08494`（**5,226**，IJCV 期刊版；组内归一化与 batch size 无关，ResNet-50 ImageNet batch=2 比 BN 低 **10.6%** 误差）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-11-10T22:02:36Z` / `2015-12-08T04:46:38Z` / `2018-03-22T17:57:16Z`；`comments` 逐字 ICLR 2017 / ECCV 2016 / v3 修订说明）+ OpenAlex 3/3 `200`（4,949 / 34,378 / 5,226，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 泛化与记忆 / 单阶段多尺度检测 / 与 batch 解耦的归一化；本轮归属：harness +2 · vision +2 · pretrain +2 · data +1 · zhulong +1 · designflow +1 · posttrain +0）
 **本轮快照**：累计 **461** 条（**第一百三十一轮 2026-11-28 09:0x +3 → 461**（B 轨补离散重参数化 / 生成对抗 / 连续控制真空白）：Categorical Reparameterization with Gumbel-Softmax `1611.01144`（**6,997**，2016 预印本；用可微的 Gumbel-Softmax 采样替代不可微的类别采样，且可平滑退火回类别分布，在结构化输出预测与含类别隐变量的无监督生成上优于当时梯度估计器，并显著加速半监督分类）/ Wasserstein GAN `1701.07875`（**7,050**，2017 预印本；用 Earth-Mover/Wasserstein 距离替代 JS 散度训练 GAN，提升稳定性、缓解模式坍塌，并给出可用于调试与超参搜索的有意义学习曲线）/ Continuous control with deep reinforcement learning（DDPG）`1509.02971`（**18,429**，2015 预印本，`10 pages + supplementary`；把 DQN 思想搬到连续动作域：基于确定性策略梯度的 actor-critic、model-free，同一套算法/网络/超参解决 20+ 模拟物理任务，多数任务可直接从原始像素端到端学习）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-11-03T19:48:08Z` / `2017-01-26T21:10:29Z` / `2015-09-09T23:01:36Z`；DDPG `comments` 逐字 `10 pages + supplementary`）+ OpenAlex 3/3 `200`（6,997 / 7,050 / 18,429，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 离散变量重参数化 / 稳定生成对抗训练 / 连续动作 model-free RL；本轮归属：posttrain +2 · vision +1 · designflow +1 · pretrain +1 · data +0 · harness +0 · zhulong +0）
 **本轮快照（前一）**：累计 **458** 条（**第一百三十轮 2026-11-28 06:0x +3 → 458**（B 轨补激活 / 世界模型 / 表格 ML 真空白）：GELU `1606.08415`（**10,723**，2016 预印本；`xΦ(x)` 按输入数值加权、而非像 ReLU 那样按符号门控，视觉 / NLP / 语音任务上均优于 ReLU/ELU）/ Dream to Control / Dreamer `1912.01603`（**2,750**，ICLR 2020；在学到的世界模型紧凑潜空间里展开想象轨迹，把状态值的解析梯度反传回去，20 个视觉控制任务上数据效率 / 计算时间 / 最终性能更优）/ XGBoost `1603.02754`（**14,912**，KDD 2016；稀疏感知算法 + 加权分位草图做近似树学习，并从缓存访问 / 数据压缩 / 分片层面扩展到十亿级样本）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-06-27T19:20:40Z` / `2019-12-03T18:57:16Z` / `2016-03-09T01:11:51Z`；abs `comments` 逐字：GELU = `Trimmed version of 2016 draft`、Dreamer = `9 pages, 12 figures`、XGBoost = `KDD'16 changed all figures to type1`）+ OpenAlex 3/3 `200`（10,723 / 2,750 / 14,912，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 激活函数 / 潜空间世界模型 RL / 表格树提升系统；本轮归属：pretrain +1 · posttrain +1 · zhulong +1 · vision +2 · data +1 · harness +1 · designflow +1）
 **本轮快照（前一）**：累计 **455** 条（**第一百二十九轮 2026-11-28 03:0x +3 → 455**（B 轨补视觉注意力 / 阅读理解 / 点云真空白）：Show, Attend and Tell `1502.03044`（**10,308**，2015 预印本；软注意力在 **196（14×14）** 位置上取期望 + 硬注意力采样并最大化变分下界，可可视化注视显著物体，Flickr8k / Flickr30k / MS COCO SOTA）/ SQuAD `1606.05250`（**11,133**，EMNLP 2016；10 万+ 众包问题、答案必为原文片段，逻辑回归 F1 **51.0%** vs 简单基线 20%，人类 86.8%）/ PointNet `1612.00593`（**11,443**，CVPR 2017；直接消费点云并保持置换不变，统一分类 / 部件分割 / 语义解析）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2015-02-10T19:18:29Z` / `2016-06-16T16:36:00Z` / `2016-12-02T08:40:40Z`；abs `comments`：SQuAD = EMNLP 2016、PointNet = CVPR 2017、Show Attend 无）+ OpenAlex 3/3 `200`（10,308 / 11,133 / 11,443，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 视觉注意力 / 抽取式阅读理解与人类上限 / 置换不变集合编码；本轮归属：vision +2 · harness +1 · data +1 · pretrain +0 · posttrain +0 · zhulong +0 · designflow +0）
@@ -7990,3 +7991,48 @@
 | 与我们工作的关系 | **posttrain（主 · 连续动作 RL 基线）**：是 actor-critic / off-policy 连续控制的标准基线，「同一超参跨任务」的口径可直接对照我们的 RL 臂。<br>**zhulong（次 · 成本与超参口径）**：其「同一套超参跨多任务」的写法值得参照。<br>**vision（次 · 像素端到端）**：直接从原始像素学策略，与波形图/截图输入相关。<br>**pretrain / data / harness / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-28**（第一百三十一轮 · 09:0x） |
 | 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2015-09-09T23:01:36Z`、`updated` `2019-07-05T10:47:27Z`；`comments` 逐字 `10 pages + supplementary`；primary `cs.LG`）+ OpenAlex **`200`**（18,429 / 2015 / `preprint` / source = arXiv，查询日 2026-11-28）。「确定性策略梯度 actor-critic / model-free / 20+ 任务 / 同一算法-架构-超参 / 与全知规划器可比 / 原始像素端到端」取自摘要逐字；摘要无具体数值 ⇒ 不写未核数字。条目级查重：`1509.02971` 在 `PAPERS.md` **0 命中**。 |
+
+## 462. Understanding deep learning requires rethinking generalization
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Understanding deep learning requires rethinking generalization |
+| 作者（前 3） | Chiyuan Zhang · Samy Bengio · Moritz Hardt（arXiv 逐字核；另 Benjamin Recht / Oriol Vinyals，共 5 位） |
+| 年份 | **2016**（arXiv API `published` 逐字 `2016-11-10T22:02:36Z`；`updated` `2026-11-28T04:01:46Z`） |
+| 会议 / 期刊 | **ICLR 2017**（abs `comments` 逐字 `Published in ICLR 2017`；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **4,949**（OpenAlex `10.48550/arxiv.1611.03530`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1611.03530> ｜ `10.48550/arXiv.1611.03530` |
+| 一句话贡献 | 通过系统实验指出：**SOTA 卷积网络用 SGD 可轻松拟合训练集的随机标签**，该现象不被显式正则化定性改变，把真图换成**完全无结构的随机噪声**后同样成立；并给出理论构造说明「参数数超过数据点时，简单两层网络已具备完美有限样本表达能力」。⇒ 传统的「模型族容量 / 正则化」解释不足以说明大网络为何泛化，需要把**隐式正则化**纳入理论。 |
+| 与我们工作的关系 | **harness（主 · 评测必须区分「记住」与「泛化」）**：<b>动作</b>：任何「训练/验证都涨」的结论必须补两类对照——① 随机标签基线（把标签打乱后能否仍拟合）；② 随机像素/噪声输入基线。若随机标签也能拟合，则不能把训练集 loss 下降当作能力证据。<br>**data（次 · 去重与污染）**：与 Deduplicating Training Data（#119）配套，把「可记住 ⇒ 泄漏会以记忆形式出现」写进数据管线风险清单。<br>**pretrain（次）**：训练 loss /  perplexity 只能作优化诊断，不能单独作泛化结论；报告中至少并列 held-out 指标。<br>**zhulong（次 · 报告口径）**：消融表须同时报 train/test gap 与随机标签对照，否则「涨点」不可归因。<br>**vision / posttrain / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十二轮 · 12:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2016-11-10T22:02:36Z`、`updated` `2026-11-28T04:01:46Z`；`comments` 逐字 `Published in ICLR 2017`；primary `cs.LG`）+ OpenAlex **`200`**（4,949 / 2016 / `preprint` / source = arXiv，查询日 2026-11-28）。「随机标签可拟合 / 随机噪声输入同样成立 / 显式正则化不改变定性结论 / 两层网络完美有限样本表达」取自摘要逐字；摘要未给具体实验规模 ⇒ 不写未核数字。条目级查重：`1611.03530` 在 `PAPERS.md` **0 命中**。 |
+
+## 463. SSD: Single Shot MultiBox Detector
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SSD: Single Shot MultiBox Detector |
+| 作者（前 3） | Wei Liu · Dragomir Anguelov · Dumitru Erhan（arXiv 逐字核；另 Christian Szegedy / Scott Reed / Cheng-Yang Fu / Alexander C. Berg，共 7 位） |
+| 年份 | **2015**（arXiv API `published` 逐字 `2015-12-08T04:46:38Z`；`updated` `2026-11-28T04:01:50Z`；ECCV 2016 会议版） |
+| 会议 / 期刊 | **ECCV 2016**（abs `comments` 逐字 `ECCV 2016`；OpenAlex `type=conference-paper`、source = Lecture notes in computer science、`publication_year=2016`） |
+| 被引数 | **34,378**（OpenAlex `10.48550/arxiv.1512.02325`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1512.02325> ｜ `10.48550/arXiv.1512.02325` |
+| 一句话贡献 | **单网络单次前向检测**：把 bounding box 输出空间离散为「每个特征图位置 × 多种长宽比与尺度」的 default boxes，一次前向同时输出各类别存在分数与框偏移；**融合不同分辨率的多层特征图**以处理不同尺寸目标，**完全去掉 proposal 生成与像素/特征重采样**；VOC2007 test 上 300×300 输入达 **72.1% mAP / 58 FPS（NVIDIA Titan X）**，500×500 输入 **75.1% mAP**（摘要逐字）。 |
+| 与我们工作的关系 | **vision（主 · 单阶段多尺度检测 / 小目标）**：波形图里的窄脉冲、版图里的细小缺陷都属于「小目标」；SSD 的「多层特征图 + 每层不同尺度 default box」是 anchor 设计的直接参照。<b>动作</b>：视觉塔做区域/异常检测时，先做「多尺度特征融合 vs 单层高分辨率」的小规模消融，别默认单层就够。<br>**designflow（次 · 分层指标）**：把「不同尺寸目标分别报指标」借到题面分层——小尺寸/稀疏故障单独计数，避免被大样本平均掉（我们的观察，不是论文结论）。<br>**harness（次 · 速度口径）**：FPS / mAP 必须同报硬件与输入分辨率；报告只写「更快」不写分辨率与 GPU 即不可比。<br>**pretrain / posttrain / data / zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十二轮 · 12:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2015-12-08T04:46:38Z`、`updated` `2026-11-28T04:01:50Z`；`comments` 逐字 `ECCV 2016`；primary `cs.CV`）+ OpenAlex **`200`**（34,378 / 2016 / `conference-paper` / source = Lecture notes in computer science，查询日 2026-11-28）。72.1% mAP / 58 FPS / Titan X / 300×300 / 75.1% / 500×500 取自摘要逐字。条目级查重：`1512.02325` 在 `PAPERS.md` **0 命中**。 |
+
+## 464. Group Normalization
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Group Normalization |
+| 作者（前 3） | Yuxin Wu · Kaiming He（arXiv 逐字核，共 2 位） |
+| 年份 | **2018**（arXiv API `published` 逐字 `2018-03-22T17:57:16Z`；`updated` `2026-11-28T03:29:59Z`） |
+| 会议 / 期刊 | **arXiv 预印本**（abs `comments` 逐字为 v3 修订说明：`v3: Update trained-from-scratch results in COCO to 41.0AP...`）；OpenAlex `type=article`、source = **International Journal of Computer Vision**（期刊版） |
+| 被引数 | **5,226**（OpenAlex `10.48550/arxiv.1803.08494`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1803.08494> ｜ `10.48550/arXiv.1803.08494` |
+| 一句话贡献 | 指出 **BN 沿 batch 维归一化在 batch 小时统计不准、误差快速上升**；提出 **Group Normalization**：把通道分组、在**组内**算均值与方差，**计算与 batch size 无关**、在很宽的 batch 范围精度稳定；ResNet-50 / ImageNet 上 **batch=2 时比 BN 低 10.6% 误差**，常规 batch 与 BN 相当并优于其他归一化变体；可自然从预训练迁到微调，在 COCO 检测/分割与 Kinetics 视频分类上优于 BN 对应版本。 |
+| 与我们工作的关系 | **vision（主 · 小 batch 训练/微调视觉塔）**：<b>动作</b>：视觉塔在单卡/小 per-GPU batch 下做 LoRA 微调时，把「BN vs GN vs LayerNorm」列为预注册对照臂；若必须用 BN，则冻结其 running stats 或改 GN，避免 batch=2 时统计噪声污染消融。<br>**pretrain（次 · 归一化选型）**：多卡切分导致 per-GPU batch 变小时，BN 的「等效 batch」口径必须写清；GN 提供与 batch 解耦的参照。<br>**zhulong（次 · 口径）**：报告须写 per-GPU batch 与归一化方式，否则跨实验不可比。<br>**harness（次）**：同一超参在不同 batch 下不可直接比，评测表要显式标注。<br>**posttrain / data / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十二轮 · 12:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2018-03-22T17:57:16Z`、`updated` `2026-11-28T03:29:59Z`；`comments` 逐字为 v3 修订说明；primary `cs.CV`）+ OpenAlex **`200`**（5,226 / 2018 / `article` / source = International Journal of Computer Vision，查询日 2026-11-28）。10.6% / batch=2 / ResNet-50 / ImageNet / COCO / Kinetics 取自摘要逐字。条目级查重：`1803.08494` 在 `PAPERS.md` **0 命中**。 |
