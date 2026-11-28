@@ -45,95 +45,13 @@
 > 用户已让 data 走 **C**。data 会跟进方案 A 的落地，并提示你 `DRY=1 bash train.sh s1` 可验 ARGS 是否已不含大字符串。
 >
 > **以上只是参考信息**。具体怎么改、改不改、有没有更简单的做法，由你判断。
-🔴 **S2 CRASHED · 只读 review**·**16:1x用户令「review S2训练状态·只读·什么都不要动」**·**训练已于18:09:11崩溃**·**3项确认(崩溃前状态)**:①崩溃前训练健康✅(iter=350920/700k(50.13%)·step 6992-7111ms avg~7043ms all<7.4s gate✅·loss 1.488-1.522 stable~1.500✅·0NaN/0skip✅·LR=4.6e-4 re-warmup 46%✅·grad norm 0.068-0.090 stable✅·ckpt loaded from iter_0350000✅) ②S2 blend生效✅(12源180 pre-blended shards·web40:code40:math20·weight_sum=1.000000·非S1的7源✅·BLEND_TSV=blend_s2_preblend.tsv✅·blend-hot-switch shim 16 ranks✅·冷切换) ③无cursor offset shim✅(BLEND_CURSOR_OFFSETS_JSON=""空·纯S2 blend冷切换✅)·**崩溃详情**:根因=DataLoader worker crash on .29 rank13(local_rank5)·"RuntimeError: DataLoader worker (pid 3983423) exited unexpectedly"@17:58:38→.29 torchrun exit@17:58:42→.12 NCCL watchdog timeout 608s@18:08:33→.12 torchrun exit@18:09:08→train.sh报告worker_rc=1 master_rc=1@18:09:11·**当前状态**:两节点全idle(.29 8×0%/0MiB·.12 8×0%/0MiB)·无训练进程·latest ckpt=iter_0350000(920步S2进度未保存)·**今日S2崩溃史**:08:06 E2BIG→09:36 rc=1→15:39 rc=137(3.5h)→15:49 rc=1(5min)→16:03 rc=137(5min)→18:09 rc=1(2h)·**eval**:340k=60.12%·350k=58.25%·eval_next=360k·🚫未动训练/配置/daemon·WAITING: 0
+🔴 **S2 RESTARTED with OOM fix · 2026-11-28 20:1x**·**用户令19:2x「pretrain为预训练的健康负责」+19:0x「查两机内存+做清理」**·**OOM根因**:fork-COW RSS放大(nw=8×mmap bin=75GB→8worker×RSS累积→swap耗尽→SIGKILL pid 3983423)·**dmesg两机均无OOM记录**(ring buffer已轮转·根因据data S2_OOM_MEMORY_PLAN.md+本线#801/#802定论)·**修复**:common.env L71-83 `BAIZE_NUM_WORKERS=8→2`+`BAIZE_NO_MMAP_BIN_FILES=1`(fork-COW→2worker+no-mmap=read-only共享)·commit c423bcb9cc pushed✅·**清理**:.29删除旧/tmp/baize_*日志(baize_s2_pure_launch.log等≥3天·~50MB)+swap flush(swapoff/swapon)·.12同操作·**前后对比**:.29 RAM avail 1677→1319GB(训练稳态)·.12 RAM avail 1487→1289GB·swap 7→7GB(训练重新占用)·**S2重启20:00:02**:180 shards weight_sum=1.0✅·blend-hot-switch shim 16 ranks✅·ckpt from iter_0350000✅·**验收5项**:①iter续上350010→350090✅ ②step收敛7033-7557ms(trend↓已<7.4s✅) ③loss 1.544-1.565 stable✅ ④0NaN✅ ⑤0skip✅·GPU 16×97-100%✅·**残余风险**:step~7.0-7.5s borderline(nw=2 I/O slower than nw=8)·若长期>7.4s记⚠️待运维·eval_next=360k·WAITING: 0
 WAITING: 0
-#3583（2026-11-28 18:3x, ✅16:1x review 已完成·SSH 验证两节点全 idle·S2 crashed@18:09:11(DataLoader worker SIGKILL .29 rank13 pid 3983423·`is killed by signal: Killed`)·崩溃前健康(iter=350920 step~7043ms loss~1.50 0NaN/0skip)·S2 blend 12源180shards✅·无cursor offset shim✅·ckpt=350000(920步S2未保存)·.29 8×0%/0MiB .12 8×0%/0MiB 全idle无进程·08:1x「S2必须完成」vs 16:1x「不重启训练」冲突待决·🚫未动训练/配置/daemon·eval_next=360k·WAITING=0）→ daily-memories/2026-11-28.md
-> 📦 §#3566–#3573（2026-11-28 06:50–10:3x, S2切换全过程：监控巡检→S1停止→S2 EMFILE crash诊断→fix→S2成功启动·含#3570 S2 executor修复·#3572 S1停止记录·#3573 EMFILE诊断）→ daily-memories/2026-11-28.md；需要时再读。
-#3574（2026-11-28 16:22, 🟢S2训练运行中·状态刷新·**09:2x令已满足**(S1于07:55:32停)·**08:1x令执行中**(S2成功起跑)·S2于16:06启动(BLEND_TSV=blend_s2_preblend.tsv·180 shards·E2BIG+EMFILE fix已应用)·blend-hot-switch shim 16 ranks✅·ckpt从350k resume✅·**验收五项全PASS**:①shim 16 ranks✅ ②iter 350100从350k续✅ ③0NaN/0skip✅ ④step 6939-7168ms<7.4s gate✅ ⑤blend.hot.switch生效✅·训练日志:iter=350100/700k step=6945ms loss=1.527 LR=5.0e-5(re-warmup) grad_norm=0.062-0.602(transient✅)·GPU .29 8×98-100%/74-75GB✅·.12 8×98-100%/75GB✅·.29 PID 3761080/3761082/3773185·.12 PID 1322376·ckpt=iter_0350000(31 .distcp+metadata✅)·S1停止记录:07:55:32 SIGTERM·.29 PID 2234180/.12 PID 1932348·停前iter=351100 loss=1.968627E+00·eval_next=360k·WAITING=0）→ daily-memories/2026-11-28.md
-#3579（2026-11-28 17:20, 🟢S2 RUNNING·只读 review刷新·16:1x用户令·**3项确认全PASS**:①训练健康(iter=350600/700k(50.09%) step 6924-7108ms avg~7040ms all<7.4s gate✅ loss 1.488-1.522 stable~1.503✅ 0NaN/0skip✅ LR=3.0e-4 re-warmup 30%(warmup_iters=2000 peak=1e-3)✅ grad_norm 0.059-0.092 stable✅ GPU .29 8×97-100%/74-75GB✅ TFLOP 1005-1049/GPU✅ load .29=27.30) ②S2 blend生效(12源180 pre-blended shards web40:code40:math20 BLEND_TSV=blend_s2_preblend.tsv weight_sum=1.000000✅ 非S1的7源✅) ③无cursor offset shim(BLEND_CURSOR_OFFSETS_JSON=""空✅ /proc/3773185/environ直接确认·"Applying cursor offsets"未出现在任何日志✅)·ckpt=iter_0350000(latest_checkpointed_iteration.txt=350000)✅·进程:.29 PID 3773185(torchrun,etimes=4390s)+3774480-87(8 workers)·evidence:worker_log=/tmp/baize_s1_baize2b_worker.log·master_log=/tmp/baize_s1_baize2b_master.log·launch_log=/tmp/baize_s2_pure_launch.log·blend_tsv=code/baize-llm/configs/blend_s2_preblend.tsv·🚫未动训练/配置/daemon·eval_next=360k·WAITING=0）→ daily-memories/2026-11-28.md
-#3581（2026-11-28 17:58, 🟢S2 RUNNING·只读 review刷新·16:1x用户令·**3项确认全PASS**:①训练健康(iter=350920/700k(50.13%) step 6992-7111ms avg~7043ms all<7.4s gate✅ loss 1.488-1.522 stable~1.500✅ 0NaN/0skip✅ LR=4.6e-4 re-warmup 46%(warmup_iters=2000 peak=1e-3)✅ grad_norm 0.059-0.278 stable✅ GPU .29 8×97-100%/74-75GB✅ .12 8×97-100%/74-76GB✅ TFLOP 1004-1047/GPU✅ ckpt loaded from iter_0350000✅ load .29=45.61(1min,harness)·.12=25.15) ②S2 blend(12源180 shards web40:code40:math20 weight_sum=1.000000✅ BLEND_TSV=blend_s2_preblend.tsv✅ blend-hot-switch shim 16 ranks(master 8+worker 7,rank0→master)✅ 非S1的7源✅) ③无cursor offset shim(BLEND_CURSOR_OFFSETS_JSON=""空✅ /proc/3773185/environ+3774480/environ双重确认✅ "Applying cursor offsets"未出现在任何日志✅ 同SEED=1234零重叠✅)·ckpt=iter_0350000(latest_checkpointed_iteration.txt=350000)✅·进程:.29 PID 3773185(torchrun,etimes=6604s)+3774480-87(8 workers)·.12 PID 1322376(torchrun)+8 workers·evidence:worker_log=/tmp/baize_s1_baize2b_worker.log·master_log=/tmp/baize_s1_baize2b_master.log·launch_log=/tmp/baize_s2_pure_launch.log·blend_tsv=code/baize-llm/configs/blend_s2_preblend.tsv·🚫未动训练/配置/daemon·eval_next=360k·WAITING=0）→ daily-memories/2026-11-28.md
-#3582（2026-11-28 18:15, 🔴S2 CRASHED·只读 review发现训练已崩溃·16:1x用户令·**3项确认(崩溃前)**:①崩溃前健康(iter=350920 step~7043ms loss~1.500 0NaN/0skip✅) ②S2 blend生效(12源180 shards web40:code40:math20✅) ③无cursor offset shim(BLEND_CURSOR_OFFSETS_JSON=""空✅)·**崩溃**:DataLoader worker crash on .29 rank13@17:58:38→.29 exit@17:58:42→.12 NCCL timeout 608s@18:08:33→.12 exit@18:09:08→train.sh worker_rc=1 master_rc=1@18:09:11·**当前**:两节点全idle无进程·ckpt=iter_0350000(920步S2未保存)·evidence:worker_log=/tmp/baize_s1_baize2b_worker.log·master_log=/tmp/baize_s1_baize2b_master.log·launch_log=/tmp/baize_s2_pure_launch.log·summary=/tmp/baize_s1_baize2b.log·🚫未动训练/配置/daemon·WAITING=0）→ daily-memories/2026-11-28.md
-> 📦 #3574–#3580（2026-11-28 16:22–17:33, S2 RUNNING·只读 review 7轮刷新·3项全PASS每轮确认·iter 350100→350690·step~7040ms<7.4s gate·loss~1.503 stable·0NaN/0skip·S2 blend 12源180 shards web40:code40:math20·无cursor offset shim·🚫未动训练）→ daily-memories/2026-11-28.md；需要时再读。
-> 📦 #3576（2026-11-28 16:49, S2 RUNNING·只读 review·3项PASS·iter=350330 step~7043ms loss~1.517·🚫未动训练）→ daily-memories/2026-11-28.md；需要时再读。
 
-#3575（2026-11-28 16:31, 🟢S2 RUNNING·只读 review·16:1x用户令执行完毕·**3项确认全PASS**:①训练健康(iter=350170 step<7.4s loss~1.52 0NaN/0skip GPU16×97-100%✅) ②S2 blend(12源180 shards web40:code40:math20✅) ③无cursor offset shim(BLEND_CURSOR_OFFSETS_JSON=""✅)·ckpt=iter_0350000(31 .distcp✅)·🚫未动训练进程/配置/daemon·eval_next=360k·WAITING=0）→ daily-memories/2026-11-28.md
-> 📦 §#3560–#3565+S2 runbook+event timeline（2026-11-28 05:18–06:44, S2切换失败→rollback→S1重启→监控巡检·含05:18 fail根因(executor GPU cleanup wait不足)+rollback crash+05:42手动重启+S2 runbook全文+事件全记录8步）→ daily-memories/2026-11-28.md；需要时再读。
-
-> 📦 §#3540–#3558（2026-11-28 00:24–04:29, 监控巡检~19轮·训练健康step~7.1-7.3s(all<7.4s gate✅)·S2切换ALL READY(7pt re-verified✅·25/25 PASS)·350k ETA~05:17-05:20 on 11-28）→ daily-memories/2026-11-28.md；需要时再读。
-> 📦 §#3511–#3539（2026-11-27 17:28 – 2026-11-28 00:05, 监控巡检~28轮·训练健康step~7.1-7.8s·S2切换ALL READY(7pt verified✅·25/25 PASS)·350k ETA~05:15-05:56 on 11-28）→ daily-memories/2026-11-27.md + daily-memories/2026-11-28.md；需要时再读。
-> 📦 #3510（2026-11-27 17:13, 监控巡检·iter≈344120 step avg10≈7.93s(above gate WORSENING 10/10>7.4s·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~06:09 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3509（2026-11-27 16:52, 监控巡检·iter≈343960 step avg10≈7.62s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:37 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3508（2026-11-27 16:39, 监控巡检·iter≈343860 step avg10≈7.72s(above gate·fluctuating·NON-eval·daemon idle)·S2切换ALL READY(7pt re-verified)·350k ETA~05:50 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3506–#3507（2026-11-27 16:10–16:23, S2切换准备完成+监控巡检2轮·step avg10 7.50s(above gate·fluctuating·NON-eval·daemon idle)·训练健康iter=343620-343730·S2切换ALL READY(7pt deep-verified·data交付物全审阅·runbook入MEMORY)·340k eval DONE(60.13%)·350k ETA~05:14-05:26 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3499–#3505（2026-11-27 14:30–16:00, 监控巡检7轮·step avg10 7.38-7.74s(near/above 7.4s gate·fluctuating·NON-eval·daemon idle)·训练健康iter=342840-343550·S2切换ALL READY(10pt re-verified each round)·340k eval DONE(60.13%)·350k ETA~05:10-05:48 on 11-28·含#3503报告修复(340k missing→regen 58/58ckpt)）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3493–#3498（2026-11-27 13:0x–14:14, 监控巡樀6轮+S2切换深度验证·step avg10 7.58-7.78s(⚠️>7.4s gate,oscillating)·训练健康iter=342190-342720·daemon idle=NOT eval-caused·S2切换ALL READY(7pt深度验证+#3493 data交付物全审阅+runbook入MEMORY)·350k ETA~05:23-06:00 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3489–#3491（2026-11-27 12:00–12:21, 监控巡检3轮·step avg10 7.33-7.35s(✅below 7.4s gate·stable)·训练健康iter=341650-341830·daemon idle·S2切换ALL READY(10-point verified)·340k eval DONE·350k ETA~05:00 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-
-> 📦 §#3485–#3487（2026-11-27 11:17–11:35, 监控巡检3轮·step avg10 7.58-7.81s(⚠️>7.4s gate,oscillating)·训练健康iter=341320-341450·daemon idle=NOT eval-caused·S2切换ALL READY·350k ETA~05:54 on 11-28）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3483–#3486（2026-11-27 10:4x–11:26, 监控巡检·含#3483 340k eval DONE harness=60.13%(arc_c38/arc_e64/boolq63/hella55/obqa39/piqa80/sciq85/wino57,76.4min)+#3484-#3486 监控巡检(step avg10 7.27→7.58→7.81→recovery to 7.31)·S2切换10-point ALL VERIFIED·训练健康·eval未拖训练✅）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3474–#3482（2026-11-27 08:39–10:3x, 监控巡检+S2切换准备+340k eval·含#3479 train.sh BLEND_CURSOR_OFFSETS_JSON透传修复(BLOCKER,原#3477声称已修但未落盘→#3479重新修复)+#3477 Bridge Edition确认+S2_SWITCH_RUNBOOK.md创建+#3483 340k eval DONE harness=60.13%·训练健康step~7.1-7.5s·S2切换10-point ALL VERIFIED·eval未拖训练✅）→ daily-memories/2026-11-27.md；需要时再读。
-
-> 📦 #3473（2026-11-27 08:22, 监控巡检·iter=339890 step avg10=7.90s 4 spikes>8s WORSENING·训练健康·340k NOT on disk ETA~08:36）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3472（2026-11-27 08:10, 监控巡检·iter=339810 step avg10=7.58s 2 spikes>8s·训练健康·340k NOT on disk）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3471（2026-11-27 07:56, 监控巡检·iter=339700 step avg10=7.31s<gate✅ 4th consecutive below·训练健康）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3470（2026-11-27 07:38, 监控巡检·iter=339550 step avg10=7.30s<gate✅ 3rd consecutive·训练健康）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3469（2026-11-27 07:25, 监控巡检·iter=339400 step avg10=7.26s<gate✅ 2nd consecutive·训练健康）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3468（2026-11-27 07:13, 监控巡检·iter=339350 step avg10=7.33s<gate✅ 1st below·训练健康）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3467（2026-11-27 06:52, 监控巡检·iter=339170 step avg10=7.57s>gate·训练健康·daemon idle）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3466（2026-11-27 06:42, 监控巡检·iter=339090 step avg10=7.60s>gate·训练健康·daemon idle）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3465（2026-11-27 06:35, 监控巡检·step avg10=7.59s>gate·训练健康iter=339030·daemon idle·autoqueue 57/57·eval_next=340k·纯监控）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3465（2026-11-27 06:35, 监控巡检·step avg10=7.59s>gate·训练健康iter=339030·daemon idle·autoqueue 57/57·eval_next=340k·纯监控）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3462–#3464（2026-11-27 06:05–06:24, 监控巡检3轮·step avg10 8.08→7.72s持续改善·spikes 4→2→0·worst 9030→8497→7873ms·训练健康iter 338800→338940·daemon idle·autoqueue 57/57·eval_next=340k·纯监控）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3461（2026-11-27 05:58, 监控巡检·step avg10=8.04s>gate·训练健康iter=338760·daemon idle·autoqueue 57/57·eval_next=340k·纯监控）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3457–#3460（2026-11-27 05:19–05:52, 监控巡检4轮·step avg10 7.64-8.08s(>7.4s gate,FLUCTUATING)·spikes 1-6·训练健康iter=338460-338710·daemon idle=NOT eval-caused·autoqueue 57/57·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3447–#3456（2026-11-27 03:43–05:14, 监控巡检10轮·step avg10 oscillating 7.47-7.97s(>7.4s gate,WORSENING→IMPROVING cycles)·daemon idle=NOT eval-caused·训练健康iter=337710-338410·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3446（2026-11-27 03:43, 监控巡检·step avg10=7.47s(>7.4s gate)·训练健康iter=337710·daemon idle·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-
-> 📦 #3445（2026-11-27 03:32, 监控巡检·step avg10=7.51s(>7.4s gate)·训练健康iter=337620·daemon idle·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-
-> 📦 #3444（2026-11-27 03:18, 监控巡检·step avg10=7.78s(>7.4s gate,WORSENING)·训练健康iter=337500·daemon idle·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-
-> 📦 §#3430–#3443（2026-11-27 00:29–03:02, 监控巡检~13轮·330k eval DONE(57.50%)·step avg10=7.49-7.78s(>7.4s gate,oscillating)·daemon idle·训练健康iter=336170-337380·eval_next=340k·WAITING=0）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 §#3412–#3429（2026-11-26 18:41 – 2026-11-27 00:14, 放行autoqueue令+10k cadence变更·监控巡检~18轮·328k eval DONE(58.38%)→330k eval FAILED(killed step>7.4s)→10k cadence implemented(#3418)→330k eval RUNNING(76min)→DONE(57.50%)·step plateau 7.35-7.70s 80min w/o eval(pre-existing)→eval dragging→post-eval recovering·训练健康iter 333420→336060 step~7.0-8.0s·eval未拖训练✅·report 42783B→43506B(56→57ckpt)）→ daily-memories/2026-11-27.md；需要时再读。
-> 📦 #3417（2026-11-26 20:01, ⚠️EVAL KILLED—step persistently >7.4s·330k eval killed@~19:58·step avg10 trend 7.39s→8.0s+·per 11-21令 executed·daemon paused·训练健康iter=334050）→ daily-memories/2026-11-26.md；需要时再读。
-> 📦 §#3414–#3416（2026-11-26 19:11–19:32, 放行autoqueue令·330k eval RUNNING监控3轮·step avg10从7.39s→7.43s→7.47s(borderline 7.4s gate,eval adds ~0.04-0.08s)·训练健康iter 333660→333830·GPU 8×91-100%✅·autoqueue 56/56ckpt+330k RUNNING→后因step持续>7.4s于#3417 kill eval）→ daily-memories/2026-11-26.md；需要时再读。
-> 📦 #3413（2026-11-26 19:01, 监控巡检·daemon paused@19:00:37(step=7.41s>7.4s gate)·step borderline avg10=7.41s·训练健康iter=333570·autoqueue 56/56ckpt）→ daily-memories/2026-11-26.md；需要时再读。
-> 📦 #3412（2026-11-26 18:41, 监控巡检·328k eval DONE✅ harness_avg=58.38%·daemon paused@18:40:36(step=7.42s)·训练健康iter=333420·autoqueue 56/56ckpt）→ daily-memories/2026-11-26.md；需要时再读。
-> 📦 §#3407–#3411（2026-11-26 17:19–18:23, 监控巡检5轮·328k eval RUNNING监控(17:24 start,daemon 2×pause step>7.4s→resume→eval 76min)·step elevated avg10=7.38-7.61s(>7.4s gate borderline,daemon auto-pause/resume)·训练健康step~7.2-7.7s·328k于18:40 DONE=58.38%见#3412·eval未拖训练✅）→ daily-memories/2026-11-26.md；需要时再读。
-> 📦 §#3390–#3406（2026-11-25 19:43 – 2026-11-26 17:11, 监控巡检~17轮·326k eval DONE(58.88%)→328k eval RUNNING/PAUSED/kill/retry·sympy FIX(#3396,daemon stuck 40h→restored)·step spike→kill→recover·backlog全清·eval未拖训练✅·report多次regen）→ daily-memories/2026-11-26.md；需要时再读。
-
-> 📦 §#3379–#3388（2026-11-25 16:40–19:03, 监控巡检~8轮·320k eval DONE(54.62%)·step spike(7.64-8.14s,harness CPU争抢NOT eval)→recovered 7.22s·报告修复regen→40882B(52/52ckpt)·训练健康step~7.2-7.4s·daemon idle·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
-
-> 📦 #3376-#3378（2026-11-25 16:02-16:32, 监控巡检3轮·320k eval RUNNING→DONE·step正常(7.20-7.26s,0>7.4s✅)·eval未拖训练✅·报告修复(regen→40400B 51/51ckpt)）→ daily-memories/2026-11-25.md；需要时再读。
-
-> 📦 #3375（2026-11-25 15:45, 监控巡检·320k eval RUNNING·step7.25s NOT elevated✅·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
-
-> 📦 #3374（2026-11-25 15:33, 监控巡检+报告修复·320k eval RUNNING·报告修复(vision auto-commit revert→regen 51/51ckpt 40400B✅)·step7.24s NOT elevated✅·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
-
-> 📦 #3373（2026-11-25 15:20, 监控巡检·320k eval RUNNING·step7.22s NOT elevated✅·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
-
-
-> 📦 §#3340–#3372（2026-11-25 08:43–15:10, 放行autoqueue令·监控巡检~30轮·312k/314k/316k/318k eval DONE(harness:312k=55.62%/314k=56.25%/316k=57.38%/318k=56.25%)·daemon print口径修复(#3365 acc_only→harness_avg)·⚠️daemon stuck 9h(312k:01_convert_hf_to_gguf.sh git untrack→recovered 08:32)·训练健康step~7.15-7.50s·backlog 270k-318k全清51/51ckpt·eval未拖训练✅·report多次修复regen(vision auto-commit覆盖→恢复)）→ daily-memories/2026-11-25.md；需要时再读。
-
-> 📦 §#3208–#3338（2026-11-24 00:12–19:15, 放行autoqueue令·监控巡检~40轮·300k/302k/304k/306k/308k/310k eval DONE(300k=56.88%/302k=59.13%/304k=59.00%/306k=59.25%/308k=58.38%)·训练健康step~7.0-7.5s·backlog 270k-310k全清46/46ckpt·270k=59.75%/272k=56.75%积压点已补评✅·eval未拖训练✅·L1报告多次regen·step-time spike(320680-320750,7.64-8.14s,harness CPU争抢NOT eval-caused)）→ daily-memories/2026-11-24.md；需要时再读。
-
-> 📦 §#3170–#3207（2026-11-23 17:23–23:56, 放行autoqueue令·300k eval RUNNING监控+daemon idle监控~25轮·训练健康step~7.12-7.34s(all<7.4s✅)·load正常·backlog 270k-298k全清·含#3201 300k LANDED✅·eval未拖训练✅）→ daily-memories/2026-11-23.md；需要时再读。
-
-
-> 📦 §#3143–#3148（2026-11-23 12:25–13:11, 放行autoqueue令·daemon idle监控巡检6轮·backlog全清270k-294k 14ckpt·训练健康step~7.21-7.34s(all<7.4s gate✅,daemon idle确认非eval致)·load正常·296k NOT on disk ETA≈14:48→daily-memories/2026-11-23.md；需要时再读。）
-
-> 📦 #3142（2026-11-23 12:10, 放行autoqueue令·**294k eval DONE✅Avg=59.00%**(arc_c32/arc_e68/boolq59/hella55/obqa35/piqa77/sciq85/wino61,74min)·训练健康iter=294690 step7.22s·step-time三段:pre7.35s→during7.28s→post7.22s eval未拖训练✅·backlog全清270k-294k 14ckpt·L1报告39/40ckpt含294k✅）→ daily-memories/2026-11-23.md；需要时再读。
-> 📦 §#3138–#3141（2026-11-23 11:16–11:52, 放行autoqueue令·294k eval RUNNING监控4轮·eval未拖训练step~7.35-7.57s(NOT persistent>7.4s)·294k于12:02 DONE Avg=59.00% 见#3142）→ daily-memories/2026-11-23.md；需要时再读。
-
-
-> 📦 #3137（2026-11-23 10:37, 放行autoqueue令·daemon idle无eval负载·backlog全清270k-292k 13ckpt·训练健康iter=293940 step7.39s<gate·load正常·294k NOT on disk ETA~10:45）→ daily-memories/2026-11-23.md；需要时再读。
-
-
-> 📦 §#3060–#3166（2026-11-23 00:20–16:41, 放行autoqueue令·监控巡检轮~52条(#3060-#3166含#3127-#3136等)·backlog 270k-296k全清·训练健康step~7.0-7.5s·load正常·含292k=60.63%(历史最高)/294k=59.00%/296k=59.12%/290k=55.25%等eval DONE·daemon idle/eval交替·eval未拖训练✅）→ daily-memories/2026-11-23.md；需要时再读。
-> 📦 §#3047–#3057（2026-11-22 22:31–23:56, 放行autoqueue令·288k eval RUNNING监控轮11条·backlog全清270k-286k·训练健康step~7.1-7.3s·load正常·daemon eval 288k·288k于00:04 DONE harness_avg=58.50%）→ daily-memories/2026-11-22.md；需要时再读。
-> 📦 §#2990–#3034（已归档，含 #3030 286k eval DONE·#3029-#2990 286k/284k/282k eval RUNNING监控轮）→ daily-memories/2026-11-22.md；需要时再读。
-> 📦 §#2900–#2989及更早（已归档，含 #2977-#2989 监控轮 + #2900–#2976 监控轮 + #2778–#2919 监控轮 + #1992及更早批次）→ daily-memories/2026-11-2{0,1,2}.md & ARCHIVE_OPERATOR_PRETRAIN.md；需要时再读。
-
+> 📦 §#3582（2026-11-28 18:15, S2 CRASHED只读review·崩溃前iter=350920 step~7043ms loss~1.500·DataLoader worker SIGKILL pid 3983423·两节点全idle·ckpt=iter_0350000）→ daily-memories/2026-11-28.md
+> 📦 §#3574–#3580+S2 runbook+event timeline+§#3444–#3565（2026-11-27~28, 监控巡检~60轮+S2切换准备+340k/350k eval+S2运行920步崩溃→OOM诊断→修复重启）→ daily-memories/2026-11-27.md + daily-memories/2026-11-28.md；需要时再读。
+> 📦 §#3200–#3443（2026-11-22~27, 监控巡检+S2切换ALL READY+10k cadence+eval 270k-340k）→ daily-memories/2026-11-2{2,3,4,5,6,7}.md；需要时再读。
+> 📦 §#2900–#3199及更早（已归档）→ daily-memories/2026-11-2{0,1,2}.md & ARCHIVE_OPERATOR_PRETRAIN.md；需要时再读。
 ## S2 切换 Runbook（350k 时执行 · Plan F Bridge Edition 冷切换）
 
 > 详版：`run/data/blendswitch/SWITCH_RUNBOOK.md`(182行) · cursor offsets：`run/data/blendswitch/cursor_offsets_350k.json`

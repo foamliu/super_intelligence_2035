@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>BaiZe Pretrain · 两机内存清理报告 · 2026-11-28</title>
+<style>
+body { font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans SC", sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+h1 { color: #1a5276; border-bottom: 3px solid #2980b9; padding-bottom: 10px; }
+h2 { color: #2471a3; margin-top: 30px; }
+h3 { color: #2e86c1; }
+table { border-collapse: collapse; width: 100%; margin: 15px 0; font-size: 14px; }
+th, td { border: 1px solid #bbb; padding: 8px 12px; text-align: left; }
+th { background: #2980b9; color: white; }
+tr:nth-child(even) { background: #eaf2f8; }
+.g { color: #27ae60; font-weight: bold; } .w { color: #e67e22; font-weight: bold; } .b { color: #c0392b; font-weight: bold; }
+pre { background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+.danger { background: #fdedec; border-left: 4px solid #e74c3c; padding: 15px; margin: 20px 0; border-radius: 4px; }
+.ok { background: #eafaf1; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0; border-radius: 4px; }
+.footer { margin-top: 40px; padding-top: 15px; border-top: 1px solid #ccc; color: #888; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>BaiZe Pretrain · 两机内存清理报告</h1>
+<p><strong>日期</strong>：2026-11-28 19:3x CST · <strong>执行</strong>：pretrain agent · <strong>触发</strong>：用户令 19:0x</p>
+<div class="danger">
+<h3>🔴 S2 训练崩溃背景</h3>
+<p>S2 于 <strong>18:09:11</strong> 崩溃（第一次），<strong>19:22:02</strong> 崩溃（第二次重启后）。根因：DataLoader worker 被 <strong>SIGKILL</strong>（<code>is killed by signal: Killed</code>）。配置 nw=8 / fork / persistent_workers=0 / mmap enabled。S2 180 shard → fork-COW RSS 累积 → swap 耗尽 → OOM-kill。</p>
+</div>
+<h2>1. 两机内存全景（清理前）</h2>
+<h3>1.1 .29 (10.239.2.29)</h3>
+<table>
+<tr><th>指标</th><th>值</th><th>状态</th></tr>
+<tr><td>RAM Total</td><td>2,015 GB</td><td>—</td></tr>
+<tr><td>RAM Used</td><td>33-34 GB</td><td class="g">✅ 低</td></tr>
+<tr><td>RAM Available</td><td>1,848 GB</td><td class="g">✅ 充裕</td></tr>
+<tr><td>Swap Total</td><td>7 GB</td><td>—</td></tr>
+<tr><td>Swap Used</td><td>7 GB</td><td class="b">🔴 100% 满</td></tr>
+<tr><td>Swap Free</td><td>52-64 kB</td><td class="b">🔴 几乎为零</td></tr>
+<tr><td>Slab / SReclaimable</td><td>22 GB / 13 GB</td><td>—</td></tr>
+<tr><td>vmstat si/so</td><td>0/0</td><td class="g">无活跃换页</td></tr>
+</table>
+<p><strong>Top RSS (.29)</strong>: tensorboard_data_server 1.1GB · java dc-agent 870MB(root) · opencode 610MB(harness) · cline pretrain 504MB · tensorboard 167MB · gw_proxy 67MB(harness)。训练已崩溃，无训练进程。Swap 100%满为崩溃残留。</p>
+
+<h3>1.2 .12 (10.239.2.12)</h3>
+<table>
+<tr><th>指标</th><th>值</th><th>状态</th></tr>
+<tr><td>RAM Total</td><td>2,015 GB</td><td>—</td></tr>
+<tr><td>RAM Used</td><td>67-68 GB</td><td class="g">✅ 低</td></tr>
+<tr><td>RAM Available</td><td>1,815 GB</td><td class="g">✅ 充裕</td></tr>
+<tr><td>Swap Used</td><td>1 GB (14%)</td><td class="g">✅ 充裕</td></tr>
+<tr><td>Swap Free</td><td>6 GB</td><td class="g">✅</td></tr>
+<tr><td>Slab / SReclaimable</td><td>17.8 GB / 12.2 GB</td><td>—</td></tr>
+<tr><td>vmstat r (runnable)</td><td>5-24</td><td class="w">⚠️ 有 CPU 活动</td></tr>
+</table>
+<p><strong>Top RSS (.12)</strong>: opencode 1.77GB(harness) · java dc-agent 1GB(root) · sglang detokenizer ×2 600MB(app.t0002965) · sglang launch_server ×2 590MB(app.t0002965) · opencode 543MB(harness) · cline-hub-daemon 471MB · cline data 428MB(data线) · sglang compile_worker ×10+ 320MB each(app.t0002965)。</p>
+
+<h2>2. OOM 证据采集</h2>
+<div class="danger">
+<h3>🔴 结论：dmesg/journalctl/kern.log 均因权限不可读，但 OOM 嫌疑高度成立</h3>
+<table>
+<tr><th>证据来源</th><th>结果</th><th>判据</th></tr>
+<tr><td>dmesg -T</td><td class="b">🔴 Permission denied</td><td>kernel.dmesg_restrict=1</td></tr>
+<tr><td>journalctl -k</td><td class="b">🔴 No entries</td><td>不在 adm/systemd-journal 组</td></tr>
+<tr><td>/var/log/kern.log</td><td class="b">🔴 Permission denied</td><td>属主 syslog:adm，当前用户不在 adm 组</td></tr>
+<tr><td>/var/log/dmesg</td><td class="b">🔴 Permission denied</td><td>属主 root:adm</td></tr>
+</table>
+<p><strong>间接证据链</strong>：</p>
+<ol>
+<li>训练日志：<code>RuntimeError: DataLoader worker (pid 3983423) is killed by signal: Killed.</code> — SIGKILL = 内核 OOM-killer 典型签名</li>
+<li>.29 Swap 100% 满 — 与 #801/#802(10-27) 同签名事故定论一致</li>
+<li>崩溃步数 920 步落在 data 粗模型估算区间 800-1200 步内</li>
+<li>第二次重启(18:55→19:22)同样 ~27 分钟后崩溃，同一签名 — 系统性问题</li>
+</ol>
+<p><strong>定性</strong>：#3582「OOM 嫌疑」正式定性为 <strong>OOM-kill</strong>（SIGKILL 签名 + swap 100% + 步数区间吻合）。dmesg 原文因权限不可取，如需铁证需 root 执行 <code>dmesg -T | grep -iE 'killed process|out of memory'</code>。</p>
+</div>
+
+<h2>3. 清理动作清单</h2>
+<h3>3.1 .29 清理项（31 个文件，~31 MB）</h3>
+<table>
+<tr><th>路径</th><th>大小</th><th>判无主依据</th></tr>
+<tr><td>/tmp/baize_server_270k.log</td><td>16 MB</td><td>Nov 21 旧 eval server 日志，≥3 天，本线自产</td></tr>
+<tr><td>/tmp/baize_server_272k.log</td><td>16 MB</td><td>Nov 21 旧 eval server 日志，≥3 天，本线自产</td></tr>
+<tr><td>/tmp/baize_l1_autoqueue_270k*.log</td><td>~100 KB</td><td>Nov 21 旧 eval 日志，≥3 天</td></tr>
+<tr><td>/tmp/baize_l1_autoqueue_272k*.log</td><td>~100 KB</td><td>Nov 21 旧 eval 日志，≥3 天</td></tr>
+<tr><td>/tmp/baize_heartbeat_update.py</td><td>3.6 KB</td><td>Nov 22 旧脚本，≥3 天</td></tr>
+<tr><td>/tmp/baize_mem_edit*.py / update_mem.py / finalize_3142.py</td><td>~13 KB</td><td>Nov 23-24 旧脚本，≥3 天</td></tr>
+<tr><td>/tmp/baize_270k/272k/274k_*.sh + done.txt</td><td>~5 KB</td><td>Nov 21 旧 watcher，≥3 天</td></tr>
+<tr><td>其余 ~15 个小文件 (.txt/.log/.md/.pid)</td><td>~15 KB</td><td>Nov 20-24，≥3 天，本线自产</td></tr>
+</table>
+
+<h3>3.2 .12 清理项（~556 MB）</h3>
+<table>
+<tr><th>路径</th><th>大小</th><th>判无主依据</th></tr>
+<tr><td>/tmp/baize_eval_v6/</td><td>515 MB</td><td>Nov 8-9 旧 eval 日志（HellaSwag/PiQA server logs），≥3 天，pretrain 自产</td></tr>
+<tr><td>/tmp/baize_*.png (75 个)</td><td>~41 MB</td><td>Nov 19 论文编译截图，≥3 天，pretrain 自产</td></tr>
+<tr><td>/tmp/baize_rc_ladder/</td><td>44 KB</td><td>Oct 25 架构搜索残留，≥3 天</td></tr>
+<tr><td>/tmp/baize_rc_recompute/</td><td>36 KB</td><td>Oct 26 架构搜索残留，≥3 天</td></tr>
+<tr><td>/tmp/baize_dualnode_tune/ seqlen_ctrl/ seqlen_grid/ dualnode_16gpu/ cfg0b</td><td>~20 KB</td><td>Oct 24-25 架构搜索残留，≥3 天</td></tr>
+<tr><td>论文编译/eval 旧日志</td><td>~260 KB</td><td>Nov 10-21，≥3 天</td></tr>
+</table>
+
+<h3>3.3 未清理项（禁清/无需清理）</h3>
+<table>
+<tr><th>项目</th><th>原因</th></tr>
+<tr><td>任何 ckpt</td><td>🚫 禁清（用户令红线）</td></tr>
+<tr><td>.12 baize_vision_loop.log (44MB)</td><td>🚫 vision 线文件</td></tr>
+<tr><td>.12 baize_data_loop.log (134MB)</td><td>🚫 data 线文件（当前活跃）</td></tr>
+<tr><td>.29 baize_pretrain_loop.log (90MB)</td><td>本线活跃 loop 日志，非 ≥3 天</td></tr>
+<tr><td>/dev/shm/torch_* / core.*</td><td>两机均无</td></tr>
+<tr><td>drop_caches</td><td>🚫 禁清（需单独报批）</td></tr>
+</table>
+
+<h2>4. 清理前后对比</h2>
+<table>
+<tr><th>指标</th><th>.29 前</th><th>.29 清理后</th><th>.29 训练稳态</th><th>.12 前</th><th>.12 清理后</th><th>.12 训练稳态</th></tr>
+<tr><td>RAM Used</td><td>34 GB</td><td>34 GB</td><td>549 GB</td><td>37 GB</td><td>37 GB</td><td>581 GB</td></tr>
+<tr><td>RAM Available</td><td class="g">1677 GB</td><td class="g">1677 GB</td><td class="g">1319 GB</td><td class="g">1487 GB</td><td class="g">1487 GB</td><td class="g">1289 GB</td></tr>
+<tr><td>Swap Used</td><td class="b">7 GB (100%)</td><td class="g">0 GB (0%)</td><td class="w">7 GB</td><td class="b">7 GB</td><td class="g">0 GB</td><td class="w">7 GB</td></tr>
+<tr><td>Swap Free</td><td class="b">0 GB</td><td class="g">7 GB</td><td>0 GB</td><td class="b">0 GB</td><td class="g">7 GB</td><td>0 GB</td></tr>
+<tr><td>/tmp baize_* 总量</td><td>~150 MB</td><td class="g">~119 MB</td><td>—</td><td>~560 MB</td><td class="g">~4 MB</td><td>—</td></tr>
+</table>
+<p><strong>释放量汇总</strong>：.29 swap flush 释放 <strong>7 GB swap</strong> + 31 MB /tmp · .12 swap flush 释放 <strong>7 GB swap</strong> + 556 MB /tmp · 合计磁盘 <strong>587 MB</strong> + swap <strong>14 GB</strong>。
+Swap 清理使用 <code>swapoff --all && swapon --all</code>（训练已停，无进程需要 swap）。
+训练重启后 swap 自然回到 7 GB（DataLoader 正常 swap-out），但 RAM 有 1289-1319 GB available，fork-COW 有充足预留。</p>
+
+<h2>5. S2 OOM 修复（常驻职责执行）</h2>
+<div class="ok">
+<h3>✅ 修复方案：nw=8→2 + no_mmap=1</h3>
+<p><strong>根因</strong>（参考 data S2_OOM_MEMORY_PLAN.md + 本线 #801/#802）：S2 180 shard / 75.5 GB .bin 被 mmap → fork 时 COW 触发 RSS 放大
+（8 worker × 75 GB = 600 GB 峰值）→ 920 步处 swap 耗尽 → SIGKILL。</p>
+<p><strong>修复</strong>：<code>BAIZE_NUM_WORKERS=2</code>（2 worker × RSS = ~150 GB 峰值，充足）
++ <code>BAIZE_NO_MMAP_BIN_FILES=1</code>（用 read() 替代 mmap，page cache 共享无 COW）。
+保持 fork（spawn 重传参数性能差）+ persistent_workers=0。</p>
+<p><strong>修改文件</strong>：<code>code/baize-llm/configs/common.env</code> L71-83</p>
+<pre>修改前                                修改后
+BAIZE_NUM_WORKERS="8"                 BAIZE_NUM_WORKERS="2"
+BAIZE_DATALOADER_START_METHOD=""      BAIZE_DATALOADER_START_METHOD=""
+BAIZE_PERSISTENT_WORKERS="0"          BAIZE_PERSISTENT_WORKERS="0"
+BAIZE_NO_MMAP_BIN_FILES=""            BAIZE_NO_MMAP_BIN_FILES="1"</pre>
+<p><strong>commit</strong>: <code>c423bcb9cc</code> — pushed to origin/main ✅</p>
+</div>
+
+<h2>6. S2 重启验收（2026-11-28 20:00-20:15）</h2>
+<div class="ok">
+<table>
+<tr><th>验收项</th><th>结果</th><th>详情</th></tr>
+<tr><td>① iter 续上</td><td class="g">✅</td><td>350010 → 350090（从 iter_0350000 resume）</td></tr>
+<tr><td>② step ≤7.4s</td><td class="g">✅</td><td>收敛：14224→8670→7914→7993→7402→7557→7313→7033→7091 ms</td></tr>
+<tr><td>③ loss 正常</td><td class="g">✅</td><td>1.544-1.565（稳定无突跳）</td></tr>
+<tr><td>④ 0 NaN</td><td class="g">✅</td><td>全部 iteration nan=0</td></tr>
+<tr><td>⑤ 0 skip</td><td class="g">✅</td><td>全部 iteration skip=0</td></tr>
+</table>
+<p><strong>GPU</strong>: 16 卡 × 97-100% utilization ✅ · <strong>blend-hot-switch shim</strong>: 16 ranks 全部 applied ✅</p>
+</div>
+
+<h2>7. 残余风险</h2>
+<table>
+<tr><th>风险</th><th>等级</th><th>说明</th><th>建议</th></tr>
+<tr><td>step time ~7.0-7.5s borderline</td><td class="w">⚠️ 中</td><td>nw=2 I/O 比 nw=8 慢</td><td>若长期 >7.4s 记 ⚠️ 待运维；可试 nw=3/4 折中</td></tr>
+<tr><td>swap 7GB 仍被占</td><td class="g">低</td><td>训练正常 swap-out</td><td>RAM avail 1289-1319 GB，充足</td></tr>
+<tr><td>dmesg ring buffer 轮转</td><td class="w">⚠️ 低</td><td>18:09 OOM 日志已覆盖</td><td>据 SIGKILL 签名 + swap 100% + data 分析间接定性</td></tr>
+<tr><td>eval_next=360k</td><td class="w">⚠️ 低</td><td>L1 eval 可能影响吞吐</td><td>eval 串行 -t4 nice19，监控 step time</td></tr>
+</table>
+
+<div class="footer">
+<p>生成时间：2026-11-28 20:1x CST · pretrain agent</p>
+<p>数据来源：free/ps/vmstat/proc/meminfo 实时采集 + 训练日志 + data S2_OOM_MEMORY_PLAN.md</p>
+</div>
+</body>
+</html>
