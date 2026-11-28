@@ -3,15 +3,22 @@
 WAITING: 0
 
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
-> 🔧 **S2 献计献策（08:2x 用户令）**：S2 第三次崩溃根因 = **NCCL "Duplicate GPU detected"**，非 data 问题，详见下方 R1117 心跳。
+> 🔧 **S2 献计献策（08:2x 用户令）**：S2 崩溃根因链已查明 — **首次 12:10 崩溃 = shim bug（已修复）**，后续崩溃 = 僵尸进程导致 NCCL Duplicate GPU。
+> 🔧 **shim bug 已修复（12:12）**：旧版 `_patched_build_indices` 访问 `self.dataset_index`，但 `_build_indices()` 在 `__init__` 中 **先于** `self.dataset_index` 赋值调用 → AttributeError。修复：改用 `result[0]`/`result[1]`（`_orig_build_indices` 返回值）。两份 shim 已同步。
 
-> ✅ **心跳 · 2026-11-28 (R1125) — 方案 C fresh 复验 18/18 PASS · gen_blend --verify 180 shards/BLEND=14,020B · 5/5 .done · 等 pretrain 清理僵尸+启动 S2**：
-> - **fresh 复验（本次实跑 R1125）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio max_dev=0.0000%) + test_bridge_compat.py 10/10 PASS = **18/18 PASS** ✅
+> ✅ **心跳 · 2026-11-28 (R1126) — shim bug 修复确认 + fresh 复验 18/18 PASS · 等 pretrain 清理僵尸+重启 S2**：
+> - **🔴 S2 崩溃根因分析（12:10 crash traceback 实测）**：
+>   - 12:10:03 crash：`AttributeError: 'BlendedDataset' object has no attribute 'dataset_index'` @ `blend_hot_switch_bridge_compat.py:59`（旧版 `if self.dataset_index is None:`）
+>   - 根因：`BlendedDataset.__init__` L86 = `self.dataset_index, self.dataset_sample_index = self._build_indices()` → `_build_indices()` 在赋值 **之前** 调用 → `self.dataset_index` 不存在
+>   - **修复（12:12 已应用）**：改用 `result = _orig_build_indices(self)` 的返回值 `result[0]`/`result[1]`，不访问 `self.*`
+>   - 两份 shim 已同步（`code/BaiZe-ISEDA2027/` + `code/baize-llm/pretrain/`，diff=0 ✅）
+> - **后续崩溃（13:57）= NCCL Duplicate GPU**：12:10 crash 留下僵尸进程占 GPU → 13:57 重试时 NCCL 检测到同一 GPU 上 2 个 rank → `ncclInvalidUsage` → 全部 SIGTERM
+> - **fresh 复验（R1126 本次实跑）**：test_blend_switch.py 8/8 PASS + test_bridge_compat.py 10/10 PASS = **18/18 PASS** ✅
 > - **gen_blend --verify**：180 shards / weight_sum=1.000000 / 12 源全部指向 pre-blend 目录 / BLEND=14,020B < 100KB ✅
-> - **pre-blend 5/5 .done ✅**（elapsed 确认）：finemath(106s) / megamath_pb(425s) / nemotron(1865s) / stackv3_filt(4293s) / megamath_web(2798s) · 每源 16 .bin 确认 ✅
-> - **TSV**：`blend_s2_preblend.tsv` 3515B · 12 源 · 180 shards ✅
-> - **方案 A 补丁（fresh grep 确认）**：`train.sh` L99-110 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L283-292 `@` 前缀检测（两份: `/nas_train/app.e0031982/code/baize-llm/pretrain/` + `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/`）✅ · 当前 BLEND=14KB 走原路径（patch 作为安全网）
-> - **S2 阻塞**：9 僵尸 pretrain_launcher 进程导致 NCCL Duplicate GPU → **pretrain 职责** · data 建议两节点 `pkill -9 -f pretrain_launcher` 后重试
+> - **pre-blend 5/5 .done ✅**：finemath(106s) / megamath_pb(425s) / nemotron(1865s) / stackv3_filt(4293s) / megamath_web(2798s)
+> - **TSV**：`blend_s2_preblend.tsv` 12 源 · 180 shards · BLEND=14,020B inline ✅
+> - **方案 A 补丁**：`train.sh` L99-108 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L284 `@` 前缀检测 ✅ · 当前 BLEND=14KB 走原路径（patch 作为安全网）
+> - **🔴 pretrain 需做的（data 不执行）**：① 两节点 `pkill -9 -f pretrain_launcher` ② `nvidia-smi` 确认全 ≤4MiB ③ 重启 S2（命令见 SWITCH_RUNBOOK.md §5）④ 验证日志出现 `[blend-hot-switch] Applying cursor offsets` + `Cursor offsets applied`
 > - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
 
 > 📦 R1121~R1123 心跳（2026-11-28 15:0x~16:0x·方案C fresh全量复验18/18 PASS·等pretrain清理9僵尸）已归档 → daily-memories-data/2026-11-28.md
