@@ -1,4 +1,42 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 299 -->
+## RUN_ID 299 — **全线只读体检：pretrain S2 / harness / posttrain / zhulong（2026-11-28 11:1x · 用户令「查看进展」）**
+
+> 只读：不 kill / 不重启 / 不改文件。重点核实 **S2 是否真的起来了**（data 已 4 轮报告「等 pretrain 启动 S2」）。
+
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+GIT=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "== A. pretrain S2 =="
+ps -eo pid,ppid,etime,args | grep -E '[t]rain\.sh|[p]retrain_gpt|[t]orchrun' | cut -c1-160 | head -8
+ls -l --time-style=+%F_%T /tmp/baize_s2_launch.log /tmp/baize_s1_baize2b_worker.log 2>/dev/null
+echo "  --- s2_launch tail ---"; tail -n 12 /tmp/baize_s2_launch.log 2>/dev/null | cut -c1-200
+echo "  --- worker tail ---"; tail -n 4 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-200
+echo "  blend_hot_switch_hits=$(grep -c 'blend.hot.switch' /tmp/baize_s1_baize2b_worker.log 2>/dev/null || echo 0)"
+echo "  latest_ckpt=$(cat /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt 2>/dev/null)"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used,temperature.gpu --format=csv,noheader 2>/dev/null | head -8
+echo
+echo "== B. harness =="
+ps -eo pid,ppid,etime,args | grep '[b]aize_harness_loop' | cut -c1-140
+ps -eo pid,ppid,etime,args | grep '[c]line ' | grep 'glm-5.2' | cut -c1-160
+tail -n 8 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-200
+ls -l --time-style=+%F_%T "$RUN/MEMORY_HARNESS.md"
+echo
+echo "== C. posttrain A5 =="
+curl -s -m 3 -o /dev/null -w "  8097=%{http_code}\n" http://127.0.0.1:8097/v1/models 2>/dev/null || echo "  8097 DOWN"
+curl -s -m 3 -o /dev/null -w "  tunnel3333=%{http_code}\n" http://127.0.0.1:3333 2>/dev/null || echo "  tunnel3333 DOWN"
+ps -eo pid,etime,args | grep -E '[5]run_eval|[r]un_cline_script|[b]aize_posttrain' | cut -c1-140 | head -6
+echo
+echo "== D. zhulong thermo =="
+ps -eo pid,etime,args | grep -E '[r]un_batch.sh|[r]un_one.sh' | cut -c1-140 | head -5
+echo
+echo "== E. git =="
+cd "$GIT" && git log -1 --format='  HEAD %h %ad %s' --date=iso
+echo "  dirty=$(git status --porcelain | wc -l) ahead_behind=$(git rev-list --left-right --count HEAD...origin/main 2>/dev/null)"
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 299 | $(date '+%F %T') ==="
+```
 <!-- RUN_ID: 298 -->
 ## RUN_ID 298 — **修复 harness agent loop：按 PID 重启 + 四证验收（2026-11-28 10:0x · 用户令）**
 
