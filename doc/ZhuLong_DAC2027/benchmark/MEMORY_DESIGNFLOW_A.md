@@ -46,5 +46,5 @@ WAITING: 0（r1617: fullscan 常驻令·teeth-guard 监控轮·只读·0 改判�
 → r1028 及更早详块见 ARCHIVE_OPERATOR_DESIGNFLOW_A.md（2026-11-23 及更早, Lite 修复主体 + casemaking era）
 
 
-> ⚠️ 同步事故自报合集（均 additive/无丢失/无 force-push, A 文件内容正确, 事后两仓 0/0 sync 工作树 clean）: r1045/r1137/r1310/r1334/r1420/r1428/r1430/r1434/r1444/r1510/r1511/r1558/r1589. **统一教训**: 共享工作树下别线 broad `git add` 会扫入本人 in-flight 改动 → (1) commit 须带 pathspec `git commit -m msg -- <A paths>`(`--` 必在 `-m` 后); (2) fetch 后立即 add+commit+push 缩短窗口; (3) `git add` 带 pathspec 不够——`git commit` 也须带 pathspec(否则共享 index 别线 staged 文件被一并提交). 详见 daily §各轮次 + ARCHIVE「归档块 · 2026-11-28 r1517 瘦身 · A2」(早期 r1045/r1137/r1310/r1334 原文).
+> ⚠️ 同步事故自报合集（均 additive/无丢失/无 force-push, A 文件内容正确, 事后两仓 0/0 sync 工作树 clean）: r1045/r1137/r1310/r1334/r1420/r1428/r1430/r1434/r1444/r1510/r1511/r1558/r1589/r1617. **统一教训**: 共享工作树下别线 broad `git add` 会扫入本人 in-flight 改动 → (1) commit 须带 pathspec `git commit -m msg -- <A paths>`(`--` 必在 `-m` 后); (2) fetch 后立即 add+commit+push 缩短窗口; (3) `git add` 带 pathspec 不够——`git commit` 也须带 pathspec(否则共享 index 别线 staged 文件被一并提交). 详见 daily §各轮次 + ARCHIVE「归档块 · 2026-11-28 r1517 瘦身 · A2」(早期 r1045/r1137/r1310/r1334 原文).
 → r1028 及更早详块见 ARCHIVE_OPERATOR_DESIGNFLOW_A.md（2026-11-23 r1059 瘦身归档：r1028 heartbeat + r1027-r8xx 旧轮次指针，原文照搬）
