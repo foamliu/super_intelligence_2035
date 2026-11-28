@@ -1778,3 +1778,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795595688030_1wuoc	jasonxu	hfeg0plg93	296	spice_sim	case	EDA-Eval-DesignFlow-DlybiasMt0PostTrim-001	2026-11-28 20:26	
 1787821402941_1qva5.messages.json	wellesc	hfeg0plg17	639	spice_sim	parked		2026-11-28 20:12	dup_of_WfCmpAdaptLogic_001_sibling_6l1c8
 1795503987230_4kjs0.messages.json	e0044480	hfeg0plg54	192	spice_sim	case	EDA-Eval-DesignFlow-CdlPvtDeckGen-001	2026-11-28 20:53	
+1795682713385_i1k7x.messages.json	e0048306	hfeg0plg88	475	characterization	case	EDA-Eval-DesignFlow-CdlInstReportGen-001	2026-11-28 21:33	r1403: deliverable=inst_report.py (pure-Python CDL instance report generator, portable abstraction of trace's SKILL cd_inst_report.il). L1 judge-run, LIVE-NA, judge_layers=[L0,L1]. 15 断言 (a,b,sa,c..n) + §4.9 trio negatives distinct FAIL. A=inv_a 4 ports 2 mos; B=nand3_top 6 ports 6 mos+1 X+1 C=8 inst. ref 15/15 + neg_selftest OK + judge-sim OK.
