@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A0/A1 口径矛盾排查上报 · BaiZe post-train</title>
+<style>
+:root{--bg:#0f1320;--card:#171c2e;--card2:#1d2440;--tx:#e8ecf8;--mut:#9aa3c0;--acc:#6ea8ff;--ok:#46d39a;--warn:#ffcf6b;--bad:#ff7a7a;--line:#2a3354}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 22px 60px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:19px;margin:30px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line);color:var(--acc)}
+h3{font-size:16px;margin:18px 0 6px;color:#cdd6f5}.sub{color:var(--mut);font-size:13px;margin-bottom:14px}
+.warn,.note,.ok,.bad{padding:12px 14px;border-radius:9px;margin:10px 0;font-size:14px}
+.warn{background:#3a3014;border:1px solid #6b541f;color:#ffe3a3}
+.note{background:#13243a;border:1px solid #28476e;color:#bcd6ff}
+.ok{background:#103024;border:1px solid #1f6b4a;color:#aef0cf}
+.bad{background:#3a1414;border:1px solid #6b1f1f;color:#ffb3b3}
+code{background:#0b0f1c;border:1px solid var(--line);padding:1px 5px;border-radius:4px;font-size:13px;color:#ffd9a0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card .k{color:var(--mut);font-size:12px}.card .v{font-size:22px;font-weight:700;margin:4px 0}.card .u{color:var(--mut);font-size:12px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--card2);color:#cdd6f5}tr:nth-child(even) td{background:#11162a}
+.tag{display:inline-block;padding:1px 7px;border-radius:5px;font-size:11px;font-weight:700}
+.t-bad{background:#3a1414;color:#ffb3b3}.t-ok{background:#103024;color:#aef0cf}.t-warn{background:#3a3014;color:#ffe3a3}
+.foot{color:var(--mut);font-size:12px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
+del{color:#ff8e8e;text-decoration:line-through}.ins{color:#7fe0a8}
+ul{margin:6px 0 6px 20px;padding:0}li{margin:3px 0}
+</style></head><body><div class="wrap">
+<h1>A0 / A1 口径矛盾排查上报</h1>
+<div class="sub">BaiZe Stage(ii) post-train · 响应 2026-11-28 08:4x / 09:0x 用户令「传达定案 + 逐条排查任务书与 MEMORY 矛盾困惑之处，列清单上报」· 撰写/署名：BaiZe post-train agent · 2026-11-28</div>
+<div class="warn"><b>首屏权威定案（2026-11-28 09:0x 用户令 · 最高优先 · 覆盖此前所有 A0/A5 口径表述）</b>
+<ul>
+<li><b>A0 = A0_base_ragfix</b>：MiniCPM5-2B｜.17 起评｜<b>有 RAG</b>（向量召回 :9003）｜<b>沙盒可达</b>（外部沙盒评分 run_eval→:8664→36.15）｜no_sandbox prompt（模型工具集=检索系，无 run_code）｜cline harness + PreToolUse hook｜158 题 / Pass@1 / 2500s / 单 trace / -p 8 -n / 5-run｜<b>45.06% ± 3.89%</b>（5-run，落盘 <code>baseline_A0_base_ragfix_5run_summary.json</code>）。</li>
+<li>任务书里「A0 = 无 RAG / 无沙盒 MCP」的表述<b>作废</b>。</li>
+<li><b>A5 → 改名 A1</b>：A1 = Qwen3.5-2B 原模型（fp16），口径与 A0_base_ragfix <b>完全一致</b>，<b>唯一差别 = 基座模型</b>（MiniCPM5-2B → Qwen3.5-2B）。</li>
+<li>原「A1 = SFT v39 step105」<b>改名为 A1sft</b>；旧结果 4.56% ± 1.70% 不再采用。</li>
+<li>早先的 3.04% / 6.84% / 43.29% 等旧结果<b>不再采用</b>；只认 A0_base_ragfix 的 45.06% ± 3.89%。</li>
+</ul></div>
+
+<div class="note"><b>排查方法</b>：以 09:0x/08:4x 定案为唯一标尺，逐条比对 <code>BAIZE_POSTTRAIN_TASK.md</code>（39896 B）与 <code>MEMORY_POSTTRAIN.md</code>（41469 B）中所有涉及 A0/A1/A5 口径、命名、数字、GPU 的表述；矛盾/困惑项列于 §二、§三；命名冲突专表见 §四；<b>已自洽</b>之处见 §五；需运维改正的任务书条目（原文/改后）见 §六。任务书为「只读指令文件、agent 禁止修改、本区作者仍为运维」，故 §六 仅<b>上报</b>待改正项，不由 agent 改写；MEMORY 为 agent 自管，已在本次唤醒同步勘误（见 §七）。</div>
+
+<div class="cards">
+<div class="card"><div class="k">权威 A0（真 A0）</div><div class="v">45.06%±3.89%</div><div class="u">A0_base_ragfix · has-RAG · 5-run</div></div>
+<div class="card"><div class="k">A1（原 A5）</div><div class="v">Qwen3.5-2B</div><div class="u">同 A0 口径 · 唯一差=模型</div></div>
+<div class="card"><div class="k">A1sft（原 A1）</div><div class="v">4.56%±1.70%</div><div class="u">SFT v39 step105 · 不再采用</div></div>
+<div class="card"><div class="k">作废旧数</div><div class="v">3.04 / 6.84 / 43.29</div><div class="u">不再采用</div></div>
+</div>
+<h2>§二 任务书（BAIZE_POSTTRAIN_TASK.md）矛盾 / 困惑清单</h2>
+<table>
+<thead><tr><th>#</th><th>位置（行/块）</th><th>任务书原文（摘）</th><th>矛盾点</th><th>裁决（依 09:0x/08:4x）</th></tr></thead>
+<tbody>
+<tr><td>T1</td><td>L58 · 2026-11-27 17:4x 令 §3 跑评测</td><td>口径 = <b>无 RAG / 无沙盒 MCP / 无 hook</b>（与 A0_base 同口径；A0_base_ragfix 的 ragfix 口径暂不用于 A5，除非用户另令）</td><td><span class="tag t-bad">矛盾</span>「无 RAG」与定案 A0=A0_base_ragfix(有 RAG) 相反；「ragfix 口径暂不用于 A5」与「A1 须与 A0_base_ragfix 完全一致」相反；「无 hook」与红线②（PreToolUse hook 全程启用、所有实验臂逐字一致）相反。</td><td>改为：<b>A1 口径 = A0_base_ragfix 实际口径</b>（有 RAG :9003 + no_sandbox prompt[模型无 run_code] + 外部沙盒评分可达 + cline harness + PreToolUse hook + 158/Pass@1/2500s/单 trace/-p 8 -n/5-run）。</td></tr>
+<tr><td>T2</td><td>L79-83 · 2026-11-22 令 §一 优先级表</td><td>P0-1「继续完成 <b>A1</b>」(=SFT v39 step105)；P0-2「新臂 <b>A5</b>（Qwen3.5-2B）就位…唯一变化=模型」</td><td><span class="tag t-warn">命名冲突</span> 定案后「A1」=Qwen3.5-2B；原 A1(SFT)→A1sft。同表内 P0-1 的「A1」与 P0-2 的「A5」改名后<b>都占 A1 标签</b>，碰撞。</td><td>P0-1「继续完成 <b>A1sft</b>」；P0-2「新臂 <b>A1</b>（原 A5，Qwen3.5-2B）」。两标签不再混用。</td></tr>
+<tr><td>T3</td><td>L85-89 · 2026-11-22 令 §二 A5 臂定义</td><td>「A5 = Qwen3.5-2B 原模型」；「完全对齐 A0 口径：.17 起评 / <b>无 RAG</b> / <b>无沙盒 MCP</b> / … / <b>无 hook</b>」</td><td><span class="tag t-bad">矛盾</span> 同 T1：「无 RAG/无沙盒 MCP/无 hook」与定案相反；命名 A5→A1。</td><td>命名改 A1；口径改 = A0_base_ragfix 实际口径（有 RAG + 外部沙盒可达 + hook 在）。「唯一自变量=基座模型」一句本身正确，保留。</td></tr>
+<tr><td>T4</td><td>L96 · 2026-11-22 令 §二 资源纪律</td><td>「Qwen3.5-2B 当前在 <b>GPU6</b> 由 vision 用作 VQA 服务（:30001/:30003）…请在 <b>GPU5 或 GPU7</b> 新起 vLLM…不碰 GPU0-3/GPU6」</td><td><span class="tag t-warn">困惑/过期</span> 与 2026-11-19 令（GPU6-7→vision，不碰）相互冲突（11-22 又允许用 GPU7）；与 2026-11-27 令（GPU4-7 全空、选 GPU5 或 GPU7、不碰 GPU0-3/GPU6）口径又不完全一致。GPU7 归属跨令混乱。</td><td>以<b>最新令 + 现状</b>为准：A1 serve 实际已在 <b>GPU5:8097</b>（wake866-868）；GPU7 归属待运维澄清（11-19 判给 vision，11-22/11-27 又允许 posttrain 用）。建议运维一锤定音 GPU7 归属。</td></tr>
+<tr><td>T5</td><td>L111-112 · 2026-11-22 令 §三 A0 报告口径声明</td><td>「A0 = MiniCPM5-2B｜.17 起评｜<b>无 RAG</b>｜<b>无沙盒 MCP</b>｜<b>43.29% ± 3.92%</b>（5-run）」</td><td><span class="tag t-bad">矛盾</span> 与定案正面冲突：A0=A0_base_ragfix(有 RAG+沙盒可达) 45.06%±3.89%；43.29%(旧退化检索 base) 不再采用。该报告 <code>reports/report_posttrain_A0_capability_deepdive_zh.html</code> 首屏即此口径，已交付，需加 supersede 横幅或重生成。</td><td>报告首屏口径改 = A0_base_ragfix 45.06%±3.89%（has-RAG+沙盒可达）；旧 43.29% 降级为「历史退化检索口径，不再采用」。<b>注</b>：报告逐题数据来自 43.29% 那批 run（非 ragfix run），若要严格对齐 45.06%，需用 ragfix 5-run 逐题 JSON 重算（ragfix 逐题 JSON 已落盘）。</td></tr>
+<tr><td>T6</td><td>L160-163 · 2026-11-20 baseline-nailed §C 臂矩阵</td><td>「A0=MiniCPM5-2B 原模型｜.17 口径（<b>无 RAG / 无沙盒 MCP</b>）」；「A1=SFT v39 step105」</td><td><span class="tag t-bad">矛盾</span> 「无 RAG/无沙盒 MCP」作废；A1(SFT)→A1sft。该块为已闭合历史块。</td><td>按归档规程可整块降级为指针搬入 <code>ARCHIVE_OPERATOR_POSTTRAIN.md</code>；若留正文须加「已被 2026-11-28 定案覆盖」标注，A0 口径改 has-RAG、A1→A1sft。</td></tr>
+<tr><td>T7</td><td>L144-148 · 2026-11-20 baseline-nailed §A 三条现状</td><td>「3.04% 不是 base…」「6.84% 混合口径…」「MiniCPM5-2B 原模型作为 cline 底模的 5-run 数字，至今不存在」</td><td><span class="tag t-warn">过期</span> 3.04/6.84 不再采用；「base 5-run 不存在」已被 A0_base_ragfix 45.06% 取代（即 MiniCPM5-2B 原模型 has-RAG 口径 5-run）。</td><td>历史背景可保留，但须补注「2026-11-28 起 base 数字 = A0_base_ragfix 45.06%±3.89%；3.04/6.84 不再采用」。</td></tr>
+<tr><td>T8</td><td>L60 / L97 · 交付物文件名</td><td><code>baseline_A5_qwen35_2b_run&lt;N&gt;_pertask.json</code> ×5 + <code>baseline_A0_vs_A5_paired_compare.json</code></td><td><span class="tag t-warn">命名</span> A5→A1 后文件名应同步。</td><td>交付物改名 A5→A1：<code>baseline_A1_qwen35_2b_run&lt;N&gt;_pertask.json</code> ×5 + <code>baseline_A0_vs_A1_paired_compare.json</code>。<b>实务</b>：run1 code-gen 已以 batch/label=<code>A5_qwen35_2b_run1</code> 起跑（wake868），建议落盘时用 A1 命名并留 A5→A1 别名映射，避免重跑。</td></tr>
+</tbody></table>
+<h2>§三 MEMORY（MEMORY_POSTTRAIN.md）矛盾 / 困惑清单</h2>
+<table>
+<thead><tr><th>#</th><th>位置</th><th>MEMORY 原文（摘）</th><th>矛盾点</th><th>裁决</th></tr></thead>
+<tbody>
+<tr><td>M1</td><td>L11 · 预注册块</td><td>「A0=MiniCPM5-2B 原模型(.17 口径:<b>无RAG/无沙盒MCP</b>/cline/-p8/-n/<b>无hook</b>,endpoint :8098)…A1=SFT v39 step105」</td><td><span class="tag t-bad">矛盾</span> 与定案相反（无RAG/无沙盒MCP/无hook 作废；A1(SFT)→A1sft）。该块标「先定后测·跑完不许改判据」，但口径由用户令权威重定义，非 agent 事后改判据。</td><td>已本次勘误：A0=A0_base_ragfix(有RAG:9003+外部沙盒可达+no_sandbox prompt+hook) 45.06%±3.89%；原 A1(SFT)→A1sft；新 A1=Qwen3.5-2B。旧预注册口径标注「被 2026-11-28 用户令覆盖」。</td></tr>
+<tr><td>M2</td><td>L15 · 状态行</td><td>「A0 5-run=43.29%±3.92% / A1 5-run=4.56%±1.70% / 配对 Δ=-38.73pp」</td><td><span class="tag t-bad">矛盾</span> 43.29%(退化检索) 与 45.06%(ragfix) <b>同称 A0</b>，MEMORY 内部即冲突；4.56% A1→A1sft 不再采用。</td><td>已勘误：A0 权威=45.06%±3.89%(ragfix)；43.29% 降级「旧退化检索口径，不再采用」；4.56% 改标 A1sft（不再采用）。</td></tr>
+<tr><td>M3</td><td>L35 · 进度快照</td><td>首列「A0 base 5-run=43.29%±3.92%(退化检索,待 ragfix 取代) + A1 SFT 5-run=4.56%…(2)A5=Qwen3.5-2B」</td><td><span class="tag t-warn">过期/命名</span> 快照仍以 43.29% 领头；A1(SFT)/A5 命名待改。其中「待 ragfix 取代」方向与定案一致。</td><td>已勘误：快照领头改 A0=ragfix 45.06%±3.89%；A1(SFT)→A1sft；A5→A1。</td></tr>
+<tr><td>M4</td><td>L8/L21/L25/L117 · A5 Q4_K_M / llama.cpp</td><td>「A5 Q4_K_M run1=0.0%(禁与 A0 fp16 配对)」「llama.cpp…A5 臂去阻塞路径」</td><td><span class="tag t-warn">过期</span> A5→A1；fp16 vLLM 路径已 UNBLOCK（wake862-866），Q4_K_M CPU 路径被取代；Q4_K_M 0.0% 属旧结果不再采用。</td><td>保留为历史归档（已多在归档块/顶部 block），新增一句「2026-11-28 起 A5=A1=fp16 Qwen3.5-2B（GPU5:8097），Q4_K_M 路径与 0.0% 结果不再采用」。</td></tr>
+<tr><td>M5</td><td>L107-109 · wake864/865 口径审计</td><td>「A0_base 实际=有RAG；A5 须复刻有RAG 才单变量配对」「任务书『A5=无RAG…与A0_base同口径』自相矛盾」</td><td><span class="tag t-ok">自洽</span> 与 09:0x 定案<b>完全一致</b>（agent 已先于定案独立得出正确口径）。仅命名 A5→A1。</td><td>命名勘误 A5→A1；结论保留为「定案印证」。</td></tr>
+<tr><td>M6</td><td>L37/41 · 当前动作/未完成指令</td><td>「A0=ragfix 5-run 45.06%±3.89% has-RAG 同口径」配对 A5/A1</td><td><span class="tag t-ok">自洽</span> 口径正确；仅 A5→A1 命名。</td><td>命名勘误 A5→A1；run1 batch/label A5_qwen35_2b 加 A1 别名。</td></tr>
+<tr><td>M7</td><td>L50-56 · GPU 端口映射表</td><td>「GPU4 :8098 minicpm5-2b base standby(DOWN,A0 5-run 已闭合)」「GPU5 :8097 qwen3.5-2b-<b>a5</b>」</td><td><span class="tag t-warn">命名/口径</span> A5→A1；「A0 5-run 已闭合」指旧 base 43.29%，权威 A0=ragfix 45.06% 亦已闭合，二者同称 A0 易混。</td><td>served-model-name 保持 <code>qwen3.5-2b-a5</code>（serve 实例名，重命名需重启 serve，非急需）；记录层标「A1(原 A5)」。</td></tr>
+<tr><td>M8</td><td>L68 · 关键事实「评测锚点」</td><td>「评测锚点：MiniCPM5-2B <b>36%</b>（full harness，与 DeepSeek 94% 同口径，差 58 pp）」</td><td><span class="tag t-warn">跨口径困惑</span> 36% = 旧 36.15 full-harness 锚点（有 RAG+MCP，与 DeepSeek 同口径），<b>非</b> A0_base_ragfix 45.06%。MEMORY 同时存 36%（锚点）与 45.06%（A0）易混。</td><td>标注区分：36% = 36.15 full-harness 历史锚点（跨口径，不可与 A0 直接比）；A0 = ragfix 45.06%±3.89%（本线权威基线）。建议论文引用 A0 用 45.06%。</td></tr>
+</tbody></table>
+<h2>§四 命名冲突专表（改名前后）</h2>
+<table>
+<thead><tr><th>标签</th><th>改名前含义</th><th>改名后含义</th><th>口径</th><th>数字</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td><b>A0</b></td><td>A0_base（退化检索，无/失效 RAG）</td><td><b>A0_base_ragfix</b>（有 RAG:9003 + 沙盒可达）</td><td>has-RAG + 外部沙盒评分 + no_sandbox + hook</td><td>45.06%±3.89%</td><td><span class="tag t-ok">权威</span></td></tr>
+<tr><td><b>A1</b></td><td>SFT v39 step105</td><td><b>Qwen3.5-2B 原模型 fp16</b>（原 A5）</td><td>= A0_base_ragfix，唯一差=模型</td><td>待 5-run（run1 code-gen 跑中）</td><td><span class="tag t-warn">在跑</span></td></tr>
+<tr><td><b>A1sft</b></td><td>（原 A1）SFT v39 step105</td><td>SFT v39 step105</td><td>= 旧 A0_base 同尺</td><td>4.56%±1.70%</td><td><span class="tag t-bad">不再采用</span></td></tr>
+<tr><td><b>A5</b></td><td>Qwen3.5-2B（含 Q4_K_M 0.0% 旧路径）</td><td><b>作废</b>（并入 A1）</td><td>—</td><td>Q4_K_M 0.0% 不再采用</td><td><span class="tag t-bad">作废</span></td></tr>
+<tr><td>旧 A0_base</td><td>43.29% 退化检索</td><td>降级为历史，不再采用</td><td>退化检索（向量召回失效）</td><td>43.29%±3.92%</td><td><span class="tag t-bad">不再采用</span></td></tr>
+<tr><td>旧锚点</td><td>3.04% / 6.84%</td><td>不再采用</td><td>混合/ ws-only / 36.15 口径</td><td>3.04 / 6.84</td><td><span class="tag t-bad">不再采用</span></td></tr>
+</tbody></table>
+
+<h2>§五 已自洽之处（agent 先于定案独立得出的正确结论）</h2>
+<div class="ok">
+<ul>
+<li><b>口径审计定论（wake864，2026-11-27 19:5x）</b>：从 A0_base run 落盘取证（<code>cline_mcp_settings.json</code> autoApprove 含 search_apis + <code>.env EDA_PROMPT_TEMPLATE=eval_sys_prompt_template_no_sandbox.md</code>）独立得出 <b>A0_base 实际口径 = 有 RAG（search_apis→:18888→:9003）+ 无沙盒 MCP（no_sandbox，模型不调 run_code）+ 外部沙盒评分（run_eval→:8664→36.15）</b>，并指出任务书「A5=无 RAG…与 A0_base 同口径」自相矛盾。<b>与 09:0x 定案完全一致</b>。</li>
+<li><b>A1（原 A5）起跑口径（wake864-868）</b>：按「复刻 A0_base 实际口径=has-RAG」起 serve/code-gen（EDA_PROMPT_TEMPLATE=no_sandbox + MCP:18888 + RAG:9003 + PreToolUse hook + cline harness），唯一自变量=基座模型 MiniCPM5-2B→Qwen3.5-2B。<b>与定案一致</b>，无需重跑（仅命名 A5→A1）。</li>
+<li><b>配对基线选择</b>：MEMORY「下一步/未完成指令」已写明 A0 配对基线 = ragfix 5-run 45.06%±3.89% has-RAG 同口径。<b>与定案一致</b>。</li>
+</ul></div>
+
+<h2>§六 待运维改正项（任务书 · 上报，不由 agent 改写）</h2>
+<div class="note">任务书为只读指令文件、本区作者仍为运维。以下为建议运维应用的原文→改后（精确到行/块）；agent 已在 MEMORY 侧完成勘误（§七）。</div>
+<table>
+<thead><tr><th>#</th><th>位置</th><th>原文（删）</th><th>改后（增）</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>L58</td><td><del>口径 = 无 RAG / 无沙盒 MCP / 无 hook（与 A0_base 同口径；A0_base_ragfix 的 ragfix 口径暂不用于 A5，除非用户另令）</del></td><td><span class="ins">口径 = A0_base_ragfix 实际口径（有 RAG :9003 + no_sandbox prompt + 外部沙盒评分可达 + cline harness + PreToolUse hook + 158/Pass@1/2500s/单 trace/-p 8 -n/5-run）；A1=Qwen3.5-2B，唯一自变量=基座模型</span></td></tr>
+<tr><td>2</td><td>L82-83</td><td>P0-1「继续完成 <del>A1</del>」/ P0-2「新臂 <del>A5</del>（Qwen3.5-2B）」</td><td>P0-1「继续完成 <span class="ins">A1sft</span>」/ P0-2「新臂 <span class="ins">A1（原 A5）</span>（Qwen3.5-2B）」</td></tr>
+<tr><td>3</td><td>L87-88</td><td>「<del>A5</del>=Qwen3.5-2B 原模型…无 RAG / 无沙盒 MCP / … / 无 hook」</td><td>「<span class="ins">A1（原 A5）</span>=Qwen3.5-2B 原模型…口径=A0_base_ragfix 实际口径（有 RAG + 外部沙盒可达 + hook 在），唯一自变量=基座模型」</td></tr>
+<tr><td>4</td><td>L96</td><td>「Qwen3.5-2B 当前在 <del>GPU6</del> 由 vision…请在 GPU5 或 <del>GPU7</del>…」</td><td>以最新令+现状为准：<span class="ins">A1 serve 在 GPU5:8097；GPU7 归属待运维一锤定音（11-19 判 vision / 11-22·27 允许 posttrain，跨令冲突）</span></td></tr>
+<tr><td>5</td><td>L112</td><td>「A0=…<del>无 RAG</del>｜<del>无沙盒 MCP</del>｜<del>43.29%±3.92%</del>」</td><td>「A0=A0_base_ragfix｜<span class="ins">有 RAG</span>｜<span class="ins">沙盒可达</span>｜<span class="ins">45.06%±3.89%</span>」；并对已交付报告 <code>report_posttrain_A0_capability_deepdive_zh.html</code> 加 supersede 横幅或用 ragfix 逐题 JSON 重生成</td></tr>
+<tr><td>6</td><td>L162-163</td><td>「A0=…<del>无 RAG / 无沙盒 MCP</del>」「<del>A1</del>=SFT v39 step105」</td><td>该已闭合块按归档规程降级为指针搬入 ARCHIVE；若留正文：A0 口径改 has-RAG、<span class="ins">A1sft</span>=SFT v39 step105</td></tr>
+<tr><td>7</td><td>L60/L97</td><td>交付物 <del>baseline_A5_…</del></td><td><span class="ins">baseline_A1_qwen35_2b_…</span>（run1 已以 A5 label 起跑，落盘用 A1 命名 + A5→A1 别名映射，免重跑）</td></tr>
+</tbody></table>
+
+<h2>§七 本次唤醒 MEMORY 同步勘误（agent 自管侧）</h2>
+<div class="ok">已在 <code>MEMORY_POSTTRAIN.md</code> 顶部新增「2026-11-28 09:0x 定案接收」block，并勘误：<br>
+① 预注册块（L11）A0 口径 无RAG/无沙盒MCP/无hook → 标注「被 2026-11-28 用户令覆盖」，权威 A0=A0_base_ragfix 45.06%±3.89% has-RAG；原 A1(SFT)→A1sft；新 A1=Qwen3.5-2B（原 A5）。<br>
+② 状态行（L15）/ 进度快照（L35）领头数 43.29% → 45.06%（ragfix），43.29% 降级「不再采用」；4.56% 标 A1sft 不再采用。<br>
+③ run1（wake868 起跑）batch/label=A5_qwen35_2b 加 A1 别名映射；A5→A1 命名勘误。<br>
+④ 关键事实「评测锚点 36%」标注为「36.15 full-harness 历史锚点，跨口径，非 A0；A0=ragfix 45.06%」。<br>
+⑤ 指向本上报件。</div>
+
+<h2>§八 证据索引</h2>
+<table>
+<thead><tr><th>证据</th><th>路径 / 命令</th></tr></thead>
+<tbody>
+<tr><td>权威 A0 5-run 汇总</td><td><code>run/baseline_A0_base_ragfix_5run_summary.json</code>（arm=A0_base_ragfix, five_run_mean=0.450633, std=0.038861, n=5）</td></tr>
+<tr><td>旧 A0_base 5-run（不再采用）</td><td><code>run/baseline_A0_base_5run_summary.json</code>（43.29%±3.92%，退化检索）</td></tr>
+<tr><td>A0 深度报告首屏口径（待 supersede）</td><td><code>reports/report_posttrain_A0_capability_deepdive_zh.html</code>（首屏 43.29%±3.92%，含「口径勘误：A0 实际=全工具 has-RAG」注）</td></tr>
+<tr><td>A0_base 实际口径取证（agent 独立）</td><td>wake864：cline_mcp_settings.json autoApprove 含 search_apis + .env EDA_PROMPT_TEMPLATE=no_sandbox</td></tr>
+<tr><td>A1（原 A5）run1 起跑</td><td>wake868：<code>baseline_A5_qwen35_2b_run1_codegen_launched.json</code>（GPU5:8097 fp16, has-RAG 口径, 158/-p8 -n/2500s/单 trace）</td></tr>
+<tr><td>任务书</td><td><code>run/BAIZE_POSTTRAIN_TASK.md</code>（39896 B；L58/L82-97/L111-112/L160-163 矛盾点）</td></tr>
+<tr><td>MEMORY</td><td><code>run/MEMORY_POSTTRAIN.md</code>（41469 B；L8/11/15/35/68 矛盾点）</td></tr>
+<tr><td>本上报件</td><td><code>reports/report_posttrain_a0a1_caliber_contradiction_audit_zh.html</code></td></tr>
+</tbody></table>
+
+<div class="foot">本上报件由 BaiZe post-train agent 响应 2026-11-28 08:4x/09:0x 用户令撰写并署名。所有口径以 09:0x 用户令为唯一标尺；所有数字来自落盘 JSON（45.06%±3.89% 经 <code>baseline_A0_base_ragfix_5run_summary.json</code> 复核）。任务书为运维只读件，§六 仅上报待改正项；MEMORY 侧勘误已同步（§七）。生成时间 2026-11-28。</div>
+</div></body></html>
