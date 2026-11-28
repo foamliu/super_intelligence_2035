@@ -2483,3 +2483,106 @@ Everything up-to-date
 （只读：未 kill / 未重启 / 未改任何文件）
 === DONE 299 | 2026-11-28 11:08:05 ===
 ```
+
+---
+
+## RUN_ID 299 · 2026-11-28 11:08:07 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+GIT=/nas_train/app.e0031982/code/super_intelligence_2035
+echo "== A. pretrain S2 =="
+ps -eo pid,ppid,etime,args | grep -E '[t]rain\.sh|[p]retrain_gpt|[t]orchrun' | cut -c1-160 | head -8
+ls -l --time-style=+%F_%T /tmp/baize_s2_launch.log /tmp/baize_s1_baize2b_worker.log 2>/dev/null
+echo "  --- s2_launch tail ---"; tail -n 12 /tmp/baize_s2_launch.log 2>/dev/null | cut -c1-200
+echo "  --- worker tail ---"; tail -n 4 /tmp/baize_s1_baize2b_worker.log 2>/dev/null | cut -c1-200
+echo "  blend_hot_switch_hits=$(grep -c 'blend.hot.switch' /tmp/baize_s1_baize2b_worker.log 2>/dev/null || echo 0)"
+echo "  latest_ckpt=$(cat /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt 2>/dev/null)"
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used,temperature.gpu --format=csv,noheader 2>/dev/null | head -8
+echo
+echo "== B. harness =="
+ps -eo pid,ppid,etime,args | grep '[b]aize_harness_loop' | cut -c1-140
+ps -eo pid,ppid,etime,args | grep '[c]line ' | grep 'glm-5.2' | cut -c1-160
+tail -n 8 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-200
+ls -l --time-style=+%F_%T "$RUN/MEMORY_HARNESS.md"
+echo
+echo "== C. posttrain A5 =="
+curl -s -m 3 -o /dev/null -w "  8097=%{http_code}\n" http://127.0.0.1:8097/v1/models 2>/dev/null || echo "  8097 DOWN"
+curl -s -m 3 -o /dev/null -w "  tunnel3333=%{http_code}\n" http://127.0.0.1:3333 2>/dev/null || echo "  tunnel3333 DOWN"
+ps -eo pid,etime,args | grep -E '[5]run_eval|[r]un_cline_script|[b]aize_posttrain' | cut -c1-140 | head -6
+echo
+echo "== D. zhulong thermo =="
+ps -eo pid,etime,args | grep -E '[r]un_batch.sh|[r]un_one.sh' | cut -c1-140 | head -5
+echo
+echo "== E. git =="
+cd "$GIT" && git log -1 --format='  HEAD %h %ad %s' --date=iso
+echo "  dirty=$(git status --porcelain | wc -l) ahead_behind=$(git rev-list --left-right --count HEAD...origin/main 2>/dev/null)"
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 299 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap29 date=2026-11-28 11:08:07
+== A. pretrain S2 ==
+1800276 1475330    02:43:08 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+-rw-r--r-- 1 app.e0031982 app.adm 105325 2026-11-28_09:36:10 /tmp/baize_s1_baize2b_worker.log
+-rw-r----- 1 app.e0031982 app.adm   4327 2026-11-28_08:06:20 /tmp/baize_s2_launch.log
+  --- s2_launch tail ---
+      2026-11-18 13:56       45844  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1794980435.whag0pgpuap29.1801089.0
+  log tail  :
+      NOTE: Using experimental fast data loading logic. To disable, pass
+          "--load_fast=false" and report issues on GitHub. More details:
+          https://github.com/tensorflow/tensorboard/issues/4784
+      
+      TensorBoard 2.20.0 at http://0.0.0.0:6006/ (Press CTRL+C to quit)
+[2026-11-28 08:06:10] rank0 @ 10.239.2.12（后台 ssh）
+[2026-11-28 08:06:20] rank1 @ whag0pgpuap29（前台）
+[2026-11-28 08:06:20] 结束：worker_rc=126 master_rc=126
+[2026-11-28 08:06:20] 日志：/tmp/baize_s1_baize2b_worker.log / /tmp/baize_s1_baize2b_master.log ；摘要：/tmp/baize_s1_baize2b.log
+  | /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/scripts/train.sh: line 282: /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun: Argument list too long
+  --- worker tail ---
+    time.sleep(monitor_interval)
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 1832016 got signal: 15
+  blend_hot_switch_hits=8
+  latest_ckpt=350000
+0, 0 %, 0 MiB, 25
+1, 0 %, 0 MiB, 25
+2, 0 %, 0 MiB, 27
+3, 0 %, 0 MiB, 25
+4, 0 %, 0 MiB, 28
+5, 0 %, 0 MiB, 26
+6, 0 %, 0 MiB, 25
+7, 0 %, 0 MiB, 24
+
+== B. harness ==
+ 299357       1    01:07:07 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+1800276 1475330    02:43:08 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027
+ create mode 100644 doc/ZhuLong_DAC2027/benchmark/daily-memories-designflow/daily_D_2026-11-28_r1649.md
+Applied autostash.
+[push] pull --rebase OK.
+[push] committed.
+To https://github.com/foamliu/super_intelligence_2035.git
+   f7cee891e0..64c9475fa8  main -> main
+[push] push OK.
+[loop] 2026-11-28 11:00:31 WAITING=1 (async task running) → sleep 900s
+-rw-r----- 1 app.e0031982 app.adm 4141 2026-11-27_16:41:14 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md
+
+== C. posttrain A5 ==
+  8097=000
+  8097 DOWN
+  tunnel3333=000
+  tunnel3333 DOWN
+
+== D. zhulong thermo ==
+
+== E. git ==
+  HEAD 28374c6071 2026-11-28 11:08:05 +0800 ops-relay[12]: result @ 2026-11-28 11:08:05
+  dirty=212 ahead_behind=0	0
+（只读：未 kill / 未重启 / 未改任何文件）
+=== DONE 299 | 2026-11-28 11:08:09 ===
+```
