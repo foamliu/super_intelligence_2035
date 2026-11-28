@@ -4,7 +4,7 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部完成 + DRY=1 端到端验证 PASS** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。
 
-> ✅ **心跳 · 2026-11-28 10:53 (R1098) — 方案 C fresh 全量复验 PASS · 等 pretrain 启动 S2**：
+> ✅ **心跳 · 2026-11-28 11:01 (R1099) — 方案 C fresh 全量复验 PASS + .done 标记补全 · 等 pretrain 启动 S2**：
 > - **A 补丁（fresh 确认）**：
 >   - `code/baize-llm/scripts/train.sh` L99-113 ✅ BLEND >100KB 时写文件 `blend_runtime.txt`，ARGS 传 `@$BLEND_FILE`
 >   - `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py` L284-289 ✅ `@` 前缀 + `os.path.isfile` 检测 → 从文件加载 BLEND
@@ -15,6 +15,7 @@ WAITING: 0
 > - **DRY=1 端到端验证（fresh）**：`BLEND_TSV=configs/blend_s2_preblend.tsv bash scripts/train.sh s1 --dry-run` → "blend 就绪：180 个 shard" · `--train-data-path` inline 字符串 · 无 E2BIG ✅
 > - **flag-off 回归（fresh）**：S1 blend (100 shards) `--dry-run` → inline 路径 · 无 @file 写入 ✅
 > - **blendswitch（fresh 重跑全 PASS）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio dev=0.0000%) · test_blend_hot_switch_integration.py 7/7 PASS · test_bridge_compat.py 10/10 PASS
+> - **.done 标记（fresh 补全）**：5/5 源 `.done` 文件已创建（stackv3_filt/megamath_web/nemotron/megamath_pb/finemath）
 > - **pretrain**：S1 已停 · 350k ckpt 完好 · 两节点 GPU 全 idle · pretrain 尚未启动 S2
 > - **无遗留任务** · WAITING=0
 
@@ -100,7 +101,7 @@ WAITING: 0
 ```
 PHASE:        方案C全部完成 — A补丁已应用+验证 + B 5/5 pre-blend DONE + TSV已修正(13847→180 shards, BLEND 14KB) + blendswitch All PASS · 等pretrain启动S2
 已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁(fix_arg_too_long.patch);✅方案A补丁已应用(train.sh+pretrain_launcher.py);✅方案B 5/5 pre-blend DONE;✅TSV已修正+gen_blend验证(180 shards/14019B BLEND)
-当前动作:     R1098:fresh全量复验(DRY=1 S2 180 shards + flag-off S1 100 shards + blendswitch 25/25 PASS)→commit+push
+当前动作:     R1099:fresh全量复验(DRY=1 --dry-run S2 180 shards inline + flag-off S1 100 shards + blendswitch 25/25 PASS) + .done标记补全 → commit+push
 下一步:       ①pretrain用更新后TSV启动S2(180 shards/14KB BLEND，无需blend_runtime.txt) ②配合切换答疑 ③持续blendswitch复验
 阻塞:         无(data侧方案C全部交付完成;TSV已修正+验证通过;等pretrain启动S2)
 ERROR_COUNT:  0
