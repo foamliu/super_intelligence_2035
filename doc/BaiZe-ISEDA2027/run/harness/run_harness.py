@@ -254,18 +254,14 @@ class CodexDriver:
 
 
 class OpencodeDriver:
-    """opencode — v2.4.1 single binary (built from source 2026-11-26).
+    """opencode — v1.19.6 (npm-installed binary, downgraded from v2.4.1 on
+    2026-11-27 per operator directive; v2.4 has tools.edit() no-write bug).
 
-    Upgraded 2026-11-26 from v1.18.27 to v2.4.1 per user order 令 F.
-    Built with `bun run script/build.ts` in packages/cli; binary at
-    ``harness/opencode/packages/cli/dist/cli-linux-x64/bin/opencode``.
-
-    Headless via `opencode run --model <model> --auto <prompt>`.  In v2.x,
-    `--dir` is no longer a flag — the working directory is set via the
-    process cwd (which _run already handles).  Provider/model come from
-    `~/.config/opencode/opencode.json` (`gw/deepseek-v4-flash` ->
-    @ai-sdk/openai-compatible @ gw_proxy).  `--auto` approves the agent's
-    tool calls non-interactively.
+    Headless via `opencode run --dir <workdir> --model <model> --auto <prompt>`.
+    v1.19.6 REQUIRES `--dir` to set the project directory (unlike v2.x which
+    uses process cwd).  Provider/model come from `~/.config/opencode/opencode.json`
+    (`gw/doubao-seed-2.0-pro-cloud` -> @ai-sdk/openai-compatible @ gw_proxy).
+    `--auto` approves the agent's tool calls non-interactively.
     """
 
     name = "opencode"
@@ -293,6 +289,7 @@ class OpencodeDriver:
               + ps)
         cmd = [
             "opencode", "run",
+            "--dir", str(workdir),
             "--model", OPENCODE_MODEL,
             "--auto",
             ps,
