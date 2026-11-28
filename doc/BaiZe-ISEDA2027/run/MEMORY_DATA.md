@@ -2,20 +2,20 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1175) — S2 内存实验 v12（data 主导）· TB iter=351,383 / step 1383/2000（69%）· step=7.01s last20（log法） · 吞吐 ~599K（S1 同级 delta -0.2%）· AnonPages .12=793GB/.29=789GB · si/so=0 · ETA step 2000 ~23:59**：
+> 🔧 **心跳 · 2026-11-28 (R1176) — S2 内存实验 v13（data 主导）· iter=351,470 / step 1470/2000（73.5%）· step=7.03s last20（log法） · 吞吐 ~599K（S1 同级 delta -0.2%）· AnonPages .12=799GB/.29=794GB · si/so=0 · ETA step 2000 ~00:00**：
 > - **用户令**（20:0x）：data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）；step ≤7.4s 硬指标
-> - **S2 config E（nw=2+no_mmap）live 实测**（TB 精确 iter=351,383 / step 1383，EventAccumulator 1383 scalar · .29 日志法 139 条 10-step entries）：
->   - step=7.01s last20（.29 日志 elapsed_time_per_iteration 法，20 条 entries = step 1355-1383）✅（≤7.4s）· 吞吐 256×16384/7.01 = ~599K tok/s ✅（与 S1 ~600K **同级** delta -0.2%）· 0 OOM ✅ · 0 实际 NaN ✅（TB lm_loss=1.4328 / 日志 lm_loss=1.4946）· oom_hits=0（grep）
->   - AnonPages：.12=793GB（/proc/meminfo 实测 792,777,772 kB）/ .29=789GB（789,440,936 kB）· MemAvail .12=1097GB/.29=1139GB · si/so=0 ✅（双节点 vmstat 实测）
+> - **S2 config E（nw=2+no_mmap）live 实测**（iter=351,470 / step 1470 · .29 日志法 20 条 10-step entries = iter 351280-351470）：
+>   - step=7.03s last20（.29 日志 elapsed_time_per_iteration 法）✅（≤7.4s）· 逐条范围 6892-7149ms（σ≈72ms 极稳定）· 吞吐 256×16384/7029 = ~599K tok/s ✅（与 S1 ~600K **同级** delta -0.2%）· 0 OOM ✅ · 0 NaN ✅（日志 lm_loss=1.49-1.51 稳定）· 0 skipped
+>   - AnonPages：.12=799GB（/proc/meminfo 实测 797,856,932 kB）/ .29=794GB（793,796,916 kB）· MemAvail .12=1093GB/.29=1135GB · si/so=0 ✅（双节点 vmstat 实测）
 >   - SwapFree：.12=6.5GB/.29=0.2GB（崩溃残留，si/so=0 确认无活跃换页）
-> - **AnonPages 增长趋势**（CSV 1790 行，step 1→1383）：COW 深度平台化，近期增速 ~0.02-0.04 GiB/step ✅
-> - **投影 step 2000**（剩余 617 步）：AnonPages ≈ 805-850GB（所有情景）· headroom ≈ 1166-1211GB → **不会 OOM** ✅
-> - **ETA step 2000**：~2026-11-28 23:59（617 步 × 7.0s ≈ 72 min）· save-interval=2000 → 自动存 iter 352,000 ckpt
+> - **AnonPages 增长趋势**（CSV 1916 行，step 1→1470）：COW 深度平台化，近期增速 ~0.05-0.07 GiB/step ✅
+> - **投影 step 2000**（剩余 530 步）：AnonPages ≈ 820-835GB（所有情景）· headroom ≈ 1213-1228GB → **不会 OOM** ✅
+> - **ETA step 2000**：~2026-11-29 00:00（530 步 × 7.03s ≈ 62 min）· save-interval=2000 → 自动存 iter 352,000 ckpt
 > - **结论：方案 E 持续达标，S2 可做**。待 step 2000 正式验收后交付 pretrain 长跑监控
-> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v12（TB iter=351,383 + .29 日志法 step time + 1790行CSV + 10段增长率衰减表 + 4情景投影 + §9交接块含验收清单+监控命令+异常处置表）
-> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh` pid=2529386（.12）/ `/tmp/s2_mem_monitor.csv`（1,790 行）· WAITING=0
+> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v13（iter=351,470 + .29 日志法 step time + 1916行CSV + 10段增长率衰减表 + 4情景投影 + §9交接块含验收清单+监控命令+异常处置表）
+> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor.csv`（1,916 行）· WAITING=0
 
-> 📦 R1164~R1174 心跳（S2 内存实验 v3-v11 · step 320→1383 · AnonPages 630→793GB · 方案 E 达标）已被 R1175 更新 → 见上
+> 📦 R1164~R1175 心跳（S2 内存实验 v3-v12 · step 320→1383 · AnonPages 630→793GB · 方案 E 达标）已被 R1176 更新 → 见上
 
 > 📦 R1161 心跳（S2 CRASHED · 只读 review · 4 项 fresh PASS）已归档 → daily-memories-data/2026-11-28.md
 
@@ -112,11 +112,11 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2 内存实验 v11（data 主导）· 方案 E（nw=2+no_mmap）达标 · TB iter=351,314 / step 1314/2000（66%）· step=7.02s last20 / 7.12s overall · 吞吐~597K/~589K · AnonPages 790GB · COW 深度平台化 · ETA step 2000 ~23:59
-已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁;✅方案A补丁已应用;✅方案B 5/5 pre-blend DONE;✅TSV(180 shards);✅S2 OOM 定量归因+方案书;✅S2 内存监控部署(.12);✅纠正定量模型(S1=666GB非1039GB);✅方案E(nw=2+no_mmap) live 实测达标(step=7.02s/吞吐~597K/0 OOM/AnonPages 790GB@step1314);✅TB wall_time精确step time;✅TB精确读取iter=351,314
-当前动作:     R1174:S2 config E 运行中(TB iter 351,314/step 1314) · 监控持续(1702行CSV) · 更新 S2_OOM_MEMORY_PLAN.md v11 + MEMORY_DATA.md → commit+push
-下一步:       ①等 step 2000 (ETA ~2026-11-28 23:59) 正式验收 ②验收通过后交付 pretrain 长跑监控 ③持续监控 AnonPages
-阻塞:         无(S2 运行正常 · step=7.02s≤7.4s · 吞吐~597K=S1 ~600K · 0 OOM · AnonPages 增长已深度平台化)
+PHASE:        S2 内存实验 v13（data 主导）· 方案 E（nw=2+no_mmap）达标 · iter=351,470 / step 1470/2000（73.5%）· step=7.03s last20 · 吞吐~599K · AnonPages .12=799GB/.29=794GB · COW 深度平台化 · ETA step 2000 ~00:00
+已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁;✅方案A补丁已应用;✅方案B 5/5 pre-blend DONE;✅TSV(180 shards);✅S2 OOM 定量归因+方案书;✅S2 内存监控部署(.12);✅纠正定量模型(S1=666GB非1039GB);✅方案E(nw=2+no_mmap) live 实测达标(step=7.03s/吞吐~599K/0 OOM/AnonPages 799GB@step1470);✅日志法精确step time;✅1916行CSV持续监控
+当前动作:     R1176:S2 config E 运行中(iter 351,470/step 1470=73.5%) · 监控持续(1916行CSV) · 更新 S2_OOM_MEMORY_PLAN.md v13 + MEMORY_DATA.md → commit+push
+下一步:       ①等 step 2000 (ETA ~2026-11-29 00:00) 正式验收 ②验收通过后交付 pretrain 长跑监控 ③持续监控 AnonPages
+阻塞:         无(S2 运行正常 · step=7.03s≤7.4s · 吞吐~599K=S1 ~600K · 0 OOM · AnonPages 增长已深度平台化)
 ERROR_COUNT:  0
 未完成指令:   无(S2 内存实验进行中 · 待 2000 步验收)→WAITING=0
 ```

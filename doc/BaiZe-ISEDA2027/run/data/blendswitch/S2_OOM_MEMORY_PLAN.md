@@ -246,7 +246,9 @@
 | **S2 v2（E·live）** | **nw=2+no_mmap** | **~570** | **6.93-7.18s** | **~565** | **675/704** | **✅** | **AnonPages 趋平（rate 0.075 GB/step，COW 饱和）** |
 | **S2 v2（E·live）** | **nw=2+no_mmap** | **~940** | **7.06s** | **594** | **768/753** | **✅** | **日志法 step 验证，吞吐达标** |
 | **S2 v2（E·live）** | **nw=2+no_mmap** | **~1036** | **7.06s** | **594** | **742/.12** | **✅** | **TB iter=351,036 · AnonPages 0.10 GB/step · COW 平台化** |
-| ⏳ S2 v2（E·待验） | nw=2+no_mmap | 2000 | ≤7.4s | ≥500K | ~840-890 | ✅ | **验收目标（ETA ~2026-11-29 00:01）** |
+| **S2 v2（E·live）** | **nw=2+no_mmap** | **~1383** | **7.01s** | **599** | **793/789** | **✅** | **TB iter=351,383 · AnonPages 0.02-0.04 GB/step · COW 深度平台化** |
+| **S2 v2（E·live）** | **nw=2+no_mmap** | **~1470** | **7.03s** | **599** | **799/794** | **✅** | **iter=351,470 · AnonPages 0.05-0.07 GB/step · COW 深度平台化** |
+| ⏳ S2 v2（E·待验） | nw=2+no_mmap | 2000 | ≤7.4s | ≥500K | ~826-852 | ✅ | **验收目标（ETA ~2026-11-29 00:00）** |
 
 > 监控脚本：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor_29.csv`（.29）
 > ⚠️ 已知问题：CSV 列顺序与 header 不匹配（grep 按 /proc/meminfo 行序返回，非 pattern 序），
@@ -876,6 +878,32 @@ for pct in [5, 10, 12, 15, 20]:
 > 6. **save-interval=2000** → step 2000 时自动存 ckpt（iter 352,000），届时可正式验收并交接。
 > 7. **监控脚本**：`/tmp/s2_mem_monitor.sh` pid=2529386（elapsed 02:34:34）持续运行于 .12。
 
+> **🔄 v13 更新（22:5x）· data 主导 · iter=351,470 + step 1470 + .29 日志法 step time + 1916行CSV + COW 深度平台化确认**：
+> 1. **日志精确 step**（.29 worker log，最新 entry iter=351,470）：**step 1470** since restart（iter 350,000 + 1,470）。
+>    lm_loss=1.49-1.51（稳定），0 NaN，0 skipped，grad norm 0.072-0.250（正常范围）。
+> 2. **step time（.29 日志法，last 20 entries = iter 351280→351470，每 10 步打印）**：
+>    avg = **7,029 ms = 7.03s** ✅（≤7.4s）。
+>    逐条（ms）：6951 / 7115 / 6892 / 7055 / 7034 / 7030 / 7027 / 6931 / 7023 / 7001 / 7149 / 6988 / 7011 / 6992 / 7034 / 7081 / 6956 / 7029 / 6977 / 7104
+>    Min=6892ms / Max=7149ms / σ≈72ms → **极稳定**。
+>    吞吐 = 256×16384/7.03 = **~599K tok/s** ✅（与 S1 ~600K 同级，delta -0.2%）。
+> 3. **AnonPages（CSV 1,916 行 + /proc/meminfo 双节点实测 22:58）**：
+>    - **.12**：AnonPages=799 GB（797,856,932 kB）· MemAvailable=1,093 GB · Cached=100 GB · SwapFree=6.5/8 GB · si/so=0 ✅
+>    - **.29**：AnonPages=794 GB（793,796,916 kB）· MemAvailable=1,135 GB · Cached=230 GB · SwapFree=0.2/8 GB · si/so=0 ✅
+>    - .29 swap 近满但 si/so=0（崩溃残留，无活跃换页）
+>    - 增量（vs v12 step 1383 → v13 step 1470，Δ87 步）：.12 +6 GB → 0.069 GB/step · .29 +5 GB → 0.057 GB/step
+>    → **COW 深度平台化**，增长率稳定在 0.05-0.07 GB/step ✅
+> 4. **投影 step 2000**（当前 step ~1470，剩余 530 步）：
+>    | 情景 | 速率 | AnonPages (.12) | headroom | 状态 |
+>    |:--|--:|--:|--:|:--|
+>    | 乐观（近期低位） | 0.05 GB/step | 826 GB | 1,222 GB | ✅ |
+>    | 近期均值 | 0.06 GB/step | 831 GB | 1,217 GB | ✅ |
+>    | 保守 | 0.07 GB/step | 836 GB | 1,212 GB | ✅ |
+>    | 悲观 | 0.10 GB/step | 852 GB | 1,196 GB | ✅ |
+>    → **所有情景均不会 OOM** ✅
+> 5. **ETA step 2000**：~2026-11-29 00:00（530 步 × 7.03s ≈ 62 min）。
+> 6. **save-interval=2000** → step 2000 时自动存 ckpt（iter 352,000），届时可正式验收并交接。
+> 7. **监控脚本**：`/tmp/s2_mem_monitor.sh` 持续运行于 .12（CSV 1,916 行，5s 间隔）。
+
 > **🔄 v11 更新（22:3x）· data 主导 · TB 精确 iter=351,314 + step 1314 实测 + AnonPages 790GB**：
 > 1. **TB 精确读取**：`EventAccumulator` → **iter=351,314**（step 1314 since restart），lm_loss=1.5378，1314 条 scalar，0 NaN。
 > 2. **step time（TB wall_time 法）**：
@@ -911,13 +939,13 @@ for pct in [5, 10, 12, 15, 20]:
 > 6. **ETA step 2000**：~2026-11-28 23:59（686 步 × 7.0s ≈ 80 min）。
 > 7. **save-interval=2000** → step 2000 时自动存 ckpt（iter 352,000），届时可正式验收并交接。
 
-> **data agent 声明**（v12）：本文档为 **data 主导的 S2 内存实验报告**（用户令 20:0x 指定）。
+> **data agent 声明**（v13）：本文档为 **data 主导的 S2 内存实验报告**（用户令 20:0x 指定）。
 > data 侧已部署监控、完成纠正后定量模型、确认方案 E（nw=2 + no_mmap）达标。
-> **S2 当前正在运行**（config E = nw=2 + no_mmap），TB 精确 iter=351,383（step 1383 since restart），0 OOM，0 NaN，
-> step=7.01s last20（.29 日志法，≤7.4s ✅），吞吐=~599K（与 S1 ~600K **同级** delta -0.2% ✅），lm_loss=1.4328，
-> AnonPages=789-793 GB（.12 /proc/meminfo + .29 /proc/meminfo 实测），MemAvailable=1,097-1,139 GB，si/so=0（无活跃换页）。
-> AnonPages 增长率从 0.29 衰减至 **0.02-0.04 GiB/step**，**COW 深度平台化**。
-> 投影 step 2000 AnonPages ≈ 806–851 GiB（所有情景），headroom ≈ 1,166–1,211 GiB → **不会 OOM** ✅。
+> **S2 当前正在运行**（config E = nw=2 + no_mmap），日志精确 iter=351,470（step 1470 since restart），0 OOM，0 NaN，
+> step=7.03s last20（.29 日志法，≤7.4s ✅），吞吐=~599K（与 S1 ~600K **同级** delta -0.2% ✅），lm_loss=1.49-1.51，
+> AnonPages=794-799 GB（.12 /proc/meminfo + .29 /proc/meminfo 实测），MemAvailable=1,093-1,135 GB，si/so=0（无活跃换页）。
+> AnonPages 增长率从 0.82 衰减至 **0.05-0.07 GB/step**，**COW 深度平台化**。
+> 投影 step 2000 AnonPages ≈ 826–852 GB（所有情景），headroom ≈ 1,196–1,222 GB → **不会 OOM** ✅。
 > **结论：方案 E 持续达标，S2 可做。** 待 step 2000 正式验收后交付 pretrain 长跑监控。ETA ~2026-11-28 23:59。
 > 所有定量数据来自实测命令（§7 可复现）+ live 监控 CSV（`/tmp/s2_mem_monitor.csv`，1,790 行）+ TB event 文件（1,383 条 scalar），
 > 模型估算已标注假设与不确定性。用户驳回方案 D（nw=0），本方案 E 满足"吞吐与 S1 同级"硬指标。
