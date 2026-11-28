@@ -2,19 +2,19 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1164) — S2 内存实验 v3（data 主导）· 方案 E 达标 · S2 可做 · 待 2000 步正式验收**：
+> 🔧 **心跳 · 2026-11-28 (R1165) — S2 内存实验 v3（data 主导）· 方案 E 达标 · step ~450 · AnonPages 趋平 · 待 2000 步正式验收**：
 > - **用户令**（20:0x）：data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）；step ≤7.4s 硬指标
 > - **纠正模型**：旧模型 S1=1,039GB **高估 1.56×**（S1 实测 666GB，ops 探针 RUN_ID 291）；.idx 因子 0.79× 非 1.5×
-> - **S2 config E（nw=2+no_mmap）live 实测**（step ~320）：
->   - step=6.9-7.2s ✅（≤7.4s）· 吞吐~565K ✅（vs S1 600K，-6%）· 0 OOM ✅ · 0 NaN ✅ · loss=1.50-1.55 ✅
->   - AnonPages：.12=630GB / .29=632GB · MemAvail：.12=1,164GB / .29=1,202GB · swap si/so=0（无活跃换页）
->   - **AnonPages 已平台化**：增长率 0.81→0.25→**0.02** GB/step（step 85→200→320）
->   - COW 衰减模型：平台期 ~667GB（与 S1 666GB 吻合）· headroom 1,386GB → **不会 OOM**
-> - **结论：方案 E 达标，S2 可做**。未采用方案 D（用户驳回）。待 step 2000 正式验收（ETA ~3h）后交付 pretrain 长跑
+> - **S2 config E（nw=2+no_mmap）live 实测**（iter 350,450 / step ~450）：
+>   - step=6.97-7.18s ✅（≤7.4s）· 吞吐~565K ✅（vs S1 600K，-6%）· 0 OOM ✅ · 0 NaN ✅ · loss=1.49-1.53 ✅
+>   - AnonPages：.12=665GB / .29=660GB · MemAvail：.12=1,127GB / .29=1,174GB · swap si/so=0（无活跃换页）
+>   - **AnonPages 增长率持续衰减**：1.05→0.52→0.14→0.21 GB/step（step 149→221→294→464），趋平中
+>   - COW 衰减模型：平台期 ~667GB（与 S1 666GB 吻合）· headroom 1,350GB → **不会 OOM**
+> - **结论：方案 E 达标，S2 可做**。未采用方案 D（用户驳回）。待 step 2000 正式验收（ETA ~2026-11-29 00:00）后交付 pretrain 长跑
 > - **交付物**：`S2_OOM_MEMORY_PLAN.md` v3（31KB：纠正模型 + 实验记录表 + COW 衰减拟合 + 新结论 + 交接块）
 > - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor_29.csv`（.29）· WAITING=0
 
-> 📦 R1163 心跳（S2 OOM 方案 v2 · 推荐 E 继续 · step 260 · AnonPages 减速中）已被 v3 覆盖 → 见上
+> 📦 R1164 心跳（S2 内存实验 v3 · step 320 · AnonPages 630GB · 方案 E 达标）已被 R1165 更新 → 见上
 
 > 📦 R1161 心跳（S2 CRASHED · 只读 review · 4 项 fresh PASS）已归档 → daily-memories-data/2026-11-28.md
 
@@ -111,13 +111,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        方案C全部完成 — A补丁已应用+验证 + B 5/5 pre-blend DONE + TSV 180 shards/BLEND 14KB + blendswitch 25/25 PASS · S2 崩溃(NCCL Duplicate GPU, 非 data 问题) · 献计献策已附
-已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁;✅方案A补丁已应用(train.sh+pretrain_launcher.py);✅方案B 5/5 pre-blend DONE;✅TSV已修正(180 shards/3623B);✅EMFILE已消除(180×2=360FD);✅S2 NCCL崩溃根因分析+修复建议(9僵尸进程→pkill+验GPU+重试)
-当前动作:     R1117:S2 NCCL Duplicate GPU 崩溃根因分析+献计献策 → commit+push
-下一步:       ①等pretrain清理僵尸+重试S2 ②配合切换答疑 ③持续blendswitch复验
-阻塞:         无(data侧方案C全部交付完成;S2崩溃=NCCL Duplicate GPU=pretrain侧问题;建议pkill僵尸+验GPU+重试)
+PHASE:        S2 内存实验 v3（data 主导）· 方案 E（nw=2+no_mmap）达标 · step ~450/2000 · AnonPages 趋平 ~665GB · 待 2000 步验收
+已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁;✅方案A补丁已应用;✅方案B 5/5 pre-blend DONE;✅TSV(180 shards);✅S2 OOM 定量归因+方案书;✅S2 内存监控部署(.12+.29);✅纠正定量模型(S1=666GB非1039GB);✅方案E(nw=2+no_mmap) live 实测达标(step≤7.4s/0 OOM/AnonPages趋平)
+当前动作:     R1165:S2 config E 运行中(iter 350,450) · 监控持续 · 更新 S2_OOM_MEMORY_PLAN.md v3 + MEMORY_DATA.md → commit+push
+下一步:       ①等 step 2000 (ETA ~2026-11-29 00:00) 正式验收 ②验收通过后交付 pretrain 长跑监控 ③持续监控 AnonPages
+阻塞:         无(S2 运行正常 · step≤7.4s · 0 OOM · AnonPages 趋平)
 ERROR_COUNT:  0
-未完成指令:   无(全部用户令已交付)→WAITING=0
+未完成指令:   无(S2 内存实验进行中 · 待 2000 步验收)→WAITING=0
 未完成指令:   无(全部用户令已交付)→WAITING=0
 ```
 
