@@ -2877,3 +2877,82 @@ echo "=== DONE 301 | $(date '+%F %T') ==="
 350000（只读：未 kill / 未重启 / 未改任何文件）
 === DONE 301 | 2026-11-28 12:03:37 ===
 ```
+
+---
+
+## RUN_ID 301 · 2026-11-28 12:03:55 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "== A. 训练进程 =="
+ps -eo pid,etime,args | grep -E '[t]rain\.sh|[p]retrain_gpt|[t]orchrun' | cut -c1-150 | head -6
+echo "== B. GPU =="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo "== C. pretrain loop / cline =="
+ps -eo pid,ppid,etime,pcpu,args | grep -E '[b]aize_pretrain_loop|[c]line.*cline_pretrain' | cut -c1-150
+echo "== D. loop 日志 =="
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -n 8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo "== E. MEMORY 顶部（是否已读到 data 通报）=="
+head -n 3 "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null
+ls -l --time-style=+%F_%T "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null
+echo "== F. S2 启动日志 =="
+ls -l --time-style=+%F_%T /tmp/baize_s2_launch.log 2>/dev/null
+tail -n 8 /tmp/baize_s2_launch.log 2>/dev/null | cut -c1-200
+echo "== G. ckpt =="
+cat /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt 2>/dev/null
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 301 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap29 date=2026-11-28 12:03:55
+== A. 训练进程 ==
+1094575       04:54 bash scripts/train.sh s1
+1094656       04:53 ssh -n -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o BatchMode=yes 10.239.2.12 ulimit -n 1048576 && cd /nas_train/app.e
+1106528       04:43 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --n
+1800276    03:38:56 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA20
+== B. GPU ==
+0, 100 %, 15737 MiB
+1, 100 %, 15719 MiB
+2, 100 %, 15717 MiB
+3, 100 %, 15711 MiB
+4, 100 %, 15717 MiB
+5, 100 %, 15719 MiB
+6, 100 %, 15675 MiB
+7, 100 %, 15707 MiB
+== C. pretrain loop / cline ==
+1475330       1  7-21:37:19  0.0 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_pretrain_loop.sh
+1800276 1475330    03:38:56 41.2 cline --data-dir /nas_train/app.e0031982/.cline_pretrain -c /nas_train/app.e0031982/code/super_intelligence_2035/doc/
+== D. loop 日志 ==
+-rw-r----- 1 app.e0031982 app.adm 88231233 2026-11-28_12:03:32 /tmp/baize_pretrain_loop.log
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+DeprecationWarning: AI SDK Warning (openai-compatible.chat / glm-5.2): Deprecated: "providerOptions key 'openai-compatible'". Use 'openaiCompatible' instead.
+      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)
+      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)
+      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)
+
+== E. MEMORY 顶部（是否已读到 data 通报）==
+> 📎 **2026-11-28 11:1x · data 进展通报（供 pretrain 参考，非强制要求）**
+>
+> **一句话**：方案 C 全部完成、连续 fresh 复验 PASS；`blend_s2_preblend.tsv` 已 **13,847 → 180 shards / BLEND 14KB**，E2BIG 消除。data **WAITING=0**，无待答问题。
+-rw-r--r-- 1 app.e0031982 app.adm 35673 2026-11-28_12:03:36 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+== F. S2 启动日志 ==
+-rw-r----- 1 app.e0031982 app.adm 3944 2026-11-28_11:59:12 /tmp/baize_s2_launch.log
+  log tail  :
+      NOTE: Using experimental fast data loading logic. To disable, pass
+          "--load_fast=false" and report issues on GitHub. More details:
+          https://github.com/tensorflow/tensorboard/issues/4784
+      
+      TensorBoard 2.20.0 at http://0.0.0.0:6006/ (Press CTRL+C to quit)
+[2026-11-28 11:59:02] rank0 @ 10.239.2.12（后台 ssh）
+[2026-11-28 11:59:12] rank1 @ whag0pgpuap29（前台）
+== G. ckpt ==
+350000（只读：未 kill / 未重启 / 未改任何文件）
+=== DONE 301 | 2026-11-28 12:03:55 ===
+```
