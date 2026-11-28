@@ -1743,3 +1743,43 @@ InstCurrentMeasGen / r1371 JitterTieRerun candidate-runs-hspice+judge-直调 hyb
   B=A）2 distinct。
 
 **零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动**（桩体检只读）。
+
+## r1377 — VihTripTune-001 R2 改造#24（non-Lite-500，candidate-runs-hspice + judge-直调 hybrid）
+
+**模式**：candidate `vih_tune.py --params <p.json> --target <V> --out-dir <dir>` 自身调
+HSPICE（coarse-to-fine grid search 4 widths，每 design gen_deck + subprocess.run
+([HSPICE, deck]) + parse .mt0/.mt1/.mt2 vtrip）产 widths.json + tuned.mt0.csv +
+analysis.json + .sp files；judge cond(g/h/i) ALSO 独立重跑 HSPICE on candidate
+best_B widths + cond(j) 独立重跑 best_A → 全 mislabeled `[L0,L1]`，broken in SUT
+（no hspice ⇒ candidate run fails ⇒ cond c/d first-fail + conds e-n fail +
+judge cond g/h/i/j crash）。
+
+**判据同原 c-n 一字迁移**（CENTER_TOL 6mV / SPREAD_TOL 15mV / MATCH_TOL 2mV /
+n_designs≥10 / .sp≥10 / cross-input A≠B / monotonic-in-idfe 原封）。
+
+**Q1 保真实证**（.75 EDASession hfhds201 hspice V-2023.12-SP1-1，r1376 3-seed md5
+d61a72c0c identical）：cand B 451 designs BEST_B wn28=1.916u/wn23=1.260u/
+wp10=0.700u/wp3=1.604u center=0.5022（2.2mV<CENTER_TOL）spread=0.0076
+（<SPREAD_TOL）trips=[0.5004,0.5069,0.4993] monotonic-in-idfe；cand A 476 designs
+BEST_A center=0.50007；judge indep B trips EXACT match cand maxdiff 0.0（anti-fab）；
+Q2 hardcode_A-on-B center=0.4596 off 40.4mV FAILS cond g cross-input guard；
+physics REAL NOT fabricated（level-1 MOS diff-pair+PMOS-mirror discriminator）。
+
+**非侵入包装**：
+- `_check_static_impl` keep (a) zip+py_compile 一字不动；
+- `(sa/sb/sc)` only-add 源码结构检查（sa subprocess+hspice / sb .tran+.measure vtrip
+  deck / sc `$DATA1`/.mt0 parse）；
+- `check_static` try/except 三元组；
+- `check_live(sess)` .75 real hspice：upload submit.zip+params_A(A visible)+
+  params_B(B hidden)+live_driver.py → driver 跑候选 A+B + judge indep hspice
+  best_B（cond g/h/i）+ best_A（cond j）→ `live_result.json`（robust against huge
+  sp_files stdout overflow）→ JSON → 断 c-n 同判据；
+- `check()` 兼容 + `__main__` 改 check_static；
+- live-neg = `naive_single_run`（cond e/m/n/g core-deleted no search）+
+  `cheat_hardcode_a_run`（cond g/k cross-input A-on-B）2 distinct。
+
+**§5 7/7**：① ref check_live PASS .75 real hspice ② 5 neg FAIL distinct
+a/b/sa/e/g（含 2 live-neg）③ 3-seed det md5 d61a72c0c（r1376）④ SKIP_RUN deploy
+workdir clean ⑤ sha `f72516da` 3-way sync（disk==HEAD==JSON）⑥ 14→17 conds
+only-add sa/sb/sc 阈值原封 ⑦ check_live no read reference/ hidden-B uploaded
+to sess not in SUT sandbox。EDA-Flow-Bench HEAD=`bde0084e1`。
