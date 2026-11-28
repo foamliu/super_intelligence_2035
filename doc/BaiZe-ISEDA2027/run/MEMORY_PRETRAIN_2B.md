@@ -1,3 +1,32 @@
+> 🔴 **内存清理巡检 · 2026-11-28 23:0x · #3605 · 用户令（19:0x 查两机内存+清理）**
+>
+> **OOM 定性（18:09 崩溃）**：dmesg/journalctl 无记录（权限受限或已轮转）；依 MEMORY #3582 既有定论：根因=fork-COW RSS 累积（nw=8×mmap→swap 耗尽→内核 OOM-kill rank13 DataLoader worker pid 3983423，SIGKILL `is killed by signal: Killed`）；修复=nw=2+no_mmap（commit c423bcb9cc 19:59）。当前 S2 以 nw=2 稳定运行（iter=351310 step~7.0s loss~1.498 0NaN 0skip）。
+>
+> **两机内存全景（清理前 → 清理后）**：
+> | 节点 | RAM used | RAM avail | Swap used/total | AnonPages | si/so |
+> |:--|--:|--:|:--|--:|:--|
+> | .29 前 | 787G | 1085G | 7.8/8G (97.6%) | 790G | 0/0 ✅ |
+> | .29 后 | 791G | 1081G | 7.8/8G (97.6%) | 794G | 0/0 ✅ |
+> | .12 前 | 822G | 1045G | 1.6/8G (19.3%) | 793G | 0/0 ✅ |
+> | .12 后 | 827G | 1040G | 1.6/8G (19.3%) | 798G | 0/0 ✅ |
+> RAM 波动±4G 属训练 DataLoader RSS 自然增长，非清理影响。
+>
+> **Top RSS（两机一致）**：16×pt_data_worker（72-76GB each）+ 8×python（21GB each）= S2 训练进程，全活跃不可清。无 stale eval/torchrun 进程。
+>
+> **清理清单**：
+> 1. `.12 /tmp/test_lang_mcore_hf`（8.3G · Aug 26 · pretrain HF 转换测试 · 3 月前 · 判无主：无进程引用）→ **已删** · 释放 8.3G 磁盘
+> 2. `.29 /tmp/baize_s2_pure_launch.log`（4.7KB · 18:09 崩溃 S2 启动日志 · 本线自产）→ **已删**
+> 3. `.29 /tmp/baize_s2_restart.log`（4.4KB · 19:22 重启日志 · 本线自产）→ **已删**
+> 4. `.29 /tmp/baize_llm_launcher_help.txt`（8KB · launcher 帮助输出 · 本线自产）→ **已删**
+>
+> **未清（合规跳过）**：.29 `/tmp/phantomjs`(5.1G harness线)·`/tmp/gw_proxy_debug.log`(1.8G 系统活跃写入)·`/tmp/dsh_sse_forwarded.log`(685M 系统日志)·`/tmp/torchinductor_*`(663M 无法确认本线)·`/tmp/{matplotlib,blender_ui,django_*,astropy_*,sympy}`(harness SWE-bench 产物)·.12 `/tmp/lmms_eval_*`(19G 疑似 vision)·`/tmp/arm*_protb_feats`(vision)·`/tmp/R{8,9}_*`(vision)·`/tmp/ray`(1.4G Apr 2 无法确认本线)·.12 `/dev/shm/psm_*`(42 个 178M root 所有)·两机 NCCL shm(.29=18 .12=16)全活跃无 stale。
+>
+> **释放量**：磁盘 8.3G（.12）+ 17KB（.29）；RAM 无变化（清理项均非内存驻留）。
+>
+> **残余风险**：① .29 swap 97.6%（nw=2 COW 页驻留，si/so=0 无活跃换页，但 swap 余量极低——若训练遇内存尖峰可能再次 OOM）；② .12 /dev/shm psm_* 178M（root 所有无法清）；③ .12 /tmp 仍有 vision/data 线大目录（~40G+，非本线不可清）。
+>
+> **结论**：两机内存健康（avail>1000G·si/so=0），S2 训练稳定；18:09 OOM 已修复（nw=2+no_mmap）；清理释放 8.3G 磁盘；.29 swap 97.6% 需关注但不构成即时风险。详见 `run/reports/report_pretrain_memory_cleanup_zh.html`。
+
 > 📎 **2026-11-28 11:1x · data 进展通报（供 pretrain 参考，非强制要求）**
 >
 > **一句话**：方案 C 全部完成、连续 fresh 复验 PASS；`blend_s2_preblend.tsv` 已 **13,847 → 180 shards / BLEND 14KB**，E2BIG 消除。data **WAITING=0**，无待答问题。

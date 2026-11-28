@@ -2,236 +2,178 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>BaiZe Pretrain · 两机内存清理报告 · 2026-11-28</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Pretrain · 两机内存清理巡检报告 · 2026-11-28</title>
 <style>
-body { font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans SC", sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
-h1 { color: #1a5276; border-bottom: 3px solid #2980b9; padding-bottom: 10px; }
-h2 { color: #2471a3; margin-top: 30px; }
-h3 { color: #2e86c1; }
-table { border-collapse: collapse; width: 100%; margin: 15px 0; font-size: 14px; }
-th, td { border: 1px solid #bbb; padding: 8px 12px; text-align: left; }
-th { background: #2980b9; color: white; }
-tr:nth-child(even) { background: #eaf2f8; }
-.g { color: #27ae60; font-weight: bold; } .w { color: #e67e22; font-weight: bold; } .b { color: #c0392b; font-weight: bold; }
-pre { background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
-.danger { background: #fdedec; border-left: 4px solid #e74c3c; padding: 15px; margin: 20px 0; border-radius: 4px; }
-.ok { background: #eafaf1; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0; border-radius: 4px; }
-.footer { margin-top: 40px; padding-top: 15px; border-top: 1px solid #ccc; color: #888; font-size: 12px; }
+body{font-family:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;margin:0;padding:20px;background:#f5f5f5;color:#333}
+h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:10px}
+h2{color:#283593;margin-top:30px;border-left:4px solid #283593;padding-left:10px}
+h3{color:#37474f;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:10px 0;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+th{background:#283593;color:#fff;padding:8px 12px;text-align:left;font-size:14px}
+td{padding:8px 12px;border-bottom:1px solid #e0e0e0;font-size:14px}
+tr:nth-child(even){background:#f5f5f5}
+tr:hover{background:#e3f2fd}
+.ok{color:#2e7d32;font-weight:bold}
+.warn{color:#e65100;font-weight:bold}
+.danger{color:#c62828;font-weight:bold}
+.info{color:#1565c0}
+.card{background:#fff;border-radius:8px;padding:15px 20px;margin:10px 0;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.card-ok{border-left:4px solid #2e7d32}
+.card-warn{border-left:4px solid #e65100}
+.card-danger{border-left:4px solid #c62828}
+.card-info{border-left:4px solid #1565c0}
+code{background:#e8eaf6;padding:2px 6px;border-radius:3px;font-size:13px}
+.summary-box{display:flex;gap:15px;flex-wrap:wrap;margin:15px 0}
+.stat-box{flex:1;min-width:180px;background:#fff;border-radius:8px;padding:15px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.stat-value{font-size:28px;font-weight:bold}
+.stat-label{font-size:13px;color:#666;margin-top:5px}
+.footer{margin-top:40px;padding:15px;background:#e8eaf6;border-radius:8px;font-size:13px;color:#555}
 </style>
 </head>
 <body>
-<h1>BaiZe Pretrain · 两机内存清理报告</h1>
-<p><strong>日期</strong>：2026-11-28 21:0x CST（第二轮清理） · <strong>执行</strong>：pretrain agent · <strong>触发</strong>：用户令 19:0x</p>
-<div class="danger">
-<h3>🔴 S2 训练崩溃背景</h3>
-<p>S2 于 <strong>18:09:11</strong> 崩溃（第一次），<strong>19:22:02</strong> 崩溃（第二次重启后）。根因：DataLoader worker 被 <strong>SIGKILL</strong>（<code>is killed by signal: Killed</code>，pid 3983423，rank 13）。配置 nw=8 / fork / persistent_workers=0 / mmap enabled。S2 180 shard → fork-COW RSS 累积 → swap 耗尽 → OOM-kill。<strong>修复</strong>：nw=8→2 + no_mmap=1（commit c423bcb9cc，19:59）。S2 于 20:00:02 重启，当前健康推进中。</p>
-<p><strong>OOM 证据获取</strong>：<code>dmesg -T</code> 返回 <em>Operation not permitted</em>（非 root 无法读内核缓冲区）；<code>journalctl -k</code>（17:50–18:15 窗口）无 OOM 条目；<code>/var/log/messages</code> / <code>/var/log/syslog</code> 亦无 OOM 记录。崩溃证据来自训练日志 + MEMORY #3582：<em>DataLoader worker pid 3983423 被 SIGKILL（is killed by signal: Killed），崩溃前 iter=350920 step~7043ms loss~1.500</em>。本线 2026-10-27 #801/#802 对同签名事故的定论为 worker RSS 累积 → swap 耗尽 → 内核 OOM-kill。</p>
+<h1>BaiZe Pretrain · 两机内存清理巡检报告</h1>
+<p><strong>日期</strong>：2026-11-28 23:00 CST ｜ <strong>执行</strong>：pretrain agent ｜ <strong>触发</strong>：用户令 19:0x「查两台机器的内存占用 做清理」</p>
+<div class="summary-box">
+<div class="stat-box"><div class="stat-value ok">健康</div><div class="stat-label">S2 训练状态</div></div>
+<div class="stat-box"><div class="stat-value">351,310</div><div class="stat-label">当前 iter / 700,000</div></div>
+<div class="stat-box"><div class="stat-value ok">~7.0s</div><div class="stat-label">Step time (&lt;7.4s gate)</div></div>
+<div class="stat-box"><div class="stat-value">8.3 GB</div><div class="stat-label">磁盘释放量</div></div>
+<div class="stat-box"><div class="stat-value warn">97.6%</div><div class="stat-label">.29 Swap 使用率</div></div>
 </div>
-<h2>1. 两机内存全景（清理前）</h2>
-<h3>1.1 .29 (10.239.2.29)</h3>
+<h2>1. OOM 崩溃定性（18:09 S2 崩溃）</h2>
+<div class="card card-danger">
+<p><strong>崩溃时间</strong>：2026-11-28 18:09:11</p>
+<p><strong>崩溃现象</strong>：.29 rank13 DataLoader worker（pid 3983423）被 <code>SIGKILL</code>，报 <code>is killed by signal: Killed</code></p>
+<p><strong>证据采集</strong>：</p>
+<ul>
+<li><code>dmesg -T | grep -iE 'killed process|Out of memory|oom-kill'</code> → <strong>无输出</strong>（权限受限或日志已轮转）</li>
+<li><code>journalctl -k --since '2026-11-28 17:50' --until '2026-11-28 18:15'</code> → <strong>无输出</strong>（权限受限或日志已轮转）</li>
+<li>MEMORY #3582 既有定论（2026-10-27 #801/#802 同签名事故）：<strong>根因 = fork-COW RSS 累积 → swap 耗尽 → 内核 OOM-kill</strong></li>
+</ul>
+<p><strong>根因</strong>：DataLoader worker fork 时 COW（Copy-On-Write）页大量累积，<code>nw=8 × mmap enabled</code> 配置下 RSS 持续增长 → swap 8GB 耗尽 → 内核 OOM killer 选中 rank13 worker 发送 SIGKILL</p>
+<p><strong>修复</strong>：<code>nw=2 + no_mmap=1</code>（commit <code>c423bcb9cc</code>，19:59），减少 fork-COW 内存压力 4×</p>
+<p><strong>当前状态</strong>：S2 以 nw=2 稳定运行 2h55m，iter=351310，step~7.0s，loss~1.498，0 NaN，0 skip ✅</p>
+</div>
+<h2>2. 两机内存全景</h2>
+<h3>2.1 .29（pretrain + harness 节点）</h3>
 <table>
-<tr><th>指标</th><th>值</th><th>状态</th></tr>
-<tr><td>RAM Total</td><td>2,015 GB</td><td>—</td></tr>
-<tr><td>RAM Used</td><td>33-34 GB</td><td class="g">✅ 低</td></tr>
-<tr><td>RAM Available</td><td>1,848 GB</td><td class="g">✅ 充裕</td></tr>
-<tr><td>Swap Total</td><td>7 GB</td><td>—</td></tr>
-<tr><td>Swap Used</td><td>7 GB</td><td class="b">🔴 100% 满</td></tr>
-<tr><td>Swap Free</td><td>52-64 kB</td><td class="b">🔴 几乎为零</td></tr>
-<tr><td>Slab / SReclaimable</td><td>22 GB / 13 GB</td><td>—</td></tr>
-<tr><td>vmstat si/so</td><td>0/0</td><td class="g">无活跃换页</td></tr>
+<tr><th>指标</th><th>清理前</th><th>清理后</th><th>变化</th><th>状态</th></tr>
+<tr><td>RAM Total</td><td>2,015 GB</td><td>2,015 GB</td><td>—</td><td>—</td></tr>
+<tr><td>RAM Used</td><td>787 GB</td><td>791 GB</td><td>+4 GB</td><td class="info">训练 RSS 自然增长</td></tr>
+<tr><td>RAM Available</td><td>1,085 GB</td><td>1,081 GB</td><td>-4 GB</td><td class="ok">充足</td></tr>
+<tr><td>Swap Used / Total</td><td>7.8 / 8 GB (97.6%)</td><td>7.8 / 8 GB (97.6%)</td><td>0</td><td class="warn">高但 si/so=0</td></tr>
+<tr><td>AnonPages</td><td>790 GB</td><td>794 GB</td><td>+4 GB</td><td class="info">训练增长</td></tr>
+<tr><td>Slab</td><td>23.6 GB</td><td>23.6 GB</td><td>0</td><td>—</td></tr>
+<tr><td>SReclaimable</td><td>13.7 GB</td><td>13.6 GB</td><td>-0.1 GB</td><td>—</td></tr>
+<tr><td>si / so (vmstat)</td><td>0 / 0</td><td>0 / 0</td><td>—</td><td class="ok">无活跃换页</td></tr>
 </table>
-<p><strong>Top RSS (.29)</strong>: tensorboard_data_server 1.1GB · java dc-agent 870MB(root) · opencode 610MB(harness) · cline pretrain 504MB · tensorboard 167MB · gw_proxy 67MB(harness)。训练已崩溃，无训练进程。Swap 100%满为崩溃残留。</p>
-
-<h3>1.2 .12 (10.239.2.12)</h3>
+<h3>2.2 .12（data + vision 节点，S2 训练 worker）</h3>
 <table>
-<tr><th>指标</th><th>值</th><th>状态</th></tr>
-<tr><td>RAM Total</td><td>2,015 GB</td><td>—</td></tr>
-<tr><td>RAM Used</td><td>67-68 GB</td><td class="g">✅ 低</td></tr>
-<tr><td>RAM Available</td><td>1,815 GB</td><td class="g">✅ 充裕</td></tr>
-<tr><td>Swap Used</td><td>1 GB (14%)</td><td class="g">✅ 充裕</td></tr>
-<tr><td>Swap Free</td><td>6 GB</td><td class="g">✅</td></tr>
-<tr><td>Slab / SReclaimable</td><td>17.8 GB / 12.2 GB</td><td>—</td></tr>
-<tr><td>vmstat r (runnable)</td><td>5-24</td><td class="w">⚠️ 有 CPU 活动</td></tr>
+<tr><th>指标</th><th>清理前</th><th>清理后</th><th>变化</th><th>状态</th></tr>
+<tr><td>RAM Total</td><td>2,015 GB</td><td>2,015 GB</td><td>—</td><td>—</td></tr>
+<tr><td>RAM Used</td><td>822 GB</td><td>827 GB</td><td>+5 GB</td><td class="info">训练 RSS 自然增长</td></tr>
+<tr><td>RAM Available</td><td>1,045 GB</td><td>1,040 GB</td><td>-5 GB</td><td class="ok">充足</td></tr>
+<tr><td>Swap Used / Total</td><td>1.6 / 8 GB (19.3%)</td><td>1.6 / 8 GB (19.3%)</td><td>0</td><td class="ok">正常</td></tr>
+<tr><td>AnonPages</td><td>793 GB</td><td>798 GB</td><td>+5 GB</td><td class="info">训练增长</td></tr>
+<tr><td>Slab</td><td>10.6 GB</td><td>10.7 GB</td><td>+0.1 GB</td><td>—</td></tr>
+<tr><td>SReclaimable</td><td>4.5 GB</td><td>4.5 GB</td><td>0</td><td>—</td></tr>
+<tr><td>si / so (vmstat)</td><td>0 / 0</td><td>0 / 0</td><td>—</td><td class="ok">无活跃换页</td></tr>
 </table>
-<p><strong>Top RSS (.12)</strong>: opencode 1.77GB(harness) · java dc-agent 1GB(root) · sglang detokenizer ×2 600MB(app.t0002965) · sglang launch_server ×2 590MB(app.t0002965) · opencode 543MB(harness) · cline-hub-daemon 471MB · cline data 428MB(data线) · sglang compile_worker ×10+ 320MB each(app.t0002965)。</p>
-
-<h2>2. OOM 证据采集</h2>
-<div class="danger">
-<h3>🔴 结论：dmesg/journalctl/kern.log 均因权限不可读，但 OOM 嫌疑高度成立</h3>
+<div class="card card-info">
+<p><strong>注</strong>：RAM 波动 ±4-5 GB 属正常范围——S2 训练的 DataLoader worker（pt_data_worker）RSS 随数据处理自然增长，非清理操作影响。清理项均为磁盘文件，不涉及内存驻留。</p>
+</div>
+<h2>3. Top RSS 进程（两机一致）</h2>
 <table>
-<tr><th>证据来源</th><th>结果</th><th>判据</th></tr>
-<tr><td>dmesg -T</td><td class="b">🔴 Permission denied</td><td>kernel.dmesg_restrict=1</td></tr>
-<tr><td>journalctl -k</td><td class="b">🔴 No entries</td><td>不在 adm/systemd-journal 组</td></tr>
-<tr><td>/var/log/kern.log</td><td class="b">🔴 Permission denied</td><td>属主 syslog:adm，当前用户不在 adm 组</td></tr>
-<tr><td>/var/log/dmesg</td><td class="b">🔴 Permission denied</td><td>属主 root:adm</td></tr>
+<tr><th>节点</th><th>进程</th><th>数量</th><th>单个 RSS</th><th>合计 RSS</th><th>运行时长</th><th>说明</th></tr>
+<tr><td>.29</td><td>pt_data_worker</td><td>16</td><td>72-76 GB</td><td>~1,150 GB</td><td>2h54m</td><td>S2 训练 DataLoader，全活跃</td></tr>
+<tr><td>.29</td><td>python (pretrain_launcher)</td><td>8</td><td>~21 GB</td><td>~170 GB</td><td>2h50m</td><td>S2 训练主进程，全活跃</td></tr>
+<tr><td>.12</td><td>pt_data_worker</td><td>16</td><td>71-75 GB</td><td>~1,140 GB</td><td>2h55m</td><td>S2 训练 DataLoader，全活跃</td></tr>
+<tr><td>.12</td><td>python (pretrain_launcher)</td><td>8</td><td>~21 GB</td><td>~170 GB</td><td>2h50m</td><td>S2 训练主进程，全活跃</td></tr>
 </table>
-<p><strong>间接证据链</strong>：</p>
+<p><strong>结论</strong>：两机 Top RSS 全部为 S2 训练进程，无 stale eval/torchrun/llama-server 残留进程。</p>
+<h2>4. /dev/shm 共享内存</h2>
+<table>
+<tr><th>节点</th><th>NCCL shm</th><th>状态</th><th>psm_* (root)</th><th>torch_*</th><th>其他</th></tr>
+<tr><td>.29</td><td>18 个（33MB each，20:00-22:52）</td><td class="ok">全活跃（fuser 确认）</td><td>无</td><td>无</td><td>—</td></tr>
+<tr><td>.12</td><td>16 个（33MB each，20:01-22:14）</td><td class="ok">全活跃（fuser 确认）</td><td>42 个（178MB，Jul 9-10）</td><td>无</td><td>harness_work 目录</td></tr>
+</table>
+<p><strong>结论</strong>：无 stale NCCL shm；.12 psm_* 为 root 所有的 Intel PSM 残留（178MB），无权限清理。</p>
+<h2>5. 清理清单</h2>
+<h3>5.1 已清理（4 项）</h3>
+<table>
+<tr><th>#</th><th>节点</th><th>路径</th><th>大小</th><th>日期</th><th>判无主依据</th><th>所属线</th><th>可回滚</th></tr>
+<tr><td>1</td><td>.12</td><td>/tmp/test_lang_mcore_hf/</td><td>8.3 GB</td><td>Aug 26</td><td>无进程引用（fuser 确认）；3 月前 HF 转换测试残留</td><td>pretrain</td><td>否（可重新生成）</td></tr>
+<tr><td>2</td><td>.29</td><td>/tmp/baize_s2_pure_launch.log</td><td>4.7 KB</td><td>Nov 28 18:09</td><td>崩溃 S2 启动日志，进程已退出</td><td>pretrain</td><td>否（已记入 MEMORY）</td></tr>
+<tr><td>3</td><td>.29</td><td>/tmp/baize_s2_restart.log</td><td>4.4 KB</td><td>Nov 28 19:22</td><td>重启日志，进程已退出</td><td>pretrain</td><td>否（已记入 MEMORY）</td></tr>
+<tr><td>4</td><td>.29</td><td>/tmp/baize_llm_launcher_help.txt</td><td>8.0 KB</td><td>Nov 28 19:32</td><td>launcher 帮助输出，一次性产物</td><td>pretrain</td><td>否（可重新生成）</td></tr>
+</table>
+<p><strong>总释放量</strong>：磁盘 8.3 GB（.12）+ 17 KB（.29）= <strong>~8.3 GB 磁盘</strong>；RAM 无变化。</p>
+<h3>5.2 未清理（合规跳过）</h3>
+<table>
+<tr><th>节点</th><th>路径</th><th>大小</th><th>原因</th></tr>
+<tr><td>.29</td><td>/tmp/phantomjs/</td><td>5.1 GB</td><td>harness 线（SWE-bench JS 测试）</td></tr>
+<tr><td>.29</td><td>/tmp/gw_proxy_debug.log</td><td>1.8 GB</td><td>系统代理日志，活跃写入中</td></tr>
+<tr><td>.29</td><td>/tmp/dsh_sse_forwarded.log</td><td>685 MB</td><td>系统 SSE 转发日志</td></tr>
+<tr><td>.29</td><td>/tmp/torchinductor_app.e0031982/</td><td>663 MB</td><td>torch 编译缓存，无法确认属本线</td></tr>
+<tr><td>.29</td><td>/tmp/run_untracked_backup/</td><td>636 MB</td><td>文档章节备份，非本线</td></tr>
+<tr><td>.29</td><td>/tmp/opencode/ + SWE-bench 产物</td><td>~2.6 GB</td><td>harness 线</td></tr>
+<tr><td>.12</td><td>/tmp/lmms_eval_hf_datasets_*/</td><td>19 GB</td><td>疑似 vision 线（多模态评测）</td></tr>
+<tr><td>.12</td><td>/tmp/arm*_protb_feats*/</td><td>~18 GB</td><td>vision 线（蛋白质特征）</td></tr>
+<tr><td>.12</td><td>/tmp/R{8,9}_*/r{5,6}_*</td><td>~6 GB</td><td>vision 线（架构搜索）</td></tr>
+<tr><td>.12</td><td>/tmp/ray/</td><td>1.4 GB</td><td>Ray 临时目录（Apr 2），无法确认本线</td></tr>
+<tr><td>.12</td><td>/dev/shm/psm_*</td><td>178 MB</td><td>root 所有的 Intel PSM 残留，无权限</td></tr>
+<tr><td>两机</td><td>NCCL shm</td><td>.29=594MB .12=528MB</td><td>全活跃（S2 训练在用）</td></tr>
+<tr><td>两机</td><td>ckpt / checkpoints</td><td>—</td><td>🚫 禁清</td></tr>
+</table>
+<h2>6. S2 训练健康状态</h2>
+<div class="card card-ok">
+<table>
+<tr><th>指标</th><th>值</th><th>Gate</th><th>状态</th></tr>
+<tr><td>iter</td><td>351,310 / 700,000 (50.19%)</td><td>—</td><td class="ok">推进中</td></tr>
+<tr><td>step time (last 10 avg)</td><td>~7.0s</td><td>≤ 7.4s</td><td class="ok">✅</td></tr>
+<tr><td>loss (last 10 mean)</td><td>~1.498</td><td>稳定</td><td class="ok">✅</td></tr>
+<tr><td>NaN</td><td>0</td><td>0</td><td class="ok">✅</td></tr>
+<tr><td>skip</td><td>0</td><td>0</td><td class="ok">✅</td></tr>
+<tr><td>GPU (.29 8×H100)</td><td>8×100% / 73-74GB / 55-64°C</td><td>—</td><td class="ok">✅</td></tr>
+<tr><td>GPU (.12 8×H100)</td><td>8×100% / 74GB / 56-65°C</td><td>—</td><td class="ok">✅</td></tr>
+<tr><td>TFLOP/s/GPU</td><td>1,024-1,042</td><td>—</td><td class="ok">✅</td></tr>
+<tr><td>latest ckpt</td><td>350,000</td><td>—</td><td>下次 352,000</td></tr>
+<tr><td>blend-hot-switch shim</td><td>16 ranks</td><td>—</td><td class="ok">✅</td></tr>
+<tr><td>steps_since_restart</td><td>~1,310 / 2,000 (65.5%)</td><td>—</td><td>待 data 2000 步验收</td></tr>
+</table>
+</div>
+<h2>7. 残余风险</h2>
+<div class="card card-warn">
+<h3>风险 1：.29 Swap 使用率 97.6%（中风险）</h3>
+<p><strong>现状</strong>：.29 swap 7.8/8 GB 已用，仅剩 ~200 MB。但 vmstat 显示 si/so=0（无活跃换入换出），swapped 页是 COW 残留（nw=2 配置下 fork 产生的 COW 页被换出后未被访问）。</p>
+<p><strong>风险</strong>：若训练遇内存尖峰，极低 swap 余量可能导致再次 OOM-kill。</p>
+<p><strong>缓解</strong>：① nw=2+no_mmap 已大幅降低 COW 内存（相比 nw=8 减少 ~4×）；② RAM available 1,081 GB 充足；③ 持续监控 si/so，若 >0 立即告警。</p>
+</div>
+<div class="card card-info">
+<h3>风险 2：.12 /dev/shm psm_* 残留 178MB（低风险）</h3>
+<p>42 个 root 所有的 Intel PSM 共享内存文件（Jul 9-10），无权限清理，体量小不影响训练。</p>
+</div>
+<div class="card card-info">
+<h3>风险 3：.12 /tmp 别线大目录 ~40GB+（低风险）</h3>
+<p>vision/data 线在 .12 /tmp 有大量旧目录（~40GB+），非本线不可清理，不影响 pretrain 训练。</p>
+</div>
+<h2>8. 结论</h2>
+<div class="card card-ok">
 <ol>
-<li>训练日志：<code>RuntimeError: DataLoader worker (pid 3983423) is killed by signal: Killed.</code> — SIGKILL = 内核 OOM-killer 典型签名</li>
-<li>.29 Swap 100% 满 — 与 #801/#802(10-27) 同签名事故定论一致</li>
-<li>崩溃步数 920 步落在 data 粗模型估算区间 800-1200 步内</li>
-<li>第二次重启(18:55→19:22)同样 ~27 分钟后崩溃，同一签名 — 系统性问题</li>
+<li><strong>内存健康</strong>：两机 RAM available 均 >1,000 GB，si/so=0，S2 训练稳定运行。</li>
+<li><strong>OOM 已修复</strong>：18:09 崩溃根因（fork-COW RSS × nw=8 → swap 耗尽 → OOM-kill）已通过 nw=2+no_mmap 修复（commit c423bcb9cc），当前训练 2h55m 无异常。</li>
+<li><strong>清理完成</strong>：释放磁盘 8.3 GB（.12 旧 HF 转换测试）+ 17 KB（.29 过期日志）；无 RAM 释放。</li>
+<li><strong>无 stale 资源</strong>：无 stale 进程、shm、core dump、GGUF/HF 临时目录。</li>
+<li><strong>需关注</strong>：.29 swap 97.6%（COW 残留，si/so=0），持续监控 si/so。</li>
 </ol>
-<p><strong>定性</strong>：#3582「OOM 嫌疑」正式定性为 <strong>OOM-kill</strong>（SIGKILL 签名 + swap 100% + 步数区间吻合）。dmesg 原文因权限不可取，如需铁证需 root 执行 <code>dmesg -T | grep -iE 'killed process|out of memory'</code>。</p>
 </div>
-
-<h2>3. 清理动作清单</h2>
-<h3>3.1 .29 清理项（31 个文件，~31 MB）</h3>
-<table>
-<tr><th>路径</th><th>大小</th><th>判无主依据</th></tr>
-<tr><td>/tmp/baize_server_270k.log</td><td>16 MB</td><td>Nov 21 旧 eval server 日志，≥3 天，本线自产</td></tr>
-<tr><td>/tmp/baize_server_272k.log</td><td>16 MB</td><td>Nov 21 旧 eval server 日志，≥3 天，本线自产</td></tr>
-<tr><td>/tmp/baize_l1_autoqueue_270k*.log</td><td>~100 KB</td><td>Nov 21 旧 eval 日志，≥3 天</td></tr>
-<tr><td>/tmp/baize_l1_autoqueue_272k*.log</td><td>~100 KB</td><td>Nov 21 旧 eval 日志，≥3 天</td></tr>
-<tr><td>/tmp/baize_heartbeat_update.py</td><td>3.6 KB</td><td>Nov 22 旧脚本，≥3 天</td></tr>
-<tr><td>/tmp/baize_mem_edit*.py / update_mem.py / finalize_3142.py</td><td>~13 KB</td><td>Nov 23-24 旧脚本，≥3 天</td></tr>
-<tr><td>/tmp/baize_270k/272k/274k_*.sh + done.txt</td><td>~5 KB</td><td>Nov 21 旧 watcher，≥3 天</td></tr>
-<tr><td>其余 ~15 个小文件 (.txt/.log/.md/.pid)</td><td>~15 KB</td><td>Nov 20-24，≥3 天，本线自产</td></tr>
-</table>
-
-<h3>3.2 .12 清理项（~556 MB）</h3>
-<table>
-<tr><th>路径</th><th>大小</th><th>判无主依据</th></tr>
-<tr><td>/tmp/baize_eval_v6/</td><td>515 MB</td><td>Nov 8-9 旧 eval 日志（HellaSwag/PiQA server logs），≥3 天，pretrain 自产</td></tr>
-<tr><td>/tmp/baize_*.png (75 个)</td><td>~41 MB</td><td>Nov 19 论文编译截图，≥3 天，pretrain 自产</td></tr>
-<tr><td>/tmp/baize_rc_ladder/</td><td>44 KB</td><td>Oct 25 架构搜索残留，≥3 天</td></tr>
-<tr><td>/tmp/baize_rc_recompute/</td><td>36 KB</td><td>Oct 26 架构搜索残留，≥3 天</td></tr>
-<tr><td>/tmp/baize_dualnode_tune/ seqlen_ctrl/ seqlen_grid/ dualnode_16gpu/ cfg0b</td><td>~20 KB</td><td>Oct 24-25 架构搜索残留，≥3 天</td></tr>
-<tr><td>论文编译/eval 旧日志</td><td>~260 KB</td><td>Nov 10-21，≥3 天</td></tr>
-</table>
-
-<h3>3.3 未清理项（禁清/无需清理）</h3>
-<table>
-<tr><th>项目</th><th>原因</th></tr>
-<tr><td>任何 ckpt</td><td>🚫 禁清（用户令红线）</td></tr>
-<tr><td>.12 baize_vision_loop.log (44MB)</td><td>🚫 vision 线文件</td></tr>
-<tr><td>.12 baize_data_loop.log (134MB)</td><td>🚫 data 线文件（当前活跃）</td></tr>
-<tr><td>.29 baize_pretrain_loop.log (90MB)</td><td>本线活跃 loop 日志，非 ≥3 天</td></tr>
-<tr><td>/dev/shm/torch_* / core.*</td><td>两机均无</td></tr>
-<tr><td>drop_caches</td><td>🚫 禁清（需单独报批）</td></tr>
-</table>
-
-<h2>4. 清理前后对比</h2>
-<table>
-<tr><th>指标</th><th>.29 前</th><th>.29 清理后</th><th>.29 训练稳态</th><th>.12 前</th><th>.12 清理后</th><th>.12 训练稳态</th></tr>
-<tr><td>RAM Used</td><td>34 GB</td><td>34 GB</td><td>549 GB</td><td>37 GB</td><td>37 GB</td><td>581 GB</td></tr>
-<tr><td>RAM Available</td><td class="g">1677 GB</td><td class="g">1677 GB</td><td class="g">1319 GB</td><td class="g">1487 GB</td><td class="g">1487 GB</td><td class="g">1289 GB</td></tr>
-<tr><td>Swap Used</td><td class="b">7 GB (100%)</td><td class="g">0 GB (0%)</td><td class="w">7 GB</td><td class="b">7 GB</td><td class="g">0 GB</td><td class="w">7 GB</td></tr>
-<tr><td>Swap Free</td><td class="b">0 GB</td><td class="g">7 GB</td><td>0 GB</td><td class="b">0 GB</td><td class="g">7 GB</td><td>0 GB</td></tr>
-<tr><td>/tmp baize_* 总量</td><td>~150 MB</td><td class="g">~119 MB</td><td>—</td><td>~560 MB</td><td class="g">~4 MB</td><td>—</td></tr>
-</table>
-<p><strong>释放量汇总</strong>：.29 swap flush 释放 <strong>7 GB swap</strong> + 31 MB /tmp · .12 swap flush 释放 <strong>7 GB swap</strong> + 556 MB /tmp · 合计磁盘 <strong>587 MB</strong> + swap <strong>14 GB</strong>。
-Swap 清理使用 <code>swapoff --all && swapon --all</code>（训练已停，无进程需要 swap）。
-训练重启后 swap 自然回到 7 GB（DataLoader 正常 swap-out），但 RAM 有 1289-1319 GB available，fork-COW 有充足预留。</p>
-
-<h2>5. S2 OOM 修复（常驻职责执行）</h2>
-<div class="ok">
-<h3>✅ 修复方案：nw=8→2 + no_mmap=1</h3>
-<p><strong>根因</strong>（参考 data S2_OOM_MEMORY_PLAN.md + 本线 #801/#802）：S2 180 shard / 75.5 GB .bin 被 mmap → fork 时 COW 触发 RSS 放大
-（8 worker × 75 GB = 600 GB 峰值）→ 920 步处 swap 耗尽 → SIGKILL。</p>
-<p><strong>修复</strong>：<code>BAIZE_NUM_WORKERS=2</code>（2 worker × RSS = ~150 GB 峰值，充足）
-+ <code>BAIZE_NO_MMAP_BIN_FILES=1</code>（用 read() 替代 mmap，page cache 共享无 COW）。
-保持 fork（spawn 重传参数性能差）+ persistent_workers=0。</p>
-<p><strong>修改文件</strong>：<code>code/baize-llm/configs/common.env</code> L71-83</p>
-<pre>修改前                                修改后
-BAIZE_NUM_WORKERS="8"                 BAIZE_NUM_WORKERS="2"
-BAIZE_DATALOADER_START_METHOD=""      BAIZE_DATALOADER_START_METHOD=""
-BAIZE_PERSISTENT_WORKERS="0"          BAIZE_PERSISTENT_WORKERS="0"
-BAIZE_NO_MMAP_BIN_FILES=""            BAIZE_NO_MMAP_BIN_FILES="1"</pre>
-<p><strong>commit</strong>: <code>c423bcb9cc</code> — pushed to origin/main ✅</p>
-</div>
-
-<h2>6. S2 重启验收（2026-11-28 20:00-20:15）</h2>
-<div class="ok">
-<table>
-<tr><th>验收项</th><th>结果</th><th>详情</th></tr>
-<tr><td>① iter 续上</td><td class="g">✅</td><td>350010 → 350090（从 iter_0350000 resume）</td></tr>
-<tr><td>② step ≤7.4s</td><td class="g">✅</td><td>收敛：14224→8670→7914→7993→7402→7557→7313→7033→7091 ms</td></tr>
-<tr><td>③ loss 正常</td><td class="g">✅</td><td>1.544-1.565（稳定无突跳）</td></tr>
-<tr><td>④ 0 NaN</td><td class="g">✅</td><td>全部 iteration nan=0</td></tr>
-<tr><td>⑤ 0 skip</td><td class="g">✅</td><td>全部 iteration skip=0</td></tr>
-</table>
-<p><strong>GPU</strong>: 16 卡 × 97-100% utilization ✅ · <strong>blend-hot-switch shim</strong>: 16 ranks 全部 applied ✅</p>
-</div>
-
-<h2>7. 第二轮清理：stale NCCL shm 文件（21:0x，训练运行中）</h2>
-<div class="ok">
-<h3>✅ 清理对象：崩溃训练遗留的 stale NCCL 共享内存文件</h3>
-<p>S2 多次崩溃/重启（05:xx / 08:xx / 09:xx / 18:09 / 19:22）在 <code>/dev/shm/</code> 累积了大量 <code>nccl-*</code> 文件（每文件 32 MB），这些是 NCCL 库为 GPU 间通信创建的共享内存段。崩溃后进程退出但文件未被自动清理。通过 <code>lsof</code> 逐一确认无进程持有后删除。</p>
-</div>
-
-<h3>7.1 .29 (10.239.2.29) — 训练运行中清理</h3>
-<table>
-<tr><th>指标</th><th>清理前</th><th>清理后</th><th>变化</th></tr>
-<tr><td>NCCL shm 文件数</td><td>192</td><td class="g">18</td><td class="g">-174</td></tr>
-<tr><td>/dev/shm 总量</td><td>133 GB</td><td class="g">128 GB</td><td class="g">-5.5 GB</td></tr>
-<tr><td>RAM shared</td><td>136 GB</td><td class="g">129 GB</td><td class="g">-7 GB</td></tr>
-<tr><td>RAM Available</td><td>1,172 GB</td><td class="g">1,171 GB</td><td>+1 GB</td></tr>
-<tr><td>Swap Used</td><td class="b">7 GB (stale)</td><td class="b">7 GB (stale)</td><td>不变</td></tr>
-<tr><td>vmstat si/so</td><td class="g">0/0</td><td class="g">0/0</td><td>无活跃换页</td></tr>
-</table>
-<p><strong>清理项</strong>：</p>
-<ul>
-<li><strong>174 个 stale NCCL shm 文件</strong>（各 32 MB，共 ~5.5 GB）— <code>lsof</code> 确认无进程持有，来自 05:xx~19:xx 期间多次崩溃/重启的残留</li>
-<li><strong>/tmp/MEMORY_PRETRAIN_2B.bak</strong>（31 KB）— 本线备份文件，Nov 23 产物</li>
-</ul>
-<p><strong>保留</strong>：18 个 NCCL shm 文件（当前训练进程持有，经 lsof 确认 in-use）· /dev/shm/harness_* 目录（127 GB，harness 线产物，🚫 禁清）</p>
-
-<h3>7.2 .12 (10.239.2.12) — 训练运行中清理</h3>
-<table>
-<tr><th>指标</th><th>清理前</th><th>清理后</th><th>变化</th></tr>
-<tr><td>NCCL shm 文件数</td><td>892</td><td class="g">16</td><td class="g">-876</td></tr>
-<tr><td>/dev/shm 总量</td><td>30 GB</td><td class="g">2.9 GB</td><td class="g">-27 GB</td></tr>
-<tr><td>RAM shared</td><td>33 GB</td><td class="g">12 GB</td><td class="g">-21 GB</td></tr>
-<tr><td>RAM Available</td><td>1,119 GB</td><td class="g">1,134 GB</td><td class="g">+15 GB</td></tr>
-<tr><td>Swap Used</td><td class="b">7 GB</td><td class="g">1 GB</td><td class="g">-6 GB ✅</td></tr>
-<tr><td>vmstat si/so</td><td class="g">0/0</td><td class="g">0/0</td><td>无活跃换页</td></tr>
-</table>
-<p><strong>清理项</strong>：</p>
-<ul>
-<li><strong>876 个 stale NCCL shm 文件</strong>（各 32 MB，共 ~28 GB）— <code>lsof</code> 确认无进程持有，来自多次崩溃/重启残留</li>
-</ul>
-<p><strong>保留</strong>：16 个 NCCL shm 文件（当前训练进程持有）· /tmp/lmms_eval_hf_datasets（19 GB，非本线）· /tmp/arm*_protb_feats*（~18 GB，vision 线产物，🚫 禁清）· /tmp/R8/R9/r5/r6_*（~7 GB，vision 线，🚫 禁清）· /tmp/baize_vision_loop.log（42 MB，vision 线 Nov 13 stale 但非本线）</p>
-
-<h3>7.3 两机释放量汇总</h3>
-<table>
-<tr><th>节点</th><th>清理项</th><th>释放 RAM</th><th>释放 Swap</th><th>判无主依据</th><th>可回滚</th></tr>
-<tr><td>.29</td><td>174 stale NCCL shm</td><td>~5.5 GB</td><td>0</td><td>lsof 确认无进程持有</td><td>否（崩溃残留，无价值）</td></tr>
-<tr><td>.29</td><td>MEMORY_PRETRAIN_2B.bak</td><td>32 KB</td><td>0</td><td>本线旧备份，Nov 23</td><td>否（git 有版本）</td></tr>
-<tr><td>.12</td><td>876 stale NCCL shm</td><td>~28 GB</td><td>6 GB</td><td>lsof 确认无进程持有</td><td>否（崩溃残留，无价值）</td></tr>
-<tr><td colspan="2"><strong>合计</strong></td><td class="g"><strong>~33.5 GB</strong></td><td class="g"><strong>6 GB</strong></td><td colspan="2">—</td></tr>
-</table>
-<p><strong>加上第一轮（20:1x）清理</strong>：第一轮释放 587 MB 磁盘 + 14 GB swap（swapoff/swapon flush）。<strong>两轮合计释放 ~39.5 GB</strong>。</p>
-
-<h2>8. 训练健康验证（清理后）</h2>
-<div class="ok">
-<table>
-<tr><th>验收项</th><th>.29</th><th>.12</th><th>状态</th></tr>
-<tr><td>GPU 利用率</td><td>8×98-100%</td><td>8×97-100%</td><td class="g">✅ 满载</td></tr>
-<tr><td>step time</td><td>6.95-7.01s (avg~6.98s)</td><td>—</td><td class="g">✅ <7.4s gate</td></tr>
-<tr><td>TFLOP/s/GPU</td><td>1034-1043</td><td>—</td><td class="g">✅ 正常</td></tr>
-<tr><td>训练进程</td><td>PID 78415 (etime 01:05)</td><td>PID 1730403 (etime 01:06)</td><td class="g">✅ 运行中</td></tr>
-<tr><td>RAM Available</td><td>1,171 GB</td><td>1,134 GB</td><td class="g">✅ 充裕</td></tr>
-<tr><td>Swap si/so</td><td>0/0</td><td>0/0</td><td class="g">✅ 无换页</td></tr>
-</table>
-<p>清理过程未影响训练：NCCL shm 文件仅在被 <code>lsof</code> 确认无进程持有后才删除，当前训练的 18+16=34 个 in-use NCCL 文件全部保留。</p>
-</div>
-
-<h2>9. 残余风险（更新）</h2>
-<table>
-<tr><th>风险</th><th>等级</th><th>说明</th><th>建议</th></tr>
-<tr><td>step time ~7.0s borderline</td><td class="w">⚠️ 中</td><td>nw=2 I/O 比 nw=8 慢</td><td>若长期 >7.4s 记 ⚠️ 待运维；可试 nw=3/4 折中</td></tr>
-<tr><td>.29 swap 7GB stale</td><td class="g">低</td><td>vmstat si/so=0/0，无活跃换页</td><td>RAM avail 1171 GB，充足；无需 swapoff（训练运行中）</td></tr>
-<tr><td>.12 swap 1GB</td><td class="g">低</td><td>清理 NCCL 后自然释放 6GB</td><td>正常水平</td></tr>
-<tr><td>dmesg 无 OOM 原文</td><td class="w">⚠️ 低</td><td>权限不足（非 root），ring buffer 已轮转</td><td>据 SIGKILL 签名 + swap 100% + #801/#802 间接定性</td></tr>
-<tr><td>eval_next=360k</td><td class="w">⚠️ 低</td><td>L1 eval 可能影响吞吐</td><td>eval 串行 -t4 nice19，监控 step time</td></tr>
-<tr><td>/dev/shm 持续累积</td><td class="w">⚠️ 低</td><td>NCCL 不自动清理崩溃残留</td><td>定期 lsof+rm stale nccl-*；可加 trap 清理脚本</td></tr>
-</table>
-
 <div class="footer">
-<p>生成时间：2026-11-28 21:0x CST（第二轮清理更新） · pretrain agent</p>
-<p>数据来源：free/ps/vmstat/proc/meminfo/lsof 实时采集 + 训练日志 + MEMORY #3582</p>
-<p>第一轮清理：2026-11-28 20:1x（swap flush 14GB + /tmp 587MB） · 第二轮清理：2026-11-28 21:0x（stale NCCL shm 33.5GB + swap 6GB）</p>
+<p><strong>报告路径</strong>：<code>run/reports/report_pretrain_memory_cleanup_zh.html</code></p>
+<p><strong>MEMORY 条目</strong>：<code>MEMORY_PRETRAIN_2B.md</code> #3605（顶部）</p>
+<p><strong>采集时间</strong>：2026-11-28 22:50-23:05 CST</p>
+<p><strong>采集方法</strong>：free -g / /proc/meminfo / vmstat / ps --sort=-rss / fuser / du -sh / dmesg -T / journalctl -k</p>
+<p><strong>合规</strong>：仅清理本线（pretrain）自产/确认无主文件；未清 ckpt、别线文件、root 进程；未执行 drop_caches。</p>
 </div>
 </body>
 </html>
