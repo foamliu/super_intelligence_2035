@@ -32,16 +32,17 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        opencode v1.19.6 predict重跑中(42/500)·zhulong predict中(89/500)·6-harness eval循环(codex eval中)·opencode/zhulong eval-watcher等待predict完成
-已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·opencode 0-patch根因修复✅(commit f154c8ba50)·cline-patched eval DONE(355/499=71.1%)·claude-code eval DONE(273/500=54.6%,142infra待查)·opencode+zhulong eval-watcher已启动(PID1816539/1816542)
-当前动作:     opencode 8w predict 42/500(序列化经serve守护,ETA~00:30 11-29)·zhulong 12w predict 89/500(ETA~02:30)·6-harness eval循环 run_eval_all_8w.sh(PID4157025):codex eval中→deepseek→hermes→pi·资源自检PASS(load16.89/224,topCPU=pretrain非本线,本线最高zhulong~22%CPU)
-下一步:       codex/deepseek/hermes/pi eval自循环完成→opencode eval(watcher PID1816539在predict完成后自动触发)→zhulong eval(watcher PID1816542)→8路eval全齐→gen_report_doubao_pro_7way.py生成最终8路对比HTML报告(含版本列,cline显示zhulong(cline-patched))
+PHASE:        opencode v1.19.6 predict中(58/500)·zhulong 12w predict中(99/500)·6-harness eval循环(deepseek eval中)·opencode/zhulong eval-watcher等待predict完成
+已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·opencode 0-patch根因修复✅(commit f154c8ba50)·cline-patched eval DONE(355/499=71.1%)·claude-code eval DONE(273/500=54.6%,142infra待查)·codex eval DONE(289/497=58.1%,129infra)·opencode+zhulong eval-watcher已启动(PID1816539/1816542)
+当前动作:     opencode 8w predict 58/500(ETA~22:40 11-28)·zhulong 12w predict 99/500(ETA~23:16)·6-harness eval循环 run_eval_all_8w.sh(PID4157025):cline✅→cc✅→codex✅→deepseek eval中→hermes→pi·资源自检PASS(load24.68/224,mem179G/2015G,topCPU=容器内pip build非本线失控,本线最高opencode~23%CPU)
+下一步:       deepseek/hermes/pi eval自循环完成→opencode eval(watcher PID1816539在predict完成后自动触发)→zhulong eval(watcher PID1816542)→8路eval全齐→gen_report_doubao_pro_7way.py生成最终8路对比HTML报告(含版本列,cline显示zhulong(cline-patched))
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~26KB / MEMORY≈6KB
 
   🔧 opencode 0-patch根因(已修复): OpencodeDriver代码为v2.4.1编写(无--dir),但v1.19.6需要--dir<workdir>才能编辑目标repo文件。修复=加回--dir(commit f154c8ba50)。smoke test验证:astropy__astropy-12907产生502B patch。
   SWE-bench Verified Pass% (doubao-pro 上一轮v1.18.27, 保留对照): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
+  SWE-bench Verified Pass% (doubao-pro 本轮v1.19.6, eval进行中): cline-patched355/499=71.1%·codex289/497=58.1%·cc273/500=54.6%(142infra待查)·deepseek/hermes/pi eval中·opencode/zhulong predict中
 
 ## 启动说明（首次唤醒）
 
