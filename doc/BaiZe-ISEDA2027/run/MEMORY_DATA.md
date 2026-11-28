@@ -2,20 +2,20 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1170) — S2 内存实验 v7（data 主导）· TB iter=351,036 / step 1036/2000（51.8%）· step=7.06s · 吞吐 594K（+0.9% vs S1）· AnonPages 742GB · COW 平台化 · ETA step 2000 ~00:01**：
+> 🔧 **心跳 · 2026-11-28 (R1171) — S2 内存实验 v8（data 主导）· TB iter=351,113 / step 1113/2000（55.7%）· step=7.13s/recent 6.98s · 吞吐 589K/recent 601K · AnonPages 745GB · COW 已平台化 · ETA step 2000 ~00:01**：
 > - **用户令**（20:0x）：data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）；step ≤7.4s 硬指标
-> - **S2 config E（nw=2+no_mmap）live 实测**（TB 精确 iter=351,036 / step 1036）：
->   - step=7.06s ✅（≤7.4s）· 吞吐~594K ✅（256×16384/7.06，与 S1 600K 同级 delta +0.9%）· 0 OOM ✅ · 0 NaN ✅（lm_loss=1.5943）
->   - AnonPages：.12=742GB（CSV col10）· MemAvail=.12=1,063GB · SwapFree=.12=6.5GB · vmstat si/so=0
-> - **AnonPages 增长趋势**（CSV 1311 行，step 102→1036）：
->   516→742GB / 934步 = 0.24 GB/step（整体均值）；近期 93 步=0.107；近期 187 步=0.134（衰减中，COW 趋平台化）
-> - **投影 step 2000**：AnonPages ≈ 838-887GB（rate 0.10-0.15）· headroom ≈ 1,161-1,210GB → **不会 OOM**
-> - **ETA step 2000**：~2026-11-29 00:01（剩余 964 步 × 7.06s ≈ 113 min）
+> - **S2 config E（nw=2+no_mmap）live 实测**（TB 精确 iter=351,113 / step 1113，EventAccumulator 1113 scalar）：
+>   - step=7.13s overall / 6.98s recent ✅（≤7.4s）· 吞吐 589K overall / 601K recent ✅（与 S1 600K 同级）· 0 OOM ✅ · 0 NaN ✅（lm_loss=1.5004）
+>   - AnonPages：.12=745-780GB（CSV 1438行 col10）· .29=779GB · MemAvail .12=1060GB/.29=1150GB · si/so=0 ✅（双节点）
+> - **AnonPages 增长趋势**（CSV 1438 行，step 1→1113，10 段分析）：
+>   Seg1=0.743 → Seg5=0.084 → Seg10=0.023 GB/step（单调衰减）· 近期 154 步=0.017 GB/step（**COW 已饱和**）
+> - **投影 step 2000**（剩余 887 步）：AnonPages ≈ 789-1011GB（所有情景）· headroom ≈ 1037-1259GB → **不会 OOM** ✅
+> - **ETA step 2000**：~2026-11-29 00:01（887 步 × 7.0s ≈ 103 min）· save-interval=2000 → 自动存 iter 352,000 ckpt
 > - **结论：方案 E 持续达标，S2 可做**。待 step 2000 正式验收后交付 pretrain 长跑监控
-> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v7（TB iter=351,036 + AnonPages 742GB + 投影 + 交接块）
-> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor.csv`（1,311 行）· WAITING=0
+> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v8（TB iter=351,113 + 10段增长率衰减表 + 4情景投影 + §9交接块含验收清单+监控命令+异常处置表）
+> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor.csv`（1,438 行）· WAITING=0
 
-> 📦 R1164~R1168 心跳（S2 内存实验 v3-v5 · step 320→783 · AnonPages 630→750GB · 方案 E 达标）已被 R1169 更新 → 见上
+> 📦 R1164~R1170 心跳（S2 内存实验 v3-v7 · step 320→1036 · AnonPages 630→742GB · 方案 E 达标）已被 R1171 更新 → 见上
 
 > 📦 R1161 心跳（S2 CRASHED · 只读 review · 4 项 fresh PASS）已归档 → daily-memories-data/2026-11-28.md
 

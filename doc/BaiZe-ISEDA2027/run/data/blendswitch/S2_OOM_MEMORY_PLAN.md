@@ -741,13 +741,124 @@ for pct in [5, 10, 12, 15, 20]:
 
 ---
 
-> **data agent 声明**（v7）：本文档为 **data 主导的 S2 内存实验报告**（用户令 20:0x 指定）。
-> data 侧已部署监控、完成纠正后定量模型、确认方案 E 达标。
-> **S2 当前正在运行**（config E = nw=2 + no_mmap），TB 精确 iter=351,036（step 1036 since restart），0 OOM，0 NaN，
-> step=7.06s（≤7.4s ✅），吞吐=594K tok/s（与 S1 同级，delta +0.9% ✅），lm_loss=1.5943，
-> AnonPages=742 GB（.12 CSV col10），MemAvailable=1,063 GB，SwapFree=6.5/8 GB，si/so=0（无活跃换页）。
-> AnonPages 增长率从 0.9 衰减至 ~0.10-0.13 GB/step（近期），COW 已趋平台化。
-> 投影 step 2000 AnonPages ≈ 838–887 GB，headroom ≈ 1,161–1,210 GB → **不会 OOM**。
-> 待 step 2000 正式验收后交付 pretrain 长跑监控。ETA ~2026-11-29 00:01。
-> 所有定量数据来自实测命令（§7 可复现）+ live 监控 CSV（`/tmp/s2_mem_monitor*.csv`，1,311 行）+ TB event 文件（1036 条 scalar），
+> **🔄 v8 更新（22:2x）· data 主导 · TB iter=351,113 + AnonPages 745GB + COW 已平台化 + 验收窗口在望**：
+> 1. **TB 精确读取**（`EventAccumulator`，1113 条 scalar）：**iter=351,113**（step 1113 since restart），lm_loss=1.5004，grad-norm=0.0653，lr=0.000552，**0 NaN** ✅。
+> 2. **Step time**（TB wall-time 法，excl warmup 5 events）：**7.13s/step** ✅（≤7.4s）。
+>    Recent（last 100 events）：**6.98s/step** ✅。
+> 3. **吞吐**：overall = 256×16384/7.13 = **589K tok/s** ✅（vs S1 600K，delta −1.8%）。
+>    Recent = 256×16384/6.98 = **601K tok/s** ✅（与 S1 同级，delta +0.1%）。
+> 4. **AnonPages（CSV col10，1438 行，5s 间隔，.12 节点）**：
+>    - step ~1（20:13）：517 GB
+>    - step ~1113（22:17）：**745 GB**
+>    - Delta = 228 GB / 1113 步 = **0.205 GB/step**（整体均值）
+> 5. **分段增长率衰减确认**（10 段 × ~110 步）：
+>    ```
+>    Seg 1  (step ~1-110):   0.743 GB/step  ← COW 破页高峰
+>    Seg 2  (step ~111-220): 0.271
+>    Seg 3  (step ~221-330): 0.191
+>    Seg 4  (step ~331-440): 0.162
+>    Seg 5  (step ~441-550): 0.084
+>    Seg 6  (step ~551-660): 0.200          ← COW 批次反弹
+>    Seg 7  (step ~661-770): 0.144
+>    Seg 8  (step ~771-880): 0.117
+>    Seg 9  (step ~881-991): 0.120
+>    Seg 10 (step ~992-1113): 0.023          ← 近乎平台化 ✅
+>    ```
+>    Recent 154 步均值 = **0.017 GB/step**（COW 已饱和）。
+> 6. **投影 step 2000**（剩余 887 步）：
+>    | 情景 | 速率 | AnonPages | headroom | 状态 |
+>    |:--|--:|--:|--:|:--|
+>    | 乐观 | 0.05 GB/step | 789 GB | 1,259 GB | ✅ |
+>    | 近期 | 0.10 GB/step | 833 GB | 1,215 GB | ✅ |
+>    | 整体均值 | 0.24 GB/step | 957 GB | 1,091 GB | ✅ |
+>    | 悲观 | 0.30 GB/step | 1,011 GB | 1,037 GB | ✅ |
+>    → **所有情景均不会 OOM** ✅
+> 7. **双节点内存实测**：
+>    - **.12**：AnonPages=780 GB · MemAvailable=1,060 GB · Cached=98 GB · SwapFree=6.5/8 GB · si/so=0 ✅
+>    - **.29**：AnonPages=779 GB · MemAvailable=1,150 GB · Cached=235 GB · SwapFree=0.2/8 GB · si/so=0 ✅
+>    - 两节点 SwapFree 均偏低（.29 几乎满），但 **vmstat si/so=0**（无活跃换页），是 crash 前残留，非活跃换页。
+> 8. **ETA step 2000**：~2026-11-29 00:01（887 步 × 7.0s ≈ 103 min）。
+> 9. **save-interval=2000** → step 2000 时自动存 ckpt（iter 352,000），届时可正式验收并交接。
+
+> **data agent 声明**（v8）：本文档为 **data 主导的 S2 内存实验报告**（用户令 20:0x 指定）。
+> data 侧已部署监控、完成纠正后定量模型、确认方案 E（nw=2 + no_mmap）达标。
+> **S2 当前正在运行**（config E = nw=2 + no_mmap），TB 精确 iter=351,113（step 1113 since restart），0 OOM，0 NaN，
+> step=7.13s（≤7.4s ✅），recent step=6.98s ✅，吞吐=589K tok/s overall / 601K recent（与 S1 600K 同级 ✅），lm_loss=1.5004，
+> AnonPages=745-780 GB（CSV/TB 实测），MemAvailable=1,060-1,150 GB，si/so=0（无活跃换页）。
+> AnonPages 增长率从 0.74 衰减至 0.017 GB/step（近期 154 步），**COW 已完全平台化**。
+> 投影 step 2000 AnonPages ≈ 789–1,011 GB（所有情景），headroom ≈ 1,037–1,259 GB → **不会 OOM** ✅。
+> **结论：方案 E 持续达标，S2 可做。** 待 step 2000 正式验收后交付 pretrain 长跑监控。ETA ~2026-11-29 00:01。
+> 所有定量数据来自实测命令（§7 可复现）+ live 监控 CSV（`/tmp/s2_mem_monitor*.csv`，1,438 行）+ TB event 文件（1,113 条 scalar），
 > 模型估算已标注假设与不确定性。用户驳回方案 D（nw=0），本方案 E 满足"吞吐与 S1 同级"硬指标。
+
+---
+
+## 9. 交接块（pretrain 长跑监控用）
+
+> **以下在 step 2000 验收通过后，pretrain 接手长跑监控。**
+
+### 验收清单（step 2000，约 iter 352,000）
+
+| # | 检查项 | 判据 | 当前值（step 1113） | step 2000 时 |
+|:--|:--|:--|:--|:--|
+| 1 | OOM | 0 次 OOM-kill | 0 ✅ | 待验收 |
+| 2 | NaN | 0 NaN | 0 ✅ | 待验收 |
+| 3 | Step time | ≤7.4s | 7.13s overall / 6.98s recent ✅ | 待验收 |
+| 4 | 吞吐 | ≥~600K tok/s（S1 同级） | 589K overall / 601K recent ✅ | 待验收 |
+| 5 | 连续步数 | ≥2000 步 0 OOM | 1113 步（56%） | 待验收 |
+| 6 | AnonPages | <1,900 GB（留 buffer） | 745-780 GB ✅ | 预估 789-1,011 GB ✅ |
+| 7 | si/so | 0（无活跃换页） | 0 ✅ | 待验收 |
+| 8 | ckpt 保存 | iter 352,000 ckpt 存在 | — | save-interval=2000 触发 |
+
+### pretrain 接手后监控要点
+
+```bash
+# 1. 检查训练是否存活
+ps -ef | grep pretrain_launcher | grep -v grep | wc -l  # 应 ≥1
+
+# 2. 检查 GPU 利用率
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader
+
+# 3. 检查内存（.12 + .29）
+ssh 10.239.2.12 'grep -E "AnonPages|MemAvailable|SwapFree" /proc/meminfo; vmstat 1 2 | tail -1'
+ssh 10.239.2.29 'grep -E "AnonPages|MemAvailable|SwapFree" /proc/meminfo; vmstat 1 2 | tail -1'
+# 判据：si/so = 0；AnonPages < 1,800 GB
+
+# 4. 检查 TB 最新 step
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python
+$PY -c "
+from tensorboard.backend.event_processing import event_accumulator
+ea = event_accumulator.EventAccumulator(
+    '/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1795867427.whag0pgpuap29.4071126.0',
+    size_guidance={'scalars': 0})
+ea.Reload()
+v = ea.Scalars('lm loss')
+print(f'iter={v[-1].step}, loss={v[-1].value:.4f}, events={len(v)}')
+"
+
+# 5. 监控 CSV 持续运行（已在 .12 上跑）
+# /tmp/s2_mem_monitor.sh → /tmp/s2_mem_monitor.csv
+wc -l /tmp/s2_mem_monitor.csv
+tail -3 /tmp/s2_mem_monitor.csv
+```
+
+### 异常处置
+
+| 异常 | 处置 |
+|:--|:--|
+| OOM-kill（worker 被 SIGKILL） | 1. 确认 dmesg 有 oom-kill 记录 2. 降 nw=1 重启（从最近 ckpt resume）3. 通知运维 |
+| si/so > 0（活跃换页） | 内存不足前兆，考虑降 nw=1 或停训练存 ckpt |
+| NaN | 停训练，检查 ckpt 完整性，从上一个 ckpt resume |
+| step time > 7.4s 持续 | 检查 I/O 竞争（别线重 I/O？NFS 延迟？），排除后若仍高则降 nw=1 |
+| AnonPages > 1,800 GB | 降 nw=1 或停训练存 ckpt，通知运维 |
+
+### 配置（已生效，不要改）
+
+```bash
+# code/baize-llm/configs/common.env
+export BAIZE_NUM_WORKERS=2           # nw=2（方案 E，COW 速率 = nw=8 的 1/4）
+export BAIZE_DATALOADER_START_METHOD=  # 空=fork
+export BAIZE_PERSISTENT_WORKERS=0
+export BAIZE_NO_MMAP_BIN_FILES=1     # 禁 mmap（回收 ~200-400GB page cache）
+export SEED=1234                     # 不换 SEED（保证零重叠）
+```
