@@ -2122,3 +2122,4 @@ ywyc1					case	EDA-Eval-DesignFlow-HybridConnPathRepairProduce-001	2026-11-28 21
 1795074487708_fuj9e	wade1zh	hfeg0plg76	54	schematic_netlist	case	EDA-Eval-DesignFlow-ClkSrcHierTraceProduce-001	2026-11-28 23:46	
 1795658202485_xlhqt.messages.json	alexli	hfeg0plg101	65	schematic_netlist	case	EDA-Eval-DesignFlow-Mt0TimingWindowCheckProduce-001	2026-11-29 00:30	
 1795588752369_ews7x	e0025730	hfhds201	117	schematic_netlist	case	EDA-Eval-DesignFlow-SpPathRewriteProduce-001	2026-11-29 01:01	
+1789549789400_5xagb	wellesc	hfeg0plg17	180	schematic_netlist	deepread		2026-11-29 01:30	cross-scope-jump netlist trace enhancement; deepread done r1680, synthesis DEBT
