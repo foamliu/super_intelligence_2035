@@ -1,6 +1,74 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
 <!-- RUN_ID: 296 -->
-## RUN_ID 296 — **诊断 harness loop 的 `llm_pick` 缺失（只读 · 2026-11-28 09:1x）**
+## RUN_ID 296 — **重启 harness agent loop（llm_rotate 已移除 · 2026-11-28 09:2x 用户令）**
+
+> **用户令**：「清理 baize_harness_loop.sh 中 llm_rotate.sh/llm_pick 相关代码，直接使用 cline 原来配的大模型。然后用 ops 中继重启 harness 的 agent loop」
+> **已完成**：脚本已改（commit `7454560a89`），删除 `llm_rotate.sh` 加载与 `llm_pick` 分支，`cline -m $MODEL -k $CLINE_KEY` 直接用脚本内置 glm-5.2。
+> **本块动作**：kill 旧 loop（空转那个）→ 启动新 loop → 验证 cline 真的被调用。
+
+```bash
+set -u
+LOOP=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+echo "[0] exec_host=$(hostname)  date=$(date '+%F %T')"
+echo
+
+echo "== A. 前置：确认脚本已是新版 =="
+grep -c 'llm_pick' "$LOOP" 2>/dev/null | sed 's/^/  llm_pick_occurrences=/'
+grep -n 'cline -c' "$LOOP" 2>/dev/null | cut -c1-200
+echo "  (应看到 -m \"\$MODEL\" -k \"\$CLINE_KEY\"，且 llm_pick 只在注释里出现 1 次)"
+echo
+
+echo "== B. 语法校验 =="
+bash -n "$LOOP" && echo "  bash -n OK" || { echo "ABORT: 语法错误"; echo "=== DONE 296 (ABORT) ==="; exit 9; }
+echo
+
+echo "== C. 停掉旧 loop（空转那个）=="
+OLD=$(pgrep -f 'baize_harness_loop' 2>/dev/null | tr '\n' ' ')
+echo "  old_pids=[$OLD]"
+for p in $OLD; do
+  echo "  kill $p"; kill "$p" 2>/dev/null; sleep 3
+  kill -0 "$p" 2>/dev/null && { echo "  kill -9 $p"; kill -9 "$p" 2>/dev/null; }
+done
+sleep 3
+echo "  after_kill_count=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)"
+echo
+
+echo "== D. 启动新 loop =="
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run || { echo "ABORT cd"; exit 9; }
+mv -f /tmp/baize_harness_loop.log /tmp/baize_harness_loop.log.old.$(date +%H%M%S) 2>/dev/null
+setsid bash "$LOOP" > /tmp/baize_harness_loop.log 2>&1 < /dev/null &
+NEWPID=$!
+echo "  launched PID=$NEWPID"
+sleep 20
+echo
+
+echo "== E. 启动后核验 =="
+echo "  alive=$(kill -0 "$NEWPID" 2>/dev/null && echo YES || echo NO)"
+echo "  loop_count=$(pgrep -fc 'baize_harness_loop' 2>/dev/null || echo 0)"
+ps -eo pid,ppid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-150
+echo
+
+echo "== F. 日志（关键：应出现 invoking cline，且【不应】出现 llm_pick not found / 无可用 LLM 候选）=="
+head -n 50 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-210
+echo "  --- grep 判定 ---"
+echo "  has_llm_pick_error=$(grep -c 'llm_pick: command not found' /tmp/baize_harness_loop.log 2>/dev/null || echo 0)"
+echo "  has_skip_no_llm=$(grep -c '无可用 LLM 候选' /tmp/baize_harness_loop.log 2>/dev/null || echo 0)"
+echo "  has_invoking=$(grep -c 'invoking cline' /tmp/baize_harness_loop.log 2>/dev/null || echo 0)"
+echo
+
+echo "== G. 等 90s 再看 cline 是否真跑起来 =="
+sleep 90
+echo "  loop_alive=$(kill -0 "$NEWPID" 2>/dev/null && echo YES || echo NO)"
+echo "  cline_procs=$(pgrep -fc 'cline ' 2>/dev/null || echo 0)"
+ps -eo pid,etime,rss,args | grep -E '[c]line ' | grep -i 'BaiZe' | cut -c1-170 | head -5
+echo "  --- log tail ---"
+tail -n 25 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-210
+echo
+
+echo "（仅重启 harness loop，未动别线、未改配置）"
+echo "=== DONE 296 | $(date '+%F %T') ==="
+```
+
 
 > **用户令**：「你用 ops 中继排查一下 harness 的问题」；补充「harness 应该是在 .29 机器上」
 > **已知**：RUN_ID 295 在 **`.12`** 上拉起 loop，日志报 `line 133: llm_pick: command not found`，
