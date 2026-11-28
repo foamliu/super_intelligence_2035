@@ -1395,4 +1395,7 @@ gu7pf					case	CalibreOverlapArea-001	2026-11-28 09:01
 1795681094862_2f45s	hbpeng	hfeg0pkn002	285	physical_verify	case	EDA-Eval-DesignFlow-RegDecisionMatrix-001	2026-11-28 12:10	
 1795781071051_u396o	xiwang	hfeg0plg107	396	layout_aether	case	EDA-Eval-DesignFlow-MarkSNShieldReport-001	2026-11-28 12:36	
 1789540783592_yztt1	e0020134	hfeg0plg86	478	physical_verify	case	EDA-Eval-DesignFlow-DrcKgBuilder-001	2026-11-28 13:04	
-1795769582119_c5mnk					claimed		2026-11-28 13:50	
+1795769582119_c5mnk					case	NicapBlockCreate-001	2026-11-28 14:07	
+1795761954530_300nu	ellawu	hfeg0plg83	188	physical_verify	parked		2026-11-28 14:08	duplicate of existing ImplantFillDeckGen-001 (same user ellawu, same IMCleFillImplantDrc generate_deck algorithm, different session/cell)
+1795842633820_h8gjq	xxchen	hfeg0plg19	1264	physical_verify	parked		2026-11-28 14:04	xxchen drcpv PyQt-GUI bug-fix族(同6z0ga/7kizj), U0=优化QA pattern GUI审查, 非physical_verify produce-task
+1795422106148_77pqh	miccao	hfeg0plg94	141	physical_verify	parked		2026-11-28 14:09	skill install/merge/rename management task(U0=install skill tar.gz, U36=merge calibre/argus knowledge into calibre-drc-log-analysis skill, U56=rename skill to PV-doctor), keywords from skill CONTENT not actual DRC execution, not physical_verify produce-task
