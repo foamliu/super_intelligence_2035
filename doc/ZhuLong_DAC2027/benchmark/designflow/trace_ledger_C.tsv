@@ -1399,3 +1399,5 @@ gu7pf					case	CalibreOverlapArea-001	2026-11-28 09:01
 1795761954530_300nu	ellawu	hfeg0plg83	188	physical_verify	parked		2026-11-28 14:08	duplicate of existing ImplantFillDeckGen-001 (same user ellawu, same IMCleFillImplantDrc generate_deck algorithm, different session/cell)
 1795842633820_h8gjq	xxchen	hfeg0plg19	1264	physical_verify	parked		2026-11-28 14:04	xxchen drcpv PyQt-GUI bug-fix族(同6z0ga/7kizj), U0=优化QA pattern GUI审查, 非physical_verify produce-task
 1795422106148_77pqh	miccao	hfeg0plg94	141	physical_verify	parked		2026-11-28 14:09	skill install/merge/rename management task(U0=install skill tar.gz, U36=merge calibre/argus knowledge into calibre-drc-log-analysis skill, U56=rename skill to PV-doctor), keywords from skill CONTENT not actual DRC execution, not physical_verify produce-task
+1795158119246_wv66o.messages.json	felixw	hfeg0plg71	327	physical_verify	parked		2026-11-28 14:28	dup-slice: felixw runset-patch already covered by CalibreDrcRunsetPatch-001 (t0dhm)
+1795694029415_ly6i9.messages.json	yu23z	hfeg0plg89	354	layout_aether	case	EDA-Eval-DesignFlow-PathWidthFromRuler-001	2026-11-28 14:43	
