@@ -1,4 +1,18 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 302 -->
+## RUN_ID 302 — **S2 训练健康细查（只读 · 2026-11-28 12:0x）**
+
+```bash
+echo "[0] host=$(hostname) date=$(date '+%F %T')"
+W=/tmp/baize_s1_baize2b_worker.log
+ls -l --time-style=+%F_%T "$W" /tmp/baize_s1_baize2b_master.log 2>/dev/null
+echo "--- worker tail 12 ---"
+tail -n 12 "$W" 2>/dev/null | cut -c1-220
+echo "--- 最近 5 条 iter ---"
+grep -E 'iteration[ =]|iter[ =]' "$W" 2>/dev/null | tail -5 | cut -c1-220
+echo "--- nan_hits=$(grep -ci 'nan' "$W" 2>/dev/null || echo 0)  skip_hits=$(grep -ci 'skip' "$W" 2>/dev/null || echo 0)  blend_switch_hits=$(grep -ci 'blend.hot.switch' "$W" 2>/dev/null || echo 0) ---"
+echo "=== DONE 302 | $(date '+%F %T') ==="
+```
 <!-- RUN_ID: 301 -->
 ## RUN_ID 301 — **S2 是否已启动 + pretrain 是否读到 data 通报（只读 · 2026-11-28 12:0x）**
 
