@@ -2,16 +2,16 @@
 
 WAITING: 0
 
-> ✅ **心跳 · 2026-11-28 (R1145) — S2 RUNNING · 只读 review · 4 项确认完毕（R1145 fresh 实跑 test_blend_switch.py 8/8 + integration 7/7）· SEED 纠错已应用**：
-> - **① S2 blend TSV ✅**：`blend_s2_preblend.tsv` · 12 源 · **prop sum=1.000000(R1145 python 实测)** · **web=0.40/code=0.40/math=0.20(实测)** · 180 shards(11×16+ufw_zh×4=180) · 5 新源全指向 pre-blend 目录
+> ✅ **心跳 · 2026-11-28 (R1146) — S2 RUNNING · 只读 review · 4 项确认完毕（R1146 fresh 实跑 test_blend_switch.py 8/8 + integration 7/7）· SEED 纠错已应用**：
+> - **① S2 blend TSV ✅**：`blend_s2_preblend.tsv` · 12 源 · **prop sum=1.000000(R1146 python 实测)** · **web=0.40/code=0.40/math=0.20(实测)** · 180 shards(11×16+ufw_zh×4=180, 实测确认) · 5 新源全指向 pre-blend 目录且 .done 确认
 > - **② 零重叠方案（同 SEED=1234 + 新源天然零重叠，无 cursor offset shim）✅**：
 >   - **同 SEED=1234 = 零重叠 ✅**（📌 2026-11-28 用户纠错）：同 seed → 同 shuffle_index 排列 → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。**换 SEED 反而破坏零重叠**。
 >   - **新源天然零重叠 ✅**：5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web) S1 未消费→overlap=0
 >   - **cursor offset shim ✅ 未启用**：`BLEND_CURSOR_OFFSETS_JSON=`（空字符串）→ 纯 S2 冷切换确认（pretrain #3577 确认 process environ 无 CURSOR vars）
->   - **SEED=5678 旧建议已清除**：TSV L18-20 注释已修正 · 旧警告已撤销 · data 线文件 grep 无残留
-> - **③ blendswitch 验证 fresh PASS ✅**（R1145 本次实跑）：standalone **8/8 PASS** + integration **7/7 PASS** · zero_overlap=0 · ratio max_dev=0.0087%(standalone)/0.0027%(integration) · flag-off byte-identical · real S1→S2 7→12 mapping zero overlap=0 · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
+>   - **SEED=5678 旧建议已清除**：TSV L18-20 注释已修正 · 旧警告已撤销 · data 线文件 grep 无残留（R1146 grep 确认仅数据值巧合命中，无 seed 引用）
+> - **③ blendswitch 验证 fresh PASS ✅**（R1146 本次实跑）：standalone **8/8 PASS** + integration **7/7 PASS** · zero_overlap=0 · ratio max_dev=0.0087%(standalone)/0.0027%(integration) · flag-off byte-identical · real S1→S2 7→12 mapping zero overlap=0 · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
 > - **④ 训练健康 ✅**：pretrain MEMORY #3577(16:57) 报 iter=350400/700k(50.06%) · step 6912-7214ms avg~7048ms all<7.4s gate✅ · loss 1.491-1.529 stable~1.511 · 0NaN/0skip✅ · LR=2.0e-4 re-warmup 20%✅ · grad norm 0.060-0.094 stable✅ · GPU .29 8×100%/.12 8×97-100%✅ · TFLOP~1020-1049/GPU✅ · ckpt loaded from iter_0350000✅
-> - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · verify_results.json byte-identical to HEAD(git status clean✅) · WAITING=0
+> - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · 仅重跑 test 生成 verify_results*.json(git status 仅 2 文件 M) · WAITING=0
 > - 📌 **SEED=5678 残留**：data 线文件已全部修正；`MEMORY_PRETRAIN_2B.md` L48 仍提「换SEED」（待 pretrain 线清理）
 
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
