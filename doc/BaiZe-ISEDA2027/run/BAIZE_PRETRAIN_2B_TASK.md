@@ -169,7 +169,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-28 16:1x（**Review S2 训练状态，只读汇报，什么都不要动**）· 用户直令 · 最高优先 · 未完成
+### ✅ 用户令 · 2026-11-28 16:1x（**Review S2 训练状态，只读汇报，什么都不要动**）· 用户直令 · 最高优先 · 已完成
 
 > **用户原话**：「安排 pretrain 和 data review 一下训练状态，什么都不要动，只通过记忆汇报发现。」
 
@@ -187,6 +187,8 @@
 3. **确认无 cursor offset shim**：`BLEND_CURSOR_OFFSETS_JSON` 未设置（纯 S2 blend，不带 cursor offset——data 的方案 D+E：换 SEED + 新源天然零重叠）
 4. **在 MEMORY 心跳汇报**：把上述 3 项确认结果写进 MEMORY 心跳第一行，标 `S2 RUNNING · 只读 review`，保持 `WAITING=0`
 5. **🚫 绝对禁止**：不 kill 进程、不重启训练、不改 train.sh/configs/.bak/blend TSV、不启动 eval、不碰 daemon
+
+> **结果（18:3x）**：只读 review 已完成（#3574–#3582 共 7+ 轮）。3 项全 PASS（崩溃前）：①健康（iter=350920 step~7043ms<7.4s loss~1.50 0NaN/0skip）②S2 blend 12源180 shards ③无 cursor offset shim。**S2 于 18:09:11 崩溃**：DataLoader worker 被 SIGKILL on .29 rank13 → .29 exit → .12 NCCL timeout 608s → .12 exit。SSH 验证两节点全 idle、无进程、ckpt=350000（920 步 S2 未保存）。🚫 未动训练/配置/daemon。**08:1x「S2 必须完成」vs 16:1x「不重启训练」冲突——待用户决定。**
 
 ---
 
