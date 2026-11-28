@@ -2095,3 +2095,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1794877997747_2kujt	steveny	hfeg0pnd001	243	schematic_netlist	parked		2026-11-28 10:41	wrong-domain: eda_agent skill CAD-tool-index reorganization (meta/tooling), not schematic_netlist/analog_context/waveform circuit work; pyaether kw reflects skill subject not task
 1795765130725_1y771	cyrusrao	hfeg0pkn002	272	schematic_netlist	case	EDA-Eval-DesignFlow-StimPinBaseRenameProduce-001	2026-11-28 10:56	
 1795683443439_zpfr7	reedchen	hfeg0pfn136	55	schematic_netlist	case	EDA-Eval-DesignFlow-TrTfMeasGenProduce-001	2026-11-28 11:32	
+1795598993855_jao1y	jiashengz	hfeg0pkn004	251	schematic_netlist	case	EDA-Eval-DesignFlow-SchWireAuditProduce-001	2026-11-28 11:57	
