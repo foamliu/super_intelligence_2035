@@ -248,7 +248,8 @@
 | **S2 v2（E·live）** | **nw=2+no_mmap** | **~1036** | **7.06s** | **594** | **742/.12** | **✅** | **TB iter=351,036 · AnonPages 0.10 GB/step · COW 平台化** |
 | **S2 v2（E·live）** | **nw=2+no_mmap** | **~1383** | **7.01s** | **599** | **793/789** | **✅** | **TB iter=351,383 · AnonPages 0.02-0.04 GB/step · COW 深度平台化** |
 | **S2 v2（E·live）** | **nw=2+no_mmap** | **~1470** | **7.03s** | **599** | **799/794** | **✅** | **iter=351,470 · AnonPages 0.05-0.07 GB/step · COW 深度平台化** |
-| ⏳ S2 v2（E·待验） | nw=2+no_mmap | 2000 | ≤7.4s | ≥500K | ~826-852 | ✅ | **验收目标（ETA ~2026-11-29 00:00）** |
+| **S2 v2（E·live）** | **nw=2+no_mmap** | **~1530** | **7.03s** | **599** | **764/762** | **✅** | **iter=351,530 · 153 Step Time entries · last20 range 6.90-7.16s · AnonPages 0.05 GiB/step · COW 深度平台化 · headroom .12=1080GiB/.29=1077GiB · si/so=0** |
+| ⏳ S2 v2（E·待验） | nw=2+no_mmap | 2000 | ≤7.4s | ≥500K | ~787(投影) | ✅ | **验收目标（ETA ~2026-11-29 00:00）· 剩余 470 步 × 7.03s ≈ 55 min** |
 
 > 监控脚本：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor_29.csv`（.29）
 > ⚠️ 已知问题：CSV 列顺序与 header 不匹配（grep 按 /proc/meminfo 行序返回，非 pattern 序），
