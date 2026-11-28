@@ -12,75 +12,7 @@
 > - **例外（2026-11-28 20:0x 用户令）**：S2 的内存实验与重启**当前由 data 执行**；pretrain 只做只读监控、不重复启停，data 达标交付后交接回 pretrain 长跑。
 > - **现状（20:0x）**：`code/baize-llm/configs/common.env` 已被改为 `nw=2 + no_mmap=1`（commit `c423bcb9cc`，19:59），属**未验证的降速路径**；S2 实际启动配置以 data 20:0x 令的实验结论为准（硬指标 step ≤7.4s，`nw=0` 一律否决）。
 
-
-
-
-> ## 🔴 2026-11-28 19:0x 用户令 · **查两机内存占用 + 做清理（最高优先）**
->
-> **用户原话**（逐字）：「让 pretrain 看看两台机器的内存占用 做清理」
->
-> **背景**：S2 已于 **18:09:11 崩溃** —— `.29` rank13 的 DataLoader worker（pid 3983423）被 **SIGKILL**，报 `is killed by signal: Killed`；本线 2026-10-27 #801/#802 对同签名事故的定论是 **worker RSS 累积 → swap 耗尽 → 内核 OOM-kill**。当前配置 `code/baize-llm/configs/common.env:72-79` = `BAIZE_NUM_WORKERS=8` / `fork`（START_METHOD 空）/ `PERSISTENT_WORKERS=0` / `mmap enabled`。
->
-> **你要做的**：
->
-> **1. 两节点各采一次内存全景**（`.29` 本机 + `ssh .12`）：
-> ```bash
-> free -g
-> grep -E 'MemTotal|MemAvailable|SwapTotal|SwapFree|SReclaimable|Slab|Mapped|Dirty|Writeback' /proc/meminfo
-> vmstat 1 5
-> ps -eo pid,ppid,user,rss,pmem,etime,args --sort=-rss | head -25
-> cat /sys/fs/cgroup/memory.current /sys/fs/cgroup/memory.max /sys/fs/cgroup/memory.events 2>/dev/null
-> cat /proc/sys/vm/swappiness /proc/sys/vm/overcommit_memory
-> ```
-> 两机分别记：RAM used/avail、**swap used/free**、page cache、Slab、cgroup `memory.events` 里的 **`oom_kill` 计数**。
->
-> **2. 顺手取 18:09 崩溃的铁证**：
-> ```bash
-> dmesg -T | grep -iE 'killed process|Out of memory|oom-kill' | tail -30
-> journalctl -k --since '2026-11-28 17:50' --until '2026-11-28 18:15' | grep -iE 'oom|killed process'
-> ```
-> 命中 `Killed process 3983423 (python)` ⇒ 把**该行原文**写进 MEMORY，#3582 的「OOM 嫌疑」正式定性；没命中 ⇒ 如实写「dmesg 无 OOM 记录，转查 audit/hub 登录与 kill 记录」。
->
-> **3. 做清理**（只清「确认无主 / 已退出 / 本线自产」的）：
-> - ✅ 可清：本线 `/tmp` 旧日志与 core dump（`/tmp/baize_*` ≥3 天、`core.*`）、已结束的 torchrun/eval 残留进程、**经 `lsof` 确认无主**的 stale shm（`/dev/shm/torch_*`）、本线临时产物（`.bak`、临时 HF/GGUF 转换目录）。
-> - 🚫 禁清：**任何 ckpt**、别线进程与文件（posttrain / vision / harness / data）、root 进程（GPU0-3 sglang 等）、`/nas_*` 上非本线内容；**🚫 不 `drop_caches`**（要做得单独报批）。
-> - 每条清理动作记：`PID 或路径 · 大小 · 判无主的依据 · 是否可回滚`。
->
-> **4. 前后对比**：清理前后各记一次 `free -g` + `ps` top-RSS，给出**释放量（GiB）**。
->
-> **5. 交付**：`MEMORY_PRETRAIN_2B.md` 顶部一条（前后数字 + 清理清单 + OOM 定性结论 + 证据行原文）+ `run/reports/report_pretrain_memory_cleanup_zh.html`（两机内存/swap/top-RSS 表 + 清理项 + 释放量 + 残余风险）。
->
-> 做完即止。
-
-
-
-> ## 🔴🔴 2026-11-28 09:2x 用户令 · **立刻把 S1 训练停下**
->
-> **用户原话**（逐字）：「让 pretrain 立刻把 S1 训练停下」
->
-> **要求**：**立刻停止当前 S1 训练**。不要等 360k ckpt、不要等当前 step 跑完、不要先做一轮监控再动手。
-> - 两节点（`.29` + `.12`）的 S1 训练进程全部停掉（`train.sh s1` / `pretrain_launcher` / `torchrun`）。
-> - 停之前先确认最新 ckpt 已落盘安全。
-> - 停完记录：停的时间、杀掉的 PID（两节点）、停止前 iter / loss、最新可用 ckpt。
->
-> 完成即止，不必附带其他巡检。
-
-
-
-> ## 🔴 2026-11-28 08:1x 用户令（最高优先 · 覆盖此前所有 S2 切换相关约定）· **S2 切换：GPU 非空闲就杀死占用 GPU 的进程，坚决启动 S2**
->
-> **用户原话**（逐字）：
-> 1. 「安排 pretrain 修复 S2 切换过程中遇到的一些困难，坚决完成 S2 切换，绝不退回到 S1。」
-> 2. 「如果 GPU 非空闲，那就杀死占用 GPU 的进程，坚决启动 S2。不要给自己找借口。」
->
-> **要求**：
-> - S2 切换必须完成，**不退回 S1**。
-> - GPU 非空闲时，**直接杀死占用 GPU 的进程**，然后启动 S2。
-> - 遇到的问题自己修，**不要给自己找借口**。
->
-> **交付**：执行完在 `MEMORY_PRETRAIN_2B.md` 置顶记一条（改动 / 杀了哪些进程 / S2 起跑证据 / 验收五项）。
-
-
+> 📦 §2026-11-28 三令（19:0x 内存清理 · 09:2x 停 S1 · 08:1x S2 切换）已全部完成 → ARCHIVE_OPERATOR_PRETRAIN.md「归档 2026-11-28」节。**结论**：①内存清理 #3605 完成（report_pretrain_memory_cleanup_zh.html 14KB）· 两机 avail>1000G · si/so=0 · OOM 定性 fork-COW→swap 耗尽 · 修复 nw=2+no_mmap；② S1 已停（ckpt=340k 安全）· S2 从 350k resume 起跑；③ S2 切换完成 · 16 卡 100% · step~7.0s · loss~1.498 · 0NaN/0skip。需要时再读。
 
 > ## 🔴 2026-11-26 20:3x 用户令 · **L1 评测节奏 2k → 每 1 万步一次** · 覆盖 11-21 放行令的 2k 口径
 >
