@@ -33,19 +33,56 @@
 > 5. **投影 step 2000**：AnonPages ≈ 865–1,113 GB（rate 0.10–0.30）· headroom ≈ 902–1,150 GB → **不会 OOM**。
 > 6. **ETA step 2000**：~2026-11-29 00:00（剩余 ~1,217 步 × 6.8s ≈ 138 min）。
 
+> **🔄 v6 更新（21:5x）· data 主导 · 日志精确 step 计数 + AnonPages 768GB + 吞吐达标确认**：
+> 1. **精确 step 计数（日志法）**：master 日志每 10 步打印一次 "Step Time"，共 94 条 → **step 940**（iter 350,940）。
+>    v5 的 "step 783" 基于 TB wall-time 估算，v6 用日志 10-step 间隔计数更精确。
+> 2. **step time（日志法，last 30 entries = steps 640-940）**：avg **7.06s** ✅（≤7.4s）。
+>    全程（excl warmup 2 entries）：avg 7.12s。Min 6.89s / Max 7.99s。
+>    v5 的 6.79s 是 TB wall-time/step（含初始化分摊），日志法 7.06s 是 per-10-step 均值（含微开销）；
+>    两者均 ≤7.4s，取保守值 7.06s 作为验收口径。
+> 3. **吞吐**：256×16384/7.06 = **594K tok/s**。S1 参考 ~600K（256×16384/7.0）。
+>    Delta = **+0.9%**（step time 7.06 vs 7.0）→ **与 S1 同级** ✅。
+>    （注：v5 用 TB wall-time 6.79s 算出 618K，高于 S1；日志法 594K 略低于 S1 但差距 <1%。
+>    两种方法均满足"step ≤7.4s / 吞吐与 S1 同级"硬指标。）
+> 4. **AnonPages 实测（.12，1-indexed col10）**：
+>    - step ~60（20:14）：542 GB
+>    - step ~940（21:54）：**768 GB**
+>    - Delta = 226 GB / 880 步 = **0.26 GB/step**（整体均值）
+>    - 近 100 行（~500s）= 0.17 GB/step（衰减趋势持续）
+>    - 近 20 行（~100s）= 0.12 GB/step（进一步衰减）
+>    - COW 破页率从初期 ~0.9 GB/step 降至 ~0.12-0.17，**逐渐饱和**。
+> 5. **.29 AnonPages**：753 GB（vs .12 768 GB，差 15 GB，正常跨节点波动）。
+>    .29 swap 满（8GB）但 vmstat si=0/so=0（崩溃残留，无活跃换页）。
+> 6. **投影 step 2000**：
+>    - 剩余步数 = 2000 - 940 = 1,060 步
+>    - 乐观（rate 0.12）：AnonPages ≈ 768 + 0.12×1060 = **895 GB**
+>    - 保守（rate 0.27）：AnonPages ≈ 768 + 0.27×1060 = **1,054 GB**
+>    - Headroom（2048 - 保守值）= **994 GB** → **不会 OOM** ✅
+> 7. **ETA step 2000**：~2026-11-29 00:00（1,060 步 × 7.06s ≈ 125 min）。
+> 8. **CSV 列序**：v5 的 1-indexed col10=AnonPages 正确（验证：col10=768GB ≈ /proc/meminfo AnonPages=762GB ✓）。
+>    v5 纠正表无需再纠偏。
+
 ---
 
-## 0. v5 摘要（data 主导 · 2026-11-28 21:4x）
+## 0. v6 摘要（data 主导 · 2026-11-28 21:5x）
 
-> **结论：方案 E（nw=2 + 禁 mmap）持续达标，S2 可做。step 2000 验收待完成（ETA ~00:00）。**
+> **结论：方案 E（nw=2 + 禁 mmap）持续达标，S2 可做。step 940/2000，0 OOM，ETA step 2000 ~00:00。**
 >
-> | 验收指标 | 用户硬指标 | 实测（step 783，TB 精确） | 状态 |
+> | 验收指标 | 用户硬指标 | 实测（step 940，日志法） | 状态 |
 > |:---|:---|:---|:---|
-> | step time | ≤ 7.4s | **6.79s**（5316s/783步） | ✅ |
-> | 吞吐 | 与 S1 同级（~600K tok/s） | **618K tok/s**（256×16384/6.79，≥S1 600K） | ✅ |
-> | OOM | ≥2000 步 0 OOM | 783 步 0 OOM，AnonPages 增长率 ~0.18 GB/step（衰减中） | ⏳ 跑至 2000 确认 |
-> | NaN | 0 | 0（TB lm_loss=1.5150，grad-norm=0.0685） | ✅ |
+> | step time | ≤ 7.4s | **7.06s**（last 30 entries avg，steps 640-940） | ✅ |
+> | 吞吐 | 与 S1 同级（~600K tok/s） | **594K tok/s**（256×16384/7.06，delta vs S1 +0.9%） | ✅ |
+> | OOM | ≥2000 步 0 OOM | 940 步 0 OOM，AnonPages 0.12-0.27 GB/step（衰减中） | ⏳ 跑至 2000 确认 |
+> | NaN | 0 | 0（check_for_nan_in_loss=true，日志无 NaN 事件） | ✅ |
 > | 方案 D（nw=0） | 驳回（不接受吞吐减半） | 未采用 | ✅ |
+>
+> | 内存指标 | .12 | .29 | 判定 |
+> |:---|---:|---:|:---|
+> | AnonPages | 768 GB | 753 GB | 增长衰减中，投影 step 2000 ≤ 1,054 GB |
+> | MemAvailable | 1,073 GB | 1,074 GB | headroom 充足 |
+> | SwapFree | 6.5 GB / 8 GB | ~0 GB / 8 GB | .29 swap 满但 si/so=0（残留） |
+> | Committed_AS | 1,492 GB | 1,263 GB | <2048 GB |
+> | vmstat si/so | 0/0 | 0/0 | 无活跃换页 ✅ |
 
 > **v5 新发现**：
 > 1. **TB 精确读取**：通过 TensorBoard event 文件确认 iter=350,783，比之前基于 etime 的估算更精确。
@@ -685,13 +722,13 @@ for pct in [5, 10, 12, 15, 20]:
 
 ---
 
-> **data agent 声明**（v5）：本文档为 **data 主导的 S2 内存实验报告**（用户令 20:0x 指定）。
+> **data agent 声明**（v6）：本文档为 **data 主导的 S2 内存实验报告**（用户令 20:0x 指定）。
 > data 侧已部署监控、完成纠正后定量模型、确认方案 E 达标。
-> **S2 当前正在运行**（config E = nw=2 + no_mmap），TB 精确 iter=350,783（step 783），0 OOM，0 NaN，
-> step=6.79s（5316s/783步，≤7.4s ✅），吞吐=618K tok/s（≥S1 600K ✅），
-> AnonPages=750 GB（.12），MemAvailable=1,142 GB，SwapFree=6.8GB/8GB，si/so=0（无活跃换页）。
-> AnonPages 增长率从 0.92 衰减至 ~0.18 GB/step（近期 3 段均值），COW 逐渐饱和。
-> 投影 step 2000 AnonPages ≈ 865–1,113 GB，headroom ≈ 902–1,150 GB → **不会 OOM**。
+> **S2 当前正在运行**（config E = nw=2 + no_mmap），日志法 step=940（iter 350,940），0 OOM，0 NaN，
+> step=7.06s（last 30 entries avg，≤7.4s ✅），吞吐=594K tok/s（与 S1 同级，delta +0.9% ✅），
+> AnonPages=768 GB（.12）/ 753 GB（.29），MemAvailable=1,073 GB，SwapFree=6.5GB/8GB（.12），si/so=0（无活跃换页）。
+> AnonPages 增长率从 0.9 衰减至 ~0.12-0.17 GB/step（近期），COW 逐渐饱和。
+> 投影 step 2000 AnonPages ≈ 895–1,054 GB，headroom ≈ 994–1,153 GB → **不会 OOM**。
 > 待 step 2000 正式验收后交付 pretrain 长跑监控。ETA ~2026-11-29 00:00。
-> 所有定量数据来自实测命令（§7 可复现）+ live 监控 CSV（`/tmp/s2_mem_monitor*.csv`，998 行）+ TensorBoard event 文件，
+> 所有定量数据来自实测命令（§7 可复现）+ live 监控 CSV（`/tmp/s2_mem_monitor*.csv`，1,173 行）+ master 日志（94 条 Step Time），
 > 模型估算已标注假设与不确定性。用户驳回方案 D（nw=0），本方案 E 满足"吞吐与 S1 同级"硬指标。
