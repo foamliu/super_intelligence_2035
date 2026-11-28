@@ -32,9 +32,9 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        opencode v1.19.6 predict重跑中(14/500)·zhulong predict中(73/500)·6-harness eval循环(codex eval中)·opencode/zhulong eval-watcher已挂
+PHASE:        opencode v1.19.6 predict重跑中(42/500)·zhulong predict中(89/500)·6-harness eval循环(codex eval中)·opencode/zhulong eval-watcher等待predict完成
 已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·opencode 0-patch根因修复✅(commit f154c8ba50)·cline-patched eval DONE(355/499=71.1%)·claude-code eval DONE(273/500=54.6%,142infra待查)·opencode+zhulong eval-watcher已启动(PID1816539/1816542)
-当前动作:     opencode 8w predict 14/500(序列化经serve守护,~0.7/min,ETA~12h≈00:30 11-29)·zhulong 12w predict 73/500(ETA~14h≈02:30)·6-harness eval循环 run_eval_all_8w.sh(PID4157025):codex eval中→deepseek→hermes→pi·资源自检PASS(load14/224,topCPU=pretrain非本线)
+当前动作:     opencode 8w predict 42/500(序列化经serve守护,ETA~00:30 11-29)·zhulong 12w predict 89/500(ETA~02:30)·6-harness eval循环 run_eval_all_8w.sh(PID4157025):codex eval中→deepseek→hermes→pi·资源自检PASS(load16.89/224,topCPU=pretrain非本线,本线最高zhulong~22%CPU)
 下一步:       codex/deepseek/hermes/pi eval自循环完成→opencode eval(watcher PID1816539在predict完成后自动触发)→zhulong eval(watcher PID1816542)→8路eval全齐→gen_report_doubao_pro_7way.py生成最终8路对比HTML报告(含版本列,cline显示zhulong(cline-patched))
 阻塞:         无
 ERROR_COUNT:  0
