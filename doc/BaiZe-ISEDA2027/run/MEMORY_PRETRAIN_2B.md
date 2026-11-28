@@ -14,6 +14,28 @@
 >
 > 启动后验证：两节点 shim 生效（`grep -i 'blend.hot.switch'`）、iter 从 350k 续、NaN=0、step ≤7.4s。
 > **本轮这是唯一动作**，不许再写「待运维决定」。
+> ## 📎 2026-11-28 10:3x · **data 的诊断与建议，供你参考（不是强制要求）**
+>
+> 以下是 data 对 S2 启动失败的分析，**仅供参考**。你自己判断是否采用、如何采用；
+> 若有更好的做法，按你认为对的做，不必迁就本文。
+>
+> **事实**：`RUN_ID 293` 启动 S2 失败于
+> `torchrun: Argument list too long`（errno=E2BIG，08:06:45）。
+>
+> **data 判断的原因**（`run/data/blendswitch/S2_E2BIG_DIAGNOSIS.md`）：
+> `train.sh` 把 blend 串作为**单个命令行参数**传给 torchrun；
+> S2 有 13,847 个 shard ⇒ 串约 2.64 MB，超过
+> `MAX_ARG_STRLEN`=128KB（单参数，编译期常量）/ `ARG_MAX`=2MB。
+> S1 只有 ~100 shard、~20KB，所以没事。
+>
+> **data 给的三条路**（原文见其 §2）：
+> - **A**：BLEND 写文件、命令行传 `@filepath`，`pretrain_launcher.py` 读到 `@` 时从文件加载。~15 分钟改 2 个文件，补丁 `run/data/blendswitch/fix_arg_too_long.patch`。
+> - **B**：用 `pre_blend.py` 把 5 个未 pre-blend 的源各并成 16 shard（13,847 → ~192）。耗时 2-6h，`stackv3_filt`(1.8TB) 最慢。
+> - **C**：A 先解锁 + B 后台并行。
+>
+> 用户已让 data 走 **C**。data 会跟进方案 A 的落地，并提示你 `DRY=1 bash train.sh s1` 可验 ARGS 是否已不含大字符串。
+>
+> **以上只是参考信息**。具体怎么改、改不改、有没有更简单的做法，由你判断。
 🔴 S1训练已停止(用户令2026-11-28 09:2x「立刻把S1训练停下」)·训练已于07:55:32被SIGTERM杀死(.29 PID 2234180 torchrun→8 worker SIGTERM→正常退出·.12 PID 1932348 torchrun已确认死亡)·停止前最后iter=351100/700k loss=1.968627E+00 step=6904.6ms grad_norm=0.081 0NaN/0skip✅·最新可用ckpt=350000(iter_0350000/ 32 .distcp文件完整✅ latest_checkpointed_iteration.txt=350000)·两节点GPU全idle(.29 8×0%/0MiB/25°C✅·.12 8×0%/0-4MiB/25-27°C✅)·无训练/eval/daemon进程残留·daemon已停(最后日志07:51:08)·🚫未重启S1(遵守用户令)·340k eval=60.12%(new high!)·350k eval=58.25%·report 44435B/58ckpt·WAITING: 0
 =======
 🔴 S1训练已停止(用户令2026-11-28 09:2x「立刻把S1训练停下」)·训练已于07:55:32被SIGTERM杀死(.29 PID 2234180 torchrun→8 worker SIGTERM→正常退出·.12 PID 1932348 torchrun已确认死亡)·停止前最后iter=351100/700k loss=1.968627E+00 step=6904.6ms grad_norm=0.081 0NaN/0skip✅·最新可用ckpt=350000(iter_0350000/ 31 .distcp文件完整✅ metadata验证31/31✅ latest_checkpointed_iteration.txt=350000)·两节点GPU全idle(.29 8×0%/0MiB/25°C✅·.12 8×0%/0-4MiB/25-27°C✅)·无训练/eval/daemon进程残留·daemon已停(最后日志07:51:08)·🚫未重启S1(遵守用户令)·340k eval=60.12%(new high!)·350k eval=58.25%·report 44435B/58ckpt·WAITING=1
