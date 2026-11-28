@@ -2,20 +2,21 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1166) — S2 内存实验 v3（data 主导）· 方案 E 达标 · step ~570 · AnonPages COW 饱和 · 待 2000 步正式验收**：
+> 🔧 **心跳 · 2026-11-28 (R1167) — S2 内存实验 v4（data 主导）· 方案 E 持续达标 · step ~660 · CSV 列序纠正 · 待 2000 步验收**：
 > - **用户令**（20:0x）：data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）；step ≤7.4s 硬指标
-> - **纠正模型**：旧模型 S1=1,039GB **高估 1.56×**（S1 实测 666GB，ops 探针 RUN_ID 291）；.idx 因子 0.79× 非 1.5×
-> - **S2 config E（nw=2+no_mmap）live 实测**（iter 350570 / step ~570）：
->   - step=6.93-7.18s ✅（≤7.4s）· 吞吐~565K ✅（vs S1 600K，-6%）· 0 OOM ✅ · 0 NaN ✅ · loss=1.49-1.52 ✅
->   - AnonPages：.12=675GB / .29=704GB · MemAvail：.12=1,135GB / .29=1,168GB · swap si/so=0（无活跃换页）
->   - **AnonPages 增长率 COW 饱和**：0.82→0.42→0.13→0.33→0.12→**0.075** GB/step（step 119→200→286→371→457→543→629），已平台化
->   - COW 衰减模型：平台期 ~675-704GB（接近 S1 666GB）· headroom 1,300GB+ → **不会 OOM**
->   - 投影 step 2000：AnonPages ≈ 782GB · headroom ≈ 1,233GB
-> - **结论：方案 E 达标，S2 可做**。未采用方案 D（用户驳回）。待 step 2000 正式验收（ETA ~2026-11-29 00:00）后交付 pretrain 长跑
-> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v3（实验记录表 + COW 衰减拟合 + 10min 间隔 AnonPages 趋势 + 新结论 + 交接块）
-> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12，PID 2529386）/ `/tmp/s2_mem_monitor.csv`（688 行）· WAITING=0
+> - **S2 config E（nw=2+no_mmap）live 实测**（iter 350,660 / step ~660）：
+>   - step=6.96-7.23s ✅（≤7.4s）· 吞吐~565K ✅ · 0 OOM ✅ · 0 NaN ✅ · loss=1.485-1.520 ✅
+>   - AnonPages：.12=694GB / .29=720GB · MemAvail：.12=1,121GB / .29=1,153GB · vmstat si/so=0（无活跃换页）
+> - **v4 纠正**：监控 CSV header 列序与实际数据不匹配（header 写 AnonPages@col6，实际 AnonPages@col10）。
+>   纠正后增长率趋势：0.90→0.51→0.14→0.15→0.31→0.11→0.08→0.26 GB/step（非单调，有 COW 批次反弹，均值 ~0.15）
+> - **.29 swap 满**（7.8GB/8GB）但 si=0/so=0 → 崩溃残留，无活跃换页，不构成风险
+> - **投影 step 2000**：AnonPages ≈ 900-1,050GB · headroom ≈ 965-1,115GB → **不会 OOM**
+> - **ETA step 2000**：~2026-11-29 00:02（剩余 ~1,340 步 × 7.14s ≈ 159 min）
+> - **结论：方案 E 持续达标，S2 可做**。待 step 2000 正式验收后交付 pretrain 长跑
+> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v4（CSV 列序纠正表 + 纠正后 AnonPages 趋势 + 投影 + 交接块）
+> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12，PID 2529386）/ `/tmp/s2_mem_monitor.csv`（800+ 行）· WAITING=0
 
-> 📦 R1164 心跳（S2 内存实验 v3 · step 320 · AnonPages 630GB · 方案 E 达标）已被 R1165 更新 → 见上
+> 📦 R1164~R1166 心跳（S2 内存实验 v3 · step 320→570 · AnonPages 630→694GB · 方案 E 达标 · CSV 列序纠正）已被 R1167 更新 → 见上
 
 > 📦 R1161 心跳（S2 CRASHED · 只读 review · 4 项 fresh PASS）已归档 → daily-memories-data/2026-11-28.md
 

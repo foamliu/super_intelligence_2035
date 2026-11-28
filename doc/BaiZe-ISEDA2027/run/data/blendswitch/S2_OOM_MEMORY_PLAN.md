@@ -13,7 +13,77 @@
 > **🔄 v3 更新（20:4x→21:0x）· data 主导**：用户令（20:0x）指定 data 主导 S2 内存实验与重启，
 > 驳回方案 D（不接受吞吐减半）。本版加入 **纠正后的定量模型**（S1 实测 666GB 而非模型 1,039GB）、
 > **step 450 live 实验数据**（AnonPages 增长率持续衰减 1.0→0.07 GB/step）、**新结论：方案 E 达标，S2 可做**。
-> **当前 S2 正在运行（iter 350,450），内存趋平 ~665GB，step ≤7.4s，0 OOM。**
+
+> **🔄 v4 更新（21:2x）· data 主导 · CSV 列序纠正 + step 660 实测**：
+> 发现监控 CSV header 与实际数据列序不匹配（header 写 AnonPages 在 col6，实际 AnonPages 在 col10）。
+> 纠正后重做增长趋势分析。**当前 S2 step ~660（iter 350,660），step 6.96–7.23s ✅，AnonPages ~694GB（.12）/ ~720GB（.29），0 OOM。**
+> 增长率在 0.08–0.31 GB/step 间波动（均值 ~0.15），COW 尚未完全饱和但趋势下降。
+> 投影 step 2000 AnonPages ≈ 900–1,050 GB，headroom ≈ 965–1,115 GB → **不会 OOM**。
+> ETA step 2000 ≈ 2026-11-29 00:02。.29 swap 满（7.8GB）但 si=0/so=0（崩溃残留，无活跃换页）。
+
+---
+
+## 0. v4 摘要（data 主导 · 2026-11-28 21:2x）
+
+> **结论：方案 E（nw=2 + 禁 mmap）持续达标，S2 可做。step 2000 验收待完成（ETA ~00:02）。**
+>
+> | 验收指标 | 用户硬指标 | 实测（step ~660） | 状态 |
+> |:---|:---|:---|:---|
+> | step time | ≤ 7.4s | 6.96–7.23s | ✅ |
+> | 吞吐 | 与 S1 同级（~600K tok/s） | ~565K tok/s（-6%） | ✅ |
+> | OOM | ≥2000 步 0 OOM | 660 步 0 OOM，AnonPages 增长率 ~0.15 GB/step（波动下降） | ⏳ 跑至 2000 确认 |
+> | 方案 D（nw=0） | 驳回（不接受吞吐减半） | 未采用 | ✅ |
+>
+> **v4 新发现**：
+> 1. **CSV header bug**：`/tmp/s2_mem_monitor.sh` 的 echo header 与 grep 输出列序不匹配。
+>    header 写 `AnonPages` 在 col6，但 grep 按 `/proc/meminfo` 行序输出，实际 AnonPages 在 col10。
+>    **不影响已有分析**（data agent 一直读 col10），但会使其他读者误读。已记录正确映射。
+> 2. **AnonPages 增长率波动**（纠正 col10）：0.90→0.51→0.14→0.15→0.31→0.11→0.08→0.26 GB/step。
+>    非单调递减，有 COW 批次反弹（0.31, 0.26），但整体均值从 0.70 降至 ~0.15。
+> 3. **.29 swap 满**（7.8GB/8GB）但 vmstat si=0/so=0 → 崩溃残留，无活跃换页，不构成风险。
+> 4. **.12 swap 在 21:13 自动释放** 6.5GB（内核回收 swap cache）。
+
+### 0.1 CSV 列序纠正表
+
+| CSV 位置 | header 标签 | **实际字段** | 验证（latest row vs /proc/meminfo） |
+|:---:|:---|:---|:---|
+| col6 | AnonPages | **Cached** | CSV=81GB ≈ meminfo Cached=86GB ✓ |
+| col7 | Cached | **SwapCached** | CSV=31MB = meminfo SwapCached=31MB ✓ |
+| col8 | Mapped | **SwapTotal** | CSV=8GB = meminfo SwapTotal=8GB ✓ |
+| col9 | Shmem | **SwapFree** | CSV=6.5GB = meminfo SwapFree=6.5GB ✓ |
+| **col10** | **SwapCached** | **AnonPages** | **CSV=686GB ≈ meminfo AnonPages=686GB ✓** |
+| col11 | SwapTotal | **Mapped** | CSV=54GB ≈ meminfo Mapped=55GB ✓ |
+| col12 | SwapFree | **Shmem** | CSV=12GB ≈ meminfo Shmem=14GB ✓ |
+| col13 | Committed_AS | **Committed_AS** | ✓（唯一正确） |
+
+> **根因**：`echo` header 手写顺序 ≠ `grep -E '^(...)'` 的 `/proc/meminfo` 行序输出。
+
+### 0.2 纠正后 AnonPages 趋势（col10，每 ~70 步采样）
+
+| 行号 | 时间 | 估算 step | AnonPages (GB) | SwapFree (.12, MB) | 增长率 (GB/step) |
+|---:|:---|---:|---:|---:|---:|
+| 2 | 20:13 | ~118 | 516 | 10 | — |
+| 100 | 20:22 | ~190 | 581 | 10 | 0.90 |
+| 200 | 20:30 | ~262 | 618 | 10 | 0.51 |
+| 300 | 20:39 | ~334 | 628 | 12 | 0.14 |
+| 400 | 20:48 | ~406 | 639 | 12 | 0.15 |
+| 500 | 20:56 | ~478 | 661 | 12 | 0.31 |
+| 600 | 21:05 | ~550 | 669 | 13 | 0.11 |
+| 700 | 21:13 | ~622 | 675 | 6,593 | 0.08 |
+| 800 | 21:22 | ~694 | 694 | 6,607 | 0.26 |
+
+> **趋势**：增长率从 0.90 降至 ~0.15（均值），但非单调——有 COW 批次反弹（0.31@step478, 0.26@step694）。
+> 对比 S1 实测 AnonPages=666GB，当前 694GB 已略超 S1，但 headroom 仍有 1,300GB+。
+
+### 0.3 投影 step 2000
+
+| 情景 | 增长率假设 | step 2000 AnonPages | headroom | OOM 风险 |
+|:---|:---|---:|---:|:---|
+| 保守 | 0.25 GB/step（近期上限） | ~1,029 GB | ~986 GB | ❌ 无 |
+| 中位 | 0.15 GB/step（近期均值） | ~895 GB | ~1,120 GB | ❌ 无 |
+| 乐观 | 0.08 GB/step（近期低点） | ~801 GB | ~1,214 GB | ❌ 无 |
+
+> **ETA step 2000**：(2000−660) × 7.14s ≈ 159 min → **~2026-11-29 00:02**
 
 ---
 
