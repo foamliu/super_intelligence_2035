@@ -1488,3 +1488,130 @@ Everything up-to-date
 （只读：未 kill / 未重启 / 未改文件）
 === DONE 296 | 2026-11-28 09:10:17 ===
 ```
+
+---
+
+## RUN_ID 296 · 2026-11-28 09:09:31 · host=`whag0pgpuap29` · exit=0
+
+**命令**
+```bash
+set -u
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "[0] exec_host=$(hostname)  ips=$(hostname -I 2>/dev/null)  date=$(date '+%F %T')"
+echo
+
+echo "== A. loop 脚本第 45-52 行（llm_rotate.sh 加载处）=="
+sed -n '45,52p' "$RUN/baize_harness_loop.sh" 2>/dev/null
+echo
+
+echo "== B. llm_rotate.sh 是否存在 =="
+ls -l "$RUN/llm_rotate.sh" 2>&1
+echo "  exist_test: $([ -f "$RUN/llm_rotate.sh" ] && echo YES || echo NO)"
+echo
+
+echo "== C. 全机搜 llm_rotate*（本机）=="
+timeout 60 find /nas_train/app.e0031982 -maxdepth 6 -name 'llm_rotate*' -not -path '*/.git/*' 2>/dev/null | head -10
+echo "  --- /tmp ---"
+ls -l /tmp/llm_* 2>/dev/null | head -5
+echo "  --- PATH 中 ---"
+command -v llm_pick 2>&1 || echo "  llm_pick 不在 PATH"
+echo
+
+echo "== D. 两节点对比（.29 / .12 互相 ssh）=="
+for h in 10.239.2.29 10.239.2.12; do
+  echo "--- $h ---"
+  timeout 30 ssh -n -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=no app.e0031982@$h \
+    "echo host=\$(hostname); echo -n 'llm_rotate='; [ -f $RUN/llm_rotate.sh ] && echo YES || echo NO; echo -n 'loop_procs='; pgrep -fc baize_harness_loop 2>/dev/null || echo 0" 2>&1 | sed 's/^/    /'
+done
+echo
+
+echo "== E. 当前两节点 harness loop 进程 =="
+for h in 10.239.2.29 10.239.2.12; do
+  echo "--- $h ---"
+  timeout 30 ssh -n -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=no app.e0031982@$h \
+    "ps -eo pid,ppid,etime,args | grep -E '[b]aize_harness_loop' | cut -c1-150" 2>&1 | sed 's/^/    /'
+done
+echo
+
+echo "== F. 本机 loop 日志（最近 30 行）=="
+tail -n 30 /tmp/baize_harness_loop.log 2>/dev/null | cut -c1-190
+echo
+
+echo "== G. hit：loop 脚本对 llm_pick 的依赖与兜底 =="
+grep -n 'llm_rotate\|llm_pick\|LLM_KEY\|CLINE_KEY' "$RUN/baize_harness_loop.sh" | cut -c1-170
+echo
+
+echo "（只读：未 kill / 未重启 / 未改文件）"
+echo "=== DONE 296 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap29  ips=10.239.8.29 10.239.9.29 10.239.10.29 10.239.11.29 10.239.22.29 10.239.12.29 10.239.13.29 10.239.14.29 10.239.15.29 10.239.23.29 10.239.2.29 10.247.36.1 10.247.35.1 10.247.34.1   date=2026-11-28 09:09:31
+
+== A. loop 脚本第 45-52 行（llm_rotate.sh 加载处）==
+#   候选来自 doc/keys.txt（10 项 → 取 8 个 chat/coding LLM，排除 ASR/文生图）；
+#   探针 = curl /chat/completions（200 可用 / 429 额度耗尽 / 403 base 不匹配）——现场实测见 run/ops/outbox.md RUN_ID 43/44。
+#   ⚠️ base 必须与模型匹配（flash@/v1=200 但 flash@/cloud/v1=403）→ llm_pick 会自动改写 cline 的 openAiBaseUrl（首次改动前备份 .llmrot.bak）。
+KEYS_TXT="$GIT_ROOT/doc/keys.txt"
+LLM_STATE="/tmp/baize_harness_llm_idx"
+[ -f "$SCRIPT_DIR/llm_rotate.sh" ] && . "$SCRIPT_DIR/llm_rotate.sh"
+
+git_sync_and_push() {
+
+== B. llm_rotate.sh 是否存在 ==
+ls: cannot access '/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/llm_rotate.sh': No such file or directory
+  exist_test: NO
+
+== C. 全机搜 llm_rotate*（本机）==
+  --- /tmp ---
+  --- PATH 中 ---
+  llm_pick 不在 PATH
+
+== D. 两节点对比（.29 / .12 互相 ssh）==
+--- 10.239.2.29 ---
+    host=whag0pgpuap29
+    llm_rotate=NO
+    loop_procs=4
+--- 10.239.2.12 ---
+    host=whag0pgpuap12
+    llm_rotate=NO
+    loop_procs=2
+
+== E. 当前两节点 harness loop 进程 ==
+--- 10.239.2.29 ---
+    4066583       1       13:59 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+--- 10.239.2.12 ---
+    3498993       1       13:56 bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh
+
+== F. 本机 loop 日志（最近 30 行）==
+[loop] 2026-11-28 08:56:33 wake up, invoking cline ...
+/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_harness_loop.sh: line 133: llm_pick: command not found
+[loop] 2026-11-28 08:56:33 !!! 无可用 LLM 候选 → 跳过本轮 cline
+[loop] 2026-11-28 08:56:33 cline returned (exit 0), checking git sync ...
+[push] 2026-11-28 08:56:33 push interval reached, syncing ...
+Auto packing the repository in background for optimum performance.
+See "git help gc" for manual housekeeping.
+warning: The last gc run reported the following. Please correct the root cause
+and remove .git/gc.log
+Automatic cleanup will not be performed until the file is removed.
+
+warning: There are too many unreachable loose objects; run 'git prune' to remove them.
+
+[push] ahead=0 behind=0
+[push] committed.
+To https://github.com/foamliu/super_intelligence_2035.git
+   db6f7c306d..cd403d13f1  main -> main
+[push] push OK.
+[loop] 2026-11-28 08:56:39 WAITING=1 (async task running) → sleep 900s
+
+== G. hit：loop 脚本对 llm_pick 的依赖与兜底 ==
+28:CLINE_KEY="02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23"
+47:#   ⚠️ base 必须与模型匹配（flash@/v1=200 但 flash@/cloud/v1=403）→ llm_pick 会自动改写 cline 的 openAiBaseUrl（首次改动前备份 .llmrot.ba
+50:[ -f "$SCRIPT_DIR/llm_rotate.sh" ] && . "$SCRIPT_DIR/llm_rotate.sh"
+133:          if llm_pick "$LLM_STATE" "$KEYS_TXT"; then
+141:          "${taskline[@]}" cline -c "$CWD" --auto-approve true -m "$LLM_MODEL" -k "$LLM_KEY" -P openai-compatible -t "$CLINE_TIMEOUT" "$prompt" < /dev/null
+
+（只读：未 kill / 未重启 / 未改文件）
+=== DONE 296 | 2026-11-28 09:10:33 ===
+```
