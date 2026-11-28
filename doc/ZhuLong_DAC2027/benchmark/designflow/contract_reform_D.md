@@ -584,3 +584,25 @@ Lite-500 的 9 OPT 多为「hspice-mock 桩体检判 OPT/BLOCKED」族（LDOGen/
 ### R2 排期（下一轮起，A/C/D ≤3 条/轮）
 
 1. **SramButterfly-001** 改造：非侵入包装 `_check_static_impl`(原 check 去 hspice 部分) + `check_static` + `check_live`(.75 sess 真跑 hspice 读 .lis/SNM) + `judge_layers=[L0,L1,L2.live]` + live-neg(static-pass/live-fail: 候选 deck 用错误 sizing 产出 .lis 但 SNM 错) + §5 七项全绿。
+
+### r1670 桩体检全量 re-scan（non-Lite NA-498 · 收口确认）
+
+**触发**：r1668 造题主线发现 CosWaveWdf-001 误判 NA→REQ（原 check.py `_run_wv()` 直调 real `wv` 二进制 `subprocess.run([wv,-ace_no_gui,tcl])`，R1「信号扫 realbin=0」只扫 hspice/finesim 漏扫 `wv`）。暴露 R1 方法论缺口 ⇒ 本轮对 NA-498 全量 re-scan，按 §2.1 两条硬规则复验。
+
+**Scan 1 · 真二进制直调（§2.1 rule 2「工具名出现 ≠ 真跑」）**：
+- 扫 498 NA case 的 `cases/D/*.json` test 字段（= 磁盘 check.py，sha 同步）。
+- 49 case 命中二进制名字面量（hspice/finesim/wv/calibre/bsub/ncsim/virtuoso/waveview/xrun/innovus 等），但**逐个核查 subprocess 调用点**：全部为 `subprocess.run([sys.executable, <候选脚本>, ...])` 或 `subprocess.run(["tclsh", <候选 tcl>])` 或 `subprocess.run(cmd, shell=True)` 其中 cmd = 候选脚本路径——**即 check 跑候选自己的脚本**，二进制名仅出现在候选生成的 deck/tcl/脚本文本里被结构性扫描（FORBIDDEN token 检查 / .measure 调用形态校验 / 生成目标名校验），非 check 直调真二进制。
+- 严格正则（argv 首元素 == 真二进制字面量 / `shutil.which("<bin>")` 喂 subprocess / `shell=True` + cmd 含真二进制）**0 命中**。
+- **结论**：除已收口的 CosWaveWdf（r1668 改 REQ+check_live）外，NA-498 无 check.py 直调真 EDA 二进制案例。R1「realbin=0」结论本轮复验仍成立（CosWaveWdf 是唯一漏网，已修）。
+
+**Scan 2 · mock 桩 Q2-cheatable（§2.1 rule 1「桩体检」）**：
+- mock 模式命中 3 case（`_GT_A` / `wv_mock`×2）+ 5 wv 相关 case。重点核查 `wv_mock.tcl` shim 族（WvHierSignalOpen / WvNetVIDisplayQA / FsdbPwlExtract / WvGridLayout / OpenWaveFmt / WvProbeReuseGuideQA）。
+- `wv_mock.tcl` 是**结构性输入提供型 mock**：从 `waveform_data.tcl`（WV_SIGNALS/WV_WAVEOBJ 数组）提供输入波形数据 + 记录候选 `sx_*` 调用到 `wv_calls.log` + dump 状态到 `wv_state.txt`。**非** GT-replay-by-signature（与 B shard `hspice_mock` 按 .param 签名回放预捕 real-HSPICE GT 的可骗模式本质不同）。
+- Q2 验证（WvHierSignalOpen-001 代表）：check.py 独立断言候选 `sx_find_wave_in_all_files` 调用序列 + 解析出的层次信号名 == `B_EXPECTED_FULLNAME`（来自 `signal_spec_B.tcl` 输入，非 mock 产物）+ displayed wave_obj == `B_EXPECTED_WAVEOBJ` + B2 not-found 必须 raise + B3 fast-path + 确定性 + anti-hardcode。**作弊提交（打印对形状但跳过 sx_* 解析）必 FAIL cond d/e/h/j**——候选必须真做信号解析。Q2=不骗过 ⇒ NA 成立。
+- `_GT_A` 命中（DqRouting1p6WriteAnalyzeProduce-001）经核查 `_GT_A` 是独立 gold 复算变量名（judge-side 复算期望值），非 mock 桩回放。NA 成立。
+
+**结论**：D non-Lite live-eval **收口确认**。
+- review=505/505 · REQ=2(done 2: CosWaveWdf r1668 + SramButterfly) · PREEXISTING=4(保留不重判) · OPT=0 · NA=498（双轴复验：真二进制直调 0 命中 + mock 桩 Q2 全 SAFE）· L2.live 7→9（D 全 shard，含 Lite 3）。
+- R1 方法论缺口（realbin 扫漏 wv）已由 r1668 修补 + 本轮全量复验闭环；无新增 REQ。
+- 与旧 P4 无冲突（旧 P4 lite-only，nonlite 纯增量）。
+- 后续：若造题主线再遇 check.py 直调真二进制（任意二进制，不只 hspice/finesim），即判 REQ 入 R2 改造队列。
