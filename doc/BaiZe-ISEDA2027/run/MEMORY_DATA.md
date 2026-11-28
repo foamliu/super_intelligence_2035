@@ -4,11 +4,12 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部完成 + DRY=1 端到端验证 PASS** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。
 
-> ✅ **心跳 · 2026-11-28 11:06 (R1100) — 方案 C fresh 复验 PASS · DRY=1 S2 180 shards inline 无 E2BIG · 5/5 .done 确认 · pretrain 无待答 · 等 pretrain 启动 S2**：
+> ✅ **心跳 · 2026-11-28 11:10 (R1101) — 方案 C fresh 复验全 PASS · 25/25 tests · DRY=1 S2 180 shards inline 无 E2BIG · 5/5 .done · 等 pretrain 启动 S2**：
 > - **DRY=1（fresh）**：`BLEND_TSV=configs/blend_s2_preblend.tsv DRY=1 bash scripts/train.sh s1 --dry-run` → "blend 就绪：180 个 shard" · weight_sum=1.000000 · inline `--train-data-path`（无 @file / 无 E2BIG）✅
+> - **blendswitch tests（fresh 重跑）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio dev=0.00%) · test_blend_hot_switch_integration.py 7/7 PASS · test_bridge_compat.py 10/10 PASS ✅
 > - **5/5 .done（fresh 确认）**：stackv3_filt(elapsed=4293s) / megamath_web(2798s) / nemotron(1865s) / megamath_pb(425s) / finemath(106s) — 全部有 .done + MANIFEST.json + 16 .bin ✅
-> - **TSV（fresh 确认）**：blend_s2_preblend.tsv 12 源 · 5 新源指向 pre-blend 目录 · 180 shards · BLEND ~14KB（远 <128KB 限制）✅
-> - **pretrain**：S1 已停 · 350k ckpt 完好 · 两节点 16×GPU 全 idle（0% util / 0-1455MiB）· pretrain 有「立刻执行 S2 切换」令但尚未启动 · pretrain 已确认 data 交付物（无待答）
+> - **TSV（fresh 确认）**：blend_s2_preblend.tsv 3515B · 12 源 · 5 新源指向 pre-blend 目录 · 180 shards · BLEND <100KB（走 inline，无 E2BIG）✅
+> - **A 补丁（fresh 确认）**：train.sh L99-113 ✅ + pretrain_launcher.py L284-289 ✅ · flag-off = stock 零回归
 > - **无遗留任务** · WAITING=0
 
 > 📦 R1099 心跳（2026-11-28 11:01·方案C fresh全量复验PASS+.done标记补全·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
