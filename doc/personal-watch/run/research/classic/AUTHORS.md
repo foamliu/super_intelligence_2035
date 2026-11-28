@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-28 15:0x · r284）**：作者 **434** 人（编号最大 **434**）· X 已核验 **168**（本轮 **+0**：三位 EDA 学者页均无本人 x/twitter 外链，UIUC 页仅有院系账号 `@eceILLINOIS` ⇒ 记「未找到 X」，不猜）· 已发信 **194**（台账 #1–#194；本窗 **+1**：#194 Tsung-Wei Huang；今日 **6/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **70** 封，与 12:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：「Tsung-Wei Huang」（UW-Madison ECE，OpenTimer 一作，A 级 `tsung-wei.huang@wisc.edu`〔本人主页明文 `Contact: tsung-wei.huang at wisc dot edu`〕，X 未找到 ⇒ 已发信 #194）· Yiran Chen（Duke ECE，EDA / 存储，A 级 `yiran.chen@duke.edu`〔Duke ECE 目录页 `200` 明文〕，X 未找到 ⇒ 仅建档）· Deming Chen（UIUC ECE，FPGA / EDA，A 级 `dchen@illinois.edu`〔UIUC ECE 目录页 `200` 明文〕，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 12:0x · r282）**：作者 **431** 人（编号最大 **431**）· X 已核验 **168**（本轮 **+0**：三位 EDA 学者页均无本人 x/twitter 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **193**（台账 #1–#193；本窗 **+1**：#193 Tsung-Yi Lin；今日 **5/12**）· 实质回信 **8 封 / 7 位作者**（≈4.1%；本窗 IMAP 只读再核：INBOX **70** 封，与 09:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Martin D. F. Wong（EDA 物理设计，UIUC，A 级 `mdfwong@illinois.edu`〔ECE 人员页明文〕，X 未找到 ⇒ 仅建档）· Robert Wille（EDA / 量子设计自动化，TUM，A 级 `robert.wille@tum.de`〔团队页明文〕，X 未找到 ⇒ 仅建档）· Jiang Hu（物理设计 / ML-for-EDA，Texas A&M，A 级 `jianghu@tamu.edu`〔CESG 页明文〕，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 09:0x · r280）**：作者 **428** 人（编号最大 **428**）· X 已核验 **168**（本轮 **+1**：`@poolio` 由本人 Stanford 主页 <https://cs.stanford.edu/~poole/> `200` / 63,366 B 外链 `twitter.com/poolio` + 代理抓 `x.com/poolio` `200` / 199,993 B，`og:title` = `Ben Poole (@poolio) / X` ⇒ 双源；Jason Cong / Sung Kyu Lim 未找到本人 X ⇒ 不猜、不计入）· 已发信 **192**（台账 #1–#192；本窗 **+1**：#192 Ben Poole；今日 **4/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 06:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Ben Poole（Gumbel-Softmax 三作，Google DeepMind，A 级 `benmpoole@gmail.com`〔本人 Stanford 主页明文〕，X `@poolio` 双源 ⇒ 已发信 #192）· Jason Cong 丛京生（EDA / FPGA 学者，UCLA，A 级 `cong@cs.ucla.edu`〔UCLA 官方人员页明文〕，X 未找到 ⇒ 仅建档）· Sung Kyu Lim 임성규（EDA 3D-IC 学者，USC〔2025-08 自 Georgia Tech 转〕，A 级 `limsung@usc.edu`〔本人旧主页明示 `Please contact me at`〕，X 未找到 ⇒ 仅建档）。
 > **当前计数（2026-11-28 06:0x · r278）**：作者 **425** 人（编号最大 **425**）· X 已核验 **167**（本轮 **+2**：`@tqchenml` 由本人主页 <https://tqchen.com/> `200` / 6,008 B 页内 `Twitter : @tqchenml` 外链 + 代理抓 `x.com/tqchenml` `200` / 186,301 B，`og:title` = `Tianqi Chen (@tqchenml) on X`、bio = `AssocProf @CarnegieMellon … Creator of @XGBoostProject` ⇒ 双源；`@mo_norouzi` 由本人主页 <https://norouzi.github.io/> `200` / 23,647 B 外链 `twitter.com/mo_norouzi` + 代理抓 `x.com/mo_norouzi` `200` / 198,504 B，`og:title` = `Mohammad Norouzi (@mo_norouzi) on X`、bio = `Founder and CEO at Ideogram` ⇒ 双源；`@guestrin` 仅 X 页 `og:title` + bio 自述 `Co-author of XGBoost` 单源、本人主页无 X 外链 ⇒ **待核、不计入**）· 已发信 **191**（台账 #1–#191；本窗 **+1**：#191 Tianqi Chen；今日 **3/12**）· 实质回信 **8 封 / 7 位作者**（≈4.3%；本窗 IMAP 只读再核：INBOX **70** 封，与 03:00 持平；**无新实质回信、无新退信**；退信 **9**、本窗 **+0**）。本轮 **+3**：Tianqi Chen 陈天奇（XGBoost 一作，CMU，A 级 `tqchen@cmu.edu`〔本人主页 `Email : tqchen at cmu dot edu` 还原〕，X `@tqchenml` 双源 ⇒ 已发信 #191）· Carlos Guestrin（XGBoost 末位，Stanford，A 级 `guestrin@stanford.edu`〔本人 contact 页明文〕，X `@guestrin` 单源待核 ⇒ 仅建档，守「同一论文 ≤1」）· Mohammad Norouzi（Dreamer 末位，Google DeepMind / Ideogram，主页无公开邮箱，X `@mo_norouzi` 双源 ⇒ 仅建档）。
@@ -6069,3 +6070,42 @@
 | X 账号 | **未找到 X**（该页未挂 x/twitter 外链；不猜） |
 | 状态 | **仅建档**（有 A 级邮箱；本轮无对应已收录论文 ⇒ 不硬写信，留作 EDA 物理设计关系网节点） |
 | 备注 | 语言=中文(判据=拼音姓名族属「Jiang Hu」+ 美国机构；按「姓名族属优先于机构」判中文；若回信为英文再切换)。物理设计 / ML-for-EDA 方向，对 designflow 的布局布线类题面与判分、zhulong 的 flow 消融有参照价值。 |
+
+### 432. Tsung-Wei Huang（拼音名；汉字写法未核实，不代拟）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tsung-Wei Huang（拼音姓名族属 ⇒ 若发信应中文） |
+| 机构 | **University of Wisconsin-Madison**（Department of Electrical and Computer Engineering, ECE） |
+| 代表论文 | **OpenTimer: A high-performance timing analysis tool**（ICCAD 2015，**一作**，B 轨 **#467**）· OpenTimer v2（TCAD 2020） |
+| 邮箱 | **A 级** `tsung-wei.huang@wisc.edu`（本人主页 <https://tsung-wei-huang.github.io/> 实测 `HTTP 200` / 9,047 B，页内明文 `Contact: tsung-wei.huang at wisc dot edu` ⇒ 按页面规则还原；**未用论文 PDF 旧地址**） |
+| 主页 | <https://tsung-wei-huang.github.io/>（`200` / 9,047 B） |
+| X 账号 | **未找到 X**（该页未挂 x/twitter 外链；不猜） |
+| 状态 | **已发信**（2026-11-28 15:0x CST，经典论文请教信第 194 封，中文）· X 待 follow（需登录态） |
+| 备注 | 语言=中文(判据=拼音姓名族属「Tsung-Wei Huang」+ 美国机构；姓名族属优先于机构)。三问直指 designflow / zhulong：① block-based vs path-based 在同一 SDC 下 slack 差异的典型量级（决定判分用哪种传播）② CPPR 开启前后违例路径数的变化幅度（决定是否在题面默认开）③ 增量分析在「改一处约束」后相对全量的加速比与结果一致性边界。 |
+
+### 433. Yiran Chen（拼音名；汉字写法未核实，不代拟）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yiran Chen（拼音姓名族属 ⇒ 若发信应中文） |
+| 机构 | **Duke University**（Department of Electrical and Computer Engineering, ECE） |
+| 代表论文 | **EDA / 存储 / 机器学习交叉方向**（本人 Duke 目录页实测含相关研究领域；本轮未逐条核具体论文，故不写 arXiv ID，避免臆造） |
+| 邮箱 | **A 级** `yiran.chen@duke.edu`（Duke ECE 目录页 <https://ece.duke.edu/faculty/yiran-chen> 实测 `HTTP 200` / 171,483 B，页内明文） |
+| 主页 | <https://ece.duke.edu/faculty/yiran-chen>（`200` / 171,483 B） |
+| X 账号 | **未找到 X**（该页未挂本人 x/twitter 外链；不猜） |
+| 状态 | **仅建档**（有 A 级邮箱；本轮无对应已收录论文 ⇒ 不硬写信，留作 EDA / 存储 / ML 关系网节点） |
+| 备注 | 语言=中文(判据=拼音姓名族属「Yiran Chen」+ 美国机构；姓名族属优先于机构)。存储 / EDA / ML 交叉方向，对 data（数据配比与语料）、zhulong（消融设计）、designflow（存储类题面）有参照价值。 |
+
+### 434. Deming Chen（拼音名；汉字写法未核实，不代拟）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Deming Chen（拼音姓名族属 ⇒ 若发信应中文） |
+| 机构 | **University of Illinois Urbana-Champaign**（Department of Electrical and Computer Engineering, ECE） |
+| 代表论文 | **FPGA / EDA / 硬件加速方向**（本人 UIUC ECE 目录页实测含相关研究领域；本轮未逐条核具体论文，故不写 arXiv ID，避免臆造） |
+| 邮箱 | **A 级** `dchen@illinois.edu`（UIUC ECE 目录页 <https://ece.illinois.edu/about/directory/faculty/dchen> 实测 `HTTP 200` / 82,812 B，页内明文；同页另有院系账号 `@eceILLINOIS`，非本人 ⇒ 不登记 X） |
+| 主页 | <https://ece.illinois.edu/about/directory/faculty/dchen>（`200` / 82,812 B） |
+| X 账号 | **未找到 X**（仅院系账号 `@eceILLINOIS`；不猜本人 handle） |
+| 状态 | **仅建档**（有 A 级邮箱；本轮无对应已收录论文 ⇒ 不硬写信，留作 FPGA / EDA 关系网节点） |
+| 备注 | 语言=中文(判据=拼音姓名族属「Deming Chen」+ 美国机构；姓名族属优先于机构)。FPGA / EDA / 硬件加速方向，对 designflow 的 FPGA 类题面、zhulong 的流程消融有参照价值。 |

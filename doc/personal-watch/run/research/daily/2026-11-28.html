@@ -244,6 +244,22 @@
   <p class="small">12:00 B 轨补充（对应 harness / pretrain / vision，不计入上表 6 线）：「随机标签可拟合」提示<b>训练 loss 不能当泛化证据</b>，任何涨点结论应补随机标签对照；<b>SSD</b> 的多尺度 default box 可作小目标 / 窄脉冲检测的 anchor 参照；<b>GroupNorm</b> 提示小 per-GPU batch 下 BN 统计不稳，视觉塔微调应把归一化方式列为预注册对照。三者均为经典基线，<b>不是</b>「已验证可迁移到 EDA」的结论。</p>
 </div>
 
+<h3 class="sec">🕔 15:00 时窗（r284 · A 轨仍满 5/5 ⇒ 0 新收；B 轨 / 作者网 / 发信 / 回信照做）</h3>
+<div class="card">
+  <ul>
+    <li><b>A 轨 0 新收</b>：今日已收满 <b>5/5</b>（00:00 窗），守「宁少勿凑」，本窗不检索、不凑第 6 篇。</li>
+    <li><b>B 轨 +3 → 467</b>（补自博弈通用 RL / 像素端到端 DQN / 开源 EDA 时序分析三处真空白）：
+      <b>Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm（AlphaZero）</b>（<a href="https://arxiv.org/abs/1712.01815">1712.01815</a>，2017-12-05，预印本，被引 <b>7,560</b>〔OpenAlex 指向 Science 2018 期刊版〕）— 单一 AlphaZero 从随机对局、除规则外无领域知识，<b>24 小时内</b>在国际象棋 / 将棋 / 围棋达超人水平并每局击败世界冠军程序。归属：posttrain（主 · 自博弈 + 可验证奖励）· vision（波形自博弈，防答案泄漏）· zhulong（成本口径）· pretrain / harness（loss ≠ 推理）。<br>
+      <b>Playing Atari with Deep Reinforcement Learning</b>（<a href="https://arxiv.org/abs/1312.5602">1312.5602</a>，2013-12-19，NIPS 2013 DRL Workshop，被引 <b>17,501</b>）— 首个直接从高维像素学控制策略的深度模型：CNN + Q-learning 变体，输入原始像素、输出估计未来回报的价值函数；7 个 Atari 2600 游戏不调架构与算法，6/7 超此前方法、3/7 超人；Nature 2015 DQN 的前置工作。归属：posttrain（主 · 经验回放 / 目标网络）· vision（像素到决策）· harness（跨任务统一口径）。<br>
+      <b>OpenTimer: A high-performance timing analysis tool</b>（ICCAD 2015，DOI <code>10.1109/iccad.2015.7372666</code>，被引 <b>176</b>，<b>&lt;500 按「EDA 标志性 / 本领域权威」收</b>）— 开源时序分析：block-based 与 path-based 传播、CPPR、增量分析；工业格式 <code>.v/.spef/.lib/.sdc</code>、并行可移植、提供增量 API；TAU 2015 工业基准上较现有 timer 数量级加速。归属：designflow（主 · 时序题 L2.live 判分后端）· zhulong（流程消融）· harness（TAU 2015 公开锚点）。</li>
+    <li><b>作者网 +3 → 434</b>（X 已核验 <b>168</b>，+0）：<b>#432 Tsung-Wei Huang</b>（UW-Madison ECE，OpenTimer 一作；A 级 <code>tsung-wei.huang@wisc.edu</code>〔本人主页明文〕，X 未找到）— <b>已发信 #194</b>；<b>#433 Yiran Chen</b>（Duke ECE，EDA / 存储 / ML；A 级 <code>yiran.chen@duke.edu</code>〔目录页明文〕，X 未找到）— 仅建档；<b>#434 Deming Chen</b>（UIUC ECE，FPGA / EDA；A 级 <code>dchen@illinois.edu</code>〔目录页明文〕，X 未找到）— 仅建档。</li>
+    <li><b>作者信 +1 → 194</b>（今日 <b>6/12</b>）：<b>#194 Tsung-Wei Huang</b> — 中文 <b>224 汉字</b>；主题 <code>时序分析的 block/path 传播、CPPR 与增量口径：三个问题</code>；<code>SENT OK 15:10:17</code>；问题 = 同一 SDC 下 block/path 的 slack 与违例路径差 / CPPR 开与关对违例数与最差 slack 的影响 / 增量 vs 全量的加速比与不一致条件；落款两行（<code>祝好，</code> / <code>Yang Liu</code>，其后无行）；正文不含项目名、不报雇主。</li>
+    <li><b>回信核验</b>（IMAP 只读）：INBOX <b>70 封</b>（与 12:00 持平，<b>+0</b>）；<code>SINCE 26-Nov-2026</code> 7 封；<b>无新实质回信、无新退信</b>。累计实质 <b>8 信 / 7 人 ≈4.1%</b> · 自动 1 · 退信 9 · 无应答(&gt;14d) 32 · 未到期 144 ⇒ 8+1+9+32+144 = <b>194</b> ✔；送达口径 8/185 ≈ 4.3%。</li>
+  </ul>
+  <p class="small">核验：arXiv abs <code>2/2 200</code>（<code>citation_title</code> + <code>citation_date</code> 逐字 <code>1712.01815</code>=2017/12/05〔仅 v1〕· <code>1312.5602</code>=2013/12/19〔API <code>published</code>/<code>updated</code> 均 <code>2013-12-19T16:00:08Z</code>〕）+ OpenAlex <code>3/3 200</code>（7,560 / 17,501 / 176，查询日 2026-11-28）；三 ID 条目级查重 <b>0 命中</b>。⚠️ arXiv API 本窗多次 <code>429 Rate exceeded</code>，<code>1712.01815</code> 元数据改由 abs 页 <code>citation_*</code> 核。</p>
+  <p class="small">15:00 B 轨补充（对应 posttrain / vision / designflow，不计入上表 6 线）：<b>AlphaZero</b> 提示 self-play 的前提是<b>环境能给出可验证胜负信号</b>，EDA 任务应先由 <code>check.py</code> 造二值判分再开 RL；<b>DQN 2013</b> 提示经验回放 + 目标网络是端到端 RL 的稳定化标配，报告须写清；<b>OpenTimer</b> 是时序题<b>离线可复跑的判分后端</b>，可避免用 mock 桩伪造物理量。三者均为经典基线，<b>不是</b>「已验证可迁移到 EDA」的结论。</p>
+</div>
+
 <h3 class="sec">🎯 对各线的可执行建议（6 线齐全，无建议显式写「无」）</h3>
 <div class="card">
   <ul>
@@ -280,14 +296,14 @@
     <li><b>元数据</b>：<code>export.arxiv.org/api/query</code> ⇒ <code>200</code> + atom；<code>published</code> 逐条 2026-11-25T14:39:59Z / 2026-11-24T11:07:23Z / 2026-11-24T19:32:45Z / 2026-11-25T17:38:00Z / 2026-11-25T18:01:22Z。</li>
     <li><b>abs 页</b>：<b>5/5 <code>200</code></b>（42,679 / 41,364 / 42,915 / 42,297 / 44,837 B）；主分类 cs.LG / cs.AR / cs.AR / cs.LG / cs.CV 取自各 abs 页 <code>primary-subject</code>。</li>
     <li><b>去重</b>：五个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>TOP_K.jsonl</code> 均 <b>0 命中</b>。</li>
-    <li><b>B 轨核验</b>（本日四窗合计 12 条）：00:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>；03:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Show Attend / SQuAD / PointNet）；06:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（GELU / Dreamer / XGBoost）；09:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Gumbel-Softmax / WGAN / DDPG）；12:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Rethinking Generalization / SSD / GroupNorm；查询日 2026-11-28）；十二个 ID 条目级查重均 0 命中。</li>
+    <li><b>B 轨核验</b>（本日五窗合计 15 条）：00:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>；03:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Show Attend / SQuAD / PointNet）；06:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（GELU / Dreamer / XGBoost）；09:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Gumbel-Softmax / WGAN / DDPG）；12:00 窗 arXiv API + OpenAlex 各 3/3 <code>200</code>（Rethinking Generalization / SSD / GroupNorm）；15:00 窗 arXiv abs 2/2 <code>200</code> + OpenAlex 3/3 <code>200</code>（AlphaZero / DQN 2013 / OpenTimer，arXiv API 多次 <code>429</code> ⇒ abs 页核 <code>1712.01815</code>；查询日 2026-11-28）；十五个 ID 条目级查重均 0 命中。</li>
     <li><b>网络</b>：arXiv <code>200</code>、OpenAlex <code>200</code>（首查一次 <code>429</code>，加 <code>mailto</code> + ≥3s 间隔后 <code>200</code>）、X 经代理 <code>200</code>、GitHub <code>200</code>；SMTP <code>SENT OK</code>、IMAP <code>LOGIN OK</code> / 70 封。</li>
   </ul>
 </div>
 
 <footer>
-  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 12:0x CST（r282 更新）<br>
-  本期（r275 + r276 + r278 + r280 + r282）：A 轨 <b>5/5</b> · B 轨 <b>+15 → 464</b> · 作者网 <b>+15 → 431</b>（X 168）· 作者信 <b>+5 → 193</b> · 实质回信 <b>8 信 / 7 人 ≈4.1%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
+  research 线 · <code>research/daily/2026-11-28.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-28 15:1x CST（r284 更新）<br>
+  本期（r275 + r276 + r278 + r280 + r282 + r284）：A 轨 <b>5/5</b> · B 轨 <b>+18 → 467</b> · 作者网 <b>+18 → 434</b>（X 168）· 作者信 <b>+6 → 194</b> · 实质回信 <b>8 信 / 7 人 ≈4.1%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
 </footer>
 
 </div>

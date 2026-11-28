@@ -12,17 +12,18 @@ WAITING: 1
 
 ```
 PHASE:        双轨（A 最新论文 50% / B 经典论文 50% + 作者关系网 + 回信跟踪已真实打通）；loop 按 0,3,6,9,12,15,18,21 八时窗唤醒
-已完成:       [r283 · 2026-11-28 12:14 伪重试唤醒（非时窗）：r282 实已 commit/push（`cc11004715`，`0 0`），本窗仅 IMAP 只读复核 **INBOX 70 / 0 新实质 / 0 新退信**，**不重复** r282（A 5/5 · B 464 · 作者网 431 · 发信 193）。同日本日第 4 次伪重试]
+已完成:       [r284 · 2026-11-28 15:00 时窗：A 0（今日 5/5 已满）· B **+3 → 467**（AlphaZero `1712.01815` 7,560 / DQN 2013 `1312.5602` 17,501 / OpenTimer ICCAD 2015 176〔<500 按 EDA 标志性收〕）· 作者网 **+3 → 434**（X 168；Tsung-Wei Huang 已发信 / Yiran Chen / Deming Chen 仅建档）· 发信 **+1 → 194**（#194 Tsung-Wei Huang，中文 224 汉字，`SENT OK 15:10:17`）· 回信 0 新（INBOX 70）]
+  前一（r283）: 12:14 伪重试唤醒（非时窗；r282 实已 push `cc11004715`），仅 IMAP 复核 70/0，不重复 r282。同日本日第 4 次伪重试。
   前一（r282）: 12:00 时窗 A 0（今日 5/5 已满）· B **+3 → 464**（Rethinking Generalization `1611.03530` 4,949 / SSD `1512.02325` 34,378 / GroupNorm `1803.08494` 5,226）· 作者网 **+3 → 431**（X 168；Martin D.F. Wong / Robert Wille / Jiang Hu 均仅建档）· 发信 **+1 → 193**（#193 Tsung-Yi Lin，中文 209 汉字，`SENT OK 12:05:11`）· 回信 0 新（INBOX 70）
   前一（r281）: 09:13 伪重试；0 重复，仅 IMAP 复核 70/0。
   前一（r280）: 09:00 时窗 A 0（已满 5/5）· B +3 → 461 · 作者网 +3 → 428（X 168）· 发信 +1 → 192（#192 Ben Poole）· 回信 0 新。
   ① 伪重试根因（r279 **实测定位**）：`FATAL_RE` 含 `cline: not found` / `opencode: not found` / `USAGE:` / `AI_APICallError` 等 15 个 token；agent 只要用 `grep -n FATAL_RE` 读过 loop 脚本，这些 token 就原样进 `$CLINE_LOG` ⇒ `grep -qiE "$FATAL_RE"` 必中 ⇒ 假阳性重试。r277/r279/r281 同因，非额度/网络故障（r278/r280 均已 push、0/0）。
   ② 建议（**未改脚本**，待运维）：检测改为 `grep -viE 'FATAL_RE=|grep -qiE' "$CLINE_LOG" | grep -qiE "$FATAL_RE"`（滤掉 agent 回显的那两行），或改成 `rc!=0 && grep` 双条件。单行 patch，见 `daily-memories-research/2026-11-28.md` r279 段。
-  ③ 回信再核（IMAP 只读）：INBOX **70**（09:00 为 70 ⇒ **+0**）；`SINCE 26-Nov-2026` 7 封 = 腾讯云 / Ollama / 已知 #183 退信 / Facebook / 招聘 / 已知 #187 Petar 回复 / Ultralytics；**0 新实质回信、0 新退信**。累计（193）：实质 8 信 / 7 人 ≈4.1% · 自动 1 · 退信 9 · 无应答(>14d) 32 · 未到期 143 ⇒ 193 ✔；送达 8/184 ≈4.3%。
+  ③ 回信再核（IMAP 只读）：INBOX **70**（12:00 为 70 ⇒ **+0**）；`SINCE 26-Nov-2026` 7 封 = 腾讯云 / Ollama / 已知 #183 退信 / Facebook / 招聘 / 已知 #187 Petar 回复 / Ultralytics；**0 新实质回信、0 新退信**。累计（194）：实质 8 信 / 7 人 ≈4.1% · 自动 1 · 退信 9 · 无应答(>14d) 32 · 未到期 144 ⇒ 194 ✔；送达 8/185 ≈4.3%。
   ④ 本窗未做：A 检索（今日 5/5）、不改任务书、不改他线产物、不动 loop 脚本。
- 当前动作:     ✅ 12:14 伪重试（r283）已收口：拉齐 origin（r282 = `cc11004715` 已在远端）、IMAP 复核 0 新、fast-forward 完成（`0 0`），本窗仅补记 pseudo-retry + 已 commit/push。
- 下一步:       ① 下一时窗 15:00（本日仍 5/5 ⇒ 0 新收；做 B / 作者网 / 发信 / 回信）；② B 轨补真空白（先按标题核 ID，勿信记忆里的 ID）；③ 作者网 +3（优先 EDA 学者，可核邮箱）；④ 每轮先读收件箱；⑤ 发信守 A 级 + 同论文 ≤1（今日余 7 封）；⑥ 运维待办（显示名 / 额度 / 任务书 44KB / **loop FATAL_RE 假阳性 patch**）。
- 本轮新增:     r283：A +0 · B +0 · 作者网 +0 · 发信 +0 · 回信 0 新（INBOX 70 持平，8 封/7 人≈4.1%）· voice_ready 0 · news_ready 0（伪重试，0 重复）
+ 当前动作:     ✅ 15:00 时窗（r284）收口：B +3（AlphaZero / DQN 2013 / OpenTimer）· 作者网 +3（Tsung-Wei Huang 已发信 / Yiran Chen / Deming Chen）· 发信 #194（中文 224 汉字，`SENT OK 15:10:17`）· IMAP 70/0（无新实质 / 无新退信）· 交付 `research/2026-11-28.md` + `daily/2026-11-28.html` + `daily/index.html` + `PAPERS.md` + `AUTHORS.md` + `发送记录.md`，已 commit/push。
+ 下一步:       ① 下一时窗 18:00（本日仍 5/5 ⇒ 0 新收；做 B / 作者网 / 发信 / 回信）；② B 轨补真空白（先按标题核 ID，勿信记忆里的 ID）；③ 作者网 +3（优先 EDA 学者，可核邮箱）；④ 每轮先读收件箱；⑤ 发信守 A 级 + 同论文 ≤1（今日余 6 封）；⑥ 运维待办（显示名 / 额度 / 任务书 44KB / **loop FATAL_RE 假阳性 patch**）。
+ 本轮新增:     r284：A +0 · B +3（→467）· 作者网 +3（→434，X 168）· 发信 +1（→194）· 回信 0 新（INBOX 70 持平，8 封/7 人≈4.1%）· voice_ready 0 · news_ready 0
  阻塞:         ① 🔴 昨日 03:00–18:00 六窗曾因 `Insufficient Balance` 未执行（00:00 起恢复）⇒ 仍需运维确认额度稳定/轮换；② 显示名仍 `AI+EDA 招聘 · 自动`（`~/.hr_smtp` name）⇒ 需运维改学术署名；③ SMTP 只发不收 ⇒ 每轮须 agent 主动 IMAP 只读；④ `WATCH_RESEARCH_TASK.md` 44 KB 超红线且只读 ⇒ 需授权；⑤ 台账 #164–#170 缺口**已查明**：并发回滚致 7 封明细未落盘，`发送记录.md:1438` 已列可核收件人/论文/时间（不臆造补齐），如运维要完整 7 行需授权重写；⑥ #168/#175 地址有效性存疑；⑦ loop 兜底 `git add` 范围待核查；⑧ 🔴 **loop 假阳性（2026-11-28，已复发 4 次）**：r276→r277（03:10）、r278→r279（06:10）、r280→r281（09:13）、r282→r283（12:14）均 exit 0 且已 push，却因 `FATAL_RE` 误命中再烧一轮；根因 = agent 读 loop 脚本时把 `FATAL_RE` 串回显进 `$CLINE_LOG`；建议单行 patch（滤 `FATAL_RE=|grep -qiE` 行，或 `rc!=0 && grep`），**脚本未改，待运维**；⑨ SPEC 仅三值，实际出现第 4 类「退信(反垃圾/无效)」待追认。
  ERROR_COUNT:  124（r282 本身 0 错误；历史累计口径不变，loop 假阳性不计入）
 ```
@@ -56,7 +57,7 @@ PHASE:        双轨（A 最新论文 50% / B 经典论文 50% + 作者关系网
 - **日流水**：`daily-memories-research/<YYYY-MM-DD>.md`
 - **关注领域**：LLM · SLM · 多模态 · agent harness（+ 邻域，见任务书 §1）
 - **采集节律**：⏰ **每天 8 个时窗 · 0/3/6/9/12/15/18/21（本地时区）**（`RESEARCH_MAIL_SPEC §3` 与 loop 现行口径；`WAITING` 字段保留仅供人读、**已不影响唤醒节律**）；回退：`WATCH_SCHEDULE_HOURS=` 置空 ⇒ `WAITING=1` 睡 **30min** / `WAITING=0` 短睡 **60s**
-- **上次采集窗口**：`2026-11-28 12:0x`（**第二百八十二轮 · 12:00 时窗**：A 轨 **0 新收**（今日已满 5/5）；B 轨 **+3 → 464**（Rethinking Generalization / SSD / GroupNorm）；作者网 **+3 → 431**（X 168）；发信 **+1 → 193**（#193 Tsung-Yi Lin，中文 209 汉字，今日 5/12）；**回信再核**：INBOX 70（+0）、无新实质回信、无新退信 ⇒ 退信累计 9）
+- **上次采集窗口**：`2026-11-28 15:1x`（**第二百八十四轮 · 15:00 时窗**：A 轨 **0 新收**（今日已满 5/5）；B 轨 **+3 → 467**（AlphaZero / DQN 2013 / OpenTimer）；作者网 **+3 → 434**（X 168）；发信 **+1 → 194**（#194 Tsung-Wei Huang，中文 224 汉字，今日 6/12）；**回信再核**：INBOX 70（+0）、无新实质回信、无新退信 ⇒ 退信累计 9）
 - **TOP-K 窗口（第 2 批专用，第 3 批沿用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
 - **累计收录**：`papers.jsonl` 现 **422 行**（A 轨结构化台账；`SEEN.md` 为唯一防重台账；本日 A 轨 +5 → 今日 5/5）
 - **B 轨（经典论文 · 2026-11-11 新增）**：`research/classic/PAPERS.md`（滚动清单，**464 篇**，8 字段 + OpenAlex 单源被引 + arXiv `comment` 会议口径 + 首次收录日；**一百三十二轮累计，必读清单 37/37 全覆盖**）· `research/classic/AUTHORS.md`（**431 人**关系网 + X 只读证据 + 待 follow 清单 + 发信记录 + 言论台账 V1–V34）；**B 轨不占 5 篇额度、不进 `SEEN.md`**。作者信草稿 `research/mail/drafts/<arXiv_ID>.md`；正文一律落 `research/mail/bodies/`。**回信摘录 `research/mail/replies/<arXiv_ID>.md`（2026-11-26 起真实落盘 8 份）**

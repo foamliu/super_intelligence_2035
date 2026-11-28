@@ -9,6 +9,7 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **467** 条（**第一百三十三轮 2026-11-28 15:0x +3 → 467**（B 轨补自博弈通用 RL / 像素端到端 DQN / 开源 EDA 时序分析真空白）：Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm（AlphaZero）`1712.01815`（**7,560**，2017 预印本；单一 AlphaZero 从随机对局、除规则外无领域知识出发，**24 小时内**在国际象棋 / 将棋 / 围棋达超人水平并每局击败世界冠军程序）/ Playing Atari with Deep Reinforcement Learning `1312.5602`（**17,501**，NIPS 2013 DRL Workshop；首个直接从高维像素学控制策略的深度模型，CNN + Q-learning 变体，7 个 Atari 游戏统一架构与算法，6/7 超前、3/7 超人）/ OpenTimer: A high-performance timing analysis tool（ICCAD 2015，DOI `10.1109/iccad.2015.7372666`，**176**，**<500 按「EDA 标志性 / 本领域权威」收**；开源时序分析工具，block-based + path-based 传播、CPPR、增量处理，兼容 `.v/.spef/.lib/.sdc`，TAU 2015 工业基准上较现有 timer 数量级加速）；核验：arXiv abs `2/2 200`（`citation_title` + `citation_date` 逐字 `1712.01815`=2017/12/05〔仅 v1〕· `1312.5602`=2013/12/19）+ OpenAlex `3/3 200`（7,560〔DOI 指向 Science 2018 期刊版〕/ 17,501 / 176，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**（`1312.5602` 仅作前置被 Nature DQN 条目引用、无独立条目）；覆盖轴 = 自博弈通用 RL / 像素端到端深度 Q 学习 / 开源 EDA 时序分析；本轮归属：posttrain +2 · vision +2 · designflow +2 · zhulong +1 · pretrain +1 · harness +1 · data +0）
 **本轮快照**：累计 **464** 条（**第一百三十二轮 2026-11-28 12:0x +3 → 464**（B 轨补泛化理论 / 单阶段检测 / 归一化真空白）：Understanding deep learning requires rethinking generalization `1611.03530`（**4,949**，ICLR 2017；SOTA 卷积网络可拟合随机标签与随机噪声输入，显式正则化不改变定性结论，两层网络参数数超过数据点即具完美有限样本表达能力）/ SSD `1512.02325`（**34,378**，ECCV 2016；单次前向 + 多层特征图不同尺度 default boxes，VOC2007 test 300×300 **72.1% mAP @ 58 FPS** on Titan X）/ Group Normalization `1803.08494`（**5,226**，IJCV 期刊版；组内归一化与 batch size 无关，ResNet-50 ImageNet batch=2 比 BN 低 **10.6%** 误差）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-11-10T22:02:36Z` / `2015-12-08T04:46:38Z` / `2018-03-22T17:57:16Z`；`comments` 逐字 ICLR 2017 / ECCV 2016 / v3 修订说明）+ OpenAlex 3/3 `200`（4,949 / 34,378 / 5,226，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 泛化与记忆 / 单阶段多尺度检测 / 与 batch 解耦的归一化；本轮归属：harness +2 · vision +2 · pretrain +2 · data +1 · zhulong +1 · designflow +1 · posttrain +0）
 **本轮快照**：累计 **461** 条（**第一百三十一轮 2026-11-28 09:0x +3 → 461**（B 轨补离散重参数化 / 生成对抗 / 连续控制真空白）：Categorical Reparameterization with Gumbel-Softmax `1611.01144`（**6,997**，2016 预印本；用可微的 Gumbel-Softmax 采样替代不可微的类别采样，且可平滑退火回类别分布，在结构化输出预测与含类别隐变量的无监督生成上优于当时梯度估计器，并显著加速半监督分类）/ Wasserstein GAN `1701.07875`（**7,050**，2017 预印本；用 Earth-Mover/Wasserstein 距离替代 JS 散度训练 GAN，提升稳定性、缓解模式坍塌，并给出可用于调试与超参搜索的有意义学习曲线）/ Continuous control with deep reinforcement learning（DDPG）`1509.02971`（**18,429**，2015 预印本，`10 pages + supplementary`；把 DQN 思想搬到连续动作域：基于确定性策略梯度的 actor-critic、model-free，同一套算法/网络/超参解决 20+ 模拟物理任务，多数任务可直接从原始像素端到端学习）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-11-03T19:48:08Z` / `2017-01-26T21:10:29Z` / `2015-09-09T23:01:36Z`；DDPG `comments` 逐字 `10 pages + supplementary`）+ OpenAlex 3/3 `200`（6,997 / 7,050 / 18,429，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 离散变量重参数化 / 稳定生成对抗训练 / 连续动作 model-free RL；本轮归属：posttrain +2 · vision +1 · designflow +1 · pretrain +1 · data +0 · harness +0 · zhulong +0）
 **本轮快照（前一）**：累计 **458** 条（**第一百三十轮 2026-11-28 06:0x +3 → 458**（B 轨补激活 / 世界模型 / 表格 ML 真空白）：GELU `1606.08415`（**10,723**，2016 预印本；`xΦ(x)` 按输入数值加权、而非像 ReLU 那样按符号门控，视觉 / NLP / 语音任务上均优于 ReLU/ELU）/ Dream to Control / Dreamer `1912.01603`（**2,750**，ICLR 2020；在学到的世界模型紧凑潜空间里展开想象轨迹，把状态值的解析梯度反传回去，20 个视觉控制任务上数据效率 / 计算时间 / 最终性能更优）/ XGBoost `1603.02754`（**14,912**，KDD 2016；稀疏感知算法 + 加权分位草图做近似树学习，并从缓存访问 / 数据压缩 / 分片层面扩展到十亿级样本）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-06-27T19:20:40Z` / `2019-12-03T18:57:16Z` / `2016-03-09T01:11:51Z`；abs `comments` 逐字：GELU = `Trimmed version of 2016 draft`、Dreamer = `9 pages, 12 figures`、XGBoost = `KDD'16 changed all figures to type1`）+ OpenAlex 3/3 `200`（10,723 / 2,750 / 14,912，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 激活函数 / 潜空间世界模型 RL / 表格树提升系统；本轮归属：pretrain +1 · posttrain +1 · zhulong +1 · vision +2 · data +1 · harness +1 · designflow +1）
@@ -8036,3 +8037,48 @@
 | 与我们工作的关系 | **vision（主 · 小 batch 训练/微调视觉塔）**：<b>动作</b>：视觉塔在单卡/小 per-GPU batch 下做 LoRA 微调时，把「BN vs GN vs LayerNorm」列为预注册对照臂；若必须用 BN，则冻结其 running stats 或改 GN，避免 batch=2 时统计噪声污染消融。<br>**pretrain（次 · 归一化选型）**：多卡切分导致 per-GPU batch 变小时，BN 的「等效 batch」口径必须写清；GN 提供与 batch 解耦的参照。<br>**zhulong（次 · 口径）**：报告须写 per-GPU batch 与归一化方式，否则跨实验不可比。<br>**harness（次）**：同一超参在不同 batch 下不可直接比，评测表要显式标注。<br>**posttrain / data / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-28**（第一百三十二轮 · 12:0x） |
 | 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2018-03-22T17:57:16Z`、`updated` `2026-11-28T03:29:59Z`；`comments` 逐字为 v3 修订说明；primary `cs.CV`）+ OpenAlex **`200`**（5,226 / 2018 / `article` / source = International Journal of Computer Vision，查询日 2026-11-28）。10.6% / batch=2 / ResNet-50 / ImageNet / COCO / Kinetics 取自摘要逐字。条目级查重：`1803.08494` 在 `PAPERS.md` **0 命中**。 |
+
+## 465. Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm（AlphaZero；arXiv 版题名；期刊版题名 *A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play*） |
+| 作者（前 3） | David Silver · Thomas Hubert · Julian Schrittwieser（abs `citation_author` 逐字核；另 Ioannis Antonoglou / Matthew Lai / Arthur Guez / Marc Lanctot / Laurent Sifre / Dharshan Kumaran / Thore Graepel / Timothy Lillicrap / Karen Simonyan / Demis Hassabis，共 13 位） |
+| 年份 | **2017**（abs `citation_date` 逐字 `2017/12/05`；submission history 仅 `[v1] Tue, 5 Dec 2017 18:45:38 UTC`，无后续版本） |
+| 会议 / 期刊 | **arXiv 预印本**（abs 无 comments 字段）；OpenAlex 将 DOI `10.48550/arxiv.1712.01815` 指向 **Science 2018 期刊版**（题名见上） |
+| 被引数 | **7,560**（OpenAlex `10.48550/arxiv.1712.01815`，查询日 **2026-11-28**；**≥500 满足判据**；该数含 Science 期刊版口径） |
+| arXiv / DOI | <https://arxiv.org/abs/1712.01815> ｜ `10.48550/arXiv.1712.01815` |
+| 一句话贡献 | 把 AlphaGo Zero 的「tabula rasa 自博弈」推广成**单一 AlphaZero 算法**：从随机对局出发、**除游戏规则外不给任何领域知识**，在 **24 小时内**于国际象棋、将棋（日本象棋）、围棋三项均达到超人类水平，并在每项上都**令人信服地击败了世界冠军程序**（摘要逐字）。 |
+| 与我们工作的关系 | **posttrain（主 · 自博弈 RL 与可验证奖励）**：这是「不靠人类标注、只靠环境自博弈信号把能力推过人类」的范式来源。<b>动作</b>：在 EDA 脚本 / 波形理解任务上做 self-play 时，先明确「环境能否给出可验证的胜负 / 对错信号」；若不能，先用 `check.py` 构造二值判分再开工（与 `check.py` 判分口径一致）。<br>**vision（次 · 波形自博弈）**：可把「自生成题目 + 自判分」当合成数据源，但须防答案泄漏（题面含答案即作弊，见 vision 线 anti-cheat）。<br>**zhulong（次 · 成本口径）**：24 小时是「相对」训练预算，报告须写清算力与搜索次数，不可只抄「24h」。<br>**pretrain / harness（次）**：training-loss 下降不足以证明推理能力，需 held-out 任务对照（见 #462 泛化条目）。<br>**data / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十三轮 · 15:0x） |
+| 核验状态 | arXiv **abs `200`**（`citation_title` / `citation_date` `2017/12/05` / `citation_author` 13 条逐字；submission history 仅 v1）+ OpenAlex **`200`**（7,560 / `publication_year=2018` / `type=article` / source = Science，查询日 2026-11-28；⚠️ arXiv 预印本与 Science 期刊版题名不同，条目以 arXiv 版为准并注明）。「24 小时 / 三棋类超人类 / 击败世界冠军程序」取自 abs 摘要逐字。条目级查重：`1712.01815` 在 `PAPERS.md` **0 命中**。 |
+
+## 466. Playing Atari with Deep Reinforcement Learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Playing Atari with Deep Reinforcement Learning（首个 DQN 论文） |
+| 作者（前 3） | Volodymyr Mnih · Koray Kavukcuoglu · David Silver（abs `citation_author` 逐字核；另 Alex Graves / Ioannis Antonoglou / Daan Wierstra / Martin Riedmiller，共 7 位） |
+| 年份 | **2013**（arXiv API `published` 逐字 `2013-12-19T16:00:08Z`；`updated` `2013-12-19T16:00:08Z`） |
+| 会议 / 期刊 | **NIPS 2013 Deep Learning Workshop**（arXiv `comments` 逐字 `NIPS Deep Learning Workshop 2013`；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **17,501**（OpenAlex `10.48550/arxiv.1312.5602`，查询日 **2026-11-28**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1312.5602> ｜ `10.48550/arXiv.1312.5602` |
+| 一句话贡献 | **首个直接从高维像素输入学控制策略的深度模型**：用 CNN + Q-learning 变体、输入原始像素、输出估计未来回报的价值函数；对 7 个 Atari 2600 游戏**不调整架构与算法**，在其中 6 个超过此前所有方法、3 个超过人类专家（摘要逐字）。它是 Nature 2015 DQN（Human-level control，`10.1038/nature14236`，本清单已收）的**前置工作**。 |
+| 与我们工作的关系 | **posttrain（主 · 端到端 RL 与经验回放）**：证明「原始观测 + 神经值函数 + 目标网络 / 经验回放」可无手工特征地学控制；对 EDA agent 的「原始工具输出 → 动作选择」有方法论借鉴（回放缓冲、目标稳定化）。<b>动作</b>：RL 臂须报经验回放与目标网络设置，否则不可与基线比。<br>**vision（次 · 像素到决策）**：波形 / 版图截图作原始输入、端到端学动作，与本线 VLM 路径互补。<br>**harness（次 · 跨任务统一评测）**：同架构 + 同超参跑多任务的「统一口径」是评测公平性参照。<br>**pretrain / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十三轮 · 15:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` / `updated` 逐字 `2013-12-19T16:00:08Z`；`comments` 逐字 `NIPS Deep Learning Workshop 2013`；primary `cs.LG`）+ abs `200`（`citation_author` 7 条逐字）+ OpenAlex **`200`**（17,501 / 2013 / `preprint` / source = arXiv，查询日 2026-11-28）。「6/7 超前、3/7 超人、7 个 Atari 游戏」取自摘要逐字。条目级查重：`1312.5602` 在 `PAPERS.md` **0 独立条目**（仅被 Nature DQN 条目作前置引用）。 |
+
+## 467. OpenTimer: A High-performance Timing Analysis Tool
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | OpenTimer: A high-performance timing analysis tool |
+| 作者（前 3） | Tsung-Wei Huang · Martin D. F. Wong（OpenAlex `authorships` 逐字核，共 2 位） |
+| 年份 | **2015**（OpenAlex `publication_year=2015`；IEEE/ACM ICCAD 2015） |
+| 会议 / 期刊 | **ICCAD 2015**（International Conference on Computer-Aided Design；OpenAlex `type=article`、source = International Conference on Computer Aided Design） |
+| 被引数 | **176**（OpenAlex DOI `10.1109/iccad.2015.7372666`，查询日 **2026-11-28**；**<500 ⇒ 按「EDA 标志性 / 本领域权威」收**：被广泛采用的开源静态时序分析引擎，后续 OpenTimer v2 与 OpenROAD / OpenLane 流程沿用其接口） |
+| arXiv / DOI | 无 arXiv（会议论文）｜ DOI `10.1109/ICCAD.2015.7372666` |
+| 一句话贡献 | 提出 **OpenTimer**：开源时序分析工具，同时支持 **block-based 与 path-based** 时序传播、**CPPR（common path pessimism removal）**、**增量分析**；在工业格式（`.v / .spef / .lib / .sdc`）上工作、设计为**并行且可移植**；为便于与布局布线等 EDA 应用集成，提供面向**增量分析**的 API；在 TAU 2015 时序分析竞赛工业基准上，较现有 timer **数量级加速**（摘要逐字）。 |
+| 与我们工作的关系 | **designflow（主 · 时序类题面与判分）**：EDA agent 常遇「读 SDC / 报 slack / 定位违例路径」类任务，OpenTimer 是**离线可复跑**的判分参照——可用它生成 golden timing report，再与 agent 产物比对。<b>动作</b>：时序题优先用 OpenTimer 做 `LIVE` 判分后端（避免用 mock 桩伪造物理量）。<br>**zhulong（次 · 流程消融）**：把「block-based vs path-based」「增量 vs 全量」作为可测自变量，报告须写清模式与 CPPR 是否开。<br>**harness（次 · 工具链口径）**：TAU 2015 基准是公开可核的评测集，可作为 harness 的外部锚点。<br>**pretrain / posttrain / vision / data**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-28**（第一百三十三轮 · 15:0x） |
+| 核验状态 | OpenAlex **`200`**（`title` / 176 / 2015 / source = ICCAD / `authorships` = Tsung-Wei Huang、Martin D. F. Wong；摘要经 `abstract_inverted_index` 还原，查询日 2026-11-28）。⚠️ **无 arXiv 版本**，按 §1「本领域权威」判据收录，链接给 DOI；「block-based / path-based / CPPR / 增量 / `.v.spef.lib.sdc` / TAU 2015 / 数量级加速」取自 OpenAlex 摘要逐字。条目级查重：`OpenTimer` 在 `PAPERS.md` **0 命中**。 |
