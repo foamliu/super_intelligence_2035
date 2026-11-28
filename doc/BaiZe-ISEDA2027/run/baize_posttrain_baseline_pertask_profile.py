@@ -85,8 +85,11 @@ def collect_session(sid_dir):
     except (OSError, ValueError):
         return None
     cwd = meta.get('cwd', '') or ''
-    base = os.path.basename(cwd.rstrip('/'))
-    m = TASK_RE.search(base)
+    # Match task id anywhere in the cwd path: A0 sessions used cwd
+    # .../code/EDA-Eval-PyAether-001 (basename = task id), but A1 (Qwen3.5-2B)
+    # sessions use cwd .../code/EDA-Eval-PyAether-002/ws (basename = 'ws').
+    # Searching the full cwd makes the profiler robust to subdir suffixes.
+    m = TASK_RE.search(cwd)
     if not m:
         return None
     task_id = m.group(1)
