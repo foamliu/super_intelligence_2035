@@ -5,12 +5,14 @@ WAITING: 0
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 第三次崩溃根因 = **NCCL "Duplicate GPU detected"**，非 data 问题，详见下方 R1117 心跳。
 
-> ✅ **心跳 · 2026-11-28 14:0x (R1120) — 方案 C fresh 复验 10/10 PASS · 9 僵尸进程仍存活（.29+.12 双节点）· 等 pretrain 清理**：
-> - **fresh 复验**：`test_bridge_compat.py` 10/10 PASS（zero_overlap=0 / ratio max_dev=0.000000 / flag-off stock equiv / cursor offset / Bresenham）✅ 刚跑
+> ✅ **心跳 · 2026-11-28 15:0x (R1121) — 方案 C fresh 全量复验 18/18 PASS · 清理 1 个 stale watcher · 等 pretrain 清理 9 僵尸**：
+> - **fresh 复验（本次实跑 15:0x）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio max_dev=0.0000%) + test_bridge_compat.py 10/10 PASS = **18/18 PASS** ✅
+> - **gen_blend --verify**：180 shards / weight_sum=1.000000 / train_data_path=14,019B (13.69KB) < 100KB ✅ · 12 源全部指向 pre-blend 目录
+> - **pre-blend 5/5 .done ✅**（elapsed 实测）：finemath(106s) / megamath_pb(425s) / nemotron(1865s) / stackv3_filt(4293s) / megamath_web(2798s) · 每源 16 .bin + 16 .idx + MANIFEST.json ✅
+> - **TSV**：`blend_s2_preblend.tsv` 3515B · 12 源 · 180 shards · BLEND 14KB < 100KB ✅
 > - **补丁确认**：`train.sh` L99-108 BLEND>100KB→file+`@filepath` ✅ · `pretrain_launcher.py` L284-290 `@`前缀检测 ✅ · 当前 BLEND=14KB 走原路径（patch=安全网）
-> - **pre-blend 5/5 .done ✅**：stackv3_filt(16 shard) / megamath_web(16) / nemotron(16) / megamath_pb(16) / finemath(16) — 均 11:00 完成
-> - **TSV**：`blend_s2_preblend.tsv` 3515B · 12 源 · 180 shards · 全部指向 pre-blend 目录 ✅
-> - **🟠 9 僵尸进程仍存活**（.29 实测 etimes≈8771s/3171s · .12 实测 etimes≈8772s/3172s）：
+> - **清理**：killed stale watcher PID 3955574（megamath_web pre_blend 已完成 10:05:35，watcher 因 pgrep 自匹配空转 ~4.5h）
+> - **🟠 9 僵尸进程仍存活**（.12 实测 PID 2353255 etimes≈3885s · .29 同）：
 >   - **S1 组**（5 进程）：PID 3922243 / 3922248 / 3922253 / 3922259 / 3922262 — ppid=1, stat=Ssl/Rsl
 >   - **S2 组**（4 进程）：PID 2353255 / 2354026 / 2354046 / 2354062 — ppid=1, stat=Ssl/Rsl
 >   - GPU 占用：.29 GPU 0/3/4/6 各 1455MiB + GPU 7 729MiB · .12 同（双节点同 PID）
