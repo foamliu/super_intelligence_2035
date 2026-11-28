@@ -12,9 +12,12 @@
 # - stack-v3-train 使用全量 8192 shard (476B tokens)，L4 过滤为文档级（90.5% 保留），.bin 未裁剪
 # - math 类别调整：megamath Batch1 epoch 从 fallback 的 1.69 降至 0.62（prop 0.075→0.028）
 # - 新增 nemotron (prop=0.067, epoch=0.50) + megamath_web (prop=0.060, epoch=0.40)，均为零重叠新源
-# - math_l1/math_l3 下调（prop 0.08→0.025 / 0.04→0.015），因 S2 换 SEED=5678 + 优先零重叠新源
+# - math_l1/math_l3 下调（prop 0.08→0.025 / 0.04→0.015），优先零重叠新源
 # - 零重叠策略：nemotron + megamath_web + finemath + megamath = 0.160 prop (80% math 预算)
-#   overlap 源 math_l1 + math_l3 = 0.040 prop (20% math 预算)，S2 用 SEED=5678 降低文档级重叠
+#   共享源 math_l1 + math_l3 = 0.040 prop (20% math 预算)，S2 用同 SEED=1234（=S1）保证零重叠
+# - 📌 2026-11-28 用户纠错：不换 SEED 才能保证零重叠。同 seed=1234 → 同 shuffle_index
+#   → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。
+#   换 SEED 会生成全新排列，从头读时可能读到 S1 已消费样本，破坏零重叠。
 #
 # ═══════════════════════════════════════════════════════════
 # Web (0.40)
