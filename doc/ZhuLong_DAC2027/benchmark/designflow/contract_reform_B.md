@@ -1604,3 +1604,63 @@ REQ 稳固.
 **§5 七项全绿**: (1)ref check_live PASS hfhds201 hspice 3-seed identical md5=f827cf46 (2)3 static neg distinct{a,sa,sb}+3 live-neg distinct{d,b,k} (3)3-seed ref check_live PASS x3 identical (4)SKIP_RUN=1 deploy workdir leak 自检通过 + ref check_static PASS (5)judge_layers=[L0,L1,L2.live] JSON test sha 18008a51 3-way sync disk==JSON==HEAD (6)断言 14->18 only-add (4 static+14 live incl sa/sb/sc/o only-add) (7)check_live 不读 reference/ GT 仅读 hidden B inputs (tb_B/meas_B/old_csv_B) + cond l/m GT 由 .75 indep hspice 现算.
 
 **落盘**: check.py + cases/B JSON (judge_layers+[L2.live]+test sha sync+test_rationale 18 conds) + negative/ (6 stubs: 3 static + 3 live) + negative_selftest.py (EDA_FLOW_LIVE_NEG=1 支持 .75 live-neg). live_eval_changes.tsv +1 (repo_commit=3efc1adbc). review_nonlite_B.tsv JitterTieRerun 行 R2 DONE. EDA-Flow-Bench HEAD=3efc1adbc. L2.live B nonlite 18->19.
+
+---
+
+## Live-eval R2 改造 #22 — CellLeakageIvPlot-001 (r1375, 2026-11-28)
+
+**case pattern = judge-直调 pure**（同 r1351 SlicerDmMeasAdd 模板但 candidate 更简）：
+candidate `parse_sw_iv.py <sw> <out_dir>` 是**纯 PARSER**（不跑 hspice），解析 HSPICE
+`.option post=2` ASCII `.sw0`（`$&%#` marker + 13-char fixed-width fields + 1e30 sentinel）
+→ `iv_data.json`（4 devices `id_abs` 数组 + `n_points` + `vg`）+ `iv_plot.png`。judge
+`check_live(sess)` 在 .75 real hspice V-2023.12-SP1-1@hfhds201 **自身** subprocess 调
+hspice on hidden `cell_leak_B.sp`（SS/-40, 301-pt `.dc vgp -0.5 2.5 0.01`）+
+`cell_leak_A.sp`（TT/25, 801-pt `.dc vwl -1 3 0.005`）→ `.sw0` → 跑候选 parser →
+断 `b..n`。全 13 条（b..n）依 HSPICE ⇒ eval host 无 hspice ⇒ `B.sw0` 不存在 ⇒
+cond `b` first-fail + conds `c..n` 全 FAIL（broken case, mislabeled `[L0,L1]`）。
+
+**判据同原 b..n 一字迁移**（TOL 5% / 1e-14..1e-11 量级 / B_NPTS=301 / A_NPTS=801 原封）。
+
+**LATENT BUG FIX**（r1374 桩体检发现）：原 `_within(a,b,lo,hi)` 4-param def 但 cond
+f/g/m 以 3-arg 调用 → cond `f` 直接 crash TypeError（case 当前不可判）；fix=drop
+vestigial `b`（body 仅用 a/lo/hi，无判分变更）。
+
+**非侵入包装**：`_check_static_impl` keep (a) zip+`parse_sw_iv.py`+py_compile 一字不动 +
+**(sa/sb/sc) only-add** 源码结构检查（sa 候选源码含 `$&%#` .sw0 marker / sb 含 `id_abs`
+器件电流提取 / sc 含 `iv_data.json`+`iv_plot.png` 产出名）+ `check_static` try/except
+三元组 + `check_live(sess)` .75 real hspice（upload submit.zip + cell_leak_A.sp +
+cell_leak_B.sp + live_driver.py → driver 跑 hspice on B.sp→B.sw0 + 候选 parser→B json/png
++ hspice on A.sp→A.sw0 + 候选 parser→A json → `===RESULT===` JSON → 断 b..n 同判据）+
+`check()` 兼容 + `__main__` 改 check_static。
+
+**Q1 保真实证**（.75 EDASession hfhds201 hspice V-2023.12-SP1-1, 3-seed wall~6s/seed）：
+ref `check_live` PASS ×3-seed identical md5=`3a8acb8c` — ref candidate real hspice on B+A，
+4 devices each, B npts 301 / A npts 801。B `.ms0` `igidl_b1=-2.000e-13`==`EXP_B_IGIDL`
+exact, `ileak_b1=-5.449e-05` vs `EXP_B_ILEAK1` 5.448629e-5（0.007% err）；A `igidl_1=-1.005e-13`
+==`EXP_A_IGIDL` exact, `ileak_1=-3.098e-05` vs `EXP_A_ILEAK1` 3.097725e-5（0.009% err）；
+both jobs concluded；physics REAL NOT fabricated（level-1 MOS `.dc vgp` sweep, GIDL off 区
+pA 级 + 导通区 uA 级，物理自洽；contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated）。
+
+**Q2 错误解法不会判过**：`cheat_hardcode_b`（硬编 B 值 vid1/301pts/5.4486e-5，含 parse 死代码
+pass static sa/sb/sc）在 B 上 11/13 PASS 然后 **FAIL cond `k`**（A npts 301≠801）+
+**cond `l`**（vd1a |Id| 5.4486e-5≠3.0977e-5）+ **cond `n`**（A 名 vid1 不含 vd1）⇒ 跨输入
+A 守卫 catches hardcode。
+
+**Negatives**：static-neg 2-distinct {`naive_empty`(sa 无 marker) /
+`naive_print_expected`(sb 有 marker 无 id_abs)}；live-neg 2-distinct static-pass/live-fail
+{`naive_core_deleted`(d devices 空 1e10 阈值) / `cheat_hardcode_b`(k 跨输入守卫)}。
+§4.9 trio {empty:sa, print_expected:sb, core_deleted:d} 3-distinct。
+
+**§5 七项全绿**：(1) ref check_live PASS hfhds201 hspice V-2023.12-SP1-1 3-seed identical
+md5=`3a8acb8c` (2) 2 static neg distinct{sa,sb}+2 live-neg distinct{d,k} (3) 3-seed ref
+check_live PASS ×3 identical (4) SKIP_RUN=1 deploy workdir clean no-leak + ref check_static
+PASS (5) `judge_layers=[L0,L1,L2.live]` JSON test sha `0e73a26c` 3-way sync disk==JSON==HEAD
+(6) 断言 14→17 only-add（4 static a/sa/sb/sc + 13 live b..n, sa/sb/sc only-add）
+(7) check_live 不读 reference/ GT 仅读 hidden A/B 输入 deck（cell_leak_A.sp/cell_leak_B.sp,
+inputs NOT GT）+ GT 常量（EXP_B_ILEAK1 etc.）judge-side 内嵌（r1374 .75 .meas 校准）。
+
+**落盘**：check.py + cases/B JSON（judge_layers+[L2.live]+test sha sync+test_rationale 17
+conds）+ negative/（4 stubs: 2 static + 2 live，替换旧 5 stubs）+ negative_selftest.py
+（EDA_FLOW_LIVE_NEG=1 支持 .75 live-neg）。live_eval_changes.tsv +1（repo_commit=bdd54d551）。
+review_nonlite_B.tsv CellLeakageIvPlot 行 R2 DONE。EDA-Flow-Bench HEAD=bdd54d551。
+L2.live B nonlite 21→22。
