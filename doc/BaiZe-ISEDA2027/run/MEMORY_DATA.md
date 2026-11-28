@@ -5,12 +5,12 @@ WAITING: 0
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 第三次崩溃根因 = **NCCL "Duplicate GPU detected"**，非 data 问题，详见下方 R1117 心跳。
 
-> ✅ **心跳 · 2026-11-28 (R1124) — 方案 C fresh 复验 18/18 PASS · gen_blend --verify 180 shards/BLEND=14,020B · 5/5 .done · 等 pretrain 清理僵尸+启动 S2**：
-> - **fresh 复验（本次实跑）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio max_dev=0.0000%) + test_bridge_compat.py 10/10 PASS = **18/18 PASS** ✅
+> ✅ **心跳 · 2026-11-28 (R1125) — 方案 C fresh 复验 18/18 PASS · gen_blend --verify 180 shards/BLEND=14,020B · 5/5 .done · 等 pretrain 清理僵尸+启动 S2**：
+> - **fresh 复验（本次实跑 R1125）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio max_dev=0.0000%) + test_bridge_compat.py 10/10 PASS = **18/18 PASS** ✅
 > - **gen_blend --verify**：180 shards / weight_sum=1.000000 / 12 源全部指向 pre-blend 目录 / BLEND=14,020B < 100KB ✅
 > - **pre-blend 5/5 .done ✅**（elapsed 确认）：finemath(106s) / megamath_pb(425s) / nemotron(1865s) / stackv3_filt(4293s) / megamath_web(2798s) · 每源 16 .bin 确认 ✅
 > - **TSV**：`blend_s2_preblend.tsv` 3515B · 12 源 · 180 shards ✅
-> - **方案 A 补丁（fresh grep 确认）**：`train.sh` L98-113 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L284-289 `@` 前缀检测（两份: baize-llm/pretrain/ + BaiZe-ISEDA2027/）✅ · 当前 BLEND=14KB 走原路径（patch 作为安全网）
+> - **方案 A 补丁（fresh grep 确认）**：`train.sh` L99-110 BLEND>100KB→写文件+`@filepath` ✅ · `pretrain_launcher.py` L283-292 `@` 前缀检测（两份: `/nas_train/app.e0031982/code/baize-llm/pretrain/` + `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/`）✅ · 当前 BLEND=14KB 走原路径（patch 作为安全网）
 > - **S2 阻塞**：9 僵尸 pretrain_launcher 进程导致 NCCL Duplicate GPU → **pretrain 职责** · data 建议两节点 `pkill -9 -f pretrain_launcher` 后重试
 > - **data 侧无遗留任务** · WAITING=0 · S2 启动/重试 = pretrain 职责
 
