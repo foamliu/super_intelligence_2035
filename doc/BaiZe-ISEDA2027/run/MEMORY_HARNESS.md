@@ -32,13 +32,13 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        opencode v1.19.6 0-patch根因已修复(驱动缺--dir)·opencode 8w全量重跑中·zhulong 12w predict中·6-harness eval中
-已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·cline-patched eval DONE(355/500=71.0%)·opencode 0-patch根因诊断+修复✅(commit f154c8ba50,pushed)
-当前动作:     opencode 8-worker全量500题重跑中(1/500,smoke test 502B patch✅)·zhulong 12-worker predict 62/500·6-harness eval循环中(codex eval中,cline-patched+claude-code已完)
-下一步:       opencode predict完成(~5h@8w)→opencode eval→zhulong predict完成(~8h)→zhulong eval→生成最终8路对比报告(含版本列)
+PHASE:        opencode v1.19.6 predict重跑中(14/500)·zhulong predict中(73/500)·6-harness eval循环(codex eval中)·opencode/zhulong eval-watcher已挂
+已完成:       H-B OK·Gate7/7·TB-2.1 7路·glm53 7way·doubao-pro 7way(上一轮)·7-harness升级✅·opencode降级v1.19.6✅·harness脚本归档✅·8way报告生成器加版本列✅·opencode 0-patch根因修复✅(commit f154c8ba50)·cline-patched eval DONE(355/499=71.1%)·claude-code eval DONE(273/500=54.6%,142infra待查)·opencode+zhulong eval-watcher已启动(PID1816539/1816542)
+当前动作:     opencode 8w predict 14/500(序列化经serve守护,~0.7/min,ETA~12h≈00:30 11-29)·zhulong 12w predict 73/500(ETA~14h≈02:30)·6-harness eval循环 run_eval_all_8w.sh(PID4157025):codex eval中→deepseek→hermes→pi·资源自检PASS(load14/224,topCPU=pretrain非本线)
+下一步:       codex/deepseek/hermes/pi eval自循环完成→opencode eval(watcher PID1816539在predict完成后自动触发)→zhulong eval(watcher PID1816542)→8路eval全齐→gen_report_doubao_pro_7way.py生成最终8路对比HTML报告(含版本列,cline显示zhulong(cline-patched))
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK~26KB / MEMORY≈5KB
+ 体积: TASK~26KB / MEMORY≈6KB
 
   🔧 opencode 0-patch根因(已修复): OpencodeDriver代码为v2.4.1编写(无--dir),但v1.19.6需要--dir<workdir>才能编辑目标repo文件。修复=加回--dir(commit f154c8ba50)。smoke test验证:astropy__astropy-12907产生502B patch。
   SWE-bench Verified Pass% (doubao-pro 上一轮v1.18.27, 保留对照): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
