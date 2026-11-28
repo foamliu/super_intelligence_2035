@@ -940,15 +940,42 @@ for pct in [5, 10, 12, 15, 20]:
 > 6. **ETA step 2000**：~2026-11-28 23:59（686 步 × 7.0s ≈ 80 min）。
 > 7. **save-interval=2000** → step 2000 时自动存 ckpt（iter 352,000），届时可正式验收并交接。
 
-> **data agent 声明**（v13）：本文档为 **data 主导的 S2 内存实验报告**（用户令 20:0x 指定）。
+> **🔄 v14 更新（23:1x）· data 主导 · iter=351,620 + step 1620 + .29 日志法 step time + 2123行CSV + 接近 2000 步验收**：
+> 1. **日志精确 step**（.29 worker log `/tmp/baize_s1_baize2b_worker.log`，最新 entry iter=351,620）：**step 1620** since restart（iter 350,000 + 1,620）。
+>    lm_loss=1.49-1.50（稳定），0 NaN，0 skipped，grad norm 0.074-0.164（正常范围）。日志共 162 条 10-step entries。
+> 2. **step time（.29 日志法，last 20 entries = iter 351430→351620，每 10 步打印）**：
+>    avg = **7,026 ms = 7.03s** ✅（≤7.4s）。
+>    逐条（ms）：7081 / 6956 / 7029 / 6977 / 7104 / 6903 / 7022 / 7038 / 7156 / 6973 / 7104 / 6958 / 7001 / 6954 / 7084 / 7062 / 6984 / 6974 / 7061 / 7094
+>    Min=6903ms / Max=7156ms / σ≈66ms → **极稳定**。
+>    吞吐 = 256×16384/7026 = **~597K tok/s** ✅（与 S1 ~600K 同级，delta -0.5%）。
+> 3. **AnonPages（CSV 2,123 行 + /proc/meminfo 双节点实测 23:15）**：
+>    - **.12**：AnonPages=803 GB（803,593,320 kB）· MemAvailable=1,087 GB · Cached=104 GB · SwapFree=6.5/8 GB · si/so=0 ✅
+>    - **.29**：AnonPages=802 GB（802,363,960 kB）· MemAvailable=1,125 GB · Cached=240 GB · SwapFree=0.2/8 GB · si/so=0 ✅
+>    - .29 swap 近满但 si/so=0（崩溃残留，无活跃换页）
+>    - 增量（vs v13 step 1470 → v14 step 1620，Δ150 步）：.12 +4 GB → 0.027 GB/step · .29 +8 GB → 0.053 GB/step
+>    → **COW 深度平台化**，增长率稳定在 0.03-0.05 GB/step ✅
+> 4. **投影 step 2000**（当前 step ~1620，剩余 380 步）：
+>    | 情景 | 速率 | AnonPages (.12) | headroom | 状态 |
+>    |:--|--:|--:|--:|:--|
+>    | 乐观（近期低位） | 0.03 GB/step | 814 GB | 1,228 GB | ✅ |
+>    | 近期均值 | 0.04 GB/step | 818 GB | 1,224 GB | ✅ |
+>    | 保守 | 0.05 GB/step | 822 GB | 1,220 GB | ✅ |
+>    | 悲观 | 0.10 GB/step | 841 GB | 1,201 GB | ✅ |
+>    → **所有情景均不会 OOM** ✅
+> 5. **ETA step 2000**：~2026-11-28 23:59（380 步 × 7.03s ≈ 44 min）。
+> 6. **save-interval=2000** → step 2000 时自动存 ckpt（iter 352,000），届时可正式验收并交接。
+> 7. **监控脚本**：`/tmp/s2_mem_monitor.sh` 持续运行于 .12（CSV 2,123 行，5s 间隔）。
+> 8. **dmesg 无 OOM 记录**（.29 `dmesg | grep -i oom` = 空）✅。
+
+> **data agent 声明**（v14）：本文档为 **data 主导的 S2 内存实验报告**（用户令 20:0x 指定）。
 > data 侧已部署监控、完成纠正后定量模型、确认方案 E（nw=2 + no_mmap）达标。
-> **S2 当前正在运行**（config E = nw=2 + no_mmap），日志精确 iter=351,470（step 1470 since restart），0 OOM，0 NaN，
-> step=7.03s last20（.29 日志法，≤7.4s ✅），吞吐=~599K（与 S1 ~600K **同级** delta -0.2% ✅），lm_loss=1.49-1.51，
-> AnonPages=794-799 GB（.12 /proc/meminfo + .29 /proc/meminfo 实测），MemAvailable=1,093-1,135 GB，si/so=0（无活跃换页）。
-> AnonPages 增长率从 0.82 衰减至 **0.05-0.07 GB/step**，**COW 深度平台化**。
-> 投影 step 2000 AnonPages ≈ 826–852 GB（所有情景），headroom ≈ 1,196–1,222 GB → **不会 OOM** ✅。
+> **S2 当前正在运行**（config E = nw=2 + no_mmap），日志精确 iter=351,620（step 1620 since restart），0 OOM，0 NaN，0 skipped，
+> step=7.03s last20（.29 日志法，≤7.4s ✅），吞吐=~597K（与 S1 ~600K **同级** delta -0.5% ✅），lm_loss=1.49-1.50，
+> AnonPages=802-803 GB（.12 /proc/meminfo + .29 /proc/meminfo 实测），MemAvailable=1,087-1,125 GB，si/so=0（无活跃换页）。
+> AnonPages 增长率从 0.82 衰减至 **0.03-0.05 GB/step**，**COW 深度平台化**。
+> 投影 step 2000 AnonPages ≈ 814–841 GB（所有情景），headroom ≈ 1,201–1,228 GB → **不会 OOM** ✅。
 > **结论：方案 E 持续达标，S2 可做。** 待 step 2000 正式验收后交付 pretrain 长跑监控。ETA ~2026-11-28 23:59。
-> 所有定量数据来自实测命令（§7 可复现）+ live 监控 CSV（`/tmp/s2_mem_monitor.csv`，1,790 行）+ TB event 文件（1,383 条 scalar），
+> 所有定量数据来自实测命令（§7 可复现）+ live 监控 CSV（`/tmp/s2_mem_monitor.csv`，2,123 行）+ .29 worker log（162 条 10-step entries），
 > 模型估算已标注假设与不确定性。用户驳回方案 D（nw=0），本方案 E 满足"吞吐与 S1 同级"硬指标。
 
 ---
@@ -959,14 +986,14 @@ for pct in [5, 10, 12, 15, 20]:
 
 ### 验收清单（step 2000，约 iter 352,000）
 
-| # | 检查项 | 判据 | 当前值（step 1383） | step 2000 时 |
+| # | 检查项 | 判据 | 当前值（step 1620） | step 2000 时 |
 |:--|:--|:--|:--|:--|
 | 1 | OOM | 0 次 OOM-kill | 0 ✅ | 待验收 |
 | 2 | NaN | 0 NaN | 0 ✅ | 待验收 |
-| 3 | Step time | ≤7.4s | 7.01s last20（.29 日志法）✅ | 待验收 |
-| 4 | 吞吐 | ≥~600K tok/s（S1 同级） | ~599K ✅（delta -0.2%） | 待验收 |
-| 5 | 连续步数 | ≥2000 步 0 OOM | 1383 步（69%） | 待验收 |
-| 6 | AnonPages | <1,900 GB（留 buffer） | 789-793 GB ✅ | 预估 852-900 GB ✅ |
+| 3 | Step time | ≤7.4s | 7.03s last20（.29 日志法）✅ | 待验收 |
+| 4 | 吞吐 | ≥~600K tok/s（S1 同级） | ~597K ✅（delta -0.5%） | 待验收 |
+| 5 | 连续步数 | ≥2000 步 0 OOM | 1620 步（81%） | 待验收 |
+| 6 | AnonPages | <1,900 GB（留 buffer） | 802-803 GB ✅ | 预估 814-841 GB ✅ |
 | 7 | si/so | 0（无活跃换页） | 0 ✅ | 待验收 |
 | 8 | ckpt 保存 | iter 352,000 ckpt 存在 | — | save-interval=2000 触发 |
 

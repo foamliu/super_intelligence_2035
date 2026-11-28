@@ -2,19 +2,19 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1177) — S2 内存实验 v14（data 主导）· iter≈351,530 / step ~1530/2000（76.5%）· step=7.03s last20（log法） · 吞吐 ~599K（S1 同级 delta -0.2%）· AnonPages .12=801GB/.29=799GB · si/so=0 · ETA step 2000 ~00:00（~55 min）**：
+> 🔧 **心跳 · 2026-11-28 (R1178) — S2 内存实验 v14（data 主导）· iter≈351,620 / step ~1620/2000（81%）· step=7.03s last20（日志法） · 吞吐 ~597K（S1 同级 delta -0.5%）· AnonPages .12=803GB/.29=802GB · si/so=0 · dmesg 无 OOM · ETA step 2000 ~23:59（~44 min）**：
 > - **用户令**（20:0x）：data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）；step ≤7.4s 硬指标
-> - **S2 config E（nw=2+no_mmap）live 实测**（iter≈351,530 / step ~1530 · .29 日志法 153 条 10-step entries）：
->   - step=7.03s last20（.29 master log Step Time entries）✅（≤7.4s）· 逐条范围 6900-7160ms（极稳定）· 吞吐 256×16384/7030 = ~599K tok/s ✅（与 S1 ~600K **同级** delta -0.2%）· 0 OOM ✅ · 0 NaN ✅（grep nan=3 均为 config 行 `check_for_nan_in_loss: true`）· 0 skip ✅（grep skip=5 均为 config 行 `skip_train: false`）
->   - AnonPages：.12=801GB（/proc/meminfo 实测 800,972,048 kB）/ .29=799GB（798,623,620 kB）· MemAvail .12=1091GB/.29=1130GB · si/so=0 ✅（双节点 vmstat 实测）
+> - **S2 config E（nw=2+no_mmap）live 实测**（iter≈351,620 / step ~1620 · .29 日志法 162 条 10-step entries）：
+>   - step=7.03s last20（.29 master log Step Time entries）✅（≤7.4s）· 逐条范围 6903-7156ms（σ≈66ms，极稳定）· 吞吐 256×16384/7026 = ~597K tok/s ✅（与 S1 ~600K **同级** delta -0.5%）· 0 OOM ✅ · 0 NaN ✅ · 0 skip ✅ · dmesg 无 OOM 记录 ✅
+>   - AnonPages：.12=803GB（/proc/meminfo 实测 803,593,320 kB）/ .29=802GB（802,363,960 kB）· MemAvail .12=1087GB/.29=1125GB · si/so=0 ✅（双节点 vmstat 实测）
 >   - SwapFree：.12=6.5GB/.29=0.2GB（崩溃残留，si/so=0 确认无活跃换页）
 >   - blend-hot-switch shim：16 ranks 全部 `[blend-hot-switch] Bridge compat shim applied` ✅
-> - **AnonPages 增长趋势**（CSV 2015 行 .12 / 2006 行 .29，step 1→1530）：COW 深度平台化，近期增速 ~0.03-0.05 GB/step ✅（从峰值 ~1.05 → ~0.05，衰减 21×）
-> - **投影 step 2000**（剩余 ~470 步）：AnonPages ≈ 787-810GB · headroom ≈ 1205-1228GB → **不会 OOM** ✅
-> - **ETA step 2000**：~2026-11-29 00:00（470 步 × 7.03s ≈ 55 min）· save-interval=2000 → 自动存 iter 352,000 ckpt
+> - **AnonPages 增长趋势**（CSV 2123 行 .12，step 1→1620）：COW 深度平台化，近期增速 ~0.03-0.05 GB/step ✅（从峰值 ~0.82 → ~0.04，衰减 20×）
+> - **投影 step 2000**（剩余 ~380 步）：AnonPages ≈ 814-841GB · headroom ≈ 1201-1228GB → **不会 OOM** ✅
+> - **ETA step 2000**：~2026-11-28 23:59（380 步 × 7.03s ≈ 44 min）· save-interval=2000 → 自动存 iter 352,000 ckpt
 > - **结论：方案 E 持续达标，S2 可做**。待 step 2000 正式验收后交付 pretrain 长跑监控
-> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v14（step ~1530 data point + 2015行CSV + §9交接块含验收清单+监控命令+异常处置表）
-> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor.csv`（2,015 行）· WAITING=0
+> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v14（step 1620 data point + 2123行CSV + §9交接块含验收清单+监控命令+异常处置表）
+> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor.csv`（2,123 行）· WAITING=0
 
 > 📦 R1164~R1176 心跳（S2 内存实验 v3-v13 · step 320→1470 · AnonPages 630→799GB · 方案 E 达标）已被 R1177 更新 → 见上
 
