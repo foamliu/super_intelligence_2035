@@ -1664,3 +1664,82 @@ conds）+ negative/（4 stubs: 2 static + 2 live，替换旧 5 stubs）+ negativ
 （EDA_FLOW_LIVE_NEG=1 支持 .75 live-neg）。live_eval_changes.tsv +1（repo_commit=bdd54d551）。
 review_nonlite_B.tsv CellLeakageIvPlot 行 R2 DONE。EDA-Flow-Bench HEAD=bdd54d551。
 L2.live B nonlite 21→22。
+
+---
+
+## Live-eval R2 桩体检 #23 — VihTripTune-001 (r1376, 2026-11-28)
+
+**case pattern = candidate-runs-hspice + judge-直调 hybrid**（同 r1345..r1375 族，本条
+candidate `vih_tune.py` 自身调 hspice `.tran` ramp 4 宽度 grid search + judge cond(g/h/i)
+ALSO 独立重跑 HSPICE on candidate best_B widths + cond(j) 独立重跑 best_A）：
+
+candidate `vih_tune.py --params <p.json> --target <V> --out-dir <dir>` 读 params
+（level-1 MOS 模型 kp/vto/lambda/gamma/phi/nsub + 电路 vdd/vref/itail + ramp 源 +
+baseline 4 宽度），coarse-to-fine grid search 4 宽度（wn28/wn23/wp10/wp3），每个候选
+design `gen_deck` + `subprocess.run([HSPICE, deck])` + parse `.mt0/.mt1/.mt2` `vtrip`
+measure（`.measure tran vtrip find v(vih) when v(out)=0.8 rise=1`，3 个 `.alter` 对应
+DFE-state `idfe=0/-0.5u/+0.5u`）→ `widths.json` + `tuned.mt0.csv` + `analysis.json`
+（best_widths/best_trips/best_center/best_spread/n_designs_run）。
+
+judge cond(c/d) cand A/B run exit0 + `widths.json` valid 4 keys positive + cond(e)
+B!=baseline + cond(f) `tuned.mt0.csv` 3 floats + **cond(g) judge indep `run_hspice`
+best_B center==0.500±6mV** + cond(h) spread≤15mV + **cond(i) cand trips==judge indep
+trips ±2mV anti-fab** + **cond(j) judge indep best_A center±6mV** + cond(k)
+widths_A!=widths_B cross-input + cond(l) trips monotonic in idfe + cond(m) cand_B
+≥10 `.sp` files + cond(n) analysis `n_designs_run`≥10 → 全 mislabeled `[L0,L1]`
+（judge_layers_now=`L0,L1`），broken in SUT（no hspice ⇒ candidate run fails ⇒ cond
+c/d first-fail + conds e-n fail + judge cond g/h/i/j crash）。**REQ 稳固 confirmed**
+（R1b verdict 正确）。
+
+**Q1 保真实证**（.75 EDASession hfhds201 hspice V-2023.12-SP1-1, session
+q1-nonlite-r1376 closed, wall ~122s/B-cand + 123s/A-cand + 2.4s/judge_verify）：
+
+ref candidate `vih_tune_ref.py` real hspice on hidden B（vref=0.460 / kp_n=80u /
+kp_p=35u / vto_n=0.45 / vto_p=-0.55 / itail=12u / baseline wn28=1.4u wn23=2.6u
+wp10=1.2u wp3=1.8u）→ 451 designs coarse+fine grid，**BEST_B** wn28=1.916u /
+wn23=1.260u / wp10=0.700u / wp3=1.604u **center=0.5022**（target 0.500，2.2mV <
+CENTER_TOL 6mV ✓g）**spread=0.0076**（< SPREAD_TOL 15mV ✓h）trips=[0.5004,
+0.5069, 0.4993] monotonic-in-idfe ✓l；on A（vref=0.500 / kp_n=120u）→ 476 designs
+**BEST_A** wn28=7.195u / wn23=1.301u / wp10=0.387u / wp3=2.174u **center=0.50007**
+（✓j）spread=0.0054。
+
+**judge indep `run_hspice` best_B**：trips=[0.5004,0.5069,0.4993] **EXACT match**
+cand（maxdiff 0.0 < MATCH_TOL 2mV ✓i anti-fab NOT fabricated）；judge indep best_A
+center=0.50007 ✓j。
+
+**baseline_A center=0.5284 EXACT match prompt「约 0.528V vs 目标 0.500V」claim**
+（strongest grounding evidence：case physics from real trace jasminej@hfeahpc505）；
+baseline_B center=0.5597 off-target；best_A != best_B ✓k（wn28 7.195u≠1.916u 等）。
+
+**3-seed determinism**：best_B `run_hspice` x3 trips identical md5=
+`d61a72c0c0eabc0ca74b62e69a360693`。
+
+**Q2 错误解法不会判过**：hardcode_A（use best_A widths on B params）→ judge indep
+center=0.4596，off-target 40.4mV > 6mV → **cond g first-fail**（cross-input guard
+catches hardcode，promised by prompt「硬编码 A 的最优宽度在 B 上会偏离 target 40mV
+必败」）；no-sim/print-expected → cond c/d first-fail（candidate run fails，no
+widths.json）。
+
+**physics REAL NOT fabricated**（level-1 MOS Shichman-Hodges diff-pair +
+PMOS-current-mirror-load discriminator + CMOS inv，VIH trip tunable to target via
+4-width sweep，DFE-state idfe monotonic trips，baseline off-target 0.528/0.560 tuned
+to 0.500；contrast SlicerSizeOpt-001 r1352 BLOCKED 1000x fabricated）。
+
+**R2 wrap plan**（de-risked，下轮 r1377 直接执行，同 r1353 NmosAgeChar / r1363
+InstCurrentMeasGen / r1371 JitterTieRerun candidate-runs-hspice+judge-直调 hybrid
+模板）：
+
+- `_check_static_impl` keep (a) zip + `vih_tune.py` + `py_compile` 一字不动 +
+  **(sa/sb/sc) only-add** 源码结构检查（sa 候选源码含 `subprocess`+`hspice` 调用 /
+  sb 含 `.tran`+`.measure tran vtrip` deck 构造 反 `.probe` 糊弄 / sc 含 `.mt0`
+  `$DATA1` parse）+ `check_static` try/except 三元组；
+- `check_live(sess)` .75 real hspice V-2023.12-SP1-1@hfhds201：upload submit.zip +
+  params_A（A visible）+ params_B（B hidden）+ `live_driver.py` → driver 跑候选
+  A+B+B2(determinism) + judge indep hspice best_B（cond g/h/i）+ best_A（cond j）→
+  JSON → 断 a..n 同判据（CENTER_TOL 6mV / SPREAD_TOL 15mV / MATCH_TOL 2mV 原封） +
+  (o) determinism only-add；
+- `check()` 兼容 + `__main__` 改 check_static；
+- live-neg = `cheat_no_run`（cond c/d no widths.json）+ `cheat_hardcode_a`（cond k/g
+  B=A）2 distinct。
+
+**零 check.py/cases/judge_layers/live_eval_changes.tsv 落盘改动**（桩体检只读）。
