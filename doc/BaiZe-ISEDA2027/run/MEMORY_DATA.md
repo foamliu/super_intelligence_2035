@@ -2,16 +2,16 @@
 
 WAITING: 0
 
-> ✅ **心跳 · 2026-11-28 (R1153) — S2 RUNNING · 只读 review · 4 项 fresh 确认完毕（本次实跑 test_blend_switch.py 8/8 + integration 7/7）· SEED=1234 确认正确 · ⚠️ SEED=5678 残留仅存在于 3 份旧报告（TSV 已清零，不影响训练）**：
-> - **① S2 blend TSV ✅**（本次 python3 实测）：`/nas_train/app.e0031982/code/baize-llm/configs/blend_s2_preblend.tsv` · **12 源** · **prop sum=1.0000000000000002**（≈1.0）· **web=0.40/code=0.40/math=0.20** · **180 shards**（11 pre-blend 源×16 .bin + ufw_zh×4 .bin = 176+4=180，逐目录 `ls *.bin | wc -l` 实测确认）· 5 新源全指向 pre-blend 目录 · 5 .done 标记确认
+> ✅ **心跳 · 2026-11-28 (R1154) — S2 RUNNING · 只读 review · 4 项 fresh 重新确认完毕（本次重跑 test_blend_switch.py 8/8 + integration 7/7）· SEED=1234 确认正确 · SEED=5678 在 TSV/代码/配置中零残留（仅 3 份旧报告 16 处，不影响训练）**：
+> - **① S2 blend TSV ✅**（R1154 python3 实测）：`code/baize-llm/configs/blend_s2_preblend.tsv` · **12 源** · **prop sum=1.0000000000000002**（≈1.0）· **web=0.40/code=0.40/math=0.20** · **180 shards**（11 pre-blend 源×16 .bin + ufw_zh×4 .bin = 176+4=180，逐目录 `ls *.bin | wc -l` 实测确认）· 5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web)全指向 pre-blend 目录 + 5 .done 标记确认 · SEED=5678 grep TSV=0 match✅ · SEED=1234 grep TSV=2 match✅
 > - **② 零重叠方案（同 SEED=1234 + 新源天然零重叠，无 cursor offset shim）✅**：
 >   - **同 SEED=1234 = 零重叠 ✅**（📌 2026-11-28 用户纠错）：同 seed → 同 shuffle_index 排列 → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。**换 SEED 反而破坏零重叠**。
->   - **新源天然零重叠 ✅**：5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web) S1 未消费→overlap=0（verify_results.json real_s1_s2_source_mapping 各新源 `s1_docs=0/overlap_docs=0` 实测确认）
+>   - **新源天然零重叠 ✅**：5 新源 S1 未消费→overlap=0（verify_results.json real_s1_s2_source_mapping 各新源 `s1_docs=0/overlap_docs=0` 实测确认）
 >   - **cursor offset shim ✅ 未启用**：`BLEND_CURSOR_OFFSETS_JSON=`（空字符串）→ 纯 S2 冷切换确认（pretrain MEMORY #3581 直接读 /proc/PID/environ 确认）
->   - **⚠️ SEED=5678 残留状态更新**（R1153 本次 grep 实测）：TSV `blend_s2_preblend.tsv` **已无 5678**（grep 返回 No match，R1152 报"L16/L18 仍有"已被纠正——TSV 已更新为正确表述 `同 SEED=1234`）。残留仅在 3 份旧报告：`report_s1s2_split_data_v3_zh.html`(~7处)/`report_s1s2_split_data_v4_zh.html`(~3处)/`report_s2_data_overlap_study.md`(~5处)。**均为旧报告文字，不影响训练**（训练实际用 SEED=1234）。按 16:1x 只读令本次不动文件，待后续清理
-> - **③ blendswitch 验证 fresh PASS ✅**（R1153 本次实跑）：standalone **8/8 PASS**(`All tests pass: True`) + integration **7/7 PASS**(`7/7 passed. All: True`) · zero_overlap=0 · ratio max_dev=0.0000%(real mapping)/0.0027%(integration) · flag-off byte-identical · real S1→S2 7→12 mapping zero overlap=0 · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
-> - **④ 训练健康 ✅**：pretrain MEMORY #3581 报 iter=350920/700k(50.13%) · step 6992-7111ms avg~7043ms all<7.4s gate✅ · loss 1.488-1.522 stable~1.500 · 0NaN/0skip✅ · LR=4.6e-4 re-warmup 46%✅ · grad norm 0.059-0.278 stable✅ · GPU .29 8×97-100%/.12 8×97-100%✅ · TFLOP 1004-1047/GPU✅ · ckpt loaded from iter_0350000✅
-> - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · 仅重跑 test 生成 verify_results*.json + 更新本 MEMORY 心跳 · WAITING=0
+>   - **SEED=5678 残留精查**（R1154 grep 实测）：TSV=0 match✅ · blendswitch/*.py=0 match✅ · blendswitch/*.json=0 match✅ · S2_E2BIG_DIAGNOSIS.md=0✅ · S2_SWITCH_ADVISORY.md=0✅ · SWITCH_RUNBOOK.md=0✅ · 残留仅在 3 份旧报告共 16 处：`report_s1s2_split_data_v3_zh.html`(8)/`report_s1s2_split_data_v4_zh.html`(3)/`report_s2_data_overlap_study.md`(5)。**均不影响训练**（训练实际用 SEED=1234）。按 16:1x 只读令不动文件，待后续清理
+> - **③ blendswitch 验证 fresh PASS ✅**（R1154 本次重跑）：standalone **8/8 PASS**(`All tests pass: True`) + integration **7/7 PASS**(`7/7 passed. All: True`) · zero_overlap=0 · ratio max_dev=0.0087%(standalone)/0.0027%(integration) · flag-off byte-identical · real S1→S2 7→12 mapping zero overlap=0 · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
+> - **④ 训练健康 ✅**（pretrain MEMORY #3581 @17:58）：iter=350920/700k(50.13%) · step 6992-7111ms avg~7043ms all<7.4s gate✅ · loss 1.488-1.522 stable~1.500 · 0NaN/0skip✅ · LR=4.6e-4 re-warmup 46%✅ · grad norm 0.059-0.278 stable✅ · GPU .29 8×97-100%/.12 8×97-100%✅ · TFLOP 1004-1047/GPU✅ · ckpt loaded from iter_0350000✅
+> - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · 仅重跑 test 刷新 verify_results*.json + 更新本 MEMORY 心跳 · WAITING=0
 
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 崩溃根因链已查明 — **首次 12:10 崩溃 = shim bug（已修复）**，后续崩溃 = 僵尸进程导致 NCCL Duplicate GPU。
