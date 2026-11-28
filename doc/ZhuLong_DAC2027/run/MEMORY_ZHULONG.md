@@ -1,6 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（2026-11-28 21:29 wake#2149·🌡️ **thermo r7 中早期健康监控·MIXED(commit drift 持续)·不干预**）：r7 跑 ~70min·63/500=12.6% judged·PASS:10 FAIL:52·decided=62·Pass@1 early=16.13%(早期不解读)·0 FUSE 0 额度 0 熔断·repo_commit 1f43fcafc→0df218c64→64f821956a 持续漂移⇒**MIXED(commit drift) 持续**·live_eval 末行 20:15<r7 起跑 20:19 暂未入窗(MIXED 仍单触发)·batch 健康(~66s/it·log 持续·ETA ~05:00+1d)·hub 功能正常(持续产 verdict)·/home 98%(12G)eval 写 /nasdata 不阻塞·conductor §7 步骤A:PHASE=running+batch 活+0 FUSE→不干预·WAITING=1 30min 轮询(下一 wake ~21:59)
+WAITING: 1（2026-11-28 22:04 wake#2150·🌡️ **thermo r7 中段健康监控·MIXED(commit drift 持续)·不干预**）：r7 跑 ~105min·86/500=17.2% judged·PASS:12 FAIL:73 ERROR:1·decided=85·Pass@1 early=14.12%(早期不解读)·0 FUSE 0 额度 0 熔断·repo_commit 1f43fcafc→3bf08e579 持续漂移⇒**MIXED(commit drift) 持续**·live_eval 窗口内(r7 起跑 20:19 后)0 新增(MIXED 仍单触发=commit drift)·batch 健康(PID 637262/637272 活·log 持续·~70s/it·worker 90 跑 DRCPatManifest-001·ETA ~05:00+1d)·hub 功能正常(持续产 verdict)·providers.json 四证✅·/home 98%(12G)eval 写 /nasdata 不阻塞·conductor §7 步骤A:PHASE=running+batch 活+0 FUSE→不干预·WAITING=1 30min 轮询(下一 wake ~22:34)
+
+- wake#2150（2026-11-28 22:04 opencode 交互式·**thermo r7 中段健康监控·MIXED(commit drift 持续)·不干预**）：r7 跑 ~105min·86/500=17.2% judged·PASS:12 FAIL:73 ERROR:1·decided=85·Pass@1 early=14.12%(早期不解读)·0 FUSE 0 额度 0 熔断·repo_commit 起跑 1f43fcafc→wake#2149 64f821956a→本轮 3bf08e579 持续漂移⇒**MIXED(commit drift) 持续**·live_eval_changes.tsv 窗口内(r7 起跑 20:19 后)0 新增(MIXED 仍单触发=commit drift·末行 11-27T20:35 TimingMeasGen-001 仍在 r7 窗口前)·batch 健康(PID 637262 bash -lc + 637272 run_batch 活·log run_thermo_r7_20261128_2019.log 持续写入·~70s/it·worker 90 正跑 DRCPatManifest-001·ETA ~05:00+1d)·hub 功能正常(持续产 verdict)·providers.json 四证✅(apiKey ...3dd97aea/model doubao-seed-2.0-pro-cloud/baseUrl cloud/v1/maxTokens 16384/reasoning false)·/home 98%(12G free)eval 写 /nasdata 不阻塞·MEMORY 39382B 超 32KB 软限本轮滚动 r1/r2/r3 时代指针(wake#2072-#2115)入 daily-2026-11-27.md·conductor §7 步骤A:PHASE=running+batch 活+0 FUSE→**不干预**·WAITING=1 30min 轮询(下一 wake ~22:34)。
 
 - wake#2149（2026-11-28 21:29 opencode 交互式·**thermo r7 中早期健康监控·MIXED(commit drift 持续)·不干预**）：r7 跑 ~70min·63/500=12.6% judged·PASS:10 FAIL:52·decided=62·Pass@1 early=16.13%(早期不解读)·0 FUSE 0 额度 0 熔断·repo_commit 起跑 1f43fcafc→wake#2148 0df218c64→本轮 64f821956a 持续漂移⇒**MIXED(commit drift) 持续**·live_eval_changes.tsv 末行 ts=2026-11-28T20:15 CosWaveWdf-001(D 重判 L2.live)<r7 起跑 20:19 暂未入窗(MIXED 仍单触发=commit drift)·batch 健康(log run_thermo_r7_20261128_2019.log 持续写入·~66s/it·ETA ~05:00+1d)·hub 功能正常(持续产 verdict)·/home 98%(12G free)eval 写 /nasdata 不阻塞·conductor §7 步骤A:PHASE=running+batch 活+0 FUSE→**不干预**·WAITING=1 30min 轮询(下一 wake ~21:59)。
 
@@ -35,62 +37,8 @@ WAITING: 1（2026-11-28 21:29 wake#2149·🌡️ **thermo r7 中早期健康监�
 
 - [wake#2116 原文滚出·2026-11-28 wake#2147 维护] thermo r3 收口 MIXED 16.29% → r4 起跑（r3 500/500·79 PASS/406 FAIL/15 ERROR·decided=485·Pass@1=16.29%·MIXED repo_commit 漂移+live_eval·r3 vs r1 净 +5 PASS·per-domain·fe 详条见 `daily-memories/2026-11-28.md`§[wake#2116 原文滚出]。原文不改。
 
-- [wake#2099-#2115 原文滚出·2026-11-28 wake#2116 维护] thermo r3 全周期健康监控 + r2 VOID 收口→r3 起跑（wake#2099 r2 VOID FUSE 3×熔断 + hub RSS 3.5GB restart + canary 两证 + r3 起跑 repo_commit=924a14db4 PID 3898570 w=4；wake#2100-#2115 r3 健康监控 28/500→499/500·均 0 FUSE·repo_commit 持续漂移 924a14db4→22341096e·live_eval 窗口内新增·r3 MIXED 双触发持续确认·hub RSS 1.3-2.5GB 稳 <3.5GB 红线）详条见 `daily-memories/2026-11-27.md`§[wake#2099-#2115 原文滚出]。原文不改。
+- [wake#2072-#2115 原文滚出·2026-11-28 wake#2150 维护合并] thermo r1/r2/r3 全周期（r1 收口=74/486=15.23% MIXED·repo_commit 漂移+live_eval +4 → r2 起跑 repo_commit=2771644fb → r2 VOID=FUSE 3x熔断~14:30 + hub RSS 3.5GB restart 清 bloat → r3 起跑 repo_commit=924a14db4 PID 3898570 w=4 → r3 全周期健康监控 28/500→499/500 均 0 FUSE·repo_commit 持续漂移 924a14db4→22341096e·r3 MIXED 双触发持续确认·hub RSS 1.3-2.5GB 稳 <3.5GB 红线）+ rerun#2 r3' 收口(79/486=16.26%·rerun#2 三轮全 MIXED r1'=13.81%/r2'=14.40%/r3'=16.26% 数字保留不入论文·无 3-run mean±std·用户转体温计根因)+ thermo r1 首次起跑+relaunch（修 --status 相对路径 bug·PID 2030035+2030045）。含 wake#2072-#2076/#2077-#2082/#2083-#2085/#2086-#2089/#2090-#2098/#2099-#2115 共 ~44 条指针。详条见 `daily-memories/2026-11-27.md`§[wake#2072-#2115 原文滚出 合并]。原文不改。
 
-- [wake#2108-#2114 原文滚出·2026-11-28 wake#2116 维护] thermo r3 健康监控中后期（wake#2108 251/500=50% Pass@1=18.95% → wake#2114 441/500=88% Pass@1=16.32%·均 0 FUSE·repo_commit 持续漂移 924a14db4→41c78b388·live_eval 窗口内新增·r3 MIXED 双触发持续确认·hub RSS 1.3-2.3GB 波动 <3.5GB 红线）详条见 `daily-memories/2026-11-27.md`§[wake#2099-#2115 原文滚出]。原文不改。
-
-- [wake#2107 原文滚出·2026-11-27 wake#2113 维护] thermo r3 健康监控(19:59·221/500=44.2%·Pass@1=18.26%·0 FUSE·repo_commit→754ed058b2·live_eval 62 行·r3 MIXED 持续确认·hub RSS 2.44GB 缓升监控) 详条见 `daily-memories/2026-11-27.md`§[wake#2106/#2107 原文滚出]。原文不改。
-
-- [wake#2106 原文滚出·2026-11-27 wake#2113 维护] thermo r3 健康监控(19:25·187/500=37.4%·Pass@1=18.28%·0 FUSE·repo_commit→a37ff1296·live_eval 60 行·r3 MIXED 持续确认·hub RSS 1.99GB 趋稳) 详条见 `daily-memories/2026-11-27.md`§[wake#2106/#2107 原文滚出]。原文不改。
-
-- [wake#2105 原文滚出·2026-11-27 wake#2106 维护] thermo r3 健康监控(18:51·154/500=30.8%·Pass@1=18.95%·0 FUSE·repo_commit→23127f9b7·live_eval 50 行·r3 MIXED 持续确认·hub RSS 2.0GB 上升监控) 详条见 `daily-memories/2026-11-27.md`§[wake#2105 原文滚出]。原文不改。
-- [wake#2104 原文滚出·2026-11-27 wake#2105 维护] thermo r3 健康监控(18:15·122/500=24.4%·Pass@1=19.83%·0 FUSE·repo_commit→aebbda800·live_eval +7·r3 MIXED 双触发持续确认) 详条见 `daily-memories/2026-11-27.md`§[wake#2104 原文滚出]。原文不改。
-
-- [wake#2103 原文滚出·2026-11-27 wake#2104 维护] thermo r3 健康监控(17:42·97/500=19.4%·Pass@1=17.7%·0 FUSE·repo_commit→f323266e3·live_eval +6·r3 MIXED 双触发持续确认) 详条见 `daily-memories/2026-11-27.md`§[wake#2103 原文滚出]。原文不改。
-
-- wake#2102 原文滚出·2026-11-27 wake#2103 维护] thermo r3 健康监控(17:12·74/500=14.8%·Pass@1=21.9%·0 FUSE·repo_commit→dcb637904·live_eval +1·r3 MIXED 双触发确认) 详条见 `daily-memories/2026-11-27.md`§[wake#2102 原文滚出]。原文不改。
-
-- [wake#2101 原文滚出·2026-11-27 wake#2112 维护] thermo r3 健康监控(16:31·48/500=9.6%·Pass@1=25.5% 早期·0 FUSE·repo_commit 924a14db4→179690bde 漂移⇒r3 预报 MIXED·hub RSS 1456MB) 详条见 `daily-memories/2026-11-27.md`§[wake#2101 原文滚出]。原文不改。
-
-- [wake#2100 原文滚出·2026-11-27 wake#2112 维护] thermo r3 健康监控(15:59·28/500=5.6%·Pass@1=21.4% 早期·0 FUSE·repo_commit 924a14db4 稳定·r3 至今 CLEAN·hub RSS 470MB) 详条见 `daily-memories/2026-11-27.md`§[wake#2100 原文滚出]。原文不改。
-
-- [wake#2099 原文滚出·2026-11-27 wake#2101 维护] thermo r2 VOID 收口 → hub restart → r3 起跑（r2 VOID 诊断 FUSE 3x熔断 ~14:30 + hub RSS 3.5GB restart 清 bloat + canary 两证 curl+single-case + 身份四证 + r3 起跑 repo_commit=924a14db4 PID 3898570 w=4 status_thermo_r3.jsonl + pgrep 误报排查）详条见 `daily-memories/2026-11-27.md`§[wake#2099 原文滚出]。原文不改。
-
-- [wake#2090-#2098 原文滚出·2026-11-27 wake#2099 维护] thermo r2 健康监控全周期（wake#2090 6%→wake#2098 48%·均 0 FUSE·repo_commit 持续漂移⇒本将判 MIXED·但 wake#2099 发现 ~14:30 实发 3x FUSE 熔断 batch DEAD⇒r2 改判 VOID）详条见 `daily-memories/2026-11-27.md`§[wake#2090-#2098 原文滚出]。原文不改。
-
-- [wake#2089 原文滚出·2026-11-27 wake#2092 维护] thermo r1 收口→r2 起跑（r1=74/486=15.23% MIXED·repo_commit e7a9b669c→a8fc224cd 漂移+live_eval +4·r2 起跑 repo_commit=2771644fb PID 1214682 w=4·preflight 6项+canary两证+身份四证全过）详条见 `daily-memories/2026-11-27.md`§[wake#2089 原文滚出]。原文不改。
-
-- [wake#2087/#2088 原文滚出·2026-11-27 wake#2096 维护] thermo r1 近收口健康监控(wake#2087 450/500=90% Pass@1=15.95%·wake#2088 485/500=97% Pass@1=15.07%·0 FUSE·repo_commit 持续漂移⇒MIXED)详条见 `daily-memories/2026-11-27.md`§[wake#2087/#2088 原文滚出]。原文不改。
-
-- [wake#2086 原文滚出·2026-11-27 wake#2096 维护] thermo r1 健康监控+MEMORY 滚出维护(07:46·410/500=82%·Pass@1=15.71%·0 FUSE·repo_commit 112d9f731·wake#2068 及更早顶部流水~30 条滚入 daily-memories)详条见 `daily-memories/2026-11-27.md`§[wake#2086 原文滚出]。原文不改。
-
-- [wake#2083/#2085 原文滚出·2026-11-28 wake#2116 维护] thermo r1 中后期健康监控（wake#2083 06:05·314/500=62.8% Pass@1=15.96%·wake#2085 07:11·376/500=75.2% Pass@1=15.49%·均 0 FUSE·repo_commit e7a9b669c→112d9f731 漂移⇒r1 将 MIXED·不干预）详条见 `daily-memories/2026-11-27.md`§[wake#2074-#2085 原文滚出]。原文不改。
-
-- [wake#2074-#2082 原文滚出·2026-11-27 wake#2083 维护] thermo r1 早期健康监控详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079/#2081/#2082 原文滚出]。原文不改。
-- [wake#2084 原文滚出·2026-11-27 wake#2085 维护] thermo r1 健康监控(06:30·342/500=68.4%·Pass@1=14.97%·0 FUSE·repo_commit→a096f7139·live_eval 36 行) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079/#2081/#2082/#2084 原文滚出]。原文不改。
-
-- [wake#2082 原文滚出·2026-11-27 wake#2083 维护] thermo r1 健康监控(05:34·286/500=57.2%·Pass@1=16.31%·0 FUSE·repo_commit→5d9521079·live_eval 33 行) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079/#2081/#2082 原文滚出]。原文不改。
-
-- [wake#2081 原文滚出·2026-11-27 wake#2082 维护] thermo r1 健康监控(05:00·247/500=49.4%·Pass@1=16.80%·0 FUSE·repo_commit→aeee2aa4f9) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079/#2081 原文滚出]。原文不改。
-
-- [wake#2080 原文滚出·2026-11-27 wake#2085 维护] thermo r1 健康监控(04:30·212/500=42.4%·Pass@1=15.71%·0 FUSE·repo_commit→16885f6cf·live_eval 32 行) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079/#2081/#2082/#2084 原文滚出]。原文不改。
-
-- [wake#2079 原文滚出·2026-11-27 wake#2081 维护] thermo r1 健康监控(03:54·183/500=36.6%·Pass@1=16.02%·0 FUSE·repo_commit→87deb7f30) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079 原文滚出]。原文不改。
-
-- [wake#2078 原文滚出·2026-11-27 wake#2081 维护] thermo r1 健康监控(03:19·151/500=30.2%·Pass@1=16.67%·0 FUSE·repo_commit→e4389cff2·live_eval +2) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079 原文滚出]。原文不改。
-
-- [wake#2077 原文滚出·2026-11-27 wake#2081 维护] thermo r1 健康监控(02:47·119/500=23.8%·Pass@1=16.95%·0 FUSE·repo_commit→f193e5cc8·live_eval +6) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079 原文滚出]。原文不改。
-
-- [wake#2075 原文滚出·2026-11-27 wake#2078 维护] thermo r1 健康监控详条见 `daily-memories/2026-11-27.md`§[wake#2075]（01:38·55/500=11%·Pass@1=20.37% 早期·0 FUSE·repo_commit→de99214f5·不干预）。原文不改。
-
-
-- [wake#2076 原文滚出·2026-11-27 wake#2081 维护] thermo r1 健康监控(02:14·85/500=17%·Pass@1=17.86% 早期·0 FUSE·repo_commit→de99214f5·窗口内 8 commit) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079 原文滚出]。原文不改。
-
-- [wake#2074 原文滚出·2026-11-27 wake#2081 维护] thermo r1 健康监控(01:02·23 judged·Pass@1=21.74% 早期·0 FUSE·repo_commit→a9f22e659·pgrep 误报排查) 详条见 `daily-memories/2026-11-27.md`§[wake#2074/#2076/#2077/#2078/#2079 原文滚出]。原文不改。
-
-- [wake#2072 原文滚出·2026-11-27 wake#2073 维护] rerun#2 r3' 收口(500/500·79 PASS/407 FAIL/14 ERROR·Pass@1=79/486=16.26%·0 FUSE)+rerun#2 三轮全 MIXED 最终确认(r1'=13.81%/r2'=14.40%/r3'=16.26% 数字保留不入论文·无 3-run mean±std·用户转体温计根因)+**thermo r1 首次起跑**(PID 1882828 w=4·repo_commit=2009a261…·log run_thermo_r1_20261127_001234·自检6项+canary两证+身份四证全过)详条见 `daily-memories/2026-11-27.md`§[wake#2072]。原文不改。
-
-- [wake#2073 原文滚出·2026-11-27 wake#2081 维护] thermo r1 relaunch：修 `--status` 相对路径 bug（kill 原 r1 / fix-验证 canary / 身份四证复验 / repo_commit 漂移记录 / r1 relaunch PID 2030035+2030045 / run_one.sh L443 cwd bug 记录供后续修）详条见 `daily-memories/2026-11-27.md`§[wake#2073]。原文不改。
 
 - [wake#1748-#2072 顶部流水合并滚出·2026-11-27 wake#2086 维护] wake#2068 及更早的所有顶部流水指针（rerun#2 r1'/r2'/r3' 全周期 + r1 重跑#1-#3 + 强模型 3-run 收口后 standby + v3 收口 standby 等，共 ~30 条指针）原文搬入 `daily-memories/2026-11-27.md`§[MEMORY 顶部流水合并滚出（wake#2068 及更早）]。要点：rerun#2 三轮全 MIXED（r1'=13.81%/r2'=14.40%/r3'=16.26% 数字保留不入论文·无 3-run mean±std·窗口内 repo_commit 漂移）；r1 重跑#1/#2/#3 全 FUSE-VOID；强模型 3-run=20.85±1.03% 收口不动；v3 pro=10.18±1.18%/lite=4.68±0.77%/mini=2.39±0.19% 收口不动。原文不改。
 
