@@ -27,13 +27,13 @@ ufw_zh	/nas_train/app.e0031982/datasets/baize-data/tokenized/Ultra-FineWeb/ultra
 # ═══════════════════════════════════════════════════════════
 code_l2	/nas_user/app.e0031982/datasets/pre-blend/code_l2	0.18	1.15
 code_l3	/nas_user/app.e0031982/datasets/pre-blend/code_l3	0.05	1.03
-stackv3_filt	/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train	0.17	0.58
+stackv3_filt	/nas_user/app.e0031982/datasets/pre-blend/stackv3_filt	0.17	0.58
 # ═══════════════════════════════════════════════════════════
 # Math (0.20)
 # ═══════════════════════════════════════════════════════════
 math_l1	/nas_user/app.e0031982/datasets/pre-blend/math_l1	0.025	0.67
 math_l3	/nas_user/app.e0031982/datasets/pre-blend/math_l3	0.015	0.66
-megamath	/nas_user/app.e0031982/datasets/pre-blend/megamath	0.028	0.62
-finemath	/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceTB/finemath-4plus	0.005	0.78
-nemotron	/nas_user/app.e0031982/datasets/baize-data/tokenized/nvidia/Nemotron-CC-Math-v1	0.067	0.50
-megamath_web	/nas_user/app.e0031982/datasets/baize-data/tokenized/IFM/MegaMath/megamath-web	0.060	0.40
+megamath	/nas_user/app.e0031982/datasets/pre-blend/megamath_pb	0.028	0.62
+finemath	/nas_user/app.e0031982/datasets/pre-blend/finemath	0.005	0.78
+nemotron	/nas_user/app.e0031982/datasets/pre-blend/nemotron	0.067	0.50
+megamath_web	/nas_user/app.e0031982/datasets/pre-blend/megamath_web	0.060	0.40
