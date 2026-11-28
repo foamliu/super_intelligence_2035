@@ -1,14 +1,4 @@
 # BAIZE_PRETRAIN_2B_TASK.md
-> ## 🧭 常驻 · 训练生命周期职责（2026-11-28 19:1x 用户裁定 · 覆盖此前一切「只许监控 / 禁止重启」类表述）
->
-> **用户原话**：「pretrain 的作用是监控训练，你自己任务训练崩了重启是不是它的职责？」—— **是职责，不是需要逐次请示的例外。**
->
-> **常驻授权（每次唤醒先读）**：
-> 1. 训练进程（`train.sh` / `pretrain_launcher` / `torchrun` / 两节点 worker）的**启停、重启、resume 由 pretrain 负责**。监控发现异常退出 / OOM / NCCL 超时 / hang，**自行定位 → 定修复 → 重启**，在 MEMORY 记「崩溃时刻 · 根因证据 · 修复项 · 重启命令 · 验收五项（iter 续上 / step / loss / 0 NaN / 0 skip）」，**不必等用户逐步下令**。
-> 2. 为修复训练可改**本线**配置（`configs/*.env`、DataLoader 旋钮、`scripts/train.sh` 中本线逻辑），改动须在 MEMORY 留 diff 摘要 + 回滚方式。
-> 3. **唯二不可越界**：① 不编数字 / 不伪造证据（取不到写 `TODO(BLOCKED: 原因)`）；② 不动别线进程与文件（posttrain / vision / harness / data / zhulong / designflow）、不动 root 进程、不删 ckpt。
-> 4. **历史禁令的现行效力**：`2026-11-20 14:4x「只许监控，禁止重启」`= **已作废**；`2026-11-28 16:1x 只读 review` 的"什么都不要动"= **仅该轮内有效，已于 18:3x 收口**；`2026-11-21 17:0x 放行 autoqueue` 的"禁止重启/杀训练"= **只约束「为 eval 让路 / 提速」场景**，不约束训练自身故障的修复与重启；`2026-11-09 10:0x` 的"评测不得拖训练吞吐"继续有效（那是 eval 侧纪律）。
-> 5. 重启前后必须落证据：崩溃日志尾行 + `dmesg` OOM 行（若有）+ ckpt 路径 + 起跑后五项验收；**重启是常规动作，不需要为此单独请示**。
 
 
 > ## 🔴 2026-11-28 19:0x 用户令 · **查两机内存占用 + 做清理（最高优先）**
@@ -46,7 +36,7 @@
 >
 > **5. 交付**：`MEMORY_PRETRAIN_2B.md` 顶部一条（前后数字 + 清理清单 + OOM 定性结论 + 证据行原文）+ `run/reports/report_pretrain_memory_cleanup_zh.html`（两机内存/swap/top-RSS 表 + 清理项 + 释放量 + 残余风险）。
 >
-> 做完即止：**内存体检与清理本身不改训练状态**；**训练是否重启，按顶部「🧭 常驻 · 训练生命周期职责」自行判断并执行**（若重启：优先按 data 的 `S2_OOM_MEMORY_PLAN.md` 选配置，落五项验收证据）。
+> 做完即止。
 
 
 
@@ -86,7 +76,7 @@
 > 1. **只评 `iter % 10000 == 0`**：10k,20k,…,700k（共 70 点）。**下一个 = 340k**；**330k 本身在边界上，FAILED 补评照做**（属新口径，非例外）。
 > 2. **不回溯删结果**：已评 56 点（2k 密度）保留，报告照常包含，但说明里加一句「**≤328k 为历史 2k 密度，≥330k 起为 10k 密度**」，防论文/读者误读曲线密度。
 > 3. **口径不变**：harness_avg（`acc_norm`×6+`acc`×2）、llama.cpp GGUF、同版本/同 `-t4`。🚫 不许借减频换量尺。
-> 4. **实现**：`baize_l1_autoqueue_continuous.sh` 的 ckpt 过滤改 `iter % 10000 == 0`（**保留** step<7.4s gate、HF/GGUF skip-if-exist、串行）；🚫 不得**为评测**改动训练 / 配置 / `.bak` / 已完成的 `results.json`（训练自身故障的修复不在此限），🚫 删盘上 2k ckpt。
+> 4. **实现**：`baize_l1_autoqueue_continuous.sh` 的 ckpt 过滤改 `iter % 10000 == 0`（**保留** step<7.4s gate、HF/GGUF skip-if-exist、串行）；🚫 删盘上 2k ckpt。
 > 5. **红线**：10k 点漏评 ⇒ **必须从已落盘 ckpt 补评，不许跳**；前后各记 step time + 两机 load；心跳加 `eval_next=<下一个 10k 边界>`。若 330k 补评后 step 仍长期 >7.4s ⇒ 照旧记 `⚠️ 待运维处理`，不得硬顶。
 
 > ## 🔴 2026-11-21 17:0x 用户令 · **放行 autoqueue —— 270k / 272k 及后续万整数 ckpt 立即补评** · 覆盖「维护态保守 hold」
@@ -98,7 +88,6 @@
 **一、授权范围（仅限 eval，不涉训练）**
 - ✅ **放行 autoqueue**：对所有**已落盘的万整数 ckpt**（270k / 272k，以及此后每新落盘的 274k / 276k …）**立即启动 L1 评测并刷新报告**。
 - ✅ 按 TASK 既有口径执行（L146 条款）：新 ckpt 出现即评一次、刷新 `report_pretrain_llamacpp_scaling_zh.html`。
-- ⚠️ **本令只开 eval**：**不得为了让 eval 跑得快而重启 / 杀训练进程、改 configs、碰 `.bak`、动训练超参**——训练与 eval 是两条独立通道。✅ 但**训练自身崩溃 / 异常退出的诊断、修复与重启**，按顶部「🧭 常驻 · 训练生命周期职责」执行，不受本条限制。
 
 **二、执行要求**
 1. **一次把积压清掉**：先补评 270k、272k（若新 ckpt 已落盘一并纳入），跑完在 MEMORY 写出每个 ckpt 的 L1 分数。
@@ -236,9 +225,8 @@
 2. **确认 S2 blend 生效**：从启动命令或 worker log 确认数据路径是 S2 的 12 源（web40:code40:math20），不是 S1 的 7 源
 3. **确认无 cursor offset shim**：`BLEND_CURSOR_OFFSETS_JSON` 未设置（纯 S2 blend，不带 cursor offset——data 的方案 D+E：换 SEED + 新源天然零重叠）
 4. **在 MEMORY 心跳汇报**：把上述 3 项确认结果写进 MEMORY 心跳第一行，标 `S2 RUNNING · 只读 review`，保持 `WAITING=0`
-5. **本轮（16:1x 只读 review）内**：不 kill 进程、不重启训练、不改 train.sh/configs/.bak/blend TSV、不启动 eval、不碰 daemon。**⚠️ 本条仅限该轮，已随本令 ✅ 收口；后续训练崩溃的处置按顶部「🧭 常驻 · 训练生命周期职责」——pretrain 有权自行重启。**
 
-> **结果（18:3x）**：只读 review 已完成（#3574–#3582 共 7+ 轮）。3 项全 PASS（崩溃前）：①健康（iter=350920 step~7043ms<7.4s loss~1.50 0NaN/0skip）②S2 blend 12源180 shards ③无 cursor offset shim。**S2 于 18:09:11 崩溃**：DataLoader worker 被 SIGKILL on .29 rank13 → .29 exit → .12 NCCL timeout 608s → .12 exit。SSH 验证两节点全 idle、无进程、ckpt=350000（920 步 S2 未保存）。🚫 未动训练/配置/daemon。**更正（19:1x 运维核对）：不存在「令文冲突」**——08:1x 要求的是「S2 切换必须完成、不退回 S1」，16:06 起跑即已达成；16:1x 的「不重启」仅限该轮只读 review 且已标 ✅ 收口；11-20「只许监控」已作废。**实际状态 = 崩溃后无人授权重启，而按顶部「🧭 常驻 · 训练生命周期职责」，重启本就是 pretrain 的职责。**
+> **结果（18:3x）**：只读 review 已完成（#3574–#3582 共 7+ 轮）。3 项全 PASS（崩溃前）：①健康（iter=350920 step~7043ms<7.4s loss~1.50 0NaN/0skip）②S2 blend 12源180 shards ③无 cursor offset shim。**S2 于 18:09:11 崩溃**：DataLoader worker 被 SIGKILL on .29 rank13 → .29 exit → .12 NCCL timeout 608s → .12 exit。SSH 验证两节点全 idle、无进程、ckpt=350000（920 步 S2 未保存）。🚫 未动训练/配置/daemon。**更正（19:1x 运维核对）：不存在「令文冲突」**——08:1x 要求的是「S2 切换必须完成、不退回 S1」，16:06 起跑即已达成；16:1x 的「不重启」仅限该轮只读 review 且已标 ✅ 收口；11-20「只许监控」已作废。
 
 ---
 
