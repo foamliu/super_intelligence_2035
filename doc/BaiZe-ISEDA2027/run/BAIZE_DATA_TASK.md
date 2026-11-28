@@ -1,6 +1,30 @@
 # BAIZE_DATA_TASK.md
 
 # BAIZE_DATA_TASK.md
+> ## 🔴 2026-11-28 20:0x 用户令 · **data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）**
+>
+> **用户原话**（逐字）：「那就把这些信息给到data，让data去实验和重启」「驳回data的建议D，不接受吞吐减半，S2吞吐需要维持跟S1一样的水平，否则宁可不做了。」
+>
+> **硬指标（高于一切方案）**：
+> - **吞吐必须与 S1 同级**：step ≤ **7.4s**（S1 实测 ~7.0s / ~600K tok/s）。**任何低于此的实现一律否决**；若唯一可行解是 `nw=0`（−50%），结论就写「**S2 不做**」，**不许降级上线**。
+> - **不崩**：同一配置连续 ≥2000 步 0 OOM。
+>
+> **已核对的实测事实（你的模型没考虑，必须用）**：
+> 1. **S1 实测内存 = 665–666G / 2015G**（ops 探针 `run/ops/outbox.md` L87 / L282，2026-11-25 08:37 起）；另有 `MemAvailable 1.34 TiB / 2.0 TiB`（`daily-memories/2026-11-02.md`）与 `719G/2TB`（`ARCHIVE_OPERATOR_PRETRAIN.md:3736`）。
+>    ⇒ **S1 不是你模型里的 1,039GB**，实际 ≈666GB，模型高估 1.6 倍；「S2 = 1,214GB / 920 步撞顶」只能当假设，不能当结论。
+> 2. **S2 的 "1.5TB" 是用户现场观察，不是落盘实测**（18:09 崩前 review 只拍了 `nvidia-smi`，没拍内存）。
+> 3. **10-27 先例**：崩溃后 RAM 回到 free 1.9TB，但 **swap 仍是满的**（`ARCHIVE_OPERATOR_PRETRAIN.md:3591`）⇒ 是匿名内存涨到顶，不是 cache 自己涨。
+>
+> **你要做的**：
+> 1. **先测再改**：S2 起跑后每 5s 采 `grep -E 'AnonPages|Cached|Mapped|Shmem|Slab|SwapCached|Committed_AS' /proc/meminfo` + `ps -eo rss,args --sort=-rss | head -5`；用 Anon / Cached 占比定性：翻倍是「索引第二份」还是「page cache」还是两者叠加。
+> 2. **重做定量模型**：内存 ∝ 文档数 / 索引副本数（`.idx×1.5×8 rank = 974GB` 已被 S1 实测 666GB 证伪）。
+> 3. **只在保住吞吐的前提下出方案**：消除第二份索引 / 索引走 mmap 交给内核回收 / 按 rank 分片索引 / 改 pre-blend 结构 等；`nw` 可调，但**验收线就是 step ≤7.4s**。
+> 4. **做实验**：在 `.29` / `.12` 跑 50 步 smoke，每轮记「配置 · step · Anon · Cached · 是否 OOM」；不合格就换，别停在纸面。
+> 5. **达标后重启 S2**：从 `iter_0350000` resume，跑 ≥2000 步确认 0 OOM 且 step ≤7.4s，再交 pretrain 长跑监控。
+> 6. **做不到就如实写「S2 不做」** + 证据（哪条路都撞 7.4s 或都 OOM），🚫 不许偷偷降速上线。
+> 7. **分工**：本轮 S2 的实验与重启由 **data 执行**（用户 20:0x 指定）；pretrain 侧只读监控、不重复启停；交付后交接回 pretrain。
+> 8. **交付**：更新 `S2_OOM_MEMORY_PLAN.md`（实验记录表 + 新结论）+ `MEMORY_DATA.md` 顶部。
+
 > ## 🔴 2026-11-28 19:0x 用户令 · **data 想 S2 的 DataLoader 内存/崩溃怎么办（最高优先）**
 >
 > **用户原话**（逐字）：「让data想想怎么办」

@@ -9,6 +9,7 @@
 > - **监控 S2**：step / loss / NaN·skip / GPU 利用率 / iter 推进，异常第一时间发现。
 > - **崩溃处置**：**自己定位、自己修、自己拉起**（数据配比 / shard / DataLoader / OOM / 内存侧都在你的范围）；需要时读 data 线的 `MEMORY_DATA.md` 与 `run/data/blendswitch/` 作参考，**不用等 data、不用协商**。直到恢复健康推进。
 > - **收口记录**：MEMORY 记「崩溃时刻 · 根因 · 参考来源（可含 data MEMORY / blendswitch 文档）· 修复项 · 重启命令 · 验收五项（iter 续上 / step ≤7.4s / loss 正常 / 0 NaN / 0 skip）」。
+> - **例外（2026-11-28 20:0x 用户令）**：S2 的内存实验与重启**当前由 data 执行**；pretrain 只做只读监控、不重复启停，data 达标交付后交接回 pretrain 长跑。
 
 
 
