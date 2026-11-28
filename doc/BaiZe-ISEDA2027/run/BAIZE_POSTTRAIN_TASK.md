@@ -1,5 +1,24 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+> ## 🔴 2026-11-28 22:3x 用户令 · **查 A1「write_files 被拒」trace：是协议适配就修，是能力不行就接受**
+>
+> **用户原话**（逐字）：「是触发了放漏题hook PreToolUse 对吧，这个对两个模型都是公平的对吧？让posttrain看看trace，排查一下。如果是协议适配问题，就解决一下。如果确实Qwen3.5-2B能力不行，那就接受这个分数。」
+>
+> **背景**：A1 run1 smoke = 2/158（1.27%），其中 **85/158 无码**；wake872 N2 记为「Qwen3.5-2B 频发 `write_files` 被 cline 拒」。**注意：不是 PreToolUse 防泄题 hook 拒的** —— hook 白名单是 `MCP + submit + spawn`；`write_files` 是 cline harness 工具集里**不存在**的工具，拒绝原因是"无此工具"。
+>
+> **要做的（按顺序）**：
+> 1. **拉 trace 定性**（每条都要原文）：
+>    - 逐题统计：`write_files` 出现次数 / 被拒原文 / 拒后是否恢复（转 `editor` 或 `submit_and_exit`）/ 最终有无 `.py` 落盘。
+>    - 分三堆：**(a) 工具协议不兼容**（模型不知道 harness 只有 `editor`）；**(b) 路径/工作区写错**（写 `ws/` 等无效路径）；**(c) 模型确实写不出正确代码**（给了 `editor` 也交不出）。
+>    - 证据落盘：`run/posttrain_5run_eval/A1_qwen35_2b/run1/write_files_triage.{json,md}`（逐题表 + 3~5 条原始 trace 片段）。
+> 2. **公平性核查**：A0（MiniCPM5-2B）在同一 harness / prompt / hook 下是否也发过 `write_files`、是否也被拒。两臂必须同工具集、同 prompt、同 hook；结论写进报告。
+>    - **A0 证据（回答「当初 A0 怎么评测的」）**：取 A0 run1-5 的 harness 版本（`cline 3.0.51`？`zhulong` 3.0.29？）、prompt 模板（`eval_sys_prompt_template_no_sandbox.md` 的 sha256）、PreToolUse hook 路径与白名单、当时暴露的工具集清单；逐项与 A1 做「同 / 不同」对照表。
+>    - **A0 trace 统计**：在 A0 的 run 日志/JSONL 里统计 `write_files` 出现次数与被拒次数（预期 0），以及 A0 用 `editor` 成功落盘的题数 —— 用这组数回答「同一个没有 `write_files` 的 harness，A0 为什么能拿 45.06%」。
+>    - **判据**：若 A0 也是同一工具集、也是 0 次 `write_files`、靠 `editor` 落盘 ⇒ harness 对两臂公平，A1 的问题是**模型工具使用/指令跟随**；若 A0 用的 harness/prompt 不同（或 hook 不同）⇒ 先修成同口径再谈分数。
+> 3. **是协议适配 ⇒ 修**：给最小修法（例：system prompt 明写「可用工具只有 `editor` / `submit`…，禁止 `write_files`」；或 harness 侧把 `write_files` 映射到 `editor`）。**修完先让 A0 用同一份 prompt 跑 1 run 校准**（确认 45.06% 不掉），再跑 A1 run1-5；预注册判据后再跑，不许事后改。
+> 4. **是能力不行 ⇒ 接受**：修了协议仍低分，就如实写「Qwen3.5-2B 低于 MiniCPM5-2B」，附逐题证据，**不改 A0 的 45.06%±3.89%**。
+> 5. **交付**：`MEMORY_POSTTRAIN.md` 顶部一条（分类计数 · 公平性结论 · 选"修"还是"接受" · 下一步命令）+ 报告 `reports/report_posttrain_a1_writefiles_triage_zh.html`。
+
 > ## 🔴 2026-11-28 09:0x 用户令（最高优先 · 澄清定案 · 覆盖此前所有 A0/A5 口径表述）
 >
 > **用户澄清（逐字）**：
