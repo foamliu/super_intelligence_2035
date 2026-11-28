@@ -2,21 +2,23 @@
 
 WAITING: 0
 
-> 🔧 **心跳 · 2026-11-28 (R1167) — S2 内存实验 v4（data 主导）· 方案 E 持续达标 · step ~660 · CSV 列序纠正 · 待 2000 步验收**：
+> 🔧 **心跳 · 2026-11-28 (R1168) — S2 内存实验 v5（data 主导）· 方案 E 持续达标 · step ~835 · TB 精确 iter=350,783 · CSV 列序确认正确 · 待 2000 步验收**：
 > - **用户令**（20:0x）：data 主导 S2 内存实验与重启；驳回方案 D（不接受吞吐减半）；step ≤7.4s 硬指标
-> - **S2 config E（nw=2+no_mmap）live 实测**（iter 350,660 / step ~660）：
->   - step=6.96-7.23s ✅（≤7.4s）· 吞吐~565K ✅ · 0 OOM ✅ · 0 NaN ✅ · loss=1.485-1.520 ✅
->   - AnonPages：.12=694GB / .29=720GB · MemAvail：.12=1,121GB / .29=1,153GB · vmstat si/so=0（无活跃换页）
-> - **v4 纠正**：监控 CSV header 列序与实际数据不匹配（header 写 AnonPages@col6，实际 AnonPages@col10）。
->   纠正后增长率趋势：0.90→0.51→0.14→0.15→0.31→0.11→0.08→0.26 GB/step（非单调，有 COW 批次反弹，均值 ~0.15）
-> - **.29 swap 满**（7.8GB/8GB）但 si=0/so=0 → 崩溃残留，无活跃换页，不构成风险
-> - **投影 step 2000**：AnonPages ≈ 900-1,050GB · headroom ≈ 965-1,115GB → **不会 OOM**
-> - **ETA step 2000**：~2026-11-29 00:02（剩余 ~1,340 步 × 7.14s ≈ 159 min）
+> - **S2 config E（nw=2+no_mmap）live 实测**（iter 350,783 / step 783，TB 精确读取）：
+>   - step=6.79s ✅（≤7.4s，5316s/783步）· 吞吐~618K ✅（256×16384/6.79，≥S1 600K）· 0 OOM ✅ · 0 NaN ✅ · loss=1.50 ✅
+>   - AnonPages：.12=750GB（col10 确认）· MemAvail：.12=1,142GB · SwapFree=6.8GB/8GB · vmstat si/so=0（无活跃换页）
+> - **CSV 列序确认**：当前 monitor 脚本 header 与实际 grep 输出**一致**（col10=AnonPages 已验证）。
+>   v4 文档中的"CSV header bug"是对旧版脚本的分析，当前版本已修正。col10=AnonPages=750,030,572 kB ≈ 750 GB ✓
+> - **AnonPages 增长趋势**（每 ~73 步采样，998 行 CSV）：
+>   0.92→0.53→0.15→0.19→0.29→0.11→0.09→0.27→0.19 GB/step（非单调，COW 批次反弹，整体衰减）
+>   近期 3 段均值=0.18 GB/step（从初期 0.92 降至 ~0.18，COW 逐渐饱和）
+> - **投影 step 2000**：AnonPages ≈ 865-1,113GB（rate 0.10-0.30）· headroom ≈ 902-1,150GB → **不会 OOM**
+> - **ETA step 2000**：~2026-11-29 00:00（剩余 ~1,217 步 × 6.8s ≈ 138 min）
 > - **结论：方案 E 持续达标，S2 可做**。待 step 2000 正式验收后交付 pretrain 长跑
-> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v4（CSV 列序纠正表 + 纠正后 AnonPages 趋势 + 投影 + 交接块）
-> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12，PID 2529386）/ `/tmp/s2_mem_monitor.csv`（800+ 行）· WAITING=0
+> - **交付物**：`S2_OOM_MEMORY_PLAN.md` v5（CSV 列序确认 + step 835 实测趋势 + 投影 + 交接块）
+> - 监控脚本持续运行：`/tmp/s2_mem_monitor.sh`（.12）/ `/tmp/s2_mem_monitor.csv`（998 行）· WAITING=0
 
-> 📦 R1164~R1166 心跳（S2 内存实验 v3 · step 320→570 · AnonPages 630→694GB · 方案 E 达标 · CSV 列序纠正）已被 R1167 更新 → 见上
+> 📦 R1164~R1167 心跳（S2 内存实验 v3-v4 · step 320→660 · AnonPages 630→750GB · 方案 E 达标 · CSV 列序纠正）已被 R1168 更新 → 见上
 
 > 📦 R1161 心跳（S2 CRASHED · 只读 review · 4 项 fresh PASS）已归档 → daily-memories-data/2026-11-28.md
 
@@ -113,14 +115,13 @@ WAITING: 0
 ## 📊 进度快照（固定格式，每次唤醒必须更新）
 
 ```
-PHASE:        S2 内存实验 v3（data 主导）· 方案 E（nw=2+no_mmap）达标 · step ~450/2000 · AnonPages 趋平 ~665GB · 待 2000 步验收
-已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁;✅方案A补丁已应用;✅方案B 5/5 pre-blend DONE;✅TSV(180 shards);✅S2 OOM 定量归因+方案书;✅S2 内存监控部署(.12+.29);✅纠正定量模型(S1=666GB非1039GB);✅方案E(nw=2+no_mmap) live 实测达标(step≤7.4s/0 OOM/AnonPages趋平)
-当前动作:     R1165:S2 config E 运行中(iter 350,450) · 监控持续 · 更新 S2_OOM_MEMORY_PLAN.md v3 + MEMORY_DATA.md → commit+push
+PHASE:        S2 内存实验 v5（data 主导）· 方案 E（nw=2+no_mmap）达标 · step ~783/2000 · TB iter=350,783 · AnonPages 750GB · 待 2000 步验收
+已完成:       ✅PC-1~PC-5;✅方案F Bridge Edition(15文件);✅blendswitch All PASS zero_overlap=0;✅SWITCH_RUNBOOK.md;✅E2BIG诊断+补丁;✅方案A补丁已应用;✅方案B 5/5 pre-blend DONE;✅TSV(180 shards);✅S2 OOM 定量归因+方案书;✅S2 内存监控部署(.12);✅纠正定量模型(S1=666GB非1039GB);✅方案E(nw=2+no_mmap) live 实测达标(step=6.79s/吞吐618K/0 OOM/AnonPages 750GB@step783);✅CSV列序确认(col10=AnonPages);✅TB精确读取iter=350,783
+当前动作:     R1168:S2 config E 运行中(iter 350,783/step 783) · 监控持续(998行CSV) · 更新 S2_OOM_MEMORY_PLAN.md v5 + MEMORY_DATA.md → commit+push
 下一步:       ①等 step 2000 (ETA ~2026-11-29 00:00) 正式验收 ②验收通过后交付 pretrain 长跑监控 ③持续监控 AnonPages
-阻塞:         无(S2 运行正常 · step≤7.4s · 0 OOM · AnonPages 趋平)
+阻塞:         无(S2 运行正常 · step=6.79s≤7.4s · 吞吐618K≥S1 600K · 0 OOM · AnonPages 增长趋缓)
 ERROR_COUNT:  0
 未完成指令:   无(S2 内存实验进行中 · 待 2000 步验收)→WAITING=0
-未完成指令:   无(全部用户令已交付)→WAITING=0
 ```
 
 > 📦 唤醒1521-1531 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC巡检+Agent/IFM下载进度+Code-Reasoning重启+IFM多轮巡检,详见日文件）
