@@ -1,4 +1,47 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
+<!-- RUN_ID: 300 -->
+## RUN_ID 300 — **pretrain 线为何没执行 S2（只读 · 2026-11-28 11:1x · 用户令「查看进展」）**
+
+> 只读：不 kill / 不重启 / 不改文件。核实 pretrain agent 是否卡死、loop 是否还在唤醒。
+
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "== A. pretrain loop / cline 进程树 =="
+ps -eo pid,ppid,stat,etime,pcpu,args | grep -E '[b]aize_pretrain_loop|[b]aize_s2_switch|[s]2_switch_executor' | cut -c1-170
+P=$(pgrep -f 'cline.*cline_pretrain' | head -1)
+echo "  pretrain_cline_pid=$P"
+if [ -n "$P" ]; then
+  echo "  ppid=$(ps -o ppid= -p $P) etime=$(ps -o etime= -p $P) stat=$(ps -o stat= -p $P) cpu=$(ps -o pcpu= -p $P) wchan=$(cat /proc/$P/wchan 2>/dev/null)"
+  echo "  parent_chain:"; ps -o pid,ppid,args -p $(ps -o ppid= -p $P | tr -d ' ') 2>/dev/null | cut -c1-160
+fi
+echo
+echo "== B. pretrain loop 日志（尾 30 行）=="
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -n 30 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo
+echo "== C. 关键计数 =="
+L=/tmp/baize_pretrain_loop.log
+for pat in 'wake up' 'invoking cline' 'cline returned' '无可用 LLM 候选' 'llm_pick' 'S2' 'torchrun' 'E2BIG' 'Argument list too long'; do
+  echo "  [$pat] = $(grep -c -- "$pat" "$L" 2>/dev/null || echo 0)"
+done
+echo
+echo "== D. 最近 6 条非空日志 =="
+grep -v '^$' "$L" 2>/dev/null | tail -6 | cut -c1-200
+echo
+echo "== E. 关键文件 mtime / WAITING =="
+ls -l --time-style=+%F_%T "$RUN/MEMORY_PRETRAIN_2B.md" "$RUN/BAIZE_PRETRAIN_2B_TASK.md" 2>/dev/null
+grep -n '^WAITING' "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null || echo '  WAITING 行缺失'
+echo
+echo "== F. S2 executor / launch 日志 =="
+ls -l --time-style=+%F_%T /tmp/s2_switch_execution.log /tmp/baize_s2_launch.log /tmp/baize_s2_switch_train.log 2>/dev/null
+tail -n 6 /tmp/s2_switch_execution.log 2>/dev/null | cut -c1-200
+echo
+echo "== G. GPU =="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 300 | $(date '+%F %T') ==="
+```
 <!-- RUN_ID: 299 -->
 ## RUN_ID 299 — **全线只读体检：pretrain S2 / harness / posttrain / zhulong（2026-11-28 11:1x · 用户令「查看进展」）**
 
