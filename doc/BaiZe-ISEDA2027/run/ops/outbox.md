@@ -2810,3 +2810,70 @@ Actually, looking at[0m[2m the MEMORY line[0m
 （只读：未 kill / 未重启 / 未改任何文件）
 === DONE 300 | 2026-11-28 11:09:15 ===
 ```
+
+---
+
+## RUN_ID 301 · 2026-11-28 12:03:36 · host=`whag0pgpuap12` · exit=0
+
+**命令**
+```bash
+echo "[0] exec_host=$(hostname) date=$(date '+%F %T')"
+RUN=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run
+echo "== A. 训练进程 =="
+ps -eo pid,etime,args | grep -E '[t]rain\.sh|[p]retrain_gpt|[t]orchrun' | cut -c1-150 | head -6
+echo "== B. GPU =="
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | head -8
+echo "== C. pretrain loop / cline =="
+ps -eo pid,ppid,etime,pcpu,args | grep -E '[b]aize_pretrain_loop|[c]line.*cline_pretrain' | cut -c1-150
+echo "== D. loop 日志 =="
+ls -l --time-style=+%F_%T /tmp/baize_pretrain_loop.log 2>/dev/null
+tail -n 8 /tmp/baize_pretrain_loop.log 2>/dev/null | cut -c1-200
+echo "== E. MEMORY 顶部（是否已读到 data 通报）=="
+head -n 3 "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null
+ls -l --time-style=+%F_%T "$RUN/MEMORY_PRETRAIN_2B.md" 2>/dev/null
+echo "== F. S2 启动日志 =="
+ls -l --time-style=+%F_%T /tmp/baize_s2_launch.log 2>/dev/null
+tail -n 8 /tmp/baize_s2_launch.log 2>/dev/null | cut -c1-200
+echo "== G. ckpt =="
+cat /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints/latest_checkpointed_iteration.txt 2>/dev/null
+echo "（只读：未 kill / 未重启 / 未改任何文件）"
+echo "=== DONE 301 | $(date '+%F %T') ==="
+```
+
+**输出**
+```
+[0] exec_host=whag0pgpuap12 date=2026-11-28 12:03:36
+== A. 训练进程 ==
+  28497       04:33 /nas_train/app.e0031982/miniforge3/envs/py310/bin/python /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun --nnodes=2 --n
+  57352       04:11 node /home/app.e0031982/.npm-global/bin/cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.e0031982/code/super
+  57359       04:11 /home/app.e0031982/.npm-global/lib/node_modules/cline/bin/.cline --data-dir /nas_train/app.e0031982/.cline_data -c /nas_train/app.
+== B. GPU ==
+0, 0 %, 17488 MiB
+1, 100 %, 15871 MiB
+2, 100 %, 15859 MiB
+3, 100 %, 17286 MiB
+4, 100 %, 15775 MiB
+5, 100 %, 15781 MiB
+6, 100 %, 16509 MiB
+7, 100 %, 15797 MiB
+== C. pretrain loop / cline ==
+== D. loop 日志 ==
+== E. MEMORY 顶部（是否已读到 data 通报）==
+> 📎 **2026-11-28 11:1x · data 进展通报（供 pretrain 参考，非强制要求）**
+>
+> **一句话**：方案 C 全部完成、连续 fresh 复验 PASS；`blend_s2_preblend.tsv` 已 **13,847 → 180 shards / BLEND 14KB**，E2BIG 消除。data **WAITING=0**，无待答问题。
+-rw-r--r-- 1 app.e0031982 app.adm 35673 2026-11-28_12:03:36 /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md
+== F. S2 启动日志 ==
+-rw-r--r-- 1 app.e0031982 app.adm 4036 2026-11-28_08:06:45 /tmp/baize_s2_launch.log
+      2026-11-20 01:22     9728818  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1794982260.whag0pgpuap29.3800664.0
+      2026-11-18 13:56       45844  /nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/tb_logs/events.out.tfevents.1794980435.whag0pgpuap29.1801089.0
+  log tail  :
+[2026-11-28 08:06:35] rank0 @ 10.239.2.12（后台 ssh）
+[2026-11-28 08:06:45] rank1 @ whag0pgpuap12（前台）
+[2026-11-28 08:06:45] 结束：worker_rc=126 master_rc=126
+[2026-11-28 08:06:45] 日志：/tmp/baize_s1_baize2b_worker.log / /tmp/baize_s1_baize2b_master.log ；摘要：/tmp/baize_s1_baize2b.log
+  | /nas_train/app.e0031982/code/super_intelligence_2035/code/baize-llm/scripts/train.sh: line 282: /nas_train/app.e0031982/miniforge3/envs/py310/bin/torchrun: Argument list too long
+== G. ckpt ==
+350000（只读：未 kill / 未重启 / 未改任何文件）
+=== DONE 301 | 2026-11-28 12:03:37 ===
+```
