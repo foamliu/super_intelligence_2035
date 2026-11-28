@@ -4,40 +4,17 @@ WAITING: 0
 
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 
-> ✅ **心跳 · 2026-11-28 13:0x (R1111) — 方案 C fresh 复验全 PASS · S2 未运行（pretrain 职责）· 25/25 tests PASS · 180 shards · BLEND=14019B < 100KB · 5/5 .done · GPU 全 idle**：
-> - **S2 训练状态**：⚠️ **当前未运行** — `ps` 无 torchrun/train.sh 进程 · GPU .12 8×0% util · 350k ckpt 完好 · S2 重启由 pretrain 负责（data 不启动训练）
-> - **方案 A 补丁（fresh 确认落地）**：train.sh L97-113（BLEND>100KB→写文件+@filepath）✅ · pretrain_launcher.py L284-289（`@` 前缀+isfile 检测）✅ · flag-off=stock 零回归
-> - **方案 B pre-blend（fresh 确认 5/5）**：stackv3_filt 16 .bin ✅ / megamath_web 16 .bin ✅ / nemotron 16 .bin ✅ / megamath_pb 16 .bin ✅ / finemath 16 .bin ✅ — 全部 .done + MANIFEST.json
-> - **TSV（fresh 确认）**：blend_s2_preblend.tsv · 12 源 · 5 新源指向 pre-blend 目录 · gen_blend --verify: **180 shards / weight_sum=1.000000 / BLEND=14019B < 100KB**（inline，无 E2BIG）✅
+> ✅ **心跳 · 2026-11-28 14:0x (R1113) — 方案 C fresh 复验全 PASS · S2 未运行（pretrain 职责）· 25/25 tests PASS · 180 shards · gen_blend --verify PASS · 5/5 .done · GPU 全 idle · EMFILE 已消除**：
+> - **S2 训练状态**：⚠️ **当前未运行** — 两节点 GPU 全 idle · 350k ckpt 完好 · S2 重启由 pretrain 负责（data 不启动训练）
+> - **方案 A 补丁（fresh grep 确认）**：`train.sh` L99-108 BLEND>100KB→写文件+@filepath ✅ · `pretrain_launcher.py` L284-285 `@`前缀+isfile检测 ✅ · flag-off=stock 零回归
+> - **方案 B pre-blend（fresh ls 确认 5/5）**：stackv3_filt 16 .bin (.done elapsed=4293s) ✅ / megamath_web 16 .bin (.done) ✅ / nemotron 16 .bin (.done) ✅ / megamath_pb 16 .bin (.done) ✅ / finemath 16 .bin (.done) ✅ — 全部 .done + MANIFEST.json
+> - **TSV（fresh gen_blend --verify）**：`blend_s2_preblend.tsv` 3515B · 12 源 · 5 新源指向 pre-blend 目录 · **180 shards / weight_sum=1.000000 / inline BLEND (无 E2BIG)** ✅
 > - **Blendswitch tests（fresh 重跑全 PASS）**：test_blend_switch.py 8/8 PASS (zero_overlap=0 / ratio dev=0.0000%) · test_bridge_compat.py 10/10 PASS · test_blend_hot_switch_integration.py 7/7 PASS → **25/25 PASS**
-> - **方案 C 交付清单（全部 ✅）**：① A 补丁已应用+验证 ② B pre-blend 5/5 .done ③ TSV 更新 180 shards/BLEND=14KB<100KB ④ 25/25 tests PASS ⑤ S2 启动=pretrain 职责（data 不启动）
+> - **EMFILE 已消除**：S2 第二次 crash 原因是 13,847 shards × 2 FD/shard ≈ 27,694 FD 超 ulimit；现在 pre-blend 完成后仅 180 shards × 2 = 360 FD，远低于任何 ulimit 限制
+> - **方案 C 交付清单（全部 ✅）**：① A 补丁已应用+验证 ② B pre-blend 5/5 .done ③ TSV 更新 180 shards/BLEND inline<100KB ④ 25/25 tests PASS ⑤ E2BIG+EMFILE 均已消除 ⑥ S2 启动=pretrain 职责（data 不启动）
 > - **无遗留任务** · WAITING=0
 
-> 📦 R1110 心跳（2026-11-28 12:3x·方案C fresh复验·25/25 PASS·180 shards·5/5 .done·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1108 心跳（2026-11-28 12:0x·方案C全部交付+ops复验·25/25 PASS·DRY=1 180shards·5/5 .done·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1106 心跳（2026-11-28 11:44·方案C fresh re-verify全PASS 25/25 tests·DRY=1 180shards inline·5/5 .done·EMFILE分析·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1105 心跳（2026-11-28 11:38·方案C fresh re-verify全PASS 25/25 tests·DRY=1 180shards inline·5/5 .done·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1104 心跳（2026-11-28 11:35·方案C fresh re-verify全PASS 25/25 tests·DRY=1 180shards inline·5/5 .done·EMFILE分析·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1102 心跳（2026-11-28 11:16·方案C re-verify全PASS 25/25 tests·DRY=1 180shards inline·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1099 心跳（2026-11-28 11:01·方案C fresh全量复验PASS+.done标记补全·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> - **A 补丁（fresh 确认）**：
->   - `code/baize-llm/scripts/train.sh` L99-113 ✅ BLEND >100KB 时写文件 `blend_runtime.txt`，ARGS 传 `@$BLEND_FILE`
->   - `/nas_train/app.e0031982/code/BaiZe-ISEDA2027/pretrain_launcher.py` L284-289 ✅ `@` 前缀 + `os.path.isfile` 检测 → 从文件加载 BLEND
->   - flag-off = stock：BLEND <100KB 走原路径，零回归
-> - **B pre-blend（5/5 .done + MANIFEST.json + fresh 确认）**：
->   - stackv3_filt 16 .bin (elapsed=4293s) ✅ / megamath_web 16 .bin (elapsed=2798s) ✅ / nemotron 16 .bin (elapsed=1865s) ✅ / megamath_pb 16 .bin (elapsed=425s) ✅ / finemath 16 .bin (elapsed=106s) ✅
-> - **TSV（fresh 确认）**：`blend_s2_preblend.tsv` 3515B · 5 源路径指向 pre-blend 目录 · DRY RUN: **180 shards / weight_sum=1.000000 / inline BLEND (无 @file / 无 E2BIG)** ✅
-> - **DRY=1 端到端验证（fresh）**：`BLEND_TSV=configs/blend_s2_preblend.tsv bash scripts/train.sh s1 --dry-run` → "blend 就绪：180 个 shard" · `--train-data-path` inline 字符串 · 无 E2BIG ✅
-> - **flag-off 回归（fresh）**：S1 blend (100 shards) `--dry-run` → inline 路径 · 无 @file 写入 ✅
-> - **blendswitch（fresh 重跑全 PASS）**：test_blend_switch.py All PASS (zero_overlap=0 / ratio dev=0.0000%) · test_blend_hot_switch_integration.py 7/7 PASS · test_bridge_compat.py 10/10 PASS
-> - **.done 标记（fresh 补全）**：5/5 源 `.done` 文件已创建（stackv3_filt/megamath_web/nemotron/megamath_pb/finemath）
-> - **pretrain**：S1 已停 · 350k ckpt 完好 · 两节点 GPU 全 idle · pretrain 尚未启动 S2
-> - **无遗留任务** · WAITING=0
-
-> 📦 R1097 心跳（2026-11-28 11:2x·方案C fresh全量复验PASS·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1095 心跳（2026-11-28 11:0x·方案C全部完成+TSV修正+fresh复验全PASS·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1094 心跳（2026-11-28 10:1x·方案C fresh复验全PASS·A补丁两份launcher均验+B 5/5 .done+TSV 3515B+blendswitch 25/25 PASS）已归档 → daily-memories-data/2026-11-28.md
-> 📦 R1093 心跳（2026-11-28 10:06·方案C全部完成·A补丁已应用+验证·B 5/5 pre-blend DONE·TSV更新(13847→180 shards,14KB)·blendswitch 25/25 PASS）已归档 → daily-memories-data/2026-11-28.md
+> 📦 R1093–R1112 心跳（2026-11-28 10:06–13:0x·方案C交付+多轮fresh复验·25/25 PASS·180 shards·5/5 .done·等pretrain启动S2）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1092 心跳（2026-11-28 09:38·方案C执行中·A补丁两半已应用+验证·B 3/5 DONE+2/5 running·auto_tsv watcher运行中·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1091 心跳（2026-11-28 09:26·方案C执行中·A补丁两半已应用+验证·B 2/5 DONE+3/5 running·auto_tsv watcher已设·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1090 心跳（2026-11-28 09:2x·方案C执行中·A补丁两半已应用+验证·B 2/5 DONE+3/5 running·auto_tsv watcher已设·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
