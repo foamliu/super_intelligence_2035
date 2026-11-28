@@ -33,7 +33,11 @@ SHARD_DOMAINS = {
     # shard A 11/06 放宽: 加 synthesis/synopsys/tcl/verilog/systemverilog/rtl/synthesis/sdc
     # (数字前端工程师少用 cline, 旧过滤词只命中 53 session, 放宽后 11/05 新扫描命中 187)
     "A": ("digital|verification|pnr_signoff|eda_other",
-          "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell"
+          # r1554: 移除 bare |rc —— 实测 124400 全量扫描里 bare rc: token=0 session，
+          # 而 $6 ~ /rc/ 子串匹配命中 2490 session 全是 C 域 drc (19172 个 drc token)，
+          # 即 rc 子串只产生跨域漂移、0 genuine A 命中。RTL Compiler 真用例若出现会被
+          # synthesis/synopsys 等放宽词经相关性兜住。DEBT r1550 (drc→rc 子串误匹配) 收口。
+          "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|pt_shell"
           "|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad"),
     "B": ("spice_sim|characterization",
           "hspice|finesim|siliconsmart|spectre|ngspice|simulator|spice|custom_sim"),
