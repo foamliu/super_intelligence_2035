@@ -2,17 +2,17 @@
 
 WAITING: 0
 
-> ✅ **心跳 · 2026-11-28 (R1142) — S2 RUNNING · 只读 review · 4 项确认完毕（fresh 实跑）· SEED 纠错已应用**：
-> - **① S2 blend TSV ✅**：`blend_s2_preblend.tsv` 3,805B · 12 源 · prop sum=1.000000(实测) · web=0.40/code=0.40/math=0.20 · 180 shards(11×16+ufw_zh×4=176+4=180 实测) · 训练命令 per-shard 权重与 TSV prop 逐源核对一致(en_v1_4:0.021875×16=0.35✅ / finemath:0.000313×16≈0.005✅ / nemotron:0.004188×16≈0.067✅ / megamath_web:0.003750×16=0.060✅ 等)
+> ✅ **心跳 · 2026-11-28 (R1143) — S2 RUNNING · 只读 review · 4 项确认完毕（R1143 fresh 实跑 test_blend_switch.py 8/8 + integration 7/7）· SEED 纠错已应用**：
+> - **① S2 blend TSV ✅**：`blend_s2_preblend.tsv` · 12 源 · **prop sum=1.000000(R1143 python 实测)** · **web=0.40/code=0.40/math=0.20(实测)** · 180 shards(11×16+ufw_zh×4=180) · 5 新源全指向 pre-blend 目录
 > - **② 零重叠方案（同 SEED=1234 + 新源天然零重叠，无 cursor offset shim）✅**：
->   - **同 SEED=1234 = 零重叠 ✅**（📌 2026-11-28 用户纠错）：同 seed → 同 shuffle_index 排列 → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。PID 1322376 `--seed 1234`（=S1 同 seed）确认正确（CLI arg 实测）。**换 SEED 反而破坏零重叠**。
->   - **新源天然零重叠 ✅**：5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web)在训练命令 --train-data-path 中确认，S1 未消费→overlap=0
->   - **cursor offset shim ✅ 未启用**：`/proc/1322376/environ` 实测 `BLEND_CURSOR_OFFSETS_JSON=`（空字符串）→ shim 不生效 → 纯 S2 冷切换确认
+>   - **同 SEED=1234 = 零重叠 ✅**（📌 2026-11-28 用户纠错）：同 seed → 同 shuffle_index 排列 → S2 从 S1 消费过的位置继续往后读 → 天然跳过已消费样本 → 零重叠。**换 SEED 反而破坏零重叠**。
+>   - **新源天然零重叠 ✅**：5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web) S1 未消费→overlap=0
+>   - **cursor offset shim ✅ 未启用**：`BLEND_CURSOR_OFFSETS_JSON=`（空字符串）→ 纯 S2 冷切换确认
 >   - **SEED=5678 旧建议已清除**：TSV L18-20 注释已修正 · 旧警告已撤销
-> - **③ blendswitch 验证 25/25 PASS ✅**（R1142 fresh 实跑）：standalone 8/8 + integration 7/7 + bridge 10/10 · zero_overlap=0 · ratio max_dev=0.0087%(standalone)/0.0027%(integration) · flag-off byte-identical · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
-> - **④ 训练健康 ✅**：PID 1322376 alive etimes≈2693s(~45min) · `--seed 1234` 确认 · pretrain MEMORY 报 iter>350k/700k step~7.0s loss~1.55 0NaN/0skip · GPU .29+.12 16×98-100%
-> - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · WAITING=0
-> - 📌 **SEED=5678 残留**：data 线文件（TSV/报告/MEMORY）已全部修正或标注撤销；`MEMORY_PRETRAIN_2B.md` L48 仍提「换SEED」（待 pretrain 线清理）
+> - **③ blendswitch 验证 fresh PASS ✅**（R1143 本次实跑）：standalone **8/8 PASS** + integration **7/7 PASS** · zero_overlap=0 · ratio max_dev=0.0000%(standalone)/0.0027%(integration) · flag-off byte-identical · real S1→S2 7→12 mapping zero overlap=0 · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制（纯冷切换）
+> - **④ 训练健康 ✅**：pretrain MEMORY #3576(16:49) 报 iter=350330/700k(50.05%) · step 6955-7174ms avg~7043ms all<7.4s gate✅ · loss 1.506-1.529 stable~1.517 · 0NaN/0skip✅ · LR=1.65e-4 re-warmup 16.5%✅ · GPU .29+.12 16×97-100%✅ · ckpt loaded from iter_0350000✅
+> - **data 侧只读 review 完毕** · 未 kill/未改训练文件/未启动操作 · verify_results.json 已 git checkout 还原 · WAITING=0
+> - 📌 **SEED=5678 残留**：data 线文件已全部修正；`MEMORY_PRETRAIN_2B.md` L48 仍提「换SEED」（待 pretrain 线清理）
 
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 崩溃根因链已查明 — **首次 12:10 崩溃 = shim bug（已修复）**，后续崩溃 = 僵尸进程导致 NCCL Duplicate GPU。
