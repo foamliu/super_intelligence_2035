@@ -2,6 +2,17 @@
 
 WAITING: 0
 
+> ✅ **心跳 · 2026-11-28 (R1139) — S2 RUNNING · 只读 review · 4 项确认完毕**：
+> - **① S2 blend TSV ✅**：`blend_s2_preblend.tsv` 12 源 · prop sum=1.000 · web=0.40/code=0.40/math=0.20 · 180 shards(11×16+ufw_zh×4) · BLEND~14KB<100KB
+> - **② 零重叠方案（D+E，无 cursor offset shim）**：
+>   - **E 新源天然零重叠 ✅**：5 新源(stackv3_filt/megamath/finemath/nemotron/megamath_web)在 blend 中，S1 未消费→overlap=0
+>   - **D 换 SEED ⚠️ 未生效**：运行中训练 `--seed 1234`（=S1 同 seed），非 TSV 注释所述的 5678；7 共享源(en_v1_4/ufw_l1_en_hq/ufw_zh/code_l2/code_l3/math_l1/math_l3)同 seed+无 cursor offset→**将存在文档级重叠**
+>   - **cursor offset shim ✅ 未启用**：`/proc/1322376/environ` 确认 `BLEND_CURSOR_OFFSETS_JSON=`(空)
+> - **③ blendswitch 验证 25/25 PASS ✅**（本次 fresh 实跑）：standalone 8/8 + integration 7/7 + bridge 10/10 · zero_overlap=0 · ratio max_dev=0.0087% · flag-off byte-identical · 注：此验证针对 Plan F(cursor offset)机制，当前 S2 未使用该机制
+> - **④ 训练健康 ✅**：.12 8×GPU 100%/75GB/57-62°C · PID 1322376 alive ~22min · ckpt=iter_0350000 · pretrain MEMORY #3574 报 iter=350100/700k step=6945ms loss=1.527 0NaN/0skip
+> - **data 侧只读 review 完毕** · 未 kill/未改文件/未启动操作 · WAITING=0
+> - ⚠️ **需提请注意**：D(换SEED)未生效→7 共享源存在文档重叠；若需严格零重叠，需启用 cursor offset shim(BLEND_CURSOR_OFFSETS_JSON)或改 seed
+
 > 🎯 **方案 C ✅ 全部交付完成** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 已交付。S2 训练由 pretrain 负责（data 不启动训练）。
 > 🔧 **S2 献计献策（08:2x 用户令）**：S2 崩溃根因链已查明 — **首次 12:10 崩溃 = shim bug（已修复）**，后续崩溃 = 僵尸进程导致 NCCL Duplicate GPU。
 > 🔧 **shim bug 已修复（12:12）**：旧版 `_patched_build_indices` 访问 `self.dataset_index`，但 `_build_indices()` 在 `__init__` 中 **先于** `self.dataset_index` 赋值调用 → AttributeError。修复：改用 `result[0]`/`result[1]`（`_orig_build_indices` 返回值）。两份 shim 已同步。
