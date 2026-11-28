@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-29 · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; --ok:#1a7f37; --warn:#9a6700; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.72; font-size:15px; }
+  .wrap { max-width:980px; margin:0 auto; padding:30px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:26px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 7px; font-size:24px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:10px; font-size:13px; opacity:.92; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  h3.sec { color:var(--primary); border-bottom:2px solid #d8e3ef; padding-bottom:6px; margin:30px 0 16px; font-size:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:14px 0;
+          box-shadow:0 1px 3px rgba(0,0,0,.04); }
+  .card h2 { font-size:16.5px; margin:0 0 10px; color:var(--primary); line-height:1.5; }
+  table.kv { border-collapse:collapse; width:100%; font-size:14px; }
+  table.kv th, table.kv td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  table.kv th { width:112px; background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12.5px; background:#e8f0fe; color:#1a4d8f; }
+  .tag.sci { background:#eef7ee; color:#1a7f37; }
+  details { margin:10px 0 2px; border:1px solid #d8e3ef; border-radius:8px; padding:8px 12px; background:#fbfdff; }
+  details summary { cursor:pointer; font-weight:600; color:#1a4d8f; }
+  details.voice-ready { background:#faf7ff; border-color:#e2d6f7; }
+  details.voice-ready summary { color:#5b3a99; }
+  details.news-ready { background:#f7fbff; border-color:#cfe3fb; }
+  details.news-ready summary { color:#0b5394; }
+  ul { margin:8px 0 4px 20px; padding:0; }
+  li { margin:4px 0; }
+  .small { font-size:13.5px; color:var(--muted); }
+  .ok { color:var(--ok); font-weight:600; }
+  .warn { color:var(--warn); font-weight:600; }
+  code { background:#f0f3f6; padding:1px 5px; border-radius:4px; font-size:13px; }
+  footer { margin-top:36px; padding-top:14px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-29</h1>
+  <div class="sub">🌅 新一天首窗（00:00）· 今日进度 <b>5 / 5</b>（A 轨满，守「宁少勿凑」）· 数据源 arXiv</div>
+  <div class="meta">生成时间：2026-11-29 00:0x CST（r290）｜ 双轨：A 最新论文 50% · B 经典论文 50%（B 累计 476）｜ 作者网 443（X 已核验 172）｜ 作者信 197（实质回信 8 信 / 7 人 ≈4.1%）</div>
+</header>
+
+<div class="note">
+  <b>免责</b>：推荐 = <b>待读线索，非结论</b>；所有数字均为<b>论文作者自报、本线未复现</b>。标题照抄英文原题（不改写/不翻译），摘要为自写中文一句话。
+  本期 5 篇全部经 arXiv API <code>200</code> + <code>application/atom+xml</code> + 真实 <code>published</code> 校验，且 abs 页 <b>5/5 <code>200</code></b>。
+</div>
+
+<h3 class="sec">A 轨 · 今日推荐（5 / 5）</h3>
+
+<div class="card">
+  <h2>1 · Mixture-of-Loops Transformer</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34923">Mixture-of-Loops Transformer</a></td></tr>
+    <tr><th>中文一句话</th><td>循环 Transformer 复用共享层换表达力但牺牲效率；MoLT 用「把 KV 当作跨层/跨圈可选复用的记忆」的 <b>Mixture-of-Loops Attention</b> 重做相邻圈衔接：<b>MoLT-R</b> 保留残差流并跨圈读局部 KV，<b>MoLT-KV</b> 从嵌入重启、读当前圈局部 KV + 前圈记忆 KV 提效，配合 loop forcing 并行训练实现单趟 MoL 解码；<b>U-shaped MoLT</b> 把记忆构建与预测读出分离、跳过无用解码遍历。400B token 预训练下 U-MoLT 在 700M/1.5B dense 与 3B MoE 上均优于 OLMo3（700M 验证 CE token 效率 <b>1.7×</b>；3B MoE 十域困惑度降 <b>0.75</b>、十任务准确率 <b>+2.1pp</b>）；Qwen3.5-0.8B-Base 上 100B token 继续预训练 11 域 CE 全降、平均 token 效率 <b>1.4×</b>；S 规模（~113M）推理延迟 <b>996.6ms ≈ OLMo3 1000.6ms</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Lianghui Zhu · Shijie Wang · Xinggang Wang · Jinze Bai · Bo Wang · Xiang Bai（6 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T18:58:53Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.LG</code> ｜ 🏷 <b>借鉴</b>（pretrain 架构选型 · 长上下文 · 训练效率）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34923">arXiv:2611.34923</a> ｜ 代码 <a href="https://github.com/hustvl/MoLT">hustvl/MoLT</a></td></tr>
+    <tr><th>推荐理由</th><td>与 pretrain 的「深度复用 / 有效容量 vs 吞吐」直接相关。可落地：① 把「循环层数 × 是否跨圈共享 KV」作为架构对照臂记录 CE token 效率；② 长上下文阶梯里加一条 looped / MoL 对照，报告同吞吐下的困惑度。⚠️ 结论来自 400B / 100B token 规模，跨规模迁移须实测；「CE token 效率 1.7×」是作者对 OLMo3 的同口径比较，不能跨 harness 直接引用。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>2 · Tracking Any Point with Agentic Visual Reasoning</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34943">Tracking Any Point with Agentic Visual Reasoning</a></td></tr>
+    <tr><th>中文一句话</th><td>通用 VLM 已在目标检测/视频识别超专家模型，但「点对应」需像素级定位同一物理表面点（外观变化或消失重现时尤难）；<b>AgenTAP</b> 让 VLM agent 直接预测点坐标与可见性并主动在视频中推理——从自身估计出发自主选择检查位置、用证据核验点身份并修正；GPT-6 Astra 下在点定位与可见性预测上超过专家模型且无需点对应专项微调；并用于「消失后重认 + 重连碎片轨迹」，构建长时第一视角视频 3D 点轨迹数据集 <b>EgoTAP-4D</b>，加入 D4RT 训练提升平均 3D 跟踪。</td></tr>
+    <tr><th>作者 / 机构</th><td>Xuweiyi Chen · Jin Yao · Linzhan Mou · … · Zezhou Cheng（共 11 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T18:59:58Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.CV</code> ｜ 🏷 <b>借鉴</b>（vision agentic · harness）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34943">arXiv:2611.34943</a></td></tr>
+    <tr><th>推荐理由</th><td>示范「把 VLM 当 agent 主动取证」而非一次性读图，与 vision 线的「agent 当 SUT」评测形态一致。可落地：在波形/版图类需要「同一物理对象跨图追踪」的任务里，把「自主选择检查区域 + 用证据核验」做成可观测的 trace 字段，便于复盘。⚠️ 依赖 GPT-6 Astra 闭源模型，开源可复现性有限；结论不能直接迁移到 EDA 视觉任务。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>3 · Can image generation help visual reasoning? An empirical study</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34935">Can image generation help visual reasoning? An empirical study</a></td></tr>
+    <tr><th>中文一句话</th><td>用「先生成辅助图再连同原图作答」实测「在图像中思考」是否真有用：<b>13 个 VLM-生成器配对</b>下生成平均使准确率降 <b>3.7pp</b>、10 个任务中 <b>9 个下降</b>；两个统一模型 BAGEL / Janus-Pro-7B 各在 8 个任务上掉分；VSTAR 上同一规划提示外加生成图反而降 <b>10.47pp</b>；ChartQAPro / MathVista 始终低于不生成基线，仅 ERQA 连续编辑 10 次后 <b>+3pp</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Xueyang Yu · Yifan Jing · Taiming Lu · … · Zhuang Liu（共 8 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T18:59:31Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.LG</code> ｜ 🏷 <b>科普</b> + 借鉴（vision 评测臂）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34935">arXiv:2611.34935</a></td></tr>
+    <tr><th>推荐理由</th><td>对「让多模态模型先画图再推理」的流行做法给出<b>负结果</b>，提醒评测不能只看个例。可落地：vision 线若要加「生成辅助图」对照臂，必须在同题/同判分下报告整体准确率变化，而不是挑成功案例。⚠️ 负结果依赖具体 13 对模型，不构成「图像生成永远无用」的普适结论。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>4 · DRBench Pro: A Knowledge-Centric Benchmark for Professional Deep Research Agents</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34852">DRBench Pro: A Knowledge-Centric Benchmark for Professional Deep Research Agents</a></td></tr>
+    <tr><th>中文一句话</th><td>现有深度研究 agent 基准多评报告质量，缺「覆盖了哪些研究方向、挖得多深」的知识中心评测；<b>DRBench Pro</b> 用自动流水线从维基百科构建本地知识树、采样子图生成查询与有证据支撑的评分细则（每条细则对应树中一个关系、保留知识结构），据此测「主要方向上的广度」与「相关知识链上的深度」并取几何平均；含 <b>24 域 144 例、44,102 条细则</b>，评 16 个深度研究 agent（最好者总覆盖 <b>57.04%</b>），细则判分与人工高度一致且排名跨指标配置稳定。</td></tr>
+    <tr><th>作者 / 机构</th><td>Han Huang · Yuchen Yan · Xingyu Wu · … · Yongliang Shen（共 8 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T18:25:30Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.CL</code> ｜ 🏷 <b>借鉴</b>（harness 评测设计 · zhulong）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34852">arXiv:2611.34852</a> ｜ 代码 <a href="https://github.com/ZJU-REAL/DRBenchPro">ZJU-REAL/DRBenchPro</a></td></tr>
+    <tr><th>推荐理由</th><td>「知识树 → 子图 → 评分细则」的构造思路，可借鉴给 zhulong / harness 做<b>结构可追溯</b>的评测：每条细则挂到具体关系上，便于审计为什么给分。可落地：把「广度（覆盖方向数）× 深度（链长）」作为报告的两个正交维度，替代单一总分。⚠️ 域是百科知识而非 EDA，需重新构造领域知识树。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>5 · Repairing the Trustworthiness of Distilled Language Models</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.34831">Repairing the Trustworthiness of Distilled Language Models</a></td></tr>
+    <tr><th>中文一句话</th><td>知识蒸馏让小模型可部署，但压缩即使保持下游性能也会带来「可信性回归」，而直接偏好优化可能改掉从教师继承的能力；作者提出基于<b>近端 Bregman 响应函数（PBRF）</b>的定向修复：用替代代理数据估曲率以摆脱对原蒸馏语料的依赖，再用<b>几率比目标</b>扩展到偏好监督（用「偏好/非偏好回答对」在约束改动幅度下修复）；对预训练与后训练蒸馏模型均提升目标可信行为（可信性回归最多改善 <b>8%</b>、困惑度下降 <b>&lt;1%</b>），是「再蒸馏 / 无约束偏好优化」之外的实用替代。</td></tr>
+    <tr><th>作者 / 机构</th><td>Kumar Shubham · Devendra Vyas · Vidushi Agarwal · Jayin Khanna · Prathosh AP（5 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-25（arXiv v1；<code>published=2026-11-25T18:12:20Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.CL</code> ｜ 🏷 <b>借鉴</b>（posttrain · 蒸馏小模型）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.34831">arXiv:2611.34831</a></td></tr>
+    <tr><th>推荐理由</th><td>对 posttrain 的「蒸馏后性能保持但行为退化」给出一个<b>不动原语料</b>的修复路径，且用代理数据估曲率这一点对「原蒸馏语料不可得」的现实约束有用。可落地：把「可信性回归」和「下游性能」分开报，修复前后各测一次。⚠️ 可信性定义依赖具体任务与判分，迁移到 EDA 任务需先定义可验证的可信性指标。</td></tr>
+  </table>
+</div>
+
+<details class="news-ready">
+<summary>📰 news_ready · 可发头条（1 条）</summary>
+<ul>
+  <li><b>大众标题</b>：让 AI「先画图再答题」，反而答得更差？</li>
+  <li><b>一句话事实</b>：一项对 13 组「视觉语言模型 + 图像生成器」的实测发现，生成辅助图后平均准确率反降 3.7 个百分点，10 个任务中 9 个变差（作者自报）。</li>
+  <li><b>可用数字</b>：平均 −3.7pp → 摘要；10 任务中 9 个下降 → 摘要；VSTAR −10.47pp → 摘要；ERQA 连续编辑 10 次 +3pp → 摘要。</li>
+  <li><b>配图</b>：本论文内图（Figure 1 主结果对比），说明与页码见 PDF；<b>出处</b>：Xueyang Yu et al., Can image generation help visual reasoning?, arXiv 2611.34935。</li>
+  <li><b>一手信源</b>：Xueyang Yu 等（前 3：Xueyang Yu, Yifan Jing, Taiming Lu）｜ <a href="https://arxiv.org/abs/2611.34935">arXiv abs</a></li>
+  <li><b>话题点</b>：「AI 会思考图像」是热门叙事，这项负结果提供了一个可核验的反例。</li>
+  <li><b>不适合发的理由</b>：属实证研究、非发布事件；结论依赖具体 13 对模型，不能推广成「图像生成无用」。</li>
+</ul>
+</details>
+
+<h3 class="sec">🎯 对各线的可执行建议（6 线齐全，无建议显式写「无」）</h3>
+<div class="card">
+  <ul>
+    <li><b>pretrain</b>（1 条）：把「循环层数 × 是否跨圈共享 KV（MoLT-R / MoLT-KV）」作为架构对照臂，报告<b>同吞吐下的 CE token 效率</b>；长上下文阶梯（32K→64K→128K）加一条 looped / MoL 对照，不改主线配方，只加对照。</li>
+    <li><b>vision</b>（2 条）：
+      <ol>
+        <li>若要加「先生成辅助图再推理」对照臂，必须在同题 / 同判分 / 同参数下报<b>整体准确率变化</b>（本文 13 对模型平均 −3.7pp），禁止只挑成功案例。</li>
+        <li>借鉴 AgenTAP：把 VLM 当 agent 主动取证（自选检查区域 + 证据核验）做成可观测 trace 字段，便于复盘「它到底看了哪」。</li>
+      </ol>
+    </li>
+    <li><b>harness</b>（2 条）：
+      <ol>
+        <li>借鉴 DRBench Pro 的「知识树 → 子图 → 评分细则」：每条细则挂到具体关系/知识点上，报告「广度 × 深度」两个正交维度，替代单一总分。</li>
+        <li>评测蒸馏小模型时，把<b>可信性回归</b>与<b>下游性能</b>分开报（Repairing Distilled LMs 的核心动机）。</li>
+      </ol>
+    </li>
+    <li><b>data</b>（1 条）：把「初始化种子 + 剪枝后重训协议」纳入实验记录（Lottery Ticket 提示可训子网与初始化强相关），避免把初始化运气当架构收益。</li>
+    <li><b>zhulong</b>（1 条）：Lite-500 报告可增「知识/任务覆盖广度 × 知识链深度」两维，并对每条判分说明它锚定到哪个知识点，提升可审计性（借 DRBench Pro 思路，<b>需重建 EDA 领域知识树</b>）。</li>
+    <li><b>designflow</b>（1 条）：造题时给每条断言标注「它验证的是哪个物理/设计关系」，对齐 DRBench Pro「细则 ↔ 关系」的可追溯做法；<b>只增断言、不放宽阈值、不降级题目</b>。</li>
+  </ul>
+</div>
+
+<h3 class="sec">附录 · 检索与去重（可核验）</h3>
+<div class="card">
+  <ul>
+    <li><b>取源</b>：<code>export.arxiv.org/api/query</code>，按 <code>cat:cs.CL|cs.LG|cs.AR|cs.SE|cs.CV|cs.AI</code> + <code>sortBy=submittedDate&sortOrder=descending</code>；六查询均 <code>200</code> + <code>application/atom+xml</code>（每查询 8 entries，间隔 ≥3s）。</li>
+    <li><b>窗口</b>：72h（<code>published</code> 上界 <code>2026-11-25T18:59:58Z</code>，距本窗约 50h &lt; 72h；arXiv 周末公告滞后已如实标注）。</li>
+    <li><b>元数据</b>：五篇 <code>published</code> 逐字 2026-11-25T18:58:53Z / 2026-11-25T18:59:58Z / 2026-11-25T18:59:31Z / 2026-11-25T18:25:30Z / 2026-11-25T18:12:20Z；主分类 cs.LG / cs.CV / cs.LG / cs.CL / cs.CL。</li>
+    <li><b>abs 页</b>：<b>5/5 <code>200</code></b>；主分类取自各 abs 页（与 API <code>primary_category</code> 一致）。</li>
+    <li><b>去重</b>：五个 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> 收录前均 <b>0 命中</b>；同批候选 <code>2611.34920</code> / <code>2611.34617</code> / <code>2611.33943</code> / <code>2611.34934</code> 因相关性或篇幅取舍未收，已核不在表内。</li>
+    <li><b>B 轨核验</b>（本窗 3 条）：arXiv API + abs 页 + OpenAlex 各 3/3 <code>200</code>（Deep Compression 9,997 / Lottery Ticket 3,391 / Taming Transformers 5,237；查询日 2026-11-29）；三 ID 条目级查重均 0 命中。</li>
+    <li><b>网络</b>：arXiv <code>200</code>、OpenAlex <code>200</code>、X 经代理 <code>200</code>（@songhan_mit / @jefrankle / @robrombach）、GitHub <code>200</code>；SMTP <code>SENT OK 00:05:00</code>、IMAP <code>LOGIN OK</code> / 71 封。</li>
+  </ul>
+</div>
+
+<footer>
+  research 线 · <code>research/daily/2026-11-29.html</code> ｜ 自包含单文件（内联 CSS、零外部资源）｜ 生成于 2026-11-29 00:0x CST（r290）<br>
+  本期（r290）：A 轨 <b>5/5</b> · B 轨 <b>+3 → 476</b> · 作者网 <b>+3 → 443</b>（X 172）· 作者信 <b>+1 → 197</b> · 实质回信 <b>8 信 / 7 人 ≈4.1%</b> · 📰 news_ready <b>1</b> · 🗣 voice_ready <b>0</b>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+Dear Professor Frankle,
+
+I am Yang Liu, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/.
+
+I read The Lottery Ticket Hypothesis while studying why sparse subnetworks in our small-model training fail to reproduce dense accuracy. Your finding that winning tickets under 10-20% of the original size retrain to comparable accuracy, and above that size learn faster, is the baseline I keep returning to.
+
+Three questions where your experience would change how we set up ablations:
+
+1. How sensitive is ticket identification to the learning-rate warmup and total iteration budget during the pruning rounds? With shorter warmup, do tickets still transfer?
+2. For structured sparsity (whole channels/blocks) instead of element-wise masks, did the same 10-20% threshold hold, or does it shift?
+3. Your evaluations focus on MNIST/CIFAR-10. On harder or non-stationary targets, is the initialization lottery still the dominant factor, or does data order dominate?
+
+Any pointers to follow-up work would help us avoid dead ends.
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

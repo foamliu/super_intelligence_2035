@@ -5744,3 +5744,8 @@
 | 2026-11-28 | 2611.33346 | NEVA: Natural-Language Co-Evolution and Validation of Microarchitectures | cs.AR | 收录 |
 | 2026-11-28 | 2611.34777 | When Every Rollout Fails: Splicing Learner-Conditioned Options into Long-Horizon Agent RL | cs.LG | 收录 |
 | 2026-11-28 | 2611.34813 | Solve Vision with Code: Coding Agents Are Stronger Visual Reasoners Than Video Models | cs.CV | 收录 |
+| 2026-11-29 | 2611.34923 | Mixture-of-Loops Transformer | cs.LG | 收录 |
+| 2026-11-29 | 2611.34943 | Tracking Any Point with Agentic Visual Reasoning | cs.CV | 收录 |
+| 2026-11-29 | 2611.34935 | Can image generation help visual reasoning? An empirical study | cs.LG | 收录 |
+| 2026-11-29 | 2611.34852 | DRBench Pro: A Knowledge-Centric Benchmark for Professional Deep Research Agents | cs.CL | 收录 |
+| 2026-11-29 | 2611.34831 | Repairing the Trustworthiness of Distilled Language Models | cs.CL | 收录 |

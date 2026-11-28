@@ -9,6 +9,7 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **476** 条（**第一百三十六轮 2026-11-29 00:0x +3 → 476**（B 轨补模型压缩 / 稀疏可训子网 / 离散视觉 token 化三处真空白）：Deep Compression `1510.00149`（**9,997**，ICLR 2016 oral；剪枝 + 训练量化 + Huffman 三级流水线，存储降 **35×–49×** 不掉精度，AlexNet 240MB→6.9MB / VGG-16 552MB→11.3MB）/ The Lottery Ticket Hypothesis `1803.03635`（**3,391**，ICLR 2019；稠密随机初始化网络含「中奖彩票」子网，单独训练可在相近迭代达原网精度，规模常 **<10–20%**）/ Taming Transformers（VQ-GAN）`2012.09841`（**5,237**，CVPR 2021；CNN 学离散图像基元词表 + Transformer 建模组合，首个 Transformer 兆像素语义引导合成）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2015-10-01T09:03:44Z` / `2018-03-09T18:51:28Z` / `2020-12-17T18:57:28Z`；`comments` 逐字 ICLR 2016 oral / ICLR camera ready / changelog）+ abs 页 3/3 `200`（43,738 / 44,518 / 41,944 B）+ OpenAlex 3/3 `200`（9,997 / 3,391 / 5,237，查询日 2026-11-29）；三 ID 条目级查重 **0 命中**；覆盖轴 = 压缩三件套与端侧部署 / 初始化彩票与稀疏可训子网 / 离散视觉词表与高分辨率生成；本轮归属：vision +2 · pretrain +2 · data +2 · posttrain +1 · harness +0 · zhulong +0 · designflow +0）
 **本轮快照**：累计 **470** 条（**第一百三十四轮 2026-11-28 18:0x +3 → 470**（B 轨补 value-based RL 组合基线 / 分布式 RL 架构 / 对话式 LLM 硬件设计三处真空白）：Rainbow `1710.02298`（**443**，2017-10-06，abs `comments` 逐字 `Under review as a conference paper at AAAI 2018`；**<500 按「方法论常青」收**：DQN 六项改进合成单一 agent + 逐项消融，Atari 2600 上数据效率与最终性能双 SOTA）/ IMPALA `1802.01561`（**1,983**，2018-02-05；解耦 acting/learning + V-trace off-policy 校正，可扩到数千台机器，DMLab-30 + Atari-57 单套参数多任务、更少数据 + 正迁移）/ Chip-Chat `2305.13243`（**419**，2023-05-22，MLCAD 2023；**<500 按「本领域权威 / LLM-for-EDA 标志性工作」收**：工程师与 LLM 共同设计 8 位累加器微处理器，送 SkyWater 130nm shuttle 流片，作者称首个全 AI 写 HDL 的芯片）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2017-10-06T07:45:46Z` / `2018-02-05T18:47:30Z` / `2023-05-22T17:13:33Z`）+ abs 页 3/3 `200`（41,858 / 44,369 / 44,643 B）+ OpenAlex 3/3 `200`（443 / 1,983 / 419，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**（`2305.13243` 仅在 #287 核验行被引用）；覆盖轴 = value-based RL 组合与消融 / 分布式 RL rollout 与 off-policy 校正 / 对话式 LLM 硬件设计与流片案例；本轮归属：posttrain +2 · harness +2 · zhulong +2 · designflow +1 · vision +0 · pretrain +0 · data +0）
 **本轮快照（前一）**：累计 **467** 条（**第一百三十三轮 2026-11-28 15:0x +3 → 467**（B 轨补自博弈通用 RL / 像素端到端 DQN / 开源 EDA 时序分析真空白）：Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm（AlphaZero）`1712.01815`（**7,560**，2017 预印本；单一 AlphaZero 从随机对局、除规则外无领域知识出发，**24 小时内**在国际象棋 / 将棋 / 围棋达超人水平并每局击败世界冠军程序）/ Playing Atari with Deep Reinforcement Learning `1312.5602`（**17,501**，NIPS 2013 DRL Workshop；首个直接从高维像素学控制策略的深度模型，CNN + Q-learning 变体，7 个 Atari 游戏统一架构与算法，6/7 超前、3/7 超人）/ OpenTimer: A high-performance timing analysis tool（ICCAD 2015，DOI `10.1109/iccad.2015.7372666`，**176**，**<500 按「EDA 标志性 / 本领域权威」收**；开源时序分析工具，block-based + path-based 传播、CPPR、增量处理，兼容 `.v/.spef/.lib/.sdc`，TAU 2015 工业基准上较现有 timer 数量级加速）；核验：arXiv abs `2/2 200`（`citation_title` + `citation_date` 逐字 `1712.01815`=2017/12/05〔仅 v1〕· `1312.5602`=2013/12/19）+ OpenAlex `3/3 200`（7,560〔DOI 指向 Science 2018 期刊版〕/ 17,501 / 176，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**（`1312.5602` 仅作前置被 Nature DQN 条目引用、无独立条目）；覆盖轴 = 自博弈通用 RL / 像素端到端深度 Q 学习 / 开源 EDA 时序分析；本轮归属：posttrain +2 · vision +2 · designflow +2 · zhulong +1 · pretrain +1 · harness +1 · data +0）
 **本轮快照**：累计 **464** 条（**第一百三十二轮 2026-11-28 12:0x +3 → 464**（B 轨补泛化理论 / 单阶段检测 / 归一化真空白）：Understanding deep learning requires rethinking generalization `1611.03530`（**4,949**，ICLR 2017；SOTA 卷积网络可拟合随机标签与随机噪声输入，显式正则化不改变定性结论，两层网络参数数超过数据点即具完美有限样本表达能力）/ SSD `1512.02325`（**34,378**，ECCV 2016；单次前向 + 多层特征图不同尺度 default boxes，VOC2007 test 300×300 **72.1% mAP @ 58 FPS** on Titan X）/ Group Normalization `1803.08494`（**5,226**，IJCV 期刊版；组内归一化与 batch size 无关，ResNet-50 ImageNet batch=2 比 BN 低 **10.6%** 误差）；核验：arXiv API `200` + `application/atom+xml`（`published` 逐字 `2016-11-10T22:02:36Z` / `2015-12-08T04:46:38Z` / `2018-03-22T17:57:16Z`；`comments` 逐字 ICLR 2017 / ECCV 2016 / v3 修订说明）+ OpenAlex 3/3 `200`（4,949 / 34,378 / 5,226，查询日 2026-11-28）；三 ID 条目级查重 **0 命中**；覆盖轴 = 泛化与记忆 / 单阶段多尺度检测 / 与 batch 解耦的归一化；本轮归属：harness +2 · vision +2 · pretrain +2 · data +1 · zhulong +1 · designflow +1 · posttrain +0）
@@ -8173,3 +8174,49 @@
 | 与我们工作的关系 | **designflow（主 · 多模态题面不能降级）**：论文把四类电路数据（spec / RTL / netlist / layout）并列为 LCM 的输入，直接支撑「题面应保留图 / 版图 / 波形形态、不得退化成纯文本」的红线。<b>动作</b>：造题与判分按这四类数据分别标注所需模态，并在报告中统计「多模态题」占比。<br>**zhulong（主 · 评测分层与 shift-left 量化）**：把 shift-left 收益写成可核对的 PPA / 迭代轮次指标，而不是只报单点 pass 率。<br>**vision（次 · 多模态表示）**：明确将版图 / 波形等物理模态纳入统一表示，是 WaveView 工作的上游动机。<br>**pretrain / data（次 · 多模态配比）**：若做多模态继续预训练，四类数据的配比与对齐应作为显式超参记录。<br>**posttrain / harness（次）**：任务应按「是否需要跨模态证据」分层统计。 |
 | 首次收录 | **2026-11-28**（第一百三十五轮 · 21:0x） |
 | 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2024-03-12T02:26:30Z` / `updated` `2024-05-01T10:43:36Z`；primary `cs.AR`；39 位作者按字母序，contact 逐字见上）+ abs 页 **`200`**（51,205 B，`citation_title` / `citation_date` `2024/03/12` / `citation_author` 逐字）+ OpenAlex **`200`**（100 / 2024 / `article` / source = Science China Information Sciences，查询日 2026-11-28）。「AI4EDA → AI-native EDA / LCMs / spec-RTL-netlist-layout / shift-left / PPA」取自摘要逐字。条目级查重：`2403.07257` 在 `PAPERS.md` **0 命中**。 |
+
+
+## 474. Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding |
+| 作者（前 3） | Song Han · Huizi Mao · William J. Dally（abs `citation_author` 逐字核；共 3 位） |
+| 年份 | **2015**（arXiv API `published` 逐字 `2015-10-01T09:03:44Z`；`updated` `2016-02-15T06:25:40Z`） |
+| 会议 / 期刊 | **ICLR 2016（oral）**（abs `comments` 逐字 `Published as a conference paper at ICLR 2016 (oral)`） |
+| 被引数 | **9,997**（OpenAlex `10.48550/arxiv.1510.00149`，查询日 **2026-11-29**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1510.00149> ｜ `10.48550/arXiv.1510.00149` |
+| 一句话贡献 | 提出「**剪枝 → 训练量化 → Huffman 编码**」三级流水线，联合把网络存储需求降 **35×–49× 且不掉精度**：剪枝去掉不重要连接（连接数降 **9×–13×**），量化让权重共享（每连接 **32 → 5 bit**），再重训微调剩余连接与量化质心；ImageNet 上 AlexNet **240MB → 6.9MB**、VGG-16 **552MB → 11.3MB**（均无精度损失），使模型可放进片上 SRAM 而非片外 DRAM；CPU/GPU/移动 GPU 上层级加速 **3×–4×**、能效 **3×–7×**（摘要逐字）。 |
+| 与我们工作的关系 | **vision（主 · 编码器 / 波形模型的端侧部署）**：pruning + 量化 + 熵编码是低成本导出基线；报告须同表给「压缩率 / 层级加速 / 能效」三口径，不能只报压缩比。**动作**：若把波形 / 版图视觉塔压到端侧，导出前固定测「压缩后下游精度不降」这一门槛。<br>**posttrain（次 · 小模型部署）**：把「掉精度」作为量化前后必测项，量化感知训练与后训练量化分开报。<br>**pretrain / data / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-29**（第一百三十六轮 · 00:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2015-10-01T09:03:44Z` / `updated` `2016-02-15T06:25:40Z`；primary `cs.CV`；abs `comments` 逐字 `Published as a conference paper at ICLR 2016 (oral)`）+ abs 页 **`200`**（43,738 B）+ OpenAlex **`200`**（9,997 / 2015 / `preprint` / source = arXiv，查询日 2026-11-29）。「35×–49× / 9×–13× / 32→5 bit / 240MB→6.9MB / 552MB→11.3MB / 3×–4× / 3×–7×」取自摘要逐字。条目级查重：`1510.00149` 在 `PAPERS.md` **0 命中**。 |
+
+## 475. The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks |
+| 作者（前 3） | Jonathan Frankle · Michael Carbin（abs `citation_author` 逐字核；共 2 位） |
+| 年份 | **2018**（arXiv API `published` 逐字 `2018-03-09T18:51:28Z`；`updated` `2019-03-04T15:51:11Z`） |
+| 会议 / 期刊 | **ICLR 2019**（abs `comments` 逐字 `ICLR camera ready`；OpenAlex `type=preprint`） |
+| 被引数 | **3,391**（OpenAlex `10.48550/arxiv.1803.03635`，查询日 **2026-11-29**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1803.03635> ｜ `10.48550/arXiv.1803.03635` |
+| 一句话贡献 | 提出「**彩票假说**」：稠密随机初始化的前馈网络里存在子网络（「中奖彩票」），**单独训练**它能在相近迭代数内达到与原网络可比的测试精度——关键在于它们「中了初始化彩票」，连接初始权重让训练格外有效；给出识别算法并在 MNIST / CIFAR10 的全连接与卷积网络上复现：中奖彩票规模常 **不到原网 10–20%**，高于该规模时学得更快、测试精度更高（摘要逐字）。 |
+| 与我们工作的关系 | **pretrain（主 · 初始化与稀疏训练）**：说明「能否训练」与初始化强相关，做小模型复现时应记录初始化种子与剪枝后重训协议，避免把初始化运气当架构收益。**data（次 · 数据/迭代预算口径）**：稀疏子网在相同迭代达到原网精度，可作为「数据量 / 迭代预算」对照实验的参照。<br>**vision / posttrain / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-29**（第一百三十六轮 · 00:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2018-03-09T18:51:28Z` / `updated` `2019-03-04T15:51:11Z`；primary `cs.LG`；abs `comments` 逐字 `ICLR camera ready`）+ abs 页 **`200`**（44,518 B）+ OpenAlex **`200`**（3,391 / 2018 / `preprint` / source = arXiv，查询日 2026-11-29）。「单独训练 / 10–20% / 学得更快」取自摘要逐字。条目级查重：`1803.03635` 在 `PAPERS.md` **0 命中**。 |
+
+## 476. Taming Transformers for High-Resolution Image Synthesis
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Taming Transformers for High-Resolution Image Synthesis |
+| 作者（前 3） | Patrick Esser · Robin Rombach · Björn Ommer（abs `citation_author` 逐字核；共 3 位） |
+| 年份 | **2020**（arXiv API `published` 逐字 `2020-12-17T18:57:28Z`；`updated` `2021-06-23T16:07:21Z`） |
+| 会议 / 期刊 | **CVPR 2021**（OpenAlex `type=conference-paper`、source = IEEE/CVF CVPR；arXiv abs `comments` 仅 `Changelog can be found in the supplementary`，未写会议 ⇒ 会议归属以 OpenAlex 单源记） |
+| 被引数 | **5,237**（OpenAlex `10.48550/arxiv.2012.09841`，查询日 **2026-11-29**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2012.09841> ｜ `10.48550/arXiv.2012.09841` |
+| 一句话贡献 | 把 **CNN 的局部归纳偏置**与 **Transformer 的表达力**结合以建模并合成高分辨率图像：① 用 CNN **学一个上下文丰富的图像基元离散词表**（VQ 码本），② 再用 Transformer **在其组合上建模**；方法可直接用于条件合成（类别等非空间信息 + 分割等空间信息都可控制生成），给出**首个用 Transformer 做兆像素级语义引导合成**的结果，并在类条件 ImageNet 上取得当时自回归模型的 SOTA（摘要逐字；码 = `https://github.com/CompVis/taming-transformers`）。 |
+| 与我们工作的关系 | **vision（主 · 图像 / 波形离散 token 化与高分辨率生成）**：「CNN 学 codebook + Transformer 建模组合」是两段式图像生成的通用配方，可直接映射到波形截图 / 版图的高分辨率离散化与可控生成；报告须写清码本大小与下采样倍率。**动作**：若做 WaveView 合成增广，用离散码本 + 自回归/扩散两段式，并单列「语义/类条件」是否真保留物理形态。<br>**pretrain（次 · 多模态 token 词表）**：离散视觉词表可与语言 token 统一建模，是统一多模态序列化的直接前身。<br>**data（次 · 合成数据）**：类条件 / 语义引导的高分辨率合成可用于数据增广，须防分布偏移（与 BigGAN 的 truncation 口径同源问题）。<br>**posttrain / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-29**（第一百三十六轮 · 00:0x） |
+| 核验状态 | arXiv API **`200`** + `application/atom+xml`（`published` 逐字 `2020-12-17T18:57:28Z` / `updated` `2021-06-23T16:07:21Z`；primary `cs.CV`）+ abs 页 **`200`**（41,944 B）+ OpenAlex **`200`**（5,237 / 2021 / `conference-paper` / source = CVPR，查询日 2026-11-29）。「离散基元词表 / Transformer 建模组合 / 兆像素语义引导 / 自回归 SOTA」取自摘要逐字。条目级查重：`2012.09841` 在 `PAPERS.md` **0 命中**（同批候选 `1711.00937` VQ-VAE 已在表内）。 |
