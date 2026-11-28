@@ -223,9 +223,9 @@
   "json_roundtrip": true,
   "json_roundtrip_pass": true,
   "perf": {
-    "t_stock": 0.20276498794555664,
-    "t_switch_only": 0.13597941398620605,
-    "t_track": 0.021338462829589844
+    "t_stock": 0.15425586700439453,
+    "t_switch_only": 0.15657854080200195,
+    "t_track": 0.02082347869873047
   },
   "perf_pass": true,
   "real_s1_s2_source_mapping": {

@@ -4,19 +4,23 @@ WAITING: 0
 
 > 🎯 **现行路线 = 方案 C（A 立即解锁 E2BIG + B 后台 pre-blend）** · **🔴 2026-11-28 10:2x 用户令**：走方案 C — 立即应用方案 A 补丁解除 E2BIG，同时后台并行跑方案 B pre-blend。
 
-> 🔴 **心跳 · 2026-11-28 08:4x (R1088) — 方案 C 执行中：A 补丁已应用+验证通过 · B pre-blend 5源全部后台运行中 · 发现4源.idx格式需转换（已写convert_idx_format.py修复）**：
-> ①✅**方案 A（E2BIG 补丁）已应用**：`train.sh` 第98-113行加 BLEND>100KB→@file 逻辑；`pretrain_launcher.py` 第284-290行加 @file 读取逻辑；`DRY=1` 验证：S2 BLEND=1.44MB>100KB→触发@file写入✅，S1 BLEND<100KB→inline✅，@file读取逻辑单测PASS✅；
-> ②✅**方案 B（pre-blend）后台运行中**：5源全部 `setsid nice -n 19` 后台运行——
->   - stackv3_filt(1.8TB,8192→16,排除3 truncated)→running 0.5%→ETA~70min
->   - finemath(36GB,64→16)→idx转换DONE(60s)→pre_blend待启动
->   - megamath(243GB,348→16)→idx转换54/348→ETA~6min
->   - megamath_web(813GB,4950→16)→idx转换306/4950→ETA~80min
->   - nemotron(728GB,193→16)→idx转换16/193→ETA~20min
-> ③⚠️**发现4源.idx格式不兼容**：megamath_tokenize.py 等写入的是文本格式(仅token count)，非Megatron MMapIndexedDataset二进制格式(MMIDIDX magic)；已编写 `convert_idx_format.py` 扫描.bin中的EOD token(id=129280)重建文档边界并写入正确.idx；finemath已转换完成验证通过(MMIDIDX magic✅,104680 docs/shard✅)；
-> ④✅**stackv3_filt 3 truncated shards**：stackv3_s01649/stackv3_s01749/stackv3_s01817 .bin文件截断，已用--exclude排除；
-> ⑤下一步：等4源idx转换完成→启动finemath/megamath/megamath_web/nemotron pre_blend→全部完成后更新blend_s2_preblend.tsv指向pre-blend目录→重新生成blend验证(shard 13847→~192)；
-> ⑥现状：S1已停 · 16卡全0MiB · 350k ckpt完好 · WAITING=0。
+> 🔴 **心跳 · 2026-11-28 09:0x (R1089) — 方案 C 执行中：A 补丁已确认应用 ✅ · B pre-blend 2/5 DONE + 3/5 running · blendswitch 25/25 PASS**：
+> ①✅**方案 A（E2BIG 补丁）已确认应用**：
+>   - `train.sh` L98-113：BLEND >100KB → 写 `blend_runtime.txt` + ARGS 传 `@filepath` ✅（grep 确认在位）
+>   - `pretrain_launcher.py` L281-292：`@` 前缀检测 + `os.path.isfile` → 从文件读取 blend ✅（grep 确认在位）
+>   - pretrain MEMORY 已知悉方案 C + 补丁路径；用户已令 pretrain「立刻执行 S2 切换」
+> ②✅**方案 B（pre-blend）进度**：
+>   - **finemath** (64→16, 36GB)：✅ DONE (106s, 16 .bin, `.done` present)
+>   - **megamath_pb** (348→16, 243GB)：✅ DONE (425s, 16 .bin, `.done` present) — ⚠️输出目录是 `megamath_pb` 非 `megamath`，TSV 更新时需注意
+>   - **stackv3_filt** (8192→16, 1.8TB)：🔄 running ~28% (5/16 .bin, ~450GB/1.8TB, ETA ~45min)
+>   - **nemotron** (193→16, 728GB)：🔄 running ~10% (1/16 .bin, ~41GB/728GB, ETA ~30min)
+>   - **megamath_web** (4950→16, 813GB)：🔄 idx转换 3082/4950 (~62%, ETA ~13min) → pre_blend auto-start watcher 已设
+> ③✅**blendswitch 复验**：test_blend_switch.py 全 PASS (zero_overlap=0, ratio max_dev=0.0000%)
+> ④✅**idx 转换全部完成**：finemath(64)+megamath(348)+nemotron(193) 全部 DONE；megamath_web(4950) 进行中
+> ⑤**下一步**：等 stackv3_filt + nemotron + megamath_web 全部 DONE → 更新 `blend_s2_preblend.tsv` 5 源路径指向 pre-blend 目录 → 重新生成 blend 验证 (shard 13847→~192, BLEND <100KB) → commit + push
+> ⑥现状：两节点 GPU 全 idle(.29 8×0MiB ✅ · .12 8×0-4MiB ✅) · 350k ckpt 完好 · /nas_user 42TB 余 · WAITING=0。
 
+> 📦 R1088 心跳（2026-11-28 08:4x·方案C执行中·A补丁已应用·B 5源后台运行·idx转换修复·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1084 心跳（2026-11-28 07:10·fresh复验25/25 PASS+交付物+RUNBOOK全量+pretrain无待答·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1082 心跳（2026-11-28 06:30·fresh复验25/25 PASS+交付物+RUNBOOK全量+S1健康iter=350210·S2待运维决定·WAITING=0）已归档 → daily-memories-data/2026-11-28.md
 > 📦 R1078~R1081 心跳（2026-11-28 06:10~06:20·fresh复验25/25 PASS+交付物全量+SWITCH_RUNBOOK.md完整+pretrain无待答·S2待运维决定·WAITING=0）已批量归档 → daily-memories-data/2026-11-28.md
